@@ -6,16 +6,14 @@
 
 using System;
 
-namespace Rdmp.Core.DataLoad.Modules.Exceptions
+namespace Rdmp.Core.DataLoad.Modules.Exceptions;
+
+/// <summary>
+/// Thrown when a file pattern expected to identify only a single file matches multiple files.
+/// </summary>
+public class MultipleMatchingFilesException : Exception
 {
-    /// <summary>
-    /// Thrown when a file pattern expected to identify only a single file matches multiple files.
-    /// </summary>
-    public class MultipleMatchingFilesException : Exception
+    public MultipleMatchingFilesException(string s) : base(s)
     {
-        public MultipleMatchingFilesException(string s):base(s)
-        {
-            
-        }
     }
 }

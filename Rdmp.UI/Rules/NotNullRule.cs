@@ -6,24 +6,18 @@
 
 using System;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.Rules
+namespace Rdmp.UI.Rules;
+
+internal class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
 {
-    class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+    public NotNullRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,
+        string propertyToCheckName) : base(activator, databaseObject, getter, control, propertyToCheckName)
     {
-        public NotNullRule(IActivateItems activator, T databaseObject, Func<T, object> getter, Control control,string propertyToCheckName) : base(activator,databaseObject,getter,control, propertyToCheckName)
-        {
-            
-        }
-
-        protected override string IsValid(object currentValue, Type typeToTest)
-        {
-            if (currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()))
-                return "Value cannot be null";
-
-            return null;
-        }
     }
+
+    protected override string IsValid(object currentValue, Type typeToTest) =>
+        currentValue == null || string.IsNullOrWhiteSpace(currentValue.ToString()) ? "Value cannot be null" : null;
 }

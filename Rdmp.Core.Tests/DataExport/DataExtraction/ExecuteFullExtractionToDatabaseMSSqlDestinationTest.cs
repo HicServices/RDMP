@@ -12,204 +12,226 @@ using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
-using Rdmp.Core.Repositories;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction;
+
+public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequiringAnExtractionConfiguration
 {
-    public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiringAnExtractionConfiguration
+    private ExternalDatabaseServer _extractionServer;
+
+    private const string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
+    private ColumnInfo _columnToTransform;
+    private Pipeline _pipeline;
+
+    [Test]
+    public void SQLServerDestination()
     {
-        private ExternalDatabaseServer _extractionServer;
-        
-        private readonly string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
-        private ColumnInfo _columnToTransform;
-        private Pipeline _pipeline;
+        DiscoveredDatabase dbToExtractTo = null;
 
-        [Test]
-        public void SQLServerDestination()
+        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
+        _columnToTransform = _columnInfos.Single(c =>
+            c.GetRuntimeName().Equals("DateOfBirth", StringComparison.CurrentCultureIgnoreCase));
+
+        var transform = $"YEAR({_columnToTransform.Name})";
+
+
+        if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .All(ei => ei.GetRuntimeName() != "YearOfBirth"))
         {
-            DiscoveredDatabase dbToExtractTo = null;
-
-            var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
-            _columnToTransform = _columnInfos.Single(c=>c.GetRuntimeName().Equals("DateOfBirth",StringComparison.CurrentCultureIgnoreCase));
-
-            string transform = "YEAR(" + _columnToTransform.Name + ")";
-
-
-            if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei => ei.GetRuntimeName() != "YearOfBirth"))
+            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform)
             {
-                var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform);
-                ei.Alias = "YearOfBirth";
-                ei.ExtractionCategory = ExtractionCategory.Core;
-                ei.SaveToDatabase();
-            
-                //make it part of the ExtractionConfiguration
-                var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet, (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL);
-                newColumn.Alias = ei.Alias;
-                newColumn.SaveToDatabase();
+                Alias = "YearOfBirth",
+                ExtractionCategory = ExtractionCategory.Core
+            };
+            ei.SaveToDatabase();
 
-                _extractableColumns.Add(newColumn);
-            }
-            
-            CreateLookupsEtc();
-
-            try
+            //make it part of the ExtractionConfiguration
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
+                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
             {
-                _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
-                _configuration.SaveToDatabase();
-                
-                var dbname = TestDatabaseNames.GetConsistentName(_project.Name + "_" + _project.ProjectNumber);
-                dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
-                if (dbToExtractTo.Exists())
-                    dbToExtractTo.Drop();
+                Alias = ei.Alias
+            };
+            newColumn.SaveToDatabase();
 
-                base.ExecuteRunner();
-
-                var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
-                Assert.IsTrue(destinationTable.Exists());
-
-                var dt = destinationTable.GetDataTable();
-
-                Assert.AreEqual(1, dt.Rows.Count);
-                Assert.AreEqual(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim(),dt.Rows[0]["ReleaseID"]);
-                Assert.AreEqual(new DateTime(2001,1,1), dt.Rows[0]["DateOfBirth"]);
-                Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
-
-                Assert.AreEqual(_columnToTransform.Data_type, destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
-                Assert.AreEqual("int",destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
-                
-                AssertLookupsEtcExist(dbToExtractTo);
-            }
-            finally
-            {
-                if(dbToExtractTo != null && dbToExtractTo.Exists())
-                    dbToExtractTo.Drop();
-
-                _pipeline?.DeleteInDatabase();
-            }
+            _extractableColumns.Add(newColumn);
         }
 
-        private void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
+        CreateLookupsEtc();
+
+        try
         {
-            Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem").Exists());
-            Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp").Exists());
-            Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff").Exists());
-        }
+            _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
+            _configuration.SaveToDatabase();
 
-        private void CreateLookupsEtc()
+            var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
+            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
+            if (dbToExtractTo.Exists())
+                dbToExtractTo.Drop();
+
+            ExecuteRunner();
+
+            var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
+            Assert.IsTrue(destinationTable.Exists());
+
+            var dt = destinationTable.GetDataTable();
+
+            Assert.AreEqual(1, dt.Rows.Count);
+            Assert.AreEqual(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim(), dt.Rows[0]["ReleaseID"]);
+            Assert.AreEqual(new DateTime(2001, 1, 1), dt.Rows[0]["DateOfBirth"]);
+            Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
+
+            Assert.AreEqual(_columnToTransform.Data_type,
+                destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
+            Assert.AreEqual("int", destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
+
+            AssertLookupsEtcExist(dbToExtractTo);
+        }
+        finally
         {
-            //an extractable file
-            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob.txt");
+            if (dbToExtractTo?.Exists() == true)
+                dbToExtractTo.Drop();
 
-            File.WriteAllText(filename,"fishfishfish");
-            var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob");
-            doc.URL = new Uri("file://"+filename);
-            doc.Extractable = true;
-            doc.SaveToDatabase();
-                
-            //an extractable global file (comes out regardless of datasets)
-            var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
-
-            File.WriteAllText(filename2,"fishfishfish2");
-            var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2");
-            doc2.URL = new Uri("file://"+filename2);
-            doc2.Extractable = true;
-            doc2.IsGlobal = true;
-            doc2.SaveToDatabase();
-
-            //an supplemental table in the database (not linked against cohort)
-            var tbl = CreateDataset<Biochemistry>(Database,500, 1000, new Random(50));
-
-            var sql = new SupportingSQLTable(CatalogueRepository, _catalogue, "Biochem");
-            var server = new ExternalDatabaseServer(CatalogueRepository, "myserver", null);
-            server.SetProperties(tbl.Database);
-            sql.ExternalDatabaseServer_ID = server.ID;
-            sql.SQL = "SELECT * FROM " + tbl.GetFullyQualifiedName();
-            sql.Extractable = true;
-            sql.SaveToDatabase();
-            
-            
-            //an supplemental (global) table in the database (not linked against cohort)
-            var tbl2 = CreateDataset<HospitalAdmissions>(Database,500, 1000, new Random(50));
-
-            var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp");
-            sql2.ExternalDatabaseServer_ID = server.ID;
-            sql2.SQL = "SELECT * FROM " + tbl2.GetFullyQualifiedName();
-            sql2.Extractable = true;
-            sql2.IsGlobal = true;
-            sql2.SaveToDatabase();
-
-
-            DataTable dtLookup = new DataTable();
-            dtLookup.Columns.Add("C");
-            dtLookup.Columns.Add("D");
-
-            dtLookup.Rows.Add("F", "Female");
-            dtLookup.Rows.Add("M", "Male");
-            dtLookup.Rows.Add("NB", "Non Binary");
-
-            var lookupTbl = tbl2.Database.CreateTable("z_fff", dtLookup);
-
-            Import(lookupTbl, out var ti, out ColumnInfo[] columnInfos);
-
-            var lookup =  new Lookup(CatalogueRepository, columnInfos[0], 
-                _columnToTransform,
-                columnInfos[1],
-                ExtractionJoinType.Left,null);
-
-            //we need a CatalogueItem for the description in order to pick SetUp the Lookup as associated with the Catalogue
-            var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc");
-            ci.ColumnInfo_ID = columnInfos[1].ID;
-            ci.SaveToDatabase();
+            _pipeline?.DeleteInDatabase();
         }
+    }
 
+    private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
+    {
+        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem")
+            .Exists());
+        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp")
+            .Exists());
+        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff")
+            .Exists());
+    }
 
-        protected override Pipeline SetupPipeline()
+    private void CreateLookupsEtc()
+    {
+        //an extractable file
+        var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob.txt");
+
+        File.WriteAllText(filename, "fishfishfish");
+        var doc = new SupportingDocument(CatalogueRepository, _catalogue, "bob")
         {
-            //create a target server pointer
-            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null);
-            _extractionServer.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            _extractionServer.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-            _extractionServer.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
-            _extractionServer.SaveToDatabase();
+            URL = new Uri($"file://{filename}"),
+            Extractable = true
+        };
+        doc.SaveToDatabase();
 
-            //create a pipeline
-            _pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
-            
-            //set the destination pipeline
-            var component = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
-            var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>().ToList();
-            IArgument argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
-            IArgument argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
-            IArgument argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+        //an extractable global file (comes out regardless of datasets)
+        var filename2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "bob2.txt");
 
-            Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
-            argumentServer.SetValue(_extractionServer);
-            argumentServer.SaveToDatabase();
-            argumentDbNamePattern.SetValue(TestDatabaseNames.Prefix + "$p_$n");
-            argumentDbNamePattern.SaveToDatabase();
-            argumentTblNamePattern.SetValue("$c_$d");
-            argumentTblNamePattern.SaveToDatabase();
-            AdjustPipelineComponentDelegate?.Invoke(component);
-            
-            var component2 = new PipelineComponent(CatalogueRepository, _pipeline, typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
-            var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>().ToArray();
-            arguments2.Single(a=>a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
-            arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
-            AdjustPipelineComponentDelegate?.Invoke(component2);
+        File.WriteAllText(filename2, "fishfishfish2");
+        var doc2 = new SupportingDocument(CatalogueRepository, _catalogue, "bob2")
+        {
+            URL = new Uri($"file://{filename2}"),
+            Extractable = true,
+            IsGlobal = true
+        };
+        doc2.SaveToDatabase();
 
-            //configure the component as the destination
-            _pipeline.DestinationPipelineComponent_ID = component.ID;
-            _pipeline.SourcePipelineComponent_ID = component2.ID;
-            _pipeline.SaveToDatabase();
+        //an supplemental table in the database (not linked against cohort)
+        var tbl = CreateDataset<Biochemistry>(Database, 500, 1000, new Random(50));
 
-            return _pipeline;
-        }
+        var sql = new SupportingSQLTable(CatalogueRepository, _catalogue, "Biochem");
+        var server = new ExternalDatabaseServer(CatalogueRepository, "myserver", null);
+        server.SetProperties(tbl.Database);
+        sql.ExternalDatabaseServer_ID = server.ID;
+        sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
+        sql.Extractable = true;
+        sql.SaveToDatabase();
+
+
+        //an supplemental (global) table in the database (not linked against cohort)
+        var tbl2 = CreateDataset<HospitalAdmissions>(Database, 500, 1000, new Random(50));
+
+        var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp")
+        {
+            ExternalDatabaseServer_ID = server.ID,
+            SQL = $"SELECT * FROM {tbl2.GetFullyQualifiedName()}",
+            Extractable = true,
+            IsGlobal = true
+        };
+        sql2.SaveToDatabase();
+
+
+        var dtLookup = new DataTable();
+        dtLookup.Columns.Add("C");
+        dtLookup.Columns.Add("D");
+
+        dtLookup.Rows.Add("F", "Female");
+        dtLookup.Rows.Add("M", "Male");
+        dtLookup.Rows.Add("NB", "Non Binary");
+
+        var lookupTbl = tbl2.Database.CreateTable("z_fff", dtLookup);
+
+        Import(lookupTbl, out _, out var columnInfos);
+
+        _ = new Lookup(CatalogueRepository, columnInfos[0],
+            _columnToTransform,
+            columnInfos[1],
+            ExtractionJoinType.Left, null);
+
+        //we need a CatalogueItem for the description in order to pick SetUp the Lookup as associated with the Catalogue
+        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc")
+        {
+            ColumnInfo_ID = columnInfos[1].ID
+        };
+        ci.SaveToDatabase();
+    }
+
+
+    protected override Pipeline SetupPipeline()
+    {
+        //create a target server pointer
+        _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver", null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
+        _extractionServer.SaveToDatabase();
+
+        //create a pipeline
+        _pipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
+
+        //set the destination pipeline
+        var component = new PipelineComponent(CatalogueRepository, _pipeline,
+            typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
+        var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
+            .ToList();
+        var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
+        var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
+        var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+
+        Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
+        argumentServer.SetValue(_extractionServer);
+        argumentServer.SaveToDatabase();
+        argumentDbNamePattern.SetValue($"{TestDatabaseNames.Prefix}$p_$n");
+        argumentDbNamePattern.SaveToDatabase();
+        argumentTblNamePattern.SetValue("$c_$d");
+        argumentTblNamePattern.SaveToDatabase();
+        AdjustPipelineComponentDelegate?.Invoke(component);
+
+        var component2 = new PipelineComponent(CatalogueRepository, _pipeline,
+            typeof(ExecuteCrossServerDatasetExtractionSource), -1, "Source");
+        var arguments2 = component2.CreateArgumentsForClassIfNotExists<ExecuteCrossServerDatasetExtractionSource>()
+            .ToArray();
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SetValue(false);
+        arguments2.Single(a => a.Name.Equals("AllowEmptyExtractions")).SaveToDatabase();
+        AdjustPipelineComponentDelegate?.Invoke(component2);
+
+        //configure the component as the destination
+        _pipeline.DestinationPipelineComponent_ID = component.ID;
+        _pipeline.SourcePipelineComponent_ID = component2.ID;
+        _pipeline.SaveToDatabase();
+
+        return _pipeline;
     }
 }

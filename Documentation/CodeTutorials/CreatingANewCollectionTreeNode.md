@@ -49,7 +49,7 @@ Start out by overriding the ToString method to return the text you want to appea
 ```csharp
 namespace Rdmp.Core.Providers.Nodes
 {
-    class FrozenExtractionConfigurationsNode
+    private class FrozenExtractionConfigurationsNode
     {
         public override string ToString()
         {
@@ -59,13 +59,13 @@ namespace Rdmp.Core.Providers.Nodes
 } 
 ```
 
-NOTE: If a node can only ever appear once in any collection (e.g. it is a unique top level node) then you can instead inherit from SingletonNode and skip the rest of this section.  If you are an SingletonNode then your class name should start with All e.g. AllCakesNode, AllCarsNode etc.
+NOTE: If a node can only ever appear once in any collection (e.g. it is a unique top level node) then you can instead inherit from SingletonNode and skip the rest of this section.  If you are a SingletonNode then your class name should start with All e.g. AllCakesNode, AllCarsNode etc.
 
-Assuming you dont have a SingletonNode then you should add constructor arguments sufficient to uniquely identify which instance you have.  In this case we will have an `FrozenExtractionConfigurationsNode` instance for every `Project` so we need a reference to which `Project` we relate to.
+Assuming you don't have a SingletonNode then you should add constructor arguments sufficient to uniquely identify which instance you have.  In this case we will have an `FrozenExtractionConfigurationsNode` instance for every `Project` so we need a reference to which `Project` we relate to.
 
 <!--- df7d2bb4cd6145719f933f6f15218b1a --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
     public Project Project { get; set; }
 
@@ -74,10 +74,7 @@ class FrozenExtractionConfigurationsNode
         Project = project;
     }
 
-    public override string ToString()
-    {
-        return "Frozen Extraction Configurations";
-    }
+    public override string ToString() => "Frozen Extraction Configurations";
 }
 ```
 
@@ -85,7 +82,7 @@ Finally we need to implement 'Equality members', this ensures that Object List V
 
 <!--- a93fd8b3d1fb4ad8975ef8cf9c384236 --->
 ```csharp
-class FrozenExtractionConfigurationsNode
+private class FrozenExtractionConfigurationsNode
 {
 	public Project Project { get; set; }
 
@@ -94,28 +91,18 @@ class FrozenExtractionConfigurationsNode
 		Project = project;
 	}
 
-	public override string ToString()
-	{
-		return "Frozen Extraction Configurations";
-	}
+	public override string ToString() => "Frozen Extraction Configurations";
 
-	protected bool Equals(FrozenExtractionConfigurationsNode other)
-	{
-		return Equals(Project, other.Project);
-	}
+	protected bool Equals(FrozenExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
 	public override bool Equals(object obj)
 	{
-		if (ReferenceEquals(null, obj)) return false;
+		if (obj is null) return false;
 		if (ReferenceEquals(this, obj)) return true;
-		if (obj.GetType() != this.GetType()) return false;
-		return Equals((FrozenExtractionConfigurationsNode) obj);
+		return obj.GetType() == GetType() && Equals((FrozenExtractionConfigurationsNode)obj);
 	}
 
-	public override int GetHashCode()
-	{
-		return (Project != null ? Project.GetHashCode() : 0);
-	}
+	public override int GetHashCode() => Project?.GetHashCode() ?? 0;
 }
 ```
 
@@ -139,13 +126,13 @@ The full method should now look something like:
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
 {
-    HashSet<object> children = new HashSet<object>();
+    var children = new HashSet<object>();
 
     var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
     children.Add(frozenConfigurationsNode);
 
-    var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-    foreach (ExtractionConfiguration config in configs)
+    var configs = ExtractionConfigurations .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+    foreach (var config in configs)
     {
         AddChildren(config, descendancy.Add(config));
         children.Add(config);
@@ -208,7 +195,7 @@ In this method add the following:
 ```csharp
 private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//todo add child objects here
 
@@ -223,7 +210,7 @@ Just as an example add the number 87 to the children HashSet:
 ```csharp
  private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	children.Add(87);
 
@@ -241,7 +228,7 @@ To complete this example we will modify the `AddChildren` method for `Extraction
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//Create a frozen extraction configurations folder as a subfolder of each ExtractionConfigurationsNode
 	var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
@@ -250,11 +237,11 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 	children.Add(frozenConfigurationsNode);
 
 	//Add children to the frozen folder
-	AddChildren(frozenConfigurationsNode,descendancy.Add(frozenConfigurationsNode));
+	AddChildren(frozenConfigurationsNode, descendancy.Add(frozenConfigurationsNode));
 
 	//Add ExtractionConfigurations which are not released (frozen)
-	var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-	foreach (ExtractionConfiguration config in configs.Where(c=>!c.IsReleased))
+	var configs = ExtractionConfigurations .Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+	foreach (var config in configs.Where(c => !c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);
@@ -265,17 +252,17 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 
 private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
-	HashSet<object> children = new HashSet<object>();
+	var children = new HashSet<object>();
 
 	//Add ExtractionConfigurations which are not released (frozen)
-	var configs = ExtractionConfigurations.Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
-	foreach (ExtractionConfiguration config in configs.Where(c => c.IsReleased))
+	var configs = ExtractionConfigurations .Where(c => c.Project_ID == frozenExtractionConfigurationsNode.Project.ID).ToArray();
+	foreach (var config in configs.Where(c => c.IsReleased))
 	{
 		AddChildren(config, descendancy.Add(config));
 		children.Add(config);
 	}
 
-	AddToDictionaries(children,descendancy);
+	AddToDictionaries(children, descendancy);
 }
 ```
 Now when you run RDMP, the final tree should look something like:

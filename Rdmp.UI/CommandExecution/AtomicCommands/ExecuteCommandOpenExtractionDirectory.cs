@@ -5,100 +5,103 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution
 {
-    internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution,IAtomicCommand
+    private FileInfo _file;
+    private DirectoryInfo _dir;
+
+    public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, ISelectedDataSets sds) : base(activator)
     {
-        private FileInfo _file;
-        private DirectoryInfo _dir;
-
-        public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, ISelectedDataSets sds):base(activator)
+        var result = sds.GetCumulativeExtractionResultsIfAny();
+        try
         {
-            var result = sds.GetCumulativeExtractionResultsIfAny();
-            try
+            if (result == null)
             {
-                if(result == null)
-                    SetImpossible("Dataset has not been extracted");
-                else
-                if(result.DestinationType == null)
-                    SetImpossible("This extraction has not been run");
-                else if (!result.DestinationType.EndsWith("FlatFileDestination"))
-                    SetImpossible($"Extraction destination was '{result.DestinationType}' so cannot be opened");
-                else
-                {
-                    _file = new FileInfo(result.DestinationDescription);
-
-                    if(!_file.Exists)
-                        SetImpossible($"File '{_file.FullName}' did not exist on disk");
-                }
+                SetImpossible("Dataset has not been extracted");
             }
-            catch (Exception)
+            else if (result.DestinationType == null)
             {
-                SetImpossible("Could not determine file location");
+                SetImpossible("This extraction has not been run");
             }
+            else if (!result.DestinationType.EndsWith("FlatFileDestination"))
+            {
+                SetImpossible($"Extraction destination was '{result.DestinationType}' so cannot be opened");
+            }
+            else
+            {
+                _file = new FileInfo(result.DestinationDescription);
 
+                if (!_file.Exists)
+                    SetImpossible($"File '{_file.FullName}' did not exist on disk");
+            }
         }
-
-        public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, IExtractionConfiguration configuration) : base(activator)
+        catch (Exception)
         {
-            var cumulativeExtractionResults = configuration.SelectedDataSets.Select(s=>s.GetCumulativeExtractionResultsIfAny()).Where(c=>c!=null).ToArray();
-            try
-            {
-                if (cumulativeExtractionResults.Length == 0)
-                    SetImpossible("No datasets have ever been extracted");
-                else
-                if (!cumulativeExtractionResults.All(c=>c.DestinationType != null && c.DestinationType.EndsWith("FlatFileDestination")))
-                    SetImpossible("Extraction destinations were not to disk");
-                else
-                {
-                    // all datasets have been extracted to disk
-
-                    // but do they have a shared parent dir?
-                    var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
-
-                    var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d=>d != null).Distinct().ToArray();
-
-                    if (parents.Length != 1)
-                        SetImpossible($"Extracted files do not share a common extraction directory");
-                    else
-                    {
-                        _dir = new DirectoryInfo(parents[0]);
-                    }
-                        
-                }
-            }
-            catch (Exception)
-            {
-                SetImpossible("Could not determine file location");
-            }
-
+            SetImpossible("Could not determine file location");
         }
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    public ExecuteCommandOpenExtractionDirectory(IActivateItems activator, IExtractionConfiguration configuration) :
+        base(activator)
+    {
+        var cumulativeExtractionResults = configuration.SelectedDataSets
+            .Select(s => s.GetCumulativeExtractionResultsIfAny()).Where(c => c != null).ToArray();
+        try
         {
-            return iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode);
-        }
+            if (cumulativeExtractionResults.Length == 0)
+            {
+                SetImpossible("No datasets have ever been extracted");
+            }
+            else if (!cumulativeExtractionResults.All(c =>
+                         c.DestinationType != null && c.DestinationType.EndsWith("FlatFileDestination")))
+            {
+                SetImpossible("Extraction destinations were not to disk");
+            }
+            else
+            {
+                // all datasets have been extracted to disk
 
-        public override void Execute()
+                // but do they have a shared parent dir?
+                var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
+
+                var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d => d != null).Distinct()
+                    .ToArray();
+
+                if (parents.Length != 1)
+                    SetImpossible($"Extracted files do not share a common extraction directory");
+                else
+                    _dir = new DirectoryInfo(parents[0]);
+            }
+        }
+        catch (Exception)
         {
-            base.Execute();
-
-            var cmd = _file != null?
-                new ExecuteCommandOpenInExplorer(Activator, _file):
-                new ExecuteCommandOpenInExplorer(Activator, _dir);
-            
-            if(!cmd.IsImpossible)
-                cmd.Execute();
+            SetImpossible("Could not determine file location");
         }
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionDirectoryNode);
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var cmd = _file != null
+            ? new ExecuteCommandOpenInExplorer(Activator, _file)
+            : new ExecuteCommandOpenInExplorer(Activator, _dir);
+
+        if (!cmd.IsImpossible)
+            cmd.Execute();
     }
 }

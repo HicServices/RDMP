@@ -11,70 +11,73 @@ using System.Text;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
-namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
+namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
+
+public partial class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
 {
-    public class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
+    private readonly List<string> _fails = new();
+    private static readonly Regex TestPattern = ContainsTestRegex();
+
+    public void FindProblems(List<string> csFilesFound)
     {
+        const string checkMethodSignature = @"void Check(ICheckNotifier notifier)";
 
-        List<string> _fails = new List<string>();
-
-        public void FindProblems(List<string> csFilesFound)
+        foreach (var file in csFilesFound)
         {
-            const string checkMethodSignature = @"void Check(ICheckNotifier notifier)";
-            Regex testPattern = new Regex(@"(\b|[a-z])Test(\b|[A-Z])");
+            if (TestPattern.IsMatch(file))
+                continue;
 
-            foreach (string file in csFilesFound)
+            var contents = File.ReadAllText(file);
+
+            if (!contents.Contains("[DemandsInitialization(\"") &&
+                !contents.Contains("[DemandsNestedInitialization(\""))
+                continue;
+
+            Console.WriteLine($"Found Demander:{file}");
+
+            var index = contents.IndexOf(checkMethodSignature, StringComparison.Ordinal);
+
+            if (index == -1)
             {
-                if (testPattern.IsMatch(file))
-                    continue;
-
-                var contents = File.ReadAllText(file);
-
-                if (!contents.Contains("[DemandsInitialization(\"") && !contents.Contains("[DemandsNestedInitialization(\""))
-                    continue;
-
-                Console.WriteLine("Found Demander:" + file);
-
-                int index = contents.IndexOf(checkMethodSignature);
-
-                if(index == -1)
-                {
-                    _fails.Add("FAIL:File " + file + " does not have a Check method implementation but contains the text [DemandsInitialization");
-                    continue;
-                }
-
-                int curlyBracerCount = -1;
-                StringBuilder sbChecksMethodBody = new StringBuilder();
-                while (curlyBracerCount != 0 && index < contents.Length)
-                {
-                    if (contents[index] == '{')
-                    {
-                        if (curlyBracerCount == -1)
-                            curlyBracerCount = 1; //first curly bracer
-                        else
-                            curlyBracerCount++;
-                    }
-
-                    if (contents[index] == '}')
-                        curlyBracerCount--;
-
-                    sbChecksMethodBody.Append(contents[index]);
-
-                    index++;
-                }
-
-                var methodBody = sbChecksMethodBody.ToString();
-
-                Console.WriteLine("Demander Check Method Is:" + Environment.NewLine + methodBody);
-
-                if (!methodBody.Contains(";"))
-                    _fails.Add("FAIL:Method body of Checks in file " + file + " is empty (does not contain any semicolons)");
+                _fails.Add(
+                    $"FAIL:File {file} does not have a Check method implementation but contains the text [DemandsInitialization");
+                continue;
             }
 
-            foreach (string fail in _fails)
-                Console.WriteLine(fail);
+            var curlyBracerCount = -1;
+            var sbChecksMethodBody = new StringBuilder();
+            while (curlyBracerCount != 0 && index < contents.Length)
+            {
+                if (contents[index] == '{')
+                {
+                    if (curlyBracerCount == -1)
+                        curlyBracerCount = 1; //first curly bracer
+                    else
+                        curlyBracerCount++;
+                }
 
-            Assert.AreEqual(0, _fails.Count);
+                if (contents[index] == '}')
+                    curlyBracerCount--;
+
+                sbChecksMethodBody.Append(contents[index]);
+
+                index++;
+            }
+
+            var methodBody = sbChecksMethodBody.ToString();
+
+            Console.WriteLine($"Demander Check Method Is:{Environment.NewLine}{methodBody}");
+
+            if (!methodBody.Contains(';'))
+                _fails.Add($"FAIL:Method body of Checks in file {file} is empty (does not contain any semicolons)");
         }
+
+        foreach (var fail in _fails)
+            Console.WriteLine(fail);
+
+        Assert.AreEqual(0, _fails.Count);
     }
+
+    [GeneratedRegex("(\\b|[a-z])Test(\\b|[A-Z])")]
+    private static partial Regex ContainsTestRegex();
 }

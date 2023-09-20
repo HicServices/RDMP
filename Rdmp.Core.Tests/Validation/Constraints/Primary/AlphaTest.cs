@@ -9,54 +9,49 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
+
+[Category("Unit")]
+internal class AlphaTest : ValidationTests
 {
+    private IPrimaryConstraint _alpha;
 
-    [Category("Unit")]
-    class AlphaTest : ValidationTests
+    [SetUp]
+    protected override void SetUp()
     {
-        private IPrimaryConstraint _alpha;
+        base.SetUp();
 
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
-
-            _alpha = (IPrimaryConstraint)Validator.CreateConstraint("alpha", Consequence.Wrong);
-        }
-
-        [TestCase("12345")]
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("A1")]
-        [TestCase("A1 ")]
-        public void Validate_Invalid_ThrowsException(string code)
-        {
-            Assert.NotNull(_alpha.Validate(code));
-        }
-
-        [TestCase(null)]
-        [TestCase("A")]
-        [TestCase("a")]
-        [TestCase("Ab")]
-        [TestCase("Ba")]
-        [TestCase("aaaaaa")]
-        [TestCase("AAAAAA")]
-        public void Validate_Valid_Success(string code)
-        {
-            Assert.IsNull(_alpha.Validate(code));
-        }
-
-        [Test]
-        public void Validate_Invalid_ExceptionContainsRequiredInfo()
-        {
-            
-            ValidationFailure result = _alpha.Validate("9");
-            
-            Assert.NotNull(result.SourceConstraint);
-            Assert.AreEqual(typeof(Alpha), result.SourceConstraint.GetType());
-            
-        }
-
+        _alpha = (IPrimaryConstraint)Validator.CreateConstraint("alpha", Consequence.Wrong);
     }
-} 
+
+    [TestCase("12345")]
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("A1")]
+    [TestCase("A1 ")]
+    public void Validate_Invalid_ThrowsException(string code)
+    {
+        Assert.NotNull(_alpha.Validate(code));
+    }
+
+    [TestCase(null)]
+    [TestCase("A")]
+    [TestCase("a")]
+    [TestCase("Ab")]
+    [TestCase("Ba")]
+    [TestCase("aaaaaa")]
+    [TestCase("AAAAAA")]
+    public void Validate_Valid_Success(string code)
+    {
+        Assert.IsNull(_alpha.Validate(code));
+    }
+
+    [Test]
+    public void Validate_Invalid_ExceptionContainsRequiredInfo()
+    {
+        var result = _alpha.Validate("9");
+
+        Assert.NotNull(result.SourceConstraint);
+        Assert.AreEqual(typeof(Alpha), result.SourceConstraint.GetType());
+    }
+}

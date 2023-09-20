@@ -9,51 +9,36 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.FilterImporting.Construction
+namespace Rdmp.Core.Curation.FilterImporting.Construction;
+
+/// <summary>
+/// Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
+/// </summary>
+public class AggregateFilterFactory : IFilterFactory
 {
+    private readonly ICatalogueRepository _repository;
+
     /// <summary>
-    /// Constructs IFilters etc for AggregateConfigurations (See IFilterFactory)
+    /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
     /// </summary>
-    public class AggregateFilterFactory :IFilterFactory
+    /// <param name="repository"></param>
+    public AggregateFilterFactory(ICatalogueRepository repository)
     {
-        private readonly ICatalogueRepository _repository;
-
-        /// <summary>
-        /// Sets class up to create <see cref="AggregateFilter"/> objects in the provided <paramref name="repository"/>
-        /// </summary>
-        /// <param name="repository"></param>
-        public AggregateFilterFactory(ICatalogueRepository repository)
-        {
-            _repository = repository;
-        }
-
-        /// <inheritdoc/>
-        public IFilter CreateNewFilter(string name)
-        {
-            return new AggregateFilter(_repository,name);
-        }
-
-        /// <inheritdoc/>
-        public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
-        {
-            return new AggregateFilterParameter(_repository,parameterSQL,(AggregateFilter)filter);
-        }
-
-        /// <inheritdoc/>
-        public Type GetRootOwnerType()
-        {
-            return typeof (AggregateConfiguration);
-        }
-
-        /// <inheritdoc/>
-        public Type GetIContainerTypeIfAny()
-        {
-            return typeof (AggregateFilterContainer);
-        }
-
-        public IContainer CreateNewContainer()
-        {
-            return new AggregateFilterContainer(_repository,FilterContainerOperation.AND);
-        }
+        _repository = repository;
     }
+
+    /// <inheritdoc/>
+    public IFilter CreateNewFilter(string name) => new AggregateFilter(_repository, name);
+
+    /// <inheritdoc/>
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
+        new AggregateFilterParameter(_repository, parameterSQL, (AggregateFilter)filter);
+
+    /// <inheritdoc/>
+    public Type GetRootOwnerType() => typeof(AggregateConfiguration);
+
+    /// <inheritdoc/>
+    public Type GetIContainerTypeIfAny() => typeof(AggregateFilterContainer);
+
+    public IContainer CreateNewContainer() => new AggregateFilterContainer(_repository, FilterContainerOperation.AND);
 }

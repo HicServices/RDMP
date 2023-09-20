@@ -5,89 +5,71 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
-namespace Rdmp.UI.ProjectUI.Datasets.Node
+namespace Rdmp.UI.ProjectUI.Datasets.Node;
+
+internal class AvailableForceJoinNode : IMasqueradeAs
 {
-    internal class AvailableForceJoinNode : IMasqueradeAs
+    [CanBeNull] public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
+
+    public TableInfo TableInfo { get; set; }
+    public JoinInfo[] JoinInfos { get; set; }
+    public bool IsMandatory { get; set; }
+
+    /// <summary>
+    /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
+    /// </summary>
+    public bool IsIncludedInQuery => ForcedJoin != null || IsMandatory;
+
+    public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
     {
-        [CanBeNull]
-        public SelectedDataSetsForcedJoin ForcedJoin { get; set; }
+        TableInfo = tableInfo;
+        IsMandatory = isMandatory;
+    }
 
-        public TableInfo TableInfo { get; set; }
-        public JoinInfo[] JoinInfos { get; set; }
-        public bool IsMandatory { get; set; }
+    public object MasqueradingAs() => TableInfo;
 
-        /// <summary>
-        /// The table will be in the query if it IsMandatory (becaues of the columns the user has selected) or is explicitly picked for inclusion by the user (ForcedJoin)
-        /// </summary>
-        public bool IsIncludedInQuery { get { return ForcedJoin != null || IsMandatory; }}
+    public override string ToString() => TableInfo.ToString();
 
-        public AvailableForceJoinNode(TableInfo tableInfo, bool isMandatory)
-        {
-            TableInfo = tableInfo;
-            IsMandatory = isMandatory;
-        }
+    #region Equality Members
 
-        public object MasqueradingAs()
-        {
-            return TableInfo;
-        }
+    protected bool Equals(AvailableForceJoinNode other) => TableInfo.Equals(other.TableInfo);
 
-        public override string ToString()
-        {
-            return TableInfo.ToString();
-        }
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AvailableForceJoinNode)obj);
+    }
 
-        #region Equality Members
-        protected bool Equals(AvailableForceJoinNode other)
-        {
-            return TableInfo.Equals(other.TableInfo);
-        }
+    public override int GetHashCode() => TableInfo.GetHashCode();
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((AvailableForceJoinNode) obj);
-        }
+    #endregion
 
-        public override int GetHashCode()
-        {
-            return TableInfo.GetHashCode();
-        }
+    /// <summary>
+    /// Populates <see cref="JoinInfos"/> by finding all potential joins to <paramref name="otherNodes"/>
+    /// </summary>
+    /// <param name="coreChildProvider"></param>
+    /// <param name="otherNodes"></param>
+    public void FindJoinsBetween(ICoreChildProvider coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
+    {
+        var allJoins = coreChildProvider.AllJoinInfos;
+        var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
 
-        #endregion
+        var foundJoinInfos = new List<JoinInfo>();
 
-        /// <summary>
-        /// Populates <see cref="JoinInfos"/> by finding all potential joins to <paramref name="otherNodes"/>
-        /// </summary>
-        /// <param name="coreChildProvider"></param>
-        /// <param name="otherNodes"></param>
-        public void FindJoinsBetween(ICoreChildProvider coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
-        {
-            var allJoins = coreChildProvider.AllJoinInfos;
-            var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
+        foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
+                     .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
+            foundJoinInfos.AddRange(
+                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+                    theirCols));
 
-            List<JoinInfo> foundJoinInfos = new List<JoinInfo>();
-
-            foreach (AvailableForceJoinNode otherNode in otherNodes)
-            {
-                //don't look for self joins
-                if(Equals(otherNode , this))
-                    continue;
-                
-                var theirCols = coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray();
-
-
-                foundJoinInfos.AddRange(TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols, theirCols));
-            }
-
-            JoinInfos = foundJoinInfos.ToArray();
-        }
+        JoinInfos = foundJoinInfos.ToArray();
     }
 }

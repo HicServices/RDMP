@@ -8,89 +8,90 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
-using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.Validation
+namespace Rdmp.Core.Tests.Curation.Integration.Validation;
+
+public class ReferentialIntegrityConstraintTests : DatabaseTests
 {
-    public class ReferentialIntegrityConstraintTests :DatabaseTests
+    private ITableInfo _tableInfo;
+    private ColumnInfo[] _columnInfo;
+    private ReferentialIntegrityConstraint _constraint;
+
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        private ITableInfo _tableInfo;
-        private ColumnInfo[] _columnInfo;
-        private ReferentialIntegrityConstraint _constraint;
+        base.OneTimeSetUp();
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
+        var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)
+            .ExpectTable("ReferentialIntegrityConstraintTests");
+
+        if (tbl.Exists())
+            tbl.Drop();
+
+        var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+
+        using (var con = server.GetConnection())
         {
-            base.OneTimeSetUp();
+            con.Open();
 
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
-
-            if(tbl.Exists())
-                tbl.Drop();
-
-            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
-            
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-
-                server.GetCommand("CREATE TABLE ReferentialIntegrityConstraintTests(MyValue int)", con).ExecuteNonQuery();
-                server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con).ExecuteNonQuery();
-            }
-
-            TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out _tableInfo,out _columnInfo);
-
-            _constraint = new ReferentialIntegrityConstraint(CatalogueRepository);
-            _constraint.OtherColumnInfo = _columnInfo.Single();
+            server.GetCommand("CREATE TABLE ReferentialIntegrityConstraintTests(MyValue int)", con).ExecuteNonQuery();
+            server.GetCommand("INSERT INTO ReferentialIntegrityConstraintTests (MyValue) VALUES (5)", con)
+                .ExecuteNonQuery();
         }
 
-        [Test]
-        [TestCase(5, false)]
-        [TestCase("5", false)]
-        [TestCase(4, true)]
-        [TestCase(6, true)]
-        [TestCase(-5, true)]
-        public void NormalLogic(object value, bool expectFailure)
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out _tableInfo, out _columnInfo);
+
+        _constraint = new ReferentialIntegrityConstraint(CatalogueRepository)
         {
-            _constraint.InvertLogic = false;
-            ValidationFailure failure = _constraint.Validate(value, null, null);
+            OtherColumnInfo = _columnInfo.Single()
+        };
+    }
 
-            //if it did not fail validation and we expected failure
-            if(failure == null && expectFailure)
-                Assert.Fail();
+    [Test]
+    [TestCase(5, false)]
+    [TestCase("5", false)]
+    [TestCase(4, true)]
+    [TestCase(6, true)]
+    [TestCase(-5, true)]
+    public void NormalLogic(object value, bool expectFailure)
+    {
+        _constraint.InvertLogic = false;
+        var failure = _constraint.Validate(value, null, null);
 
-            //or it did fail validation and we did not expect failure
-            if(failure != null && !expectFailure)
-                Assert.Fail();
+        //if it did not fail validation and we expected failure
+        if (failure == null && expectFailure)
+            Assert.Fail();
 
-            Assert.Pass();
-        }
+        //or it did fail validation and we did not expect failure
+        if (failure != null && !expectFailure)
+            Assert.Fail();
+
+        Assert.Pass();
+    }
 
 
-        [Test]
-        [TestCase(5, true)]
-        [TestCase("5", true)]
-        [TestCase(4, false)]
-        [TestCase(6, false)]
-        [TestCase(-5, false)]
-        public void InvertedLogic(object value, bool expectFailure)
-        {
-            _constraint.InvertLogic = true;
-            ValidationFailure failure = _constraint.Validate(value, null, null);
+    [Test]
+    [TestCase(5, true)]
+    [TestCase("5", true)]
+    [TestCase(4, false)]
+    [TestCase(6, false)]
+    [TestCase(-5, false)]
+    public void InvertedLogic(object value, bool expectFailure)
+    {
+        _constraint.InvertLogic = true;
+        var failure = _constraint.Validate(value, null, null);
 
-            //if it did not fail validation and we expected failure
-            if (failure == null && expectFailure)
-                Assert.Fail();
+        //if it did not fail validation and we expected failure
+        if (failure == null && expectFailure)
+            Assert.Fail();
 
-            //or it did fail validation and we did not expect failure
-            if (failure != null && !expectFailure)
-                Assert.Fail();
+        //or it did fail validation and we did not expect failure
+        if (failure != null && !expectFailure)
+            Assert.Fail();
 
-            Assert.Pass();
-        }
+        Assert.Pass();
     }
 }

@@ -7,24 +7,24 @@
 using System;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+public class CohortCombineToCreateCommandHelper
 {
-    public class CohortCombineToCreateCommandHelper
+    public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator, ICatalogue c,
+        ExtractionInformation[] candidates)
     {
+        if (candidates.Length == 0)
+            throw new Exception(
+                $"None of the ExtractionInformations in Catalogue {c} are marked IsExtractionIdentifier.  You will need to edit the Catalogue in CatalogueManager and select one of the columns in the dataset as the extraction identifier");
 
-        public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator,ICatalogue c, ExtractionInformation[] candidates)
-        {
-            if (candidates.Length == 0)
-                throw new Exception("None of the ExtractionInformations in Catalogue " + c + " are marked IsExtractionIdentifier.  You will need to edit the Catalogue in CatalogueManager and select one of the columns in the dataset as the extraction identifier");
+        activator.Show(
+            $"Dataset {c} has {candidates.Length} columns marked IsExtractionInformation, which one do you want to do cohort identification on?");
 
-            activator.Show("Dataset " + c + " has " + candidates.Length + " columns marked IsExtractionInformation, which one do you want to do cohort identification on?");
+        var selected = activator.SelectOne("Pick Extraction Identifier", candidates);
 
-            var selected = activator.SelectOne("Pick Extraction Identifier", candidates);
-
-            if (selected != null)
-                return (ExtractionInformation)selected;
-            
-            throw new Exception("User refused to choose an extraction identifier");
-        }
+        return selected != null
+            ? (ExtractionInformation)selected
+            : throw new Exception("User refused to choose an extraction identifier");
     }
 }

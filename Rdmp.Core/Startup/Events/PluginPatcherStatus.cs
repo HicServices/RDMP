@@ -4,22 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Startup.Events
+namespace Rdmp.Core.Startup.Events;
+
+/// <summary>
+/// Describes the status of an <see cref="MapsDirectlyToDatabaseTable.Versioning.PluginPatcher"/> which is responsible
+/// for patching the database schema of a table used by a plugin
+/// </summary>
+public enum PluginPatcherStatus
 {
     /// <summary>
-    /// Describes the status of an <see cref="MapsDirectlyToDatabaseTable.Versioning.PluginPatcher"/> which is responsible
-    /// for patching the database schema of a table used by a plugin
+    /// There was a problem constructing an instance of the patcher class
     /// </summary>
-    public enum PluginPatcherStatus
-    {
-        /// <summary>
-        /// There was a problem constructing an instance of the patcher class
-        /// </summary>
-        CouldNotConstruct,
+    CouldNotConstruct,
 
-        /// <summary>
-        /// Patcher was successfully created
-        /// </summary>
-        Healthy
-    }
+    /// <summary>
+    /// Patcher was successfully created
+    /// </summary>
+    Healthy
 }

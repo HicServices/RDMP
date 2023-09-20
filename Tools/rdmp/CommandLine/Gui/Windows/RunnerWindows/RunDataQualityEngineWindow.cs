@@ -8,19 +8,14 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
+
+internal class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
 {
-    class RunDataQualityEngineWindow : RunEngineWindow<DqeOptions>
+    public RunDataQualityEngineWindow(IBasicActivateItems activator, Catalogue c)
+        : base(activator, () => GetCommand(c))
     {
-        public RunDataQualityEngineWindow(IBasicActivateItems activator, Catalogue c)
-            : base(activator, () => GetCommand(c))
-        {
-
-        }
-
-        private static DqeOptions GetCommand(Catalogue c)
-        {
-            return new DqeOptions { Catalogue = c.ID.ToString() };
-        }
     }
+
+    private static DqeOptions GetCommand(Catalogue c) => new() { Catalogue = c.ID.ToString() };
 }

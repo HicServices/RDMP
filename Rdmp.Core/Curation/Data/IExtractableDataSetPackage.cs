@@ -4,16 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of
+/// datasets to a project extraction in one go and to standardise who gets what datasets.
+/// </summary>
+public interface IExtractableDataSetPackage : INamed, IMapsDirectlyToDatabaseTable
 {
-    /// <summary>
-    /// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of 
-    /// datasets to a project extraction in one go and to standardise who gets what datasets.
-    /// </summary>
-    public interface IExtractableDataSetPackage : INamed, IMapsDirectlyToDatabaseTable
-    {
-        string Creator { get; }
-    }
+    string Creator { get; }
 }

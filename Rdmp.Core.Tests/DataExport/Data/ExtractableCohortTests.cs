@@ -5,42 +5,39 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Settings;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Tests.Common;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.Data
+namespace Rdmp.Core.Tests.DataExport.Data;
+
+internal class ExtractableCohortTests : TestsRequiringACohort
 {
-    class ExtractableCohortTests : TestsRequiringACohort
+    [Test]
+    public void TestExtractableCohort_Identifiable()
     {
-        [Test]
-        public void TestExtractableCohort_Identifiable()
-        {
-            var cohort = _extractableCohort;
+        var cohort = _extractableCohort;
 
-            Assert.IsNotNull(cohort.GetPrivateIdentifier());
-            Assert.AreNotEqual(cohort.GetReleaseIdentifier(),cohort.GetPrivateIdentifier());
+        Assert.IsNotNull(cohort.GetPrivateIdentifier());
+        Assert.AreNotEqual(cohort.GetReleaseIdentifier(), cohort.GetPrivateIdentifier());
 
-            var ect = cohort.ExternalCohortTable;
-            ect.ReleaseIdentifierField = ect.PrivateIdentifierField;
-            ect.SaveToDatabase();
+        var ect = cohort.ExternalCohortTable;
+        ect.ReleaseIdentifierField = ect.PrivateIdentifierField;
+        ect.SaveToDatabase();
 
-            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
+        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
 
-            var ex = Assert.Throws<Exception>(()=>cohort.GetReleaseIdentifier());
+        var ex = Assert.Throws<Exception>(() => cohort.GetReleaseIdentifier());
 
-            Assert.AreEqual("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)", ex.Message);
+        Assert.AreEqual(
+            "R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)",
+            ex.Message);
 
-            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
+        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 
-            Assert.AreEqual(cohort.GetReleaseIdentifier(),cohort.GetPrivateIdentifier());
+        Assert.AreEqual(cohort.GetReleaseIdentifier(), cohort.GetPrivateIdentifier());
 
-            UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
-        }
+        UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
     }
 }

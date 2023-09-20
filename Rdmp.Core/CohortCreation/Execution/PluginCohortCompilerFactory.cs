@@ -4,28 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+internal static class PluginCohortCompilerFactory
 {
-    internal class PluginCohortCompilerFactory
-    {
-        private MEF _mef;
-
-        public PluginCohortCompilerFactory(MEF mef)
-        {
-            this._mef = mef;
-        }
-
-        internal IReadOnlyCollection<IPluginCohortCompiler> CreateAll()
-        {
-            return _mef
-                    .GetTypes<IPluginCohortCompiler>()
-                    .Select(Activator.CreateInstance)
-                    .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
-        }
-    }
+    internal static IReadOnlyCollection<IPluginCohortCompiler> CreateAll() =>
+        MEF.GetTypes<IPluginCohortCompiler>()
+            .Select(Activator.CreateInstance)
+            .Cast<IPluginCohortCompiler>().ToList().AsReadOnly();
 }

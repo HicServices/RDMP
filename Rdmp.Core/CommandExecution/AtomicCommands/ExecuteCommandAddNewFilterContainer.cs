@@ -4,87 +4,79 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+using System;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
-using System;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
 {
-    public class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
+    private readonly IRootFilterContainerHost _host;
+    private readonly IContainer _container;
+    internal const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
+    private const float DefaultWeight = 1.1f;
+
+    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host) :
+        base(activator)
     {
-        private IRootFilterContainerHost _host;
-        private IContainer _container;
-        public const string FiltersCannotBeAddedToApiCalls = "Filters cannot be added to API calls";
-        private const float DEFAULT_WEIGHT = 1.1f;
+        Weight = DefaultWeight;
+        _host = host;
 
-        public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IRootFilterContainerHost host):base(activator)
+        if (host.RootFilterContainer_ID != null)
+            SetImpossible("There is already a root filter container on this object");
+
+        if (host is AggregateConfiguration ac)
         {
-            Weight = DEFAULT_WEIGHT;
+            if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+                SetImpossible("Aggregate is set to use another's filter container tree");
 
-            if(host.RootFilterContainer_ID != null)
-                SetImpossible("There is already a root filter container on this object");
-
-            if (host is AggregateConfiguration ac)
-            {
-                if(ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-                    SetImpossible("Aggregate is set to use another's filter container tree");
-
-                if (ac.Catalogue.IsApiCall())
-                    SetImpossible(FiltersCannotBeAddedToApiCalls);
-            }
-
-            SetImpossibleIfReadonly(host);
-
-            _host = host;
+            if (ac.Catalogue.IsApiCall())
+                SetImpossible(FiltersCannotBeAddedToApiCalls);
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        SetImpossibleIfReadonly(host);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
+
+    public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container) : base(activator)
+    {
+        _container = container;
+
+        SetImpossibleIfReadonly(container);
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var factory = (_container?.GetFilterFactory() ?? _host?.GetFilterFactory()) ??
+                      throw new Exception("Unable to determine FilterFactory, is host and container null?");
+        var newContainer = factory.CreateNewContainer();
+
+        if (_host != null)
         {
-            Weight = DEFAULT_WEIGHT;
-
-            return iconProvider.GetImage(RDMPConcept.FilterContainer,OverlayKind.Add);
+            _host.RootFilterContainer_ID = newContainer.ID;
+            _host.SaveToDatabase();
         }
-        public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container):base(activator)
+        else
         {
-            Weight = DEFAULT_WEIGHT;
+            if (_container == null)
+                throw new Exception("Command should take container or host but both were null");
 
-            _container = container;
-
-            SetImpossibleIfReadonly(container);
+            _container.AddChild(newContainer);
         }
-        public override void Execute()
-        {
-            base.Execute();
-            
-            var factory = _container?.GetFilterFactory() ?? _host?.GetFilterFactory();
 
-            if(factory == null)
-                throw new Exception("Unable to determine FilterFactory, is host and container null?");
 
-            var newContainer = factory.CreateNewContainer();
-            
-            if(_host != null)
-            {
-                _host.RootFilterContainer_ID = newContainer .ID;
-                _host.SaveToDatabase();
-            }
-            else
-            {
-                if(_container == null)
-                    throw new Exception("Command should take container or host but both were null");
-               
-                _container.AddChild(newContainer);
-            }
-            
-
-            Publish(_host ?? (IMapsDirectlyToDatabaseTable)newContainer);
-            Emphasise(newContainer);
-        }
+        Publish(_host ?? (IMapsDirectlyToDatabaseTable)newContainer);
+        Emphasise(newContainer);
     }
 }

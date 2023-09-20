@@ -4,22 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+namespace Rdmp.Core.CommandExecution;
 
-namespace Rdmp.Core.CommandExecution
+/// <summary>
+/// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
+/// </summary>
+public class EmphasiseRequest
 {
-    /// <summary>
-    /// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
-    /// </summary>
-    public class EmphasiseRequest
-    {
-        public object ObjectToEmphasise { get; set; }
-        public int ExpansionDepth { get; set; }
+    public object ObjectToEmphasise { get; set; }
+    public int ExpansionDepth { get; set; }
 
-        public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
-        {
-            ObjectToEmphasise = objectToEmphasise;
-            ExpansionDepth = expansionDepth;
-        }
+    public EmphasiseRequest(object objectToEmphasise, int expansionDepth = 0)
+    {
+        ObjectToEmphasise = objectToEmphasise;
+        ExpansionDepth = expansionDepth;
     }
 }

@@ -4,23 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.Databases;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    internal class AllExternalServersNodeMenu : RDMPContextMenuStrip
+    public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args, node)
     {
-        public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,node)
-        {
-            Add(new ExecuteCommandConfigureDefaultServers(_activator));
-        }
+        Add(new ExecuteCommandConfigureDefaultServers(_activator));
     }
 }

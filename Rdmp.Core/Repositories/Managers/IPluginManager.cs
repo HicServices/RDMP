@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Repositories.Managers
+using Rdmp.Core.Curation.Data;
+
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Handles high level management of all the loaded <see cref="Plugin"/> in the <see cref="ICatalogueRepository"/>
+/// </summary>
+public interface IPluginManager
 {
-    /// <summary>
-    /// Handles high level management of all the loaded <see cref="Plugin"/> in the <see cref="ICatalogueRepository"/>
-    /// </summary>
-    public interface IPluginManager
-    {
-        Curation.Data.Plugin[] GetCompatiblePlugins();
-    }
+    Plugin[] GetCompatiblePlugins();
 }

@@ -4,28 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class TableInfoStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _tableInfo;
+    private readonly Image<Rgba32> _tableInfoTableValuedFunction;
+
+    public TableInfoStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _tableInfo;
-        private readonly Image<Rgba32> _tableInfoTableValuedFunction;
-
-        public TableInfoStateBasedIconProvider()
-        {
-            _tableInfo = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
-            _tableInfoTableValuedFunction = Image.Load<Rgba32>(CatalogueIcons.TableInfoTableValuedFunction);
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not TableInfo tableInfo)
-                return null;
-
-            return tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
-        }
+        _tableInfo = Image.Load<Rgba32>(CatalogueIcons.TableInfo);
+        _tableInfoTableValuedFunction = Image.Load<Rgba32>(CatalogueIcons.TableInfoTableValuedFunction);
     }
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o) => o is not TableInfo tableInfo ? null :
+        tableInfo.IsTableValuedFunction ? _tableInfoTableValuedFunction : _tableInfo;
 }

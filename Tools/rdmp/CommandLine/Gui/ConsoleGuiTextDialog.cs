@@ -5,121 +5,115 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ConsoleGuiTextDialog
 {
-    class ConsoleGuiTextDialog
+    private readonly DialogArgs _args;
+    private readonly string _initialValue;
+
+    public string ResultText;
+
+    public ConsoleGuiTextDialog(DialogArgs args, string initialValue)
     {
-        private readonly DialogArgs _args;
-        private readonly string _initialValue;
+        _args = args;
+        _initialValue = initialValue;
+    }
 
-        public string ResultText;
+    public int? MaxLength { get; set; }
 
-        public ConsoleGuiTextDialog(DialogArgs args, string initialValue)
+    public bool ShowDialog()
+    {
+        var okClicked = false;
+
+        var win = new Window(_args.WindowTitle)
         {
-            _args = args;
-            this._initialValue = initialValue;
-        }
+            X = 0,
+            Y = 0,
 
-        public int? MaxLength { get; set; }
+            // By using Dim.Fill(), it will automatically resize without manual intervention
+            Width = Dim.Fill(1),
+            Height = Dim.Fill(1),
+            Modal = true,
+            ColorScheme = ConsoleMainWindow.ColorScheme
+        };
 
-        public bool ShowDialog()
+        var description = new Label
         {
-            bool okClicked = false;
+            Text = _args.TaskDescription ?? "",
+            Y = 0
+        };
 
-            var win = new Window(_args.WindowTitle) {
-                X = 0,
-                Y = 0,
+        win.Add(description);
 
-                // By using Dim.Fill(), it will automatically resize without manual intervention
-                Width = Dim.Fill(1),
-                Height = Dim.Fill(1),
-                Modal = true,
-                ColorScheme = ConsoleMainWindow.ColorScheme
-            };
+        var entryLabel = new Label
+        {
+            Text = _args.EntryLabel ?? "",
+            Y = Pos.Bottom(description)
+        };
 
-            var description = new Label
-            {
-                Text = _args.TaskDescription ?? "",
-                Y = 0,
-            };
+        win.Add(entryLabel);
 
-            win.Add(description);
+        var textField = new TextView
+        {
+            X = 1,
+            Y = Pos.Bottom(entryLabel),
+            Height = Dim.Fill(2),
+            Width = Dim.Fill(2),
+            Text = _initialValue ?? "",
+            AllowsTab = false,
+            AllowsReturn = MaxLength is > BasicActivateItems.MultiLineLengthThreshold
+        };
 
-            var entryLabel = new Label
-            {
-                Text = _args.EntryLabel ?? "",
-                Y = Pos.Bottom(description),
-            };
+        win.Add(textField);
 
-            win.Add(entryLabel);
+        var btnOk = new Button("Ok", true)
+        {
+            X = 0,
+            Y = Pos.Bottom(textField),
+            Width = 10,
+            Height = 1,
+            IsDefault = true
+        };
+        btnOk.Clicked += () =>
+        {
+            okClicked = true;
+            ResultText = textField.Text.ToString();
+            Application.RequestStop();
+        };
 
-            var textField = new TextView()
-            {
-                X = 1,
-                Y = Pos.Bottom(entryLabel),
-                Height = Dim.Fill(2),
-                Width = Dim.Fill(2),
-                Text = _initialValue ?? "",
-                AllowsTab = false,
-                AllowsReturn = MaxLength.HasValue ? MaxLength > BasicActivateItems.MultiLineLengthThreshold : false,
-            };
+        var btnCancel = new Button("Cancel", true)
+        {
+            X = Pos.Right(btnOk),
+            Y = Pos.Bottom(textField),
+            Width = 13,
+            Height = 1,
+            IsDefault = false
+        };
+        btnCancel.Clicked += () =>
+        {
+            okClicked = false;
+            Application.RequestStop();
+        };
 
-            win.Add(textField);
+        var btnClear = new Button("C_lear", true)
+        {
+            X = Pos.Right(btnCancel),
+            Y = Pos.Bottom(textField),
+            Width = 13,
+            Height = 1,
+            IsDefault = false
+        };
+        btnClear.Clicked += () => { textField.Text = ""; };
 
-            var btnOk = new Button("Ok",true)
-            {
-                X = 0,
-                Y = Pos.Bottom(textField),
-                Width = 10,
-                Height = 1,
-                IsDefault = true
-            };
-            btnOk.Clicked += () =>
-            {
-                okClicked = true;
-                ResultText = textField.Text.ToString();
-                Application.RequestStop();
-            };
+        win.Add(btnOk);
+        win.Add(btnCancel);
+        win.Add(btnClear);
 
-            var btnCancel = new Button("Cancel",true)
-            {
-                X = Pos.Right(btnOk),
-                Y = Pos.Bottom(textField),
-                Width = 13,
-                Height = 1,
-                IsDefault = false
-            };
-            btnCancel.Clicked += () =>
-            {
-                okClicked = false;
-                Application.RequestStop();
-            };
+        Application.Run(win, ConsoleMainWindow.ExceptionPopup);
 
-            var btnClear = new Button("C_lear", true)
-            {
-                X = Pos.Right(btnCancel),
-                Y = Pos.Bottom(textField),
-                Width = 13,
-                Height = 1,
-                IsDefault = false
-            };
-            btnClear.Clicked += () =>
-            {
-                textField.Text = "";
-            };
-
-            win.Add(btnOk);
-            win.Add(btnCancel);
-            win.Add(btnClear);
-
-            Application.Run(win, ConsoleMainWindow.ExceptionPopup);
-
-            return okClicked;
-        }
+        return okClicked;
     }
 }

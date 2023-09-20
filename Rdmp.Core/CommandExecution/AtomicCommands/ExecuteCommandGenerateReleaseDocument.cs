@@ -5,90 +5,79 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
-using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports.ExtractionTime;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IAtomicCommand
+    private readonly ExtractionConfiguration _extractionConfiguration;
+
+    public ExecuteCommandGenerateReleaseDocument(IBasicActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
-        private readonly ExtractionConfiguration _extractionConfiguration;
+        _extractionConfiguration = extractionConfiguration;
+        /////////////////Other stuff///////////
+        if (!extractionConfiguration.CumulativeExtractionResults.Any())
+            SetImpossible("No datasets have been extracted");
 
-        public ExecuteCommandGenerateReleaseDocument(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
-        {
-            _extractionConfiguration = extractionConfiguration;
-            /////////////////Other stuff///////////
-            if (!extractionConfiguration.CumulativeExtractionResults.Any())
-                SetImpossible("No datasets have been extracted");
-
-            if(_extractionConfiguration.Cohort_ID == null)
-            {
-                SetImpossible("ExtractionConfiguration does not have a cohort");
-            }
-            else
-            {
-                try
-                {
-                    // try to fetch the cohort (give it 2 seconds maximum). 
-                    // we don't want to freeze waiting for context menu to pop up on this
-                    var eds = _extractionConfiguration.Cohort.GetExternalData(2);
-
-                    if (eds == ExternalCohortDefinitionData.Orphan)
-                    {
-                        SetImpossible("Cohort did not exist");
-                    }
-                }
-                catch (Exception)
-                {
-                    SetImpossible("Cohort was unreachable");
-                }
-            }
-                
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
+        if (_extractionConfiguration.Cohort_ID == null)
+            SetImpossible("ExtractionConfiguration does not have a cohort");
+        else
             try
             {
-                ReleaseRunner.IdentifyAndRemoveOldExtractionResults(BasicActivator.RepositoryLocator, new AcceptAllCheckNotifier(), _extractionConfiguration);
-            }
-            catch (Exception e)
-            {
-                ShowException("Error checking for stale extraction logs", e);
-            }
+                // try to fetch the cohort (give it 2 seconds maximum).
+                // we don't want to freeze waiting for context menu to pop up on this
+                var eds = _extractionConfiguration.Cohort.GetExternalData(2);
 
-            try
+                if (eds == ExternalCohortDefinitionData.Orphan) SetImpossible("Cohort did not exist");
+            }
+            catch (Exception)
             {
-                WordDataReleaseFileGenerator generator = new WordDataReleaseFileGenerator(_extractionConfiguration, BasicActivator.RepositoryLocator.DataExportRepository);
+                SetImpossible("Cohort was unreachable");
+            }
+    }
 
-                //null means leave word file on screen and dont save
-                generator.GenerateWordFile(null);
-            }
-            catch (Exception e)
-            {
-                BasicActivator.ShowException("Failed to generate release document",e);
-            }
+    public override string GetCommandHelp() =>
+        "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        try
+        {
+            ReleaseRunner.IdentifyAndRemoveOldExtractionResults(BasicActivator.RepositoryLocator,
+                new AcceptAllCheckNotifier(), _extractionConfiguration);
+        }
+        catch (Exception e)
+        {
+            ShowException("Error checking for stale extraction logs", e);
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        try
         {
-            return Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
+            var generator = new WordDataReleaseFileGenerator(_extractionConfiguration,
+                BasicActivator.RepositoryLocator.DataExportRepository);
+
+            //null means leave word file on screen and don't save
+            generator.GenerateWordFile(null);
+        }
+        catch (Exception e)
+        {
+            BasicActivator.ShowException("Failed to generate release document", e);
         }
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
 }

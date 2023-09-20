@@ -10,43 +10,43 @@ using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
 
-namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
+namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData;
+
+[Category("Unit")]
+public class TestBiochemistryCreation
 {
-    [Category("Unit")]
-    public class TestBiochemistryCreation
+    [Test]
+    [TestCase(1000)]
+    [TestCase(321)]
+    [TestCase(100000)]
+    public void CreateCSV(int numberOfRecords)
     {
-        [Test]
-        [TestCase(1000)]
-        [TestCase(321)]
-        [TestCase(100000)]
-        public void CreateCSV(int numberOfRecords)
+        var r = new Random(500);
+        var people = new PersonCollection();
+        people.GeneratePeople(100, r);
+
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DeleteMeTestBiochemistry.csv"));
+
+        var finished = false;
+        var finishedWithRecords = -1;
+
+        var biochem = new Biochemistry(new Random(500));
+        biochem.RowsGenerated += (s, e) =>
         {
-            var r = new Random(500);
-            var people = new PersonCollection();
-            people.GeneratePeople(100,r);
+            finished = e.IsFinished;
+            finishedWithRecords = e.RowsWritten;
+        };
 
-            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestBiochemistry.csv"));
+        biochem.GenerateTestDataFile(people, f, numberOfRecords);
 
-            bool finished = false;
-            int finishedWithRecords = -1;
+        //one progress task only, should have reported creating the correct number of rows
+        Assert.IsTrue(finished);
+        Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-            var biochem = new Biochemistry(new Random(500));
-            biochem.RowsGenerated += (s, e) =>
-            {
-                finished = e.IsFinished;
-                finishedWithRecords = e.RowsWritten;
-            };
+        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length,
+            numberOfRecords); //can be newlines in middle of file
 
-            biochem.GenerateTestDataFile(people, f, numberOfRecords);
-
-            //one progress task only, should have reported creating the correct number of rows
-            Assert.IsTrue(finished);
-            Assert.AreEqual(numberOfRecords, finishedWithRecords);
-
-            Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
-
-            Console.WriteLine("Created file: " + f.FullName);
-            f.Delete();
-        }
+        Console.WriteLine($"Created file: {f.FullName}");
+        f.Delete();
     }
 }

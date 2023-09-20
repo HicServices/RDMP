@@ -8,77 +8,73 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation
+namespace Rdmp.Core.Tests.Curation;
+
+internal class UnitTestsAllObjectsSupported : UnitTests
 {
-    class UnitTestsAllObjectsSupported:UnitTests
+    /// <summary>
+    /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
+    /// those listed in <see cref="UnitTests.SkipTheseTypes"/>) and returns a valid value.
+    /// </summary>
+    [Test]
+    public void TestAllSupported()
     {
-        /// <summary>
-        /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
-        /// those listed in <see cref="UnitTests.SkipTheseTypes"/>) and returns a valid value.
-        /// </summary>
-        [Test]
-        public void TestAllSupported()
+        //load all DatabaseEntity types
+        var types = MEF.GetAllTypes()
+            .Where(static t => typeof(DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+
+        var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
+        var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
+
+        var notSupported = new List<Type>();
+
+        foreach (var t in types)
         {
-            //load all DatabaseEntity types
-            MEF mef = new MEF();
-            mef.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+            //ignore these types too
+            if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous", StringComparison.Ordinal) ||
+                typeof(SpontaneousObject).IsAssignableFrom(t))
+                continue;
 
-            var types = mef.GetAllTypes()
-                .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+            DatabaseEntity instance = null;
 
-            var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
-            var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
-             
-            List<Type> notSupported = new List<Type>();
-            
-            foreach (Type t in types)
+            try
             {
-                //ignore these types too
-                if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") || typeof(SpontaneousObject).IsAssignableFrom(t))
-                    continue;
-
-                DatabaseEntity instance = null;
-
-                try
-                {
-                    //ensure that the method supports the Type
-                    var generic = method.MakeGenericMethod(t);
-                    instance = (DatabaseEntity)generic.Invoke(this, null);
-                }
-                catch (TargetInvocationException exception)
-                {
-                    if (exception.InnerException is TestCaseNotWrittenYetException)
-                        notSupported.Add(t);
-                    else
-                        throw;
-                }
-
-                //if the instance returned by MakeGenericMethod does not pass checks that's a dealbreaker!
-                if (instance != null)
-                {
-                    try
-                    {
-                        //and that it returns an instance
-                        Assert.IsNotNull(instance);
-                        Assert.IsTrue(instance.Exists());
-                        Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,"Type was '" + t.Name+"'");
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception("Implementation of WhenIHaveA<" + t.Name + "> is flawed",e);
-                    }
-                }
-
+                //ensure that the method supports the Type
+                var generic = method.MakeGenericMethod(t);
+                instance = (DatabaseEntity)generic.Invoke(this, null);
+            }
+            catch (TargetInvocationException exception)
+            {
+                if (exception.InnerException is TestCaseNotWrittenYetException)
+                    notSupported.Add(t);
+                else
+                    throw;
             }
 
-            Assert.IsEmpty(notSupported, "The following Types were not supported by WhenIHaveA<T>:" +Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
+            //if the instance returned by MakeGenericMethod does not pass checks that's a dealbreaker!
+            if (instance != null)
+                try
+                {
+                    //and that it returns an instance
+                    Assert.IsNotNull(instance);
+                    Assert.IsTrue(instance.Exists());
+                    Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,
+                        "Type was '" + t.Name + "'");
+                }
+                catch (Exception e)
+                {
+                    throw new Exception($"Implementation of WhenIHaveA<{t.Name}> is flawed", e);
+                }
         }
+
+        Assert.IsEmpty(notSupported,
+            $"The following Types were not supported by WhenIHaveA<T>:{Environment.NewLine}{string.Join(Environment.NewLine, notSupported.Select(t => t.Name))}");
     }
 }

@@ -11,27 +11,31 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
+
+/// <summary>
+/// Loads data according to a data-based schedule, e.g. Biochemistry.
+/// Needs to know: how to generate dates for the job, how to select a load schedule
+/// </summary>
+public abstract class ScheduledDataLoadProcess : DataLoadProcess
 {
-    /// <summary>
-    /// Loads data according to a data-based schedule, e.g. Biochemistry.
-    /// Needs to know: how to generate dates for the job, how to select a load schedule
-    /// </summary>
-    public abstract class ScheduledDataLoadProcess : DataLoadProcess
-    {
-        protected readonly JobDateGenerationStrategyFactory JobDateGenerationStrategyFactory;
-        protected readonly ILoadProgressSelectionStrategy LoadProgressSelectionStrategy;
-        protected readonly int? OverrideNumberOfDaysToLoad;
+    protected readonly JobDateGenerationStrategyFactory JobDateGenerationStrategyFactory;
+    protected readonly ILoadProgressSelectionStrategy LoadProgressSelectionStrategy;
+    protected readonly int? OverrideNumberOfDaysToLoad;
 
-        protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution, JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory, ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,HICDatabaseConfiguration configuration)
-            : base(repositoryLocator,loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,configuration)
-        {
-            JobDateGenerationStrategyFactory = jobDateGenerationStrategyFactory;
-            LoadProgressSelectionStrategy = loadProgressSelectionStrategy;
-            OverrideNumberOfDaysToLoad = overrideNumberOfDaysToLoad;
-        }
+    protected ScheduledDataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ILoadMetadata loadMetadata, ICheckable preExecutionChecker, IDataLoadExecution loadExecution,
+        JobDateGenerationStrategyFactory jobDateGenerationStrategyFactory,
+        ILoadProgressSelectionStrategy loadProgressSelectionStrategy, int? overrideNumberOfDaysToLoad,
+        ILogManager logManager, IDataLoadEventListener dataLoadEventListener, HICDatabaseConfiguration configuration)
+        : base(repositoryLocator, loadMetadata, preExecutionChecker, logManager, dataLoadEventListener, loadExecution,
+            configuration)
+    {
+        JobDateGenerationStrategyFactory = jobDateGenerationStrategyFactory;
+        LoadProgressSelectionStrategy = loadProgressSelectionStrategy;
+        OverrideNumberOfDaysToLoad = overrideNumberOfDaysToLoad;
     }
 }

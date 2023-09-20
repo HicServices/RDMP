@@ -9,133 +9,132 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using TypeGuesser;
 
-namespace Rdmp.UI.DataLoadUIs.ModuleUIs
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs;
+
+public partial class DatabaseColumnRequestUI : UserControl
 {
-    public partial class DatabaseColumnRequestUI : UserControl
+    private readonly DatabaseColumnRequest _column;
+    private bool bLoaded;
+
+    public DatabaseColumnRequestUI(DatabaseColumnRequest column)
     {
-        private readonly DatabaseColumnRequest _column;
-        private bool bLoaded = false;
+        _column = column;
+        InitializeComponent();
 
-        public DatabaseColumnRequestUI(DatabaseColumnRequest column)
+        lblColumnName.Text = column.ColumnName;
+
+        ddManagedType.DataSource = DatabaseTypeRequest.PreferenceOrder;
+
+        var request = column.TypeRequested;
+        if (request != null)
         {
-            _column = column;
-            InitializeComponent();
+            if (request.CSharpType != null)
+                ddManagedType.SelectedItem = request.CSharpType;
 
-            lblColumnName.Text = column.ColumnName;
+            if (request.Size != null)
+                nBeforeDecimal.Value = request.Size.NumbersBeforeDecimalPlace;
 
-            ddManagedType.DataSource = DatabaseTypeRequest.PreferenceOrder;
+            if (request.Size != null)
+                nAfterDecimal.Value = request.Size.NumbersAfterDecimalPlace;
 
-            var request = column.TypeRequested;
-            if (request != null)
-            {
-                if (request.CSharpType != null)
-                    ddManagedType.SelectedItem = request.CSharpType;
-
-                if (request.Size != null)
-                    nBeforeDecimal.Value = request.Size.NumbersBeforeDecimalPlace;
-
-                if (request.Size != null)
-                    nAfterDecimal.Value = request.Size.NumbersAfterDecimalPlace;
-
-                if (request.Width.HasValue)
-                    nLength.Value = request.Width.Value;
-            }
-
-            tbExplicitDbType.Text = column.ExplicitDbType;
-            
-            bLoaded = true;
-            ResetVisibility();
+            if (request.Width.HasValue)
+                nLength.Value = request.Width.Value;
         }
 
-        private void ResetVisibility()
+        tbExplicitDbType.Text = column.ExplicitDbType;
+
+        bLoaded = true;
+        ResetVisibility();
+    }
+
+    private void ResetVisibility()
+    {
+        if (!string.IsNullOrEmpty(tbExplicitDbType.Text))
         {
-            if (!string.IsNullOrEmpty(tbExplicitDbType.Text))
-            {
-                ddManagedType.Visible = false;
-                label2.Visible = false;
-                nLength.Visible = false;
-                label3.Visible = false;
+            ddManagedType.Visible = false;
+            label2.Visible = false;
+            nLength.Visible = false;
+            label3.Visible = false;
+            nBeforeDecimal.Visible = false;
+            label4.Visible = false;
+            nAfterDecimal.Visible = false;
+            label5.Visible = false;
+            return;
+        }
+
+        ddManagedType.Visible = true;
+        label2.Visible = true;
+
+        var type = ddManagedType.SelectedItem as Type;
+        switch (Type.GetTypeCode(type))
+        {
+            case TypeCode.String:
+                nLength.Visible = true;
                 nBeforeDecimal.Visible = false;
-                label4.Visible = false;
                 nAfterDecimal.Visible = false;
+                label3.Visible = true;
+                label4.Visible = false;
                 label5.Visible = false;
                 return;
-            }
-
-            ddManagedType.Visible = true;
-            label2.Visible = true;
-
-            var type = ddManagedType.SelectedItem as Type;
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.String:
-                    nLength.Visible = true;
-                    nBeforeDecimal.Visible = false;
-                    nAfterDecimal.Visible = false;
-                    label3.Visible = true;
-                    label4.Visible = false;
-                    label5.Visible = false;
-                    return;
-                case TypeCode.Decimal:
-                    nLength.Visible = false;
-                    nBeforeDecimal.Visible = true;
-                    nAfterDecimal.Visible = true;
-                    label3.Visible = false;
-                    label4.Visible = true;
-                    label5.Visible = true;
-                    return;
-                default:
-                    nLength.Visible = false;
-                    nBeforeDecimal.Visible = false;
-                    nAfterDecimal.Visible = false;
-                    label3.Visible = false;
-                    label4.Visible = false;
-                    label5.Visible = false;
-                    return;
-            }
-        }
-
-        private void tbExplicitDbType_TextChanged(object sender, System.EventArgs e)
-        {
-            ResetVisibility();
-            
-            if (!bLoaded)
+            case TypeCode.Decimal:
+                nLength.Visible = false;
+                nBeforeDecimal.Visible = true;
+                nAfterDecimal.Visible = true;
+                label3.Visible = false;
+                label4.Visible = true;
+                label5.Visible = true;
                 return;
-
-            _column.ExplicitDbType = tbExplicitDbType.Text;
-        }
-
-        private void ddManagedType_SelectedIndexChanged(object sender, System.EventArgs e)
-        {
-            ResetVisibility();
-
-            if (!bLoaded)
+            default:
+                nLength.Visible = false;
+                nBeforeDecimal.Visible = false;
+                nAfterDecimal.Visible = false;
+                label3.Visible = false;
+                label4.Visible = false;
+                label5.Visible = false;
                 return;
-
-            if(_column.TypeRequested != null)
-                _column.TypeRequested.CSharpType = (Type) ddManagedType.SelectedItem;
         }
+    }
 
-        private void n_ValueChanged(object sender, EventArgs e)
+    private void tbExplicitDbType_TextChanged(object sender, EventArgs e)
+    {
+        ResetVisibility();
+
+        if (!bLoaded)
+            return;
+
+        _column.ExplicitDbType = tbExplicitDbType.Text;
+    }
+
+    private void ddManagedType_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        ResetVisibility();
+
+        if (!bLoaded)
+            return;
+
+        if (_column.TypeRequested != null)
+            _column.TypeRequested.CSharpType = (Type)ddManagedType.SelectedItem;
+    }
+
+    private void n_ValueChanged(object sender, EventArgs e)
+    {
+        ResetVisibility();
+
+        if (!bLoaded)
+            return;
+
+        var n = (NumericUpDown)sender;
+
+        if (_column.TypeRequested != null)
         {
-            ResetVisibility();
+            if (n == nLength)
+                _column.TypeRequested.Width = (int)n.Value;
 
-            if (!bLoaded)
-                return;
+            if (n == nAfterDecimal)
+                _column.TypeRequested.Size.NumbersAfterDecimalPlace = (int)n.Value;
 
-            var n = (NumericUpDown) sender;
-
-            if (_column.TypeRequested != null)
-            {
-                if(n == nLength)
-                    _column.TypeRequested.Width = (int)n.Value;
-
-                if (n == nAfterDecimal)
-                    _column.TypeRequested.Size.NumbersAfterDecimalPlace = (int)n.Value;
-
-                if (n == nBeforeDecimal)
-                    _column.TypeRequested.Size.NumbersBeforeDecimalPlace = (int)n.Value;
-            }
+            if (n == nBeforeDecimal)
+                _column.TypeRequested.Size.NumbersBeforeDecimalPlace = (int)n.Value;
         }
     }
 }

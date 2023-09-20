@@ -6,11 +6,10 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests
+namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests;
+
+public class TestArgumentedClass
 {
-    public class TestArgumentedClass
-    {
-        [DemandsInitialization("Fishes", DemandType.Unspecified,true)]
-        public bool MyBool { get; set; }
-    }
+    [DemandsInitialization("Fishes", DemandType.Unspecified, true)]
+    public bool MyBool { get; set; }
 }

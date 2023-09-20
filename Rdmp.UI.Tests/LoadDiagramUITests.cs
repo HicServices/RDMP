@@ -10,44 +10,39 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+public class LoadDiagramUITests : UITests
 {
-    public class LoadDiagramUITests : UITests
+    [Test]
+    [UITimeout(50000)]
+    public void Test_LoadDiagramUITests_NormalState()
     {
-        [Test, UITimeout(50000)]
-        public void Test_LoadDiagramUITests_NormalState()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            
-            SetupMEF();
+        var lmd = WhenIHaveA<LoadMetadata>();
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
-            var ui = AndLaunch<LoadDiagramUI>(lmd);
+        //it isn't impossible to show us
+        AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
 
-            //it isn't impossible to show us
-            base.AssertCommandIsPossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd));
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
 
-            AssertNoErrors(ExpectedErrorType.Any);
+    [Test]
+    [UITimeout(50000)]
+    public void Test_LoadDiagramUITests_NoCatalogues()
+    {
+        var lmd = WhenIHaveA<LoadMetadata>();
 
-        }
+        //delete the Catalogue so the load is an orphan
+        lmd.GetAllCatalogues().Single().DeleteInDatabase();
 
-        [Test, UITimeout(50000)]
-        public void Test_LoadDiagramUITests_NoCatalogues()
-        {
-            var lmd = WhenIHaveA<LoadMetadata>();
-            
-            //delete the Catalogue so the load is an orphan
-            lmd.GetAllCatalogues().Single().DeleteInDatabase();
-            
-            SetupMEF();
+        _ = AndLaunch<LoadDiagramUI>(lmd);
 
-            var ui = AndLaunch<LoadDiagramUI>(lmd);
+        //can't launch the command
+        AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd),
+            "does not have any associated Catalogues");
 
-            //cant launch the command
-            AssertCommandIsImpossible(new ExecuteCommandViewLoadDiagram(ItemActivator, lmd), "does not have any associated Catalogues");
-
-            //and ui should be showing big problems
-            AssertErrorWasShown(ExpectedErrorType.Fatal,"Could not fetch data");
-
-        }
+        //and ui should be showing big problems
+        AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not fetch data");
     }
 }

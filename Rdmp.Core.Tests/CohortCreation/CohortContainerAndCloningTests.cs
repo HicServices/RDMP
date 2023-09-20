@@ -13,141 +13,141 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CohortCreation
+namespace Rdmp.Core.Tests.CohortCreation;
+
+public class CohortContainerAndCloningTests : CohortIdentificationTests
 {
-    public class CohortContainerAndCloningTests : CohortIdentificationTests
+    [Test]
+    public void AggregateOrdering_ExplicitSetting_CorrectOrder()
     {
-        [Test]
-        public void AggregateOrdering_ExplicitSetting_CorrectOrder()
+        try
         {
-            try
-            {
-                //set the order so that 2 comes before 1
-                rootcontainer.AddChild(aggregate2, 1);
-                rootcontainer.AddChild(aggregate1, 5);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
-            try
-            {
-                Assert.AreEqual(1, aggregate2.Order);
-                Assert.AreEqual(5, aggregate1.Order);
-
-                Assert.AreEqual(rootcontainer.GetAggregateConfigurations()[0].ID, aggregate2.ID);
-                Assert.AreEqual(rootcontainer.GetAggregateConfigurations()[1].ID, aggregate1.ID);
-            }
-            finally
-            {
-                rootcontainer.RemoveChild(aggregate1);
-                rootcontainer.RemoveChild(aggregate2);
-            }
+            //set the order so that 2 comes before 1
+            rootcontainer.AddChild(aggregate2, 1);
+            rootcontainer.AddChild(aggregate1, 5);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
         }
 
-        [Test]
-        public void CloneChild_NamingCorrectNewObject()
+        try
         {
+            Assert.AreEqual(1, aggregate2.Order);
+            Assert.AreEqual(5, aggregate1.Order);
 
-            //should not follow naming convention
-            aggregate1.Name = "fish";
-            Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
-
-            //add a clone using aggregate1 as a template 
-            var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1,null);
-            //add the clone
-            rootcontainer.AddChild(clone, 0);
-
-            try
-            {
-                //there should be 1 child
-                AggregateConfiguration[] aggregateConfigurations = rootcontainer.GetAggregateConfigurations();
-                Assert.AreEqual(1, aggregateConfigurations.Length);
-
-                //child should follow naming convention
-                Assert.IsTrue(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregateConfigurations[0]));
-
-                //clone should have a different ID - also it was created after so should be higher ID
-                Assert.Greater(aggregateConfigurations[0].ID, aggregate1.ID);
-
-            }
-            finally
-            {
-                aggregate1.RevertToDatabaseState();
-
-                rootcontainer.RemoveChild(clone);
-
-                if (clone.RootFilterContainer != null)
-                    clone.RootFilterContainer.DeleteInDatabase();
-
-                clone.DeleteInDatabase();
-            }
+            Assert.AreEqual(rootcontainer.GetAggregateConfigurations()[0].ID, aggregate2.ID);
+            Assert.AreEqual(rootcontainer.GetAggregateConfigurations()[1].ID, aggregate1.ID);
         }
-        [Test]
-        public void CloneChildWithFilter_IDsDifferent()
+        finally
         {
-            //aggregate 1 is now a normal non cohort aggregate
-            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.OR);
-            aggregate1.CountSQL = "count(*)";
-            aggregate1.RootFilterContainer_ID = container.ID;
-            aggregate1.SaveToDatabase();
+            rootcontainer.RemoveChild(aggregate1);
+            rootcontainer.RemoveChild(aggregate2);
+        }
+    }
 
-            //with filters
-            var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-            filter.WhereSQL = "sex=@sex";
+    [Test]
+    public void CloneChild_NamingCorrectNewObject()
+    {
+        //should not follow naming convention
+        aggregate1.Name = "fish";
+        Assert.IsFalse(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregate1));
 
-            //and parameters
-            new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
-            filter.SaveToDatabase();
+        //add a clone using aggregate1 as a template
+        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
+        //add the clone
+        rootcontainer.AddChild(clone, 0);
 
-            var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
-            param.Value = "'M'";
-            param.SaveToDatabase();
+        try
+        {
+            //there should be 1 child
+            var aggregateConfigurations = rootcontainer.GetAggregateConfigurations();
+            Assert.AreEqual(1, aggregateConfigurations.Length);
 
-            //we are importing this graph aggregate as a new cohort identification aggregate
-            var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
+            //child should follow naming convention
+            Assert.IsTrue(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregateConfigurations[0]));
 
-            //since its a cohort aggregate it should be identical to the origin Aggregate except it has a different ID and no count SQL
-            Assert.AreEqual(clone.CountSQL,null);
+            //clone should have a different ID - also it was created after so should be higher ID
+            Assert.Greater(aggregateConfigurations[0].ID, aggregate1.ID);
+        }
+        finally
+        {
+            aggregate1.RevertToDatabaseState();
 
-            //get the original sql
-            var aggregateSql = aggregate1.GetQueryBuilder().SQL;
+            rootcontainer.RemoveChild(clone);
 
-            try
-            {
-                Assert.AreNotEqual(clone.ID, aggregate1.ID);
-                Assert.AreNotEqual(clone.RootFilterContainer_ID, aggregate1.RootFilterContainer_ID);
+            clone.RootFilterContainer?.DeleteInDatabase();
+
+            clone.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void CloneChildWithFilter_IDsDifferent()
+    {
+        //aggregate 1 is now a normal non cohort aggregate
+        var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.OR);
+        aggregate1.CountSQL = "count(*)";
+        aggregate1.RootFilterContainer_ID = container.ID;
+        aggregate1.SaveToDatabase();
+
+        //with filters
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
+
+        //and parameters
+        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+        filter.SaveToDatabase();
+
+        var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
+        param.Value = "'M'";
+        param.SaveToDatabase();
+
+        //we are importing this graph aggregate as a new cohort identification aggregate
+        var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
+
+        //since its a cohort aggregate it should be identical to the origin Aggregate except it has a different ID and no count SQL
+        Assert.AreEqual(clone.CountSQL, null);
+
+        //get the original sql
+        var aggregateSql = aggregate1.GetQueryBuilder().SQL;
+
+        try
+        {
+            Assert.AreNotEqual(clone.ID, aggregate1.ID);
+            Assert.AreNotEqual(clone.RootFilterContainer_ID, aggregate1.RootFilterContainer_ID);
 
 
-                var cloneContainer = clone.RootFilterContainer;
-                var cloneFilter = cloneContainer.GetFilters().Single();
+            var cloneContainer = clone.RootFilterContainer;
+            var cloneFilter = cloneContainer.GetFilters().Single();
 
-                Assert.AreNotEqual(cloneContainer.ID, container.ID);
-                Assert.AreNotEqual(cloneFilter.ID, filter.ID);
+            Assert.AreNotEqual(cloneContainer.ID, container.ID);
+            Assert.AreNotEqual(cloneFilter.ID, filter.ID);
 
-                var cloneParameter = (AggregateFilterParameter)cloneFilter.GetAllParameters().Single();
-                Assert.AreNotEqual(cloneParameter.ID, param.ID);
+            var cloneParameter = (AggregateFilterParameter)cloneFilter.GetAllParameters().Single();
+            Assert.AreNotEqual(cloneParameter.ID, param.ID);
 
-                //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
-                string cohortAggregateSql = new CohortQueryBuilder(clone,null,null).SQL;
+            //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
+            var cohortAggregateSql = new CohortQueryBuilder(clone, null, null).SQL;
 
 
 //the basic aggregate has the filter, parameter and group by
-                Assert.AreEqual(CollapseWhitespace(
+            Assert.AreEqual(CollapseWhitespace(
                     string.Format(
-@"DECLARE @sex AS varchar(50);
+                        @"DECLARE @sex AS varchar(50);
 SET @sex='M';
 /*cic_{0}_UnitTestAggregate1*/
 SELECT 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi],
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi],
 count(*)
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/
@@ -155,9 +155,10 @@ sex=@sex
 )
 
 group by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]
 order by 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(aggregateSql));
+[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]", cohortIdentificationConfiguration.ID)),
+                CollapseWhitespace(aggregateSql));
 
 //the expected differences are
 //1. should not have the count
@@ -165,15 +166,15 @@ order by
 //3. should be marked with the cic comment with the ID matching the CohortIdentificationConfiguration.ID
 //4. should have a distinct on the identifier column
 
-                Assert.AreEqual(
-@"DECLARE @sex AS varchar(50);
+            Assert.AreEqual(
+                $@"DECLARE @sex AS varchar(50);
 SET @sex='M';
-/*cic_"+cohortIdentificationConfiguration.ID+@"_UnitTestAggregate1*/
+/*cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1*/
 SELECT
 distinct
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData].[chi]
+[{TestDatabaseNames.Prefix}ScratchArea].[dbo].[BulkData].[chi]
 FROM 
-["+TestDatabaseNames.Prefix+@"ScratchArea].[dbo].[BulkData]
+[{TestDatabaseNames.Prefix}ScratchArea].[dbo].[BulkData]
 WHERE
 (
 /*MyFilter*/
@@ -181,87 +182,87 @@ sex=@sex
 )", cohortAggregateSql);
 
 
-                clone.RootFilterContainer.DeleteInDatabase();
-                container.DeleteInDatabase();
-            }
-            finally
-            {
-                clone.DeleteInDatabase();
-            }
+            clone.RootFilterContainer.DeleteInDatabase();
+            container.DeleteInDatabase();
         }
-
-
-        [Test]
-        public void CohortIdentificationConfiguration_CloneEntirely()
+        finally
         {
-            //set the order so that 2 comes before 1
-            rootcontainer.AddChild(aggregate1, 5);
-
-            rootcontainer.AddChild(container1);
-            container1.AddChild(aggregate2,1);
-            container1.AddChild(aggregate3,2);
-
-
-            //create a filter too
-            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.OR);
-
-            aggregate1.RootFilterContainer_ID = container.ID;
-            aggregate1.SaveToDatabase();
-
-            var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container);
-            filter.WhereSQL = "sex=@sex";
-            new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter,null);
-            filter.SaveToDatabase();
-
-            //with a parameter too
-            var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
-            param.Value = "'M'";
-            param.SaveToDatabase();
-
-            cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
-            cohortIdentificationConfiguration.SaveToDatabase();
-
-            try
-            {
-                var clone = cohortIdentificationConfiguration.CreateClone(new ThrowImmediatelyCheckNotifier());
-
-                //the objects should be different
-                Assert.AreNotEqual(cohortIdentificationConfiguration.ID, clone.ID);
-                Assert.IsTrue(clone.Name.EndsWith("(Clone)"));
-
-                Assert.AreNotEqual(clone.RootCohortAggregateContainer_ID, cohortIdentificationConfiguration.RootCohortAggregateContainer_ID);
-                Assert.IsNotNull(clone.RootCohortAggregateContainer_ID);
-
-                var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration,null).SQL;
-                var cloneSQL = new CohortQueryBuilder(clone,null).SQL;
-
-                beforeSQL = Regex.Replace(beforeSQL, "cic_[0-9]+_", "");
-                cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");
-
-                //the SQL should be the same for them 
-                Assert.AreEqual(beforeSQL,cloneSQL);
-
-                var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
-                    .Where(a => a.RootFilterContainer_ID != null)
-                    .Select(ag => ag.RootFilterContainer).Single();
-
-                Assert.AreNotEqual(container, containerClone);
-                
-                //cleanup phase
-                clone.DeleteInDatabase();
-                containerClone.DeleteInDatabase();
-
-            }
-            finally
-            {
-                rootcontainer.RemoveChild(aggregate1);
-                container1.RemoveChild(aggregate2);
-                container1.RemoveChild(aggregate3);
-
-                filter.DeleteInDatabase();
-                container.DeleteInDatabase();
-            }
+            clone.DeleteInDatabase();
         }
+    }
 
+
+    [Test]
+    public void CohortIdentificationConfiguration_CloneEntirely()
+    {
+        //set the order so that 2 comes before 1
+        rootcontainer.AddChild(aggregate1, 5);
+
+        rootcontainer.AddChild(container1);
+        container1.AddChild(aggregate2, 1);
+        container1.AddChild(aggregate3, 2);
+
+
+        //create a filter too
+        var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.OR);
+
+        aggregate1.RootFilterContainer_ID = container.ID;
+        aggregate1.SaveToDatabase();
+
+        var filter = new AggregateFilter(CatalogueRepository, "MyFilter", container)
+        {
+            WhereSQL = "sex=@sex"
+        };
+        new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+        filter.SaveToDatabase();
+
+        //with a parameter too
+        var param = (AggregateFilterParameter)filter.GetAllParameters().Single();
+        param.Value = "'M'";
+        param.SaveToDatabase();
+
+        cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
+        cohortIdentificationConfiguration.SaveToDatabase();
+
+        try
+        {
+            var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+
+            //the objects should be different
+            Assert.AreNotEqual(cohortIdentificationConfiguration.ID, clone.ID);
+            Assert.IsTrue(clone.Name.EndsWith("(Clone)"));
+
+            Assert.AreNotEqual(clone.RootCohortAggregateContainer_ID,
+                cohortIdentificationConfiguration.RootCohortAggregateContainer_ID);
+            Assert.IsNotNull(clone.RootCohortAggregateContainer_ID);
+
+            var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration, null).SQL;
+            var cloneSQL = new CohortQueryBuilder(clone, null).SQL;
+
+            beforeSQL = Regex.Replace(beforeSQL, "cic_[0-9]+_", "");
+            cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");
+
+            //the SQL should be the same for them
+            Assert.AreEqual(beforeSQL, cloneSQL);
+
+            var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()
+                .Where(a => a.RootFilterContainer_ID != null)
+                .Select(ag => ag.RootFilterContainer).Single();
+
+            Assert.AreNotEqual(container, containerClone);
+
+            //cleanup phase
+            clone.DeleteInDatabase();
+            containerClone.DeleteInDatabase();
+        }
+        finally
+        {
+            rootcontainer.RemoveChild(aggregate1);
+            container1.RemoveChild(aggregate2);
+            container1.RemoveChild(aggregate3);
+
+            filter.DeleteInDatabase();
+            container.DeleteInDatabase();
+        }
     }
 }

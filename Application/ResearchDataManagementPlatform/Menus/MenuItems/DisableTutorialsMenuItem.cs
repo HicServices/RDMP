@@ -6,35 +6,34 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Tutorials;
-using ReusableLibraryCode.Settings;
 
-namespace ResearchDataManagementPlatform.Menus.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems;
+
+/// <summary>
+/// Disables displaying Tutorials in RDMP
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+public sealed class DisableTutorialsMenuItem : ToolStripMenuItem
 {
-    /// <summary>
-    /// Disables displaying Tutorials in RDMP
-    /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    public class DisableTutorialsMenuItem : ToolStripMenuItem
+    private readonly TutorialTracker _tracker;
+
+    public DisableTutorialsMenuItem(ToolStripMenuItem parent, TutorialTracker tracker)
     {
-        private readonly TutorialTracker _tracker;
+        parent.DropDownOpened += Parent_DropDownOpened;
+        _tracker = tracker;
+        Text = "Disable Tutorials";
+    }
 
-        public DisableTutorialsMenuItem(ToolStripMenuItem parent, TutorialTracker tracker)
-        {
-            parent.DropDownOpened += parent_DropDownOpened;
-            _tracker = tracker;
-            Text = "Disable Tutorials";
-        }
+    private void Parent_DropDownOpened(object sender, EventArgs e)
+    {
+        Checked = UserSettings.DisableTutorials;
+    }
 
-        void parent_DropDownOpened(object sender, EventArgs e)
-        {
-            Checked = UserSettings.DisableTutorials;
-        }
-
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
-            _tracker.DisableAllTutorials();
-        }
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
+        TutorialTracker.DisableAllTutorials();
     }
 }

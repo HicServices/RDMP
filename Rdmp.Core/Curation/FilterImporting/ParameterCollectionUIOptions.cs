@@ -4,105 +4,89 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector, string parameterName);
+
+/// <summary>
+/// Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
+/// with it (handled by a <see cref="ParameterManager"/>).
+/// </summary>
+public class ParameterCollectionUIOptions
 {
-    public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector, string parameterName);
+    public ICollectSqlParameters Collector { get; set; }
 
     /// <summary>
-    /// Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
-    /// with it (handled by a <see cref="ParameterManager"/>).
+    /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
     /// </summary>
-    public class ParameterCollectionUIOptions
+    public bool ReadOnly { get; set; }
+
+    public ParameterLevel CurrentLevel { get; set; }
+    public ParameterManager ParameterManager { get; set; }
+    private CreateNewSqlParameterHandler _createNewParameterDelegate;
+
+    public readonly ParameterRefactorer Refactorer = new();
+
+    public string UseCase { get; private set; }
+
+    public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel,
+        ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
     {
-        public ICollectSqlParameters Collector { get; set; }
+        UseCase = useCase;
+        Collector = collector;
+        CurrentLevel = currentLevel;
+        ParameterManager = parameterManager;
+        _createNewParameterDelegate = createNewParameterDelegate;
 
-        /// <summary>
-        /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
-        /// </summary>
-        public bool ReadOnly { get; set; }
-        public ParameterLevel CurrentLevel { get; set; }
-        public ParameterManager ParameterManager { get; set; }
-        private CreateNewSqlParameterHandler _createNewParameterDelegate;
+        if (_createNewParameterDelegate == null)
+            if (AnyTableSqlParameter.IsSupportedType(collector.GetType()))
+                _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
 
-        public readonly ParameterRefactorer Refactorer = new ParameterRefactorer();
-
-        public string UseCase { get; private set; }
-
-        public ParameterCollectionUIOptions(string useCase, ICollectSqlParameters collector, ParameterLevel currentLevel, ParameterManager parameterManager, CreateNewSqlParameterHandler createNewParameterDelegate = null)
-        {
-
-            UseCase = useCase;
-            Collector = collector;
-            CurrentLevel = currentLevel;
-            ParameterManager = parameterManager;
-            _createNewParameterDelegate = createNewParameterDelegate;
-
-            if (_createNewParameterDelegate == null)
-                if (AnyTableSqlParameter.IsSupportedType(collector.GetType()))
-                    _createNewParameterDelegate = CreateNewParameterDefaultImplementation;
-
-            if (collector is IMightBeReadOnly ro)
-                ReadOnly = ro.ShouldBeReadOnly(out _);
-        }
-
-
-
-        /// <summary>
-        /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
-        /// </summary>
-        /// <returns></returns>
-        private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
-        {
-            if (!parameterName.StartsWith("@"))
-                parameterName = "@" + parameterName;
-
-            var entity = (IMapsDirectlyToDatabaseTable)collector;
-            var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity, AnyTableSqlParameter.GetDefaultDeclaration(parameterName));
-            newParam.Value = AnyTableSqlParameter.DefaultValue;
-            newParam.SaveToDatabase();
-            return newParam;
-        }
-
-        public bool CanNewParameters()
-        {
-            return _createNewParameterDelegate != null;
-        }
-
-        public ISqlParameter CreateNewParameter(string parameterName)
-        {
-            return _createNewParameterDelegate(Collector, parameterName);
-        }
-
-        public bool IsHigherLevel(ISqlParameter parameter)
-        {
-            return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
-        }
-
-        private bool IsDifferentLevel(ISqlParameter p)
-        {
-            return ParameterManager.GetLevelForParameter(p) != CurrentLevel;
-        }
-
-        public bool IsOverridden(ISqlParameter sqlParameter)
-        {
-            return ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
-        }
-
-        public bool ShouldBeDisabled(ISqlParameter p)
-        {
-            return IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
-        }
-
-        public bool ShouldBeReadOnly(ISqlParameter p)
-        {
-            return ReadOnly || IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
-        }
+        if (collector is IMightBeReadOnly ro)
+            ReadOnly = ro.ShouldBeReadOnly(out _);
     }
+
+
+    /// <summary>
+    /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
+    /// </summary>
+    /// <returns></returns>
+    private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
+    {
+        if (!parameterName.StartsWith("@"))
+            parameterName = $"@{parameterName}";
+
+        var entity = (IMapsDirectlyToDatabaseTable)collector;
+        var newParam = new AnyTableSqlParameter((ICatalogueRepository)entity.Repository, entity,
+            AnyTableSqlParameter.GetDefaultDeclaration(parameterName))
+        {
+            Value = AnyTableSqlParameter.DefaultValue
+        };
+        newParam.SaveToDatabase();
+        return newParam;
+    }
+
+    public bool CanNewParameters() => _createNewParameterDelegate != null;
+
+    public ISqlParameter CreateNewParameter(string parameterName) =>
+        _createNewParameterDelegate(Collector, parameterName);
+
+    public bool IsHigherLevel(ISqlParameter parameter) =>
+        ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
+
+    private bool IsDifferentLevel(ISqlParameter p) => ParameterManager.GetLevelForParameter(p) != CurrentLevel;
+
+    public bool IsOverridden(ISqlParameter sqlParameter) => ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
+
+    public bool ShouldBeDisabled(ISqlParameter p) => IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
+
+    public bool ShouldBeReadOnly(ISqlParameter p) =>
+        ReadOnly || IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
 }

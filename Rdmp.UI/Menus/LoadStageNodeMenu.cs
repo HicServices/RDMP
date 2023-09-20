@@ -15,73 +15,68 @@ using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class LoadStageNodeMenu : RDMPContextMenuStrip
 {
-    internal class LoadStageNodeMenu : RDMPContextMenuStrip
+    private readonly LoadStageNode _loadStageNode;
+
+    public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
     {
-        private readonly LoadStageNode _loadStageNode;
-        private MEF _mef;
+        _loadStageNode = loadStageNode;
 
-        public LoadStageNodeMenu(RDMPContextMenuStripArgs args, LoadStageNode loadStageNode) : base(args, loadStageNode)
+        args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
+
+        AddMenu<IDataProvider>("Add Cached Data Provider", t => typeof(ICachedDataProvider).IsAssignableFrom(t));
+        AddMenu<IDataProvider>("Add Data Provider", t => !typeof(ICachedDataProvider).IsAssignableFrom(t));
+
+        AddMenu<IAttacher>("Add Attacher");
+        AddMenu<IMutilateDataTables>("Add Mutilator");
+    }
+
+    private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
+    {
+        var types = MEF.GetTypes<T>().Where(filterTypes).ToArray();
+        var menu = new ToolStripMenuItem(menuName);
+
+        ProcessTaskType taskType;
+
+        if (typeof(T) == typeof(IDataProvider))
+            taskType = ProcessTaskType.DataProvider;
+        else if (typeof(T) == typeof(IAttacher))
+            taskType = ProcessTaskType.Attacher;
+        else if (typeof(T) == typeof(IMutilateDataTables))
+            taskType = ProcessTaskType.MutilateDataTable;
+        else
+            throw new ArgumentException($"Type '{typeof(T)}' was not expected", nameof(T));
+
+        foreach (var type in types)
         {
-            _loadStageNode = loadStageNode;
-            _mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
+            var toAdd = type;
+            var mi = menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd));
 
-            args.SkipCommand<ExecuteCommandCreateNewClassBasedProcessTask>();
-            
-           AddMenu<IDataProvider>("Add Cached Data Provider",t=>typeof(ICachedDataProvider).IsAssignableFrom(t));
-           AddMenu<IDataProvider>("Add Data Provider", t=> !typeof(ICachedDataProvider).IsAssignableFrom(t));
+            var help = _activator.CommentStore.GetTypeDocumentationIfExists(type);
 
-           AddMenu<IAttacher>("Add Attacher");
-           AddMenu<IMutilateDataTables>("Add Mutilator");
+            if (help != null)
+                mi.ToolTipText = help;
         }
 
-        private void AddMenu<T>(string menuName, Func<Type, bool> filterTypes)
-        {
-            var types = _mef.GetTypes<T>().Where(filterTypes).ToArray();
-            var menu = new ToolStripMenuItem(menuName);
+        menu.Enabled = ProcessTask.IsCompatibleStage(taskType, _loadStageNode.LoadStage) && types.Any();
 
-            ProcessTaskType taskType;
+        Items.Add(menu);
+    }
 
-            if (typeof(T) == typeof(IDataProvider))
-                taskType = ProcessTaskType.DataProvider;
-            else
-                if (typeof(T) == typeof(IAttacher))
-                    taskType = ProcessTaskType.Attacher;
-                else if (typeof(T) == typeof(IMutilateDataTables))
-                    taskType = ProcessTaskType.MutilateDataTable;
-                else
-                    throw new ArgumentException("Type '" + typeof(T) + "' was not expected", "T");
-
-            foreach (Type type in types)
-            {
-                Type toAdd = type;
-                var mi = menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd));
-
-                var help = _activator.CommentStore.GetTypeDocumentationIfExists(type);
-
-                if (help != null)
-                    mi.ToolTipText = help;
-            }
-
-            menu.Enabled = ProcessTask.IsCompatibleStage(taskType, _loadStageNode.LoadStage) && types.Any();
-
-            Items.Add(menu);
-        }
-
-        private void AddMenu<T>(string menuName)
-        {
-            AddMenu<T>(menuName, t => true);
-        }
+    private void AddMenu<T>(string menuName)
+    {
+        AddMenu<T>(menuName, t => true);
+    }
 
 
-
-        private void AddTypeIntoStage(Type type)
-        {
-            var cmd = new ExecuteCommandCreateNewClassBasedProcessTask(_activator, _loadStageNode.LoadMetadata, _loadStageNode.LoadStage, type);
-            cmd.Execute();
-        }
+    private void AddTypeIntoStage(Type type)
+    {
+        var cmd = new ExecuteCommandCreateNewClassBasedProcessTask(_activator, _loadStageNode.LoadMetadata,
+            _loadStageNode.LoadStage, type);
+        cmd.Execute();
     }
 }

@@ -8,68 +8,57 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsFilterContainer : RDMPCommandExecutionProposal<IContainer>
 {
-    class ProposeExecutionWhenTargetIsFilterContainer:RDMPCommandExecutionProposal<IContainer>
+    public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsFilterContainer(IActivateItems itemActivator) : base(itemActivator)
-        {
+    }
 
+    public override bool CanActivate(IContainer target) => false;
+
+    public override void Activate(IContainer target)
+    {
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        //drag a filter into a container
+        if (cmd is FilterCombineable sourceFilterCommand)
+        {
+            //if filter is already in the target container
+            if (sourceFilterCommand.ImmediateContainerIfAny?.Equals(targetContainer) ?? false)
+                return null;
+
+            //if the target container is one that is part of the filters tree then it's a move
+            if (sourceFilterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
+                return new ExecuteCommandMoveFilterIntoContainer(ItemActivator, sourceFilterCommand, targetContainer);
+
+            //otherwise it's an import
+
+            //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
+            //filter into a data export AND/OR container
+            return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer, sourceFilterCommand.Filter);
         }
 
-        public override bool CanActivate(IContainer target)
+        //drag a container into another container
+        if (cmd is ContainerCombineable sourceContainerCommand)
         {
-            return false;
+            //if the source and target are the same container
+            if (sourceContainerCommand.Container.Equals(targetContainer))
+                return null;
+
+            //is it a movement within the current container tree
+            return sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer)
+                ? new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer)
+                : new ExecuteCommandImportFilterContainerTree(ItemActivator, targetContainer,
+                    sourceContainerCommand.Container);
         }
 
-        public override void Activate(IContainer target)
-        {
-            
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, IContainer targetContainer, InsertOption insertOption = InsertOption.Default)
-        {
-            var sourceFilterCommand = cmd as FilterCombineable;
-
-            //drag a filter into a container
-            if (sourceFilterCommand != null)
-            {
-                //if filter is already in the target container
-                if (sourceFilterCommand.ImmediateContainerIfAny?.Equals(targetContainer) ?? false)
-                    return null;
-
-                //if the target container is one that is part of the filters tree then it's a move
-                if (sourceFilterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                    return new ExecuteCommandMoveFilterIntoContainer(ItemActivator, sourceFilterCommand, targetContainer);
-                
-                //otherwise it's an import    
-
-                //so instead let's let them create a new copy (possibly including changing the type e.g. importing a master
-                //filter into a data export AND/OR container
-                return new ExecuteCommandCreateNewFilter(ItemActivator, targetContainer,sourceFilterCommand.Filter);
-                
-            }
-
-            //drag a container into another container
-            if ( cmd is ContainerCombineable sourceContainerCommand)
-            {
-                //if the source and target are the same container
-                if (sourceContainerCommand.Container.Equals(targetContainer))
-                    return null;
-
-                //is it a movement within the current container tree
-                if (sourceContainerCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                    return new ExecuteCommandMoveContainerIntoContainer(ItemActivator, sourceContainerCommand, targetContainer);
-
-                return new ExecuteCommandImportFilterContainerTree(ItemActivator,targetContainer,sourceContainerCommand.Container);
-            }
-            
-            return null;
-        
-
-        }
+        return null;
     }
 }

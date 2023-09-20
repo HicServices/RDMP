@@ -5,43 +5,35 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.Common;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class GetDatabaseDiagramBinaryTest : DatabaseTests
 {
-    
-    public class GetDatabaseDiagramBinaryTest:DatabaseTests
+    [Test]
+    public void GetBinaryText()
     {
-        [Test]
-        public void GetBinaryText()
-        {
-            using (var con = CatalogueTableRepository.GetConnection())
-            {
-                using(DbCommand cmd = DatabaseCommandHelper.GetCommand(
-                    "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
-                    con.Connection, con.Transaction))
-                    using (var reader = cmd.ExecuteReader())
-                    {
-                        //The system diagram exists
-                        Assert.IsTrue(reader.Read());
+        using var con = CatalogueTableRepository.GetConnection();
+        using var cmd = DatabaseCommandHelper.GetCommand(
+            "SELECT definition  FROM sysdiagrams where name = 'Catalogue_Data_Diagram' ",
+            con.Connection, con.Transaction);
+        using var reader = cmd.ExecuteReader();
+        //The system diagram exists
+        Assert.IsTrue(reader.Read());
 
-                        var bytes = (byte[]) reader[0];
-                        var bytesAsString = ByteArrayToString(bytes);
-                    
-                        Console.WriteLine(bytesAsString);
-                        Assert.Greater(bytesAsString.Length,100000);
-                    }
-            }
-        }
+        var bytes = (byte[])reader[0];
+        var bytesAsString = ByteArrayToString(bytes);
 
-        public static string ByteArrayToString(byte[] ba)
-        {
-            string hex = BitConverter.ToString(ba);
-            return hex.Replace("-", "");
-        }
+        Console.WriteLine(bytesAsString);
+        Assert.Greater(bytesAsString.Length, 100000);
+    }
+
+    public static string ByteArrayToString(byte[] ba)
+    {
+        var hex = BitConverter.ToString(ba);
+        return hex.Replace("-", "");
     }
 }
-

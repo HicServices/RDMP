@@ -5,31 +5,32 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
-using ReusableLibraryCode.Checks;
 using System;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Databases
+namespace Rdmp.Core.Tests.Databases;
+
+internal class MasterDatabaseScriptExecutorTests : DatabaseTests
 {
-    class MasterDatabaseScriptExecutorTests : DatabaseTests
+    [Test]
+    public void TestCreatingSchemaTwice()
     {
-        [Test]
-        public void TestCreatingSchemaTwice()
-        {
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-            var mds = new MasterDatabaseScriptExecutor(db);
-            //setup as DQE
-            mds.CreateAndPatchDatabase(new DataQualityEnginePatcher(), new AcceptAllCheckNotifier());
+        var mds = new MasterDatabaseScriptExecutor(db);
+        //setup as DQE
+        mds.CreateAndPatchDatabase(new DataQualityEnginePatcher(), new AcceptAllCheckNotifier());
 
-            //now try to setup same db as Logging
-            var ex = Assert.Throws<Exception>(()=>mds.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier()));
+        //now try to setup same db as Logging
+        var ex = Assert.Throws<Exception>(() =>
+            mds.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier()));
 
-            StringAssert.Contains("is already set up as a platform database for another schema (it has the 'ScriptsRun' table)", ex.InnerException.Message);
-
-        }
+        StringAssert.Contains(
+            "is already set up as a platform database for another schema (it has the 'ScriptsRun' table)",
+            ex.InnerException.Message);
     }
 }

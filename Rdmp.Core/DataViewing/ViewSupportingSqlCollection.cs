@@ -4,61 +4,49 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using ReusableLibraryCode.DataAccess;
-using System.Collections.Generic;
-using System.Linq;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    class ViewSupportingSqlCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public SupportingSQLTable SupportingSQLTable => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault();
+
+    public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
     {
+        DatabaseObjects.Add(supportingSql);
+    }
 
-        public SupportingSQLTable SupportingSQLTable { get => DatabaseObjects.OfType<SupportingSQLTable>().FirstOrDefault(); }
+    /// <summary>
+    /// Persistence constructor
+    /// </summary>
+    public ViewSupportingSqlCollection()
+    {
+    }
 
-        public ViewSupportingSqlCollection(SupportingSQLTable supportingSql)
-        {
-            DatabaseObjects.Add(supportingSql);
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+    }
 
-        /// <summary>
-        /// Persistence constructor 
-        /// </summary>
-        public ViewSupportingSqlCollection()
-        {
+    public IDataAccessPoint GetDataAccessPoint() => SupportingSQLTable.ExternalDatabaseServer;
 
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
+        return new QuerySyntaxHelperFactory().Create(syntax);
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-        }
+    public string GetSql() => SupportingSQLTable.SQL;
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return SupportingSQLTable.ExternalDatabaseServer;
-        }
+    public string GetTabName() => SupportingSQLTable.Name;
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
-            return new QuerySyntaxHelperFactory().Create(syntax);
-        }
-
-        public string GetSql()
-        {
-            return SupportingSQLTable.SQL;
-        }
-
-        public string GetTabName()
-        {
-            return SupportingSQLTable.Name;
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return SupportingSQLTable;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return SupportingSQLTable;
     }
 }

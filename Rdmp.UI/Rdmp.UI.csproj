@@ -1,12 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <PackageId>HIC.RDMP.Plugin.UI</PackageId>
+    <id>HIC.RDMP.Plugin.UI</id>
+    <version>$(version)</version>
+    <title>HIC.RDMP.Plugin.UI</title>
+    <authors>Health Informatics Centre, University of Dundee</authors>
+    <owners>Health Informatics Centre, University of Dundee</owners>
+    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>UI package for plugin development</description>
+    <copyright>Copyright 2018-2019</copyright>
     <ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
-    <TargetFramework>net6.0-windows7.0</TargetFramework>
-    <AssemblyTitle>Rdmp.UI</AssemblyTitle>
-    <Product>Rdmp.UI</Product>
+    <TargetFramework>net7.0-windows7.0</TargetFramework>
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
 	<NoWarn>1701;1702;CS1591;NU1701;CA1416</NoWarn>
     
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
@@ -16,55 +28,39 @@
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="en_US.aff" />
-    <None Remove="en_US.dic" />
-    <None Remove="Hunspellx64.dll" />
-    <None Remove="Hunspellx86.dll" />
-    <None Remove="hyph_en_US.dic" />
-    <None Remove="Pencil.cur" />
+    <None Remove="en_GB.aff" />
+    <None Remove="en_GB.dic" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="en_US.aff">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="en_US.dic">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Hunspellx64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Hunspellx86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="hyph_en_US.dic">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Pencil.cur">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="en_GB.aff" />
+    <EmbeddedResource Include="en_GB.dic" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="fernandreu.ScintillaNET" Version="4.2.0" />
     <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
-    <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
-    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.4" />
+    <PackageReference Include="Scintilla.NET" Version="5.3.2.9" />
     <PackageReference Include="SecurityCodeScan.VS2019" Version="5.6.7">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="System.Security.Permissions" Version="7.0.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="7.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="System.Threading.AccessControl" Version="7.0.1" />
+    <PackageReference Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
+    <PackageReference Include="WeCantSpell.Hunspell" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ChecksUI\ChecksUI.cs">
@@ -253,27 +249,17 @@
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs" />
+    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs" />
     <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs" />
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs" />
+    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs" />
     <Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -287,12 +273,8 @@
     <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Logging\LoggingTabUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs" />
+    <Compile Update="Logging\LoggingTabUI.cs" />
     <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -302,12 +284,8 @@
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
-    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Validation\ValidationSetupUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs" />
+    <Compile Update="Validation\ValidationSetupUI.cs" />
     <Compile Update="SimpleDialogs\WaitUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -320,9 +298,7 @@
     <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs" />
     <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -335,9 +311,7 @@
       <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs" />
     <Compile Update="Versioning/PatchingUI.cs">
       <SubType>Form</SubType>
     </Compile>

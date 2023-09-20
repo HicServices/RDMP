@@ -11,49 +11,50 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+/// <summary>
+/// Tests for <see cref="ExecuteCommandCreateNewFilter" />
+/// </summary>
+internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
 {
-    /// <summary>
-    /// Tests for <see cref="ExecuteCommandCreateNewFilter">
-    /// </summary>
-    class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
+    [Test]
+    public void TestNewFilterForAggregate()
     {
-        [Test]
-        public void TestNewFilterForAggregate()
-        {
-            var ac = WhenIHaveA<AggregateConfiguration>();
+        var ac = WhenIHaveA<AggregateConfiguration>();
 
-            // has no container to start with (no filters)
-            Assert.IsNull(ac.RootFilterContainer_ID);
-            Run("CreateNewFilter",$"{nameof(AggregateConfiguration)}:{ac.ID}");
+        // has no container to start with (no filters)
+        Assert.IsNull(ac.RootFilterContainer_ID);
+        Run("CreateNewFilter", $"{nameof(AggregateConfiguration)}:{ac.ID}");
 
-            Assert.IsNotNull(ac.RootFilterContainer_ID,"Should now have a container");
-            Assert.AreEqual(1,ac.RootFilterContainer.GetFilters().Count(),"Expected a single new filter");
-        }
-        [Test]
-        public void TestNewFilterForExtractionConfiguration()
-        {
-            var sds = WhenIHaveA<SelectedDataSets>();
+        Assert.IsNotNull(ac.RootFilterContainer_ID, "Should now have a container");
+        Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
+    }
 
-            // has no container to start with (no filters)
-            Assert.IsNull(sds.RootFilterContainer_ID);
-            Run("CreateNewFilter", $"{nameof(SelectedDataSets)}:{sds.ID}");
+    [Test]
+    public void TestNewFilterForExtractionConfiguration()
+    {
+        var sds = WhenIHaveA<SelectedDataSets>();
 
-            Assert.IsNotNull(sds.RootFilterContainer_ID, "Should now have a container");
-            Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Count(), "Expected a single new filter");
-        }
-        [Test]
-        public void TestNewFilterForCatalogue()
-        {
-            var ei = WhenIHaveA<ExtractionInformation>();
+        // has no container to start with (no filters)
+        Assert.IsNull(sds.RootFilterContainer_ID);
+        Run("CreateNewFilter", $"{nameof(SelectedDataSets)}:{sds.ID}");
 
-            // no Catalogue level filters
-            Assert.IsEmpty(ei.ExtractionFilters);
-            Run("CreateNewFilter", $"{nameof(ExtractionInformation)}:{ei.ID}", "My cool filter", "hb='t'");
+        Assert.IsNotNull(sds.RootFilterContainer_ID, "Should now have a container");
+        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
+    }
 
-            var f = ei.ExtractionFilters.Single();
-            Assert.AreEqual("My cool filter", f.Name);
-            Assert.AreEqual("hb='t'", f.WhereSQL);
-        }
+    [Test]
+    public void TestNewFilterForCatalogue()
+    {
+        var ei = WhenIHaveA<ExtractionInformation>();
+
+        // no Catalogue level filters
+        Assert.IsEmpty(ei.ExtractionFilters);
+        Run("CreateNewFilter", $"{nameof(ExtractionInformation)}:{ei.ID}", "My cool filter", "hb='t'");
+
+        var f = ei.ExtractionFilters.Single();
+        Assert.AreEqual("My cool filter", f.Name);
+        Assert.AreEqual("hb='t'", f.WhereSQL);
     }
 }

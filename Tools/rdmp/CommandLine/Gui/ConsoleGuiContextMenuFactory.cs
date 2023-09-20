@@ -4,6 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -12,202 +15,174 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+internal class ConsoleGuiContextMenuFactory
 {
-    internal class ConsoleGuiContextMenuFactory
+    private IBasicActivateItems activator;
+
+    public ConsoleGuiContextMenuFactory(IBasicActivateItems activator)
     {
-        private IBasicActivateItems activator;
+        this.activator = activator;
+    }
 
-        public ConsoleGuiContextMenuFactory(IBasicActivateItems activator)
+    public ContextMenu Create(object[] many, object single)
+    {
+        var commands = GetCommands(activator, many, single).ToArray();
+
+        var order = new Dictionary<MenuItem, float>();
+
+        // Build subcategories
+        var categories = commands
+            .OrderBy(c => c.Weight)
+            .Select(c => c.SuggestedCategory)
+            .Where(c => !string.IsNullOrWhiteSpace(c))
+            .Distinct();
+
+        var miCategories = categories.ToDictionary(category => category, _ => new List<MenuItem>());
+
+        var items = new List<MenuItem>();
+
+        // Build commands into menu items
+        foreach (var cmd in commands.OrderBy(c => c.Weight))
         {
-            this.activator = activator;
+            var item = new MenuItem(cmd.GetCommandName(), null, () => ExecuteWithCatch(cmd));
+            order.Add(item, cmd.Weight);
+
+            if (cmd.SuggestedCategory != null)
+                miCategories[cmd.SuggestedCategory].Add(item);
+            else
+                items.Add(item);
         }
 
-        public  ContextMenu Create(object[] many, object single)
+        foreach (var kvp in miCategories)
         {
-            var commands = GetCommands(activator, many, single).ToArray();
-
-            var order = new Dictionary<MenuItem, float>();
-
-            // Build subcategories
-            var categories = commands
-                .OrderBy(c => c.Weight)
-                .Select(c => c.SuggestedCategory)
-                .Where(c => !string.IsNullOrWhiteSpace(c))
-                .Distinct();
-
-            Dictionary<string, List<MenuItem>> miCategories = new();
-
-            foreach (var category in categories)
-                miCategories.Add(category, new List<MenuItem>());
-
-            List<MenuItem> items = new();
-
-            // Build commands into menu items
-            foreach (var cmd in commands.OrderBy(c => c.Weight))
-            {
-                var item = new MenuItem(cmd.GetCommandName(), null, () => ExecuteWithCatch(cmd));
-                order.Add(item, cmd.Weight);
-
-                if (cmd.SuggestedCategory != null)
-                {
-                    miCategories[cmd.SuggestedCategory].Add(item);
-                }
-                else
-                {
-                    items.Add(item);
-                }
-            }
-
-            foreach (var kvp in miCategories)
-            {
-                // menu bar order is the minimum of the menu items in it
-                var bar = new MenuBarItem(kvp.Key, AddSpacers(kvp.Value, order));
-                order.Add(bar, kvp.Value.Select(m => order[m]).Min());
-                items.Add(bar);
-            }
-
-            // we can do nothing if theres no menu items
-            if (items.Count == 0)
-                return null;
-
-            var withSpacers = AddSpacers(items, order);
-
-            var menu = new ContextMenu();
-            menu.MenuItems = new MenuBarItem(withSpacers);
-
-            return menu;
+            // menu bar order is the minimum of the menu items in it
+            var bar = new MenuBarItem(kvp.Key, AddSpacers(kvp.Value, order));
+            order.Add(bar, kvp.Value.Select(m => order[m]).Min());
+            items.Add(bar);
         }
 
-        private  MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
+        // we can do nothing if theres no menu items
+        if (items.Count == 0)
+            return null;
+
+        var withSpacers = AddSpacers(items, order);
+
+        var menu = new ContextMenu
         {
-            // sort it                
-            items.OrderBy(m => order[m]).ToList();
+            MenuItems = new MenuBarItem(withSpacers)
+        };
 
-            // add spacers when the Weight differs by more than 1 whole number
-            var withSpacers = new List<MenuItem>();
-            int lastWeightSeen = (int)order[items.First()];
+        return menu;
+    }
 
-            foreach (var item in items)
+    private static MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)
+    {
+        // sort it
+        items.OrderBy(m => order[m]).ToList();
+
+        // add spacers when the Weight differs by more than 1 whole number
+        var withSpacers = new List<MenuItem>();
+        var lastWeightSeen = (int)order[items.First()];
+
+        foreach (var item in items)
+        {
+            if (lastWeightSeen != (int)order[item])
             {
-                if (lastWeightSeen != (int)order[item])
-                {
-                    // add a spacer
-                    withSpacers.Add(null);
-                    lastWeightSeen = (int)order[item];
-                }
-
-                withSpacers.Add(item);
+                // add a spacer
+                withSpacers.Add(null);
+                lastWeightSeen = (int)order[item];
             }
 
-            return withSpacers.ToArray();
+            withSpacers.Add(item);
         }
 
-        private  void ExecuteWithCatch(IAtomicCommand cmd)
-        {
-            try
-            {
-                cmd.Execute();
-            }
-            catch (Exception ex)
-            {
+        return withSpacers.ToArray();
+    }
 
-                activator.ShowException($"Error running command '{cmd.GetCommandName()}'", ex);
-            }
+    private void ExecuteWithCatch(IAtomicCommand cmd)
+    {
+        try
+        {
+            cmd.Execute();
         }
-
-        private  IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
+        catch (Exception ex)
         {
-            var factory = new AtomicCommandFactory(activator);
+            activator.ShowException($"Error running command '{cmd.GetCommandName()}'", ex);
+        }
+    }
 
-            if (many.Length > 1)
-            {
-                return factory.CreateManyObjectCommands(many).ToArray();
-            }
+    private static IEnumerable<IAtomicCommand> GetCommands(IBasicActivateItems activator, object[] many, object single)
+    {
+        var factory = new AtomicCommandFactory(activator);
 
-            var o = single;
+        if (many.Length > 1) return factory.CreateManyObjectCommands(many).ToArray();
 
-            if (ReferenceEquals(o, ConsoleMainWindow.Catalogues))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewCatalogueByImportingFile(activator),
-                    new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator),
-                };
-            }
-            if (ReferenceEquals(o, ConsoleMainWindow.Loads))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewLoadMetadata(activator),
-                };
-            }
-            if (ReferenceEquals(o, ConsoleMainWindow.Projects))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandNewObject(activator,typeof(Project)){OverrideCommandName = "New Project" }
-                };
-            }
-            if (ReferenceEquals(o, ConsoleMainWindow.CohortConfigs))
-            {
-                return new IAtomicCommand[] {
-                    new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
-                };
-            }
+        var o = single;
 
-            if (o == null)
-                return new IAtomicCommand[0];
+        if (ReferenceEquals(o, ConsoleMainWindow.Catalogues))
+            return new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingFile(activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator)
+            };
+        if (ReferenceEquals(o, ConsoleMainWindow.Loads))
+            return new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewLoadMetadata(activator)
+            };
+        if (ReferenceEquals(o, ConsoleMainWindow.Projects))
+            return new IAtomicCommand[]
+            {
+                new ExecuteCommandNewObject(activator, typeof(Project)) { OverrideCommandName = "New Project" }
+            };
+        if (ReferenceEquals(o, ConsoleMainWindow.CohortConfigs))
+            return new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
+            };
 
-            return
-                GetExtraCommands(activator, o)
+        return o == null
+            ? Array.Empty<IAtomicCommand>()
+            : GetExtraCommands(activator, o)
                 .Union(factory.CreateCommands(o))
                 .Union(activator.PluginUserInterfaces.SelectMany(p => p.GetAdditionalRightClickMenuItems(o)))
                 .OrderBy(c => c.Weight);
-        }
+    }
 
-        private  IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
-        {
-            if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
+    private static IEnumerable<IAtomicCommand> GetExtraCommands(IBasicActivateItems activator, object o)
+    {
+        if (CommandFactoryBase.Is(o, out LoadMetadata lmd))
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunDleWindow(activator, lmd))
-                { OverrideCommandName = "Execute Load..." };
-            }
+            { OverrideCommandName = "Execute Load..." };
 
-            if (CommandFactoryBase.Is(o, out Project p))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
+        if (CommandFactoryBase.Is(o, out Project p))
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunReleaseWindow(activator, p))
-                { OverrideCommandName = "Release..." };
-            }
-            if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
+            { OverrideCommandName = "Release..." };
+        if (CommandFactoryBase.Is(o, out ExtractionConfiguration ec))
+        {
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunReleaseWindow(activator, ec))
-                { OverrideCommandName = "Release..." };
+            { OverrideCommandName = "Release..." };
 
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
                     () => new RunExtractionWindow(activator, ec))
-                { OverrideCommandName = "Extract..." };
-            }
-
-            if (CommandFactoryBase.Is(o, out CacheProgress cp))
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
-                    () => new RunCacheWindow(activator, cp))
-                { OverrideCommandName = "Run Cache..." };
-            }
-
-            if (CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
-            {
-                yield return new ExecuteCommandRunConsoleGuiView(activator,
-                    () => new RunDataQualityEngineWindow(activator, c))
-                { OverrideCommandName = "Run DQE..." };
-            }
+            { OverrideCommandName = "Extract..." };
         }
 
+        if (CommandFactoryBase.Is(o, out CacheProgress cp))
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
+                    () => new RunCacheWindow(activator, cp))
+            { OverrideCommandName = "Run Cache..." };
+
+        if (CommandFactoryBase.Is(o, out Catalogue c) && !c.IsApiCall())
+            yield return new ExecuteCommandRunConsoleGuiView(activator,
+                    () => new RunDataQualityEngineWindow(activator, c))
+            { OverrideCommandName = "Run DQE..." };
     }
 }

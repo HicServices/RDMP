@@ -8,65 +8,54 @@ using System;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandCheckAsync : BasicUICommandExecution,IAtomicCommand
+    private readonly ICheckable _checkable;
+    private readonly Action<ICheckable, CheckResult> _reportWorstTo;
+
+    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable) : base(activator)
     {
-        private readonly ICheckable _checkable;
-        private readonly Action<ICheckable, CheckResult> _reportWorstTo;
+        _checkable = checkable as ICheckable;
 
-        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable): base(activator)
-        {
-            _checkable = checkable as ICheckable;
+        if (_checkable == null)
+            SetImpossible("Object is not checkable");
 
-            if(_checkable == null)
-                SetImpossible("Object is not checkable");
-
-            Weight = 100.3f;
-        }
-        public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
-        {
-            _reportWorstTo = reportWorst;
-
-            Weight = 100.3f;
-        }
-
-        public override string GetCommandName()
-        {
-            if(_checkable == null)
-            {
-                return "Check";
-            }
-            return $"Check '{_checkable}'";
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Run validation checks for this item to ensure that easily checkable properties are valid";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var popupChecksUI = new PopupChecksUI("Checking " + _checkable, false);
-
-            if(_reportWorstTo != null)
-                popupChecksUI.AllChecksComplete += (s,a)=>_reportWorstTo(_checkable,a.CheckResults.GetWorst());
-
-            popupChecksUI.StartChecking(_checkable);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
-        }
+        Weight = 100.3f;
     }
+
+    public ExecuteCommandCheckAsync(IActivateItems activator, DatabaseEntity checkable,
+        Action<ICheckable, CheckResult> reportWorst) : this(activator, checkable)
+    {
+        _reportWorstTo = reportWorst;
+
+        Weight = 100.3f;
+    }
+
+    public override string GetCommandName() => _checkable == null ? "Check" : $"Check '{_checkable}'";
+
+    public override string GetCommandHelp() =>
+        "Run validation checks for this item to ensure that easily checkable properties are valid";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var popupChecksUI = new PopupChecksUI($"Checking {_checkable}", false);
+
+        if (_reportWorstTo != null)
+            popupChecksUI.AllChecksComplete += (s, a) => _reportWorstTo(_checkable, a.CheckResults.GetWorst());
+
+        popupChecksUI.StartChecking(_checkable);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
 }

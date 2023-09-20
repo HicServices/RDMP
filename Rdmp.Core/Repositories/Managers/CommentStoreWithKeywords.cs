@@ -6,42 +6,42 @@
 
 using System;
 using System.IO;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
+/// </summary>
+public class CommentStoreWithKeywords : CommentStore
 {
-    /// <summary>
-    /// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
-    /// </summary>
-    public class CommentStoreWithKeywords : CommentStore
+    public override void ReadComments(params string[] directoriesToLookInForComments)
     {
-        public override void ReadComments(params string[] directoriesToLookInForComments)
+        base.ReadComments(directoriesToLookInForComments);
+
+        var keywords = new FileInfo("./Curation/KeywordHelp.txt");
+
+        if (keywords.Exists)
+            AddToHelp(File.ReadAllText(keywords.FullName));
+    }
+
+    private void AddToHelp(string keywordHelpFileContents)
+    {
+        var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (var line in lines)
         {
-            base.ReadComments(directoriesToLookInForComments);
-            
-            FileInfo keywords = new FileInfo("./Curation/KeywordHelp.txt");
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
 
-            if(keywords.Exists)
-                AddToHelp(File.ReadAllText(keywords.FullName));
-        }
+            var split = line.Split(':');
 
-        private void AddToHelp(string keywordHelpFileContents)
-        {
-            var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            if (split.Length != 2)
+                throw new Exception(
+                    $"Malformed line in Resources.KeywordHelp, line is:{Environment.NewLine}{line}{Environment.NewLine}We expected it to have exactly one colon in it");
 
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var split = line.Split(':');
-
-                if (split.Length != 2)
-                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
-
-                if (!ContainsKey(split[0]))
-                    Add(split[0], split[1]);
-            }
+            if (!ContainsKey(split[0]))
+                Add(split[0], split[1]);
         }
     }
 }

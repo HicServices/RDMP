@@ -4,33 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ProjectUI;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class ExtractionConfigurationMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExtractionConfigurationMenu:RDMPContextMenuStrip
+    public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
+        : base(args, extractionConfiguration)
     {
-        public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
-            : base( args,extractionConfiguration)
-        {
-            Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
+        Items.Add("Edit", null,
+            (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
 
-            Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f}.SetTarget(extractionConfiguration));
-            Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
+        Add(new ExecuteCommandRelease(_activator) { Weight = -99.5f }.SetTarget(extractionConfiguration));
+        Add(new ExecuteCommandRefreshExtractionConfigurationsCohort(_activator, extractionConfiguration));
 
-            Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
+        Add(new ExecuteCommandOpenExtractionDirectory(_activator, extractionConfiguration));
 
-            ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
-        }
-
+        ReBrandActivateAs("Configure/Run Extract...", RDMPConcept.ExtractionConfiguration, OverlayKind.Execute);
     }
 }

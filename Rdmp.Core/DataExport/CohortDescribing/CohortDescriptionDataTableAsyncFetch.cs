@@ -8,54 +8,45 @@ using System;
 using System.Data;
 using System.Threading.Tasks;
 using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataExport.CohortDescribing
+namespace Rdmp.Core.DataExport.CohortDescribing;
+
+/// <summary>
+/// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)
+/// </summary>
+public class CohortDescriptionDataTableAsyncFetch
 {
-    /// <summary>
-    /// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)
-    /// </summary>
-    public class CohortDescriptionDataTableAsyncFetch
+    public ExternalCohortTable Source { get; private set; }
+    public DataTable DataTable { get; private set; }
+    public Task Task { get; private set; }
+
+
+    public event Action Finished;
+
+    public CohortDescriptionDataTableAsyncFetch(ExternalCohortTable source)
     {
-        public ExternalCohortTable Source { get; private set; }
-        public DataTable DataTable { get; private set; }
-        public Task Task { get; private set; }
+        Source = source;
+        DataTable = new DataTable();
+        DataTable.BeginLoadData();
+    }
 
 
-        public event Action Finished;
-
-        public CohortDescriptionDataTableAsyncFetch(ExternalCohortTable source)
+    public void Begin()
+    {
+        Task = new Task(() =>
         {
-            Source = source;
-            DataTable = new DataTable();
-        }
+            var server = DataAccessPortal.ExpectDatabase(Source, DataAccessContext.DataExport).Server;
+            using var con = server.GetConnection();
+            con.Open();
+            using var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con);
+            cmd.CommandTimeout = 120; //give it up to 2 minutes
+            server.GetDataAdapter(cmd).Fill(DataTable);
+            DataTable.EndLoadData();
+        });
 
+        Task.ContinueWith(s => { Finished?.Invoke(); });
 
-        public void Begin()
-        {
-            Task = new Task(() =>
-            {
-                var server = DataAccessPortal.GetInstance().ExpectDatabase(Source, DataAccessContext.DataExport).Server;
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
-                    using(var cmd = server.GetCommand(Source.GetCountsDataTableSql(), con))
-                    {
-                        cmd.CommandTimeout = 120; //give it up to 2 minutes
-                        server.GetDataAdapter(cmd).Fill(DataTable);
-                    }   
-                }
-                
-            });
-
-            Task.ContinueWith(s =>
-            {
-                if (Finished != null)
-                    Finished();
-            });
-
-            Task.Start();
-        }
-
+        Task.Start();
     }
 }

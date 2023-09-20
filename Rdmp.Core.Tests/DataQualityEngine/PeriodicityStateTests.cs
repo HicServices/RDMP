@@ -10,40 +10,37 @@ using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataQualityEngine
+namespace Rdmp.Core.Tests.DataQualityEngine;
+
+internal class PeriodicityStateTests : DatabaseTests
 {
-    class PeriodicityStateTests : DatabaseTests
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestGetPeriodicityForDataTableForEvaluation_EmptyEvaluation(bool pivot)
     {
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestGetPeriodicityForDataTableForEvaluation_EmptyEvaluation(bool pivot)
-        {
-            var cata = new Catalogue(CatalogueRepository, "MyCata");
+        var cata = new Catalogue(CatalogueRepository, "MyCata");
 
-            var dqeRepo = new DQERepository(CatalogueRepository);
+        var dqeRepo = new DQERepository(CatalogueRepository);
 
-            var eval = new Evaluation(dqeRepo, cata);
+        var eval = new Evaluation(dqeRepo, cata);
 
-            var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(eval, "ALL", pivot);
+        var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(eval, "ALL", pivot);
 
-            Assert.IsNull(dt);
-        }
+        Assert.IsNull(dt);
+    }
 
-        [Test]
-        public void GetPeriodicityCountsForEvaluation_EmptyEvaluation()
-        {
-            var cata = new Catalogue(CatalogueRepository, "MyCata");
+    [Test]
+    public void GetPeriodicityCountsForEvaluation_EmptyEvaluation()
+    {
+        var cata = new Catalogue(CatalogueRepository, "MyCata");
 
-            var dqeRepo = new DQERepository(CatalogueRepository);
+        var dqeRepo = new DQERepository(CatalogueRepository);
 
-            var eval = new Evaluation(dqeRepo, cata);
+        var eval = new Evaluation(dqeRepo, cata);
 
-            var dict = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
+        var dict = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
 
-            Assert.IsNotNull(dict);
-            Assert.IsEmpty(dict);
-
-        }
-
+        Assert.IsNotNull(dict);
+        Assert.IsEmpty(dict);
     }
 }

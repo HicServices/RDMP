@@ -9,48 +9,48 @@ using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+/// <summary>
+/// Describes a single <see cref="ParameterInfo"/> or <see cref="PropertyInfo"/> required by a <see cref="CommandInvoker"/>
+/// </summary>
+public class RequiredArgument
 {
-    /// <summary>
-    /// Describes a single <see cref="ParameterInfo"/> or <see cref="PropertyInfo"/> required by a <see cref="CommandInvoker"/>
-    /// </summary>
-    public class RequiredArgument
+    public string Name { get; }
+    public Type Type { get; }
+    public object ReflectionObject { get; }
+    public bool HasDefaultValue { get; }
+    public object DefaultValue { get; }
+
+    public DemandsInitializationAttribute DemandIfAny { get; private set; }
+
+    public RequiredArgument(PropertyInfo propertyInfo)
     {
-        public string Name { get; }
-        public Type Type { get; }
-        public object ReflectionObject { get; }
-        public bool HasDefaultValue { get;}
-        public object DefaultValue { get; }
+        Name = propertyInfo.Name;
+        Type = propertyInfo.PropertyType;
+        ReflectionObject = propertyInfo;
+        HasDefaultValue = false;
+        DefaultValue = null;
+        DemandIfAny = propertyInfo.GetCustomAttribute<DemandsInitializationAttribute>();
+    }
 
-        public DemandsInitializationAttribute DemandIfAny { get; private set; }
+    public RequiredArgument(ParameterInfo parameterInfo)
+    {
+        Name = parameterInfo.Name;
+        Type = parameterInfo.ParameterType;
+        ReflectionObject = parameterInfo;
+        HasDefaultValue = parameterInfo.HasDefaultValue;
+        DefaultValue = parameterInfo.DefaultValue;
+        DemandIfAny = parameterInfo.GetCustomAttribute<DemandsInitializationAttribute>();
+    }
 
-        public RequiredArgument(PropertyInfo propertyInfo)
-        {
-            Name = propertyInfo.Name;
-            Type = propertyInfo.PropertyType;
-            ReflectionObject = propertyInfo;
-            HasDefaultValue = false;
-            DefaultValue = null;
-            DemandIfAny = propertyInfo.GetCustomAttribute<DemandsInitializationAttribute>();
-        }
-
-        public RequiredArgument(ParameterInfo parameterInfo)
-        {
-            Name = parameterInfo.Name;
-            Type = parameterInfo.ParameterType;
-            ReflectionObject = parameterInfo;
-            HasDefaultValue = parameterInfo.HasDefaultValue;
-            DefaultValue = parameterInfo.DefaultValue;
-            DemandIfAny = parameterInfo.GetCustomAttribute<DemandsInitializationAttribute>();
-        }
-        public RequiredArgument(IArgument a)
-        {
-            Name = a.Name;
-            Type = a.GetSystemType();
-            ReflectionObject = a;
-            HasDefaultValue = true;
-            DefaultValue = a.GetValueAsSystemType();
-            DemandIfAny = null;
-        }
+    public RequiredArgument(IArgument a)
+    {
+        Name = a.Name;
+        Type = a.GetSystemType();
+        ReflectionObject = a;
+        HasDefaultValue = true;
+        DefaultValue = a.GetValueAsSystemType();
+        DemandIfAny = null;
     }
 }

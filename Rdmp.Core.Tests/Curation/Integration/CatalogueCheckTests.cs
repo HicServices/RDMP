@@ -9,61 +9,60 @@ using System.Data;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class CatalogueCheckTests : DatabaseTests
 {
-    public class CatalogueCheckTests:DatabaseTests
+    [Test]
+    public void CatalogueCheck_DodgyName()
     {
-        [Test]
-        public void CatalogueCheck_DodgyName()
+        var cata = new Catalogue(CatalogueRepository, "fish")
         {
-            var cata = new Catalogue(CatalogueRepository, "fish");
-            
             //name broken
-            cata.Name = @"c:\bob.txt#";
-            var ex = Assert.Throws<Exception>(()=>cata.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
+            Name = @"c:\bob.txt#"
+        };
 
-            cata.DeleteInDatabase();
-        }
+        var ex = Assert.Throws<Exception>(() => cata.Check(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        public void CatalogueCheck_FetchData(DatabaseType databaseType)
-        {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Name");
-            dt.Rows.Add("Frank");
-            dt.Rows.Add("Peter");
+        cata.DeleteInDatabase();
+    }
 
-            var database = GetCleanedServer(databaseType);
-            var tbl = database.CreateTable("CatalogueCheck_CanReadText",dt);
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    public void CatalogueCheck_FetchData(DatabaseType databaseType)
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("Name");
+        dt.Rows.Add("Frank");
+        dt.Rows.Add("Peter");
 
-            var cata = Import(tbl);
+        var database = GetCleanedServer(databaseType);
+        var tbl = database.CreateTable("CatalogueCheck_CanReadText", dt);
 
-            //shouldn't be any errors
-            var tomemory = new ToMemoryCheckNotifier();
-            cata.Check(tomemory);
-            Assert.AreEqual(CheckResult.Success,tomemory.GetWorst());
+        var cata = Import(tbl);
 
-            //delete all the records in the table
-            tbl.Truncate();
-            cata.Check(tomemory);
+        //shouldn't be any errors
+        var tomemory = new ToMemoryCheckNotifier();
+        cata.Check(tomemory);
+        Assert.AreEqual(CheckResult.Success, tomemory.GetWorst());
 
-            //now it should warn us that it is empty 
-            Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
+        //delete all the records in the table
+        tbl.Truncate();
+        cata.Check(tomemory);
 
-            tbl.Drop();
+        //now it should warn us that it is empty
+        Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
 
-
-            cata.Check(tomemory);
-
-            //now it should fail checks
-            Assert.AreEqual(CheckResult.Fail, tomemory.GetWorst());
+        tbl.Drop();
 
 
-        }
+        cata.Check(tomemory);
+
+        //now it should fail checks
+        Assert.AreEqual(CheckResult.Fail, tomemory.GetWorst());
     }
 }

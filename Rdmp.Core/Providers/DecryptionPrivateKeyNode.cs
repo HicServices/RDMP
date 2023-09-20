@@ -6,18 +6,17 @@
 
 using Rdmp.Core.Providers.Nodes;
 
-namespace Rdmp.Core.Providers
-{
-    /// <summary>
-    /// Tree node for showing the single Private Key location in TableInfoCollectionUI (See PasswordEncryptionKeyLocationUI)
-    /// </summary>
-    public class DecryptionPrivateKeyNode:SingletonNode
-    {
-        public bool KeyNotSpecified { get; private set; }
+namespace Rdmp.Core.Providers;
 
-        public DecryptionPrivateKeyNode(bool keyNotSpecified) : base("Decryption Certificate")
-        {
-            KeyNotSpecified = keyNotSpecified;
-        }
+/// <summary>
+/// Tree node for showing the single Private Key location in TableInfoCollectionUI (See PasswordEncryptionKeyLocationUI)
+/// </summary>
+public class DecryptionPrivateKeyNode : SingletonNode
+{
+    public bool KeyNotSpecified { get; private set; }
+
+    public DecryptionPrivateKeyNode(bool keyNotSpecified) : base("Decryption Certificate")
+    {
+        KeyNotSpecified = keyNotSpecified;
     }
 }

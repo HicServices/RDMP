@@ -4,57 +4,49 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Plugin = Rdmp.Core.Curation.Data.Plugin;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExportPlugins : BasicCommandExecution
 {
-    public class ExecuteCommandExportPlugins : BasicCommandExecution
+    private DirectoryInfo _outDir;
+    private Curation.Data.Plugin[] _plugins;
+
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator) : this(activator, null)
     {
-        private DirectoryInfo _outDir;
-        private Curation.Data.Plugin[] _plugins;
+    }
 
-        public ExecuteCommandExportPlugins(IBasicActivateItems activator): this(activator,null)
-        {
-            
-        }
-        
-        [UseWithObjectConstructor]
-        public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory):base(activator)
-        {
-            _outDir = outputDirectory;
-            _plugins = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
+    [UseWithObjectConstructor]
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory) : base(activator)
+    {
+        _outDir = outputDirectory;
+        _plugins = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
 
-            if(!_plugins.Any())
-                SetImpossible("There are no compatible plugins (for the version of RDMP you are running)");
-
-        }
+        if (!_plugins.Any())
+            SetImpossible("There are no compatible plugins (for the version of RDMP you are running)");
+    }
 
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Shortcut);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Shortcut);
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if (_outDir == null)
-                _outDir = BasicActivator.SelectDirectory("Output directory");
+        _outDir ??= BasicActivator.SelectDirectory("Output directory");
 
-            if (_outDir == null)
-                return;
+        if (_outDir == null)
+            return;
 
-            foreach (Curation.Data.Plugin p in _plugins)
-                p.LoadModuleAssemblies.FirstOrDefault()?.DownloadAssembly(_outDir);
-        }
+        foreach (var p in _plugins)
+            p.LoadModuleAssemblies.FirstOrDefault()?.DownloadAssembly(_outDir);
     }
 }

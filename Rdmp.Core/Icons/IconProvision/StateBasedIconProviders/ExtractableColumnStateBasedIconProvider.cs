@@ -5,62 +5,54 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public sealed class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ExtractableColumnStateBasedIconProvider : IObjectStateBasedIconProvider
+    private static readonly Image<Rgba32> BasicImage = Image.Load<Rgba32>(CatalogueIcons.ExtractableColumn);
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        private readonly Image<Rgba32> _basicImage;
-        private readonly IconOverlayProvider _overlayProvider;
+        if (o is not ExtractableColumn col)
+            return null;
 
-        public ExtractableColumnStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _basicImage = Image.Load<Rgba32>(CatalogueIcons.ExtractableColumn);
-            _overlayProvider = overlayProvider;
-        }
+        var toReturn = BasicImage;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not ExtractableColumn col)
-                return null;
+        //if the current state is to hash add the overlay
+        if (col.HashOnDataRelease)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
 
-            var toReturn = _basicImage;
-            
-            //if the current state is to hash add the overlay
-            if (col.HashOnDataRelease) 
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+        if (col.CatalogueExtractionInformation?.IsPrimaryKey ?? false)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+        if (col.CatalogueExtractionInformation?.IsExtractionIdentifier ?? false)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
 
-            if (col.CatalogueExtractionInformation?.IsPrimaryKey ?? false)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
-            if (col.CatalogueExtractionInformation?.IsExtractionIdentifier ?? false)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+        var ei = col.CatalogueExtractionInformation;
 
-            var ei = col.CatalogueExtractionInformation;
-
-            //its parent ExtractionInformation still exists then we can determine its category
-            if (ei == null) return toReturn;
-
-            return ei.ExtractionCategory switch
+        //its parent ExtractionInformation still exists then we can determine its category
+        return ei == null
+            ? toReturn
+            : ei.ExtractionCategory switch
             {
                 ExtractionCategory.ProjectSpecific =>
-                    _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
-                ExtractionCategory.Core => _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
-                ExtractionCategory.Supplemental => _overlayProvider.GetOverlay(toReturn,
+                    IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
+                ExtractionCategory.Core => IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable),
+                ExtractionCategory.Supplemental => IconOverlayProvider.GetOverlay(toReturn,
                     OverlayKind.Extractable_Supplemental),
-                ExtractionCategory.SpecialApprovalRequired => _overlayProvider.GetOverlay(toReturn,
+                ExtractionCategory.SpecialApprovalRequired => IconOverlayProvider.GetOverlay(toReturn,
                     OverlayKind.Extractable_SpecialApproval),
-                ExtractionCategory.Internal => _overlayProvider.GetOverlay(toReturn,
+                ExtractionCategory.Internal => IconOverlayProvider.GetOverlay(toReturn,
                     OverlayKind.Extractable_Internal),
-                ExtractionCategory.Deprecated => _overlayProvider.GetOverlay(
-                    _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable), OverlayKind.Deprecated),
-                _ => throw new ArgumentOutOfRangeException()
+                ExtractionCategory.Deprecated => IconOverlayProvider.GetOverlay(
+                    IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable), OverlayKind.Deprecated),
+                _ => throw new ArgumentOutOfRangeException(nameof(o))
             };
-        }
     }
 }

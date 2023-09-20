@@ -7,36 +7,34 @@
 using System.Linq;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandClearFavourites : BasicUICommandExecution
 {
-    public class ExecuteCommandClearFavourites : BasicUICommandExecution
+    public ExecuteCommandClearFavourites(IActivateItems activator) : base(activator)
     {
-        public ExecuteCommandClearFavourites(IActivateItems activator) : base(activator)
-        {
-            if(!Activator.FavouritesProvider.CurrentFavourites.Any())
-                SetImpossible("You do not have any Favourites");
-        }
+        if (!Activator.FavouritesProvider.CurrentFavourites.Any())
+            SetImpossible("You do not have any Favourites");
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if (YesNo($"Delete '{Activator.FavouritesProvider.CurrentFavourites.Count}' Favourites",
+        if (YesNo($"Delete '{Activator.FavouritesProvider.CurrentFavourites.Count}' Favourites",
                 "Clear Favourites"))
-            {
-                var first = Activator.FavouritesProvider.CurrentFavourites.First();
+        {
+            var first = Activator.FavouritesProvider.CurrentFavourites.First();
 
-                foreach (var f in Activator.FavouritesProvider.CurrentFavourites) 
-                    f.DeleteInDatabase();
-                
-                //now that we have deleted them it is definitely not possible anymore
-                SetImpossible("You do not have any Favourites");
+            foreach (var f in Activator.FavouritesProvider.CurrentFavourites)
+                f.DeleteInDatabase();
 
-                Activator.FavouritesProvider.CurrentFavourites.Clear();
+            //now that we have deleted them it is definitely not possible anymore
+            SetImpossible("You do not have any Favourites");
 
-                Publish(first);
-                
-            }
+            Activator.FavouritesProvider.CurrentFavourites.Clear();
+
+            Publish(first);
         }
     }
 }

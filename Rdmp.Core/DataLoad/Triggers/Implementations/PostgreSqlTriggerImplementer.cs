@@ -5,180 +5,154 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
-using FAnsi;
 using FAnsi.Discovery;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Exceptions;
-using ReusableLibraryCode.Settings;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.DataLoad.Triggers.Implementations
+namespace Rdmp.Core.DataLoad.Triggers.Implementations;
+
+/// <summary>
+/// Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
+/// </summary>
+public class PostgreSqlTriggerImplementer : TriggerImplementer
 {
-    /// <summary>
-    /// Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
-    /// </summary>
-    public class PostgreSqlTriggerImplementer : TriggerImplementer
+    private string _triggerRuntimeName;
+    private string _procedureNameFullyQualified;
+    private string _procedureRuntimeName;
+
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
+        createDataLoadRunIDAlso)
     {
-        private string _schema;
-        private string _triggerRuntimeName;
-        private string _procedureNameFullyQualified;
-        private string _procedureRuntimeName;
+        var schema = string.IsNullOrWhiteSpace(_table.Schema)
+            ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny()
+            : _table.Schema;
+        _triggerRuntimeName = $"{_table.GetRuntimeName()}_OnUpdate";
 
-        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-        public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso):base(table,createDataLoadRunIDAlso)
+        _procedureRuntimeName = $"{_table.GetRuntimeName()}_OnUpdateProc";
+        _procedureNameFullyQualified = $"{schema}.\"{_procedureRuntimeName}\"";
+    }
+
+    public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
+    {
+        problemsDroppingTrigger = "";
+        thingsThatWorkedDroppingTrigger = "";
+
+        try
         {
-            _schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
-            _triggerRuntimeName = _table.GetRuntimeName() + "_OnUpdate";
-            
-            _procedureRuntimeName = _table.GetRuntimeName() + "_OnUpdateProc";
-            _procedureNameFullyQualified = _schema + ".\"" + _procedureRuntimeName + "\"";
-        }
+            using var con = _server.GetConnection();
+            con.Open();
 
-        public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
-        {
-            problemsDroppingTrigger = "";
-            thingsThatWorkedDroppingTrigger = "";
-
-            try
+            using (var cmd = _server.GetCommand(
+                       $"DROP TRIGGER IF EXISTS \"{_triggerRuntimeName}\" ON {_table.GetFullyQualifiedName()}", con))
             {
-                using (var con = _server.GetConnection())
-                {
-                    con.Open();
-
-                    using(var cmd = _server.GetCommand("DROP TRIGGER IF EXISTS \"" + _triggerRuntimeName + "\" ON " + _table.GetFullyQualifiedName(), con))
-                    {
-                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    using(var cmd = _server.GetCommand("DROP FUNCTION IF EXISTS  " + _procedureNameFullyQualified, con))
-                    {
-                        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                        cmd.ExecuteNonQuery();
-                    }
-
-                    thingsThatWorkedDroppingTrigger = "Droppped trigger " + _triggerRuntimeName;
-                }
-            }
-            catch (Exception exception)
-            {
-                //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-                problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
-            }
-        }
-
-        public override string CreateTrigger(ICheckNotifier notifier)
-        {
-            string creationSql = base.CreateTrigger(notifier);
-
-            CreateProcedure(notifier);
-            
-            var sql = string.Format(@"CREATE TRIGGER ""{0}"" BEFORE UPDATE ON {1} FOR EACH ROW
-EXECUTE PROCEDURE {2}();", 
-                _triggerRuntimeName,
-                _table.GetFullyQualifiedName(),
-                _procedureNameFullyQualified);
-
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                using(var cmd = _server.GetCommand(sql, con))
-                {
-                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.ExecuteNonQuery();
-                }
-                    
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmd.ExecuteNonQuery();
             }
 
-            return creationSql;
-        }
-
-        private void CreateProcedure(ICheckNotifier notifier)
-        {
-            var sql = string.Format(@"CREATE OR REPLACE FUNCTION {0}()
-  RETURNS trigger AS
-$$
-{1}
-$$
-LANGUAGE 'plpgsql';"
-                ,_procedureNameFullyQualified
-                , CreateTriggerBody()
-                );
-
-            using (var con = _server.GetConnection())
+            using (var cmd = _server.GetCommand($"DROP FUNCTION IF EXISTS  {_procedureNameFullyQualified}", con))
             {
-                con.Open();
-
-                using(var cmd = _server.GetCommand(sql, con))
-                {
-                    cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
-                    cmd.ExecuteNonQuery();
-                }
-                    
+                cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+                cmd.ExecuteNonQuery();
             }
+
+            thingsThatWorkedDroppingTrigger = $"Dropped trigger {_triggerRuntimeName}";
         }
-
-        protected string GetTriggerBody()
+        catch (Exception exception)
         {
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                using(var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con))
-                    using (var r = cmd.ExecuteReader())
-                        return r.Read() ? r["prosrc"] as string:null;
-            }
-        }
-
-        public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
-        {
-            base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
-
-            var sqlThen = GetTriggerBody();
-            var sqlNow = CreateTriggerBody();
-
-            if(sqlThen != null)
-                sqlThen = Regex.Replace(sqlThen,@"\s+", " ").Trim();
-
-            if(sqlNow != null)
-                sqlNow = Regex.Replace(sqlNow,@"\s+", " ").Trim();
-
-            AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
-
-            return true;
-        }
-
-        private void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
-        {
-            if(!sqlNow.Equals(sqlThen))
-                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
-        }
-
-        private string CreateTriggerBody()
-        {
-            var syntax = _table.GetQuerySyntaxHelper();
-
-            return
-                string.Format(@"BEGIN
-            INSERT INTO {0}({1},""hic_validTo"",""hic_userID"",hic_status)
-            VALUES({2},now(),current_user,'U');
-
-            NEW.{3} := NOW();
- 
-            RETURN NEW;
-            END;",
-                    _archiveTable.GetFullyQualifiedName()                                                                          
-                    , string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),         
-                    string.Join(",", _columns.Select(c => "OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))),
-                    syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
-
-        }
-
-        public override TriggerStatus GetTriggerStatus()
-        {
-            return string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
+            //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
+            problemsDroppingTrigger += $"Failed to drop Trigger:{exception.Message}{Environment.NewLine}";
         }
     }
+
+    public override string CreateTrigger(ICheckNotifier notifier)
+    {
+        var creationSql = base.CreateTrigger(notifier);
+        using var con = _server.GetConnection();
+        con.Open();
+
+        CreateProcedure(con);
+
+        var sql =
+            $@"CREATE TRIGGER ""{_triggerRuntimeName}"" BEFORE UPDATE ON {_table.GetFullyQualifiedName()} FOR EACH ROW
+EXECUTE PROCEDURE {_procedureNameFullyQualified}();";
+
+        using var cmd = _server.GetCommand(sql, con);
+        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+        cmd.ExecuteNonQuery();
+
+        return creationSql;
+    }
+
+    private void CreateProcedure(DbConnection con)
+    {
+        var sql = $@"CREATE OR REPLACE FUNCTION {_procedureNameFullyQualified}()
+  RETURNS trigger AS
+$$
+{CreateTriggerBody()}
+$$
+LANGUAGE 'plpgsql';";
+
+        using var cmd = _server.GetCommand(sql, con);
+        cmd.CommandTimeout = UserSettings.ArchiveTriggerTimeout;
+        cmd.ExecuteNonQuery();
+    }
+
+    protected string GetTriggerBody()
+    {
+        using var con = _server.GetConnection();
+        con.Open();
+
+        using var cmd =
+            _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con);
+        using var r = cmd.ExecuteReader();
+        return r.Read() ? r["prosrc"] as string : null;
+    }
+
+    public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
+    {
+        base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
+
+        var sqlThen = GetTriggerBody();
+        var sqlNow = CreateTriggerBody();
+
+        if (sqlThen != null)
+            sqlThen = Regex.Replace(sqlThen, @"\s+", " ").Trim();
+
+        if (sqlNow != null)
+            sqlNow = Regex.Replace(sqlNow, @"\s+", " ").Trim();
+
+        AssertTriggerBodiesAreEqual(sqlThen, sqlNow);
+
+        return true;
+    }
+
+    private static void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
+    {
+        if (!sqlNow.Equals(sqlThen))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql", sqlNow,
+                sqlThen);
+    }
+
+    private string CreateTriggerBody()
+    {
+        var syntax = _table.GetQuerySyntaxHelper();
+
+        return
+            $@"BEGIN
+            INSERT INTO {_archiveTable.GetFullyQualifiedName()}({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},""hic_validTo"",""hic_userID"",hic_status)
+            VALUES({string.Join(",", _columns.Select(c => $"OLD.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},now(),current_user,'U');
+
+            NEW.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := NOW();
+ 
+            RETURN NEW;
+            END;";
+    }
+
+    public override TriggerStatus GetTriggerStatus() =>
+        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
 }

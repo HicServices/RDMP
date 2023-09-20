@@ -6,46 +6,45 @@
 
 using System;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.UI.Refreshing;
 
-namespace Rdmp.UI.ExtractionUIs.FilterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs;
+
+/// <summary>
+/// Builds a query to fetch data that matches a given <see cref="IFilter"/>
+/// </summary>
+public class FilterGraphObjectCollection : PersistableObjectCollection
 {
-    /// <summary>
-    /// Builds a query to fetch data that matches a given <see cref="IFilter"/>
-    /// </summary>
-    public class FilterGraphObjectCollection : PersistableObjectCollection
+    public FilterGraphObjectCollection()
     {
-        public FilterGraphObjectCollection()
-        {
-        }
+    }
 
-        public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter):this()
-        {
-            if (graph.IsCohortIdentificationAggregate)
-                throw new ArgumentException("Graph '" + graph + "' is a Cohort Identification Aggregate, this is not allowed.  Aggregat must be a graph aggregate");
-            DatabaseObjects.Add(graph);
-            DatabaseObjects.Add(filter);
-        }
+    public FilterGraphObjectCollection(AggregateConfiguration graph, ConcreteFilter filter) : this()
+    {
+        if (graph.IsCohortIdentificationAggregate)
+            throw new ArgumentException(
+                $"Graph '{graph}' is a Cohort Identification Aggregate, this is not allowed.  Aggregate must be a graph aggregate");
+        DatabaseObjects.Add(graph);
+        DatabaseObjects.Add(filter);
+    }
 
-        public AggregateConfiguration GetGraph()
-        {
-            return (AggregateConfiguration) DatabaseObjects.Single(o => o is AggregateConfiguration);
-        }
-        public IFilter GetFilter()
-        {
-            return (IFilter)DatabaseObjects.Single(o => o is IFilter);
-        }
+    public AggregateConfiguration GetGraph()
+    {
+        return (AggregateConfiguration)DatabaseObjects.Single(o => o is AggregateConfiguration);
+    }
 
-        public void HandleRefreshObject(RefreshObjectEventArgs e)
-        {
-            foreach (IMapsDirectlyToDatabaseTable o in DatabaseObjects)
-                if (o.Equals(e.Object))
-                    ((IRevertable) o).RevertToDatabaseState();
-        }
+    public IFilter GetFilter()
+    {
+        return (IFilter)DatabaseObjects.Single(o => o is IFilter);
+    }
+
+    public void HandleRefreshObject(RefreshObjectEventArgs e)
+    {
+        foreach (var o in DatabaseObjects.Where(o => o.Equals(e.Object)))
+            ((IRevertable)o).RevertToDatabaseState();
     }
 }

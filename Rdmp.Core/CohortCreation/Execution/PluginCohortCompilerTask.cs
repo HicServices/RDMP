@@ -5,29 +5,23 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Aggregation;
-using ReusableLibraryCode.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation.Execution
+namespace Rdmp.Core.CohortCreation.Execution;
+
+internal class PluginCohortCompilerTask : AggregationTask
 {
-    class PluginCohortCompilerTask : AggregationTask
+    public IPluginCohortCompiler PluginCompiler { get; }
+
+    public PluginCohortCompilerTask(AggregateConfiguration ac, CohortCompiler mainCompiler,
+        IPluginCohortCompiler pluginCompiler) : base(ac, mainCompiler)
     {
-        public IPluginCohortCompiler PluginCompiler { get; }
+        PluginCompiler = pluginCompiler;
+    }
 
-        public PluginCohortCompilerTask(AggregateConfiguration ac,CohortCompiler mainCompiler, IPluginCohortCompiler pluginCompiler):base(ac,mainCompiler)
-        {
-            PluginCompiler = pluginCompiler;
-        }
-
-        public override IDataAccessPoint[] GetDataAccessPoints()
-        {
-            // for this task always go direct to the query cache
-            return new[] { Aggregate.GetCohortIdentificationConfigurationIfAny().QueryCachingServer };
-        }
-
+    public override IDataAccessPoint[] GetDataAccessPoints()
+    {
+        // for this task always go direct to the query cache
+        return new[] { Aggregate.GetCohortIdentificationConfigurationIfAny().QueryCachingServer };
     }
 }

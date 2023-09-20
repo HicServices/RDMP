@@ -4,38 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandCreateNewDashboard : BasicUICommandExecution, IAtomicCommand
+    public ExecuteCommandCreateNewDashboard(IActivateItems activator) : base(activator)
     {
-        public ExecuteCommandCreateNewDashboard(IActivateItems activator) : base(activator)
-        {
+    }
 
-        }
-        
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Add);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.DashboardLayout, OverlayKind.Add);
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if(TypeText("Dashboard Name","Name",out string name))
-            {
-                var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueRepository, name);
-                Publish(l);
-                Emphasise(l);
-            }
+        if (TypeText("Dashboard Name", "Name", out var name))
+        {
+            var l = new DashboardLayout(Activator.RepositoryLocator.CatalogueRepository, name);
+            Publish(l);
+            Emphasise(l);
         }
     }
 }

@@ -9,28 +9,29 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.Pipelines;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandEditPipelineWithUseCase : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandEditPipelineWithUseCase : BasicUICommandExecution,IAtomicCommand
+    private readonly Pipeline _pipeline;
+    private readonly PipelineUseCase _useCase;
+
+    public ExecuteCommandEditPipelineWithUseCase(IActivateItems itemActivator, Pipeline pipeline,
+        PipelineUseCase useCase) : base(itemActivator)
     {
-        private readonly Pipeline _pipeline;
-        private readonly PipelineUseCase _useCase;
+        _pipeline = pipeline;
+        _useCase = useCase;
+    }
 
-        public ExecuteCommandEditPipelineWithUseCase(IActivateItems itemActivator,Pipeline pipeline, PipelineUseCase useCase):base(itemActivator)
-        {
-            _pipeline = pipeline;
-            _useCase = useCase;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
+        var dialog = new ConfigurePipelineUI(Activator, _pipeline, _useCase,
+            Activator.RepositoryLocator.CatalogueRepository);
+        dialog.ShowDialog();
 
-            //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
-            var dialog = new ConfigurePipelineUI(Activator,_pipeline, _useCase, Activator.RepositoryLocator.CatalogueRepository);
-            dialog.ShowDialog();
-            
-            Publish(_pipeline);
-        }
+        Publish(_pipeline);
     }
 }

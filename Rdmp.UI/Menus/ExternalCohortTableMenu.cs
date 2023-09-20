@@ -4,28 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
-using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class ExternalCohortTableMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class ExternalCohortTableMenu : RDMPContextMenuStrip
-    {        
-        public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
-        {
-            var projectOnlyNode = args.Masquerader as CohortSourceUsedByProjectNode;
-            if (projectOnlyNode != null)
-                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode) { Weight = -99.9f});
-            else
-                Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable) { Weight = -99.9f });
-        }
+    public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable) : base(args,
+        externalCohortTable)
+    {
+        if (args.Masquerader is CohortSourceUsedByProjectNode projectOnlyNode)
+            Add(new ExecuteCommandShowSummaryOfCohorts(_activator, projectOnlyNode) { Weight = -99.9f });
+        else
+            Add(new ExecuteCommandShowSummaryOfCohorts(_activator, externalCohortTable) { Weight = -99.9f });
     }
 }

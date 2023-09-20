@@ -4,86 +4,82 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Icons.IconProvision;
-using System;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
-using System.Linq;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution
+namespace Rdmp.Core.CommandExecution;
+
+/// <summary>
+/// Split the contents of the OS clipboard by newlines and add the content of each
+/// line as new <see cref="CatalogueItem"/> to the <see cref="Catalogue"/>.  This
+/// lets user copy and paste a SELECT sql query column set to create objects in RDMP.
+/// </summary>
+public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecution
 {
-    /// <summary>
-    /// Split the contents of the OS clipboard by newlines and add the content of each
-    /// line as new <see cref="CatalogueItem"/> to the <see cref="Catalogue"/>.  This
-    /// lets user copy and paste a SELECT sql query column set to create objects in RDMP.
-    /// </summary>
-    public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecution
+    private readonly Catalogue _catalogue;
+    private readonly string _clipboardContents;
+    private readonly Func<string> _clipboardContentGetter;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator,
+        [DemandsInitialization("The Catalogue to add the new CatalogueItems to")]
+        Catalogue catalogue,
+        [DemandsInitialization("The contents of the OS clipboard or null to prompt user with a message box at runtime")]
+        string clipboardContents) : base(activator)
     {
-        private readonly Catalogue _catalogue;
-        private readonly string _clipboardContents;
-        private readonly Func<string> _clipboardContentGetter;
+        _catalogue = catalogue;
+        _clipboardContents = clipboardContents;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator,
+    public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, Catalogue catalogue,
+        Func<string> clipboardContentGetter) : base(activator)
+    {
+        _catalogue = catalogue;
+        _clipboardContentGetter = clipboardContentGetter;
+    }
 
-            [DemandsInitialization("The Catalogue to add the new CatalogueItems to")]
-            Catalogue catalogue,
-            [DemandsInitialization("The contents of the OS clipboard or null to prompt user with a message box at runtime")]
-            string clipboardContents) : base(activator)
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var clipboard = _clipboardContents;
+
+        if (_clipboardContentGetter != null)
         {
-            _catalogue = catalogue;
-            _clipboardContents = clipboardContents;
+            clipboard = _clipboardContentGetter?.Invoke();
         }
-
-        public ExecuteCommandPasteClipboardAsNewCatalogueItems(IBasicActivateItems activator, Catalogue catalogue, Func<string> clipboardContentGetter) : base(activator)
+        else
         {
-            _catalogue = catalogue;
-            _clipboardContentGetter = clipboardContentGetter;
-        }
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
-        }
-        public override void Execute()
-        {
-            base.Execute();
-
-            string clipboard = _clipboardContents;
-
-            if (_clipboardContentGetter != null)
-            {
-                clipboard = _clipboardContentGetter?.Invoke();
-            }
-            else
-            {
-                if (clipboard == null)
-                    if (!BasicActivator.TypeText(new DialogArgs
-                    {
-                        WindowTitle = "Paste Columns",
-
-                    }, int.MaxValue, null, out clipboard, false))
-                    {
-                        // user cancelled search
-                        return;
-                    }
-            }
-
             if (clipboard == null)
-                return;
+                if (!BasicActivator.TypeText(new DialogArgs
+                {
+                    WindowTitle = "Paste Columns"
+                }, int.MaxValue, null, out clipboard, false))
+                    // user cancelled search
+                    return;
+        }
 
-            string[] toImport = UsefulStuff.GetInstance().GetArrayOfColumnNamesFromStringPastedInByUser(clipboard).ToArray();
+        if (clipboard == null)
+            return;
 
-            if (toImport.Any())
-            {
-                foreach (string name in toImport)
-                    new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
+        var toImport = UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser(clipboard).ToArray();
 
-                Publish(_catalogue);
-            }
+        if (toImport.Any())
+        {
+            foreach (var name in toImport)
+                _ = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, name);
+
+            Publish(_catalogue);
         }
     }
 }

@@ -7,21 +7,22 @@
 
 using FAnsi.Discovery;
 
-namespace Rdmp.Core.Logging
-{
-    /// <summary>
-    /// See DataLoadInfo
-    /// </summary>
-    public interface IDataLoadInfo
-    {
-        ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources, int expectedInserts);
-        void LogFatalError(string errorSource, string errorDescription);
-        void LogProgress(DataLoadInfo.ProgressEventType pevent, string Source, string Description);
+namespace Rdmp.Core.Logging;
 
-        void CloseAndMarkComplete();
-        int ID { get; }
-        DiscoveredServer DatabaseSettings { get; }
-        
-        bool IsClosed { get; }
-    }
+/// <summary>
+/// See DataLoadInfo
+/// </summary>
+public interface IDataLoadInfo
+{
+    ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable, DataSource[] sources,
+        int expectedInserts);
+
+    void LogFatalError(string errorSource, string errorDescription);
+    void LogProgress(DataLoadInfo.ProgressEventType pevent, string Source, string description);
+
+    void CloseAndMarkComplete();
+    int ID { get; }
+    DiscoveredServer DatabaseSettings { get; }
+
+    bool IsClosed { get; }
 }

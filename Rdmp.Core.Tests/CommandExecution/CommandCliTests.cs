@@ -7,65 +7,58 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+/// <summary>
+/// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
+/// classes
+/// </summary>
+public abstract class CommandCliTests : UnitTests
 {
-    /// <summary>
-    /// Base class for all tests which test RDMP CLI command line arguments to run <see cref="BasicCommandExecution"/> derrived
-    /// classes
-    /// </summary>
-    public abstract class CommandCliTests : UnitTests
+    protected CommandInvoker GetInvoker()
     {
-        protected override void OneTimeSetUp()
+        var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
-            base.OneTimeSetUp();
+            DisallowInput = true
+        });
+        invoker.CommandImpossible += (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
 
-            SetupMEF();
-        }
+        return invoker;
+    }
 
-        protected CommandInvoker GetInvoker()
+    protected IBasicActivateItems GetMockActivator()
+    {
+        var mock = Substitute.For<IBasicActivateItems>();
+        mock.RepositoryLocator.Returns(RepositoryLocator);
+        mock.GetDelegates().Returns(new List<CommandInvokerDelegate>());
+        return mock;
+    }
+
+    /// <summary>
+    /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
+    /// </summary>
+    /// <param name="command">1 string per piece following rdmp cmd.  Element 0 should be the Type of command to run</param>
+    /// <returns></returns>
+    protected int Run(params string[] command)
+    {
+        var opts = new ExecuteCommandOptions
         {
-            var invoker = new CommandInvoker(new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier())
-            {
-                DisallowInput = true
-            });
-            invoker.CommandImpossible +=(s,c)=> throw new Exception(c.Command.ReasonCommandImpossible);
+            CommandName = command[0],
+            CommandArgs = command.Skip(1).ToArray()
+        };
 
-            return invoker;
-        }
-        
-        protected Mock<IBasicActivateItems> GetMockActivator()
-        {
-            var mock = new Mock<IBasicActivateItems>();
-            mock.Setup(m => m.RepositoryLocator).Returns(RepositoryLocator);
-            mock.Setup(m => m.GetDelegates()).Returns(new List<CommandInvokerDelegate>());
-            mock.Setup(m => m.Show(It.IsAny<string>()));
-            return mock;
-        }
-
-        /// <summary>
-        /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd
-        /// </summary>
-        /// <param name="command">1 string per piece following rdmp cmd.  Element 0 should be the Type of command to run</param>
-        /// <returns></returns>
-        protected int Run(params string[] command)
-        {
-            var opts = new ExecuteCommandOptions();
-            opts.CommandName = command[0];
-            opts.CommandArgs = command.Skip(1).ToArray();
-            
-            var runner = new ExecuteCommandRunner(opts);
-            return runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),
-                new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
-        }
+        var runner = new ExecuteCommandRunner(opts);
+        return runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
     }
 }

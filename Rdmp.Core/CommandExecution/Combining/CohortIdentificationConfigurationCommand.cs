@@ -7,25 +7,21 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
+/// </summary>
+public class CohortIdentificationConfigurationCommand : ICombineToMakeCommand, IHasFolderCombineable
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
-    /// </summary>
-    public class CohortIdentificationConfigurationCommand:ICombineToMakeCommand, IHasFolderCombineable
+    public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+
+    public IHasFolder Folderable => CohortIdentificationConfiguration;
+
+    public CohortIdentificationConfigurationCommand(CohortIdentificationConfiguration cohortIdentificationConfiguration)
     {
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
-
-        public IHasFolder Folderable => CohortIdentificationConfiguration;
-
-        public CohortIdentificationConfigurationCommand(CohortIdentificationConfiguration cohortIdentificationConfiguration)
-        {
-            CohortIdentificationConfiguration = cohortIdentificationConfiguration;
-        }
-
-        public string GetSqlString()
-        {
-            return null;
-        }
+        CohortIdentificationConfiguration = cohortIdentificationConfiguration;
     }
+
+    public string GetSqlString() => null;
 }

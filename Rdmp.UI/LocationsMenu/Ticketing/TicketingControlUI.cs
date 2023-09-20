@@ -9,102 +9,96 @@ using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using Color = System.Drawing.Color;
 
-namespace Rdmp.UI.LocationsMenu.Ticketing
+namespace Rdmp.UI.LocationsMenu.Ticketing;
+
+/// <summary>
+/// This control lets you reference a ticket in your ticketing system (e.g. JIRA, fogbugz etc).  The control has a location for you to record the ticket identifier (e.g. LINK-123).
+/// If you don't yet have a ticketing system configured (and you have a plugin that supports the ticketing system) then you can set up the ticketing system configuration by launching
+/// TicketingSystemConfigurationUI (from Catalogue Manager main menu).
+/// 
+/// <para>Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking 'Show' should take you directly to your ticketing system (e.g. launch a
+/// new browser window at the website page of the ticket).</para>
+/// </summary>
+public partial class TicketingControlUI : RDMPUserControl
 {
-    /// <summary>
-    /// This control lets you reference a ticket in your ticketing system (e.g. JIRA, fogbugz etc).  The control has a location for you to record the ticket identifier (e.g. LINK-123).
-    /// If you don't yet have a ticketing system configured (and you have a plugin that supports the ticketing system) then you can set up the ticketing system configuration by launching
-    /// TicketingSystemConfigurationUI (from Catalogue Manager main menu).
-    /// 
-    /// <para>Assuming your ticketing system plugin is working correctly and correctly configured in RDMP then clicking 'Show' should take you directly to your ticketing system (e.g. launch a
-    /// new browser window at the website page of the ticket).</para>
-    /// </summary>
-    public partial class TicketingControlUI : RDMPUserControl
+    private ITicketingSystem _ticketingSystemConfiguration;
+    public event EventHandler TicketTextChanged;
+    public bool IsValidTicketName { get; private set; }
+
+    public string TicketText
     {
-        private ITicketingSystem _ticketingSystemConfiguration;
-        public event EventHandler TicketTextChanged;
-        public bool IsValidTicketName { get; private set; }
+        get => tbTicket.Text;
+        set => tbTicket.Text = value;
+    }
 
-        public string TicketText
+    public string Title
+    {
+        set => gbTicketing.Text = value;
+    }
+
+    public TicketingControlUI()
+    {
+        InitializeComponent();
+    }
+
+    public override void SetItemActivator(IActivateItems activator)
+    {
+        base.SetItemActivator(activator);
+
+        ReCheckTicketingSystemInCatalogue();
+    }
+
+    public void ReCheckTicketingSystemInCatalogue()
+    {
+        ragSmiley1.SetVisible(false);
+
+        try
         {
-            get { return tbTicket.Text; }
-            set { tbTicket.Text = value; }
+            if (VisualStudioDesignMode)
+                return;
+
+            if (Activator == null)
+                throw new Exception("Activator has not been set, call SetItemActivator");
+
+            var factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
+
+            var configuration = Activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
+            _ticketingSystemConfiguration = factory.CreateIfExists(configuration);
+
+            gbTicketing.Enabled = _ticketingSystemConfiguration != null;
+        }
+        catch (Exception exception)
+        {
+            ragSmiley1.SetVisible(true);
+            ragSmiley1.Fatal(exception);
+        }
+    }
+
+
+    private void tbTicket_TextChanged(object sender, EventArgs e)
+    {
+        if (_ticketingSystemConfiguration != null)
+        {
+            IsValidTicketName = _ticketingSystemConfiguration.IsValidTicketName(tbTicket.Text);
+            tbTicket.ForeColor = IsValidTicketName ? Color.Black : Color.Red;
         }
 
-        public string Title
+        var h = TicketTextChanged;
+        h?.Invoke(sender, e);
+    }
+
+    private void btnShowTicket_Click(object sender, EventArgs e)
+    {
+        try
         {
-            set
-            {
-                gbTicketing.Text = value;
-            }
+            if (!string.IsNullOrWhiteSpace(tbTicket.Text) && IsValidTicketName)
+                _ticketingSystemConfiguration.NavigateToTicket(tbTicket.Text);
         }
-
-        public TicketingControlUI()
+        catch (Exception exception)
         {
-            InitializeComponent();
-        }
-
-        public override void SetItemActivator(IActivateItems activator)
-        {
-            base.SetItemActivator(activator);
-
-            ReCheckTicketingSystemInCatalogue();
-        }
-
-        public void ReCheckTicketingSystemInCatalogue()
-        {
-            ragSmiley1.SetVisible(false);
-            
-            try
-            {
-                if (VisualStudioDesignMode)
-                    return;
-
-                if (Activator == null)
-                    throw new Exception("Activator has not been set, call SetItemActivator");
-
-                TicketingSystemFactory factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
-
-                var configuration = Activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
-                _ticketingSystemConfiguration = factory.CreateIfExists(configuration);
-
-                gbTicketing.Enabled = _ticketingSystemConfiguration != null;
-            }
-            catch (Exception exception)
-            {
-                ragSmiley1.SetVisible(true);
-                ragSmiley1.Fatal(exception);
-            }
-        }
-
-
-        private void tbTicket_TextChanged(object sender, EventArgs e)
-        {
-            if (_ticketingSystemConfiguration != null)
-            {
-                IsValidTicketName = _ticketingSystemConfiguration.IsValidTicketName(tbTicket.Text);
-                tbTicket.ForeColor = IsValidTicketName ? Color.Black : Color.Red;
-            }
-
-            var h = TicketTextChanged;
-            if(h != null)
-                h(sender, e);
-        }
-
-        private void btnShowTicket_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                if (!string.IsNullOrWhiteSpace(tbTicket.Text) && IsValidTicketName)
-                    _ticketingSystemConfiguration.NavigateToTicket(tbTicket.Text);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
+            ExceptionViewer.Show(exception);
         }
     }
 }

@@ -8,19 +8,20 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 
-namespace Rdmp.UI.Tests.DataLoadUIs.ANOUIs.ANOTableManagement
+namespace Rdmp.UI.Tests.DataLoadUIs.ANOUIs.ANOTableManagement;
+
+public class ColumnInfoToANOTableConverterUITests : UITests
 {
-    public class ColumnInfoToANOTableConverterUITests :UITests
+    [Test]
+    [UITimeout(20000)]
+    public void Test_ColumnInfoToANOTableConverterUI_Constructor()
     {
-        [Test,UITimeout(20000)]
-        public void Test_ColumnInfoToANOTableConverterUI_Constructor()
-        {
-            var o = WhenIHaveA<ColumnInfo>();
-            var ui = AndLaunch<ColumnInfoToANOTableConverterUI>(o);
-            Assert.IsNotNull(ui);
-            AssertErrorWasShown(ExpectedErrorType.KilledForm,"Could not get connection string because Server was null on dataAccessPoint 'My_Table'");
-            //AssertNoErrors(ExpectedErrorType.Fatal);
-            //AssertNoErrors(ExpectedErrorType.KilledForm);
-        }
+        var o = WhenIHaveA<ColumnInfo>();
+        var ui = AndLaunch<ColumnInfoToANOTableConverterUI>(o);
+        Assert.IsNotNull(ui);
+        AssertErrorWasShown(ExpectedErrorType.KilledForm,
+            "Could not get connection string because Server was null on dataAccessPoint 'My_Table'");
+        //AssertNoErrors(ExpectedErrorType.Fatal);
+        //AssertNoErrors(ExpectedErrorType.KilledForm);
     }
 }

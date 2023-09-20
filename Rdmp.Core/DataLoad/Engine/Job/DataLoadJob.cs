@@ -16,203 +16,214 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Job
+namespace Rdmp.Core.DataLoad.Engine.Job;
+
+/// <inheritdoc/>
+public class DataLoadJob : IDataLoadJob
 {
-    /// <inheritdoc/>
-    public class DataLoadJob : IDataLoadJob
+    public string Description { get; private set; }
+    public IDataLoadInfo DataLoadInfo { get; private set; }
+    public ILoadDirectory LoadDirectory { get; set; }
+    private readonly IDataLoadEventListener _listener;
+
+    public int JobID { get; set; }
+
+    private readonly ILogManager _logManager;
+    public ILoadMetadata LoadMetadata { get; private set; }
+
+    public List<ITableInfo> RegularTablesToLoad { get; private set; }
+    public List<ITableInfo> LookupTablesToLoad { get; private set; }
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+
+    private Stack<IDisposeAfterDataLoad> _disposalStack = new();
+
+    public HICDatabaseConfiguration Configuration { get; set; }
+    public object Payload { get; set; }
+
+    public bool PersistentRaw { get; set; }
+
+
+    private List<NotifyEventArgs> _crashAtEnd = new();
+
+    public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+
+
+    private string _loggingTask;
+
+    public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description,
+        ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,
+        HICDatabaseConfiguration configuration)
     {
-        public string Description { get; private set; }
-        public IDataLoadInfo DataLoadInfo { get; private set; }
-        public ILoadDirectory LoadDirectory { get; set; }
-        private readonly IDataLoadEventListener _listener;
+        _logManager = logManager;
+        RepositoryLocator = repositoryLocator;
+        LoadMetadata = loadMetadata;
+        LoadDirectory = directory;
+        Configuration = configuration;
+        _listener = listener;
+        Description = description;
 
-        public int JobID { get; set; }
-        
-        private readonly ILogManager _logManager;
-        public ILoadMetadata LoadMetadata { get; private set; }
+        var catalogues = LoadMetadata.GetAllCatalogues().ToList();
 
-        public List<ITableInfo> RegularTablesToLoad { get; private set; }
-        public List<ITableInfo> LookupTablesToLoad { get; private set; }
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+        if (LoadMetadata != null)
+            _loggingTask = GetLoggingTask(catalogues);
 
-        private Stack<IDisposeAfterDataLoad> _disposalStack = new Stack<IDisposeAfterDataLoad>();
-        
-        public HICDatabaseConfiguration Configuration { get; set; }
-        public object Payload { get; set; }
+        RegularTablesToLoad = catalogues.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
+        LookupTablesToLoad = catalogues.SelectMany(catalogue => catalogue.GetLookupTableInfoList()).Distinct().ToList();
+    }
 
-        public bool PersistentRaw { get; set; }
+    private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
+    {
+        var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
+        if (distinctLoggingTasks.Count > 1)
+            throw new Exception(
+                $"The catalogues to be loaded do not share the same logging task: {string.Join(", ", distinctLoggingTasks)}");
 
+        _loggingTask = distinctLoggingTasks.First();
+        return string.IsNullOrWhiteSpace(_loggingTask)
+            ? throw new Exception("There is no logging task specified for this load (the name is blank)")
+            : _loggingTask;
+    }
 
-        private List<NotifyEventArgs> _crashAtEnd = new();
+    private void CreateDataLoadInfo()
+    {
+        if (string.IsNullOrWhiteSpace(Description))
+            throw new Exception(
+                "The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
 
-        public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+        DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, nameof(DataLoadProcess), Description, "", false);
 
+        if (DataLoadInfo == null)
+            throw new Exception("DataLoadInfo is null");
 
-        private string _loggingTask;
+        JobID = DataLoadInfo.ID;
+    }
 
-        public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description, ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
-        {
-            _logManager = logManager;
-            RepositoryLocator = repositoryLocator;
-            LoadMetadata = loadMetadata;
-            LoadDirectory = directory;
-            Configuration = configuration;
-            _listener = listener;
-            Description = description;
+    public void LogProgress(string senderName, string message)
+    {
+        if (DataLoadInfo == null)
+            throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
-            List<ICatalogue> catalogues = LoadMetadata.GetAllCatalogues().ToList();
-            
-            if (LoadMetadata != null)
-                _loggingTask = GetLoggingTask(catalogues);
+        if (!DataLoadInfo.IsClosed)
+            DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnProgress, senderName, message);
+    }
 
-            RegularTablesToLoad = catalogues.SelectMany(catalogue => catalogue.GetTableInfoList(false)).Distinct().ToList();
-            LookupTablesToLoad = catalogues.SelectMany(catalogue => catalogue.GetLookupTableInfoList()).Distinct().ToList();
-        }
-
-        private string GetLoggingTask(IEnumerable<ICatalogue> cataloguesToLoad)
-        {
-            var distinctLoggingTasks = cataloguesToLoad.Select(catalogue => catalogue.LoggingDataTask).Distinct().ToList();
-            if (distinctLoggingTasks.Count() > 1)
-                throw new Exception("The catalogues to be loaded do not share the same logging task: " + string.Join(", ", distinctLoggingTasks));
-
-            _loggingTask = distinctLoggingTasks.First();
-            if (string.IsNullOrWhiteSpace(_loggingTask))
-                throw new Exception("There is no logging task specified for this load (the name is blank)");
-
-            return _loggingTask;
-        }
-
-        private void CreateDataLoadInfo()
-        {
-            if (string.IsNullOrWhiteSpace(Description))
-                throw new Exception("The data load description (for the DataLoadInfo object) must not be empty, please provide a relevant description");
-
-            DataLoadInfo = _logManager.CreateDataLoadInfo(_loggingTask, typeof(DataLoadProcess).Name, Description, "", false);
-
-            if (DataLoadInfo == null)
-                throw new Exception("DataLoadInfo is null");
-
-            JobID = DataLoadInfo.ID;
-        }
-
-        public void LogProgress(string senderName, string message)
-        {
-            if (DataLoadInfo == null)
-                throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
-
-            if (!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnProgress, senderName, message);
-        }
-
-        public void LogError(string message, Exception exception)
-        {
-            // we are bailing out before the load process has had a chance to create a DataLoadInfo object
-            if (DataLoadInfo == null)
-                CreateDataLoadInfo();
-
-            DataLoadInfo.LogFatalError(typeof(DataLoadProcess).Name, message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
-            DataLoadInfo.CloseAndMarkComplete();
-        }
-
-        public void StartLogging()
-        {
+    public void LogError(string message, Exception exception)
+    {
+        // we are bailing out before the load process has had a chance to create a DataLoadInfo object
+        if (DataLoadInfo == null)
             CreateDataLoadInfo();
-        }
 
-        public void CloseLogging()
-        {
-            if (DataLoadInfo != null)
-                DataLoadInfo.CloseAndMarkComplete();
-        }
+        DataLoadInfo.LogFatalError(nameof(DataLoadProcess),
+            message + Environment.NewLine + ExceptionHelper.ExceptionToListOfInnerMessages(exception, true));
+        DataLoadInfo.CloseAndMarkComplete();
+    }
 
-        public void LogInformation(string senderName, string message)
-        {
-            if (DataLoadInfo == null)
-                throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
+    public void StartLogging()
+    {
+        CreateDataLoadInfo();
+    }
 
-            if(!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
-        }
+    public void CloseLogging()
+    {
+        DataLoadInfo?.CloseAndMarkComplete();
+    }
 
-        public void LogWarning(string senderName, string message)
-        {
-            if (DataLoadInfo == null)
-                throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
+    public void LogInformation(string senderName, string message)
+    {
+        if (DataLoadInfo == null)
+            throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
-            if (!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
-        }
+        if (!DataLoadInfo.IsClosed)
+            DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
+    }
 
-        public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
-        {
-            foreach (TableInfo regularTableInfo in RegularTablesToLoad)
-                cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener,regularTableInfo, stage);
+    public void LogWarning(string senderName, string message)
+    {
+        if (DataLoadInfo == null)
+            throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
-            foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
-                 cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
-            
-            PushForDisposal(cloner);
-        }
+        if (!DataLoadInfo.IsClosed)
+            DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
+    }
 
-        public void PushForDisposal(IDisposeAfterDataLoad disposeable)
-        {
-            _disposalStack.Push(disposeable);
-        }
+    public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
+    {
+        foreach (TableInfo regularTableInfo in RegularTablesToLoad)
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, regularTableInfo, stage);
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            if(DataLoadInfo != null)
-                switch (e.ProgressEventType)
-                {
-                    case ProgressEventType.Trace:
-                    case ProgressEventType.Debug:
-                        break;
-                    case ProgressEventType.Information:
-                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
-                        break;
-                    case ProgressEventType.Warning:
-                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
-                        break;
-                    case ProgressEventType.Error:
-                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
-                        DataLoadInfo.LogFatalError(sender.GetType().Name, e.Exception != null ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : e.Message);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            _listener.OnNotify(sender,e);
-        }
+        foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
 
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            _listener.OnProgress(sender,e);
-        }
+        PushForDisposal(cloner);
+    }
 
-        public string ArchiveFilepath
-        {
-            get { return Path.Combine(LoadDirectory.ForArchiving.FullName, DataLoadInfo.ID + ".zip"); }
-        }
+    public void PushForDisposal(IDisposeAfterDataLoad disposeable)
+    {
+        _disposalStack.Push(disposeable);
+    }
 
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-            while (_disposalStack.Any())
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        if (DataLoadInfo != null)
+            switch (e.ProgressEventType)
             {
-                var disposable = _disposalStack.Pop();
-                disposable.LoadCompletedSoDispose(exitCode, postLoadEventsListener);
+                case ProgressEventType.Trace:
+                case ProgressEventType.Debug:
+                    break;
+                case ProgressEventType.Information:
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation,
+                        sender.GetType().Name, e.Message + (e.Exception != null
+                            ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                            : ""));
+                    break;
+                case ProgressEventType.Warning:
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name,
+                        e.Message + (e.Exception != null
+                            ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                            : ""));
+                    break;
+                case ProgressEventType.Error:
+                    DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name,
+                        e.Message);
+                    DataLoadInfo.LogFatalError(sender.GetType().Name,
+                        e.Exception != null
+                            ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)
+                            : e.Message);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-        }
 
-        public ColumnInfo[] GetAllColumns()
-        {
-            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
-        }
+        _listener.OnNotify(sender, e);
+    }
 
-        public void CrashAtEnd(NotifyEventArgs because)
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        _listener.OnProgress(sender, e);
+    }
+
+    public string ArchiveFilepath => Path.Combine(LoadDirectory.ForArchiving.FullName, $"{DataLoadInfo.ID}.zip");
+
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+    {
+        while (_disposalStack.Any())
         {
-            _crashAtEnd.Add(because);
+            var disposable = _disposalStack.Pop();
+            disposable.LoadCompletedSoDispose(exitCode, postLoadEventsListener);
         }
+    }
+
+    public ColumnInfo[] GetAllColumns()
+    {
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
+    }
+
+    public void CrashAtEnd(NotifyEventArgs because)
+    {
+        _crashAtEnd.Add(because);
     }
 }

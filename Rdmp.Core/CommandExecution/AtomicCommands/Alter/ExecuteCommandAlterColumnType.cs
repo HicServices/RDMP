@@ -6,98 +6,81 @@
 
 using System;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+
+/// <summary>
+/// Changes the datatype of the database column in the live database
+/// </summary>
+public class ExecuteCommandAlterColumnType : BasicCommandExecution
 {
-    /// <summary>
-    /// Changes the datatype of the database column in the live database
-    /// </summary>
-    public class ExecuteCommandAlterColumnType : BasicCommandExecution
+    private readonly ColumnInfo columnInfo;
+    private readonly string _datatype;
+
+    public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) :
+        base(activator)
     {
-        private ColumnInfo columnInfo;
-        private string _datatype;
+        this.columnInfo = columnInfo;
+        _datatype = datatype;
 
-        public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo, string datatype = null) : base(activator)
+        if (columnInfo.TableInfo.IsView)
+            SetImpossible("Column is part of a view so cannot be altered");
+        if (columnInfo.TableInfo.IsTableValuedFunction)
+            SetImpossible("Column is part of a table valued function so cannot be altered");
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var col = columnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var fansiType = col.DataType;
+        var oldSqlType = fansiType.SQLType;
+        var newSqlType = _datatype;
+
+        if (newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+            return;
+
+        if (string.IsNullOrWhiteSpace(newSqlType))
+            return;
+
+        try
         {
-            this.columnInfo = columnInfo;
-            _datatype = datatype;
-
-            if (columnInfo.TableInfo.IsView)
-            {
-                SetImpossible("Column is part of a view so cannot be altered");
-            }
-            if (columnInfo.TableInfo.IsTableValuedFunction)
-            {
-                SetImpossible("Column is part of a table valued function so cannot be altered");
-            }
+            fansiType.AlterTypeTo(newSqlType);
+        }
+        catch (Exception ex)
+        {
+            ShowException($"Failed to Alter Type of column '{col.GetFullyQualifiedName()}'", ex);
+            return;
         }
 
-        public override void Execute()
-        {
-            base.Execute();
+        columnInfo.Data_type = newSqlType;
+        columnInfo.SaveToDatabase();
 
-            var col = columnInfo.Discover(DataAccessContext.InternalDataProcessing);
-            var fansiType = col.DataType;
-            string oldSqlType = fansiType.SQLType;
-            string newSqlType = _datatype;
+        var archive = col.Table.Database.ExpectTable($"{col.Table}_Archive");
 
-            if(newSqlType == null)
-            {
-                if (!TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
-                {
-                    return;
-                }
-            }
-
-            if (string.IsNullOrWhiteSpace(newSqlType))
-            {
-                return;
-            }
-
+        if (archive.Exists())
             try
             {
-                fansiType.AlterTypeTo(newSqlType);
+                var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
+                if (archiveCol.DataType.SQLType.Equals(oldSqlType))
+                    try
+                    {
+                        archiveCol.DataType.AlterTypeTo(newSqlType);
+                    }
+                    catch (Exception ex)
+                    {
+                        ShowException($"Failed to Alter Archive Column '{archiveCol.GetFullyQualifiedName()}'", ex);
+                        return;
+                    }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                ShowException($"Failed to Alter Type of column '{col.GetFullyQualifiedName()}'", ex);
+                //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                 return;
             }
 
-            columnInfo.Data_type = newSqlType;
-            columnInfo.SaveToDatabase();
-
-            var archive = col.Table.Database.ExpectTable(col.Table + "_Archive");
-
-            if (archive.Exists())
-            {
-                try
-                {
-                    var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
-                    if (archiveCol.DataType.SQLType.Equals(oldSqlType))
-                    {
-                        try
-                        {
-                            archiveCol.DataType.AlterTypeTo(newSqlType);
-                        }
-                        catch (Exception ex)
-                        {
-                            ShowException($"Failed to Alter Archive Column '{archiveCol.GetFullyQualifiedName()}'", ex);
-                            return;
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
-                    return;
-                }
-            }
-            
-
-            Publish(columnInfo.TableInfo);
-        }
-
+        Publish(columnInfo.TableInfo);
     }
 }

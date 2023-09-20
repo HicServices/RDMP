@@ -4,67 +4,62 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Wizard;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
+    /// <summary>
+    /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+    /// </summary>
+    public string Folder { get; set; } = FolderHelper.Root;
+
+    public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
     {
-        /// <summary>
-        /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>
-        /// </summary>
-        public string Folder { get; set; } = FolderHelper.Root;
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandCreateNewDataExtractionProject(IActivateItems activator) : base(activator)
+    public override void Execute()
+    {
+        base.Execute();
+        var wizard = new CreateNewDataExtractionProjectUI(Activator);
+        if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
         {
-            UseTripleDotSuffix = true;
-        }
+            var p = wizard.ProjectCreatedIfAny;
 
-        public override void Execute()
-        {
-            base.Execute();
-            var wizard = new CreateNewDataExtractionProjectUI(Activator);
-            if (wizard.ShowDialog() == DialogResult.OK && wizard.ProjectCreatedIfAny != null)
+            p.Folder = Folder;
+            p.SaveToDatabase();
+
+            Publish(p);
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
+
+            if (wizard.ExtractionConfigurationCreatedIfAny != null)
             {
-                var p = wizard.ProjectCreatedIfAny;
-
-                p.Folder = Folder;
-                p.SaveToDatabase();
-
-                Publish(p);
-                Activator.RequestItemEmphasis(this, new EmphasiseRequest(p, int.MaxValue));
-
-                if (wizard.ExtractionConfigurationCreatedIfAny != null)
-                { 
-                    //now execute it
-                    var executeCommand = new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(wizard.ExtractionConfigurationCreatedIfAny);
-                    if (!executeCommand.IsImpossible)
-                        executeCommand.Execute();
-                }
-
+                //now execute it
+                var executeCommand =
+                    new ExecuteCommandExecuteExtractionConfiguration(Activator).SetTarget(
+                        wizard.ExtractionConfigurationCreatedIfAny);
+                if (!executeCommand.IsImpossible)
+                    executeCommand.Execute();
             }
         }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
-        }
-
-        public override string GetCommandHelp()
-        {
-            return
-                "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
-                "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
-        }
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add);
+
+    public override string GetCommandHelp() =>
+        "This will open a window which will guide you in the steps for creating a Data Extraction Project.\r\n" +
+        "You will be asked to choose a Cohort, the Catalogues to extract and the destination folder.";
 }

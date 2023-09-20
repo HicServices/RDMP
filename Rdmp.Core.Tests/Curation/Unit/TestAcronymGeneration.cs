@@ -8,25 +8,23 @@ using NUnit.Framework;
 using Rdmp.Core.Reports;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+public class TestAcronymGeneration : DatabaseTests
 {
-    public class TestAcronymGeneration : DatabaseTests
+    [Test]
+    [TestCase("bob", "bob")]
+    [TestCase("Demography", "Demog")]
+    [TestCase("DMPCatalogue", "DMPC")]
+    [TestCase("Datasheet1", "D1")]
+    [TestCase("Frank Bettie Cardinality", "FBC")]
+    [TestCase("Datashet DMP 32", "DDMP32")]
+    public void Predict(string name, string predictedAcronym)
     {
+        var extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
 
-        [Test]
-        [TestCase("bob","bob")]
-        [TestCase("Demography", "Demog")]
-        [TestCase("DMPCatalogue", "DMPC")]
-        [TestCase("Datasheet1", "D1")]
-        [TestCase("Frank Bettie Cardinality", "FBC")]
-        [TestCase("Datashet DMP 32", "DDMP32")]
-        public void Predict(string name, string predictedAcronym)
-        {
-            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(CatalogueRepository, null);
+        var suggestion = DitaCatalogueExtractor.GetAcronymSuggestionFromCatalogueName(name);
 
-            string suggestion = extractor.GetAcronymSuggestionFromCatalogueName(name);
-
-            Assert.AreEqual(predictedAcronym,suggestion);
-        }
+        Assert.AreEqual(predictedAcronym, suggestion);
     }
 }

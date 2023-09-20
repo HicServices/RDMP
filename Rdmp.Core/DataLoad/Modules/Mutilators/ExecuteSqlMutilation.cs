@@ -10,43 +10,41 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.Mutilators
+namespace Rdmp.Core.DataLoad.Modules.Mutilators;
+
+/// <summary>
+/// Similar to <see cref="ExecuteSqlFileRuntimeTask"/> but doesn't require the Sql to be stored on disk.  Instead the SQL is stored
+/// in the property <see cref="Sql"/> (i.e. in the RMDP platform database).
+/// </summary>
+public class ExecuteSqlMutilation : IPluginMutilateDataTables
 {
-    /// <summary>
-    /// Similar to <see cref="ExecuteSqlFileRuntimeTask"/> but doesn't require the Sql to be stored on disk.  Instead the SQL is stored
-    /// in the property <see cref="Sql"/> (i.e. in the RMDP platform database).
-    /// </summary>
-    public class ExecuteSqlMutilation : IPluginMutilateDataTables
+    private DiscoveredDatabase _db;
+    private LoadStage _loadStage;
+
+    [DemandsInitialization("Run the following SQL when this component is run in the DLE", DemandType = DemandType.SQL,
+        Mandatory = true)]
+    public string Sql { get; set; }
+
+    public void Check(ICheckNotifier notifier)
     {
-        private DiscoveredDatabase _db;
-        private LoadStage _loadStage;
+    }
 
-        [DemandsInitialization("Run the following SQL when this component is run in the DLE",DemandType = DemandType.SQL,Mandatory =true)]
-        public string Sql{get;set;}
+    public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
+    {
+        _db = dbInfo;
+        _loadStage = loadStage;
+    }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            
-        }
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+    {
+    }
 
-        public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
-        {
-            _db = dbInfo;
-            _loadStage = loadStage;
-        }
-
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-            
-        }
-
-        public ExitCodeType Mutilate(IDataLoadJob job)
-        {
-            var sql = new ExecuteSqlInDleStage(job,_loadStage);
-            return sql.Execute(Sql,_db);
-        }
+    public ExitCodeType Mutilate(IDataLoadJob job)
+    {
+        var sql = new ExecuteSqlInDleStage(job, _loadStage);
+        return sql.Execute(Sql, _db);
     }
 }

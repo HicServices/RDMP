@@ -5,39 +5,39 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.DataLoad;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _exe;
+    private readonly Image<Rgba32> _sql;
+    private readonly Image<Rgba32> _plugin;
+    private readonly Image<Rgba32> _attacher;
+    private readonly Image<Rgba32> _dataProvider;
+    private readonly Image<Rgba32> _mutilateDataTables;
+
+    public ProcessTaskStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _exe;
-        private readonly Image<Rgba32> _sql;
-        private readonly Image<Rgba32> _plugin;
-        private readonly Image<Rgba32> _attacher;
-        private readonly Image<Rgba32> _dataProvider;
-        private readonly Image<Rgba32> _mutilateDataTables;
+        _exe = Image.Load<Rgba32>(CatalogueIcons.Exe);
+        _sql = Image.Load<Rgba32>(CatalogueIcons.SQL);
+        _plugin = Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
 
-        public ProcessTaskStateBasedIconProvider()
-        {
-            _exe = Image.Load<Rgba32>(CatalogueIcons.Exe);
-            _sql = Image.Load<Rgba32>(CatalogueIcons.SQL);
-            _plugin = Image.Load<Rgba32>(CatalogueIcons.ProcessTask);
+        _attacher = Image.Load<Rgba32>(CatalogueIcons.Attacher);
+        _dataProvider = Image.Load<Rgba32>(CatalogueIcons.DataProvider);
+        _mutilateDataTables = Image.Load<Rgba32>(CatalogueIcons.MutilateDataTables);
+    }
 
-            _attacher = Image.Load<Rgba32>(CatalogueIcons.Attacher);
-            _dataProvider = Image.Load<Rgba32>(CatalogueIcons.DataProvider);
-            _mutilateDataTables = Image.Load<Rgba32>(CatalogueIcons.MutilateDataTables);
-        }
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is Type && o.Equals(typeof(ProcessTask))) return _plugin;
-
-            if (o is not ProcessTask pt)
-                return null;
-            return pt.ProcessTaskType switch
+        return o is not ProcessTask pt
+            ? null
+            : pt.ProcessTaskType switch
             {
                 ProcessTaskType.Executable => _exe,
                 ProcessTaskType.SQLFile => _sql,
@@ -46,6 +46,5 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 ProcessTaskType.MutilateDataTable => _mutilateDataTables,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
     }
 }

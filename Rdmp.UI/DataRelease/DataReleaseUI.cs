@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
@@ -19,6 +18,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections;
@@ -29,262 +29,243 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.DataRelease
+namespace Rdmp.UI.DataRelease;
+
+/// <summary>
+/// The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in
+/// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
+/// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
+/// 
+/// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well
+/// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
+/// 
+/// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
+/// early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in the list box.  You can only do an extraction once all the datasets in
+/// the configuration are releasable.</para>
+/// 
+/// <para>In addition to verifying the datasets you can tie the RDMP into your ticketing system.  For example if you have tickets for each project extraction with stages for validation
+/// (so that data analysts can log time against validation and sign off on it etc) then you can setup Data Export Manager when the 'Release' Ticket is at a certain state (e.g. validated).
+/// To configure a ticketing system see TicketingSystemConfigurationUI.</para>
+/// 
+/// <para>If you haven't configured a Ticketing System then you shouldn't have to worry about the Environment State.</para>
+/// 
+/// <para> Once you have selected all the configurations you want to release click Release.</para>
+/// </summary>
+public partial class DataReleaseUI : DataReleaseUI_Design
 {
-    /// <summary>
-    /// The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in
-    /// a research project.  There is no going back once you have sent the package to the researcher, if you have accidentally included the wrong datasets or supplied identifiable data
-    /// (e.g. in a free text field) then you are in big trouble.  For this reason the 'Release' process is a tightly controlled sequence which the RDMP undertakes to try to reduce error.
-    /// 
-    /// <para>In this control you will see all the currently selected datasets in a project's configuration(s) and the state of the dataset extraction (from the RDMP's perspective) as well 
-    /// as the status of the 'Environment' (Ticketing System).  Right clicking on a dataset will give you options appropriate to its state.</para>
-    /// 
-    /// <para>Extraction of large datasets can take days or weeks and a project extraction is an ongoing exercise.  It is possible that by the time you come to release a project some of the
-    /// early datasets have been changed or the files deleted etc.  The status of each extracted dataset is shown in the list box.  You can only do an extraction once all the datasets in
-    /// the configuration are releasable.</para>
-    /// 
-    /// <para>In addition to verifying the datasets you can tie the RDMP into your ticketing system.  For example if you have tickets for each project extraction with stages for validation
-    /// (so that data analysts can log time against validation and sign off on it etc) then you can setup Data Export Manager when the 'Release' Ticket is at a certain state (e.g. validated).
-    /// To configure a ticketing system see TicketingSystemConfigurationUI.</para>
-    /// 
-    /// <para>If you haven't configured a Ticketing System then you shouldn't have to worry about the Environment State.</para>
-    /// 
-    /// <para> Once you have selected all the configurations you want to release click Release.</para>
-    /// </summary>
-    public partial class DataReleaseUI : DataReleaseUI_Design
+    private Project _project;
+
+    private bool _isFirstTime = true;
+
+    private IPipelineSelectionUI _pipelineSelectionUI1;
+    private IMapsDirectlyToDatabaseTable[] _globals;
+    private DataExportChildProvider _childProvider;
+
+    private ArbitraryFolderNode _globalsNode = new(ExtractionDirectory.GLOBALS_DATA_NAME, -500);
+
+
+    private bool _isExecuting;
+    private RDMPCollectionCommonFunctionality _commonFunctionality;
+    private IEnumerable<ExtractionConfiguration> _configurations = Array.Empty<ExtractionConfiguration>();
+    private IEnumerable<ISelectedDataSets> _selectedDataSets = Array.Empty<ISelectedDataSets>();
+
+    private ToolStripControlHost _pipelinePanel;
+
+    public DataReleaseUI()
     {
-        private Project _project;
+        InitializeComponent();
 
-        private bool _isFirstTime = true;
+        AssociatedCollection = RDMPCollection.DataExport;
 
-        private IPipelineSelectionUI _pipelineSelectionUI1;
-        private IMapsDirectlyToDatabaseTable[] _globals;
-        private DataExportChildProvider _childProvider;
-        
-        private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
+        tlvReleasePotentials.CanExpandGetter = CanExpandGetter;
+        tlvReleasePotentials.ChildrenGetter = ChildrenGetter;
+        checkAndExecuteUI1.CommandGetter = CommandGetter;
 
+        olvReleaseability.AspectGetter = Releaseability_AspectGetter;
+        olvReleaseability.ImageGetter = Releaseability_ImageGetter;
+        checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
 
-        private bool _isExecuting;
-        private RDMPCollectionCommonFunctionality _commonFunctionality;
-        private IEnumerable<ExtractionConfiguration> _configurations = new ExtractionConfiguration[0];
-        private IEnumerable<ISelectedDataSets> _selectedDataSets = new ISelectedDataSets[0];
+        checkAndExecuteUI1.AllowsYesNoToAll = false;
 
-        private ToolStripControlHost _pipelinePanel;
+        _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
-        public DataReleaseUI()
-        {
-            InitializeComponent();
+        checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
+    }
 
-            AssociatedCollection = RDMPCollection.DataExport;
+    private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
+    {
+        tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
 
-            tlvReleasePotentials.CanExpandGetter = CanExpandGetter;
-            tlvReleasePotentials.ChildrenGetter = ChildrenGetter;
-            checkAndExecuteUI1.CommandGetter = CommandGetter;
+        if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
+            //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_project));
 
-            olvReleaseability.AspectGetter = Releaseability_AspectGetter;
-            olvReleaseability.ImageGetter = Releaseability_ImageGetter;
-            checkAndExecuteUI1.StateChanged += CheckAndExecuteUI1OnStateChanged;
+        _isExecuting = checkAndExecuteUI1.IsExecuting;
+    }
 
-            checkAndExecuteUI1.AllowsYesNoToAll = false;
+    private object Releaseability_ImageGetter(object rowObject)
+    {
+        var state = GetState(rowObject);
+        return state == null ? null : Activator.CoreIconProvider.GetImage(state).ImageToBitmap();
+    }
 
-            _commonFunctionality = new RDMPCollectionCommonFunctionality();
+    private object Releaseability_AspectGetter(object rowObject)
+    {
+        var state = GetState(rowObject);
+        return state?.ToString();
+    }
 
-            checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
-        }
-
-        private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
-        {
-            tlvReleasePotentials.RefreshObjects(tlvReleasePotentials.Objects.Cast<object>().ToArray());
-
-            if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
+    private object GetState(object rowObject)
+    {
+        return checkAndExecuteUI1.CurrentRunner is not ReleaseRunner releaseRunner
+            ? null
+            : rowObject switch
             {
-                //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
-                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
-            }
-
-            _isExecuting = checkAndExecuteUI1.IsExecuting;
-        }
-
-        private object Releaseability_ImageGetter(object rowObject)
-        {
-            var state = GetState(rowObject);
-            return state == null ? null : Activator.CoreIconProvider.GetImage(state).ImageToBitmap();
-        }
-
-        private object Releaseability_AspectGetter(object rowObject)
-        {
-            var state = GetState(rowObject);
-            return state == null ? null : state.ToString();
-        }
-
-        private object GetState(object rowObject)
-        {
-            var releaseRunner = checkAndExecuteUI1.CurrentRunner as ReleaseRunner;
-            var sds = rowObject as ISelectedDataSets;
-            var configuration = rowObject as IExtractionConfiguration;
-            var supportingDocument = rowObject as SupportingDocument;
-            var supportingSqlTable = rowObject as SupportingSQLTable;
-
-            if (releaseRunner == null)
-                return null;
-
-            if (configuration != null)
-                return releaseRunner.GetState(configuration);
-
-            if (sds != null)
-                return releaseRunner.GetState(sds);
-
-            if (supportingDocument != null)
-                return releaseRunner.GetState(supportingDocument);
-
-            if (supportingSqlTable != null)
-                return releaseRunner.GetState(supportingSqlTable);
-
-            if (rowObject.Equals(_globalsNode))
-                return releaseRunner.GetGlobalReleaseState();
-
-            return null;
-        }
-
-        private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
-        {
-            return new ReleaseOptions()
-            {
-                Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
-                Configurations = ToIdList(
-                    _configurations.Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c)).Select(ec => ec.ID).ToArray()
-                    ),
-                SelectedDataSets = ToIdList(
-                    _selectedDataSets.All(tlvReleasePotentials.IsChecked) ? new int[0] : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
-                    ),
-                Command = activityRequested,
-                ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode),
+                IExtractionConfiguration configuration => releaseRunner.GetState(configuration),
+                ISelectedDataSets sds => releaseRunner.GetState(sds),
+                SupportingDocument supportingDocument => releaseRunner.GetState(supportingDocument),
+                SupportingSQLTable supportingSqlTable => releaseRunner.GetState(supportingSqlTable),
+                _ => rowObject.Equals(_globalsNode) ? releaseRunner.GetGlobalReleaseState() : null
             };
-        }
+    }
 
-        private string ToIdList(int[] ints)
+    private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
+    {
+        return new ReleaseOptions
         {
-            return string.Join(",", ints.Select(i => i.ToString()).ToArray());
-        }
+            Pipeline = _pipelineSelectionUI1.Pipeline == null ? "0" : _pipelineSelectionUI1.Pipeline.ID.ToString(),
+            Configurations = ToIdList(
+                _configurations
+                    .Where(c => tlvReleasePotentials.IsChecked(c) || tlvReleasePotentials.IsCheckedIndeterminate(c))
+                    .Select(ec => ec.ID).ToArray()
+            ),
+            SelectedDataSets = ToIdList(
+                _selectedDataSets.All(tlvReleasePotentials.IsChecked)
+                    ? Array.Empty<int>()
+                    : tlvReleasePotentials.CheckedObjects.OfType<ISelectedDataSets>().Select(sds => sds.ID).ToArray()
+            ),
+            Command = activityRequested,
+            ReleaseGlobals = tlvReleasePotentials.IsChecked(_globalsNode)
+        };
+    }
 
-        private IEnumerable ChildrenGetter(object model)
+    private static string ToIdList(int[] ints)
+    {
+        return string.Join(",", ints.Select(i => i.ToString()));
+    }
+
+    private IEnumerable ChildrenGetter(object model)
+    {
+        return model switch
         {
-            var p = model as Project;
-            var ec = model as ExtractionConfiguration;
+            Project p => _configurations = _childProvider.GetActiveConfigurationsOnly(p),
+            ExtractionConfiguration ec =>
+                _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>(),
+            _ => Equals(model, _globalsNode) ? _globals : null
+        };
+    }
 
-            if (p != null)
-                return _configurations = _childProvider.GetActiveConfigurationsOnly(p);
+    private bool CanExpandGetter(object model)
+    {
+        var c = ChildrenGetter(model);
 
-            if (ec != null)
-                return _selectedDataSets = _childProvider.GetChildren(ec).OfType<ISelectedDataSets>();
+        return c != null && c.Cast<object>().Any();
+    }
 
-            if (Equals(model, _globalsNode))
-                return _globals;
+    public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
+    {
+        base.SetDatabaseObject(activator, databaseObject);
 
-            return null;
-        }
-        private bool CanExpandGetter(object model)
+        if (!_commonFunctionality.IsSetup)
         {
-            var c = ChildrenGetter(model);
-
-            return c != null && c.Cast<object>().Any();
-        }
-
-        public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
-        {
-            base.SetDatabaseObject(activator, databaseObject);
-            
-            if(!_commonFunctionality.IsSetup)
-            {
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
+            _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null,
+                new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddFavouriteColumn = false,
                     SuppressChildrenAdder = true,
                     AddCheckColumn = false
                 });
 
-                _commonFunctionality.SetupColumnTracking(olvName, new Guid("2d09c1d2-b4a7-400f-9003-d23e43cd3d75"));
-                _commonFunctionality.SetupColumnTracking(olvReleaseability, new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
-            }
-
-            _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
-            _project = databaseObject;
-
-            //figure out the globals
-            var ec = _project.ExtractionConfigurations.FirstOrDefault();
-            _globals = ec != null ? ec.GetGlobals() : new IMapsDirectlyToDatabaseTable[0];
-
-            if (_pipelineSelectionUI1 == null)
-            {
-                var context = ReleaseUseCase.DesignTime();
-                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(Activator,"Release", DockStyle.Fill);
-                _pipelineSelectionUI1.CollapseToSingleLineMode();
-                _pipelineSelectionUI1.Pipeline = null;
-                _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
-
-                _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
-            }
-
-            CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
-            CommonFunctionality.Add(_pipelinePanel);
-            CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
-            
-            checkAndExecuteUI1.SetItemActivator(activator);
-
-            var checkedBefore = tlvReleasePotentials.CheckedObjects;
-
-            tlvReleasePotentials.ClearObjects();
-            tlvReleasePotentials.AddObject(_globalsNode);
-            tlvReleasePotentials.AddObject(_project);
-            tlvReleasePotentials.ExpandAll();
-            
-            if (_isFirstTime)
-                tlvReleasePotentials.CheckAll();
-            else if (checkedBefore.Count > 0)
-                tlvReleasePotentials.CheckObjects(checkedBefore);
-
-            _isFirstTime = false;
-
-            tlvReleasePotentials.DisableObjects(_globals);
-            //tlvReleasePotentials.DisableObject(_globalsNode);
+            _commonFunctionality.SetupColumnTracking(olvName, new Guid("2d09c1d2-b4a7-400f-9003-d23e43cd3d75"));
+            _commonFunctionality.SetupColumnTracking(olvReleaseability,
+                new Guid("2f0ca398-a0d5-4e13-bb40-a2c817d4179a"));
         }
-        
-        public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
+
+        _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
+        _project = databaseObject;
+
+        //figure out the globals
+        var ec = _project.ExtractionConfigurations.FirstOrDefault();
+        _globals = ec != null ? ec.GetGlobals() : Array.Empty<IMapsDirectlyToDatabaseTable>();
+
+        if (_pipelineSelectionUI1 == null)
         {
-            base.ConsultAboutClosing(sender, e);
-            checkAndExecuteUI1.ConsultAboutClosing(sender, e);
-        }
-        
-        public override string GetTabName()
-        {
-            return "Release: " + _project;
-        }
-        
-        public void TickAllFor(ExtractionConfiguration configuration)
-        {
-            tlvReleasePotentials.UncheckAll();
-            tlvReleasePotentials.CheckObject(configuration);
-            tlvReleasePotentials.CheckObject(_globalsNode);
+            var context = ReleaseUseCase.DesignTime();
+            _pipelineSelectionUI1 =
+                new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create(
+                    Activator, "Release", DockStyle.Fill);
+            _pipelineSelectionUI1.CollapseToSingleLineMode();
+            _pipelineSelectionUI1.Pipeline = null;
+            _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
+
+            _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
         }
 
-        public void Tick(ISelectedDataSets selectedDataSet)
-        {
-            tlvReleasePotentials.UncheckAll();
-            tlvReleasePotentials.CheckObject(selectedDataSet);
-            tlvReleasePotentials.CheckObject(_globalsNode);
-        }
+        CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
+        CommonFunctionality.Add(_pipelinePanel);
+        CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline",
+            "The sequence of components that will be executed in order to gather the extracted artefacts and assemble them into a single release folder/database. This will start with a source component that gathers the artefacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
 
-        private void ResetChecksUI(object sender, EventArgs e)
-        {
-            if (!checkAndExecuteUI1.IsExecuting)
-                checkAndExecuteUI1.Reset();
-        }
+        checkAndExecuteUI1.SetItemActivator(activator);
+
+        var checkedBefore = tlvReleasePotentials.CheckedObjects;
+
+        tlvReleasePotentials.ClearObjects();
+        tlvReleasePotentials.AddObject(_globalsNode);
+        tlvReleasePotentials.AddObject(_project);
+        tlvReleasePotentials.ExpandAll();
+
+        if (_isFirstTime)
+            tlvReleasePotentials.CheckAll();
+        else if (checkedBefore.Count > 0)
+            tlvReleasePotentials.CheckObjects(checkedBefore);
+
+        _isFirstTime = false;
+
+        tlvReleasePotentials.DisableObjects(_globals);
+        //tlvReleasePotentials.DisableObject(_globalsNode);
     }
 
-
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
-    public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
+    public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
-
+        base.ConsultAboutClosing(sender, e);
+        checkAndExecuteUI1.ConsultAboutClosing(sender, e);
     }
+
+    public override string GetTabName() => $"Release: {_project}";
+
+    public void TickAllFor(ExtractionConfiguration configuration)
+    {
+        tlvReleasePotentials.UncheckAll();
+        tlvReleasePotentials.CheckObject(configuration);
+        tlvReleasePotentials.CheckObject(_globalsNode);
+    }
+
+    public void Tick(ISelectedDataSets selectedDataSet)
+    {
+        tlvReleasePotentials.UncheckAll();
+        tlvReleasePotentials.CheckObject(selectedDataSet);
+        tlvReleasePotentials.CheckObject(_globalsNode);
+    }
+
+    private void ResetChecksUI(object sender, EventArgs e)
+    {
+        if (!checkAndExecuteUI1.IsExecuting)
+            checkAndExecuteUI1.Reset();
+    }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<DataReleaseUI_Design, UserControl>))]
+public abstract class DataReleaseUI_Design : RDMPSingleDatabaseObjectControl<Project>
+{
 }

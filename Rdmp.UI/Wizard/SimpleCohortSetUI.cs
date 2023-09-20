@@ -16,260 +16,262 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons;
 
-namespace Rdmp.UI.Wizard
+namespace Rdmp.UI.Wizard;
+
+/// <summary>
+/// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to modify how a dataset Catalogue is filtered to identify patients.  Selecting prescribing will result in a cohort
+/// set of 'everyone appearing in the prescribing dataset', if you add a filter on drug prescribed to 'Paracetamol' then the set will be 'everyone who has ever been presdcribed Paracetamol'.
+/// </summary>
+public partial class SimpleCohortSetUI : UserControl
 {
-    /// <summary>
-    /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to modify how a dataset Catalogue is filtered to identify patients.  Selecting prescribing will result in a cohort
-    /// set of 'everyone appearing in the prescribing dataset', if you add a filter on drug prescribed to 'Paracetamol' then the set will be 'everyone who has ever been presdcribed Paracetamol'.
-    /// </summary>
-    public partial class SimpleCohortSetUI : UserControl
+    //constant things
+    private Bitmap _linkImage;
+    private Bitmap _unlinkImage;
+    private IActivateItems _activator;
+
+    //dynamic things
+    private bool lockIn = true;
+    private bool _knownIdentifiersMode;
+
+    private List<SimpleFilterUI> _filterUIs = new();
+
+    public SimpleCohortSetUI()
     {
-        //constant things
-        private Bitmap _linkImage;
-        private Bitmap _unlinkImage;
-        private IActivateItems _activator;
+        InitializeComponent();
 
-        //dynamic things
-        private bool lockIn = true;
-        private bool _knownIdentifiersMode;
+        _linkImage = FamFamFamIcons.link.ImageToBitmap();
+        _unlinkImage = FamFamFamIcons.link_break.ImageToBitmap();
 
-        private List<SimpleFilterUI> _filterUIs = new List<SimpleFilterUI>();
+        cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 
-        public SimpleCohortSetUI()
-        {
-            InitializeComponent();
+        btnLockExtractionIdentifier.Image = _linkImage;
+        ddAndOr.DataSource = Enum.GetValues(typeof(FilterContainerOperation));
 
-            _linkImage = FamFamFamIcons.link.ImageToBitmap();
-            _unlinkImage = FamFamFamIcons.link_break.ImageToBitmap();
+        btnDelete.Visible = false;
+    }
 
-            cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
+    public void SetupFor(IActivateItems activator)
+    {
+        _activator = activator;
+        cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
+        pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
+        pbExtractionIdentifier.Image =
+            activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
+        pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
+        cbxCatalogues.SetItemActivator(activator);
+    }
 
-            btnLockExtractionIdentifier.Image = _linkImage;
-            ddAndOr.DataSource = Enum.GetValues(typeof(FilterContainerOperation));
+    private Catalogue _lastCatalogue;
 
-            btnDelete.Visible = false;
-        }
+    public ICatalogue Catalogue => cbxCatalogues.SelectedItem as Catalogue;
 
-        public void SetupFor(IActivateItems activator)
-        {
-            _activator = activator;
-            cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
-            pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
-            pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();
-            pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter).ImageToBitmap();
-            cbxCatalogues.SetItemActivator(activator);
-        }
+    private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (cbxCatalogues.SelectedItem is not Catalogue cata)
+            return;
 
-        private Catalogue _lastCatalogue = null;
-
-        public ICatalogue Catalogue => cbxCatalogues.SelectedItem as Catalogue;
-
-        private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var cata = cbxCatalogues.SelectedItem as Catalogue;
-
-            if (cata == null)
-                return;
-
-            //if the Catalogue changes clear the old filters because they apply to the last dataset
-            if(_lastCatalogue != null)
-                if(!Equals(_lastCatalogue, cata))//catalogue has changed
+        //if the Catalogue changes clear the old filters because they apply to the last dataset
+        if (_lastCatalogue != null)
+            if (!Equals(_lastCatalogue, cata)) //catalogue has changed
+            {
+                //if there are no user specified ones clear the mandatory filters (if there are any)
+                if (_filterUIs.All(f => f.Mandatory))
                 {
-                    //if there are no user specified ones clear the mandatory filters (if there are any)
-                    if (_filterUIs.All(f => f.Mandatory))
-                        ClearFilters();
-                    else //there are some user specified ones
-                        if (
-                            //confirm with user before we erase these
-                            _activator.YesNo(
-                                "Changing the dataset will clear the Filters you have configured, is this what you want?",
-                                "Change Dataset"))
-                            ClearFilters();
-                        else
-                        {
-                            cbxCatalogues.SelectedItem = _lastCatalogue;
-                            return;
-                        }
+                    ClearFilters();
                 }
-
-            //add any mandatory filters that are not yet part of the configuration
-            foreach (var mandatoryFilter in cata.GetAllMandatoryFilters())
-                if(!_filterUIs.Any(f=>f.Filter.Equals(mandatoryFilter)))
+                else //there are some user specified ones
+                if (
+                    //confirm with user before we erase these
+                    _activator.YesNo(
+                        "Changing the dataset will clear the Filters you have configured, is this what you want?",
+                        "Change Dataset"))
                 {
-                    var m = AddFilter(mandatoryFilter);
-                    m.Mandatory = true; //mandatory ones cannot be changed or gotten rid of
+                    ClearFilters();
                 }
-
-            //set the columns
-            var allColumns = cata.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
-
-            cbxColumns.DataSource = allColumns;
-
-            var identifiers = allColumns.Where(ei => ei.IsExtractionIdentifier).ToArray();
-
-            //if no columns have yet been marked as IsExtractionIdentifier then we show all columns and demand that the user lock one in
-            if (identifiers.Length == 0)
-                UnlockIdentifier(null);
-            else
-            if (identifiers.Length == 1)
-                LockIdentifier(identifiers[0]);//there is only one IsExtractionIdentifier so lock it in automatically
-            else
-            {
-                _knownIdentifiersMode = true;
-
-                //if there are multiple columns marked with IsExtractionIdentifier then we show all of them but no others
-                //e.g. SMR02 where there could be Mother CHI, Baby CHI and Father CHI do not unmark extraction identifier just because they changed it
-                cbxColumns.DataSource = identifiers;
-                UnlockIdentifier(null);
+                else
+                {
+                    cbxCatalogues.SelectedItem = _lastCatalogue;
+                    return;
+                }
             }
 
-            var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
-            ddAvailableFilters.DataSource = allFilters;
-
-            _lastCatalogue = cata;
-        }
-
-        private void ClearFilters()
-        {
-            _filterUIs.Clear();
-            tableLayoutPanel1.Controls.Clear();
-            ddAndOr.Enabled = false;
-        }
-
-        private void LockIdentifier(ExtractionInformation extractionInformation)
-        {
-            cbxColumns.Enabled = false;
-            cbxColumns.SelectedItem = extractionInformation;
-            btnLockExtractionIdentifier.Image = _unlinkImage;
-
-            //if it isn't yet marked as an extraction identifier save it as one for next time
-            if(!extractionInformation.IsExtractionIdentifier)
+        //add any mandatory filters that are not yet part of the configuration
+        foreach (var mandatoryFilter in cata.GetAllMandatoryFilters())
+            if (!_filterUIs.Any(f => f.Filter.Equals(mandatoryFilter)))
             {
-                extractionInformation.IsExtractionIdentifier = true;
-                extractionInformation.SaveToDatabase();
+                var m = AddFilter(mandatoryFilter);
+                m.Mandatory = true; //mandatory ones cannot be changed or gotten rid of
             }
 
-            lockIn = false;
+        //set the columns
+        var allColumns = cata.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
+
+        cbxColumns.DataSource = allColumns;
+
+        var identifiers = allColumns.Where(ei => ei.IsExtractionIdentifier).ToArray();
+
+        //if no columns have yet been marked as IsExtractionIdentifier then we show all columns and demand that the user lock one in
+        if (identifiers.Length == 0)
+        {
+            UnlockIdentifier(null);
+        }
+        else if (identifiers.Length == 1)
+        {
+            LockIdentifier(identifiers[0]); //there is only one IsExtractionIdentifier so lock it in automatically
+        }
+        else
+        {
+            _knownIdentifiersMode = true;
+
+            //if there are multiple columns marked with IsExtractionIdentifier then we show all of them but no others
+            //e.g. SMR02 where there could be Mother CHI, Baby CHI and Father CHI do not unmark extraction identifier just because they changed it
+            cbxColumns.DataSource = identifiers;
+            UnlockIdentifier(null);
         }
 
-        private void UnlockIdentifier(ExtractionInformation currentSelectionIfAny)
+        var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
+        ddAvailableFilters.DataSource = allFilters;
+
+        _lastCatalogue = cata;
+    }
+
+    private void ClearFilters()
+    {
+        _filterUIs.Clear();
+        tableLayoutPanel1.Controls.Clear();
+        ddAndOr.Enabled = false;
+    }
+
+    private void LockIdentifier(ExtractionInformation extractionInformation)
+    {
+        cbxColumns.Enabled = false;
+        cbxColumns.SelectedItem = extractionInformation;
+        btnLockExtractionIdentifier.Image = _unlinkImage;
+
+        //if it isn't yet marked as an extraction identifier save it as one for next time
+        if (!extractionInformation.IsExtractionIdentifier)
         {
-            cbxColumns.Enabled = true;
-            cbxColumns.SelectedItem = null;
-
-            //if there are multiple extraction identifiers e.g. SMR02 where there could be Mother CHI, Baby CHI and Father CHI do not unmark extraction identifier just because they changed it
-            if (!_knownIdentifiersMode && currentSelectionIfAny != null)
-            {
-                currentSelectionIfAny.IsExtractionIdentifier = false;
-                currentSelectionIfAny.SaveToDatabase();
-            }
-
-            btnLockExtractionIdentifier.Image = _linkImage;
-            lockIn = true;
+            extractionInformation.IsExtractionIdentifier = true;
+            extractionInformation.SaveToDatabase();
         }
 
-        private void btnLockExtractionIdentifier_Click(object sender, EventArgs e)
+        lockIn = false;
+    }
+
+    private void UnlockIdentifier(ExtractionInformation currentSelectionIfAny)
+    {
+        cbxColumns.Enabled = true;
+        cbxColumns.SelectedItem = null;
+
+        //if there are multiple extraction identifiers e.g. SMR02 where there could be Mother CHI, Baby CHI and Father CHI do not unmark extraction identifier just because they changed it
+        if (!_knownIdentifiersMode && currentSelectionIfAny != null)
         {
-            if (lockIn)
-                LockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
-            else
-                UnlockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
+            currentSelectionIfAny.IsExtractionIdentifier = false;
+            currentSelectionIfAny.SaveToDatabase();
         }
 
-        private void btnAddFilter_Click(object sender, EventArgs e)
+        btnLockExtractionIdentifier.Image = _linkImage;
+        lockIn = true;
+    }
+
+    private void btnLockExtractionIdentifier_Click(object sender, EventArgs e)
+    {
+        if (lockIn)
+            LockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
+        else
+            UnlockIdentifier(cbxColumns.SelectedItem as ExtractionInformation);
+    }
+
+    private void btnAddFilter_Click(object sender, EventArgs e)
+    {
+        if (ddAvailableFilters.SelectedItem is not ExtractionFilter f)
+            return;
+
+        AddFilter(f);
+    }
+
+    private SimpleFilterUI AddFilter(ExtractionFilter f)
+    {
+        var filterUI = new SimpleFilterUI(_activator, f);
+        filterUI.RequestDeletion += () => RemoveFilter(filterUI);
+
+        filterUI.Width = tableLayoutPanel1.Width;
+        filterUI.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
+
+        tableLayoutPanel1.Controls.Add(filterUI, tableLayoutPanel1.RowCount - 1, 0);
+
+        //this array always seems to be 1 element long..
+        tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
+
+        _filterUIs.Add(filterUI);
+
+        //if there are 2+ filters then user can specify AND / OR to combine them
+        ddAndOr.Enabled = _filterUIs.Count >= 2;
+
+        return filterUI;
+    }
+
+    private void RemoveFilter(SimpleFilterUI filterUI)
+    {
+        _filterUIs.Remove(filterUI);
+        tableLayoutPanel1.Controls.Remove(filterUI);
+    }
+
+    public void Clear()
+    {
+        cbxCatalogues.SelectedItem = null;
+    }
+
+    public void CreateCohortSet(CohortAggregateContainer targetContainer)
+    {
+        if (cbxCatalogues.SelectedItem is not Catalogue cata)
+            return;
+
+        var cataCommand = new CatalogueCombineable(cata)
         {
-
-            var f = ddAvailableFilters.SelectedItem as ExtractionFilter;
-
-            if(f == null)
-                return;
-
-            AddFilter(f);
-
-        }
-
-        private SimpleFilterUI AddFilter(ExtractionFilter f)
-        {
-            var filterUI = new SimpleFilterUI(_activator, f);
-            filterUI.RequestDeletion += () => RemoveFilter(filterUI);
-
-            filterUI.Width = tableLayoutPanel1.Width;
-            filterUI.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
-
-            tableLayoutPanel1.Controls.Add(filterUI, tableLayoutPanel1.RowCount - 1, 0);
-
-            //this array always seems to be 1 element long..
-            tableLayoutPanel1.RowStyles[0].SizeType = SizeType.AutoSize;
-
-            _filterUIs.Add(filterUI);
-
-            //if there are 2+ filters then user can specify AND / OR to combine them
-            ddAndOr.Enabled = _filterUIs.Count >= 2;
-
-            return filterUI;
-        }
-
-        private void RemoveFilter(SimpleFilterUI filterUI)
-        {
-            _filterUIs.Remove(filterUI);
-            tableLayoutPanel1.Controls.Remove(filterUI);
-        }
-
-        public void Clear()
-        {
-            cbxCatalogues.SelectedItem = null;
-        }
-
-        public void CreateCohortSet(CohortAggregateContainer targetContainer)
-        {
-            var cata = cbxCatalogues.SelectedItem as Catalogue;
-
-            if (cata == null)
-                return;
-
-            var cataCommand = new CatalogueCombineable(cata);
             //use this one
-            cataCommand.ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation;
+            ResolveMultipleExtractionIdentifiers = (s, e) => cbxColumns.SelectedItem as ExtractionInformation
+        };
 
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator,cataCommand ,targetContainer);
-            cmd.SkipMandatoryFilterCreation = true;
-            cmd.Execute();
-
-            var aggregate = cmd.AggregateCreatedIfAny;
-            
-            var filterOp = (FilterContainerOperation) ddAndOr.SelectedItem;
-
-            IContainer filterContainer;
-            if (aggregate.RootFilterContainer_ID != null)
-            {
-                //this is the case if there are mandatory filters in the dataset
-                filterContainer = aggregate.RootFilterContainer;
-                filterContainer.Operation = filterOp;
-                filterContainer.SaveToDatabase();
-            }
-            else if (_filterUIs.Count > 0)
-            {
-                filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
-                aggregate.RevertToDatabaseState();
-                aggregate.RootFilterContainer_ID = filterContainer.ID;
-                aggregate.SaveToDatabase();
-
-                List<IFilter> filtersAddedSoFar = new List<IFilter>();
-                foreach (var ui in _filterUIs)
-                {
-                    var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository), filterContainer, filtersAddedSoFar.ToArray());
-                    filtersAddedSoFar.Add(f);
-                }
-            }
-        }
-
-        private void ddAndOr_SelectedIndexChanged(object sender, EventArgs e)
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cataCommand,
+            targetContainer)
         {
+            SkipMandatoryFilterCreation = true
+        };
+        cmd.Execute();
 
+        var aggregate = cmd.AggregateCreatedIfAny;
+
+        var filterOp = (FilterContainerOperation)ddAndOr.SelectedItem;
+
+        IContainer filterContainer;
+        if (aggregate.RootFilterContainer_ID != null)
+        {
+            //this is the case if there are mandatory filters in the dataset
+            filterContainer = aggregate.RootFilterContainer;
+            filterContainer.Operation = filterOp;
+            filterContainer.SaveToDatabase();
         }
+        else if (_filterUIs.Count > 0)
+        {
+            filterContainer = new AggregateFilterContainer(_activator.RepositoryLocator.CatalogueRepository, filterOp);
+            aggregate.RevertToDatabaseState();
+            aggregate.RootFilterContainer_ID = filterContainer.ID;
+            aggregate.SaveToDatabase();
+
+            var filtersAddedSoFar = new List<IFilter>();
+            foreach (var ui in _filterUIs)
+            {
+                var f = ui.CreateFilter(new AggregateFilterFactory(_activator.RepositoryLocator.CatalogueRepository),
+                    filterContainer, filtersAddedSoFar.ToArray());
+                filtersAddedSoFar.Add(f);
+            }
+        }
+    }
+
+    private void ddAndOr_SelectedIndexChanged(object sender, EventArgs e)
+    {
     }
 }

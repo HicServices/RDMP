@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
@@ -13,44 +14,40 @@ using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Tests.Common.Scenarios
+namespace Tests.Common.Scenarios;
+
+/// <summary>
+/// Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue"/> with a <see cref="LoadMetadata"/>
+/// </summary>
+public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequestAdjuster
 {
-    /// <summary>
-    /// Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue"/> with a <see cref="LoadMetadata"/>
-    /// </summary>
-    public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequestAdjuster
+    public void AdjustColumns(List<DatabaseColumnRequest> columns)
     {
-        public void AdjustColumns(List<DatabaseColumnRequest> columns)
-        {
-            //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
-            foreach(var c in columns)
-            {
-                if(c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue)
-                    c.TypeRequested.Width = Math.Max(500,c.TypeRequested.Width.Value);
+        //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
+        foreach (var c in columns.Where(c =>
+                     c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue))
+            c.TypeRequested.Width = Math.Max(500, c.TypeRequested.Width.Value);
+    }
 
-            }
-        }
+    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows, Random r,
+        out PersonCollection peopleGenerated) where T : IDataGenerator
+    {
+        peopleGenerated = new PersonCollection();
+        peopleGenerated.GeneratePeople(people, r);
+        return CreateDataset<T>(db, peopleGenerated, rows, r);
+    }
 
-        protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db,int people, int rows,Random r, out PersonCollection peopleGenerated) where T:IDataGenerator
-        {
-            peopleGenerated = new PersonCollection();
-            peopleGenerated.GeneratePeople(people, r);
-            return CreateDataset<T>(db, peopleGenerated, rows,r);
-        }
-        protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows,Random r) where T:IDataGenerator
-        {
-            return CreateDataset<T>(db,people,rows,r,out _);
-        }
+    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows, Random r)
+        where T : IDataGenerator => CreateDataset<T>(db, people, rows, r, out _);
 
-        protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, PersonCollection people, int rows, Random r)
-            where T : IDataGenerator
-        {
-            var f = new DataGeneratorFactory();
-            T instance = f.Create<T>(r);
+    protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, PersonCollection people, int rows, Random r)
+        where T : IDataGenerator
+    {
+        var f = new DataGeneratorFactory();
+        var instance = f.Create<T>(r);
 
-            var dt = instance.GetDataTable(people, rows);
+        var dt = instance.GetDataTable(people, rows);
 
-            return db.CreateTable(typeof(T).Name, dt, null, false, this);
-        }
+        return db.CreateTable(typeof(T).Name, dt, null, false, this);
     }
 }

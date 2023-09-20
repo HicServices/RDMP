@@ -10,48 +10,44 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandAnonymiseColumnInfo : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandAnonymiseColumnInfo : BasicUICommandExecution,IAtomicCommand
+    private readonly ColumnInfo _columnInfo;
+
+    public ExecuteCommandAnonymiseColumnInfo(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
     {
-        private readonly ColumnInfo _columnInfo;
+        _columnInfo = columnInfo;
+        if (columnInfo.GetRuntimeName().StartsWith(ANOTable.ANOPrefix, StringComparison.CurrentCultureIgnoreCase))
+            SetImpossible($"ColumnInfo is already anonymised (Starts with \"{ANOTable.ANOPrefix}\"");
 
-        public ExecuteCommandAnonymiseColumnInfo(IActivateItems activator, ColumnInfo columnInfo):base(activator)
-        {
-            _columnInfo = columnInfo;
-            if (columnInfo.GetRuntimeName().StartsWith(ANOTable.ANOPrefix,StringComparison.CurrentCultureIgnoreCase))
-                SetImpossible("ColumnInfo is already anonymised (Starts with \"" + ANOTable.ANOPrefix + "\"");
+        if (columnInfo.ANOTable_ID != null)
+            SetImpossible("ColumnInfo is already anonymised");
 
-            if (columnInfo.ANOTable_ID != null)
-                SetImpossible("ColumnInfo is already anonymised");
+        if (Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore) == null)
+            SetImpossible("No Default ANOStore has been configured");
 
-            if(Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore) == null)
-                SetImpossible("No Default ANOStore has been configured");
+        if (string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Server))
+            SetImpossible("Parent TableInfo is missing a value for Server");
 
-            if(string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Server))
-                SetImpossible("Parent TableInfo is missing a value for Server");
-            
-            if(string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Database))
-                SetImpossible("Parent TableInfo is missing a value for Database");
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            Activator.Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(_columnInfo);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ANOColumnInfo);
-        }
-
+        if (string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Database))
+            SetImpossible("Parent TableInfo is missing a value for Database");
     }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        Activator.Activate<ColumnInfoToANOTableConverterUI, ColumnInfo>(_columnInfo);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ANOColumnInfo);
 }

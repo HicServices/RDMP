@@ -7,39 +7,34 @@
 using System.IO;
 using Rdmp.Core.Curation.Data.Serialization;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// Describes file(s) which the user is seeking to combine with other object(s) (e.g. during drag and drop)
+/// </summary>
+public class FileCollectionCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    /// Describes file(s) which the user is seeking to combine with other object(s) (e.g. during drag and drop)
+    /// The files which have been selected for combining
     /// </summary>
-    public class FileCollectionCombineable : ICombineToMakeCommand
+    public FileInfo[] Files { get; set; }
+
+
+    /// <summary>
+    /// True if the <see cref="Files"/> are serialized <see cref="ShareDefinition"/> files
+    /// </summary>
+    public bool IsShareDefinition { get; set; }
+
+    /// <summary>
+    /// Creates a new instance in which the user is seeking to combine the given <paramref name="files"/>
+    /// </summary>
+    /// <param name="files"></param>
+    public FileCollectionCombineable(FileInfo[] files)
     {
-        /// <summary>
-        /// The files which have been selected for combining
-        /// </summary>
-        public FileInfo[] Files { get; set; }
-        
-
-        /// <summary>
-        /// True if the <see cref="Files"/> are serialized <see cref="ShareDefinition"/> files
-        /// </summary>
-        public bool IsShareDefinition { get; set; }
-        
-        /// <summary>
-        /// Creates a new instance in which the user is seeking to combine the given <paramref name="files"/>
-        /// </summary>
-        /// <param name="files"></param>
-        public FileCollectionCombineable(FileInfo[] files)
-        {
-            Files = files;
-            IsShareDefinition = files.Length == 1 && files[0].Extension == ".sd";
-
-        }
-
-        /// <inheritdoc/>
-        public string GetSqlString()
-        {
-            return null;
-        }
+        Files = files;
+        IsShareDefinition = files.Length == 1 && files[0].Extension == ".sd";
     }
+
+    /// <inheritdoc/>
+    public string GetSqlString() => null;
 }

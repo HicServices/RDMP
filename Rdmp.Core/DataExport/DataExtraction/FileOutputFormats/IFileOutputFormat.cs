@@ -6,17 +6,15 @@
 
 using System.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats
-{
-    interface IFileOutputFormat
-    {
+namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
-        string GetFileExtension();
-        string OutputFilename { get; }
-        void Open();
-        void WriteHeaders(DataTable t);
-        void Append(DataRow r);
-        void Flush();
-        void Close();
-    }
+internal interface IFileOutputFormat
+{
+    string GetFileExtension();
+    string OutputFilename { get; }
+    void Open();
+    void WriteHeaders(DataTable t);
+    void Append(DataRow r);
+    void Flush();
+    void Close();
 }

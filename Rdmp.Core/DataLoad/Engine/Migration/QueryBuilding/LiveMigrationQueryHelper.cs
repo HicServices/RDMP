@@ -9,44 +9,41 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.DataLoad.Triggers;
 
-namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
+namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
+
+/// <summary>
+/// See MigrationQueryHelper
+/// </summary>
+public class LiveMigrationQueryHelper : MigrationQueryHelper
 {
-    /// <summary>
-    /// See MigrationQueryHelper
-    /// </summary>
-    public class LiveMigrationQueryHelper : MigrationQueryHelper
+    private readonly int _dataLoadRunID;
+
+    public LiveMigrationQueryHelper(MigrationColumnSet columnsToMigrate, int dataLoadRunID) : base(columnsToMigrate)
     {
-        private readonly int _dataLoadRunID;
+        _dataLoadRunID = dataLoadRunID;
+    }
 
-        public LiveMigrationQueryHelper(MigrationColumnSet columnsToMigrate, int dataLoadRunID) : base (columnsToMigrate)
-        {
-            _dataLoadRunID = dataLoadRunID;
-        }
+    public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
+    {
+        var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => $"{destAlias}.[{name}] = {sourceAlias}.[{name}]")
+            .ToList();
+        parts.Add($"{destAlias}.{SpecialFieldNames.DataLoadRunID} = {_dataLoadRunID}");
 
-        public override string BuildUpdateClauseForRow(string sourceAlias, string destAlias)
-        {
-            var parts = ColumnsToMigrate.FieldsToUpdate.Select(name => destAlias + ".[" + name + "] = " + sourceAlias + ".[" + name + "]").ToList();
-            parts.Add(destAlias + "." + SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID);
+        return string.Join(", ", parts);
+    }
 
-            return String.Join(", ", parts);
-        }
+    public override string BuildInsertClause() => throw new NotImplementedException();
 
-        public override string BuildInsertClause()
-        {
-            var inserts = GetListOfInsertColumnFields(ColumnsToMigrate, _dataLoadRunID);
-            throw new NotImplementedException();
-        }
+    public static List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate,
+        int dataLoadRunID)
+    {
+        var inserts = new List<KeyValuePair<string, string>>();
 
-        public List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate, int dataLoadRunID)
-        {
-            var inserts = new List<KeyValuePair<string, string>>();
+        columnsToMigrate.FieldsToUpdate.ToList().ForEach(column =>
+            inserts.Add(new KeyValuePair<string, string>($"[{column}]", $"source.[{column}]")));
 
-            columnsToMigrate.FieldsToUpdate.ToList().ForEach(column =>
-                inserts.Add(new KeyValuePair<string, string>("[" + column + "]", "source.[" + column + "]")));
+        inserts.Add(new KeyValuePair<string, string>(SpecialFieldNames.DataLoadRunID, dataLoadRunID.ToString()));
 
-            inserts.Add(new KeyValuePair<string, string>(SpecialFieldNames.DataLoadRunID, dataLoadRunID.ToString()));
-
-            return inserts;
-        }
+        return inserts;
     }
 }

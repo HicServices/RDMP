@@ -8,30 +8,25 @@ using System;
 using YamlDotNet.Core;
 using YamlDotNet.Core.Events;
 using YamlDotNet.Serialization;
-
 using Version = System.Version;
 
-namespace Rdmp.Core.Repositories
+namespace Rdmp.Core.Repositories;
+
+/// <summary>
+/// Reads/Writes <see cref="Version"/> as a simple string value
+/// </summary>
+internal class VersionYamlTypeConverter : IYamlTypeConverter
 {
-    /// <summary>
-    /// Reads/Writes <see cref="Version"/> as a simple string value
-    /// </summary>
-    internal class VersionYamlTypeConverter : IYamlTypeConverter
+    public bool Accepts(Type type) => type == typeof(Version);
+
+    public object ReadYaml(IParser parser, Type type)
     {
-        public bool Accepts(Type type)
-        {
-            return type == typeof(Version);
-        }
+        var s = parser.Consume<Scalar>();
+        return new Version(s.Value);
+    }
 
-        public object ReadYaml(IParser parser, Type type)
-        {
-            var s = parser.Consume<Scalar>();
-            return new Version(s.Value);
-        }
-
-        public void WriteYaml(IEmitter emitter, object value, Type type)
-        {
-            emitter.Emit(new Scalar(((Version)value).ToString()));
-        }
+    public void WriteYaml(IEmitter emitter, object value, Type type)
+    {
+        emitter.Emit(new Scalar(((Version)value).ToString()));
     }
 }

@@ -10,151 +10,137 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Xml.Serialization;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <inheritdoc cref="IPermissionWindow"/>
+public class PermissionWindow : DatabaseEntity, IPermissionWindow
 {
-    /// <inheritdoc cref="IPermissionWindow"/>
-    public class PermissionWindow : DatabaseEntity, IPermissionWindow
+    #region Database Properties
+
+    private string _name;
+    private string _description;
+    private bool _requiresSynchronousAccess;
+
+    /// <inheritdoc/>
+    [NotNull]
+    [Unique]
+    public string Name
     {
-        #region Database Properties
+        get => _name;
+        set => SetField(ref _name, value);
+    }
 
-        private string _name;
-        private string _description;
-        private bool _requiresSynchronousAccess;
-        
-        /// <inheritdoc/>
-        [NotNull]
-        [Unique]
-        public string Name
+    /// <inheritdoc/>
+    public string Description
+    {
+        get => _description;
+        set => SetField(ref _description, value);
+    }
+
+    /// <inheritdoc/>
+    public bool RequiresSynchronousAccess
+    {
+        get => _requiresSynchronousAccess;
+        set => SetField(ref _requiresSynchronousAccess, value);
+    }
+
+    /// <summary>
+    /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
+    /// </summary>
+    public string PermissionPeriodConfig
+    {
+        get => SerializePermissionWindowPeriods();
+        set
         {
-            get { return _name; }
-            set { SetField(ref  _name, value); }
+            var old = SerializePermissionWindowPeriods();
+            DeserializePermissionWindowPeriods(value);
+            OnPropertyChanged(old, value);
         }
+    }
 
-        /// <inheritdoc/>
-        public string Description
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IEnumerable<ICacheProgress> CacheProgresses => Repository.GetAllObjectsWithParent<CacheProgress>(this);
+
+    #endregion
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
+
+    private static readonly XmlSerializer Serializer = new(typeof(List<PermissionWindowPeriod>));
+
+    private string SerializePermissionWindowPeriods()
+    {
+        using var output = new StringWriter();
+        Serializer.Serialize(output, PermissionWindowPeriods);
+        return output.ToString();
+    }
+
+    private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
+    {
+        if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
         {
-            get { return _description; }
-            set { SetField(ref  _description, value); }
+            PermissionWindowPeriods = new List<PermissionWindowPeriod>();
         }
+        else
+            PermissionWindowPeriods =
+                Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
+    }
 
-        /// <inheritdoc/>
-        public bool RequiresSynchronousAccess
+    /// <inheritdoc/>
+    public bool WithinPermissionWindow() => WithinPermissionWindow(DateTime.UtcNow);
+
+    /// <inheritdoc/>
+    public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
+    {
+        return !PermissionWindowPeriods.Any() ||
+               PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
+    }
+
+    public PermissionWindow()
+    {
+    }
+
+    /// <summary>
+    /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
+    /// </summary>
+    /// <param name="repository"></param>
+    public PermissionWindow(ICatalogueRepository repository)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _requiresSynchronousAccess; }
-            set { SetField(ref  _requiresSynchronousAccess, value); }
-        }
-        
-        /// <summary>
-        /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
-        /// </summary>
-        public string PermissionPeriodConfig {
-            get { return SerializePermissionWindowPeriods(); }
-            set
-            {
-                var old = SerializePermissionWindowPeriods();
-                DeserializePermissionWindowPeriods(value);
-                OnPropertyChanged(old, value);
-            }
-        }
+            { "PermissionPeriodConfig", DBNull.Value },
+            { "Name", $"New PermissionWindow{Guid.NewGuid()}" }
+        });
+    }
 
-        #endregion
+    internal PermissionWindow(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Name = r["Name"].ToString();
+        Description = r["Description"].ToString();
+        RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
+        PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
+    }
 
-        #region Relationships
+    /// <inheritdoc/>
+    public override string ToString() => $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IEnumerable<ICacheProgress> CacheProgresses {
-            get { return Repository.GetAllObjectsWithParent<CacheProgress>(this); }
-        }
-        #endregion
-
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
-
-        private string SerializePermissionWindowPeriods()
-        {
-            var serializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-            using (var output = new StringWriter())
-            {
-                serializer.Serialize(output, PermissionWindowPeriods);
-                return output.ToString();
-            }
-        }
-
-        private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
-        {
-            if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
-                PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-            else
-            {
-                var deserializer = new XmlSerializer(typeof (List<PermissionWindowPeriod>));
-                PermissionWindowPeriods = deserializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
-            }
-        }
-        /// <inheritdoc/>
-        public bool WithinPermissionWindow()
-        {
-            if (!PermissionWindowPeriods.Any())
-                return true;
-
-            return WithinPermissionWindow(DateTime.UtcNow);
-        }
-
-        /// <inheritdoc/>
-        public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
-        {
-            
-            if (!PermissionWindowPeriods.Any())
-                return true;
-
-            return PermissionWindowPeriods.Any(permissionPeriod => permissionPeriod.Contains(dateTimeUTC));
-        }
-
-        public PermissionWindow()
-        {
-
-        }
-
-        /// <summary>
-        /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
-        /// </summary>
-        /// <param name="repository"></param>
-        public PermissionWindow(ICatalogueRepository repository)
-        {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>
-            {
-                {"PermissionPeriodConfig", DBNull.Value},
-                {"Name","New PermissionWindow" + Guid.NewGuid()}
-            });
-        }
-
-        internal PermissionWindow(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Name = r["Name"].ToString();
-            Description = r["Description"].ToString();
-            RequiresSynchronousAccess = Convert.ToBoolean(r["RequiresSynchronousAccess"]);
-            PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
-        }
-        
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return (string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name) + "(ID = " + ID + ")";
-        }
-        
-        /// <inheritdoc/>
-        public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
-        {
-            PermissionWindowPeriods = windowPeriods;
-            PermissionPeriodConfig = SerializePermissionWindowPeriods();
-        }
+    /// <inheritdoc/>
+    public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
+    {
+        PermissionWindowPeriods = windowPeriods;
+        PermissionPeriodConfig = SerializePermissionWindowPeriods();
     }
 }

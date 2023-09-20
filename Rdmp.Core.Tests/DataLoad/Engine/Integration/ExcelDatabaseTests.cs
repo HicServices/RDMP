@@ -13,43 +13,43 @@ using System.IO;
 using System.Linq;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class ExcelDatabaseTests : DatabaseTests
 {
-    public class ExcelDatabaseTests : DatabaseTests
+    [Test]
+    public void TestLoadingFileWithTrailingDotsInHeader()
     {
-        [Test]
-        public void TestLoadingFileWithTrailingDotsInHeader()
-        {
-            var trailingDotsFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TrailingDots....xlsx");
-            FileAssert.Exists(trailingDotsFile);
+        var trailingDotsFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TrailingDots....xlsx");
+        FileAssert.Exists(trailingDotsFile);
 
-            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-            // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
-            var creator = new CataloguePipelinesAndReferencesCreation(
-                RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-            creator.CreatePipelines();
+        // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
+        var creator = new CataloguePipelinesAndReferencesCreation(
+            RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
+        creator.CreatePipelines(new PlatformDatabaseCreationOptions {});
 
-            // find the excel loading pipeline
-            var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID).FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
+        // find the excel loading pipeline
+        var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: Excel File"));
 
-            // run an import of the file using the pipeline
-            var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
-                new ThrowImmediatelyActivator(RepositoryLocator),
-                new FileInfo(trailingDotsFile),
-                null, db, pipe, null);
+        // run an import of the file using the pipeline
+        var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
+            new ThrowImmediatelyActivator(RepositoryLocator),
+            new FileInfo(trailingDotsFile),
+            null, db, pipe, null);
 
-            cmd.Execute();
+        cmd.Execute();
 
-            var tbl = db.ExpectTable("TrailingDots");
-            Assert.IsTrue(tbl.Exists());
+        var tbl = db.ExpectTable("TrailingDots");
+        Assert.IsTrue(tbl.Exists());
 
-            var cols = tbl.DiscoverColumns();
-            Assert.AreEqual(2, cols.Length);
-            Assert.AreEqual("Field1",cols[0].GetRuntimeName());
-            Assert.AreEqual("Field2", cols[1].GetRuntimeName());
-                        
-            Assert.AreEqual(2, tbl.GetRowCount());
-        }
+        var cols = tbl.DiscoverColumns();
+        Assert.AreEqual(2, cols.Length);
+        Assert.AreEqual("Field1", cols[0].GetRuntimeName());
+        Assert.AreEqual("Field2", cols[1].GetRuntimeName());
+
+        Assert.AreEqual(2, tbl.GetRowCount());
     }
 }

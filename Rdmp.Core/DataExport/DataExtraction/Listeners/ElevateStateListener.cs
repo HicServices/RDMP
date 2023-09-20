@@ -5,31 +5,29 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.DataExport.DataExtraction.Commands;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataExport.DataExtraction.Listeners
+namespace Rdmp.Core.DataExport.DataExtraction.Listeners;
+
+/// <summary>
+/// A simple DataLoadEventListener to be used during extraction so that the state can be moved to "crashed" if any component raises an error without an exception.
+/// </summary>
+public class ElevateStateListener : IDataLoadEventListener
 {
+    private readonly ExtractCommand extractCommand;
 
-    /// <summary>
-    /// A simple DataLoadEventListener to be used during extraction so that the state can be moved to "crashed" if any component raises an error without an exception.
-    /// </summary>
-    public class ElevateStateListener : IDataLoadEventListener
+    public ElevateStateListener(ExtractCommand extractCommand)
     {
-        private readonly ExtractCommand extractCommand;
+        this.extractCommand = extractCommand;
+    }
 
-        public ElevateStateListener(ExtractCommand extractCommand)
-        {
-            this.extractCommand = extractCommand;
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        if (e.ProgressEventType == ProgressEventType.Error && extractCommand != null)
+            extractCommand.ElevateState(ExtractCommandState.Crashed);
+    }
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            if (e.ProgressEventType == ProgressEventType.Error && extractCommand != null)
-                extractCommand.ElevateState(ExtractCommandState.Crashed);
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-        }
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
     }
 }

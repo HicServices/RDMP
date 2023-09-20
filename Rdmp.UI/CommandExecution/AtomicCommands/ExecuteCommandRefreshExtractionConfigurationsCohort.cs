@@ -4,85 +4,77 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Threading.Tasks;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Progress;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
+    private readonly ExtractionConfiguration _extractionConfiguration;
+
+    public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator,
+        ExtractionConfiguration extractionConfiguration) : base(activator)
     {
-        private readonly ExtractionConfiguration _extractionConfiguration;
-        private Project _project;
+        _extractionConfiguration = extractionConfiguration;
+        var project = (Project)_extractionConfiguration.Project;
 
-        public ExecuteCommandRefreshExtractionConfigurationsCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
-        {
-            _extractionConfiguration = extractionConfiguration;
-            _project = (Project)_extractionConfiguration.Project;
-            
-            if(extractionConfiguration.Cohort_ID == null)
-                SetImpossible("No Cohort Set");
+        if (extractionConfiguration.Cohort_ID == null)
+            SetImpossible("No Cohort Set");
 
-            if (extractionConfiguration.CohortRefreshPipeline_ID == null)
-                SetImpossible("No Refresh Pipeline Set");
+        if (extractionConfiguration.CohortRefreshPipeline_ID == null)
+            SetImpossible("No Refresh Pipeline Set");
 
-            if(!_project.ProjectNumber.HasValue)
-                SetImpossible("Project '"+_project+"' does not have a Project Number");
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query). " +
-                   "This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-            
-            //show the ui
-            var progressUi = new ProgressUI();
-            progressUi.ApplyTheme(Activator.Theme);
-
-            progressUi.Text = "Refreshing Cohort (" + _extractionConfiguration + ")";
-            Activator.ShowWindow(progressUi,true);
-
-            var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
-            Task.Run(
-
-                //run the pipeline in a Thread
-                () =>
-                {
-
-                    progressUi.ShowRunning(true);
-                    engine.Execute();
-                }
-                ).ContinueWith(s =>
-            {
-                progressUi.ShowRunning(false);
-
-                //then on the UI thread 
-                if(s.IsFaulted)
-                    return;
-
-                //issue save and refresh
-                if (engine.Request.CohortCreatedIfAny != null)
-                    Publish(_extractionConfiguration);
-
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
-        }
+        if (!project.ProjectNumber.HasValue)
+            SetImpossible($"Project '{project}' does not have a Project Number");
     }
+
+    public override string GetCommandHelp() =>
+        "Update the cohort to a new version by rerunning the associated Cohort Identification Configuration (query). " +
+        "This is useful if you have to do yearly\\monthly releases and update the cohort based on new data";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        //show the ui
+        var progressUi = new ProgressUI();
+        progressUi.ApplyTheme(Activator.Theme);
+
+        progressUi.Text = $"Refreshing Cohort ({_extractionConfiguration})";
+        Activator.ShowWindow(progressUi, true);
+
+        var engine = new CohortRefreshEngine(progressUi, _extractionConfiguration);
+        Task.Run(
+            //run the pipeline in a Thread
+            () =>
+            {
+                progressUi.ShowRunning(true);
+                engine.Execute();
+            }
+        ).ContinueWith(s =>
+        {
+            progressUi.ShowRunning(false);
+
+            //then on the UI thread
+            if (s.IsFaulted)
+                return;
+
+            //issue save and refresh
+            if (engine.Request.CohortCreatedIfAny != null)
+                Publish(_extractionConfiguration);
+        }, TaskScheduler.FromCurrentSynchronizationContext());
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
 }

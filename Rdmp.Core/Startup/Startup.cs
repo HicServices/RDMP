@@ -5,12 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Reflection;
+using System.Runtime.Loader;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using FAnsi.Implementation;
@@ -18,362 +16,276 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataQualityEngine.Data;
-using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup.Events;
-using Rdmp.Core.Validation;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.Startup
+namespace Rdmp.Core.Startup;
+
+/// <summary>
+/// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2
+/// databases) and plugin databases (Called Tier3).
+/// 
+/// <para>Identifies which databases need to be patched.</para>
+/// 
+/// <para>Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.</para>
+/// </summary>
+public class Startup
 {
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
+    public event FoundPlatformDatabaseHandler DatabaseFound = static delegate { };
+    //public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
+
     /// <summary>
-    /// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2 
-    /// databases) and plugin databases (Called Tier3).
-    /// 
-    /// <para>Identifies which databases need to be patched.</para>
-    /// 
-    /// <para>Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.</para>
+    /// Set to true to ignore unpatched platform databases
     /// </summary>
-    public class Startup
+    public bool SkipPatching { get; init; }
+
+    public PluginPatcherFoundHandler PluginPatcherFound = static delegate { };
+
+    private readonly PatcherManager _patcherManager = new();
+
+    #region Constructors
+
+    public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator) : this()
     {
-        public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }
+        RepositoryLocator = repositoryLocator;
+    }
 
-        private readonly EnvironmentInfo _environmentInfo;
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
-        public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
+    public Startup()
+    {
+        TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
+    }
 
-        /// <summary>
-        /// Set to true to ignore unpatched platform databases
-        /// </summary>
-        public bool SkipPatching { get; set; }
+    #endregion
 
-        public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
+    #region Database Discovery
 
-        PatcherManager _patcherManager = new PatcherManager();
+    public void DoStartup(ICheckNotifier notifier)
+    {
+        var foundCatalogue = false;
 
-        #region Constructors
-        public Startup(EnvironmentInfo environmentInfo,IRDMPPlatformRepositoryServiceLocator repositoryLocator):this(environmentInfo)
+        notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies", CheckResult.Success));
+
+        DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
+
+        var cataloguePatcher = new CataloguePatcher();
+
+        try
         {
-            RepositoryLocator = repositoryLocator;
+            foundCatalogue = Find(RepositoryLocator.CatalogueRepository, cataloguePatcher, notifier);
+        }
+        catch (Exception e)
+        {
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, cataloguePatcher, RDMPPlatformDatabaseStatus.Broken, e));
         }
 
-        public Startup(EnvironmentInfo environmentInfo)
-        {
-            _environmentInfo = environmentInfo;
-            TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
-        }
-        #endregion
-
-        #region Database Discovery
-        public void DoStartup(ICheckNotifier notifier)
-        {
-            bool foundCatalogue = false;
-
-            notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
-
-            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
-
-            var cataloguePatcher = new CataloguePatcher();
-
+        if (foundCatalogue)
             try
             {
-                foundCatalogue = Find(RepositoryLocator.CatalogueRepository,cataloguePatcher,notifier);
-            }
-            catch (Exception e)
-            {
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,cataloguePatcher, RDMPPlatformDatabaseStatus.Broken,e));
-            }
-
-            if (foundCatalogue)
-                try
+                //setup connection string keywords
+                foreach (var keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
                 {
-                    //setup connection string keywords
-                    foreach (ConnectionStringKeyword keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
-                    {
-                        var tomem = new ToMemoryCheckNotifier(notifier);
-                        keyword.Check(tomem);
+                    var tomem = new ToMemoryCheckNotifier(notifier);
+                    keyword.Check(tomem);
 
-                        //don't add broken keywords!
-                        if (tomem.GetWorst() >= CheckResult.Fail)
-                            continue;
+                    //don't add broken keywords!
+                    if (tomem.GetWorst() >= CheckResult.Fail)
+                        continue;
 
-                        //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
-                        DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value, ConnectionStringKeywordPriority.SystemDefaultMedium);
-                    }
-
+                    //pass it into the system wide static keyword collection for use with all databases of this type all the time (that includes Microsoft Sql Server btw which means those options will happen for DataExport too!)
+                    DiscoveredServerHelper.AddConnectionStringKeyword(keyword.DatabaseType, keyword.Name, keyword.Value,
+                        ConnectionStringKeywordPriority.SystemDefaultMedium);
                 }
-                catch (Exception ex)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",CheckResult.Fail, ex));
-                }
-            
-
-            //only load data export manager if catalogue worked
-            if(foundCatalogue)
-            {
-                LoadMEF(RepositoryLocator.CatalogueRepository,notifier);
-
-                //find tier 2 databases
-                foreach (var patcher in _patcherManager.Tier2Patchers) 
-                    FindWithPatcher(patcher,notifier);
-
-                try
-                {
-                    var dataExportRepository = RepositoryLocator.DataExportRepository;
-
-                    //not configured
-                    if(dataExportRepository == null)
-                        return;
-
-                    Find(dataExportRepository, new DataExportPatcher(),notifier);
-                }
-                catch (Exception e)
-                {
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,e));
-                }
-
-                FindTier3Databases( RepositoryLocator.CatalogueRepository,notifier);
-            }
-            
-            if(MEFSafeDirectoryCatalog != null)
-                Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,notifier);
-        }
-
-        private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
-        {
-            foreach (PluginPatcher patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
-                FindWithPatcher(patcher,notifier);
-        }
-
-        private bool Find(IRepository repository, IPatcher patcher,ICheckNotifier notifier)
-        {
-            //if it's not configured
-            if (repository == null)
-            {
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
-                return false;
-            }
-
-            // it's not a database we are getting this data from then assume its good to go
-            if (repository is not ITableRepository tableRepository)
-                return true;
-                
-            //check we can reach it
-            var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-            notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Connecting to {0} on {1}",db.GetRuntimeName(),db.Server.Name) ,CheckResult.Success));
-
-            //is it reachable
-            try
-            {
-                tableRepository.TestConnection();
             }
             catch (Exception ex)
             {
-                //no
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable, ex));
-                return false;
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",
+                    CheckResult.Fail, ex));
             }
 
 
-            Patch.PatchingState patchingRequired;
+        //only load data export manager if catalogue worked
+        if (!foundCatalogue) return;
+        LoadMEF(RepositoryLocator.CatalogueRepository, notifier);
+
+        //find tier 2 databases
+        foreach (var patcher in _patcherManager.Tier2Patchers)
+            FindWithPatcher(patcher, notifier);
+
+        try
+        {
+            var dataExportRepository = RepositoryLocator.DataExportRepository;
+
+            //not configured
+            if (dataExportRepository == null)
+                return;
+
+            Find(dataExportRepository, new DataExportPatcher(), notifier);
+        }
+        catch (Exception e)
+        {
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,
+                    e));
+        }
+
+        FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
+    }
+
+    private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
+    {
+        foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
+            FindWithPatcher(patcher, notifier);
+    }
+
+    private bool Find(IRepository repository, IPatcher patcher, ICheckNotifier notifier)
+    {
+        //if it's not configured
+        if (repository == null)
+        {
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
+            return false;
+        }
+
+        // it's not a database we are getting this data from then assume it's good to go
+        if (repository is not ITableRepository tableRepository)
+            return true;
+
+        //check we can reach it
+        var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
+        notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
+            CheckResult.Success));
+
+        //is it reachable
+        try
+        {
+            tableRepository.TestConnection();
+        }
+        catch (Exception ex)
+        {
+            //no
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable,
+                    ex));
+            return false;
+        }
+
+
+        try
+        {
+            //is it up-to-date on patches?
+            var patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(),
+                patcher, out _, out _, out _);
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, patchingRequired switch
+                {
+                    Patch.PatchingState.NotRequired => RDMPPlatformDatabaseStatus.Healthy,
+                    Patch.PatchingState.Required => SkipPatching
+                        ? RDMPPlatformDatabaseStatus.Healthy
+                        : RDMPPlatformDatabaseStatus.RequiresPatching,
+                    Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
+                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                }));
+        }
+        catch (Exception e)
+        {
+            //database is broken (maybe the version of the db is ahead of the host assembly?)
+            DatabaseFound(this,
+                new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
+            return false;
+        }
+
+        return true;
+    }
+
+    private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
+    {
+        var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            .Where(eds => eds.WasCreatedBy(patcher));
+
+        foreach (IExternalDatabaseServer server in dbs)
             try
             {
-                //is it up-to-date on patches?
-                Version databaseVersion;
-                Patch[] patchesInDatabase;
-                SortedDictionary<string, Patch> allPatchesInAssembly;
-                
-                patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(), patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
+                var builder = DataAccessPortal
+                    .ExpectServer(server, DataAccessContext.InternalDataProcessing)
+                    .Builder;
+
+                Find(new CatalogueRepository(builder), patcher, notifier);
             }
             catch (Exception e)
             {
-                //database is broken (maybe the version of the db is ahead of the host assembly?)
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
-                return false;
+                notifier.OnCheckPerformed(new CheckEventArgs($"Could not resolve ExternalDatabaseServer '{server}'",
+                    CheckResult.Warning, e));
+            }
+    }
+
+    #endregion
+
+
+    #region MEF
+
+    /// <summary>
+    /// Load the plugins from the platform DB
+    /// </summary>
+    /// <param name="catalogueRepository"></param>
+    /// <param name="notifier"></param>
+    private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
+    {
+        /*foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
+                     .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))*/
+        // Ignore tiny nupkg files from  old 'unit test'
+        foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
+                     .Where(path => new FileInfo(path).Length > 100).Select(File.OpenRead)
+                     .SelectMany(LoadModuleAssembly.GetContents))
+            try
+            {
+                AssemblyLoadContext.Default.LoadFromStream(body);
+            }
+            catch (Exception e)
+            {
+                var msg = $"Could not load plugin component {name} due to {e.Message}";
+                Console.Error.WriteLine(msg);
+                notifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Warning, e));
+            }
+            finally
+            {
+                body.Dispose();
             }
 
-            // if we are suppressing patching
-            if (patchingRequired == Patch.PatchingState.Required && SkipPatching)
-                patchingRequired = Patch.PatchingState.NotRequired;
+        if (CatalogueRepository.SuppressHelpLoading) return;
 
-            switch(patchingRequired)
-            {
-                case Patch.PatchingState.NotRequired:
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
-                    break;
-                case Patch.PatchingState.Required: 
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
-                    break;
-                case Patch.PatchingState.SoftwareBehindDatabase:
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.SoftwareOutOfDate));
-                    break;
-                default : throw new ArgumentOutOfRangeException("patchingRequired");
-            }          
+        notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+        var sw = Stopwatch.StartNew();
+        catalogueRepository.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
+        sw.Stop();
+        notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+    }
 
-            return true;
-        }
+    #endregion
 
-        private void FindWithPatcher(IPatcher patcher,ICheckNotifier notifier)
-        {
-            var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedBy(patcher));
-
-            foreach (IExternalDatabaseServer server in dbs)
-            {
-                try
-                {
-                    var builder = DataAccessPortal.GetInstance()
-                        .ExpectServer(server, DataAccessContext.InternalDataProcessing)
-                        .Builder;
-
-                    Find(new CatalogueRepository(builder), patcher,notifier);
-                }
-                catch (Exception e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
-                }
-            }
-        }
-        #endregion
-
-
-        #region MEF
-
-        private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
-        {
-            catalogueRepository.MEF ??= new MEF();
-
-            var downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
-             
-            //make sure the MEF directory exists
-            if(!downloadDirectory.Exists)
-                downloadDirectory.Create();
-
-            var compatiblePlugins = catalogueRepository.PluginManager.GetCompatiblePlugins();
-
-            var dirs = new List<DirectoryInfo>();
-            var toLoad = new List<DirectoryInfo> {
-                //always load the current application directory
-                new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory)
-            };
-
-            for (int i = 0; i < compatiblePlugins.Length; i++)
-            {
-                var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
-                var subdir = Directory.CreateDirectory(subDirName);
-
-                dirs.Add(subdir);
-                                                             
-                var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
-
-                //if we have not downloaded this yet
-                if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
-                    compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
-                                
-                foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
-                {                    
-                    //get rid of any old out dirs
-                    var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
-                    
-                    bool mustUnzip = true;
-
-                    //if there's already an unpacked version
-                    if(outDir is { Exists: true })
-                    {
-                        //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
-                        mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
-
-                        if(mustUnzip)
-                            outDir.Delete(true);
-                    }
-                    else
-                        outDir = subdir.CreateSubdirectory("out");
-
-                    if(mustUnzip)
-                        using(var zf = ZipFile.OpenRead(archive.FullName))
-                            try
-                            {
-                                zf.ExtractToDirectory(outDir.FullName);
-                            }
-                            catch(Exception ex)
-                            {
-                                notifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
-                            }
-                    else
-                        notifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
-
-                    toLoad.AddRange(_environmentInfo.GetPluginSubDirectories(outDir.CreateSubdirectory("lib"), notifier));
-
-                    //tell them we downloaded it
-                    MEFFileDownloaded(this,
-                            new MEFFileDownloadProgressEventArgs(subdir, compatiblePlugins.Length, i + 1,
-                                archive.Name, false, MEFFileDownloadEventStatus.Success));
-                }
-            }
-
-            //The only Directories in MEF folder should be Plugin subdirectories, any that don't correspond with a plugin should be deleted 
-            foreach (DirectoryInfo unexpectedDirectory in downloadDirectory.GetDirectories().Where(expected=>!dirs.Any(d=>d.FullName.Equals(expected.FullName))))
-            {
-                try
-                {
-                    unexpectedDirectory.Delete(true);
-                    notifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced plugin folder " + unexpectedDirectory.FullName, CheckResult.Success));
-
-                }
-                catch (Exception ex)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Found unreferenced (no Plugin) folder " + unexpectedDirectory.FullName +
-                            " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
-                            CheckResult.Fail, ex));
-                }
-            }
-
-            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
-            
-            MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, toLoad.Select(d=>d.FullName).ToArray());
-            catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
-            
-            notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
-            var sw = Stopwatch.StartNew();
-
-            if(!CatalogueRepository.SuppressHelpLoading)
-                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
-
-            sw.Stop();
-            notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
-        }
-        #endregion
-
-        /// <summary>
-        /// <para>
-        /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory 
-        /// (see <see cref="AssemblyResolver"/>) and FAnsiSql DBMS implementations.
-        /// </para>
-        /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you 
-        /// are performing a low level operation like patching</para>
-        /// </summary>
-        public static void PreStartup()
-        {
-            AssemblyResolver.SetupAssemblyResolver();
-
-            ImplementationManager.Load<MicrosoftSQLImplementation>();
-            ImplementationManager.Load<MySqlImplementation>();
-            ImplementationManager.Load<OracleImplementation>();
-            ImplementationManager.Load<PostgreSqlImplementation>();
-        }
+    /// <summary>
+    /// <para>
+    /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory
+    /// (see <see cref="AssemblyResolver"/>) and FAnsiSql DBMS implementations.
+    /// </para>
+    /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you
+    /// are performing a low level operation like patching</para>
+    /// </summary>
+    public static void PreStartup()
+    {
+        ImplementationManager.Load<MicrosoftSQLImplementation>();
+        ImplementationManager.Load<MySqlImplementation>();
+        ImplementationManager.Load<OracleImplementation>();
+        ImplementationManager.Load<PostgreSqlImplementation>();
     }
 }

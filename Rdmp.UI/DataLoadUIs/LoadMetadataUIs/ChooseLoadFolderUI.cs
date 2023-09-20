@@ -14,151 +14,148 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
+
+/// <summary>
+/// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading,
+/// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
+/// 
+/// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
+/// when you click Ok.</para>
+/// 
+/// <para>Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to its folder) then
+/// you can select the 'use existing' checkbox and enter the path to the existing folder (this should be the root folder i.e. not the Data folder).  This will run Checks on the folder
+/// to confirm that it is has an intact structure and then use it for your load.</para>
+/// 
+/// </summary>
+public partial class ChooseLoadDirectoryUI : RDMPForm
 {
     /// <summary>
-    /// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
-    /// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
-    /// 
-    /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
-    /// when you click Ok.</para>
-    /// 
-    /// <para>Alternatively if you want to reuse an existing directory (for example if you have accidentally deleted your old data load configuration and lost the reference to its folder) then
-    /// you can select the 'use existing' checkbox and enter the path to the existing folder (this should be the root folder i.e. not the Data folder).  This will run Checks on the folder
-    /// to confirm that it is has an intact structure and then use it for your load.</para>
-    /// 
+    /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
-    public partial class ChooseLoadDirectoryUI : RDMPForm
+    public string Result { get; private set; }
+
+    private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
+
+    public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
     {
-        /// <summary>
-        /// The users final choice of project directory, also check DialogResult for Ok / Cancel
-        /// </summary>
-        public string Result { get; private set; }
+        InitializeComponent();
 
-        Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
+        SetItemActivator(activator);
 
-        public ChooseLoadDirectoryUI(IActivateItems activator, ILoadMetadata loadMetadata)
+        var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists(
+            "ILoadMetadata.LocationOfFlatFiles", false, true);
+
+        helpIcon1.SetHelpText("Location Of Flat Files", help);
+
+        if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
         {
-            InitializeComponent();
-            
-            SetItemActivator(activator);
-
-            var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
-            
-            helpIcon1.SetHelpText("Location Of Flat Files",help);
-
-            if(!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
-            {
-                tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
-                CheckExistingProjectDirectory();
-            }
-        }
-
-        private void rb_CheckedChanged(object sender, EventArgs e)
-        {
-            tbCreateNew.Enabled = rbCreateNew.Checked;
-            tbUseExisting.Enabled = rbUseExisting.Checked;
-            btnOk.Enabled = true;
-
-        }
-
-        private void tbUseExisting_Leave(object sender, EventArgs e)
-        {
+            tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
             CheckExistingProjectDirectory();
         }
+    }
 
-        private void CheckExistingProjectDirectory()
+    private void rb_CheckedChanged(object sender, EventArgs e)
+    {
+        tbCreateNew.Enabled = rbCreateNew.Checked;
+        tbUseExisting.Enabled = rbUseExisting.Checked;
+        btnOk.Enabled = true;
+    }
+
+    private void tbUseExisting_Leave(object sender, EventArgs e)
+    {
+        CheckExistingProjectDirectory();
+    }
+
+    private void CheckExistingProjectDirectory()
+    {
+        ragSmiley1.Visible = true;
+        try
         {
-            ragSmiley1.Visible = true;
+            new LoadDirectory(tbUseExisting.Text);
+            ragSmiley1.Reset();
+        }
+        catch (Exception ex)
+        {
+            ragSmiley1.Fatal(ex);
+        }
+    }
+
+
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+        if (rbCreateNew.Checked)
             try
             {
-                new LoadDirectory(tbUseExisting.Text);
-                ragSmiley1.Reset();
-            }
-            catch (Exception ex)
-            {
-                ragSmiley1.Fatal(ex);
-            }
-        }
+                var dir = new DirectoryInfo(tbCreateNew.Text);
 
+                if (!dir.Exists)
+                    dir.Create();
 
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            if (rbCreateNew.Checked)
+                Result = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name).RootPath.FullName;
+
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception exception)
             {
-                try
+                ExceptionViewer.Show(exception);
+            }
+
+        if (rbUseExisting.Checked)
+            try
+            {
+                var dir = new LoadDirectory(tbUseExisting.Text);
+                Result = dir.RootPath.FullName;
+                DialogResult = DialogResult.OK;
+                Close();
+            }
+            catch (Exception exception)
+            {
+                if (Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})", "Invalid Path"))
                 {
-                    var dir = new DirectoryInfo(tbCreateNew.Text);
-                
-                    if(!dir.Exists)
-                        dir.Create();
-
-                    Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name).RootPath.FullName;
-
+                    Result = tbUseExisting.Text;
                     DialogResult = DialogResult.OK;
-                    this.Close();
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show(exception);
+                    Close();
                 }
             }
+    }
 
-            if (rbUseExisting.Checked)
-            {
-                try
-                {
-                    var dir = new LoadDirectory(tbUseExisting.Text);
-                    Result = dir.RootPath.FullName;
-                    DialogResult = DialogResult.OK;
-                    this.Close();
-                }
-                catch (Exception exception)
-                {
-                    if(Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})","Invalid Path"))
-                    {
-                        Result = tbUseExisting.Text;
-                        DialogResult = DialogResult.OK;
-                        this.Close();
-                    }
-                }
-            }
-        }
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+    private void btnCreateNewBrowse_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog();
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+            tbCreateNew.Text = fbd.SelectedPath;
+    }
+
+    private void btnBrowseForExisting_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog
         {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
+            ShowNewFolderButton = false
+        };
 
-        private void btnCreateNewBrowse_Click(object sender, EventArgs e)
+        if (fbd.ShowDialog() == DialogResult.OK)
         {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            
-            if (fbd.ShowDialog() == DialogResult.OK)
-                tbCreateNew.Text = fbd.SelectedPath;
+            tbUseExisting.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
         }
+    }
 
-        private void btnBrowseForExisting_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            fbd.ShowNewFolderButton = false;
+    private void tbUseExisting_TextChanged(object sender, EventArgs e)
+    {
+        lblDataIsReservedWordExisting.Visible = _endsWithDataFolder.IsMatch(tbUseExisting.Text);
+    }
 
-            if (fbd.ShowDialog() == DialogResult.OK)
-            {
-                tbUseExisting.Text = fbd.SelectedPath;
-                CheckExistingProjectDirectory();
-            }
-        }
-
-        private void tbUseExisting_TextChanged(object sender, EventArgs e)
-        {
-            lblDataIsReservedWordExisting.Visible = _endsWithDataFolder.IsMatch(tbUseExisting.Text);
-        }
-
-        private void tbCreateNew_TextChanged(object sender, EventArgs e)
-        {
-            lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
-        }
+    private void tbCreateNew_TextChanged(object sender, EventArgs e)
+    {
+        lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
     }
 }

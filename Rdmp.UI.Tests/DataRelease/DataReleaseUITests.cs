@@ -8,17 +8,17 @@ using NUnit.Framework;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.DataRelease;
 
-namespace Rdmp.UI.Tests.DataRelease
+namespace Rdmp.UI.Tests.DataRelease;
+
+public class DataReleaseUITests : UITests
 {
-    public class DataReleaseUITests :UITests
+    [Test]
+    [UITimeout(20000)]
+    public void Test_DataReleaseUI_Constructor()
     {
-        [Test,UITimeout(20000)]
-        public void Test_DataReleaseUI_Constructor()
-        {
-            var o = WhenIHaveA<Project>();
-            var ui = AndLaunch<DataReleaseUI>(o);
-            Assert.IsNotNull(ui);
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        var o = WhenIHaveA<Project>();
+        var ui = AndLaunch<DataReleaseUI>(o);
+        Assert.IsNotNull(ui);
+        AssertNoErrors(ExpectedErrorType.Any);
     }
 }

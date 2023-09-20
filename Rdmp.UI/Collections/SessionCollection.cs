@@ -4,40 +4,35 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data.Dashboarding;
-using System;
 using System.Collections.Generic;
+using Rdmp.Core.Curation.Data.Dashboarding;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// Collection of objects grouped into a session.  This is the persistence data object for <see cref="SessionCollectionUI"/> which tracks which objects are included in the session e.g. between RDMP GUI restarts
+/// </summary>
+public class SessionCollection : PersistableObjectCollection
 {
+    public string SessionName { get; private set; }
+
     /// <summary>
-    /// Collection of objects grouped into a session.  This is the persistence data object for <see cref="SessionCollectionUI"/> which tracks which objects are included in the session e.g. between RDMP GUI restarts
+    /// for persistence, do not use
     /// </summary>
-    public class SessionCollection :PersistableObjectCollection
+    public SessionCollection()
     {
-        public string SessionName { get; private set; }
-
-        /// <summary>
-        /// for persistence, do not use
-        /// </summary>
-        public SessionCollection()
-        {
-        }
-
-        public SessionCollection(string name): this()
-        {
-            SessionName = name;
-        }
-
-        public override string SaveExtraText()
-        {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>() {{nameof(SessionName), SessionName}});
-        }
-
-        public override void LoadExtraText(string s)
-        {
-            SessionName = Helper.GetValueIfExistsFromPersistString(nameof(SessionName), s);
-        }
     }
 
+    public SessionCollection(string name) : this()
+    {
+        SessionName = name;
+    }
+
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { nameof(SessionName), SessionName } });
+
+    public override void LoadExtraText(string s)
+    {
+        SessionName = PersistStringHelper.GetValueIfExistsFromPersistString(nameof(SessionName), s);
+    }
 }

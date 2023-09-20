@@ -5,21 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using Rdmp.Core.Startup;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
 
-namespace Rdmp.Core.Tests.CommandExecution
-{
-    class TestStartup : UnitTests
-    {
-        [Test]
-        public void TestStartupWithMemoryRepository()
-        {
-            var s = new Rdmp.Core.Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
-            Assert.DoesNotThrow(()=>s.DoStartup(new ThrowImmediatelyCheckNotifier()));
-        }
+namespace Rdmp.Core.Tests.CommandExecution;
 
+internal class TestStartup : UnitTests
+{
+    [Test]
+    public void TestStartupWithMemoryRepository()
+    {
+        var s = new Startup.Startup(RepositoryLocator);
+        Assert.DoesNotThrow(() => s.DoStartup(ThrowImmediatelyCheckNotifier.Quiet));
     }
 }

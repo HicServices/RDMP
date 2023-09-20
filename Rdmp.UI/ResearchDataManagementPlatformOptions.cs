@@ -6,16 +6,12 @@
 
 using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.UI
+namespace Rdmp.UI;
+
+/// <summary>
+/// Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut
+/// </summary>
+public class ResearchDataManagementPlatformOptions : RDMPCommandLineOptions
 {
-    /// <summary>
-    /// Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut
-    /// </summary>
-    public class ResearchDataManagementPlatformOptions : RDMPCommandLineOptions
-    {
-        protected override bool ShouldLoadHelp()
-        {
-            return true;
-        }
-    }
+    protected override bool ShouldLoadHelp() => true;
 }

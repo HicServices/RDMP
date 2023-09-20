@@ -10,42 +10,32 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// Translates a data load engine ProcessTask (design time template) configured by the user into the correct RuntimeTask (realisation) based on the
+/// ProcessTaskType (Attacher, Executable etc).  See DataLoadEngine.cd
+/// </summary>
+public class RuntimeTaskFactory
 {
-    /// <summary>
-    /// Translates a data load engine ProcessTask (design time template) configured by the user into the correct RuntimeTask (realisation) based on the
-    /// ProcessTaskType (Attacher, Executable etc).  See DataLoadEngine.cd
-    /// </summary>
-    public class RuntimeTaskFactory
+    public RuntimeTaskFactory(ICatalogueRepository repository)
     {
-        private readonly ICatalogueRepository _repository;
+    }
 
-        public RuntimeTaskFactory(ICatalogueRepository repository)
+    public static RuntimeTask Create(IProcessTask task, IStageArgs stageArgs)
+    {
+        //get the user configured Design Time arguments + stage specific arguments
+        var args = new RuntimeArgumentCollection(task.GetAllArguments().ToArray(), stageArgs);
+
+        //Create an instance of the the appropriate ProcessTaskType
+        return task.ProcessTaskType switch
         {
-            _repository = repository;
-        }
-
-        public RuntimeTask Create(IProcessTask task, IStageArgs stageArgs)
-        {
-            //get the user configured Design Time arguments + stage specific arguments
-            var args = new RuntimeArgumentCollection(task.GetAllArguments().ToArray(), stageArgs);
-
-            //Create an instance of the the appropriate ProcessTaskType
-            switch (task.ProcessTaskType)
-            {
-                case ProcessTaskType.Executable:
-                    return new ExecutableRuntimeTask(task, args);
-                case ProcessTaskType.SQLFile:
-                    return new ExecuteSqlFileRuntimeTask(task, args);
-                case ProcessTaskType.Attacher:
-                    return new AttacherRuntimeTask(task, args, _repository.MEF);
-                case ProcessTaskType.DataProvider:
-                    return new DataProviderRuntimeTask(task, args,_repository.MEF);
-                case ProcessTaskType.MutilateDataTable:
-                    return new MutilateDataTablesRuntimeTask(task, args, _repository.MEF);
-                default:
-                    throw new Exception("Cannot create runtime task: Unknown process task type '" + task.ProcessTaskType + "'");
-            }
-        }
+            ProcessTaskType.Executable => new ExecutableRuntimeTask(task, args),
+            ProcessTaskType.SQLFile => new ExecuteSqlFileRuntimeTask(task, args),
+            ProcessTaskType.Attacher => new AttacherRuntimeTask(task, args),
+            ProcessTaskType.DataProvider => new DataProviderRuntimeTask(task, args),
+            ProcessTaskType.MutilateDataTable => new MutilateDataTablesRuntimeTask(task, args),
+            _ => throw new Exception($"Cannot create runtime task: Unknown process task type '{task.ProcessTaskType}'")
+        };
     }
 }

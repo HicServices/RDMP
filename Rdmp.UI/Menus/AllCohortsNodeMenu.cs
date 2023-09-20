@@ -10,31 +10,32 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class AllCohortsNodeMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class AllCohortsNodeMenu:RDMPContextMenuStrip
+    [UseWithObjectConstructor]
+    public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
+        : base(args, node)
     {
-        [UseWithObjectConstructor]
-        public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
-            : base(args, node)
-        {
-            Add(new ExecuteCommandShowSummaryOfCohorts(_activator));
+        Add(new ExecuteCommandShowSummaryOfCohorts(_activator));
 
-            Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
+        Add(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
 
-            Items.Add("Create blank cohort database (Not recommended)", _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem).ImageToBitmap(), (s, e) => AddBlankExternalCohortTable());
-            
-        }
-        
-        private void AddBlankExternalCohortTable()
-        {
-            var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,"Blank Cohort Source " + Guid.NewGuid(),DatabaseType.MicrosoftSQLServer);
-            Publish(newExternalCohortTable);
-            Activate(newExternalCohortTable);
-        }
+        Items.Add("Create blank cohort database (Not recommended)",
+            _activator.CoreIconProvider.GetImage(RDMPConcept.ExternalCohortTable, OverlayKind.Problem).ImageToBitmap(),
+            (s, e) => AddBlankExternalCohortTable());
+    }
+
+    private void AddBlankExternalCohortTable()
+    {
+        var newExternalCohortTable = new ExternalCohortTable(RepositoryLocator.DataExportRepository,
+            $"Blank Cohort Source {Guid.NewGuid()}", DatabaseType.MicrosoftSQLServer);
+        Publish(newExternalCohortTable);
+        Activate(newExternalCohortTable);
     }
 }

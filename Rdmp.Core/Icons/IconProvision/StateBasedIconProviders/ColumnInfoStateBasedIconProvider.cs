@@ -4,37 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public sealed class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ColumnInfoStateBasedIconProvider : IObjectStateBasedIconProvider
+    private static readonly Image<Rgba32> ColumnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
+    private static readonly Image<Rgba32> ColumnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly Image<Rgba32> _columnInfo;
-        private readonly Image<Rgba32> _columnInfoWithANO;
+        if (o is not ColumnInfo columnInfo)
+            return null;
 
-        public ColumnInfoStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _overlayProvider = overlayProvider;
-            _columnInfo = Image.Load<Rgba32>(CatalogueIcons.ColumnInfo);
-            _columnInfoWithANO = Image.Load<Rgba32>(CatalogueIcons.ANOColumnInfo);
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not ColumnInfo columnInfo)
-                return null;
+        var basicIcon = columnInfo.ANOTable_ID != null ? ColumnInfoWithANO : ColumnInfo;
 
-            var basicIcon = columnInfo.ANOTable_ID != null ? _columnInfoWithANO : _columnInfo;
-
-            if (columnInfo.IsPrimaryKey)
-                return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Key);
-            
-            return basicIcon;
-        }
+        return columnInfo.IsPrimaryKey ? IconOverlayProvider.GetOverlay(basicIcon, OverlayKind.Key) : basicIcon;
     }
 }

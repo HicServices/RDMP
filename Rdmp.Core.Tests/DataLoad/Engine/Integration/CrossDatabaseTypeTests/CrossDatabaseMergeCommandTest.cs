@@ -21,115 +21,115 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Checks;
-using Tests.Common;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests;
+
+public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
 {
-    public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    public void TestMerge(DatabaseType databaseType)
     {
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        public void TestMerge(DatabaseType databaseType)
+        //microsoft one gets called for free in test setup (see base class)
+        if (databaseType != DatabaseType.MicrosoftSQLServer)
+            SetupFromTo(databaseType);
+
+        var dt = new DataTable();
+        var colName = new DataColumn("Name", typeof(string));
+        var colAge = new DataColumn("Age", typeof(int));
+        dt.Columns.Add(colName);
+        dt.Columns.Add(colAge);
+        dt.Columns.Add("Postcode", typeof(string));
+
+        //Data in live awaiting toTbl be updated
+        dt.Rows.Add(new object[] { "Dave", 18, "DD3 1AB" });
+        dt.Rows.Add(new object[] { "Dave", 25, "DD1 1XS" });
+        dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value });
+        dt.Rows.Add(new object[] { "Filli", 32, "DD3 78L" });
+        dt.Rows.Add(new object[] { "Mandrake", 32, DBNull.Value });
+
+        dt.PrimaryKey = new[] { colName, colAge };
+
+        var toTbl = To.CreateTable("ToTable", dt);
+
+        Assert.IsTrue(toTbl.DiscoverColumn("Name").IsPrimaryKey);
+        Assert.IsTrue(toTbl.DiscoverColumn("Age").IsPrimaryKey);
+        Assert.IsFalse(toTbl.DiscoverColumn("Postcode").IsPrimaryKey);
+
+        dt.Rows.Clear();
+
+        //new data being loaded
+        dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update toTbl change postcode toTbl "DD1 1PS"
+        dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
+        dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value }); //ignored because already present in dataset
+        dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
+        dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
+        dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
+
+        var fromTbl = From.CreateTable($"{DatabaseName}_ToTable_STAGING", dt);
+
+        //import the toTbl table as a TableInfo
+        var cata = Import(toTbl, out var ti, out var cis);
+
+        //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
+        var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
+        triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
+        var configuration = new MigrationConfiguration(From, LoadBubble.Staging, LoadBubble.Live,
+            new FixedStagingDatabaseNamer(toTbl.Database.GetRuntimeName(), fromTbl.Database.GetRuntimeName()));
+
+        var lmd = new LoadMetadata(CatalogueRepository);
+        cata.LoadMetadata_ID = lmd.ID;
+        cata.SaveToDatabase();
+
+        var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
+
+        //set SetUp a logging task
+        var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var logManager = new LogManager(logServer);
+        logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
+        var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);
+
+        var job = new ThrowImmediatelyDataLoadJob
         {
-            //microsoft one gets called for free in test setup (see base class)
-            if (databaseType != DatabaseType.MicrosoftSQLServer)
-                SetupFromTo(databaseType);
+            LoadMetadata = lmd,
+            DataLoadInfo = dli,
+            RegularTablesToLoad = new List<ITableInfo>(new[] { ti })
+        };
 
-            var dt = new DataTable();
-            var colName = new DataColumn("Name",typeof(string));
-            var colAge = new DataColumn("Age",typeof(int));
-            dt.Columns.Add(colName);
-            dt.Columns.Add(colAge);
-            dt.Columns.Add("Postcode",typeof(string));
+        migrationHost.Migrate(job, new GracefulCancellationToken());
 
-            //Data in live awaiting toTbl be updated
-            dt.Rows.Add(new object[]{"Dave",18,"DD3 1AB"});
-            dt.Rows.Add(new object[] {"Dave", 25, "DD1 1XS" });
-            dt.Rows.Add(new object[] {"Mango", 32, DBNull.Value});
-            dt.Rows.Add(new object[] { "Filli", 32,"DD3 78L" });
-            dt.Rows.Add(new object[] { "Mandrake", 32, DBNull.Value });
+        var resultantDt = toTbl.GetDataTable();
+        Assert.AreEqual(7, resultantDt.Rows.Count);
 
-            dt.PrimaryKey = new[]{colName,colAge};
+        AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
+        AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
+        AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
 
-            var toTbl = To.CreateTable("ToTable", dt);
+        AssertRowEquals(resultantDt, "Filli", 32, DBNull.Value);
+        AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
+        AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
 
-            Assert.IsTrue(toTbl.DiscoverColumn("Name").IsPrimaryKey);
-            Assert.IsTrue(toTbl.DiscoverColumn("Age").IsPrimaryKey);
-            Assert.IsFalse(toTbl.DiscoverColumn("Postcode").IsPrimaryKey);
-
-            dt.Rows.Clear();
-            
-            //new data being loaded
-            dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update toTbl change postcode toTbl "DD1 1PS"
-            dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
-            dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value }); //ignored because already present in dataset
-            dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
-            dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
-            dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
-            
-            var fromTbl = From.CreateTable(DatabaseName + "_ToTable_STAGING", dt);
-            
-            //import the toTbl table as a TableInfo
-            var cata = Import(toTbl,out var ti,out var cis);
-
-            //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
-            var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
-            triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
-
-            var configuration = new MigrationConfiguration(From, LoadBubble.Staging, LoadBubble.Live,
-                new FixedStagingDatabaseNamer(toTbl.Database.GetRuntimeName(), fromTbl.Database.GetRuntimeName()));
-
-            var lmd = new LoadMetadata(CatalogueRepository);
-            cata.LoadMetadata_ID = lmd.ID;
-            cata.SaveToDatabase();
-
-            var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
-
-            //set SetUp a logging task
-            var logServer = CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-            var logManager = new LogManager(logServer);
-            logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
-            var dli = logManager.CreateDataLoadInfo("CrossDatabaseMergeCommandTest", "tests", "running test", "", true);
-
-            var job = new ThrowImmediatelyDataLoadJob()
-            {
-                LoadMetadata = lmd,
-                DataLoadInfo = dli,
-                RegularTablesToLoad = new List<ITableInfo>(new[]{ti})
-            };
-
-            migrationHost.Migrate(job, new GracefulCancellationToken());
-            
-            var resultantDt = toTbl.GetDataTable();
-            Assert.AreEqual(7,resultantDt.Rows.Count);
-
-            AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
-            AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
-            AssertRowEquals(resultantDt, "Mango", 32, DBNull.Value);
-            
-            AssertRowEquals(resultantDt,"Filli",32,DBNull.Value);
-            AssertRowEquals(resultantDt, "Mandrake", 32, "DD1 1PS");
-            AssertRowEquals(resultantDt, "Mandrake", 31, "DD1 1PS");
-            
-            AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
+        AssertRowEquals(resultantDt, "Dave", 18, "DD3 1AB");
 
 
-            var archival = logManager.GetArchivalDataLoadInfos("CrossDatabaseMergeCommandTest", new CancellationToken());
-            var log = archival.First();
+        var archival = logManager.GetArchivalDataLoadInfos("CrossDatabaseMergeCommandTest", new CancellationToken());
+        var log = archival.First();
 
 
-            Assert.AreEqual(dli.ID,log.ID);
-            Assert.AreEqual(2,log.TableLoadInfos.Single().Inserts);
-            Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
-        }
+        Assert.AreEqual(dli.ID, log.ID);
+        Assert.AreEqual(2, log.TableLoadInfos.Single().Inserts);
+        Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
+    }
 
-        private void AssertRowEquals(DataTable resultantDt,string name,int age, object postcode)
-        {
-            Assert.AreEqual(
-                1, resultantDt.Rows.Cast<DataRow>().Count(r => Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
-                "Did not find expected record:" + string.Join(",",name,age,postcode));
-        }
+    private static void AssertRowEquals(DataTable resultantDt, string name, int age, object postcode)
+    {
+        Assert.AreEqual(
+            1,
+            resultantDt.Rows.Cast<DataRow>().Count(r =>
+                Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
+            "Did not find expected record:" + string.Join(",", name, age, postcode));
     }
 }

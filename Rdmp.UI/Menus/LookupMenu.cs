@@ -7,14 +7,13 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+[System.ComponentModel.DesignerCategory("")]
+internal class LookupMenu : RDMPContextMenuStrip
 {
-    [System.ComponentModel.DesignerCategory("")]
-    class LookupMenu : RDMPContextMenuStrip
+    public LookupMenu(RDMPContextMenuStripArgs args, Lookup lookup) : base(args, lookup)
     {
-        public LookupMenu(RDMPContextMenuStripArgs args, Lookup lookup) : base(args, lookup)
-        {
-            Add(new ExecuteCommandBrowseLookup(args.ItemActivator, lookup));
-        }
+        Add(new ExecuteCommandBrowseLookup(args.ItemActivator, lookup));
     }
 }

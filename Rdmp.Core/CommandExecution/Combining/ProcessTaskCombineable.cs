@@ -6,23 +6,19 @@
 
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ProcessTask"/>
+/// </summary>
+public class ProcessTaskCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ProcessTask"/>
-    /// </summary>
-    public class ProcessTaskCombineable : ICombineToMakeCommand
+    public ProcessTask ProcessTask { get; set; }
+
+    public ProcessTaskCombineable(ProcessTask processTask)
     {
-        public ProcessTask ProcessTask { get; set; }
-
-        public ProcessTaskCombineable(ProcessTask processTask)
-        {
-            ProcessTask = processTask;
-        }
-
-        public string GetSqlString()
-        {
-            return null;
-        }
+        ProcessTask = processTask;
     }
+
+    public string GetSqlString() => null;
 }

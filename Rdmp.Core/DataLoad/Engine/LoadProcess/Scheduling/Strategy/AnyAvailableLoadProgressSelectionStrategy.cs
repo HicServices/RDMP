@@ -9,23 +9,19 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+
+/// <summary>
+/// ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.
+/// </summary>
+public class AnyAvailableLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
 {
-    /// <summary>
-    /// ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.
-    /// </summary>
-    public class AnyAvailableLoadProgressSelectionStrategy : ILoadProgressSelectionStrategy
+    private readonly ILoadMetadata _loadMetadata;
+
+    public AnyAvailableLoadProgressSelectionStrategy(ILoadMetadata loadMetadata)
     {
-        private readonly ILoadMetadata _loadMetadata;
-
-        public AnyAvailableLoadProgressSelectionStrategy(ILoadMetadata loadMetadata)
-        {
-            _loadMetadata = loadMetadata;
-        }
-
-        public List<ILoadProgress> GetAllLoadProgresses()
-        {
-            return _loadMetadata.LoadProgresses.ToList();
-        }
+        _loadMetadata = loadMetadata;
     }
+
+    public List<ILoadProgress> GetAllLoadProgresses() => _loadMetadata.LoadProgresses.ToList();
 }

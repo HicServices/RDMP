@@ -46,6 +46,7 @@
             this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
             this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
             this.btnClearFavourites = new System.Windows.Forms.Button();
+            this.btnClearUserSettings = new System.Windows.Forms.Button();
             this.cbDoubleClickToExpand = new System.Windows.Forms.CheckBox();
             this.cbDebugPerformance = new System.Windows.Forms.CheckBox();
             this.cbShowPipelineCompletedPopup = new System.Windows.Forms.CheckBox();
@@ -698,6 +699,17 @@
             this.label14.Size = new System.Drawing.Size(73, 15);
             this.label14.TabIndex = 26;
             this.label14.Text = "Find Setting:";
+             //
+            //btnClearUserSettings
+            //
+             this.btnClearUserSettings.Location = new System.Drawing.Point(821, 40);
+            this.btnClearUserSettings.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            this.btnClearUserSettings.Name = "btnClearUserSettings";
+            this.btnClearUserSettings.Size = new System.Drawing.Size(150, 25);
+            this.btnClearUserSettings.TabIndex = 10;
+            this.btnClearUserSettings.Text = Core.GlobalStrings.ClearSettings;
+            this.userSettingsToolTips.SetToolTip(this.btnClearUserSettings, Core.GlobalStrings.ClearUserSettingsTooltip);
+            this.btnClearUserSettings.UseVisualStyleBackColor = true;
             // 
             // cbUseAliasInsteadOfTransformInGroupByAggregateGraphs
             // 
@@ -716,6 +728,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1012, 758);
             this.Controls.Add(this.label14);
+            this.Controls.Add(this.btnClearUserSettings);
             this.Controls.Add(this.tbFind);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.ddTheme);
@@ -767,6 +780,7 @@
         private System.Windows.Forms.CheckBox cbWait5Seconds;
         private System.Windows.Forms.CheckBox cbShowCohortWizard;
         private System.Windows.Forms.Button btnClearFavourites;
+        private System.Windows.Forms.Button btnClearUserSettings;
         private System.Windows.Forms.CheckBox cbDoubleClickToExpand;
         private System.Windows.Forms.CheckBox cbDebugPerformance;
         private System.Windows.Forms.CheckBox cbShowPipelineCompletedPopup;

@@ -13,189 +13,187 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Events;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
-using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines;
+
+/// <summary>
+/// Reusable component shown by the RDMP whenever it wants you to select a pipeline to achieve a task (See 'Pipelines' is UserManual.md).  The task will
+/// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear
+/// though).
+/// 
+/// <para>You should read the task description and select an appropriate pipeline (which will appear in the pipeline diagram along with the input objects this window was launched with).  If
+/// you don't have a pipeline yet you can create a new one (See ConfigurePipelineUI).</para>
+/// 
+/// <para>Input objects are the objects that are provided to accomplish the task (for example a file you are trying to load).  You can usually double click input objects to learn more about
+/// them (e.g. open a file, view a cohort etc).  </para>
+/// 
+/// <para>This may seem like a complicated approach to user interface design but it allows for maximum plugin architecture and freedom to build your own business practices into routine tasks
+/// like cohort committing, data extraction etc.</para>
+/// 
+/// </summary>
+public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineRunner
 {
+    private readonly IPipelineUseCase _useCase;
+    private PipelineSelectionUI _pipelineSelectionUI;
+    private PipelineDiagramUI pipelineDiagram1;
+
     /// <summary>
-    /// Reusable component shown by the RDMP whenever it wants you to select a pipeline to achieve a task (See 'Pipelines' is UserManual.md).  The task will
-    /// be clearly described at the top of the form, this might be 'loading a flat file into the database to create a new cohort' (the actual description will be more verbose and clear 
-    /// though).
-    /// 
-    /// <para>You should read the task description and select an appropriate pipeline (which will appear in the pipeline diagram along with the input objects this window was launched with).  If
-    /// you don't have a pipeline yet you can create a new one (See ConfigurePipelineUI).</para>
-    /// 
-    /// <para>Input objects are the objects that are provided to accomplish the task (for example a file you are trying to load).  You can usually double click input objects to learn more about
-    /// them (e.g. open a file, view a cohort etc).  </para>
-    /// 
-    /// <para>This may seem like a complicated approach to user interface design but it allows for maximum plugin architecture and freedom to build your own business practices into routine tasks
-    /// like cohort committing, data extraction etc.</para>
-    /// 
+    /// Fired when the user executes the pipeline (this can happen multiple times if it crashes).
     /// </summary>
-    public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineRunner
+    public event PipelineEngineEventHandler PipelineExecutionStarted;
+
+    /// <summary>
+    /// Fired when the pipeline finishes execution without throwing an exception.
+    /// </summary>
+    public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
+
+    private ForkDataLoadEventListener fork;
+
+    private readonly List<object> _initializationObjects = new();
+
+    public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
     {
-        private readonly IPipelineUseCase _useCase;
-        private PipelineSelectionUI _pipelineSelectionUI;
-        private PipelineDiagramUI pipelineDiagram1;
+        _useCase = useCase;
+        InitializeComponent();
 
-        /// <summary>
-        /// Fired when the user executes the pipeline (this can happen multiple times if it crashes).
-        /// </summary>
-        public event PipelineEngineEventHandler PipelineExecutionStarted;
+        taskDescriptionLabel1.SetupFor(args);
 
-        /// <summary>
-        /// Fired when the pipeline finishes execution without throwing an exception.
-        /// </summary>
-        public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
+        //designer mode
+        if (useCase == null && activator == null)
+            return;
+        Text = args.WindowTitle;
 
-        private ForkDataLoadEventListener fork = null;
+        SetItemActivator(activator);
+        progressUI1.ApplyTheme(activator.Theme);
 
-        readonly List<object> _initializationObjects = new List<object>();
-
-       public ConfigureAndExecutePipelineUI(DialogArgs args, IPipelineUseCase useCase, IActivateItems activator)
+        pipelineDiagram1 = new PipelineDiagramUI(activator)
         {
-           _useCase = useCase;
-           InitializeComponent();
+            Dock = DockStyle.Fill
+        };
+        panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
 
-           taskDescriptionLabel1.SetupFor(args);
+        fork = new ForkDataLoadEventListener(progressUI1);
 
-           //designer mode
-           if(useCase == null && activator == null)
-               return;
-            Text = args.WindowTitle;
+        var context = useCase.GetContext();
 
-            SetItemActivator(activator);
-            progressUI1.ApplyTheme(activator.Theme);
+        if (context.GetFlowType() != typeof(DataTable))
+            throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
 
-            pipelineDiagram1 = new PipelineDiagramUI(activator);
+        foreach (var o in useCase.GetInitializationObjects())
+        {
+            CommonFunctionality.Add(new ExecuteCommandDescribe(activator, o));
 
-            pipelineDiagram1.Dock = DockStyle.Fill;
-            panel_pipelineDiagram1.Controls.Add(pipelineDiagram1);
-
-            fork = new ForkDataLoadEventListener(progressUI1);
-
-            var context = useCase.GetContext();
-
-            if(context.GetFlowType() != typeof(DataTable))
-                throw new NotSupportedException("Only DataTable flow contexts can be used with this class");
-
-            foreach (var o in useCase.GetInitializationObjects())
-            {
-                CommonFunctionality.Add(new ExecuteCommandDescribe(activator, o));
-
-                _initializationObjects.Add(o);
-            }
-
-            SetPipelineOptions( activator.RepositoryLocator.CatalogueRepository);
+            _initializationObjects.Add(o);
         }
 
-        private bool _pipelineOptionsSet = false;
+        SetPipelineOptions(activator.RepositoryLocator.CatalogueRepository);
+    }
 
-        
-        public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
-        
-        private void SetPipelineOptions(ICatalogueRepository repository)
+    private bool _pipelineOptionsSet;
+
+
+    public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
+
+    private void SetPipelineOptions(ICatalogueRepository repository)
+    {
+        if (_pipelineOptionsSet)
+            throw new Exception(
+                "CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
+
+
+        _pipelineOptionsSet = true;
+
+        _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
         {
-            if (_pipelineOptionsSet)
-                throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");
+            Dock = DockStyle.Fill
+        };
+        _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
+        _pipelineSelectionUI.PipelineDeleted += () => pipelineDiagram1.Clear();
 
-            
-            _pipelineOptionsSet = true;
+        _pipelineSelectionUI.CollapseToSingleLineMode();
 
-            _pipelineSelectionUI = new PipelineSelectionUI(Activator, _useCase, repository)
-            {
-                Dock = DockStyle.Fill
-            };
-            _pipelineSelectionUI.PipelineChanged += _pipelineSelectionUI_PipelineChanged;
-            _pipelineSelectionUI.PipelineDeleted += () => pipelineDiagram1.Clear();
-            
-            _pipelineSelectionUI.CollapseToSingleLineMode();
+        pPipelineSelection.Controls.Add(_pipelineSelectionUI);
 
-            pPipelineSelection.Controls.Add(_pipelineSelectionUI);
-            
-            //setup factory
-            PipelineFactory = new DataFlowPipelineEngineFactory(_useCase, repository.MEF);
+        //setup factory
+        PipelineFactory = new DataFlowPipelineEngineFactory(_useCase);
 
-            _pipelineOptionsSet = true;
+        _pipelineOptionsSet = true;
 
-            RefreshDiagram();
+        RefreshDiagram();
+    }
+
+    private void _pipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
+    {
+        RefreshDiagram();
+
+        //repaint entire control so that the arrows are rendered correctly
+        Invalidate();
+        Refresh();
+    }
+
+    private void RefreshDiagram()
+    {
+        //not ready to refresh diagram yet
+        if (!_pipelineOptionsSet)
+            return;
+
+        if (_pipelineSelectionUI.Pipeline != null)
+        {
+            btnPreviewSource.Enabled = true;
+            btnExecute.Enabled = true;
+            progressUI1.Enabled = true;
+        }
+        else
+        {
+            btnPreviewSource.Enabled = false;
+            btnExecute.Enabled = false;
+            progressUI1.Enabled = false;
         }
 
-        void _pipelineSelectionUI_PipelineChanged(object sender, EventArgs e)
-        {
-            RefreshDiagram();
+        pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
+    }
 
-            //repaint entire control so that the arrows are rendered correctly
-            Invalidate();
-            Refresh();
+
+    private CancellationTokenSource _cancel;
+
+    private void btnExecute_Click(object sender, EventArgs e)
+    {
+        var pipeline = CreateAndInitializePipeline();
+
+        //if it is already executing
+        if (btnExecute.Text == "Stop")
+        {
+            _cancel.Cancel(); //set the cancellation token
+            return;
         }
 
-        private void RefreshDiagram()
-        {
-            //not ready to refresh diagram yet
-            if (!_pipelineOptionsSet)
-                return;
+        btnExecute.Text = "Stop";
 
-            if(_pipelineSelectionUI.Pipeline != null)
-            {
-                btnPreviewSource.Enabled = true;
-                btnExecute.Enabled = true;
-                progressUI1.Enabled = true;
-            }
-            else
-            {
-                btnPreviewSource.Enabled = false;
-                btnExecute.Enabled = false;
-                progressUI1.Enabled = false;
-            }
+        _cancel = new CancellationTokenSource();
 
-            pipelineDiagram1.SetTo(_pipelineSelectionUI.Pipeline, _useCase);
-        }
+        //clear any old results
+        progressUI1.Clear();
 
+        PipelineExecutionStarted?.Invoke(this, new PipelineEngineEventArgs(pipeline));
 
-        private CancellationTokenSource _cancel;
+        progressUI1.ShowRunning(true);
 
-        private void btnExecute_Click(object sender, EventArgs e)
-        {
-            var pipeline = CreateAndInitializePipeline();
+        var success = false;
+        Exception exception = null;
 
-            //if it is already executing
-            if (btnExecute.Text == "Stop")
-            {
-                _cancel.Cancel();//set the cancellation token
-                return;
-            }
-
-            btnExecute.Text = "Stop";
-
-            _cancel = new CancellationTokenSource();
-
-            //clear any old results
-            progressUI1.Clear();
-                
-            if(PipelineExecutionStarted != null)
-                PipelineExecutionStarted(this,new PipelineEngineEventArgs(pipeline));
-
-            progressUI1.ShowRunning(true);
-
-            bool success = false;
-            Exception exception = null;
-
-            //start a new thread
-            Task t = new Task(() =>
+        //start a new thread
+        var t = new Task(() =>
             {
                 try
                 {
@@ -207,122 +205,99 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                     fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Pipeline execution failed", ex));
                     exception = ex;
                 }
-                
             }
-                
-                
+        );
 
-                );
+        t.ContinueWith(x =>
+        {
+            if (success)
+                //if it successfully got here then Thread has run the engine to completion successfully
+                PipelineExecutionFinishedsuccessfully?.Invoke(this, new PipelineEngineEventArgs(pipeline));
 
-            t.ContinueWith(x => 
+            progressUI1.ShowRunning(false);
+
+            btnExecute.Text = "Execute"; //make it so user can execute again
+
+            if (success)
             {
-                if (success)
-                {
-                    //if it successfully got here then Thread has run the engine to completion successfully
-                    if (PipelineExecutionFinishedsuccessfully != null)
-                        PipelineExecutionFinishedsuccessfully(this, new PipelineEngineEventArgs(pipeline));
-                }
-                
-                progressUI1.ShowRunning(false);
+                if (UserSettings.ShowPipelineCompletedPopup)
+                    WideMessageBox.Show("Pipeline Completed", "Pipeline execution completed", WideMessageBoxTheme.Help);
+                progressUI1.SetSuccess();
+            }
+            else
+            {
+                var worst = progressUI1.GetWorst();
+                progressUI1.SetFatal();
 
-                btnExecute.Text = "Execute"; //make it so user can execute again
+                if (UserSettings.ShowPipelineCompletedPopup)
+                    ExceptionViewer.Show("Pipeline Failed", exception ?? worst?.Exception);
+            }
+        }, TaskScheduler.FromCurrentSynchronizationContext());
 
-                if (success)
-                {
-                    if (UserSettings.ShowPipelineCompletedPopup)
-                    {
-                        WideMessageBox.Show("Pipeline Completed", "Pipeline execution completed", WideMessageBoxTheme.Help);
+        t.Start();
+    }
 
-                    }
-                    progressUI1.SetSuccess();
-                }
-                else
-                {
-                    var worst = progressUI1.GetWorst();
-                    progressUI1.SetFatal();
 
-                    if (UserSettings.ShowPipelineCompletedPopup)
-                    {
-                        ExceptionViewer.Show("Pipeline Failed", exception ?? worst?.Exception);
-                    }
-                }
+    private void btnPreviewSource_Click(object sender, EventArgs e)
+    {
+        var pipeline = CreateAndInitializePipeline();
 
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-
-            t.Start();
-        }
-
-        
-        private void btnPreviewSource_Click(object sender, EventArgs e)
-        {
-            var pipeline = CreateAndInitializePipeline();
-            
-            if (pipeline != null)
-                try
-                {
-                    DataTableViewerUI dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>) pipeline.SourceObject).TryGetPreview(),"Preview");
-                    SingleControlForm.ShowDialog(dtv);
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show("Preview Generation Failed",exception);
-                }
-        }
-
-        private IDataFlowPipelineEngine CreateAndInitializePipeline()
-        {
-            progressUI1.Clear();
-
-            IDataFlowPipelineEngine pipeline = null;
+        if (pipeline != null)
             try
             {
-                pipeline = PipelineFactory.Create(_pipelineSelectionUI.Pipeline, fork);
+                var dtv = new DataTableViewerUI(((IDataFlowSource<DataTable>)pipeline.SourceObject).TryGetPreview(),
+                    "Preview");
+                SingleControlForm.ShowDialog(dtv);
             }
             catch (Exception exception)
             {
-                fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Could not instantiate pipeline", exception));
-                return null;
+                ExceptionViewer.Show("Preview Generation Failed", exception);
             }
+    }
 
+    private IDataFlowPipelineEngine CreateAndInitializePipeline()
+    {
+        progressUI1.Clear();
 
-            try
-            {
-                pipeline.Initialize(_initializationObjects.ToArray());
-            }
-            catch (Exception exception)
-            {
-                fork.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to Initialize pipeline", exception));
-                return null;
-            }
-
+        IDataFlowPipelineEngine pipeline = null;
+        try
+        {
+            pipeline = PipelineFactory.Create(_pipelineSelectionUI.Pipeline, fork);
+            pipeline.Initialize(_initializationObjects.ToArray());
             return pipeline;
         }
-
-        private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
+        catch (Exception exception)
         {
-
+            fork.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error,
+                    $"Could not {(pipeline == null ? "instantiate" : "initialise")} pipeline", exception));
+            return null;
         }
+    }
 
-        private void tpConfigure_Click(object sender, EventArgs e)
-        {
+    private void tabControl2_SelectedIndexChanged(object sender, EventArgs e)
+    {
+    }
 
-        }
+    private void tpConfigure_Click(object sender, EventArgs e)
+    {
+    }
 
-        public void CancelIfRunning()
-        {
-            if(_cancel != null && !_cancel.IsCancellationRequested)
-                _cancel.Cancel();
-        }
+    public void CancelIfRunning()
+    {
+        if (_cancel is { IsCancellationRequested: false })
+            _cancel.Cancel();
+    }
 
-        public void SetAdditionalProgressListener(IDataLoadEventListener listener)
-        {
-            fork = new ForkDataLoadEventListener(progressUI1,listener);
-        }
+    public void SetAdditionalProgressListener(IDataLoadEventListener listener)
+    {
+        fork = new ForkDataLoadEventListener(progressUI1, listener);
+    }
 
-        public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-            Activator.ShowDialog(new SingleControlForm(this));
-            return 0;
-        }
+    public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
+        Activator.ShowDialog(new SingleControlForm(this));
+        return 0;
     }
 }

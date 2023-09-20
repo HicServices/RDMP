@@ -4,36 +4,30 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
-namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+
+public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadMetadata, Catalogue>,
+    IDeletableWithCustomMessage
 {
-    public class CatalogueUsedByLoadMetadataNode:ObjectUsedByOtherObjectNode<LoadMetadata,Catalogue>,IDeletableWithCustomMessage
+    public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue) : base(loadMetadata,
+        catalogue)
     {
-
-        public CatalogueUsedByLoadMetadataNode(LoadMetadata loadMetadata, Catalogue catalogue):base(loadMetadata,catalogue)
-        {
-        }
-
-
-        public void DeleteInDatabase()
-        {
-            ObjectBeingUsed.LoadMetadata_ID = null;
-            ObjectBeingUsed.SaveToDatabase();
-        }
-
-        public string GetDeleteMessage()
-        {
-            return "remove Catalogue '" + ObjectBeingUsed +"' from Load";
-        }
-
-        /// <inheritdoc/>
-        public string GetDeleteVerb()
-        {
-            return "Remove";
-        }
     }
+
+
+    public void DeleteInDatabase()
+    {
+        ObjectBeingUsed.LoadMetadata_ID = null;
+        ObjectBeingUsed.SaveToDatabase();
+    }
+
+    public string GetDeleteMessage() => $"remove Catalogue '{ObjectBeingUsed}' from Load";
+
+    /// <inheritdoc/>
+    public string GetDeleteVerb() => "Remove";
 }

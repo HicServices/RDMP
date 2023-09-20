@@ -7,57 +7,50 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IFilter"/>
+/// </summary>
+public class FilterCombineable : ICombineToMakeCommand
 {
+    public IFilter Filter { get; private set; }
+
+    public IContainer ImmediateContainerIfAny { get; private set; }
+    public IContainer RootContainerIfAny { get; private set; }
+
+    public Catalogue SourceCatalogueIfAny { get; private set; }
+
     /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IFilter"/>
+    /// All the containers that are in the current filter tree (includes the Root).
     /// </summary>
-    public class FilterCombineable : ICombineToMakeCommand
+    public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; }
+
+    public FilterCombineable(IFilter filter)
     {
-        public IFilter Filter { get; private set; }
-        
-        public IContainer ImmediateContainerIfAny { get; private set; }
-        public IContainer RootContainerIfAny { get; private set; }
+        Filter = filter;
 
-        public Catalogue SourceCatalogueIfAny { get; private set; }
+        FindContainers();
 
-        /// <summary>
-        /// All the containers that are in the current filter tree (includes the Root).
-        /// </summary>
-        public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; } 
+        if (ImmediateContainerIfAny != null)
+            SourceCatalogueIfAny = ImmediateContainerIfAny.GetCatalogueIfAny();
+    }
 
-        public FilterCombineable(IFilter filter)
+    private void FindContainers()
+    {
+        ImmediateContainerIfAny = Filter.FilterContainer;
+        AllContainersInEntireTreeFromRootDown = new List<IContainer>();
+
+        if (ImmediateContainerIfAny != null)
         {
-            Filter = filter;
+            RootContainerIfAny = ImmediateContainerIfAny.GetRootContainerOrSelf();
 
-            FindContainers();
-
-            if (ImmediateContainerIfAny != null)
-                SourceCatalogueIfAny = ImmediateContainerIfAny.GetCatalogueIfAny();
-            
-        }
-        
-        private void FindContainers()
-        {
-            ImmediateContainerIfAny = Filter.FilterContainer;
-            AllContainersInEntireTreeFromRootDown = new List<IContainer>();
-            
-            if(ImmediateContainerIfAny != null)
-            {
-                RootContainerIfAny = ImmediateContainerIfAny.GetRootContainerOrSelf();
-                
-                //so we can determine whether we are being draged into a new heirarchy tree (copy) or just being dragged around inside our own tree (move)
-                AllContainersInEntireTreeFromRootDown.Add(RootContainerIfAny);
-                AllContainersInEntireTreeFromRootDown.AddRange(RootContainerIfAny.GetAllSubContainersRecursively());
-                
-            }
-        }
-
-        
-
-        public string GetSqlString()
-        {
-            return Filter.WhereSQL;
+            //so we can determine whether we are being draged into a new heirarchy tree (copy) or just being dragged around inside our own tree (move)
+            AllContainersInEntireTreeFromRootDown.Add(RootContainerIfAny);
+            AllContainersInEntireTreeFromRootDown.AddRange(RootContainerIfAny.GetAllSubContainersRecursively());
         }
     }
+
+
+    public string GetSqlString() => Filter.WhereSQL;
 }

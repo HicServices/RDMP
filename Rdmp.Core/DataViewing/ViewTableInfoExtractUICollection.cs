@@ -13,106 +13,96 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Builds a query to fetch data from a <see cref="TableInfo"/>
+/// </summary>
+public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    public ViewType ViewType { get; private set; }
+
     /// <summary>
-    /// Builds a query to fetch data from a <see cref="TableInfo"/>
+    /// for persistence, do not use
     /// </summary>
-    public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public ViewTableInfoExtractUICollection()
     {
-        public ViewType ViewType { get; private set; }
+    }
 
-        /// <summary>
-        /// for persistence, do not use
-        /// </summary>
-        public ViewTableInfoExtractUICollection()
-        {
-        }
+    public ViewTableInfoExtractUICollection(ITableInfo t, ViewType viewType, IFilter filter = null)
+        : this()
+    {
+        DatabaseObjects.Add(t);
 
-        public ViewTableInfoExtractUICollection(ITableInfo t, ViewType viewType, IFilter filter = null)
-            : this()
-        {
-            DatabaseObjects.Add(t);
+        if (filter != null)
+            DatabaseObjects.Add(filter);
+        ViewType = viewType;
+    }
 
-            if (filter != null)
-                DatabaseObjects.Add(filter);
-            ViewType = viewType;
-        }
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { "ViewType", ViewType.ToString() } });
 
-        public override string SaveExtraText()
-        {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
-        }
+    public override void LoadExtraText(string s)
+    {
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
+        ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
+    }
 
-        public override void LoadExtraText(string s)
-        {
-            string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
-            ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
-        }
+    public object GetDataObject()
+    {
+        return DatabaseObjects.Single(o => o is ColumnInfo or Curation.Data.TableInfo);
+    }
 
-        public object GetDataObject()
-        {
-            return DatabaseObjects.Single(o => o is ColumnInfo || o is TableInfo);
-        }
+    public IFilter GetFilterIfAny()
+    {
+        return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
+    }
 
-        public IFilter GetFilterIfAny()
-        {
-            return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
-        }
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            var filter = GetFilterIfAny() as ConcreteFilter;
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        if (GetFilterIfAny() is ConcreteFilter filter)
+            yield return filter;
+    }
 
-            if (filter != null)
-                yield return filter;
-        }
+    public IDataAccessPoint GetDataAccessPoint() => TableInfo;
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return TableInfo;
-        }
+    public string GetSql()
+    {
+        var qb = new QueryBuilder(null, null);
 
-        public string GetSql()
-        {
-            var qb = new QueryBuilder(null, null);
+        if (ViewType == ViewType.TOP_100)
+            qb.TopX = 100;
 
-            if (ViewType == ViewType.TOP_100)
-                qb.TopX = 100;
+        var memoryRepository = new MemoryCatalogueRepository();
 
-            var memoryRepository = new MemoryCatalogueRepository();
+        qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
 
-            qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository, c)).ToArray());
+        var filter = GetFilterIfAny();
+        if (filter != null)
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter },
+                FilterContainerOperation.AND);
 
-            var filter = GetFilterIfAny();
-            if (filter != null)
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
+        var sql = qb.SQL;
 
-            var sql = qb.SQL;
+        return ViewType == ViewType.Aggregate
+            ? throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos")
+            : sql;
+    }
 
-            if (ViewType == ViewType.Aggregate)
-                throw new NotSupportedException("ViewType.Aggregate can only be applied to ColumnInfos not TableInfos");
+    public string GetTabName() => $"{TableInfo}({ViewType})";
 
-            return sql;
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+        autoComplete.Add(TableInfo);
+    }
 
-        }
+    public TableInfo TableInfo => DatabaseObjects.OfType<TableInfo>().SingleOrDefault();
 
-        public string GetTabName()
-        {
-            return TableInfo + "(" + ViewType + ")";
-        }
-
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-            autoComplete.Add(TableInfo);
-        }
-
-        public TableInfo TableInfo { get { return DatabaseObjects.OfType<TableInfo>().SingleOrDefault(); } }
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            var t = TableInfo;
-            return t != null ? t.GetQuerySyntaxHelper() : null;
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        var t = TableInfo;
+        return t?.GetQuerySyntaxHelper();
     }
 }

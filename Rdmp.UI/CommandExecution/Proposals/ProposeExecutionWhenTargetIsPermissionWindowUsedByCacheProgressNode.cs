@@ -11,31 +11,29 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class
+    ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<
+        PermissionWindowUsedByCacheProgressNode>
 {
-    class ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode : RDMPCommandExecutionProposal<PermissionWindowUsedByCacheProgressNode>
+    public ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode(IActivateItems itemActivator) :
+        base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(PermissionWindowUsedByCacheProgressNode target)
-        {
-            return true;
-        }
-
-        public override void Activate(PermissionWindowUsedByCacheProgressNode target)
-        {
-            if (target.DirectionIsCacheToPermissionWindow)
-                ItemActivator.Activate<PermissionWindowUI, PermissionWindow>(target.PermissionWindow);
-            else
-                ItemActivator.Activate<CacheProgressUI, CacheProgress>(target.CacheProgress);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindowUsedByCacheProgressNode target,InsertOption insertOption = InsertOption.Default)
-        {
-            //no drag and drop
-            return null;
-        }
     }
+
+    public override bool CanActivate(PermissionWindowUsedByCacheProgressNode target) => true;
+
+    public override void Activate(PermissionWindowUsedByCacheProgressNode target)
+    {
+        if (target.DirectionIsCacheToPermissionWindow)
+            ItemActivator.Activate<PermissionWindowUI, PermissionWindow>(target.PermissionWindow);
+        else
+            ItemActivator.Activate<CacheProgressUI, CacheProgress>(target.CacheProgress);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        PermissionWindowUsedByCacheProgressNode target, InsertOption insertOption = InsertOption.Default) =>
+        //no drag and drop
+        null;
 }

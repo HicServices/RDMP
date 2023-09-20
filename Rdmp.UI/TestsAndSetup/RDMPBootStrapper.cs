@@ -8,128 +8,115 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Startup;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
-using ScintillaNET;
 
-namespace Rdmp.UI.TestsAndSetup
+namespace Rdmp.UI.TestsAndSetup;
+
+public class RDMPBootStrapper
 {
-    public class RDMPBootStrapper<T> where T : RDMPForm, new()
+    private string _catalogueConnection;
+    private string _dataExportConnection;
+
+    /// <summary>
+    /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
+    /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
+    /// </summary>
+    public static ResearchDataManagementPlatformOptions ApplicationArguments;
+
+    private readonly Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> _formConstructor;
+
+    public RDMPBootStrapper(ResearchDataManagementPlatformOptions args,
+        Func<IRDMPPlatformRepositoryServiceLocator, RDMPForm> constructor)
     {
-        private readonly EnvironmentInfo _environmentInfo;
-        private string catalogueConnection;
-        private string dataExportConnection;
-        
-        /// <summary>
-        /// The last used connection string arguments when launching using this factory class.  Typically the boot strapper
-        /// should only ever be used once so you can safely query this field but best to check that it is not null anyway.
-        /// </summary>
-        public static ResearchDataManagementPlatformOptions ApplicationArguments;
-        private readonly ResearchDataManagementPlatformOptions _args;
-        private T _mainForm;
+        ApplicationArguments = args;
+        _formConstructor = constructor;
+    }
 
-        
-        public RDMPBootStrapper(EnvironmentInfo environmentInfo, ResearchDataManagementPlatformOptions args)
+    private static readonly HashSet<string> IgnoreExceptions = new(StringComparer.InvariantCultureIgnoreCase)
+    {
+        // This error seems to come from ObjectTreeView but seems harmless
+        "Value cannot be null. (Parameter 'owningItem')"
+    };
+
+    public void Show()
+    {
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
+
+        //tell me when you blow up somewhere in the windows API instead of somewhere sensible
+        Application.ThreadException += (s, e) =>
         {
-            ApplicationArguments = args;
-            _args = args;
-            this._environmentInfo = environmentInfo;
+            if (!IgnoreExceptions.Contains(e.Exception?.Message)) GlobalExceptionHandler.Instance.Handle(s, e);
+        };
+        Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+        AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
 
+        try
+        {
+            ApplicationArguments.GetConnectionStrings(out var c, out var d);
+            _catalogueConnection = c?.ConnectionString;
+            _dataExportConnection = d?.ConnectionString;
+        }
+        catch (Exception ex)
+        {
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
+            {
+                var viewer = new ExceptionViewer("Failed to get connection strings",
+                    $"ConnectionStringsFile was '{ApplicationArguments.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}",
+                    ex);
+                viewer.ShowDialog();
+            }
+            else
+            {
+                ExceptionViewer.Show("Failed to get connection strings", ex);
+            }
+
+            return;
         }
 
-        public HashSet<string> IgnoreExceptions = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase){ 
-            
-            // This error seems to come from ObjectTreeView but seems harmless
-            "Value cannot be null. (Parameter 'owningItem')",
-            };
-
-        public void Show(bool requiresDataExportDatabaseToo)
+        try
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            //show the startup dialog
+            var startup = new Startup { SkipPatching = ApplicationArguments.SkipPatching };
 
-            Scintilla.SetDestroyHandleBehavior(true);
-
-            //tell me when you blow up somewhere in the windows API instead of somewhere sensible
-            Application.ThreadException += (s,e)=>{
-
-                var msg = e.Exception?.Message;
-                if(msg != null && IgnoreExceptions.Contains(msg))
-                {
-                    return;
-                }
-
-                GlobalExceptionHandler.Instance.Handle(s,e);
-                };
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            AppDomain.CurrentDomain.UnhandledException += GlobalExceptionHandler.Instance.Handle;
-
-            try
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.Dir))
             {
-                _args.GetConnectionStrings(out var c, out var d);
-                this.catalogueConnection = c?.ConnectionString;
-                this.dataExportConnection = d?.ConnectionString;
+                startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
             }
-            catch (Exception ex)
+            else if (!string.IsNullOrWhiteSpace(_catalogueConnection) &&
+                     !string.IsNullOrWhiteSpace(_dataExportConnection))
             {
-                if(!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
-                {
-                    var viewer = new ExceptionViewer("Failed to get connection strings", $"ConnectionStringsFile was '{_args.ConnectionStringsFile}'{Environment.NewLine}{ExceptionHelper.ExceptionToListOfInnerMessages(ex)}", ex);
-                    viewer.ShowDialog();
-                }
-                else
-                    ExceptionViewer.Show("Failed to get connection strings", ex);
+                startup.RepositoryLocator = new LinkedRepositoryProvider(_catalogueConnection, _dataExportConnection);
+                startup.RepositoryLocator.CatalogueRepository.TestConnection();
+                startup.RepositoryLocator.DataExportRepository.TestConnection();
+            }
+
+            var startupUI = new StartupUI(startup);
+            startupUI.ShowDialog();
+
+            if (startupUI.CouldNotReachTier1Database)
+            {
+                MessageBox.Show("Platform databases could not be reached.");
                 return;
             }
 
-            try
-            {
-                //show the startup dialog
-                Startup startup = new Startup(_environmentInfo) { SkipPatching = _args.SkipPatching };
+            //launch the main application form T
+            var mainForm = _formConstructor(startup.RepositoryLocator);
 
-                if(!string.IsNullOrWhiteSpace(_args.Dir))
-                {
-                    startup.RepositoryLocator = _args.GetRepositoryLocator();
-                }
-                else
-                if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
-                {
-                    startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);
-                    startup.RepositoryLocator.CatalogueRepository.TestConnection();
-                    startup.RepositoryLocator.DataExportRepository.TestConnection();
-                }
-
-                var startupUI = new StartupUI(startup);
-                startupUI.ShowDialog();
-
-                if (startupUI.CouldNotReachTier1Database)
-                {
-                    MessageBox.Show("Platform databases could not be reached.");
-                    return;
-                }
-
-                //launch the main application form T
-                _mainForm = new T();
-
-                typeof (T).GetMethod("SetRepositoryLocator").Invoke(_mainForm,new object[]{startup.RepositoryLocator});
-
-                if (startupUI.DoNotContinue)
-                    return;
-
-                Application.Run(_mainForm);
-            }
-            catch (Exception e)
-            {
-                if (!string.IsNullOrWhiteSpace(_args.ConnectionStringsFile))
-                {
-                    ExceptionViewer.Show($"Startup failed for '{_args.ConnectionStringsFile}'",e);
-                }
-                else
-                    ExceptionViewer.Show(e);
+            if (startupUI.DoNotContinue)
                 return;
-            }
+
+            Application.Run(mainForm);
+        }
+        catch (Exception e)
+        {
+            if (!string.IsNullOrWhiteSpace(ApplicationArguments.ConnectionStringsFile))
+                ExceptionViewer.Show($"Startup failed for '{ApplicationArguments.ConnectionStringsFile}'", e);
+            else
+                ExceptionViewer.Show(e);
         }
     }
 }

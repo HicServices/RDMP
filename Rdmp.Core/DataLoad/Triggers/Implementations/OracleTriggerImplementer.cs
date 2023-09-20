@@ -4,75 +4,67 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Oracle.ManagedDataAccess.Client;
-using ReusableLibraryCode.Exceptions;
-using ReusableLibraryCode.Settings;
-using TypeGuesser;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
-namespace Rdmp.Core.DataLoad.Triggers.Implementations
+namespace Rdmp.Core.DataLoad.Triggers.Implementations;
+
+/// <inheritdoc/>
+internal class OracleTriggerImplementer : MySqlTriggerImplementer
 {
-    /// <inheritdoc/>
-    internal class OracleTriggerImplementer:MySqlTriggerImplementer
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
+        createDataLoadRunIDAlso)
     {
-        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
-        public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
-        {
-        }
+    }
 
-        protected override string GetTriggerBody()
-        {
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
+    protected override string GetTriggerBody()
+    {
+        using var con = _server.GetConnection();
+        con.Open();
 
-                using (var cmd =
-                    _server.GetCommand(
-                        string.Format("select trigger_body from all_triggers where trigger_name = UPPER('{0}')",
-                            GetTriggerName()), con))
-                {
-                    ((OracleCommand)cmd).InitialLONGFetchSize = -1;
-                    var r = cmd.ExecuteReader();
+        using var cmd =
+            _server.GetCommand(
+                $"select trigger_body from all_triggers where trigger_name = UPPER('{GetTriggerName()}')", con);
+        ((OracleCommand)cmd).InitialLONGFetchSize = -1;
+        var r = cmd.ExecuteReader();
 
-                    while (r.Read())
-                        return (string) r["trigger_body"];
-                }
-            }
+        while (r.Read())
+            return (string)r["trigger_body"];
 
-            return null;
-        }
+        return null;
+    }
 
-        protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
-        {
-            _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true, UserSettings.ArchiveTriggerTimeout);
-        }
+    protected override void AddValidFrom(DiscoveredTable table, IQuerySyntaxHelper syntaxHelper)
+    {
+        _table.AddColumn(SpecialFieldNames.ValidFrom, " DATE DEFAULT CURRENT_TIMESTAMP", true,
+            UserSettings.ArchiveTriggerTimeout);
+    }
 
-        protected override string CreateTriggerBody()
-        {
-            var syntax = _table.GetQuerySyntaxHelper();
+    protected override string CreateTriggerBody()
+    {
+        var syntax = _table.GetQuerySyntaxHelper();
 
-            return string.Format(@"BEGIN
-    INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
+        return $@"BEGIN
+    INSERT INTO {_archiveTable.GetFullyQualifiedName()} ({string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName())))},hic_validTo,hic_userID,hic_status) VALUES ({string.Join(",", _columns.Select(c => $":old.{syntax.EnsureWrapped(c.GetRuntimeName())}"))},CURRENT_DATE,USER,'U');
 
-  :new.{3} := sysdate;
+  :new.{syntax.EnsureWrapped(SpecialFieldNames.ValidFrom)} := sysdate;
 
 
-  END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
-                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))),
-                syntax.EnsureWrapped(SpecialFieldNames.ValidFrom));
-        }
+  END";
+    }
 
-        protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
-        {
-            sqlNow = sqlNow??"";
-            sqlThen = sqlThen??"";
+    protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
+    {
+        sqlNow ??= "";
+        sqlThen ??= "";
 
-            if(!sqlNow.Trim(';',' ','\t').Equals(sqlThen.Trim(';',' ','\t')))
-                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlThen,sqlNow);
-        }
+        if (!sqlNow.Trim(';', ' ', '\t').Equals(sqlThen.Trim(';', ' ', '\t')))
+            throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expected sql", sqlThen,
+                sqlNow);
     }
 }

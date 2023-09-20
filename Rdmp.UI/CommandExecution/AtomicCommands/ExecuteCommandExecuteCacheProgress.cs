@@ -4,62 +4,55 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LoadExecutionUIs;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandExecuteCacheProgress : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicCommandWithTarget
+    private CacheProgress _cp;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandExecuteCacheProgress(IActivateItems activator, CacheProgress cp) : base(activator)
     {
-        private CacheProgress _cp;
+        _cp = cp;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandExecuteCacheProgress(IActivateItems activator, CacheProgress cp) : base(activator)
-        {
-            _cp = cp;
-        }
-        
-        public ExecuteCommandExecuteCacheProgress(IActivateItems activator)
-            : base(activator)
-        {
+    public ExecuteCommandExecuteCacheProgress(IActivateItems activator)
+        : base(activator)
+    {
+    }
 
-        }
+    public override string GetCommandHelp() =>
+        "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
 
-        public override string GetCommandHelp()
-        {
-            return "Runs the caching activity.  This usually involves long term incremental fetching and storing data ready for load";
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Execute);
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _cp = (CacheProgress)target;
+        return this;
+    }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _cp = (CacheProgress) target;
-            return this;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        _cp ??= SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
 
-            if (_cp == null)
-                _cp = SelectOne<CacheProgress>(Activator.RepositoryLocator.CatalogueRepository);
-            
-            if(_cp == null)
-                return;
-            
-            Activator.Activate<ExecuteCacheProgressUI, CacheProgress>(_cp);
-        }
+        if (_cp == null)
+            return;
+
+        Activator.Activate<ExecuteCacheProgressUI, CacheProgress>(_cp);
     }
 }

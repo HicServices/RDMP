@@ -14,103 +14,105 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Job
+namespace Rdmp.Core.DataLoad.Engine.Job;
+
+/// <summary>
+/// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc
+/// </summary>
+public class ThrowImmediatelyDataLoadJob : IDataLoadJob
 {
-    /// <summary>
-    /// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc 
-    /// </summary>
-    public class ThrowImmediatelyDataLoadJob: IDataLoadJob
+    private readonly IDataLoadEventListener _listener;
+
+    public ThrowImmediatelyDataLoadJob()
     {
-        private readonly IDataLoadEventListener _listener;
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+    }
 
-        public ThrowImmediatelyDataLoadJob()
-        {
-            _listener = new ThrowImmediatelyDataLoadEventListener();
-        }
+    public ThrowImmediatelyDataLoadJob(DiscoveredServer liveServer)
+    {
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+        Configuration = new HICDatabaseConfiguration(liveServer);
+    }
 
-        public ThrowImmediatelyDataLoadJob(DiscoveredServer liveServer)
-        {
-            _listener = new ThrowImmediatelyDataLoadEventListener();
-            Configuration = new HICDatabaseConfiguration(liveServer);
-        }
+    public ThrowImmediatelyDataLoadJob(IDataLoadEventListener listener)
+    {
+        _listener = listener;
+    }
 
-        public ThrowImmediatelyDataLoadJob(IDataLoadEventListener listener)
-        {
-            _listener = listener;
-        }
-        public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
-        {
-            _listener = new ThrowImmediatelyDataLoadEventListener();
-            RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);
-            Configuration = configuration;
-        }
+    public ThrowImmediatelyDataLoadJob(HICDatabaseConfiguration configuration, params ITableInfo[] regularTablesToLoad)
+    {
+        _listener = ThrowImmediatelyDataLoadEventListener.Quiet;
+        RegularTablesToLoad = new List<ITableInfo>(regularTablesToLoad);
+        Configuration = configuration;
+    }
 
-        public string Description { get; private set; }
-        public IDataLoadInfo DataLoadInfo { get; set; }
-        public ILoadDirectory LoadDirectory { get; set; }
-        public int JobID { get; set; }
-        public ILoadMetadata LoadMetadata { get; set; }
-        public bool DisposeImmediately { get; private set; }
-        public string ArchiveFilepath { get; private set; }
-        public List<ITableInfo> RegularTablesToLoad { get; set; } = new List<ITableInfo>();
-        public List<ITableInfo> LookupTablesToLoad { get; set; } = new List<ITableInfo>();
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
+    public string Description { get; private set; }
+    public IDataLoadInfo DataLoadInfo { get; set; }
+    public ILoadDirectory LoadDirectory { get; set; }
+    public int JobID { get; set; }
+    public ILoadMetadata LoadMetadata { get; set; }
+    public bool DisposeImmediately { get; private set; }
+    public string ArchiveFilepath { get; private set; }
+    public List<ITableInfo> RegularTablesToLoad { get; set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; set; } = new();
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
-        public void StartLogging()
-        {
-        }
+    public void StartLogging()
+    {
+    }
 
-        public void CloseLogging()
-        {
-        }
+    public void CloseLogging()
+    {
+    }
 
-        public HICDatabaseConfiguration Configuration { get; set; }
+    public HICDatabaseConfiguration Configuration { get; set; }
 
-        public object Payload { get; set; }
-        public bool PersistentRaw { get; set; }
+    public object Payload { get; set; }
+    public bool PersistentRaw { get; set; }
 
-        private List<NotifyEventArgs> _crashAtEnd = new();
+    private List<NotifyEventArgs> _crashAtEnd = new();
 
-        /// <inheritdoc/>
-        public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+    /// <inheritdoc/>
+    public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
 
-        public void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
-        {
-        }
-        public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
-        {
-        }
+    public static void AddForDisposalAfterCompletion(IDisposeAfterDataLoad disposable)
+    {
+    }
 
-        public void PushForDisposal(IDisposeAfterDataLoad disposeable)
-        {
-        }
+    public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
+    {
+    }
 
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-            
-        }
+    public void PushForDisposal(IDisposeAfterDataLoad disposeable)
+    {
+    }
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            _listener.OnNotify(sender,e);
-        }
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+    {
+    }
 
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            _listener.OnProgress(sender,e);
-        }
-        public ColumnInfo[] GetAllColumns()
-        {
-            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        _listener.OnNotify(sender, e);
+    }
 
-        /// <inheritdoc/>
-        public void CrashAtEnd(NotifyEventArgs because)
-        {
-            _crashAtEnd.Add(because);
-        }
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        _listener.OnProgress(sender, e);
+    }
+
+    public ColumnInfo[] GetAllColumns()
+    {
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
+    }
+
+    /// <inheritdoc/>
+    public void CrashAtEnd(NotifyEventArgs because)
+    {
+        _crashAtEnd.Add(because);
     }
 }

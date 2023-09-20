@@ -9,100 +9,99 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.Core.Reports
+namespace Rdmp.Core.Reports;
+
+/// <summary>
+/// Generates class descriptions for all <see cref="DatabaseEntity"/> classes (from xmldocs) into a user readable Microsoft Word Docx file.
+/// Also shows corresponding icon within RDMP.  This allows the user to see what a Project is and the icon what an ExtractionConfiguration
+/// is etc and for those descriptions/icons to always match the live/installed version of RDMP.
+/// </summary>
+public class DocumentationReportDatabaseEntities : DocXHelper
 {
-    /// <summary>
-    /// Generates class descriptions for all <see cref="DatabaseEntity"/> classes (from xmldocs) into a user readable Microsoft Word Docx file.
-    /// Also shows corresponding icon within RDMP.  This allows the user to see what a Project is and the icon what an ExtractionConfiguration
-    /// is etc and for those descriptions/icons to always match the live/installed version of RDMP.
-    /// </summary>
-    public class DocumentationReportDatabaseEntities : DocXHelper
+    private CommentStore _commentStore;
+    private Dictionary<Type, string> Summaries = new();
+
+    public void GenerateReport(CommentStore commentStore, ICheckNotifier notifier, IIconProvider iconProvider,
+        bool showFile)
     {
-        private MEF _mef;
-        private CommentStore _commentStore;
-        private Dictionary<Type, string> Summaries = new Dictionary<Type, string>();
-
-        public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, IIconProvider iconProvider,MEF mef, bool showFile)
+        _commentStore = commentStore;
+        try
         {
-            _mef = mef;
-            _commentStore = commentStore;
-            try
-            {
-                Check(notifier);
+            Check(notifier);
 
-                using (var document = GetNewDocFile("RDMPDocumentation"))
+            using var document = GetNewDocFile("RDMPDocumentation");
+            var t = InsertTable(document, Summaries.Count * 2 + 1, 1);
+
+            //Listing Cell header
+            SetTableCell(t, 0, 0, "Tables");
+
+            var keys = Summaries.Keys.ToArray();
+
+            for (var i = 0; i < Summaries.Count; i++)
+            {
+                //creates the run
+                SetTableCell(t, i * 2 + 1, 0, "");
+
+                var bmp = iconProvider.GetImage(keys[i]);
+
+                if (bmp != null)
                 {
-                    var t = InsertTable(document,(Summaries.Count *2) +1, 1);
-                    
-                    //Listing Cell header
-                    SetTableCell(t, 0, 0, "Tables");
-
-                    Type[] keys = Summaries.Keys.ToArray();
-
-                    for (int i = 0; i < Summaries.Count; i++)
-                    {
-                        //creates the run
-                        SetTableCell(t, (i*2) + 1, 0, "");
-                        
-                        var bmp = iconProvider.GetImage(keys[i]);
-
-                        if (bmp != null)
-                        {
-                            var para = t.Rows[(i * 2) + 1].GetCell(0).Paragraphs.First();
-                            var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
-                            GetPicture(run,bmp);
-                        }
-                        SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);
-
-                        SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
-                    }
-
-                    if(showFile)
-                        ShowFile(document);
+                    var para = t.Rows[i * 2 + 1].GetCell(0).Paragraphs.First();
+                    var run = para.Runs.FirstOrDefault() ?? para.CreateRun();
+                    GetPicture(run, bmp);
                 }
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
-            }
-        }
 
-        public void Check(ICheckNotifier notifier)
+                SetTableCell(t, i * 2 + 1, 0, $" {keys[i].Name}");
+
+                SetTableCell(t, i * 2 + 2, 0, Summaries[keys[i]]);
+            }
+
+            if (showFile)
+                ShowFile(document);
+        }
+        catch (Exception e)
         {
-            foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
-                if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
-                {
-                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
-                        continue;
-                    try
-                    {
-                        //spontaneous objects don't exist in the database.
-                        if(typeof(SpontaneousObject).IsAssignableFrom(t))
-                            continue;
-                    }
-                    catch(Exception)
-                    {
-                        continue;
-                    }
-
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found type " + t, CheckResult.Success));
-
-                    var docs = _commentStore.GetTypeDocumentationIfExists(t, true, true);
-
-                    if (docs == null)
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs("Failed to get definition for class " + t.FullName, CheckResult.Fail));
-                    else
-                        Summaries.Add(t, docs);
-                }
+            notifier.OnCheckPerformed(new CheckEventArgs("Report generation failed", CheckResult.Fail, e));
         }
+    }
+
+    private void Check(ICheckNotifier notifier)
+    {
+        foreach (var t in MEF.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
+            {
+                if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous") ||
+                    t.Assembly.FullName?.StartsWith("DynamicProxyGenAssembly2") == true)
+                    continue;
+                try
+                {
+                    //spontaneous objects don't exist in the database.
+                    if (typeof(SpontaneousObject).IsAssignableFrom(t))
+                        continue;
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found type {t}", CheckResult.Success));
+
+                var docs = _commentStore.GetTypeDocumentationIfExists(t, true, true);
+
+                if (docs == null)
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs($"Failed to get definition for class {t.FullName} defined in {t.Assembly}",
+                            CheckResult.Fail));
+                else
+                    Summaries.Add(t, docs);
+            }
     }
 }

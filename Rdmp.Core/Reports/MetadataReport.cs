@@ -7,492 +7,488 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
-using NPOI.XWPF.UserModel;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Reports
+namespace Rdmp.Core.Reports;
+
+/// <summary>
+/// Describes a method that generates images for a <seealso cref="Catalogue"/> e.g. aggregate graphs
+/// </summary>
+/// <param name="catalogue"></param>
+/// <returns></returns>
+public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue catalogue);
+
+/// <summary>
+/// Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount, distinct patient count, description and descriptions
+/// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to
+/// the report (including heatmap if a dynamic pivot is included in the graph).
+/// </summary>
+public class MetadataReport : DocXHelper
 {
-    /// <summary>
-    /// Describes a method that generates images for a <seealso cref="Catalogue"/> e.g. aggregate graphs
-    /// </summary>
-    /// <param name="catalogue"></param>
-    /// <returns></returns>
-    public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue catalogue);
+    private readonly ICatalogueRepository _repository;
+    private readonly MetadataReportArgs _args;
+    private readonly HashSet<TableInfo> _lookupsEncounteredToAppearInAppendix = new();
 
-    /// <summary>
-    /// Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount, distinct patient count, description and descriptions
-    /// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to 
-    /// the report (including heatmap if a dynamic pivot is included in the graph).
-    /// </summary>
-    public class MetadataReport:DocXHelper
+    public float PageWidthInPixels { get; private set; }
+
+    public event RequestCatalogueImagesHandler RequestCatalogueImages;
+
+    private const int TextFontSize = 7;
+
+
+    public MetadataReport(ICatalogueRepository repository, MetadataReportArgs args)
     {
-        private readonly ICatalogueRepository _repository;
-        private readonly MetadataReportArgs _args;
-        
-        HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
+        _repository = repository;
+        _args = args;
+    }
 
-        public float PageWidthInPixels { get; private set; }
-        
-        public event RequestCatalogueImagesHandler RequestCatalogueImages;
-        
-        private const int TextFontSize = 7;
+    private Thread thread;
 
-        
+    public void GenerateWordFileAsync(IDataLoadEventListener listener, bool showFile)
+    {
+        thread = new Thread(() => GenerateWordFile(listener, showFile));
+        thread.Start();
+    }
 
-        public MetadataReport(ICatalogueRepository repository,MetadataReportArgs args)
+    public FileInfo GenerateWordFile(IDataLoadEventListener listener, bool showFile)
+    {
+        try
         {
-            _repository = repository;
-            _args = args;
-        }
+            //if there's only one catalogue call it 'prescribing.docx' etc
+            var filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
-        Thread thread;
+            using var document = GetNewDocFile(filename);
+            PageWidthInPixels = GetPageWidth();
 
-        public void GenerateWordFileAsync(IDataLoadEventListener listener, bool showFile)
-        {
+            var sw = Stopwatch.StartNew();
 
-            thread = new Thread(() => GenerateWordFile(listener,showFile));
-            thread.Start();
-        }
-
-        public FileInfo GenerateWordFile(IDataLoadEventListener listener, bool showFile)
-        {
             try
             {
-                //if there's only one catalogue call it 'prescribing.docx' etc
-                string filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
+                var completed = 0;
 
-                using (var document = GetNewDocFile(filename))
+
+                foreach (var c in _args.Catalogues.OrderBy(c => c.Name))
                 {
-                    PageWidthInPixels = GetPageWidth();
-                    
-                    var sw = Stopwatch.StartNew();
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Extracting",
+                            new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length),
+                            sw.Elapsed));
 
+                    var recordCount = -1;
+                    var distinctRecordCount = -1;
+                    string identifierName = null;
+
+                    var gotRecordCount = false;
                     try
                     {
-                        int completed = 0;
-
-
-                        foreach (Catalogue c in _args.Catalogues.OrderBy(c=>c.Name))
+                        if (_args.IncludeRowCounts)
                         {
-                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
-
-                            int recordCount = -1;
-                            int distinctRecordCount = -1;
-                            string identifierName = null;
-
-                            bool gotRecordCount = false;
-                            try
-                            {
-                                if (_args.IncludeRowCounts)
-                                {
-                                    GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
-                                    gotRecordCount = true;
-                                }
-                            }
-                            catch (Exception e)
-                            {
-                                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Error processing record count for Catalogue " + c.Name,e));
-                            }
-
-                            InsertHeader(document,c.Name);
-
-                            //assume we don't know the age of the dataset
-                            DateTime? accurateAsOf = null;
-                            
-                            //get the age of the dataset if known and output it
-                            if (_args.TimespanCalculator != null)
-                            {
-                                string timespan = _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true,out accurateAsOf);
-                                if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
-                                    InsertParagraph(document,timespan + (accurateAsOf.HasValue ? "*" :""), TextFontSize);
-                            }
-
-                            InsertParagraph(document,c.Description, TextFontSize);
-
-                            if(accurateAsOf.HasValue)
-                                InsertParagraph(document,"* Based on DQE run on " + accurateAsOf.Value, TextFontSize-2);
-                            
-                            if (gotRecordCount)
-                            {
-                                InsertHeader(document,"Record Count", 3);
-                                CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
-                            }
-
-                            if (!_args.SkipImages && RequestCatalogueImages != null)
-                            {
-                                BitmapWithDescription[] onRequestCatalogueImages = RequestCatalogueImages(c);
-
-                                if (onRequestCatalogueImages.Any())
-                                {
-                                    InsertHeader(document,"Aggregates",2);
-                                    AddImages(document,onRequestCatalogueImages);
-                                }
-
-                            }
-                                                        
-                            CreateDescriptionsTable(document,c);
-
-                            if(_args.IncludeNonExtractableItems)
-                                CreateNonExtractableColumnsTable(document,c);
-
-                            //if this is not the last Catalogue create a new page
-                            if (completed != _args.Catalogues.Length)
-                                InsertSectionPageBreak(document);
-
-                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
+                            GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
+                            gotRecordCount = true;
                         }
-
-                        if (LookupsEncounteredToAppearInAppendix.Any())
-                            CreateLookupAppendix(document, listener);
-
-                        if(showFile)
-                            ShowFile(document);
-
-                        SetMargins(document,20);
-                        
-                        AddFooter(document,"Created on " + DateTime.Now, TextFontSize);
-
-                        return document.FileInfo;
                     }
-                    catch (ThreadInterruptedException)
+                    catch (Exception e)
                     {
-                        //user hit abort   
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"Error processing record count for Catalogue {c.Name}", e));
                     }
+
+                    InsertHeader(document, c.Name);
+
+                    //assume we don't know the age of the dataset
+                    DateTime? accurateAsOf = null;
+
+                    //get the age of the dataset if known and output it
+                    if (_args.TimespanCalculator != null)
+                    {
+                        var timespan =
+                            _args.TimespanCalculator.GetHumanReadableTimespanIfKnownOf(c, true, out accurateAsOf);
+                        if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
+                            InsertParagraph(document, timespan + (accurateAsOf.HasValue ? "*" : ""), TextFontSize);
+                    }
+
+                    InsertParagraph(document, c.Description, TextFontSize);
+
+                    if (accurateAsOf.HasValue)
+                        InsertParagraph(document, $"* Based on DQE run on {accurateAsOf.Value}", TextFontSize - 2);
+
+                    if (gotRecordCount)
+                    {
+                        InsertHeader(document, "Record Count", 3);
+                        CreateCountTable(document, recordCount, distinctRecordCount, identifierName);
+                    }
+
+                    if (!_args.SkipImages && RequestCatalogueImages != null)
+                    {
+                        var onRequestCatalogueImages = RequestCatalogueImages(c);
+
+                        if (onRequestCatalogueImages.Any())
+                        {
+                            InsertHeader(document, "Aggregates", 2);
+                            AddImages(document, onRequestCatalogueImages);
+                        }
+                    }
+
+                    CreateDescriptionsTable(document, c);
+
+                    if (_args.IncludeNonExtractableItems)
+                        CreateNonExtractableColumnsTable(document, c);
+
+                    //if this is not the last Catalogue create a new page
+                    if (completed != _args.Catalogues.Length)
+                        InsertSectionPageBreak(document);
+
+                    listener.OnProgress(this,
+                        new ProgressEventArgs("Extracting",
+                            new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length),
+                            sw.Elapsed));
                 }
-                
+
+                if (_lookupsEncounteredToAppearInAppendix.Any())
+                    CreateLookupAppendix(document, listener);
+
+                if (showFile)
+                    ShowFile(document);
+
+                SetMargins(document, 20);
+
+                AddFooter(document, $"Created on {DateTime.Now}", TextFontSize);
+
+                return document.FileInfo;
+            }
+            catch (ThreadInterruptedException)
+            {
+                //user hit abort
+            }
+        }
+        catch (Exception e)
+        {
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
+        }
+
+        return null;
+    }
+
+    private void CreateLookupAppendix(XWPFDocument document, IDataLoadEventListener listener)
+    {
+        InsertSectionPageBreak(document);
+        InsertHeader(document, "Appendix 1 - Lookup Tables");
+
+        //foreach lookup
+        foreach (var lookupTable in _lookupsEncounteredToAppearInAppendix)
+        {
+            DataTable dt = null;
+
+            try
+            {
+                dt = GetLookupTableInfoContentsFromDatabase(lookupTable);
             }
             catch (Exception e)
             {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Failed to get the contents of loookup {lookupTable.Name}", e));
             }
 
-            return null;
-        }
+            if (dt == null)
+                continue;
 
-        private void CreateLookupAppendix(XWPFDocument document, IDataLoadEventListener listener)
-        {
-            InsertSectionPageBreak(document);
-            InsertHeader(document,"Appendix 1 - Lookup Tables");
-            
-            //foreach lookup
-            foreach (TableInfo lookupTable in LookupsEncounteredToAppearInAppendix)
+            //if it has too many columns
+            if (dt.Columns.Count > 5)
             {
-                DataTable dt = null;
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                    $"Lookup table {lookupTable.Name} has more than 5 columns so will not be processed"));
+                continue;
+            }
 
-                try    
-                {
-                   dt = GetLookupTableInfoContentsFromDatabase(lookupTable);
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Failed to get the contents of loookup " + lookupTable.Name, e));
-                }
-                
-                if(dt == null)
-                    continue;
+            //write name of lookup
+            InsertHeader(document, lookupTable.Name);
 
-                //if it has too many columns
-                if (dt.Columns.Count > 5)
-                {
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Lookup table " + lookupTable.Name + " has more than 5 columns so will not be processed"));
-                    continue;
-                }
+            var table = InsertTable(document, Math.Min(dt.Rows.Count + 1, _args.MaxLookupRows + 2), dt.Columns.Count);
 
-                //write name of lookup
-                InsertHeader(document,lookupTable.Name);
+            var tableLine = 0;
 
-                var table = InsertTable(document,Math.Min(dt.Rows.Count + 1, _args.MaxLookupRows + 2), dt.Columns.Count);
+            //write the headers to the table
+            for (var i = 0; i < dt.Columns.Count; i++)
+                SetTableCell(table, tableLine, i, dt.Columns[i].ColumnName, TextFontSize);
 
-                int tableLine = 0;
+            //move to next line
+            tableLine++;
 
-                //write the headers to the table
-                for (int i = 0; i < dt.Columns.Count; i++)
-                    SetTableCell(table, tableLine, i, dt.Columns[i].ColumnName, TextFontSize);
+            var maxLineCountDowner = _args.MaxLookupRows + 1; //1 for the headers and 1 for the ... row
+
+            //see if it has any lookups
+            foreach (DataRow row in dt.Rows)
+            {
+                for (var i = 0; i < dt.Columns.Count; i++)
+                    SetTableCell(table, tableLine, i, Convert.ToString(row[i]));
 
                 //move to next line
                 tableLine++;
+                maxLineCountDowner--;
 
-                int maxLineCountDowner = _args.MaxLookupRows + 1;//1 for the headers and 1 for the ... row
-                
-                //see if it has any lookups
-                foreach (DataRow row in dt.Rows)
-                { 
-                    for (int i = 0; i < dt.Columns.Count; i++)
-                        SetTableCell(table,tableLine, i, Convert.ToString(row[i]));
-
-                    //move to next line
-                    tableLine++;
-                    maxLineCountDowner--;
-
-                    if (maxLineCountDowner == 1)
-                    {
-                        for (int i = 0; i < dt.Columns.Count; i++)
-                            SetTableCell(table,tableLine, i, "...");
-                        break;
-                    }
-                }
-
-                AutoFit(table);
-
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Wrote out lookup table " + lookupTable.Name + " successfully"));
-            }
-        }
-
-
-        private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
-        {
-            //get the contents of the lookup
-            using(var con = DataAccessPortal.GetInstance().ExpectServer(lookupTable,DataAccessContext.InternalDataProcessing).GetConnection())
-            {
-                con.Open();
-               
-                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con))
-                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-                    {
-                        var dt = new System.Data.DataTable();
-                        da.Fill(dt);
-
-                        return dt;
-                    }
-            }
-        }
-
-        private void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
-        {
-            foreach (var image in onRequestCatalogueImages)
-            {
-                if(!string.IsNullOrWhiteSpace(image.Header))
-                    InsertHeader(document,image.Header,3);
-
-                if (!string.IsNullOrWhiteSpace(image.Description))
-                    InsertParagraph(document, image.Description);
-
-                GetPicture(document,image.Bitmap);
-            }
-        }
-
-        private void CreateDescriptionsTable(XWPFDocument document, Catalogue c)
-        {
-            var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
-            extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
-
-            if (!extractionInformations.Any())
-                return;
-
-            InsertHeader(document, "Extractable Columns", 2);
-
-            var table = InsertTable(document, extractionInformations.Count + 1, 4);
-
-            int tableLine = 0;
-
-            SetTableCell(table, tableLine, 0, "Column", TextFontSize);
-            SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
-            SetTableCell(table, tableLine, 2, "Description", TextFontSize);
-            SetTableCell(table, tableLine, 3, "Category", TextFontSize);
-
-            tableLine++;
-
-
-            foreach (ExtractionInformation information in extractionInformations)
-            {
-                SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
-                SetTableCell(table, tableLine, 1, information.ColumnInfo == null ? "ORPHAN":information.ColumnInfo.Data_type, TextFontSize);
-                string description = information.CatalogueItem.Description;
-
-                //a field should only ever be a foreign key to one Lookup table
-                var lookups = information.ColumnInfo?.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
-
-                //if it has any lookups
-                if (lookups != null && lookups.Any())
+                if (maxLineCountDowner == 1)
                 {
-                    var pkTableId = lookups.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().SingleOrDefault();
-
-                    var lookupTable = _repository.GetObjectByID<TableInfo>(pkTableId);
-
-                    if (!LookupsEncounteredToAppearInAppendix.Contains(lookupTable))
-                        LookupsEncounteredToAppearInAppendix.Add(lookupTable);
-
-                    description += "References Lookup Table " + lookupTable.GetRuntimeName();
-
+                    for (var i = 0; i < dt.Columns.Count; i++)
+                        SetTableCell(table, tableLine, i, "...");
+                    break;
                 }
-
-                SetTableCell(table, tableLine, 2, description, TextFontSize);
-                SetTableCell(table, tableLine, 3, information.ExtractionCategory.ToString(), TextFontSize);
-
-                tableLine++;
             }
 
             AutoFit(table);
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Wrote out lookup table {lookupTable.Name} successfully"));
         }
-        private void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
+    }
+
+
+    private static DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
+    {
+        //get the contents of the lookup
+        using var con = DataAccessPortal.ExpectServer(lookupTable, DataAccessContext.InternalDataProcessing)
+            .GetConnection();
+        con.Open();
+
+        using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {lookupTable.Name}", con);
+        using var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+        var dt = new DataTable();
+        dt.BeginLoadData();
+        da.Fill(dt);
+        dt.EndLoadData();
+
+        return dt;
+    }
+
+    private static void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
+    {
+        foreach (var image in onRequestCatalogueImages)
         {
-            var nonExtractableCatalogueItems = c.CatalogueItems.Where(ci => ci.ExtractionInformation == null).ToList();
+            if (!string.IsNullOrWhiteSpace(image.Header))
+                InsertHeader(document, image.Header, 3);
 
-            if (!nonExtractableCatalogueItems.Any())
-                return;
+            if (!string.IsNullOrWhiteSpace(image.Description))
+                InsertParagraph(document, image.Description);
 
-            InsertHeader(document, "Other Columns (Not Extractable)", 2);
+            GetPicture(document, image.Bitmap);
+        }
+    }
 
-            var table = InsertTable(document, nonExtractableCatalogueItems.Count + 1, 3);
+    private void CreateDescriptionsTable(XWPFDocument document, Catalogue c)
+    {
+        var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
+        extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
 
-            int tableLine = 0;
+        if (!extractionInformations.Any())
+            return;
 
-            SetTableCell(table, tableLine, 0, "Column", TextFontSize);
-            SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
-            SetTableCell(table, tableLine, 2, "Description", TextFontSize);
+        InsertHeader(document, "Extractable Columns", 2);
 
-            tableLine++;
+        var table = InsertTable(document, extractionInformations.Count + 1, 4);
+
+        var tableLine = 0;
+
+        SetTableCell(table, tableLine, 0, "Column", TextFontSize);
+        SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
+        SetTableCell(table, tableLine, 2, "Description", TextFontSize);
+        SetTableCell(table, tableLine, 3, "Category", TextFontSize);
+
+        tableLine++;
 
 
-            foreach (CatalogueItem ci in nonExtractableCatalogueItems.OrderBy(ci => ci.Name))
+        foreach (var information in extractionInformations)
+        {
+            SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
+            SetTableCell(table, tableLine, 1,
+                information.ColumnInfo == null ? "ORPHAN" : information.ColumnInfo.Data_type, TextFontSize);
+            var description = information.CatalogueItem.Description;
+
+            //a field should only ever be a foreign key to one Lookup table
+            var lookups = information.ColumnInfo?.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
+
+            //if it has any lookups
+            if (lookups != null && lookups.Any())
             {
-                SetTableCell(table, tableLine, 0, ci.Name, TextFontSize);
-                SetTableCell(table, tableLine, 1, ci.ColumnInfo?.Data_type ?? @"N\A", TextFontSize);
-                SetTableCell(table, tableLine, 2, ci.Description, TextFontSize);
-                tableLine++;
+                var pkTableId = lookups.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().SingleOrDefault();
+
+                var lookupTable = _repository.GetObjectByID<TableInfo>(pkTableId);
+
+                _lookupsEncounteredToAppearInAppendix.Add(lookupTable);
+
+                description += $"References Lookup Table {lookupTable.GetRuntimeName()}";
             }
 
-            AutoFit(table);
-        }
+            SetTableCell(table, tableLine, 2, description, TextFontSize);
+            SetTableCell(table, tableLine, 3, information.ExtractionCategory.ToString(), TextFontSize);
 
-        private int IsExtractionIdentifiersFirstOrder(ExtractionInformation x, ExtractionInformation y)
-        {
-            if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
-                return -1;
-
-            if (y.IsExtractionIdentifier && y.IsExtractionIdentifier)
-                return 1;
-
-            return x.Order - y.Order;
-        }
-
-        private bool Include(ExtractionInformation arg)
-        {
-            switch (arg.ExtractionCategory)
-            {
-                case ExtractionCategory.Core:
-                    return true;
-                case ExtractionCategory.Supplemental:
-                    return true;
-                case ExtractionCategory.SpecialApprovalRequired:
-                    return true;
-                case ExtractionCategory.Internal:
-                    return _args.IncludeInternalItems;
-                case ExtractionCategory.Deprecated:
-                    return _args.IncludeDeprecatedItems;
-                case ExtractionCategory.ProjectSpecific:
-                    return true;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
-        private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
-        {
-            var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
-            
-            int tableLine = 0;
-
-            SetTableCell(table,tableLine, 0, "Records",TextFontSize);
-
-            //only add column values if there is an IsExtractionIdentifier returned 
-            if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
-                SetTableCell(table,tableLine, 1, "Distinct " + identifierName,TextFontSize);
-            
             tableLine++;
-
-            
-            SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
-
-            //only add column values if there is an IsExtractionIdentifier returned 
-            if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
-                SetTableCell(table, tableLine, 1, distinctCount.ToString("N0"), TextFontSize);
         }
 
+        AutoFit(table);
+    }
 
-        private void GetRecordCount(Catalogue c, out int count, out int distinct, out string identifierName)
+    private static void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
+    {
+        var nonExtractableCatalogueItems = c.CatalogueItems.Where(ci => ci.ExtractionInformation == null).ToList();
+
+        if (!nonExtractableCatalogueItems.Any())
+            return;
+
+        InsertHeader(document, "Other Columns (Not Extractable)", 2);
+
+        var table = InsertTable(document, nonExtractableCatalogueItems.Count + 1, 3);
+
+        var tableLine = 0;
+
+        SetTableCell(table, tableLine, 0, "Column", TextFontSize);
+        SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
+        SetTableCell(table, tableLine, 2, "Description", TextFontSize);
+
+        tableLine++;
+
+
+        foreach (var ci in nonExtractableCatalogueItems.OrderBy(ci => ci.Name))
         {
-            //one of the fields will be marked IsExtractionIdentifier (e.g. CHI column)
-            ExtractionInformation[] bestExtractionInformation = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(e => e.IsExtractionIdentifier).ToArray();
+            SetTableCell(table, tableLine, 0, ci.Name, TextFontSize);
+            SetTableCell(table, tableLine, 1, ci.ColumnInfo?.Data_type ?? @"N\A", TextFontSize);
+            SetTableCell(table, tableLine, 2, ci.Description, TextFontSize);
+            tableLine++;
+        }
 
-            TableInfo tableToQuery = null;
+        AutoFit(table);
+    }
 
-            //there is no extraction identifier or we are not doing distincts
-            if (!bestExtractionInformation.Any())
-            {
-                //there is no extraction identifier, let's see what tables there are that we can query
-                var tableInfos = 
-                    c.GetAllExtractionInformation(ExtractionCategory.Any)
+    private int IsExtractionIdentifiersFirstOrder(ExtractionInformation x, ExtractionInformation y)
+    {
+        if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
+            return -1;
+
+        return y.IsExtractionIdentifier is true and true ? 1 : x.Order - y.Order;
+    }
+
+    private bool Include(ExtractionInformation arg)
+    {
+        return arg.ExtractionCategory switch
+        {
+            ExtractionCategory.Core => true,
+            ExtractionCategory.Supplemental => true,
+            ExtractionCategory.SpecialApprovalRequired => true,
+            ExtractionCategory.Internal => _args.IncludeInternalItems,
+            ExtractionCategory.Deprecated => _args.IncludeDeprecatedItems,
+            ExtractionCategory.ProjectSpecific => true,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
+    {
+        var table = InsertTable(document, 2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
+
+        var tableLine = 0;
+
+        SetTableCell(table, tableLine, 0, "Records", TextFontSize);
+
+        //only add column values if there is an IsExtractionIdentifier returned
+        if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
+            SetTableCell(table, tableLine, 1, $"Distinct {identifierName}", TextFontSize);
+
+        tableLine++;
+
+
+        SetTableCell(table, tableLine, 0, recordCount.ToString("N0"), TextFontSize);
+
+        //only add column values if there is an IsExtractionIdentifier returned
+        if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
+            SetTableCell(table, tableLine, 1, distinctCount.ToString("N0"), TextFontSize);
+    }
+
+
+    private void GetRecordCount(Catalogue c, out int count, out int distinct, out string identifierName)
+    {
+        //one of the fields will be marked IsExtractionIdentifier (e.g. CHI column)
+        var bestExtractionInformation = c.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Where(e => e.IsExtractionIdentifier).ToArray();
+
+        TableInfo tableToQuery = null;
+
+        //there is no extraction identifier or we are not doing distincts
+        if (!bestExtractionInformation.Any())
+        {
+            //there is no extraction identifier, let's see what tables there are that we can query
+            var tableInfos =
+                c.GetAllExtractionInformation(ExtractionCategory.Any)
                     .Select(ei => ei.ColumnInfo.TableInfo_ID)
                     .Distinct()
                     .Select(_repository.GetObjectByID<TableInfo>)
                     .ToArray();
-                
-                //there is only one table that we can query
-                if (tableInfos.Count() == 1)
-                    tableToQuery = tableInfos.Single();//query that one
-                else
-                if (tableInfos.Count(t => t.IsPrimaryExtractionTable) == 1)//there are multiple tables but there is only one IsPrimaryExtractionTable
-                    tableToQuery = tableInfos.Single(t => t.IsPrimaryExtractionTable);
-                else
-                    throw new Exception("Did not know which table to query out of " + string.Join(",", tableInfos.Select(t => t.GetRuntimeName())) + " you can resolve this by marking one (AND ONLY ONE) of these tables as IsPrimaryExtractionTable=true");//there are multiple tables and multiple or no IsPrimaryExtractionTable
 
-            }
+            //there is only one table that we can query
+            if (tableInfos.Length == 1)
+                tableToQuery = tableInfos.Single(); //query that one
+            else if
+                (tableInfos.Count(t => t.IsPrimaryExtractionTable) ==
+                 1) //there are multiple tables but there is only one IsPrimaryExtractionTable
+                tableToQuery = tableInfos.Single(t => t.IsPrimaryExtractionTable);
             else
-                tableToQuery = bestExtractionInformation[0].ColumnInfo.TableInfo;//there is an extraction identifier so use its table to query
-
-            bool hasExtractionIdentifier = bestExtractionInformation.Any();
-
-            var server = c.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, true);
-            using (var con = server.GetConnection())
-            {
-
-                con.Open();
-
-                if (tableToQuery.Name.Contains("@"))
-                    throw new Exception("Table '" + tableToQuery.Name + "' looks like a table valued function so cannot be processed");
-
-                string sql = "SELECT " + Environment.NewLine;
-                sql += "count(*) as recordCount";
-
-                //if it has extraction information and we want a distinct count
-                if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
-                    sql += ",\r\ncount(distinct " + bestExtractionInformation[0].SelectSQL + ") as recordCountDistinct" + Environment.NewLine;
-            
-                sql += " from " + Environment.NewLine;
-                sql += tableToQuery.Name;
-
-                identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
-
-                using (DbCommand cmd = server.GetCommand(sql, con))
-                {
-                    cmd.CommandTimeout = _args.Timeout;
-
-                    using (DbDataReader r = cmd.ExecuteReader())
-                    {
-                        r.Read();
-                        count = Convert.ToInt32(r["recordCount"]);
-                        distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-                    }
-                }
-                
-                con.Close();
-            }
+                throw new Exception(
+                    $"Did not know which table to query out of {string.Join(",", tableInfos.Select(t => t.GetRuntimeName()))} you can resolve this by marking one (AND ONLY ONE) of these tables as IsPrimaryExtractionTable=true"); //there are multiple tables and multiple or no IsPrimaryExtractionTable
         }
-
-        public void Abort()
+        else
         {
-            if(thread != null)
-                thread.Interrupt();
+            tableToQuery =
+                bestExtractionInformation[0].ColumnInfo
+                    .TableInfo; //there is an extraction identifier so use its table to query
         }
+
+        var hasExtractionIdentifier = bestExtractionInformation.Any();
+
+        var server = c.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, true);
+        using var con = server.GetConnection();
+        con.Open();
+
+        if (tableToQuery.Name.Contains('@'))
+            throw new Exception(
+                $"Table '{tableToQuery.Name}' looks like a table valued function so cannot be processed");
+
+        var sql = $"SELECT {Environment.NewLine}";
+        sql += "count(*) as recordCount";
+
+        //if it has extraction information and we want a distinct count
+        if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
+            sql +=
+                $",\r\ncount(distinct {bestExtractionInformation[0].SelectSQL}) as recordCountDistinct{Environment.NewLine}";
+
+        sql += $" from {Environment.NewLine}";
+        sql += tableToQuery.Name;
+
+        identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
+
+        using (var cmd = server.GetCommand(sql, con))
+        {
+            cmd.CommandTimeout = _args.Timeout;
+
+            using var r = cmd.ExecuteReader();
+            r.Read();
+            count = Convert.ToInt32(r["recordCount"]);
+            distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts
+                ? Convert.ToInt32(r["recordCountDistinct"])
+                : -1;
+        }
+
+        con.Close();
+    }
+
+    public void Abort()
+    {
+        thread?.Interrupt();
     }
 }

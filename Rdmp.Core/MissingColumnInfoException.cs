@@ -7,22 +7,19 @@
 using System;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core
-{
-    /// <summary>
-    /// Thrown when an object which should be associated with a single <see cref="ColumnInfo"/> cannot be resolved to one (e.g. an <see cref="ExtractionInformation"/> which
-    /// has become unlinked with an underlying column).
-    /// </summary>
-    public class MissingColumnInfoException : Exception
-    {
-        public MissingColumnInfoException(string message): base(message)
-        {
-            
-        }
+namespace Rdmp.Core;
 
-        public MissingColumnInfoException(string message,Exception innerException):base(message,innerException)
-        {
-            
-        }
+/// <summary>
+/// Thrown when an object which should be associated with a single <see cref="ColumnInfo"/> cannot be resolved to one (e.g. an <see cref="ExtractionInformation"/> which
+/// has become unlinked with an underlying column).
+/// </summary>
+public class MissingColumnInfoException : Exception
+{
+    public MissingColumnInfoException(string message) : base(message)
+    {
+    }
+
+    public MissingColumnInfoException(string message, Exception innerException) : base(message, innerException)
+    {
     }
 }

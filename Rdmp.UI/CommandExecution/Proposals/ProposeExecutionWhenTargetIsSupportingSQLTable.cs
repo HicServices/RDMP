@@ -9,28 +9,22 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsSupportingSQLTable : RDMPCommandExecutionProposal<SupportingSQLTable>
 {
-    class ProposeExecutionWhenTargetIsSupportingSQLTable : RDMPCommandExecutionProposal<SupportingSQLTable>
+    public ProposeExecutionWhenTargetIsSupportingSQLTable(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsSupportingSQLTable(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(SupportingSQLTable target)
-        {
-            return true;
-        }
-
-        public override void Activate(SupportingSQLTable target)
-        {
-            ItemActivator.Activate<SupportingSQLTableUI, SupportingSQLTable>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingSQLTable target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
     }
+
+    public override bool CanActivate(SupportingSQLTable target) => true;
+
+    public override void Activate(SupportingSQLTable target)
+    {
+        ItemActivator.Activate<SupportingSQLTableUI, SupportingSQLTable>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingSQLTable target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

@@ -5,15 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
-namespace Rdmp.UI.Rules
+namespace Rdmp.UI.Rules;
+
+/// <summary>
+/// Interface for implementations of <see cref="Binding"/> validation based upon a relevant attribute (e.g. <see cref="NotNullAttribute"/>)
+/// </summary>
+public interface IBinderRule
 {
-    /// <summary>
-    /// Interface for implementations of <see cref="Binding"/> validation based upon a relevant attribute (e.g. <see cref="NotNullAttribute"/>)
-    /// </summary>
-    public interface IBinderRule
-    {
-        ErrorProvider ErrorProvider { get;}
-    }
+    ErrorProvider ErrorProvider { get; }
 }

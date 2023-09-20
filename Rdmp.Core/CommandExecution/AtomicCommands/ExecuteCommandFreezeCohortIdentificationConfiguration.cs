@@ -4,45 +4,40 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicCommandExecution
 {
-    public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicCommandExecution
+    private readonly CohortIdentificationConfiguration _cic;
+    private readonly bool _desiredFreezeState;
+
+    public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic, bool desiredFreezeState) : base(activator)
     {
-        private readonly CohortIdentificationConfiguration _cic;
-        private readonly bool _desiredFreezeState;
-
-        public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, bool desiredFreezeState):base(activator)
-        {
-            _cic = cic;
-            _desiredFreezeState = desiredFreezeState;
-        }
-
-        public override string GetCommandName()
-        {
-            return _desiredFreezeState ? "Freeze Configuration" : "Unfreeze Configuration";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (_desiredFreezeState)
-                _cic.Freeze();
-            else
-                _cic.Unfreeze();
-
-            Publish(_cic);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
-        }
+        _cic = cic;
+        _desiredFreezeState = desiredFreezeState;
     }
+
+    public override string GetCommandName() => _desiredFreezeState ? "Freeze Configuration" : "Unfreeze Configuration";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_desiredFreezeState)
+            _cic.Freeze();
+        else
+            _cic.Unfreeze();
+
+        Publish(_cic);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
 }

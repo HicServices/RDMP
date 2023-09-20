@@ -9,69 +9,61 @@ using System.ComponentModel;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Validation.UIAttributes;
 
-namespace Rdmp.Core.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary;
+
+/// <summary>
+/// Values being validated are expected to pass the Regex pattern
+/// </summary>
+public class RegularExpression : SecondaryConstraint
 {
-    /// <summary>
-    /// Values being validated are expected to pass the Regex pattern
-    /// </summary>
-    public class RegularExpression : SecondaryConstraint
+    private string _pattern;
+
+    public RegularExpression()
     {
-        private string _pattern;
-        
-        public RegularExpression()
+        // Required for serialisation.
+    }
+
+    public RegularExpression(string pattern)
+    {
+        _pattern = pattern;
+    }
+
+    [Description(
+        "The Regular Expression pattern that MUST match the value being validated.  If you find yourself copy pasting the same Pattern all over the place you should instead consider a StandardRegexConstraint")]
+    [ExpectsLotsOfText]
+    public string Pattern
+    {
+        get => _pattern;
+        set
         {
-            // Required for serialisation. 
-        }
+            //throws if you pass an invalid pattern
+            new Regex(value);
 
-        public RegularExpression(string pattern)
-        {
-            _pattern = pattern;
-        }
 
-        [Description("The Regular Expression pattern that MUST match the value being validated.  If you find yourself copy pasting the same Pattern all over the place you should instead consider a StandardRegexConstraint")]
-        [ExpectsLotsOfText]
-        public string Pattern
-        {
-            get
-            {
-                return _pattern;
-            }
-            set
-            {
-                //throws if you pass an invalid pattern
-                new Regex(value);
-
-                
-                _pattern = value;
-            }
-        }
-
-         public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
-        {
-            if (value == null)
-                return null;
-
-            //if it is a basic type e.g. user wants to validate using regex [0-9]? (single digit!) then let them
-            if (value is string == false)
-                value = Convert.ToString(value);
-
-            var text = (string)value;
-            Match match = Regex.Match(text, _pattern);
-
-            if (!match.Success) 
-                return new ValidationFailure("Failed to match text [" + value + "] to regular expression /"+_pattern+"/",this);
-
-            return null;
-        }
-
-        public override void RenameColumn(string originalName, string newName)
-        {
-            
-        }
-
-        public override string GetHumanReadableDescriptionOfValidation()
-        {
-            return "Matches regex " + Pattern;
+            _pattern = value;
         }
     }
+
+    public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
+    {
+        if (value == null)
+            return null;
+
+        //if it is a basic type e.g. user wants to validate using regex [0-9]? (single digit!) then let them
+        if (value is string == false)
+            value = Convert.ToString(value);
+
+        var text = (string)value;
+        var match = Regex.Match(text, _pattern);
+
+        return !match.Success
+            ? new ValidationFailure($"Failed to match text [{value}] to regular expression /{_pattern}/", this)
+            : null;
+    }
+
+    public override void RenameColumn(string originalName, string newName)
+    {
+    }
+
+    public override string GetHumanReadableDescriptionOfValidation() => $"Matches regex {Pattern}";
 }

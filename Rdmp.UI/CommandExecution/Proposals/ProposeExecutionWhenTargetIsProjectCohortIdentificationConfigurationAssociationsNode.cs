@@ -8,37 +8,30 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class
+    ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<
+        ProjectCohortIdentificationConfigurationAssociationsNode>
 {
-    class ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode : RDMPCommandExecutionProposal<ProjectCohortIdentificationConfigurationAssociationsNode>
+    public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(
+        IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target)
-        {
-            return false;
-        }
-
-        public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
-        {
-            
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
-            InsertOption insertOption = InsertOption.Default)
-        {
-            var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-            if (cicCommand != null)
-            {
-                return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-            }
-
-            return null;
-        }
     }
+
+    public override bool CanActivate(ProjectCohortIdentificationConfigurationAssociationsNode target) => false;
+
+    public override void Activate(ProjectCohortIdentificationConfigurationAssociationsNode target)
+    {
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        ProjectCohortIdentificationConfigurationAssociationsNode target,
+        InsertOption insertOption = InsertOption.Default) =>
+        cmd is CohortIdentificationConfigurationCommand cicCommand
+            ? new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator)
+                .SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project)
+            : (ICommandExecution)null;
 }

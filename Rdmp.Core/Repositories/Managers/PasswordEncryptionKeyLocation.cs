@@ -5,191 +5,160 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
-using System.Xml.Serialization;
-using MapsDirectlyToDatabaseTable.Injection;
+using System.Text;
 using Rdmp.Core.Curation;
-using ReusableLibraryCode;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation
+/// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
+/// takes place (only providing access to the key file location to users who should be able to use the passwords).
+/// 
+/// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
+/// </summary>
+public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 {
+    private readonly ICatalogueRepository _catalogueRepository;
+
+    public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
+
     /// <summary>
-    /// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation
-    /// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
-    /// takes place (only providing access to the key file location to users who should be able to use the passwords).
-    /// 
-    /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
+    /// Prepares to retrieve/create the key file for the given platform database
     /// </summary>
-    public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
+    /// <param name="catalogueRepository"></param>
+    public PasswordEncryptionKeyLocation(ICatalogueRepository catalogueRepository)
     {
-        private readonly ICatalogueRepository _catalogueRepository;
+        _catalogueRepository = catalogueRepository;
 
-        public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
+        ClearAllInjections();
+    }
 
-        /// <summary>
-        /// Prepares to retrieve/create the key file for the given platform database
-        /// </summary>
-        /// <param name="catalogueRepository"></param>
-        public PasswordEncryptionKeyLocation(ICatalogueRepository catalogueRepository)
+    public IEncryptStrings GetEncrypter() => new SimpleStringValueEncryption(OpenKeyFile());
+
+    private Lazy<string> _knownKeyFileLocation;
+
+    /// <summary>
+    /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
+    /// custom keyfile has been created yet.  The answer to this question is cached, call <see cref="ClearAllInjections"/> to reset
+    /// the cache
+    /// </summary>
+    /// <returns></returns>
+    public string GetKeyFileLocation() => _knownKeyFileLocation.Value;
+
+    private string GetKeyFileLocationImpl()
+    {
+        // Prefer to get it from the environment variable
+        var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
+
+        return fromEnvVar ?? _catalogueRepository.GetEncryptionKeyPath();
+    }
+
+
+    /// <summary>
+    /// Connects to the private key location and returns the encryption/decryption parameters stored in it
+    /// </summary>
+    /// <returns></returns>
+    public string OpenKeyFile()
+    {
+        var location = GetKeyFileLocation();
+        return location is null ? null : File.ReadAllText(location);
+    }
+
+    private static void DeserializeFromLocation(string keyLocation)
+    {
+        if (string.IsNullOrWhiteSpace(keyLocation))
+            return;
+        try
         {
-            _catalogueRepository = catalogueRepository;
+            new RSACryptoServiceProvider().FromXmlString(File.ReadAllText(keyLocation));
+        }
+        catch (Exception ex)
+        {
+            throw new Exception(
+                $"Failed to open and read key file {keyLocation} (possibly it is not in a shared network location or the current user ({Environment.UserName}) does not have access to the file?)",
+                ex);
+        }
+    }
 
-            ClearAllInjections();
+    /// <summary>
+    /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
+    /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    public FileInfo CreateNewKeyFile(string path)
+    {
+        ClearAllInjections();
+
+        var existingKey = GetKeyFileLocation();
+        if (existingKey != null)
+            throw new NotSupportedException($"There is already a key file at location:{existingKey}");
+
+        var provider = new RSACryptoServiceProvider(4096);
+
+        var fi = new FileInfo(path);
+
+        if (fi.Directory is { Exists: false })
+            fi.Directory.Create();
+
+        using (var stream = fi.Create())
+        {
+            stream.Write(Encoding.UTF8.GetBytes(provider.ToXmlString(true)));
         }
 
-        public IEncryptStrings GetEncrypter()
-        {
-            return new SimpleStringValueEncryption(OpenKeyFile());
-        }
+        var fileInfo = new FileInfo(path);
 
+        if (!fileInfo.Exists)
+            throw new Exception("Created file but somehow it didn't exist!?!");
 
-        Lazy<string> _knownKeyFileLocation;
+        _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
 
-        /// <summary>
-        /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
-        /// custom keyfile has been created yet.  The answer to this question is cached, call <see cref="ClearAllInjections"/> to reset
-        /// the cache
-        /// </summary>
-        /// <returns></returns>
-        public string GetKeyFileLocation()
-        {
-            return _knownKeyFileLocation.Value;
-        }
+        ClearAllInjections();
 
-        private string GetKeyFileLocationImpl()
-        {
-            // Prefer to get it from the environment variable
-            var fromEnvVar = Environment.GetEnvironmentVariable(RDMP_KEY_LOCATION);
+        return fileInfo;
+    }
 
-            if (fromEnvVar != null)
-                return fromEnvVar;
+    /// <summary>
+    /// Changes the location of the RSA private key file to a physical location on disk (which must exist)
+    /// </summary>
+    /// <param name="newLocation"></param>
+    public void ChangeLocation(string newLocation)
+    {
+        ClearAllInjections();
 
-            return _catalogueRepository.GetEncryptionKeyPath();
-        }
+        if (!File.Exists(newLocation))
+            throw new FileNotFoundException($"Could not find key file at:{newLocation}");
 
+        //confirms that it is accessible and deserializable
+        DeserializeFromLocation(newLocation);
 
-        /// <summary>
-        /// Connects to the private key location and returns the encryption/decryption parameters stored in it
-        /// </summary>
-        /// <returns></returns>
-        public RSAParameters? OpenKeyFile()
-        {
-            string existingKey = GetKeyFileLocation();
-            return DeserializeFromLocation(existingKey);
-        }
+        _catalogueRepository.SetEncryptionKeyPath(newLocation);
 
-        private RSAParameters? DeserializeFromLocation(string keyLocation)
-        {
-            if (string.IsNullOrWhiteSpace(keyLocation))
-                return null;
+        ClearAllInjections();
+    }
 
-            string xml;
+    /// <summary>
+    /// Deletes the location of the RSA private key file from the platform database (does not delete the physical
+    /// file).
+    /// </summary>
+    public void DeleteKey()
+    {
+        ClearAllInjections();
 
-            try
-            {
-                xml = File.ReadAllText(keyLocation);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Failed to open and read key file " + keyLocation + " (possibly it is not in a shared network location or the current user - " + Environment.UserName + ", does not have access to the file?)", ex);
-            }
+        if (GetKeyFileLocation() == null)
+            throw new NotSupportedException("Cannot delete key because there is no key file configured");
 
+        _catalogueRepository.DeleteEncryptionKeyPath();
 
-            try
-            {
-                XmlSerializer DeserializeXml = new XmlSerializer(typeof(RSAParameters));
-                return (RSAParameters)DeserializeXml.Deserialize(new StringReader(xml));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to deserialize key file " + keyLocation + ", possibly it is corrupt or has been modified manually to break it?", e);
-            }
-        }
+        ClearAllInjections();
+    }
 
-        /// <summary>
-        /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
-        /// This will make any existing serialized passwords iretrievable unless you restore and reset the original key file location. 
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public FileInfo CreateNewKeyFile(string path)
-        {
-            ClearAllInjections();
-
-            string existingKey = GetKeyFileLocation();
-            if (existingKey != null)
-                throw new NotSupportedException("There is already a key file at location:" + existingKey);
-
-            RSACryptoServiceProvider provider = new RSACryptoServiceProvider(4096);
-            RSAParameters p = provider.ExportParameters(true);
-
-            var fi = new FileInfo(path);
-
-            if(fi.Directory != null && !fi.Directory.Exists)
-                fi.Directory.Create();
-
-            using (var stream = fi.Create())
-            {
-                XmlSerializer SerializeXml = new XmlSerializer(typeof(RSAParameters));
-                SerializeXml.Serialize(stream, p);
-                stream.Flush();
-                stream.Close();
-            }
-
-            var fileInfo = new FileInfo(path);
-
-            if (!fileInfo.Exists)
-                throw new Exception("Created file but somehow it didn't exist!?!");
-
-            _catalogueRepository.SetEncryptionKeyPath(fileInfo.FullName);
-
-            ClearAllInjections();
-            
-            return fileInfo;
-        }
-
-        /// <summary>
-        /// Changes the location of the RSA private key file to a physical location on disk (which must exist)
-        /// </summary>
-        /// <param name="newLocation"></param>
-        public void ChangeLocation(string newLocation)
-        {
-            ClearAllInjections();
-
-            if (!File.Exists(newLocation))
-                throw new FileNotFoundException("Could not find key file at:" + newLocation);
-
-            //confirms that it is accessible and deserializable
-            DeserializeFromLocation(newLocation);
-
-            _catalogueRepository.SetEncryptionKeyPath(newLocation);
-
-            ClearAllInjections();
-        }
-
-        /// <summary>
-        /// Deletes the location of the RSA private key file from the platform database (does not delete the physical
-        /// file).
-        /// </summary>
-        public void DeleteKey()
-        {
-            ClearAllInjections();
-
-            string existingKey = GetKeyFileLocation();
-
-            if (existingKey == null)
-                throw new NotSupportedException("Cannot delete key because there is no key file configured");
-
-            _catalogueRepository.DeleteEncryptionKeyPath();
-
-            ClearAllInjections();
-        }
-
-        public void ClearAllInjections()
-        {
-            _knownKeyFileLocation = new Lazy<string>(GetKeyFileLocationImpl);
-        }
+    public void ClearAllInjections()
+    {
+        _knownKeyFileLocation = new Lazy<string>(GetKeyFileLocationImpl);
     }
 }

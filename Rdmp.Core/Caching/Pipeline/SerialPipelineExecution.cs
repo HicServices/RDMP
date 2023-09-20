@@ -7,26 +7,26 @@
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Caching.Pipeline
+namespace Rdmp.Core.Caching.Pipeline;
+
+/// <summary>
+/// Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust each IDataFlowPipelineEngine one
+/// after the other.
+/// </summary>
+public class SerialPipelineExecution : IMultiPipelineEngineExecutionStrategy
 {
-    /// <summary>
-    /// Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust each IDataFlowPipelineEngine one 
-    /// after the other.
-    /// </summary>
-    public class SerialPipelineExecution : IMultiPipelineEngineExecutionStrategy
+    public void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken,
+        IDataLoadEventListener listener)
     {
-        public void Execute(IEnumerable<IDataFlowPipelineEngine> engines, GracefulCancellationToken cancellationToken, IDataLoadEventListener listener)
+        // Execute each pipeline to completion before starting the next
+        foreach (var engine in engines)
         {
-            // Execute each pipeline to completion before starting the next
-            foreach (var engine in engines)
-            {
-                engine.ExecutePipeline(cancellationToken);
-                
-                if (cancellationToken.IsCancellationRequested)
-                    break;
-            }
+            engine.ExecutePipeline(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                break;
         }
     }
 }

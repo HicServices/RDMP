@@ -4,63 +4,56 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCommandWithTarget
+    private readonly CacheProgress _cacheProgress;
+    private PermissionWindow _window;
+
+    public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) :
+        base(activator)
     {
-        private readonly CacheProgress _cacheProgress;
-        private PermissionWindow _window;
-        
-        public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) : base(activator)
-        {
-            _cacheProgress = cacheProgress;
-            _window = null;
+        _cacheProgress = cacheProgress;
+        _window = null;
 
-            if(!activator.CoreChildProvider.AllPermissionWindows.Any())
-                SetImpossible("There are no PermissionWindows created yet");
-        }
+        if (!activator.CoreChildProvider.AllPermissionWindows.Any())
+            SetImpossible("There are no PermissionWindows created yet");
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Restrict caching execution to the given time period";
-        }
+    public override string GetCommandHelp() => "Restrict caching execution to the given time period";
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            if(_window == null)
-                _window = SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
+        _window ??= SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-            if(_window == null)
-                return;
+        if (_window == null)
+            return;
 
-            _cacheProgress.PermissionWindow_ID = _window.ID;
-            _cacheProgress.SaveToDatabase();
+        _cacheProgress.PermissionWindow_ID = _window.ID;
+        _cacheProgress.SaveToDatabase();
 
-            Publish(_cacheProgress);
-        }
+        Publish(_cacheProgress);
+    }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            var window = target as PermissionWindow;
-            if (window != null)
-                _window = window;
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        if (target is PermissionWindow window)
+            _window = window;
 
-            return this;
-        }
+        return this;
     }
 }

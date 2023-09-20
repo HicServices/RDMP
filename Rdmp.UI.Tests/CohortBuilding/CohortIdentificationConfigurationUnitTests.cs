@@ -11,128 +11,134 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Tests.CohortBuilding
+namespace Rdmp.UI.Tests.CohortBuilding;
+
+internal class CohortIdentificationConfigurationUnitTests : UITests
 {
-    class CohortIdentificationConfigurationUnitTests:UITests
+    private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
     {
-        private void GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic)
-        {
-            cic = WhenIHaveA<CohortIdentificationConfiguration>();
-             
-            cic.CreateRootContainerIfNotExists();
+        cic = WhenIHaveA<CohortIdentificationConfiguration>();
 
-            //clear anything old
-            foreach (var old in cic.RootCohortAggregateContainer.GetOrderedContents().Cast<DatabaseEntity>())
-                old.DeleteInDatabase();
+        cic.CreateRootContainerIfNotExists();
 
-            //we need a patient identifier column
-            var ei = WhenIHaveA<ExtractionInformation>();
-            ei.IsExtractionIdentifier = true;
-            ei.SaveToDatabase();
+        //clear anything old
+        foreach (var old in cic.RootCohortAggregateContainer.GetOrderedContents().Cast<DatabaseEntity>())
+            old.DeleteInDatabase();
 
-            //in a catalogue
-            cata = ei.CatalogueItem.Catalogue;
-        }
+        //we need a patient identifier column
+        var ei = WhenIHaveA<ExtractionInformation>();
+        ei.IsExtractionIdentifier = true;
+        ei.SaveToDatabase();
 
-        [Test, UITimeout(50000)]
-        public void Test_AggregateConfigurationOrder_TwoAggregates()
-        {
-            DeleteOldAggregates();
+        //in a catalogue
+        cata = ei.CatalogueItem.Catalogue;
+    }
 
-            GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
-            
-            //we should be able to add it
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
-            AssertCommandIsPossible(cmd);
+    [Test]
+    [UITimeout(50000)]
+    public void Test_AggregateConfigurationOrder_TwoAggregates()
+    {
+        DeleteOldAggregates();
 
-            cmd.Execute();
+        GetObjects(out var cata, out var cic);
 
-            var ac1 = (AggregateConfiguration)(cic.RootCohortAggregateContainer.GetOrderedContents().First());
-            Assert.AreEqual(0,ac1.Order);
+        //we should be able to add it
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        AssertCommandIsPossible(cmd);
 
-            //add another one
-            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
-            AssertCommandIsPossible(cmd2);
-            cmd2.Execute();
+        cmd.Execute();
 
-            //the added ones should have sensible order (no collisions)
-            var all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
-            ac1 = (AggregateConfiguration)all[0];
-            var ac2 = (AggregateConfiguration)all[1];
+        var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
+        Assert.AreEqual(0, ac1.Order);
 
-            Assert.AreEqual(0,ac1.Order);
-            Assert.AreEqual(1,ac2.Order);
+        //add another one
+        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        AssertCommandIsPossible(cmd2);
+        cmd2.Execute();
 
-            Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length, "Expected you to create 2 AggregateConfiguration only");
-        }
+        //the added ones should have sensible order (no collisions)
+        var all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
+        ac1 = (AggregateConfiguration)all[0];
+        var ac2 = (AggregateConfiguration)all[1];
+
+        Assert.AreEqual(0, ac1.Order);
+        Assert.AreEqual(1, ac2.Order);
+
+        Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length,
+            "Expected you to create 2 AggregateConfiguration only");
+    }
 
 
-        [Test, UITimeout(50000)]
-        public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
-        {
-            GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
-            
-            //we should be able to add it to root container
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
-            cmd.Execute();
+    [Test]
+    [UITimeout(50000)]
+    public void Test_AggregateConfigurationOrder_MovingAggregatesBetweenContainers()
+    {
+        GetObjects(out var cata, out var cic);
 
-            
-            //create a subcontainer
-            var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
-            cic.RootCohortAggregateContainer.AddChild(subcontainer);
+        //we should be able to add it to root container
+        var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+            new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
+        cmd.Execute();
 
-            //add the second ac to the subcontainer 
-            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),subcontainer);
-            cmd2.Execute();
 
-            //should now look like this:
-            //Root
-            //  INTERSECT
-            //      Ac2
-            //  Ac 1
-            // 
+        //create a subcontainer
+        var subcontainer = new CohortAggregateContainer(Repository, SetOperation.INTERSECT);
+        cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
-            var all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
+        //add the second ac to the subcontainer
+        var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
+            new CatalogueCombineable(cata), subcontainer);
+        cmd2.Execute();
 
-            var ac1 = (AggregateConfiguration) all[1];
-            var ac2 = (AggregateConfiguration)subcontainer.GetOrderedContents().Single();
-            var intersect = (CohortAggregateContainer) all[0];
+        //should now look like this:
+        //Root
+        //  INTERSECT
+        //      Ac2
+        //  Ac 1
+        // 
 
-            Assert.AreEqual(0,intersect.Order);
-            Assert.AreEqual(1,ac1.Order);
-            Assert.AreEqual(0,ac2.Order);
+        var all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
 
-            //now move the Ac2 to Root (problematic since both Ac 2 and the INTERSECT have Order 0 - in their own separate containers)
-            var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, new AggregateConfigurationCombineable(ac2),cic.RootCohortAggregateContainer);
-            cmd3.Execute();
+        var ac1 = (AggregateConfiguration)all[1];
+        var ac2 = (AggregateConfiguration)subcontainer.GetOrderedContents().Single();
+        var intersect = (CohortAggregateContainer)all[0];
 
-            all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
+        Assert.AreEqual(0, intersect.Order);
+        Assert.AreEqual(1, ac1.Order);
+        Assert.AreEqual(0, ac2.Order);
 
-            //should now look like this 
-            //Root
-            //  Ac2
-            //  INTERSECT (empty)
-            //  Ac 1
+        //now move the Ac2 to Root (problematic since both Ac 2 and the INTERSECT have Order 0 - in their own separate containers)
+        var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator,
+            new AggregateConfigurationCombineable(ac2), cic.RootCohortAggregateContainer);
+        cmd3.Execute();
 
-            ac2 = (AggregateConfiguration) all[0];
-            intersect = (CohortAggregateContainer) all[1];
-            ac1 = (AggregateConfiguration)all[2];
+        all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();
 
-            Assert.AreEqual(0,ac2.Order);
-            Assert.AreEqual(1,intersect.Order);
-            Assert.AreEqual(2,ac1.Order);
-        }
+        //should now look like this
+        //Root
+        //  Ac2
+        //  INTERSECT (empty)
+        //  Ac 1
 
-        private void DeleteOldAggregates()
-        {
-            //remove any remnants so we can count them at the end to make sure no duplicates were created
-            foreach (AggregateConfiguration ac in Repository.GetAllObjects<AggregateConfiguration>())
-                ac.DeleteInDatabase();
+        ac2 = (AggregateConfiguration)all[0];
+        intersect = (CohortAggregateContainer)all[1];
+        ac1 = (AggregateConfiguration)all[2];
 
-            Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length, "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
-        }
+        Assert.AreEqual(0, ac2.Order);
+        Assert.AreEqual(1, intersect.Order);
+        Assert.AreEqual(2, ac1.Order);
+    }
 
+    private void DeleteOldAggregates()
+    {
+        //remove any remnants so we can count them at the end to make sure no duplicates were created
+        foreach (var ac in Repository.GetAllObjects<AggregateConfiguration>())
+            ac.DeleteInDatabase();
+
+        Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length,
+            "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
     }
 }

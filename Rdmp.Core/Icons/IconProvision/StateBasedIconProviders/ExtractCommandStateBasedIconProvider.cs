@@ -5,34 +5,34 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvider
+    private readonly Image<Rgba32> _waiting;
+    private readonly Image<Rgba32> _warning;
+    private readonly Image<Rgba32> _writing;
+    private readonly Image<Rgba32> _failed;
+    private readonly Image<Rgba32> _tick;
+
+    public ExtractCommandStateBasedIconProvider()
     {
-        private readonly Image<Rgba32> _waiting;
-        private readonly Image<Rgba32> _warning;
-        private readonly Image<Rgba32> _writing;
-        private readonly Image<Rgba32> _failed;
-        private readonly Image<Rgba32> _tick;
+        _waiting = Image.Load<Rgba32>(CatalogueIcons.Waiting);
+        _warning = Image.Load<Rgba32>(CatalogueIcons.Warning);
+        _writing = Image.Load<Rgba32>(CatalogueIcons.Writing);
+        _failed = Image.Load<Rgba32>(CatalogueIcons.Failed);
+        _tick = Image.Load<Rgba32>(CatalogueIcons.Tick);
+    }
 
-        public ExtractCommandStateBasedIconProvider()
-        {
-            _waiting = Image.Load<Rgba32>(CatalogueIcons.Waiting);
-            _warning = Image.Load<Rgba32>(CatalogueIcons.Warning);
-            _writing = Image.Load<Rgba32>(CatalogueIcons.Writing);
-            _failed = Image.Load<Rgba32>(CatalogueIcons.Failed);
-            _tick = Image.Load<Rgba32>(CatalogueIcons.Tick);
-        }
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not ExtractCommandState ecs)
-                return null;
-
-            return ecs switch
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o is not ExtractCommandState ecs
+            ? null
+            : ecs switch
             {
                 ExtractCommandState.NotLaunched => _waiting,
                 ExtractCommandState.WaitingForSQLServer => _waiting,
@@ -45,6 +45,5 @@ namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
                 ExtractCommandState.WaitingToExecute => _waiting,
                 _ => throw new ArgumentOutOfRangeException()
             };
-        }
     }
 }

@@ -5,59 +5,53 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-
-
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+internal class TypeTextOrCancelDialogTests : UITests
 {
-    class TypeTextOrCancelDialogTests : UITests
+    [Test]
+    public void Test_TypeTextOrCancelDialog_TinyStrings()
     {
-        [Test]
-        public void Test_TypeTextOrCancelDialog_TinyStrings()
-        {
-            var dlg = new TypeTextOrCancelDialog("f", "m", 5000);
+        var dlg = new TypeTextOrCancelDialog("f", "m", 5000);
 
-            //pretend like we launched it
-            LastUserInterfaceLaunched = dlg;
+        //pretend like we launched it
+        LastUserInterfaceLaunched = dlg;
 
-            //the title and body should be a reasonable length
-            Assert.AreEqual(1, dlg.Text.Length);
-            Assert.AreEqual(1, GetControl<TextBox>()[1].Text.Length);
+        //the title and body should be a reasonable length
+        Assert.AreEqual(1, dlg.Text.Length);
+        Assert.AreEqual(1, GetControl<TextBox>()[1].Text.Length);
 
-            //dialog shouldn't go thinner than 540 or wider than 840 pixels
-            Assert.GreaterOrEqual(dlg.Width, 540);
-            Assert.LessOrEqual(dlg.Width, 840);
-        }
+        //dialog shouldn't go thinner than 540 or wider than 840 pixels
+        Assert.GreaterOrEqual(dlg.Width, 540);
+        Assert.LessOrEqual(dlg.Width, 840);
+    }
 
-        [Test]
-        public void Test_TypeTextOrCancelDialog_LargeStrings()
-        {
-            StringBuilder sb = new StringBuilder();
+    [Test]
+    public void Test_TypeTextOrCancelDialog_LargeStrings()
+    {
+        var sb = new StringBuilder();
 
-            //send TypeTextOrCancelDialog a million characters
-            for (int i = 0; i < 1_000_000; i++)
-                sb.Append("f");
+        //send TypeTextOrCancelDialog a million characters
+        for (var i = 0; i < 1_000_000; i++)
+            sb.Append('f');
 
-            var s = sb.ToString();
+        var s = sb.ToString();
 
-            var dlg = new TypeTextOrCancelDialog(s,s,5000);
-            
-            //pretend like we launched it
-            LastUserInterfaceLaunched = dlg;
+        var dlg = new TypeTextOrCancelDialog(s, s, 5000);
 
-            //the title and body should be a reasonable length
-            Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, dlg.Text.Length);
-            Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<TextBox>()[1].Text.Length);
+        //pretend like we launched it
+        LastUserInterfaceLaunched = dlg;
 
-            //dialog shouldn't go thinner than 540 or wider than 840 pixels
-            Assert.GreaterOrEqual(dlg.Width, 540);
-            Assert.LessOrEqual(dlg.Width, 840);
+        //the title and body should be a reasonable length
+        Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, dlg.Text.Length);
+        Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<TextBox>()[1].Text.Length);
 
-        }
-        
+        //dialog shouldn't go thinner than 540 or wider than 840 pixels
+        Assert.GreaterOrEqual(dlg.Width, 540);
+        Assert.LessOrEqual(dlg.Width, 840);
     }
 }

@@ -4,93 +4,89 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
+    private CohortIdentificationConfiguration _cic;
+    private Project _project;
+
+    /// <summary>
+    /// The clone that was created this command or null if it has not been executed/failed
+    /// </summary>
+    public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic)
+        : base(activator)
     {
-        private CohortIdentificationConfiguration _cic;
-        private Project _project;
+        _cic = cic;
+    }
 
-        /// <summary>
-        /// The clone that was created this command or null if it has not been executed/failed
-        /// </summary>
-        public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
+    public override string GetCommandHelp() =>
+        "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration cic)
-            : base(activator)
+    public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
+    {
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        switch (target)
         {
-            _cic = cic;
+            case CohortIdentificationConfiguration configuration:
+                _cic = configuration;
+                break;
+            case Project project:
+                _project = project;
+                break;
         }
 
-        public override string GetCommandHelp()
-        {
-            return "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
-        }
+        return this;
+    }
 
-        public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
-        {
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
-        }
+        _cic ??= SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            if (target is CohortIdentificationConfiguration)
-                _cic = (CohortIdentificationConfiguration)target;
+        if (_cic == null)
+            return;
 
-            if (target is Project)
-                _project = (Project)target;
+        // Confirm creating yes/no (assuming activator is interactive)
+        if (BasicActivator.IsInteractive && !YesNo(
+                "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
+                "Confirm Cloning")) return;
+        CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
-            return this;
-        }
+        if (_project != null) // clone the association
+            _ = new ProjectCohortIdentificationConfigurationAssociation(
+                BasicActivator.RepositoryLocator.DataExportRepository,
+                _project,
+                CloneCreatedIfAny);
 
-        public override void Execute()
-        {
-            base.Execute();
+        //Load the clone up
+        Publish(CloneCreatedIfAny);
+        if (_project != null)
+            Emphasise(_project);
+        else
+            Emphasise(CloneCreatedIfAny);
 
-            if (_cic == null)
-                _cic = SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
-
-            if(_cic == null)
-                return;
-
-            // Confirm creating yes/no (assuming activator is interactive)
-            if (!BasicActivator.IsInteractive || YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
-                    "filters, parameters and set operations. Are you sure this is what you want?",
-                    "Confirm Cloning"))
-            {
-                
-                CloneCreatedIfAny = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
-
-                if (_project != null) // clone the association
-                    new ProjectCohortIdentificationConfigurationAssociation(
-                                    BasicActivator.RepositoryLocator.DataExportRepository,
-                                    _project,
-                                    CloneCreatedIfAny);
-
-                //Load the clone up
-                Publish(CloneCreatedIfAny);
-                if (_project != null)
-                    Emphasise(_project);
-                else
-                    Emphasise(CloneCreatedIfAny);
-
-                Activate(CloneCreatedIfAny);
-            }
-        }
+        Activate(CloneCreatedIfAny);
     }
 }

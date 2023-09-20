@@ -5,114 +5,119 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,IAtomicCommandWithTarget
+    private ICatalogue _catalogue;
+    private IProject _project;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator, ICatalogue catalogue,
+        IProject project) : this(itemActivator)
     {
-        private ICatalogue _catalogue;
-        private IProject _project;
+        SetCatalogue(catalogue);
+        _project = project;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator,ICatalogue catalogue, IProject project):this(itemActivator)
+    public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator) : base(itemActivator)
+    {
+        UseTripleDotSuffix = true;
+    }
+
+    public override string GetCommandHelp() =>
+        "Restrict use of the dataset only to extractions of the specified Project";
+
+    public override void Execute()
+    {
+        if (_catalogue == null)
+            SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
+
+        _project ??= SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
+
+        if (_project == null || _catalogue == null)
+            return;
+
+        base.Execute();
+
+        var eds = BasicActivator.RepositoryLocator.DataExportRepository
+            .GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+
+        var alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
+
+        if (alreadyInConfiguration != null)
+            throw new Exception(
+                $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
+
+        eds.Project_ID = _project.ID;
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
         {
-            SetCatalogue(catalogue);
-            _project = project;
-        }
-        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator): base(itemActivator)
-        {
-            UseTripleDotSuffix = true;
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Restrict use of the dataset only to extractions of the specified Project";
-        }
-
-        public override void Execute()
-        {
-            if(_catalogue == null) 
-                SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
-
-            if(_project == null)
-                _project = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
-
-            if(_project == null || _catalogue == null)
-                return;
-            
-            base.Execute();
-
-            var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
-            
-            IExtractionConfiguration alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
-
-            if(alreadyInConfiguration != null)
-                throw new Exception("Cannot make " + _catalogue + " Project Specific because it is already a part of ExtractionConfiguration " + alreadyInConfiguration + " (Project=" + alreadyInConfiguration.Project +") and possibly others");
-
-            eds.Project_ID = _project.ID;
-            foreach (ExtractionInformation ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
-            {
-                ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
-                ei.SaveToDatabase();
-            }
-            eds.SaveToDatabase();
-
-            Publish(_catalogue);
+            ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
+            ei.SaveToDatabase();
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        eds.SaveToDatabase();
+
+        Publish(_catalogue);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
+
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        switch (target)
         {
-            return Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
+            case Catalogue catalogue:
+                SetCatalogue(catalogue);
+                break;
+            case Project project:
+                _project = project;
+                break;
         }
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+        return this;
+    }
+
+    private void SetCatalogue(ICatalogue catalogue)
+    {
+        ResetImpossibleness();
+
+        _catalogue = catalogue;
+
+        if (catalogue == null)
         {
-            if (target is Catalogue)
-                SetCatalogue((Catalogue) target);
-
-            if (target is Project)
-                _project = (Project) target;
-
-            return this;
+            SetImpossible("Catalogue cannot be null");
+            return;
         }
 
-        private void SetCatalogue(ICatalogue catalogue)
-        {
-            ResetImpossibleness();
+        var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
-            _catalogue = catalogue;
+        if (status.IsProjectSpecific)
+            SetImpossible("Catalogue is already Project Specific");
 
-            if (catalogue == null)
-            {
-                SetImpossible("Catalogue cannot be null");
-                return;
-            }
+        if (!status.IsExtractable)
+            SetImpossible("Catalogue must first be made Extractable");
 
-            var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
+        var ei = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
+        if (!ei.Any())
+            SetImpossible("Catalogue has no extractable columns");
 
-            if (status.IsProjectSpecific)
-                SetImpossible("Catalogue is already Project Specific");
+        if (ei.Count(e => e.IsExtractionIdentifier) != 1)
+            SetImpossible("Catalogue must have exactly 1 IsExtractionIdentifier column");
 
-            if (!status.IsExtractable)
-                SetImpossible("Catalogue must first be made Extractable");
-
-            var ei = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
-            if (!ei.Any())
-                SetImpossible("Catalogue has no extractable columns");
-
-            if (ei.Count(e => e.IsExtractionIdentifier) != 1)
-                SetImpossible("Catalogue must have exactly 1 IsExtractionIdentifier column");
-
-            if (ei.Any(e => e.ExtractionCategory != ExtractionCategory.Core && e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
-                SetImpossible("All existing ExtractionInformations must be ExtractionCategory.Core");
-        }
+        if (ei.Any(e =>
+                e.ExtractionCategory != ExtractionCategory.Core &&
+                e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
+            SetImpossible("All existing ExtractionInformations must be ExtractionCategory.Core");
     }
 }

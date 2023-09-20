@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -18,322 +17,304 @@ using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts
+/// produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit them somewhere as a final released package.
+/// </summary>
+public class ReleaseRunner : ManyRunner
 {
-    /// <summary>
-    /// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts
-    /// produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit them somewhere as a final released package.
-    /// </summary>
-    public class ReleaseRunner:ManyRunner
-    {
-        private readonly ReleaseOptions _options;
-        private Pipeline _pipeline;
-        private IProject _project;
-        private IExtractionConfiguration[] _configurations;
-        private ISelectedDataSets[] _selectedDatasets;
+    private readonly ReleaseOptions _options;
+    private Pipeline _pipeline;
+    private IProject _project;
+    private IExtractionConfiguration[] _configurations;
+    private ISelectedDataSets[] _selectedDatasets;
 
-        public ReleaseRunner(ReleaseOptions options):base(options)
+    public ReleaseRunner(ReleaseOptions options) : base(options)
+    {
+        _options = options;
+    }
+
+    protected override void Initialize()
+    {
+        _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
+
+        //get all configurations user has picked
+        _configurations =
+            GetObjectsFromCommandLineString<ExtractionConfiguration>(RepositoryLocator, _options.Configurations)
+                .ToArray();
+
+        if (_options.SkipReleased) _configurations = _configurations.Where(c => !c.IsReleased).ToArray();
+
+        //some datasets only
+        if (_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
         {
-            _options = options;
+            _selectedDatasets =
+                GetObjectsFromCommandLineString<SelectedDataSets>(RepositoryLocator, _options.SelectedDataSets)
+                    .ToArray();
+
+            var configurationIds = _configurations.Select(c => c.ID).ToArray();
+
+            //if user has specified some selected datasets that do not belong to configurations they specified then we will need to include
+            //those configurations as well
+            foreach (var s in _selectedDatasets)
+                if (!configurationIds.Contains(s.ExtractionConfiguration_ID))
+                    //add the config since it's not included in _options.Configurations
+                    _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
+        }
+        else
+        {
+            _selectedDatasets = _configurations.SelectMany(c => c.SelectedDataSets).ToArray();
         }
 
-        protected override void Initialize()
+        if (!_configurations.Any())
+            throw new Exception("No Configurations have been selected for release");
+
+        _project = _configurations.Select(c => c.Project).Distinct().Single();
+    }
+
+
+    protected override void AfterRun()
+    {
+    }
+
+    protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
+    {
+        foreach (var configuration in _configurations)
+            IdentifyAndRemoveOldExtractionResults(RepositoryLocator, checkNotifier, configuration);
+
+        var toReturn = new List<ICheckable>();
+
+        if (_options.ReleaseGlobals ?? true)
         {
-            _pipeline = GetObjectFromCommandLineString<Pipeline>(RepositoryLocator, _options.Pipeline);
-                        
-            //get all configurations user has picked
-            _configurations = GetObjectsFromCommandLineString<ExtractionConfiguration>(RepositoryLocator,_options.Configurations).ToArray();
+            toReturn.Add(new GlobalsReleaseChecker(RepositoryLocator, _configurations));
+            toReturn.AddRange(_configurations.First()
+                .GetGlobals()
+                .Select(availableGlobal =>
+                    new GlobalsReleaseChecker(RepositoryLocator, _configurations, availableGlobal).GetEvaluator()));
+        }
 
-            if(_options.SkipReleased)
+        foreach (var configuration in _configurations)
+        {
+            toReturn.AddRange(GetReleasePotentials(checkNotifier, configuration));
+            toReturn.Add(new ReleaseEnvironmentPotential(configuration));
+        }
+
+        if (_pipeline == null)
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
+            return Array.Empty<ICheckable>();
+        }
+
+        var useCase = GetReleaseUseCase(checkNotifier);
+        if (useCase != null)
+        {
+            var engine = useCase.GetEngine(_pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+            toReturn.Add(engine);
+        }
+
+        return toReturn.ToArray();
+    }
+
+    public static void IdentifyAndRemoveOldExtractionResults(IRDMPPlatformRepositoryServiceLocator repo,
+        ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
+    {
+        var oldResults = configuration.CumulativeExtractionResults
+            .Where(cer => !configuration.GetAllExtractableDataSets().Contains(cer.ExtractableDataSet))
+            .ToArray();
+
+        if (oldResults.Any())
+        {
+            var message =
+                $"In Configuration {configuration}:{Environment.NewLine}{Environment.NewLine}The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
+
+            message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n);
+
+            if (
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+                    $"Delete expired CumulativeExtractionResults for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
+                foreach (var result in oldResults)
+                    result.DeleteInDatabase();
+        }
+
+        var oldLostSupplemental = configuration.CumulativeExtractionResults
+            .SelectMany(c => c.SupplementalExtractionResults)
+            .Union(configuration.SupplementalExtractionResults)
+            .Where(s => !repo.ArbitraryDatabaseObjectExists(s.ReferencedObjectRepositoryType, s.ReferencedObjectType,
+                s.ReferencedObjectID))
+            .ToArray();
+
+        if (oldLostSupplemental.Any())
+        {
+            var message =
+                $"In Configuration {configuration}:{Environment.NewLine}{Environment.NewLine}The following list reflect objects (supporting sql, lookups or documents) that were previously extracted but have since been deleted:";
+
+            message = oldLostSupplemental.Aggregate(message,
+                (s, n) => s + Environment.NewLine + n.DestinationDescription);
+
+            if (
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
+                    $"Delete expired Extraction Results for configuration.{Environment.NewLine}Not doing so may result in failures at Release time.")))
+                foreach (var result in oldLostSupplemental)
+                    result.DeleteInDatabase();
+        }
+    }
+
+    private List<ReleasePotential> GetReleasePotentials(ICheckNotifier checkNotifier,
+        IExtractionConfiguration configuration)
+    {
+        var toReturn = new List<ReleasePotential>();
+
+        //create new ReleaseAssesments
+        foreach (var selectedDataSet in GetSelectedDataSets(configuration)) //todo only the ones user ticked
+        {
+            var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
+
+            var progress = selectedDataSet.ExtractionProgressIfAny;
+            if (progress != null)
+                if (progress.MoreToFetch())
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                        ErrorCodes.AttemptToReleaseUnfinishedExtractionProgress,
+                        selectedDataSet, progress.ProgressDate, progress.EndDate));
+
+            //if it has never been extracted
+            if (extractionResults?.DestinationDescription == null)
             {
-                _configurations = _configurations.Where(c => !c.IsReleased).ToArray();
-            }
-
-            //some datasets only
-            if(_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
-            {
-                _selectedDatasets = GetObjectsFromCommandLineString<SelectedDataSets>(RepositoryLocator, _options.SelectedDataSets).ToArray();
-
-                var configurationIds = _configurations.Select(c => c.ID).ToArray();
-
-                //if user has specified some selected datasets that do not belong to configurations they specified then we will need to include
-                //those configurations as well
-                foreach (var s in _selectedDatasets)
-                {
-                    if (!configurationIds.Contains(s.ExtractionConfiguration_ID))
-                    {
-                        //add the config since it's not included in _options.Configurations
-                        _configurations = _configurations.ToList().Union(new[] { s.ExtractionConfiguration }).ToArray();
-                    }
-                }
-                    
+                toReturn.Add(new NoReleasePotential(RepositoryLocator,
+                    selectedDataSet)); //the potential is ZERO to release this dataset
             }
             else
-                _selectedDatasets = _configurations.SelectMany(c=>c.SelectedDataSets).ToArray();
-                        
-            if (!_configurations.Any())
-                throw new Exception("No Configurations have been selected for release");
-
-            _project = _configurations.Select(c => c.Project).Distinct().Single();
-        }
-
-
-        protected override void AfterRun()
-        {
-            
-        }
-
-        protected override ICheckable[] GetCheckables(ICheckNotifier checkNotifier)
-        {
-            foreach (var configuration in _configurations)
-                IdentifyAndRemoveOldExtractionResults(RepositoryLocator,checkNotifier, configuration);
-
-            List<ICheckable> toReturn = new List<ICheckable>();
-
-            if (_options.ReleaseGlobals ?? true)
             {
-                toReturn.Add(new GlobalsReleaseChecker(RepositoryLocator, _configurations));
-                toReturn.AddRange(_configurations.First()
-                                                 .GetGlobals()
-                                                 .Select(availableGlobal => 
-                                                     new GlobalsReleaseChecker(RepositoryLocator, _configurations, availableGlobal).GetEvaluator()));
-            }
+                //it's been extracted!, who extracted it?
+                var destinationThatExtractedIt =
+                    (IExecuteDatasetExtractionDestination)ObjectConstructor.Construct(extractionResults
+                        .GetDestinationType());
 
-            foreach (IExtractionConfiguration configuration in _configurations)
-            {
-                toReturn.AddRange(GetReleasePotentials(checkNotifier,configuration));
-                toReturn.Add(new ReleaseEnvironmentPotential(configuration));
-            }
+                //destination tell us how releasable it is
+                var releasePotential =
+                    destinationThatExtractedIt.GetReleasePotential(RepositoryLocator, selectedDataSet);
 
-            if(_pipeline == null)
-            {
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("No Pipeline has been picked", CheckResult.Fail));
-                return new ICheckable[0];
-            }
-
-            var useCase = GetReleaseUseCase(checkNotifier);
-            if (useCase != null)
-            {
-                var engine = useCase.GetEngine(_pipeline, new ThrowImmediatelyDataLoadEventListener());
-                toReturn.Add(engine);
-            }
-
-            return toReturn.ToArray();
-        }
-
-        public static void IdentifyAndRemoveOldExtractionResults(IRDMPPlatformRepositoryServiceLocator repo,ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
-        {
-            var oldResults = configuration.CumulativeExtractionResults
-                .Where(cer => !configuration.GetAllExtractableDataSets().Contains(cer.ExtractableDataSet))
-                .ToArray();
-
-            if (oldResults.Any())
-            {
-                string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
-                                 "The following CumulativeExtractionResults reflect datasets that were previously extracted under the existing Configuration but are no longer in the CURRENT configuration:";
-
-                message = oldResults.Aggregate(message, (s, n) => s + Environment.NewLine + n);
-
-                if (
-                    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                        "Delete expired CumulativeExtractionResults for configuration." + Environment.NewLine +
-                        "Not doing so may result in failures at Release time.")))
-                {
-                    foreach (var result in oldResults)
-                        result.DeleteInDatabase();
-                }
-            }
-
-            var oldLostSupplemental = configuration.CumulativeExtractionResults
-                .SelectMany(c => c.SupplementalExtractionResults)
-                .Union(configuration.SupplementalExtractionResults)
-                .Where(s => !repo.ArbitraryDatabaseObjectExists(s.ReferencedObjectRepositoryType, s.ReferencedObjectType, s.ReferencedObjectID))
-                .ToArray();
-
-            if (oldLostSupplemental.Any())
-            {
-                string message = "In Configuration " + configuration + ":" + Environment.NewLine + Environment.NewLine +
-                                 "The following list reflect objects (supporting sql, lookups or documents) " +
-                                 "that were previously extracted but have since been deleted:";
-
-                message = oldLostSupplemental.Aggregate(message, (s, n) => s + Environment.NewLine + n.DestinationDescription);
-
-                if (
-                    checkNotifier.OnCheckPerformed(new CheckEventArgs(message, CheckResult.Fail, null,
-                        "Delete expired Extraction Results for configuration." + Environment.NewLine +
-                        "Not doing so may result in failures at Release time.")))
-                {
-                    foreach (var result in oldLostSupplemental)
-                        result.DeleteInDatabase();
-                }
+                //it is THIS much releasability!
+                toReturn.Add(releasePotential);
             }
         }
 
-        private List<ReleasePotential> GetReleasePotentials(ICheckNotifier checkNotifier, IExtractionConfiguration configuration)
+        return toReturn;
+    }
+
+    protected override object[] GetRunnables()
+    {
+        return new[] { GetReleaseUseCase(ThrowImmediatelyCheckNotifier.Quiet) };
+    }
+
+    private ReleaseUseCase GetReleaseUseCase(ICheckNotifier checkNotifier)
+    {
+        var data = new ReleaseData(RepositoryLocator);
+
+        foreach (var configuration in _configurations)
         {
-            var toReturn = new List<ReleasePotential>();
-
-            //create new ReleaseAssesments
-            foreach (ISelectedDataSets selectedDataSet in GetSelectedDataSets(configuration))//todo only the ones user ticked
-            {
-                var extractionResults = selectedDataSet.GetCumulativeExtractionResultsIfAny();
-
-                var progress = selectedDataSet.ExtractionProgressIfAny;
-                if (progress != null)
-                {
-                    if(progress.MoreToFetch())
-                    {
-                        checkNotifier.OnCheckPerformed(new CheckEventArgs(
-                            ErrorCodes.AttemptToReleaseUnfinishedExtractionProgress,
-                            selectedDataSet,progress.ProgressDate,progress.EndDate));
-                    }
-                }
-
-                //if it has never been extracted
-                if (extractionResults == null || extractionResults.DestinationDescription == null)
-                    toReturn.Add(new NoReleasePotential(RepositoryLocator, selectedDataSet)); //the potential is ZERO to release this dataset
-                else
-                {
-                    //it's been extracted!, who extracted it?
-                    var destinationThatExtractedIt = (IExecuteDatasetExtractionDestination)new ObjectConstructor().Construct(extractionResults.GetDestinationType());
-
-                    //destination tell us how releasable it is
-                    var releasePotential = destinationThatExtractedIt.GetReleasePotential(RepositoryLocator, selectedDataSet);
-
-                    //it is THIS much releasability!
-                    toReturn.Add(releasePotential);
-                }
-            }
-            
-            return toReturn;
+            data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(checkNotifier, configuration));
+            data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
+            data.SelectedDatasets.Add(configuration, GetSelectedDataSets(configuration));
         }
 
-        protected override object[] GetRunnables()
+        data.ReleaseGlobals = _options.ReleaseGlobals ?? true;
+
+        var allDdatasets = _configurations.SelectMany(ec => ec.GetAllExtractableDataSets()).ToList();
+        var selectedDatasets = data.SelectedDatasets.Values.SelectMany(sd => sd.ToList()).ToList();
+
+        data.ReleaseState = allDdatasets.Count != selectedDatasets.Count
+            ? ReleaseState.DoingPatch
+            : ReleaseState.DoingProperRelease;
+
+        try
         {
-            return new[] { GetReleaseUseCase(new ThrowImmediatelyCheckNotifier()) };
+            return new ReleaseUseCase(_project, data, RepositoryLocator.CatalogueRepository);
+        }
+        catch (Exception ex)
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"FAIL: {ex.Message}", CheckResult.Fail, ex));
         }
 
-        private ReleaseUseCase GetReleaseUseCase(ICheckNotifier checkNotifier)
-        {
-            var data = new ReleaseData(RepositoryLocator);
+        return null;
+    }
 
-            foreach (IExtractionConfiguration configuration in _configurations)
-            {
-                data.ConfigurationsForRelease.Add(configuration, GetReleasePotentials(checkNotifier,configuration));
-                data.EnvironmentPotentials.Add(configuration, new ReleaseEnvironmentPotential(configuration));
-                data.SelectedDatasets.Add(configuration, GetSelectedDataSets(configuration));
-            }
+    protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
+    {
+        var useCase = (ReleaseUseCase)runnable;
+        var engine = useCase.GetEngine(_pipeline, listener);
+        engine.ExecutePipeline(Token);
+    }
 
-            data.ReleaseGlobals = _options.ReleaseGlobals ?? true;
+    private IEnumerable<ISelectedDataSets> GetSelectedDataSets(IExtractionConfiguration configuration)
+    {
+        //are we only releasing some of the datasets?
+        var onlySomeDatasets = _selectedDatasets.Where(sds => sds.ExtractionConfiguration_ID == configuration.ID)
+            .ToArray();
 
-            var allDdatasets = _configurations.SelectMany(ec => ec.GetAllExtractableDataSets()).ToList();
-            var selectedDatasets = data.SelectedDatasets.Values.SelectMany(sd => sd.ToList()).ToList();
+        if (onlySomeDatasets.Any())
+            return onlySomeDatasets;
 
-            data.ReleaseState = allDdatasets.Count != selectedDatasets.Count 
-                                    ? ReleaseState.DoingPatch 
-                                    : ReleaseState.DoingProperRelease;
+        //no, we are releasing all of them
+        return configuration.SelectedDataSets;
+    }
 
-            try
-            {
-                return new ReleaseUseCase(_project, data,RepositoryLocator.CatalogueRepository);
-            }
-            catch (Exception ex)
-            {
-                checkNotifier.OnCheckPerformed(new CheckEventArgs("FAIL: " + ex.Message, CheckResult.Fail, ex));
-            }
+    public object GetState(IExtractionConfiguration configuration)
+    {
+        var matches = GetCheckerResults<ReleaseEnvironmentPotential>(rp => rp.Configuration.Equals(configuration));
 
+        return matches.Length == 0 ? null : ((ReleaseEnvironmentPotential)matches.Single().Key).Assesment;
+    }
+
+    public object GetState(ISelectedDataSets selectedDataSets)
+    {
+        var matches = GetCheckerResults<ReleasePotential>(rp => rp.SelectedDataSet.ID == selectedDataSets.ID);
+
+        if (matches.Length == 0)
             return null;
-        }
 
-        protected override void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener)
+        var releasePotential = (ReleasePotential)matches.Single().Key;
+        var results = matches.Single().Value;
+
+        //not been released ever
+        if (releasePotential is NoReleasePotential)
+            return Releaseability.NeverBeenSuccessfullyExecuted;
+
+        //do we know the release state of the assesments
+        if (releasePotential.Assessments != null && releasePotential.Assessments.Any())
         {
-            var useCase = (ReleaseUseCase) runnable;
-            var engine = useCase.GetEngine(_pipeline, listener);
-            engine.ExecutePipeline(Token);
+            var releasability = releasePotential.Assessments.Values.Min();
+
+            if (releasability != Releaseability.Undefined)
+                return releasability;
         }
 
-        private IEnumerable<ISelectedDataSets> GetSelectedDataSets(IExtractionConfiguration configuration)
-        {
-            //are we only releasing some of the datasets?
-            var onlySomeDatasets = _selectedDatasets.Where(sds => sds.ExtractionConfiguration_ID == configuration.ID).ToArray();
+        //otherwise use the checks of it
+        return results.GetWorst();
+    }
 
-            if (onlySomeDatasets.Any())
-                return onlySomeDatasets;
+    public object GetState(SupportingSQLTable global) => GetState((IMapsDirectlyToDatabaseTable)global);
 
-            //no, we are releasing all of them
-            return configuration.SelectedDataSets;
-        }
+    public object GetState(SupportingDocument global) => GetState((IMapsDirectlyToDatabaseTable)global);
 
-        public object GetState(IExtractionConfiguration configuration)
-        {
-            var matches = GetCheckerResults<ReleaseEnvironmentPotential>((rp) => rp.Configuration.Equals(configuration));
+    private object GetState(IMapsDirectlyToDatabaseTable global)
+    {
+        var matches = GetCheckerResults<GlobalReleasePotential>(rp => rp.RelatedGlobal.Equals(global));
 
-            if (matches.Length == 0)
-                return null;
+        return matches.Length == 0 ? null : ((GlobalReleasePotential)matches.Single().Key).Releasability;
+    }
 
-            return ((ReleaseEnvironmentPotential) matches.Single().Key).Assesment;
-        }
+    public CheckResult? GetGlobalReleaseState()
+    {
+        var result = GetSingleCheckerResults<GlobalsReleaseChecker>();
 
-        public object GetState(ISelectedDataSets selectedDataSets)
-        {
-            var matches = GetCheckerResults<ReleasePotential>(rp => rp.SelectedDataSet.ID == selectedDataSets.ID);
-            
-            if (matches.Length == 0)
-                return null;
-
-            var releasePotential = (ReleasePotential) matches.Single().Key;
-            var results = matches.Single().Value;
-
-            //not been released ever
-            if (releasePotential is NoReleasePotential)
-                return Releaseability.NeverBeenSuccessfullyExecuted;
-
-            //do we know the release state of the assesments
-            if (releasePotential.Assessments != null && releasePotential.Assessments.Any())
-            {
-                var releasability = releasePotential.Assessments.Values.Min();
-
-                if (releasability != Releaseability.Undefined)
-                    return releasability;
-            }
-
-            //otherwise use the checks of it
-            return results.GetWorst();
-        }
-
-        public object GetState(SupportingSQLTable global)
-        {
-            return GetState((IMapsDirectlyToDatabaseTable)global);
-        }
-
-        public object GetState(SupportingDocument global)
-        {
-            return GetState((IMapsDirectlyToDatabaseTable)global);
-        }
-
-        private object GetState(IMapsDirectlyToDatabaseTable global)
-        {
-            var matches = GetCheckerResults<GlobalReleasePotential>(rp => rp.RelatedGlobal.Equals(global));
-
-            if (matches.Length == 0)
-                return null;
-
-            return ((GlobalReleasePotential) matches.Single().Key).Releasability;
-        }
-
-        public CheckResult? GetGlobalReleaseState()
-        {
-            var result = GetSingleCheckerResults<GlobalsReleaseChecker>();
-
-            if (result == null)
-                return null;
-
-            return result.GetWorst();
-        }
+        return result?.GetWorst();
     }
 }

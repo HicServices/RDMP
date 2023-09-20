@@ -7,16 +7,16 @@
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// interface for all processes which satiate an <see cref="RDMPCommandLineOptions"/> derrived command by running a given engine on the supplied input objects
+/// </summary>
+public interface IRunner
 {
-    /// <summary>
-    /// interface for all processes which satiate an <see cref="RDMPCommandLineOptions"/> derrived command by running a given engine on the supplied input objects
-    /// </summary>
-    public interface IRunner
-    {
-        int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token);
-    }
+    int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token);
 }

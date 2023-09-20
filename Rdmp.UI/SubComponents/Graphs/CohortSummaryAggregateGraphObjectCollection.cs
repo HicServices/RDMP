@@ -6,103 +6,102 @@
 
 using System;
 using System.Linq;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.UI.SubComponents.Graphs
+namespace Rdmp.UI.SubComponents.Graphs;
+
+/// <summary>
+/// Input/Persistence object for <see cref="CohortSummaryAggregateGraphUI"/> which records which filter (if any) should be shown for patients
+/// matching the <see cref="CohortContainerIfAny"/> or <see cref="CohortIfAny"/> in the graph.
+/// </summary>
+public class CohortSummaryAggregateGraphObjectCollection : PersistableObjectCollection
 {
+    public CohortSummaryAdjustment Adjustment;
+    public AggregateFilter SingleFilterOnly => DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault();
+
+    public CohortAggregateContainer CohortContainerIfAny => DatabaseObjects[0] as CohortAggregateContainer;
+    public AggregateConfiguration CohortIfAny => DatabaseObjects[0] as AggregateConfiguration;
+
+    public AggregateConfiguration Graph => (AggregateConfiguration)DatabaseObjects[1];
+
     /// <summary>
-    /// Input/Persistence object for <see cref="CohortSummaryAggregateGraphUI"/> which records which filter (if any) should be shown for patients
-    /// matching the <see cref="CohortContainerIfAny"/> or <see cref="CohortIfAny"/> in the graph.
+    /// Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
     /// </summary>
-    public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
+    public CohortSummaryAggregateGraphObjectCollection()
     {
-        public CohortSummaryAdjustment Adjustment;
-        public AggregateFilter SingleFilterOnly { get { return DatabaseObjects.OfType<AggregateFilter>().SingleOrDefault(); } }
+    }
 
-        public CohortAggregateContainer CohortContainerIfAny { get { return DatabaseObjects[0] as CohortAggregateContainer; } }
-        public AggregateConfiguration CohortIfAny { get { return DatabaseObjects[0] as AggregateConfiguration; } }
+    /// <summary>
+    /// Use this constructor at runtime
+    /// </summary>
+    /// <param name="cohort"></param>
+    /// <param name="graph"></param>
+    /// <param name="adjustment"></param>
+    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,
+        CohortSummaryAdjustment adjustment) : this()
+    {
+        if (!cohort.IsCohortIdentificationAggregate)
+            throw new ArgumentException(
+                $"Parameter cohort was AggregateConfiguration '{cohort}' which is not a Cohort Aggregate (not allowed)",
+                nameof(cohort));
+        if (graph.IsCohortIdentificationAggregate)
+            throw new ArgumentException(
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)",
+                nameof(graph));
 
-        public AggregateConfiguration Graph { get { return (AggregateConfiguration)DatabaseObjects[1]; } }
+        DatabaseObjects.Add(cohort);
+        DatabaseObjects.Add(graph);
+        Adjustment = adjustment;
+    }
 
-        /// <summary>
-        /// Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
-        /// </summary>
-        public CohortSummaryAggregateGraphObjectCollection()
-        {
-        }
+    /// <summary>
+    /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
+    /// </summary>
+    /// <param name="container"></param>
+    /// <param name="graph"></param>
+    public CohortSummaryAggregateGraphObjectCollection(CohortAggregateContainer container, AggregateConfiguration graph)
+        : this()
+    {
+        if (graph.IsCohortIdentificationAggregate)
+            throw new ArgumentException(
+                $"Parameter graph was AggregateConfiguration '{graph}' which is a Cohort Aggregate (not allowed)",
+                nameof(graph));
 
-        /// <summary>
-        /// Use this constructor at runtime
-        /// </summary>
-        /// <param name="cohort"></param>
-        /// <param name="graph"></param>
-        /// <param name="adjustment"></param>
-        public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,CohortSummaryAdjustment adjustment):this()
-        {
-            if(!cohort.IsCohortIdentificationAggregate)
-                throw new ArgumentException("Parameter cohort was AggregateConfiguration '" + cohort + "' which is not a Cohort Aggregate (not allowed)","cohort");
-            if (graph.IsCohortIdentificationAggregate)
-                throw new ArgumentException("Parameter graph was AggregateConfiguration '" + graph + "' which is a Cohort Aggregate (not allowed)", "graph");
+        DatabaseObjects.Add(container);
+        DatabaseObjects.Add(graph);
+        Adjustment = CohortSummaryAdjustment.WhereExtractionIdentifiersIn;
+    }
 
-            DatabaseObjects.Add(cohort);
-            DatabaseObjects.Add(graph);
-            Adjustment = adjustment;
-        }
-        /// <summary>
-        /// Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
-        /// </summary>
-        /// <param name="container"></param>
-        /// <param name="graph"></param>
-        public CohortSummaryAggregateGraphObjectCollection(CohortAggregateContainer container, AggregateConfiguration graph)
-            : this()
-        {
-            if (graph.IsCohortIdentificationAggregate)
-                throw new ArgumentException("Parameter graph was AggregateConfiguration '" + graph + "' which is a Cohort Aggregate (not allowed)", "graph");
+    public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph,
+        CohortSummaryAdjustment adjustment, AggregateFilter singleFilterOnly) : this(cohort, graph, adjustment)
+    {
+        DatabaseObjects.Add(singleFilterOnly);
+    }
 
-            DatabaseObjects.Add(container);
-            DatabaseObjects.Add(graph);
-            Adjustment = CohortSummaryAdjustment.WhereExtractionIdentifiersIn;
-        }
+    public override string SaveExtraText() => Adjustment.ToString();
 
-        public CohortSummaryAggregateGraphObjectCollection(AggregateConfiguration cohort, AggregateConfiguration graph, CohortSummaryAdjustment adjustment, AggregateFilter singleFilterOnly):this(cohort,graph,adjustment)
-        {
-            DatabaseObjects.Add(singleFilterOnly);
-        }
+    public override void LoadExtraText(string s)
+    {
+        if (!Enum.TryParse(s, out CohortSummaryAdjustment a))
+            throw new Exception($"Could not parse '{s}' into a valid CohortSummaryAdjustment");
 
-        public override string SaveExtraText()
-        {
-            return Adjustment.ToString();
-        }
+        Adjustment = a;
+    }
 
-        public override void LoadExtraText(string s)
-        {
-            CohortSummaryAdjustment a;
-            
-            if(!CohortSummaryAdjustment.TryParse(s, out a))
-                throw new Exception("Could not parse '" + s + "' into a valid CohortSummaryAdjustment");
+    public void RevertIfMatchedInCollectionObjects(DatabaseEntity oTriggeringRefresh, out bool shouldClose)
+    {
+        shouldClose = false;
 
-            Adjustment = a;
-        }
-
-        public void RevertIfMatchedInCollectionObjects(DatabaseEntity oTriggeringRefresh, out bool shouldClose)
-        {
-            shouldClose = false;
-
-            var matchingObject = DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) as IRevertable;
-
-            //matched object in our collection
-            if(matchingObject != null)
-                if (matchingObject.Exists()) 
-                    matchingObject.RevertToDatabaseState();
-                else
-                    shouldClose = true;//object doesn't exist anymore so close control
-
-            
-        }
+        //matched object in our collection
+        if (DatabaseObjects.SingleOrDefault(o => o.Equals(oTriggeringRefresh)) is IRevertable matchingObject)
+            if (matchingObject.Exists())
+                matchingObject.RevertToDatabaseState();
+            else
+                shouldClose = true; //object doesn't exist anymore so close control
     }
 }

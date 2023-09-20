@@ -10,22 +10,20 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Tests.Common;
-using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class CredentialsTests : DatabaseTests
 {
-    public class CredentialsTests : DatabaseTests
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        base.OneTimeSetUp();
 
-            foreach (TableInfo table in CatalogueRepository.GetAllObjects<TableInfo>())
-            {
-                if (table.Name.Equals("GetCredentialsFromATableInfo")
+        foreach (var table in CatalogueRepository.GetAllObjects<TableInfo>())
+            if (table.Name.Equals("GetCredentialsFromATableInfo")
                 ||
                 table.Name.Equals("Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1")
                 ||
@@ -40,346 +38,350 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 table.Name.Equals("Test")
                 ||
                 table.Name.Equals("Tableinfo1")
-                )
-                    table.DeleteInDatabase();
-            }
+               )
+                table.DeleteInDatabase();
 
-            foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-            {
-                if(cred.Name.Equals("bob")
-                    ||
-                    cred.Name.Equals("Test")
-                    )
-                    cred.DeleteInDatabase();
-            }
+        foreach (var cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
+            if (cred.Name.Equals("bob")
+                ||
+                cred.Name.Equals("Test")
+               )
+                cred.DeleteInDatabase();
+    }
 
+    [Test]
+    public void CreateNewCredentials()
+    {
+        var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
 
-            
-        }
-
-        [Test]
-        public void CreateNewCredentials()
+        try
         {
-            var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
-
-            try
-            {
-                Assert.AreEqual("bob", newCredentials.Name);
-                Assert.AreNotEqual(0, newCredentials.ID);
-            }
-            finally
-            {
-                newCredentials.DeleteInDatabase();
-            }
+            Assert.AreEqual("bob", newCredentials.Name);
+            Assert.AreNotEqual(0, newCredentials.ID);
         }
-
-
-        [Test]
-        public void CreateNewCredentialsThenGetByUsernamePasswordCombo()
+        finally
         {
-            var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
-
-            newCredentials.Username = "myusername";
-            newCredentials.Password = "mypassword";
-            newCredentials.SaveToDatabase();
-
-            var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>().SingleOrDefault(c=>c.Username == "myusername");
-            Assert.IsNotNull(newCopy);
-            
-            try
-            {
-                Assert.NotNull(newCopy);
-                Assert.AreEqual(newCredentials.ID, newCopy.ID);
-                Assert.AreEqual(newCredentials.Username, newCopy.Username);
-                Assert.AreEqual(newCredentials.GetDecryptedPassword(), newCopy.GetDecryptedPassword());
-                Assert.AreEqual(newCredentials.Password, newCopy.Password);
-            }
-            finally
-            {
-                newCredentials.DeleteInDatabase();
-                
-            }
+            newCredentials.DeleteInDatabase();
         }
+    }
 
-        [Test]
-        public void TestThe_Any_EnumValue_CannotRequestAnyCredentials()
+
+    [Test]
+    public void CreateNewCredentialsThenGetByUsernamePasswordCombo()
+    {
+        var newCredentials = new DataAccessCredentials(CatalogueRepository, "bob")
         {
-            TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-            tableInfo.Name = "My Exciting Table";
+            Username = "myusername",
+            Password = "mypassword"
+        };
 
-            var creds = new DataAccessCredentials(CatalogueRepository);
-            try
-            {
-                creds.Name = "Test";
-                creds.SaveToDatabase();
+        newCredentials.SaveToDatabase();
 
-                tableInfo.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
-                tableInfo.SaveToDatabase();
+        var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+            .SingleOrDefault(c => c.Username == "myusername");
+        Assert.IsNotNull(newCopy);
 
-                //attempt to request ANY credentials
-                var ex = Assert.Throws<Exception>(()=> tableInfo.GetCredentialsIfExists(DataAccessContext.Any));
-                Assert.AreEqual("You cannot ask for any credentials, you must supply a usage context.",ex.Message);
-
-
-            }
-            finally
-            {
-                tableInfo.DeleteInDatabase();
-                creds.DeleteInDatabase();
-            }
+        try
+        {
+            Assert.NotNull(newCopy);
+            Assert.AreEqual(newCredentials.ID, newCopy.ID);
+            Assert.AreEqual(newCredentials.Username, newCopy.Username);
+            Assert.AreEqual(newCredentials.GetDecryptedPassword(), newCopy.GetDecryptedPassword());
+            Assert.AreEqual(newCredentials.Password, newCopy.Password);
         }
-        [Test]
-        public void TestThe_Any_EnumValue()
+        finally
         {
-            TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-            tableInfo.Name = "My Exciting Table";
+            newCredentials.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void TestThe_Any_EnumValue_CannotRequestAnyCredentials()
+    {
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
+
+        var creds = new DataAccessCredentials(CatalogueRepository);
+        try
+        {
+            creds.Name = "Test";
+            creds.SaveToDatabase();
+
+            tableInfo.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo.SaveToDatabase();
 
-            var creds = new DataAccessCredentials(CatalogueRepository);
-            try
-            {
-                creds.Name = "Test";
-                creds.SaveToDatabase();
-                
-                                //now create the association as Any
-                tableInfo.SetCredentials(creds, DataAccessContext.Any);
-                
-                //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
-                var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-                Assert.NotNull(creds2);
-                creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataExport);
-                Assert.NotNull(creds2);
-                creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad);
-                Assert.NotNull(creds2);
-
-            }
-            finally
-            {
-                tableInfo.DeleteInDatabase();
-                creds.DeleteInDatabase();
-            }
+            //attempt to request ANY credentials
+            var ex = Assert.Throws<Exception>(() => tableInfo.GetCredentialsIfExists(DataAccessContext.Any));
+            Assert.AreEqual("You cannot ask for any credentials, you must supply a usage context.", ex.Message);
         }
-
-        [Test]
-        public void Test_Any_PrioritisingTheMoreAppropriateCredential()
+        finally
         {
-            TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-            tableInfo.Name = "Tableinfo1";
+            tableInfo.DeleteInDatabase();
+            creds.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void TestThe_Any_EnumValue()
+    {
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
+        tableInfo.SaveToDatabase();
+
+        var creds = new DataAccessCredentials(CatalogueRepository);
+        try
+        {
+            creds.Name = "Test";
+            creds.SaveToDatabase();
+
+            //now create the association as Any
+            tableInfo.SetCredentials(creds, DataAccessContext.Any);
+
+            //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
+            var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            Assert.NotNull(creds2);
+            creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataExport);
+            Assert.NotNull(creds2);
+            creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad);
+            Assert.NotNull(creds2);
+        }
+        finally
+        {
+            tableInfo.DeleteInDatabase();
+            creds.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void Test_Any_PrioritisingTheMoreAppropriateCredential()
+    {
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "Tableinfo1"
+        };
+        tableInfo.SaveToDatabase();
+
+        var creds = new DataAccessCredentials(CatalogueRepository);
+        var creds2 = new DataAccessCredentials(CatalogueRepository);
+
+        try
+        {
+            creds.Name = "Test";
+            creds.SaveToDatabase();
+
+            //now create the association as Any
+            tableInfo.SetCredentials(creds, DataAccessContext.DataLoad);
+            tableInfo.SetCredentials(creds2, DataAccessContext.Any);
+
+
+            Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
+        }
+        finally
+        {
+            tableInfo.DeleteInDatabase();
+            creds.DeleteInDatabase();
+            creds2.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void SaveAndReloadCredentials()
+    {
+        var originalCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
+
+        try
+        {
+            originalCredentials.Name = "bob1";
+            originalCredentials.Username = "user";
+            originalCredentials.Password = "pass";
+            originalCredentials.SaveToDatabase();
+
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
+            Assert.AreEqual(originalCredentials.Name, newCopy.Name);
+            Assert.AreEqual(originalCredentials.Username, newCopy.Username);
+            Assert.AreEqual(originalCredentials.Password, newCopy.Password);
+
+            //test overridden Equals
+            Assert.AreEqual(originalCredentials, newCopy);
+            originalCredentials.Password = "fish";
+            Assert.AreEqual(originalCredentials, newCopy); //they are still equal because IDs are the same
+        }
+        finally
+        {
+            originalCredentials.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void GetCredentialsFromATableInfo()
+    {
+        var tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo")
+        {
+            Name = "My Exciting Table"
+        };
+
+        var creds = new DataAccessCredentials(CatalogueRepository);
+        try
+        {
+            creds.Name = "Test";
+            creds.SaveToDatabase();
+
+            tableInfo.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo.SaveToDatabase();
 
-            var creds = new DataAccessCredentials(CatalogueRepository);
-            var creds2 = new DataAccessCredentials(CatalogueRepository);
-  
-            try
-            {
-                creds.Name = "Test";
-                creds.SaveToDatabase();
-
-                //now create the association as Any
-                tableInfo.SetCredentials(creds, DataAccessContext.DataLoad);
-                tableInfo.SetCredentials(creds2, DataAccessContext.Any);
-                
-                
-                Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
-
-            }
-            finally
-            {
-                tableInfo.DeleteInDatabase();
-                creds.DeleteInDatabase();
-                creds2.DeleteInDatabase();
-            }
+            //Go via TableInfo and get credentials
+            var creds2 =
+                (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            Assert.AreEqual(creds2.Name, creds.Name);
         }
-
-        [Test]
-        public void SaveAndReloadCredentials()
+        finally
         {
-            var originalCredentials = new DataAccessCredentials(CatalogueRepository, "bob");
-
-            try
-            {
-                originalCredentials.Name = "bob1";
-                originalCredentials.Username = "user";
-                originalCredentials.Password = "pass";
-                originalCredentials.SaveToDatabase();
-
-                var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
-                Assert.AreEqual(originalCredentials.Name, newCopy.Name);
-                Assert.AreEqual(originalCredentials.Username, newCopy.Username);
-                Assert.AreEqual(originalCredentials.Password, newCopy.Password);
-
-                //test overridden Equals
-                Assert.AreEqual(originalCredentials,newCopy);
-                originalCredentials.Password = "fish";
-                Assert.AreEqual(originalCredentials, newCopy);//they are still equal because IDs are the same
-
-            }
-            finally
-            {
-                originalCredentials.DeleteInDatabase();
-            }
+            tableInfo.DeleteInDatabase();
+            creds.DeleteInDatabase();
         }
+    }
 
-        [Test]
-        public void GetCredentialsFromATableInfo()
+    [Test]
+    public void Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt_ThrowsThatCredentialsHasDependencies()
+    {
+        //Get all TableInfos that share this credential
+        var tableInfo1 = new TableInfo(CatalogueRepository, "Dependency1");
+        var tableInfo2 = new TableInfo(CatalogueRepository, "Dependency2");
+        var creds = new DataAccessCredentials(CatalogueRepository, "bob");
+
+        try
         {
-
-            TableInfo tableInfo = new TableInfo(CatalogueRepository, "GetCredentialsFromATableInfo");
-            tableInfo.Name = "My Exciting Table";
-
-            var creds = new DataAccessCredentials(CatalogueRepository);
-            try
-            {
-                creds.Name = "Test";
-                creds.SaveToDatabase();
-
-                tableInfo.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
-                tableInfo.SaveToDatabase();
-
-                //Go via TableInfo and get credentials
-                DataAccessCredentials creds2 = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-                Assert.AreEqual(creds2.Name, creds.Name);
-            }
-            finally
-            {
-                tableInfo.DeleteInDatabase();
-                creds.DeleteInDatabase();
-            }
-        }
-
-        [Test]
-        public void Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt_ThrowsThatCredentialsHasDependencies()
-        {
-            //Get all TableInfos that share this credential
-            TableInfo tableInfo1 = new TableInfo(CatalogueRepository, "Dependency1");
-            TableInfo tableInfo2 = new TableInfo(CatalogueRepository, "Dependency2");
-            var creds = new DataAccessCredentials(CatalogueRepository, "bob");
-
-            try
-            {
-            
-                tableInfo1.SetCredentials(creds,DataAccessContext.InternalDataProcessing);
-                tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
-                tableInfo1.SaveToDatabase();
-                tableInfo2.SaveToDatabase();
-
-                var ex = Assert.Throws<CredentialsInUseException>(creds.DeleteInDatabase);//the bit that fails (because tables are there)
-                Assert.AreEqual("Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)",ex.Message);
-            }
-            finally
-            {
-                tableInfo1.DeleteInDatabase();//will work
-                tableInfo2.DeleteInDatabase();//will work
-                creds.DeleteInDatabase();//will work
-            }
-
-            
-
-        }
-
-        [Test]
-        public void GetAllUsersOfACredential()
-        {
-
-            //Get all TableInfos that share this credential
-            TableInfo tableInfo1 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1");
-            TableInfo tableInfo2 = new TableInfo(CatalogueRepository, "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt2");
-            var creds = new DataAccessCredentials(CatalogueRepository, "bob");
-
             tableInfo1.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
             tableInfo1.SaveToDatabase();
             tableInfo2.SaveToDatabase();
 
-
-            ITableInfo[] TablesThatUseCredential = creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
-
-            Assert.Contains(tableInfo1, TablesThatUseCredential);
-            Assert.Contains(tableInfo2, TablesThatUseCredential); 
-
-            tableInfo1.DeleteInDatabase();
-            tableInfo2.DeleteInDatabase();
-            creds.DeleteInDatabase();
+            var ex = Assert.Throws<CredentialsInUseException>(creds
+                .DeleteInDatabase); //the bit that fails (because tables are there)
+            Assert.AreEqual(
+                "Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)",
+                ex.Message);
         }
-
-        [Test]
-        public void GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride()
+        finally
         {
-            Catalogue c = new Catalogue(CatalogueRepository, "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
-            CatalogueItem ci = new CatalogueItem(CatalogueRepository, c,"GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
-            TableInfo t = new TableInfo(CatalogueRepository, "Test");
-            ColumnInfo col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col","varchar(10)", t);
-            
-            var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
+            tableInfo1.DeleteInDatabase(); //will work
+            tableInfo2.DeleteInDatabase(); //will work
+            creds.DeleteInDatabase(); //will work
+        }
+    }
 
-            DataAccessCredentials cred = null;
-            try
+    [Test]
+    public void GetAllUsersOfACredential()
+    {
+        //Get all TableInfos that share this credential
+        var tableInfo1 = new TableInfo(CatalogueRepository,
+            "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt1");
+        var tableInfo2 = new TableInfo(CatalogueRepository,
+            "Create2TableInfosThatShareTheSameCredentialAndTestDeletingIt2");
+        var creds = new DataAccessCredentials(CatalogueRepository, "bob");
+
+        tableInfo1.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
+        tableInfo2.SetCredentials(creds, DataAccessContext.InternalDataProcessing);
+        tableInfo1.SaveToDatabase();
+        tableInfo2.SaveToDatabase();
+
+
+        var TablesThatUseCredential =
+            creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
+
+        Assert.Contains(tableInfo1, TablesThatUseCredential);
+        Assert.Contains(tableInfo2, TablesThatUseCredential);
+
+        tableInfo1.DeleteInDatabase();
+        tableInfo2.DeleteInDatabase();
+        creds.DeleteInDatabase();
+    }
+
+    [Test]
+    public void GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride()
+    {
+        var c = new Catalogue(CatalogueRepository,
+            "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
+        var ci = new CatalogueItem(CatalogueRepository, c,
+            "GetConnectionStringFromCatalogueWhereOneTableInfoUsesACredentialsOverride");
+        var t = new TableInfo(CatalogueRepository, "Test");
+        var col = new ColumnInfo(CatalogueRepository, "[mydatabase].[dbo].test.col", "varchar(10)", t);
+
+        var extractionInformation = new ExtractionInformation(CatalogueRepository, ci, col, col.Name);
+
+        DataAccessCredentials cred = null;
+        try
+        {
+            t.Server = "myserver";
+            t.Database = "mydatabase";
+
+            cred = new DataAccessCredentials(CatalogueRepository, "bob")
             {
-                t.Server = "myserver";
-                t.Database = "mydatabase";
-                
-                cred = new DataAccessCredentials(CatalogueRepository, "bob");
-                cred.Username = "bob";
-                cred.Password = "pass";
+                Username = "bob",
+                Password = "pass"
+            };
 
-                Assert.AreNotEqual("pass",cred.Password);
-                Assert.AreEqual("pass", cred.GetDecryptedPassword());
+            Assert.AreNotEqual("pass", cred.Password);
+            Assert.AreEqual("pass", cred.GetDecryptedPassword());
 
 
-                cred.SaveToDatabase();
-                t.SetCredentials(cred, DataAccessContext.InternalDataProcessing);
-                t.SaveToDatabase();
+            cred.SaveToDatabase();
+            t.SetCredentials(cred, DataAccessContext.InternalDataProcessing);
+            t.SaveToDatabase();
 
-                var constr = (SqlConnectionStringBuilder)c.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing,false).Builder;
-                Assert.AreEqual("myserver",constr.DataSource);
-                Assert.False(constr.IntegratedSecurity);
-                Assert.AreEqual("bob", constr.UserID);
-                Assert.AreEqual("pass", constr.Password);
-
-     
-            }
-            finally 
-            {
-                t.DeleteInDatabase();
-                if(cred != null)
-                    cred.DeleteInDatabase();
-                c.DeleteInDatabase();//no need to delete ci because of cascades
-                
-            }
-
+            var constr =
+                (SqlConnectionStringBuilder)c
+                    .GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).Builder;
+            Assert.AreEqual("myserver", constr.DataSource);
+            Assert.False(constr.IntegratedSecurity);
+            Assert.AreEqual("bob", constr.UserID);
+            Assert.AreEqual("pass", constr.Password);
         }
-
-        [Test]
-        public void Test_BlankPasswords()
+        finally
         {
-            var creds = new DataAccessCredentials(CatalogueRepository, "blankpwdCreds");
-            creds.Username = "Root";
-            creds.Password = "";
-
-            creds.SaveToDatabase();
-
-
-            var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
-            Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",null));
-            Assert.AreEqual(creds,manager.GetCredentialByUsernameAndPasswordIfExists("Root",""));
+            t.DeleteInDatabase();
+            cred?.DeleteInDatabase();
+            c.DeleteInDatabase(); //no need to delete ci because of cascades
         }
+    }
 
-        [Test]
-        public void Test_NoDuplicatePasswords()
+    [Test]
+    public void Test_BlankPasswords()
+    {
+        var creds = new DataAccessCredentials(CatalogueRepository, "blankpwdCreds")
         {
-            var t1 = new TableInfo(CatalogueRepository, "tbl1");
-            var t2 = new TableInfo(CatalogueRepository, "tbl2");
+            Username = "Root",
+            Password = ""
+        };
 
-            var credCount = CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length;
+        creds.SaveToDatabase();
 
-            //if there is a username then we need to associate it with the TableInfo we just created
-            DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
-            var cred = credentialsFactory.Create(t1, "blarg", "flarg",DataAccessContext.Any);
-            var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
 
-            Assert.AreEqual(credCount + 1, CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length);
-            
-            Assert.AreEqual(cred, cred2, $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
-        }
+        var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
+        Assert.AreEqual(creds, manager.GetCredentialByUsernameAndPasswordIfExists("Root", null));
+        Assert.AreEqual(creds, manager.GetCredentialByUsernameAndPasswordIfExists("Root", ""));
+    }
+
+    [Test]
+    public void Test_NoDuplicatePasswords()
+    {
+        var t1 = new TableInfo(CatalogueRepository, "tbl1");
+        var t2 = new TableInfo(CatalogueRepository, "tbl2");
+
+        var credCount = CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length;
+
+        //if there is a username then we need to associate it with the TableInfo we just created
+        var credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);
+        var cred = credentialsFactory.Create(t1, "blarg", "flarg", DataAccessContext.Any);
+        var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
+
+        Assert.AreEqual(credCount + 1, CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length);
+
+        Assert.AreEqual(cred, cred2,
+            $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
     }
 }

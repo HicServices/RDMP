@@ -7,91 +7,87 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.Cohort
+namespace Rdmp.Core.Tests.DataExport.Cohort;
+
+[Category("Database")]
+public class CohortTests : TestsRequiringACohort
 {
-    [Category("Database")]
-    public class CohortTests : TestsRequiringACohort
+    [Test]
+    public void TestOverridingReleaseIdentifier()
     {
-        [Test]
-        public void TestOverridingReleaseIdentifier()
+        //get cohort without override
+        Assert.IsNull(_extractableCohort.OverrideReleaseIdentifierSQL);
+
+        //should match global release identifier (from its source because there is no override)
+        Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
+
+        //appy override
+        _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
+        _extractableCohort.SaveToDatabase();
+
+        //should now match override
+        Assert.AreEqual("Fish", _extractableCohort.GetReleaseIdentifier());
+
+        //now set it back to null (not overriding)
+        _extractableCohort.OverrideReleaseIdentifierSQL = null;
+        _extractableCohort.SaveToDatabase();
+
+        //now check that we are back to the original release identifier
+        Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
+    }
+
+    [Test]
+    public void TestSelf_RecordAllFailures()
+    {
+        var failures = new RecordAllFailures();
+        failures.FailureMessages.Add("Hi there Thomas, How's it going?");
+
+        Assert.IsFalse(failures.AnyFailMessageLike("Carmageddon"));
+
+        Assert.IsTrue(failures.AnyFailMessageLike("Thomas"));
+
+        Assert.IsTrue(failures.AnyFailMessageLike("Thomas", "going"));
+        Assert.IsTrue(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
+        Assert.IsTrue(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
+
+        Assert.IsFalse(failures.AnyFailMessageLike("Thomas", "going", "Hi", "Fear the babadook"));
+    }
+
+    private class RecordAllFailures : ICheckNotifier
+    {
+        public RecordAllFailures()
         {
-            //get cohort without override
-            Assert.IsNull(_extractableCohort.OverrideReleaseIdentifierSQL);
-
-            //should match global release identifier (from its source because there is no override)
-            Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
-            
-            //appy override
-            _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
-            _extractableCohort.SaveToDatabase();
-            
-            //should now match override
-            Assert.AreEqual("Fish", _extractableCohort.GetReleaseIdentifier());
-
-            //now set it back to null (not overriding)
-            _extractableCohort.OverrideReleaseIdentifierSQL = null;
-            _extractableCohort.SaveToDatabase();
-
-            //now check that we are back to the original release identifier
-            Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
-            
+            FailureMessages = new List<string>();
         }
-        
-        [Test]
-        public void TestSelf_RecordAllFailures()
+
+        public List<string> FailureMessages { get; set; }
+
+        public bool AnyFailMessageLike(params string[] bitsTofind)
         {
-            RecordAllFailures failures = new RecordAllFailures();
-            failures.FailureMessages.Add("Hi there Thomas, How's it going?");
-
-            Assert.IsFalse(failures.AnyFailMessageLike("Carmageddon"));
-            
-            Assert.IsTrue(failures.AnyFailMessageLike("Thomas"));
-
-            Assert.IsTrue(failures.AnyFailMessageLike("Thomas","going"));
-            Assert.IsTrue(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
-            Assert.IsTrue(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
-
-            Assert.IsFalse(failures.AnyFailMessageLike("Thomas", "going", "Hi","Fear the babadook"));
-
-        }
-
-        private class RecordAllFailures : ICheckNotifier
-        {
-            public RecordAllFailures()
-            {
-                FailureMessages = new List<string>();
-            }
-            public List<string> FailureMessages { get; set; }
-
-            public bool AnyFailMessageLike(params string[] bitsTofind)
-            {
-                return FailureMessages.Any(m =>
+            return FailureMessages.Any(m =>
                 {
-                    bool found = bitsTofind.Any();
+                    var found = bitsTofind.Any();
 
-                    foreach(string s in bitsTofind) 
-                        if(!m.ToLower().Contains(s.ToLower()))
+                    foreach (var s in bitsTofind)
+                        if (!m.ToLower().Contains(s.ToLower()))
                             found = false;
 
                     return found;
                 }
-                   );
-            }
-
-
-            public bool OnCheckPerformed(CheckEventArgs args)
-            {
-                if(args.Result == CheckResult.Fail)
-                    FailureMessages.Add(args.Message);
-
-                //accept all proposed changes
-                return true;
-            }
+            );
         }
 
+
+        public bool OnCheckPerformed(CheckEventArgs args)
+        {
+            if (args.Result == CheckResult.Fail)
+                FailureMessages.Add(args.Message);
+
+            //accept all proposed changes
+            return true;
+        }
     }
 }
-

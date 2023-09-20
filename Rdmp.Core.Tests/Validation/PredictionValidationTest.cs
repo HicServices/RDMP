@@ -11,172 +11,175 @@ using Rdmp.Core.Validation.Constraints.Primary;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
-namespace Rdmp.Core.Tests.Validation
+namespace Rdmp.Core.Tests.Validation;
+
+[Category("Unit")]
+internal class PredictionValidationTest
 {
+    #region Test arguments
 
-    [Category("Unit")]
-    class PredictionValidationTest
+    [TestCase("UNKNOWN")]
+    [TestCase("Gender")]
+    public void Validate_NullTargetField_GeneratesException(string targetField)
     {
+        var prediction = new Prediction(new ChiSexPredictor(), targetField);
+        var v = CreateInitialisedValidator(prediction);
 
-        #region Test arguments
+        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.IsInstanceOf<MissingFieldException>(ex?.InnerException);
+    }
 
-        [TestCase("UNKNOWN")]
-        [TestCase("Gender")]
-        public void Validate_NullTargetField_GeneratesException(string targetField)
+    [Test]
+    public void Validate_NullRule_GeneratesException()
+    {
+        var ex = Assert.Throws<ArgumentException>(() => _ = new Prediction(null, "gender"));
+        StringAssert.Contains("You must specify a PredictionRule to follow", ex?.Message);
+    }
+
+    [Test]
+    public void Validate_Uninitialized_GeneratesException()
+    {
+        var prediction = new Prediction();
+        var v = CreateInitialisedValidator(prediction);
+
+        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+    }
+
+    [Test]
+    public void Validate_UninitializedTarget_GeneratesException()
+    {
+        var prediction = new Prediction
         {
-            var prediction = new Prediction(new ChiSexPredictor(), targetField);
-            var v = CreateInitialisedValidator(prediction);
+            Rule = new ChiSexPredictor()
+        };
+        var v = CreateInitialisedValidator(prediction);
+        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.IsInstanceOf<InvalidOperationException>(ex?.InnerException);
+    }
 
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<MissingFieldException>(ex.InnerException);
-        }
-
-        [Test]
-        public void Validate_NullRule_GeneratesException()
+    [Test]
+    public void Validate_UninitializedRule_GeneratesException()
+    {
+        var prediction = new Prediction
         {
-            var ex = Assert.Throws<ArgumentException>(()=>new Prediction(null, "gender"));
-            StringAssert.Contains("You must specify a PredictionRule to follow",ex.Message);
-        }
+            TargetColumn = "chi"
+        };
+        var v = CreateInitialisedValidator(prediction);
+        var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
+    }
 
-        [Test]
-        public void Validate_Uninitialized_GeneratesException()
+    #endregion
+
+    #region Test CHI - with primary constraint & secondary constraint
+
+    [Test]
+    public void Validate_ChiHasConsistentSexIndicator_Valid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidator(prediction);
+
+        Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
+    }
+
+    [Test]
+    public void Validate_ChiIsNull_Valid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidator(prediction);
+
+        Assert.IsNull(v.Validate(TestConstants.NullChiAndValidSex));
+    }
+
+    [Test]
+    public void Validate_SexIsNull_Valid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidator(prediction);
+
+        Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
+    }
+
+    [Test]
+    public void Validate_CHIHasInconsistentSexIndicator_Invalid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidator(prediction);
+
+        Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
+    }
+
+    [Test]
+    public void Validate_ChiIsInvalid_Invalid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidator(prediction);
+
+        Assert.NotNull(v.Validate(TestConstants.InvalidChiAndValidSex));
+    }
+
+    #endregion
+
+    #region Test CHI - with primary constraint & secondary constraint
+
+    [Test]
+    public void Validate_NoPrimaryConstraintChiHasConsistentSexIndicator_Valid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
+
+        Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
+    }
+
+    [Test]
+    public void Validate_NoPrimaryConstraintChiIsNull_Valid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
+
+        Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
+    }
+
+    [Test]
+    public void Validate_NoPrimaryConstraintCHIHasInconsistentSexIndicator_Invalid()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
+
+        Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
+    }
+
+    [Test]
+    public void
+        Validate_NoPrimaryConstraintChiIsInvalid_ValidBecauseWhoCaresIfChiIsInvalid_IfYouDoCareUseAChiPrimaryConstraintInstead()
+    {
+        var prediction = new Prediction(new ChiSexPredictor(), "gender");
+        var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
+
+        Assert.Null(v.Validate(TestConstants.InvalidChiAndValidSex));
+    }
+
+    #endregion
+
+    private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
+    {
+        var i = new ItemValidator
         {
-            var prediction = new Prediction();
-            var v = CreateInitialisedValidator(prediction);
+            PrimaryConstraint = new Chi()
+        };
+        i.SecondaryConstraints.Add(prediction);
 
-            var ex = Assert.Throws <Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
-        }
+        var v = new Validator();
+        v.AddItemValidator(i, "chi", typeof(string));
+        return v;
+    }
 
-        [Test]
-        public void Validate_UninitializedTarget_GeneratesException()
-        {
-            var prediction = new Prediction();
-            prediction.Rule = new ChiSexPredictor();
-            var v = CreateInitialisedValidator(prediction);
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
-        }
+    private static Validator CreateInitialisedValidatorWithNoPrimaryConstraint(SecondaryConstraint prediction)
+    {
+        var i = new ItemValidator();
+        i.SecondaryConstraints.Add(prediction);
 
-        [Test]
-        public void Validate_UninitializedRule_GeneratesException()
-        {
-            var prediction = new Prediction();
-            prediction.TargetColumn = "chi";
-            var v = CreateInitialisedValidator(prediction);
-            var ex = Assert.Throws<Exception>(()=>v.Validate(TestConstants.ValidChiAndInconsistentSex));
-            Assert.IsInstanceOf<InvalidOperationException>(ex.InnerException);
-        }
-        #endregion
-
-        #region Test CHI - with primary constraint & secondary constraint
-
-        [Test]
-        public void Validate_ChiHasConsistentSexIndicator_Valid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
-        }
-        
-        [Test]
-        public void Validate_ChiIsNull_Valid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            Assert.IsNull(v.Validate(TestConstants.NullChiAndValidSex));
-        }
-
-        [Test]
-        public void Validate_SexIsNull_Valid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
-        }
-
-        [Test]
-        public void Validate_CHIHasInconsistentSexIndicator_Invalid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
-        }
-
-        [Test]
-        public void Validate_ChiIsInvalid_Invalid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidator(prediction);
-
-            Assert.NotNull(v.Validate(TestConstants.InvalidChiAndValidSex));
-        }
-
-        #endregion
-
-        #region Test CHI - with primary constraint & secondary constraint
-
-        [Test]
-        public void Validate_NoPrimaryConstraintChiHasConsistentSexIndicator_Valid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
-
-            Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
-        }
-
-        [Test]
-        public void Validate_NoPrimaryConstraintChiIsNull_Valid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
-
-            Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
-        }
-
-        [Test]
-        public void Validate_NoPrimaryConstraintCHIHasInconsistentSexIndicator_Invalid()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
-
-            Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
-        }
-
-        [Test]
-        public void Validate_NoPrimaryConstraintChiIsInvalid_ValidBecauseWhoCaresIfChiIsInvalid_IfYouDoCareUseAChiPrimaryConstraintInstead()
-        {
-            var prediction = new Prediction(new ChiSexPredictor(), "gender");
-            var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
-
-            Assert.Null(v.Validate(TestConstants.InvalidChiAndValidSex));
-        }
-
-        #endregion
-        
-        private static Validator CreateInitialisedValidator(SecondaryConstraint prediction)
-        {
-            var i = new ItemValidator();
-            i.PrimaryConstraint = new Chi();
-            i.SecondaryConstraints.Add(prediction);
-
-            var v = new Validator();
-            v.AddItemValidator(i, "chi", typeof(string));
-            return v;
-        }
-
-        private static Validator CreateInitialisedValidatorWithNoPrimaryConstraint(SecondaryConstraint prediction)
-        {
-            var i = new ItemValidator();
-            i.SecondaryConstraints.Add(prediction);
-            
-            var v = new Validator();
-            v.AddItemValidator(i, "chi", typeof(string));
-            return v;
-        }
+        var v = new Validator();
+        v.AddItemValidator(i, "chi", typeof(string));
+        return v;
     }
 }

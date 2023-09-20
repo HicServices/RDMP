@@ -7,93 +7,88 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data.ImportExport
+namespace Rdmp.Core.Curation.Data.ImportExport;
+
+/// <summary>
+/// Identifies an object in the local Catalogue database (or DataExport database) which has been shared externally (via its SharingUID).  The use of a SharingUID
+/// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
+/// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
+/// </summary>
+public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMapsDirectlyToDatabaseTable>
 {
+    #region Database Properties
+
+    private string _sharingUID;
+
+    #endregion
+
     /// <summary>
-    /// Identifies an object in the local Catalogue database (or DataExport database) which has been shared externally (via its SharingUID).  The use of a SharingUID
-    /// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
-    /// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
+    /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
+    /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
     /// </summary>
-    public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMapsDirectlyToDatabaseTable>
+    public string SharingUID
     {
-        #region Database Properties
+        get => _sharingUID;
+        set => SetField(ref _sharingUID, value);
+    }
 
-        private string _sharingUID;
-        
-        #endregion
+    /// <inheritdoc cref="SharingUID"/>
+    [NoMappingToDatabase]
+    public Guid SharingUIDAsGuid => Guid.Parse(SharingUID);
 
-        /// <summary>
-        /// The globally unique identifier for refering to the shared object.  This allows the object to be updated later / new versions to be distributed
-        /// even though the ID is different (e.g. it has been imported into another instance of RDMP).
-        /// </summary>
-        public string SharingUID
+    public ObjectExport()
+    {
+        ClearAllInjections();
+    }
+
+    /// <summary>
+    /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="objectForSharing"></param>
+    /// <param name="guid"></param>
+    internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _sharingUID; }
-            set { SetField(ref _sharingUID, value); }
-        }
-        
-        /// <inheritdoc cref="SharingUID"/>
-        [NoMappingToDatabase]
-        public Guid SharingUIDAsGuid { get { return Guid.Parse(SharingUID); }}
+            { "ReferencedObjectID", objectForSharing.ID },
+            { "ReferencedObjectType", objectForSharing.GetType().Name },
+            { "ReferencedObjectRepositoryType", objectForSharing.Repository.GetType().Name },
+            { "SharingUID", guid.ToString() }
+        });
 
-        public ObjectExport()
-        {
-            ClearAllInjections();
-        }
+        if (ID == 0 || Repository != repository)
+            throw new ArgumentException("Repository failed to properly hydrate this class");
 
-        /// <summary>
-        /// use <see cref="ShareManager.GetNewOrExistingExportFor"/> for easier access to this constructor
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="objectForSharing"></param>
-        /// <param name="guid"></param>
-        internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
-        {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>()
-            {
-                {"ReferencedObjectID",objectForSharing.ID},
-                {"ReferencedObjectType",objectForSharing.GetType().Name},
-                {"ReferencedObjectRepositoryType",objectForSharing.Repository.GetType().Name},
-                {"SharingUID",guid.ToString()},
-            
-            });
+        ClearAllInjections();
+    }
 
-            if (ID == 0 || Repository != repository)
-                throw new ArgumentException("Repository failed to properly hydrate this class");
+    /// <inheritdoc/>
+    public ObjectExport(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        SharingUID = r["SharingUID"].ToString();
+    }
 
-            ClearAllInjections();
-        }
+    public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
+    {
+        _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(instance);
+    }
 
-        /// <inheritdoc/>
-        public ObjectExport(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            SharingUID = r["SharingUID"].ToString();
-        }
+    /// <inheritdoc/>
+    public override string ToString() => _knownReferenceTo != null
+        ? $"E::{_knownReferenceTo.Value}"
+        : $"E::{ReferencedObjectType}::{SharingUID}";
 
-        public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
-        {
-            _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(()=>instance);
-        }
+    private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;
 
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            if (_knownReferenceTo != null)
-                return "E::" + _knownReferenceTo.Value;
-
-            return "E::" + ReferencedObjectType +"::" + SharingUID;
-        }
-
-        private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;
-        public void ClearAllInjections()
-        {
-            _knownReferenceTo = null;
-        }
+    public void ClearAllInjections()
+    {
+        _knownReferenceTo = null;
     }
 }

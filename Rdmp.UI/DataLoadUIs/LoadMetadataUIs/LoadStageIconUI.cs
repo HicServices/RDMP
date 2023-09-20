@@ -7,26 +7,24 @@
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons;
 
-namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
+
+/// <summary>
+/// Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)
+/// </summary>
+[TechnicalUI]
+public partial class LoadStageIconUI : UserControl
 {
-    /// <summary>
-    /// Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)
-    /// </summary>
-    [TechnicalUI]
-    public partial class LoadStageIconUI : UserControl
+    public LoadStageIconUI()
     {
-        public LoadStageIconUI()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        public void Setup(ICoreIconProvider iconProvider,LoadStage stage)
-        {
-            pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
-            lblLoadStage.Text = stage.ToString();
-            this.Width = lblLoadStage.Right;
-        }
+    public void Setup(ICoreIconProvider iconProvider, LoadStage stage)
+    {
+        pictureBox1.Image = iconProvider.GetImage(stage).ImageToBitmap();
+        lblLoadStage.Text = stage.ToString();
+        Width = lblLoadStage.Right;
     }
 }

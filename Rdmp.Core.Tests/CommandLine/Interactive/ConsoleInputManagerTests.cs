@@ -4,26 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CommandLine.Interactive
+namespace Rdmp.Core.Tests.CommandLine.Interactive;
+
+internal class ConsoleInputManagerTests : UnitTests
 {
-    class ConsoleInputManagerTests : UnitTests
+    [Test]
+    public void TestDisallowInput()
     {
-        [Test]
-        public void TestDisallowInput()
+        var manager = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
         {
-            var manager = new ConsoleInputManager(RepositoryLocator, new ThrowImmediatelyCheckNotifier());
-            manager.DisallowInput = true;
-            
-            Assert.Throws<InputDisallowedException>(()=>manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
-        }
+            DisallowInput = true
+        };
+
+        Assert.Throws<InputDisallowedException>(() => manager.GetString(new DialogArgs { WindowTitle = "bob" }, null));
     }
 }

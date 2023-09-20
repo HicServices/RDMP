@@ -8,33 +8,31 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.UI.Copying;
 
-namespace Rdmp.UI.Collections.Providers.Copying
+namespace Rdmp.UI.Collections.Providers.Copying;
+
+/// <summary>
+/// Enables Ctrl+C support in <see cref="TreeListView"/>
+/// </summary>
+public class CopyPasteProvider
 {
-    /// <summary>
-    /// Enables Ctrl+C support in <see cref="TreeListView"/>
-    /// </summary>
-    public class CopyPasteProvider
+    private TreeListView _tree;
+
+    public void RegisterEvents(TreeListView tree)
     {
-        private TreeListView _tree;
+        _tree = tree;
+        _tree.KeyUp += TreeOnKeyUp;
+    }
 
-        public void RegisterEvents(TreeListView tree)
+    private void TreeOnKeyUp(object sender, KeyEventArgs keyEventArgs)
+    {
+        if (keyEventArgs.KeyCode == Keys.C && keyEventArgs.Control)
         {
-            _tree = tree;
-            _tree.KeyUp += TreeOnKeyUp;
-        }
+            var commandFactory = new RDMPCombineableFactory();
 
-        private void TreeOnKeyUp(object sender, KeyEventArgs keyEventArgs)
-        {
-            if (keyEventArgs.KeyCode == Keys.C && keyEventArgs.Control)
-            {
-                RDMPCombineableFactory commandFactory = new RDMPCombineableFactory();
+            var command = commandFactory.Create(_tree.SelectedObject);
 
-                var command = commandFactory.Create(_tree.SelectedObject);
-
-                if (command != null)
-                    Clipboard.SetDataObject(command);
-            }
-            
+            if (command != null)
+                Clipboard.SetDataObject(command);
         }
     }
 }

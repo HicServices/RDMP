@@ -17,96 +17,104 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Helpers;
 
-namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
+
+public class EndToEndCacheTest : DatabaseTests
 {
-    public class EndToEndCacheTest : DatabaseTests
+    private Catalogue _cata;
+    private LoadMetadata _lmd;
+    private LoadProgress _lp;
+    private CacheProgress _cp;
+
+    private const int NumDaysToCache = 5;
+
+    private TestDataPipelineAssembler _testPipeline;
+    private LoadDirectory _LoadDirectory;
+
+    [SetUp]
+    protected override void SetUp()
     {
+        base.SetUp();
 
-        private Catalogue _cata;
-        private LoadMetadata _lmd;
-        private LoadProgress _lp;
-        private CacheProgress _cp;
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
-        private TestDataPipelineAssembler _testPipeline;
-        private LoadDirectory _LoadDirectory;
+        _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
+        _LoadDirectory =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+                @"EndToEndCacheTest", true);
+        _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
+        _lmd.SaveToDatabase();
 
-        const int NumDaysToCache = 5;
+        Clear(_LoadDirectory);
 
-        [SetUp]
-        protected override void SetUp()
+        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
         {
-            base.SetUp();
+            LoadMetadata_ID = _lmd.ID
+        };
+        _cata.SaveToDatabase();
 
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
-            
-            _lmd = new LoadMetadata(CatalogueRepository, "Ive got a lovely bunch o' coconuts");
-            _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), @"EndToEndCacheTest", true);
-            _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
-            _lmd.SaveToDatabase();
+        _lp = new LoadProgress(CatalogueRepository, _lmd);
+        _cp = new CacheProgress(CatalogueRepository, _lp);
 
-            Clear(_LoadDirectory);
+        _lp.OriginDate = new DateTime(2001, 1, 1);
+        _lp.SaveToDatabase();
 
-            _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
-            _cata.LoadMetadata_ID = _lmd.ID;
-            _cata.SaveToDatabase();
+        _testPipeline =
+            new TestDataPipelineAssembler($"EndToEndCacheTestPipeline{Guid.NewGuid()}", CatalogueRepository);
+        _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
 
-            _lp = new LoadProgress(CatalogueRepository, _lmd);
-            _cp = new CacheProgress(CatalogueRepository, _lp); 
-            
-            _lp.OriginDate = new DateTime(2001,1,1);
-            _lp.SaveToDatabase();
+        _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
+        _cp.SaveToDatabase();
 
-            _testPipeline = new TestDataPipelineAssembler("EndToEndCacheTestPipeline" + Guid.NewGuid(),CatalogueRepository);
-            _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
-
-            _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
-            _cp.SaveToDatabase();
-
-            _cp.SaveToDatabase();
-        }
+        _cp.SaveToDatabase();
+    }
 
 
-        [Test]
-        public void FireItUpManually()
+    [Test]
+    public void FireItUpManually()
+    {
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
+        MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+
+        var cachingHost = new CachingHost(CatalogueRepository)
         {
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
-            RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
+            CacheProgress = _cp
+        };
 
-            var cachingHost = new CachingHost(CatalogueRepository);
-            
-            cachingHost.CacheProgress = _cp;
-            cachingHost.Start(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+        cachingHost.Start(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-            // should be numDaysToCache days in cache
-            Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Count());
+        // should be numDaysToCache days in cache
+        Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
 
-            // make sure each file is named as expected
-            var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
-            for (var i = -NumDaysToCache; i < 0; i++)
-            {
-                var filename = DateTime.Now.AddDays(i).ToString("yyyyMMdd") + ".csv"; 
-                Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
-            }
-        }
-
-        [Test]
-        public void RunEndToEndCacheTest()
+        // make sure each file is named as expected
+        var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
+        for (var i = -NumDaysToCache; i < 0; i++)
         {
-            var t = Task.Factory.StartNew(() =>
-            {
-                Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
-
-                var auto = new CacheRunner(new CacheOptions(){CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run});
-                auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
-            });
-
-            Assert.True(t.Wait(60000));
+            var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv";
+            Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
         }
+    }
+
+    [Test]
+    public void RunEndToEndCacheTest()
+    {
+        var t = Task.Factory.StartNew(() =>
+        {
+            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
+
+            var auto = new CacheRunner(new CacheOptions
+            { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
+            auto.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
+        });
+
+        Assert.True(t.Wait(60000));
     }
 }

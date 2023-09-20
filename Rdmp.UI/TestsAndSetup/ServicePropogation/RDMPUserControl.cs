@@ -7,70 +7,68 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
 
 
-namespace Rdmp.UI.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
+
+/// <summary>
+/// TECHNICAL: Base class for all UserControls in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
+/// The class handles propagation of the RepositoryLocator to all Child Controls at OnLoad time.  IMPORTANT: Do not use RepositoryLocator until OnLoad or later (i.e. don't use it
+/// in the constructor of your class).  Also make sure your RDMPUserControl is hosted on an RDMPForm.
+/// </summary>
+[TechnicalUI]
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPUserControl, UserControl>))]
+public abstract class RDMPUserControl : UserControl, IRDMPControl
 {
-    
-    /// <summary>
-    /// TECHNICAL: Base class for all UserControls in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.
-    /// The class handles propagation of the RepositoryLocator to all Child Controls at OnLoad time.  IMPORTANT: Do not use RepositoryLocator until OnLoad or later (i.e. don't use it
-    /// in the constructor of your class).  Also make sure your RDMPUserControl is hosted on an RDMPForm.
-    /// </summary>
-    [TechnicalUI]
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPUserControl, UserControl>))]
-    public abstract class RDMPUserControl : UserControl, IRDMPControl
+    public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
+    public IActivateItems Activator { get; private set; }
+
+    protected readonly bool VisualStudioDesignMode;
+
+
+    //constructor
+    protected RDMPUserControl()
     {
-        public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
-        public IActivateItems Activator { get; private set; }
+        VisualStudioDesignMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+        CommonFunctionality = new RDMPControlCommonFunctionality(this);
+    }
 
-        protected readonly bool VisualStudioDesignMode;
+    public virtual void SetItemActivator(IActivateItems activator)
+    {
+        Activator = activator;
+        CommonFunctionality.SetItemActivator(activator);
+    }
 
-        
-        //constructor
-        protected RDMPUserControl()
+
+    /// <summary>
+    /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks(ICheckable)"/>
+    /// </summary>
+    protected virtual void OnBeforeChecking()
+    {
+    }
+
+    /// <summary>
+    /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
+    /// </summary>
+    public IRDMPControl GetTopmostRDMPUserControl() => GetTopmostRDMPUserControl(this, this);
+
+    public event EventHandler<bool> UnSavedChanges;
+
+    public void SetUnSavedChanges(bool b)
+    {
+        UnSavedChanges?.Invoke(this, b);
+    }
+
+    private static IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
+    {
+        while (true)
         {
-            VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-            CommonFunctionality = new RDMPControlCommonFunctionality(this);
-        }
-
-        public virtual void SetItemActivator(IActivateItems activator)
-        {
-            Activator = activator;
-            CommonFunctionality.SetItemActivator(activator);
-        }
-
-
-        /// <summary>
-        /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks(ICheckable)"/>
-        /// </summary>
-        protected virtual void OnBeforeChecking()
-        {
-            
-        }
-
-        /// <summary>
-        /// Returns the topmost control which implements <see cref="RDMPUserControl"/>
-        /// </summary>
-        public IRDMPControl GetTopmostRDMPUserControl()
-        {
-            return GetTopmostRDMPUserControl(this, this);
-        }
-        
-        public event EventHandler<bool> UnSavedChanges;
-        public void SetUnSavedChanges(bool b)
-        {
-            UnSavedChanges?.Invoke(this,b);
-        }
-
-        private IRDMPControl GetTopmostRDMPUserControl(Control c, RDMPUserControl found)
-        {
-            if (c.Parent == null)
-                return found;
-
-            return GetTopmostRDMPUserControl(c.Parent, c.Parent as RDMPUserControl ?? found);
+            if (c.Parent == null) return found;
+            var c1 = c;
+            c = c.Parent;
+            found = c1.Parent as RDMPUserControl ?? found;
         }
     }
 }

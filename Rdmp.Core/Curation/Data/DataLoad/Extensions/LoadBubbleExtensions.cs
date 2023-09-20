@@ -6,33 +6,28 @@
 
 using System;
 
-namespace Rdmp.Core.Curation.Data.DataLoad.Extensions
+namespace Rdmp.Core.Curation.Data.DataLoad.Extensions;
+
+/// <summary>
+/// Static type extensions for Enum <see cref="LoadBubble"/>
+/// </summary>
+public static class LoadBubbleExtensions
 {
     /// <summary>
-    /// Static type extensions for Enum <see cref="LoadBubble"/>
+    /// Converts a <see cref="LoadBubble"/> into a <see cref="LoadStage"/>
     /// </summary>
-    public static class LoadBubbleExtensions
+    /// <param name="bubble"></param>
+    /// <returns></returns>
+    public static LoadStage ToLoadStage(this LoadBubble bubble)
     {
-        /// <summary>
-        /// Converts a <see cref="LoadBubble"/> into a <see cref="LoadStage"/>
-        /// </summary>
-        /// <param name="bubble"></param>
-        /// <returns></returns>
-        public static LoadStage ToLoadStage(this LoadBubble bubble)
+        return bubble switch
         {
-            switch (bubble)
-            {
-                case LoadBubble.Raw:
-                    return LoadStage.AdjustRaw;
-                case LoadBubble.Staging:
-                    return LoadStage.AdjustStaging;
-                case LoadBubble.Live:
-                    return LoadStage.PostLoad;
-                case LoadBubble.Archive:
-                    throw new Exception("LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage");
-                default:
-                    throw new ArgumentOutOfRangeException("bubble");
-            }
-        }
+            LoadBubble.Raw => LoadStage.AdjustRaw,
+            LoadBubble.Staging => LoadStage.AdjustStaging,
+            LoadBubble.Live => LoadStage.PostLoad,
+            LoadBubble.Archive => throw new Exception(
+                "LoadBubble.Archive refers to _Archive tables, therefore it cannot be translated into a LoadStage"),
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
     }
 }

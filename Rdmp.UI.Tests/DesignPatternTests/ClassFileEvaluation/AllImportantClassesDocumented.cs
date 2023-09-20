@@ -11,138 +11,145 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 
-namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
+namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
+
+public partial class AllImportantClassesDocumented
 {
-    public class AllImportantClassesDocumented
+    private List<string> _csFilesList;
+    private List<string> problems = new();
+    private int commentedCount;
+    private int commentLineCount;
+    private bool strict = false;
+
+    private string[] excusedClassFileNames =
     {
-        private List<string> _csFilesList;
-        private List<string> problems = new List<string>();
-        private int commentedCount = 0;
-        private int commentLineCount = 0;
-        private bool strict = false;
+        "Class1.cs",
+        "Program.cs",
+        "PluginNugetClass.cs",
+        "PluginTest.cs",
+        "PluginUI.cs",
 
-        private string[] excusedClassFileNames =
+        //todo resolve the following:
+        "ReleasePipeline.cs", //needs refactoring
+        "ReleaseUseCase.cs", //needs refactoring
+        "FixedDataReleaseSource.cs", //needs refactoring
+        "CacheFetchRequestProvider.cs", //why do we need this class?
+
+        "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
+        "Relationship.cs", //deprecated by the anonymisation object sharing framework?
+        "RelationshipMap.cs" //deprecated by the anonymisation object sharing framework?
+    };
+
+    public void FindProblems(List<string> csFilesList)
+    {
+        _csFilesList = csFilesList;
+
+        foreach (var f in _csFilesList)
         {
-            "Class1.cs",
-            "Program.cs",
-            "PluginNugetClass.cs",
-            "PluginTest.cs",
-            "PluginUI.cs",
+            if (excusedClassFileNames.Contains(Path.GetFileName(f)))
+                continue;
 
-            //todo resolve the following:
-            "ReleasePipeline.cs", //needs refactoring
-            "ReleaseUseCase.cs",//needs refactoring
-            "FixedDataReleaseSource.cs",//needs refactoring
-            "CacheFetchRequestProvider.cs", //why do we need this class?
-            
-            "SharedObjectImporter.cs", //deprecated by the anonymisation object sharing framework?
-            "Relationship.cs",//deprecated by the anonymisation object sharing framework?
-            "RelationshipMap.cs"//deprecated by the anonymisation object sharing framework?
+            var text = File.ReadAllText(f);
 
-        };
+            var startAt = text.IndexOf("public class", StringComparison.Ordinal);
+            if (startAt == -1)
+                startAt = text.IndexOf("public interface", StringComparison.Ordinal);
 
-        public void FindProblems(List<string> csFilesList)
-        {
-            _csFilesList = csFilesList;
-
-            foreach (var f in _csFilesList)
+            if (startAt != -1)
             {
-                if(excusedClassFileNames.Contains(Path.GetFileName(f)))
+                var beforeDeclaration = text[..startAt];
+
+                var mNamespace = NamespaceRegex().Match(beforeDeclaration);
+
+                if (!mNamespace.Success)
+                    Assert.Fail($"No namespace found in class file {f}"); //no namespace in class!
+
+                var nameSpace = mNamespace.Groups[1].Value;
+
+                //skip tests
+                if (nameSpace.Contains("Tests"))
                     continue;
-                
-                var text = File.ReadAllText(f);
 
-                int startAt = text.IndexOf("public class");
-                if(startAt == -1)
-                    startAt = text.IndexOf("public interface");
+                if (nameSpace.Contains("TestData.Relational")) //this has never been tested / used
+                    continue;
 
-                if (startAt != -1)
+                if (nameSpace.Contains("CohortManagerLibrary.FreeText")) //this has never been tested / used
+                    continue;
+
+                if (nameSpace.Contains("CatalogueWebService")) //this has never been tested / used
+                    continue;
+
+                if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
+                    continue;
+
+                var match = SummaryTagRegex().Match(beforeDeclaration);
+                var matchInherit = InheritDocRegex().Match(beforeDeclaration);
+
+                //are there comments?
+                if (!match.Success && !matchInherit.Success)
                 {
-                    var beforeDeclaration = text.Substring(0, startAt);
-
-                    var mNamespace = Regex.Match(beforeDeclaration, "namespace (.*)");
-
-                    if(!mNamespace.Success)
-                        Assert.Fail("No namespace found in class file " + f);//no namespace in class!
-                    
-                    var nameSpace= mNamespace.Groups[1].Value;
-
-                    //skip tests
-                    if (nameSpace.Contains("Tests"))
-                        continue;
-
-                    if (nameSpace.Contains("TestData.Relational"))//this has never been tested / used
-                        continue;
-
-                    if (nameSpace.Contains("CohortManagerLibrary.FreeText"))//this has never been tested / used
-                        continue;
-
-                    if (nameSpace.Contains("CatalogueWebService"))//this has never been tested / used
-                        continue;
-
-                    if (nameSpace.Contains("CommitAssemblyEmptyAssembly"))
-                        continue;
-
-                    var match = Regex.Match(beforeDeclaration, "<summary>(.*)</summary>", RegexOptions.Singleline);
-                    var matchInherit = Regex.Match(beforeDeclaration, "<inheritdoc", RegexOptions.Singleline);
-
-                    //are there comments?
-                    if (!match.Success && !matchInherit.Success)
+                    //no!
+                    if (!strict) //are we being strict?
                     {
-                        //no!
-                        if (!strict) //are we being strict?
-                        {
-                            //User interface namespaces/related classes
-                            if (nameSpace.Contains("Nodes"))
-                                continue;
-                            if (nameSpace.Contains("CommandExecution"))
-                                continue;
-                            
-                            if (nameSpace.Contains("Copying"))
-                                continue;
-                            if (nameSpace.Contains("Icons"))
-                                continue;
+                        //User interface namespaces/related classes
+                        if (nameSpace.Contains("Nodes"))
+                            continue;
+                        if (nameSpace.Contains("CommandExecution"))
+                            continue;
 
-                            if (nameSpace.Contains("Diagnostics"))
-                                continue;
+                        if (nameSpace.Contains("Copying"))
+                            continue;
+                        if (nameSpace.Contains("Icons"))
+                            continue;
 
-                            if (nameSpace.Contains("Dashboard"))
-                                continue;
+                        if (nameSpace.Contains("Diagnostics"))
+                            continue;
 
-                            if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
-                                continue;
-                            
-                            //Provider specific implementations of stuff that is documented at interface level
-                            if (nameSpace.Contains(".Discovery.Microsoft") ||nameSpace.Contains(".Discovery.Oracle") ||nameSpace.Contains(".Discovery.MySql"))
-                                continue;
-                        }
+                        if (nameSpace.Contains("Dashboard"))
+                            continue;
 
-                        int idxLastSlash = f.LastIndexOf("\\");
+                        if (nameSpace.Contains("MapsDirectlyToDatabaseTableUI"))
+                            continue;
 
-                        if(idxLastSlash != -1)
-                            problems.Add(String.Format("FAIL UNDOCUMENTED CLASS:{0} ({1})", 
-                                f.Substring(f.LastIndexOf("\\") + 1),
-                                f.Substring(0, idxLastSlash))
-                                );
-                        else
-                            problems.Add("FAIL UNDOCUMENTED CLASS:" + f);
+                        //Provider specific implementations of stuff that is documented at interface level
+                        if (nameSpace.Contains(".Discovery.Microsoft") || nameSpace.Contains(".Discovery.Oracle") ||
+                            nameSpace.Contains(".Discovery.MySql"))
+                            continue;
                     }
-                    else
-                    {
-                        var lines = match.Groups[1].Value.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Count();
-                        commentLineCount += lines;
-                        commentedCount++;
-                    }
+
+                    var idxLastSlash = f.LastIndexOf("\\", StringComparison.Ordinal);
+
+                    problems.Add(
+                        idxLastSlash != -1
+                            ? $"FAIL UNDOCUMENTED CLASS:{f[(f.LastIndexOf("\\", StringComparison.Ordinal) + 1)..]} ({f[..idxLastSlash]})"
+                            : $"FAIL UNDOCUMENTED CLASS:{f}"
+                    );
+                }
+                else
+                {
+                    var lines = match.Groups[1].Value
+                        .Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries).Length;
+                    commentLineCount += lines;
+                    commentedCount++;
                 }
             }
-            
-            foreach (string fail in problems)
-                Console.WriteLine(fail);
-
-            Console.WriteLine("Total Documented Classes:" + commentedCount);
-            Console.WriteLine("Total Lines of Classes Documentation:" + commentLineCount);
-            
-            Assert.AreEqual(0, problems.Count);
         }
+
+        foreach (var fail in problems)
+            Console.WriteLine(fail);
+
+        Console.WriteLine($"Total Documented Classes:{commentedCount}");
+        Console.WriteLine($"Total Lines of Classes Documentation:{commentLineCount}");
+
+        Assert.AreEqual(0, problems.Count);
     }
+
+    [GeneratedRegex("namespace (.*)")]
+    private static partial Regex NamespaceRegex();
+
+    [GeneratedRegex("<summary>(.*)</summary>", RegexOptions.Singleline)]
+    private static partial Regex SummaryTagRegex();
+
+    [GeneratedRegex("<inheritdoc", RegexOptions.Singleline)]
+    private static partial Regex InheritDocRegex();
 }

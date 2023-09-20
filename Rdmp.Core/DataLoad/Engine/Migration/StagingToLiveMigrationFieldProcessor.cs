@@ -12,109 +12,116 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 
-namespace Rdmp.Core.DataLoad.Engine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration;
+
+/// <summary>
+/// Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields roles such that artifact fields
+/// that are generated as part of the load (i.e. computed columns) denoted by the prefix hic_ are not treated as differences in the dataset.  This means
+/// that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not be identified as UPDATES to the
+/// LIVE data table and will be ignored (assuming that there are no differences in other fields that are Diffed).
+/// </summary>
+public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
 {
-    /// <summary>
-    /// Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields roles such that artifact fields
-    /// that are generated as part of the load (i.e. computed columns) denoted by the prefix hic_ are not treated as differences in the dataset.  This means
-    /// that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not be identified as UPDATES to the 
-    /// LIVE data table and will be ignored (assuming that there are no differences in other fields that are Diffed).
-    /// </summary>
-    public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
+    private readonly Regex _updateButDoNotDiffExtended;
+    private readonly Regex _ignore;
+    private readonly ColumnInfo[] _alsoIgnore;
+
+    /// <inheritdoc/>
+    public bool NoBackupTrigger { get; set; }
+
+    public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore = null,
+        ColumnInfo[] alsoIgnore = null)
     {
-        private readonly Regex _updateButDoNotDiffExtended;
-        private readonly Regex _ignore;
-        private readonly ColumnInfo[] _alsoIgnore;
+        _updateButDoNotDiffExtended = updateButDoNotDiff;
+        _ignore = ignore;
+        _alsoIgnore = alsoIgnore;
+    }
 
-        /// <inheritdoc/>
-        public bool NoBackupTrigger {get;set;}
+    public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
+    {
+        if (NoBackupTrigger)
+            return;
 
-        public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore=null, ColumnInfo[] alsoIgnore = null)
+        if (!destinationFields.Any(f =>
+                f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
+            throw new MissingFieldException(
+                $"Destination (Live) database table is missing field:{SpecialFieldNames.DataLoadRunID}");
+
+        if (!destinationFields.Any(f =>
+                f.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom, StringComparison.CurrentCultureIgnoreCase)))
+            throw new MissingFieldException(
+                $"Destination (Live) database table is missing field:{SpecialFieldNames.ValidFrom}");
+    }
+
+    public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff,
+        List<DiscoveredColumn> fieldsToUpdate)
+    {
+        if (IgnoreColumnInfo(field))
+            return;
+
+        if (Ignore(field))
+            return;
+
+        //it is a hic internal field but not one of the overwritten, standard ones
+        if (SpecialFieldNames.IsHicPrefixed(field)
+            ||
+            UpdateOnly(field))
+
         {
-            _updateButDoNotDiffExtended = updateButDoNotDiff;
-            _ignore = ignore;
-            _alsoIgnore = alsoIgnore;
+            fieldsToUpdate.Add(field);
         }
-
-        public void ValidateFields(DiscoveredColumn[] sourceFields, DiscoveredColumn[] destinationFields)
+        else
         {
-            if(NoBackupTrigger)
-                return;
-
-            if (!destinationFields.Any(f => f.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID, StringComparison.CurrentCultureIgnoreCase)))
-                throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.DataLoadRunID);
-
-            if (!destinationFields.Any(f=>f.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom,StringComparison.CurrentCultureIgnoreCase)))
-                throw new MissingFieldException("Destination (Live) database table is missing field:" + SpecialFieldNames.ValidFrom);
+            //it is not a hic internal field
+            fieldsToDiff.Add(field);
+            fieldsToUpdate.Add(field);
         }
+    }
 
-        public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
-        {
-            if(IgnoreColumnInfo(field))
-                return;
+    private bool IgnoreColumnInfo(DiscoveredColumn field)
+    {
+        if (_alsoIgnore == null)
+            return false;
 
-            if(Ignore(field))
-                return;
+        // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
 
-            //it is a hic internal field but not one of the overwritten, standard ones
-            if (SpecialFieldNames.IsHicPrefixed(field)
-                || 
-                UpdateOnly(field))
-            
-                fieldsToUpdate.Add(field);
-            else
-            {
-                //it is not a hic internal field
-                fieldsToDiff.Add(field);
-                fieldsToUpdate.Add(field);
-            }
-        }
+        //its a column we were told to ignore
+        var match = _alsoIgnore.FirstOrDefault(c =>
+            c.GetRuntimeName().Equals(field.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+            c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase)
+        );
 
-        private bool IgnoreColumnInfo(DiscoveredColumn field)
-        {
-            if(_alsoIgnore == null)
-                return false;
+        return match != null && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted")
+            : match != null;
+    }
 
-            // TODO: if a load targets 2 tables with the same name in different databases and one has a column marked ignore it could be ignored in both during load.  Note that `field` parameter is the from column not the to column
-            
-            //its a column we were told to ignore
-            ColumnInfo match = _alsoIgnore.FirstOrDefault(c=>
-                c.GetRuntimeName().Equals(field.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase) &&
-                c.TableInfo.GetRuntimeName().Equals(field.Table.GetRuntimeName(),StringComparison.CurrentCultureIgnoreCase)
-            );
+    private bool Ignore(DiscoveredColumn field)
+    {
+        if (_ignore == null)
+            return false;
 
-            if(match != null && field.IsPrimaryKey)
-                throw new NotSupportedException($"ColumnInfo {match} is marked {nameof(ColumnInfo.IgnoreInLoads)} but is a Primary Key column this is not permitted");
+        //its a global ignore based on regex ignore pattern?
+        var match = _ignore.IsMatch(field.GetRuntimeName());
 
-            return match != null;
-        }
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"Ignore Pattern {_ignore} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
+    }
 
-        private bool Ignore(DiscoveredColumn field)
-        {
-            if(_ignore == null)
-                return false;
+    private bool UpdateOnly(DiscoveredColumn field)
+    {
+        if (_updateButDoNotDiffExtended == null)
+            return false;
 
-            //its a global ignore based on regex ignore pattern?
-            bool match = _ignore.IsMatch(field.GetRuntimeName());
+        //its a supplemental ignore e.g. MessageGuid
+        var match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
 
-            if(match && field.IsPrimaryKey)
-                throw new NotSupportedException("Ignore Pattern " + _ignore + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
-
-            return match;
-        }
-
-        private bool UpdateOnly(DiscoveredColumn field)
-        {
-            if(_updateButDoNotDiffExtended == null)
-                return false;
-
-            //its a supplemental ignore e.g. MessageGuid
-            bool match = _updateButDoNotDiffExtended.IsMatch(field.GetRuntimeName());
-
-            if(match && field.IsPrimaryKey)
-                throw new NotSupportedException("UpdateButDoNotDiff Pattern " + _updateButDoNotDiffExtended + " matched Primary Key column '" + field.GetRuntimeName() + "' this is not permitted");
-
-            return match;
-        }
+        return match && field.IsPrimaryKey
+            ? throw new NotSupportedException(
+                $"UpdateButDoNotDiff Pattern {_updateButDoNotDiffExtended} matched Primary Key column '{field.GetRuntimeName()}' this is not permitted")
+            : match;
     }
 }

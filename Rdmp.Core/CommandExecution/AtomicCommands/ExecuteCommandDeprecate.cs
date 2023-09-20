@@ -4,79 +4,63 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Settings;
-using System;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandDeprecate : BasicCommandExecution
 {
+    private readonly IMightBeDeprecated[] _o;
+    private readonly bool _desiredState;
 
-    public class ExecuteCommandDeprecate : BasicCommandExecution, IAtomicCommand
+    [UseWithObjectConstructor]
+    public ExecuteCommandDeprecate(IBasicActivateItems itemActivator,
+        [DemandsInitialization("The object you want to deprecate/undeprecate")]
+        IMightBeDeprecated[] o,
+        [DemandsInitialization("True to deprecate.  False to undeprecate", DefaultValue = true)]
+        bool desiredState = true) : base(itemActivator)
     {
-        private readonly IMightBeDeprecated[] _o;
-        private bool _desiredState;
-      
-        [UseWithObjectConstructor]
-        public ExecuteCommandDeprecate(IBasicActivateItems itemActivator, 
-            [DemandsInitialization("The object you want to deprecate/undeprecate")]
-            IMightBeDeprecated[] o, 
-            [DemandsInitialization("True to deprecate.  False to undeprecate",DefaultValue = true)]
-            bool desiredState = true) : base(itemActivator)
+        _o = o;
+        _desiredState = desiredState;
+    }
+
+    public override string GetCommandName() => !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName :
+        _desiredState ? "Deprecate" : "Undeprecate";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_o == null || _o.Length == 0)
+            return;
+
+        if (ExecuteWithCommit(ExecuteImpl, GetDescription(), _o)) Publish((DatabaseEntity)_o[0]);
+    }
+
+    private void ExecuteImpl()
+    {
+        foreach (var o in _o)
         {
-            _o = o;
-            _desiredState = desiredState;
+            o.IsDeprecated = _desiredState;
+            o.SaveToDatabase();
         }
 
-        public override string GetCommandName()
+        if (!BasicActivator.IsInteractive || _o.Length != 1 || _o[0] is not Catalogue || !_desiredState ||
+            !BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement")) return;
+        var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
         {
-            if (!string.IsNullOrEmpty(OverrideCommandName))
-                return OverrideCommandName;
+            PromptToPickReplacement = true
+        };
+        cmd.Execute();
+    }
 
-            return _desiredState ? "Deprecate" : "Undeprecate";
-        }
+    private string GetDescription()
+    {
+        var verb = _desiredState ? "Deprecate" : "UnDeprecate";
+        var noun = _o.Length == 1 ? _o[0].ToString() : $"{_o.Length} objects";
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            if(_o == null || _o.Length == 0)
-                return;
-
-            if(ExecuteWithCommit(ExecuteImpl, GetDescription(),_o))
-            {
-                Publish((DatabaseEntity)_o[0]);
-            }
-        }
-
-        private void ExecuteImpl()
-        {
-            foreach (var o in _o)
-            {
-                o.IsDeprecated = _desiredState;
-                o.SaveToDatabase();
-            }
-
-            if (BasicActivator.IsInteractive && _o.Length == 1 && _o[0] is Catalogue)
-            {
-                if (_desiredState == true && BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement"))
-                {
-                    var cmd = new ExecuteCommandReplacedBy(BasicActivator, _o[0], null)
-                    {
-                        PromptToPickReplacement = true
-                    };
-                    cmd.Execute();
-                }
-            }
-        }
-
-        private string GetDescription()
-        {
-            var verb = _desiredState ? "Deprecate" : "UnDeprecate";
-            var noun = _o.Length == 1 ? _o[0].ToString() : _o.Length + " objects";
-
-            return $"{verb} {noun}";
-        }
+        return $"{verb} {noun}";
     }
 }

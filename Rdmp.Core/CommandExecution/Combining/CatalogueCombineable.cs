@@ -9,59 +9,57 @@ using System.Runtime.CompilerServices;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
+/// </summary>
+public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
+    public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
+    public Catalogue Catalogue { get; set; }
+
+    public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler
+        ResolveMultipleExtractionIdentifiers
+    { get; set; }
+
+    public IHasFolder Folderable => Catalogue;
+
+    public CatalogueCombineable(Catalogue catalogue)
+    {
+        Catalogue = catalogue;
+        ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .Any(e => e.IsExtractionIdentifier);
+    }
+
+    public string GetSqlString() => null;
 
     /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
+    /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
+    /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
     /// </summary>
-    public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
+    /// <param name="activator"></param>
+    /// <param name="cohortAggregateContainer"></param>
+    /// <param name="importMandatoryFilters"></param>
+    /// <param name="caller"></param>
+    /// <returns></returns>
+    public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
+        CohortAggregateContainer cohortAggregateContainer, bool importMandatoryFilters = true,
+        [CallerMemberName] string caller = null)
     {
-        public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
-        public Catalogue Catalogue { get; set; }
-        public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
+        var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-        public IHasFolder Folderable => Catalogue;
+        return cic == null ? null : GenerateAggregateConfigurationFor(activator, cic, importMandatoryFilters);
+    }
 
-        public CatalogueCombineable(Catalogue catalogue)
-        {
-            Catalogue = catalogue;
-            ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any(e => e.IsExtractionIdentifier);
-        }
-
-        public string GetSqlString()
-        {
-            return null;
-        }
-
-        /// <summary>
-        /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
-        /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="cohortAggregateContainer"></param>
-        /// <param name="importMandatoryFilters"></param>
-        /// <param name="caller"></param>
-        /// <returns></returns>
-        public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
-        {
-            var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
-
-            if (cic == null)
-                return null;
-
-            return GenerateAggregateConfigurationFor(activator,cic, importMandatoryFilters);
-        }
-
-        public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
-            CohortIdentificationConfiguration cic, bool importMandatoryFilters = true,
-            [CallerMemberName] string caller = null)
-        {
-            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue,
-                ResolveMultipleExtractionIdentifiers ??
-                ((a,b)=> CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(activator,a, b)),
+    public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
+        CohortIdentificationConfiguration cic, bool importMandatoryFilters = true,
+        [CallerMemberName] string caller = null)
+    {
+        var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue,
+            ResolveMultipleExtractionIdentifiers ??
+            ((a, b) => CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(activator, a, b)),
             importMandatoryFilters);
-            return new AggregateConfigurationCombineable(newAggregate);
-        }
+        return new AggregateConfigurationCombineable(newAggregate);
     }
 }

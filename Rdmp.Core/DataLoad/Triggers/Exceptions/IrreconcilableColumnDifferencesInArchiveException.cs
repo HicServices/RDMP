@@ -4,16 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataLoad.Triggers.Exceptions
+namespace Rdmp.Core.DataLoad.Triggers.Exceptions;
+
+/// <summary>
+/// Thrown when an _Archive table does not match the live table (See TriggerImplementer)
+/// </summary>
+public class IrreconcilableColumnDifferencesInArchiveException : TriggerException
 {
-    /// <summary>
-    /// Thrown when an _Archive table does not match the live table (See TriggerImplementer)
-    /// </summary>
-    public class IrreconcilableColumnDifferencesInArchiveException : TriggerException
+    public IrreconcilableColumnDifferencesInArchiveException(string s) : base(s)
     {
-        public IrreconcilableColumnDifferencesInArchiveException(string s):base(s)
-        {
-            
-        }
     }
 }

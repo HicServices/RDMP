@@ -11,47 +11,45 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+/// <summary>
+/// Runner for Cohort Creation Tasks.
+/// </summary>
+public class CohortCreationRunner : Runner
 {
-    /// <summary>
-    /// Runner for Cohort Creation Tasks.
-    /// </summary>
-    public class CohortCreationRunner : Runner
+    private readonly CohortCreationOptions _options;
+    private ExtractionConfiguration _configuration;
+
+    public CohortCreationRunner(CohortCreationOptions options)
     {
-        private readonly CohortCreationOptions _options;
-        private ExtractionConfiguration _configuration;
+        _options = options;
+        _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),
+            _options.ExtractionConfiguration);
+    }
 
-        public CohortCreationRunner(CohortCreationOptions options)
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
+        if (HasConfigurationPreviouslyBeenReleased())
+            throw new Exception("Extraction Configuration has already been released");
+
+        if (_options.Command == CommandLineActivity.run)
         {
-            _options = options;
-            _configuration = GetObjectFromCommandLineString<ExtractionConfiguration>(_options.GetRepositoryLocator(),_options.ExtractionConfiguration);
+            var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
+            engine.Execute();
         }
 
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-            if (HasConfigurationPreviouslyBeenReleased())
-                throw new Exception("Extraction Configuration has already been released");
+        return 0;
+    }
 
-            if (_options.Command == CommandLineActivity.run)
-            {
-                var engine = new CohortRefreshEngine(new ThrowImmediatelyDataLoadEventListener(), _configuration);
-                engine.Execute();
-            }
+    private bool HasConfigurationPreviouslyBeenReleased()
+    {
+        var previouslyReleasedStuff = _configuration.ReleaseLog;
 
-            return 0;
-        }
-
-        private bool HasConfigurationPreviouslyBeenReleased()
-        {
-            var previouslyReleasedStuff = _configuration.ReleaseLog;
-
-            if (previouslyReleasedStuff.Any())
-                return true;
-
-            return false;
-        }
+        return previouslyReleasedStuff.Any();
     }
 }

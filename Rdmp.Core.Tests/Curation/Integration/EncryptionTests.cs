@@ -9,212 +9,220 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class EncryptionTests : DatabaseTests
 {
-    public class EncryptionTests : DatabaseTests
+    [Test]
+    public void EncryptAndThenDecryptString()
     {
-        [Test]
-        public void EncryptAndThenDecryptString()
+        var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
+
+        const string toEncrypt = "Amagad";
+        var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
+
+        Assert.AreNotEqual(toEncrypt, encryptedBinaryString);
+        Assert.AreEqual(toEncrypt, encrypter.Decrypt(encryptedBinaryString));
+    }
+
+    [Test]
+    public void CheckIfThingsAreEncryptedOrNot()
+    {
+        var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
+
+        const string toEncrypt = "Amagad";
+        var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
+
+        Console.WriteLine($"Encrypted password was:{encryptedBinaryString}");
+
+        Assert.True(encrypter.IsStringEncrypted(encryptedBinaryString));
+        Assert.False(encrypter.IsStringEncrypted(toEncrypt));
+    }
+
+
+    [Test]
+    public void MultiEncryptingShouldntBreakIt()
+    {
+        //cleanup
+        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+                     .Where(c => c.Name.Equals("frankieFran")))
+            c.DeleteInDatabase();
+
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        try
         {
+            //as soon as you set a password it should be encrypted by the credentials class in memory
+            creds.Password = "fish";
 
-            var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
+            Assert.AreNotEqual("fish", creds.Password);
+            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
 
-            string toEncrypt = "Amagad";
-            string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
+            //set the password to the encrypted password
+            creds.Password = creds.Password;
 
-            Console.WriteLine("Encrypted password was:" +encrytpedBinaryString);
-            Assert.AreNotEqual(toEncrypt, encrytpedBinaryString);
-            Assert.AreEqual(toEncrypt,encrypter.Decrypt(encrytpedBinaryString));
+            //should still work
+            Assert.AreNotEqual("fish", creds.Password);
+            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
         }
-
-        [Test]
-        public void CheckIfThingsAreEncryptedOrNot()
+        finally
         {
-
-            var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
-
-            string toEncrypt = "Amagad";
-            string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
-
-            Console.WriteLine("Encrypted password was:" + encrytpedBinaryString);
-            
-            Assert.True(encrypter.IsStringEncrypted(encrytpedBinaryString));
-            Assert.False(encrypter.IsStringEncrypted(toEncrypt));
+            creds.DeleteInDatabase();
         }
+    }
 
 
-        [Test]
-        public void MultiEncryptingShouldntBreakIt()
+    [Test]
+    public void DataAccessCredentialsEncryption()
+    {
+        //cleanup
+        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+                     .Where(c => c.Name.Equals("frankieFran")))
+            c.DeleteInDatabase();
+
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        try
         {
-            //cleanup
-            foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
-                c.DeleteInDatabase();
+            //as soon as you set a password it should be encrypted by the credentials class in memory
+            creds.Password = "fish";
+            Assert.AreNotEqual("fish", creds.Password);
+            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
 
-            DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
-            try
+            //save it
+            creds.SaveToDatabase();
+            using (var con = CatalogueTableRepository.GetConnection())
             {
-                //as soon as you set a password it should be encrypted by the credentials class in memory
-                creds.Password = "fish";
-                
-                Assert.AreNotEqual("fish", creds.Password);
-                Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
-                
-                //set the password to the encrypted password
-                creds.Password = creds.Password;
-
-                //should still work
-                Assert.AreNotEqual("fish", creds.Password);
-                Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
-            }
-            finally
-            {
-                creds.DeleteInDatabase();
-            }
-        }
-
-
-        [Test]
-        public void DataAccessCredentialsEncryption()
-        {
-            //cleanup
-            foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
-                c.DeleteInDatabase();
-
-            DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
-            try
-            {
-                //as soon as you set a password it should be encrypted by the credentials class in memory
-                creds.Password = "fish";
-                Assert.AreNotEqual("fish",creds.Password);
-                Assert.AreEqual("fish", creds.GetDecryptedPassword());//but we should still be able to decrypt it
-            
-                //save it
-                creds.SaveToDatabase();
-                using (var con = CatalogueTableRepository.GetConnection())
+                string value;
+                using (var cmd = DatabaseCommandHelper.GetCommand(
+                           "Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection,
+                           con.Transaction))
                 {
-                    string value;
-                    using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
-                        value = (string) cmd.ExecuteScalar();
-
-                    //ensure password in database is encrypted
-                    Assert.AreNotEqual("fish",value);
-                    Assert.AreEqual(creds.Password,value);//does value in database match value in memory (encrypted)
+                    value = (string)cmd.ExecuteScalar();
                 }
 
-                //get a new copy out of the database
-                DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-                Assert.AreEqual(creds.Password,newCopy.Password);//passwords should match
-                Assert.AreNotEqual("fish",creds.Password);//neither should be fish
-                Assert.AreNotEqual("fish", newCopy.Password);
-            
-                //both should decrypt to the same value (fish
-                Assert.AreEqual("fish",creds.GetDecryptedPassword());
-                Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
+                //ensure password in database is encrypted
+                Assert.AreNotEqual("fish", value);
+                Assert.AreEqual(creds.Password, value); //does value in database match value in memory (encrypted)
+            }
 
-            }
-            finally
-            {
-                creds.DeleteInDatabase();
-            }
+            //get a new copy out of the database
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            Assert.AreEqual(creds.Password, newCopy.Password); //passwords should match
+            Assert.AreNotEqual("fish", creds.Password); //neither should be fish
+            Assert.AreNotEqual("fish", newCopy.Password);
+
+            //both should decrypt to the same value (fish
+            Assert.AreEqual("fish", creds.GetDecryptedPassword());
+            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
         }
-
-        [Test]
-        [TestCase("bob")]
-        [TestCase("  bob  ")]
-        [TestCase("  b@!#*$(!#W$999sdf0------------ob  ")]
-        public void TestFreakyPasswordValues(string freakyPassword)
+        finally
         {
-            //cleanup
-            foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
-                c.DeleteInDatabase();
+            creds.DeleteInDatabase();
+        }
+    }
 
-            DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
-            try
+    [Test]
+    [TestCase("bob")]
+    [TestCase("  bob  ")]
+    [TestCase("  b@!#*$(!#W$999sdf0------------ob  ")]
+    public void TestFreakyPasswordValues(string freakyPassword)
+    {
+        //cleanup
+        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+                     .Where(c => c.Name.Equals("frankieFran")))
+            c.DeleteInDatabase();
+
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        try
+        {
+            //as soon as you set a password it should be encrypted by the credentials class in memory
+            creds.Password = freakyPassword;
+            Assert.AreNotEqual(freakyPassword, creds.Password);
+            Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword()); //but we should still be able to decrypt it
+
+            //save it
+            creds.SaveToDatabase();
+            using (var con = CatalogueTableRepository.GetConnection())
             {
-                //as soon as you set a password it should be encrypted by the credentials class in memory
-                creds.Password = freakyPassword;
-                Assert.AreNotEqual(freakyPassword, creds.Password);
-                Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword());//but we should still be able to decrypt it
-
-                //save it
-                creds.SaveToDatabase();
-                using (var con = CatalogueTableRepository.GetConnection())
+                string value;
+                using (var cmd = DatabaseCommandHelper.GetCommand(
+                           "Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection,
+                           con.Transaction))
                 {
-                    string value;
-                    using(var cmd = DatabaseCommandHelper.GetCommand("Select Password from DataAccessCredentials where Name='frankieFran'", con.Connection, con.Transaction))
-                        value = (string) cmd.ExecuteScalar();
-
-                    //ensure password in database is encrypted
-                    Assert.AreNotEqual(freakyPassword, value);
-                    Assert.AreEqual(creds.Password, value);//does value in database match value in memory (encrypted)
+                    value = (string)cmd.ExecuteScalar();
                 }
 
-                //get a new copy out of the database
-                DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-                Assert.AreEqual(creds.Password, newCopy.Password);//passwords should match
-                Assert.AreNotEqual(freakyPassword, creds.Password);//neither should be fish
-                Assert.AreNotEqual(freakyPassword, newCopy.Password);
-
-                //both should decrypt to the same value (fish
-                Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword());
-                Assert.AreEqual(freakyPassword, newCopy.GetDecryptedPassword());
-
+                //ensure password in database is encrypted
+                Assert.AreNotEqual(freakyPassword, value);
+                Assert.AreEqual(creds.Password, value); //does value in database match value in memory (encrypted)
             }
-            finally
-            {
-                creds.DeleteInDatabase();
-            }
+
+            //get a new copy out of the database
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
+            Assert.AreEqual(creds.Password, newCopy.Password); //passwords should match
+            Assert.AreNotEqual(freakyPassword, creds.Password); //neither should be fish
+            Assert.AreNotEqual(freakyPassword, newCopy.Password);
+
+            //both should decrypt to the same value (fish
+            Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword());
+            Assert.AreEqual(freakyPassword, newCopy.GetDecryptedPassword());
         }
-
-
-        [Test]
-        public void MigrationOfOldPasswordsTest()
+        finally
         {
-            //cleanup
-            foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(c => c.Name.Equals("frankieFran")))
-                c.DeleteInDatabase();
-
-            //create a new credentials
-            DataAccessCredentials creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
-            try
-            {
-                //update the database to an unencrypted password (like would be the case before software patch)
-                using (var con = CatalogueTableRepository.GetConnection())
-                {
-                    using (var cmd = DatabaseCommandHelper.GetCommand(
-                        "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
-                        con.Transaction))
-                        Assert.AreEqual(1, cmd.ExecuteNonQuery());
-                    
-                }
-
-                DataAccessCredentials newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-                
-                Assert.AreEqual("fish",newCopy.GetDecryptedPassword());
-                Assert.AreNotEqual("fish", newCopy.Password);
-            }
-            finally
-            {
-                creds.DeleteInDatabase();
-            }
+            creds.DeleteInDatabase();
         }
+    }
 
-        [Test]
-        public void PasswordTooLong()
+
+    [Test]
+    public void MigrationOfOldPasswordsTest()
+    {
+        //cleanup
+        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+                     .Where(c => c.Name.Equals("frankieFran")))
+            c.DeleteInDatabase();
+
+        //create a new credentials
+        var creds = new DataAccessCredentials(CatalogueRepository, "frankieFran");
+        try
         {
-            if(RepositoryLocator.CatalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation em && !string.IsNullOrWhiteSpace(em.GetKeyFileLocation()))
-                Assert.Inconclusive("Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
+            //update the database to an unencrypted password (like would be the case before software patch)
+            using (var con = CatalogueTableRepository.GetConnection())
+            {
+                using var cmd = DatabaseCommandHelper.GetCommand(
+                    "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
+                    con.Transaction);
+                Assert.AreEqual(1, cmd.ExecuteNonQuery());
+            }
 
-            string password = "a";
-            for (int i = 0; i < 200; i++)
-                password += "a";
+            var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
 
-            var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
-            Assert.AreEqual("The free text Value supplied to this class was too long to be encrypted (Length of string was 201)", ex.Message);
+            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
+            Assert.AreNotEqual("fish", newCopy.Password);
         }
-        
+        finally
+        {
+            creds.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void PasswordTooLong()
+    {
+        if (RepositoryLocator.CatalogueRepository.EncryptionManager is PasswordEncryptionKeyLocation em &&
+            !string.IsNullOrWhiteSpace(em.GetKeyFileLocation()))
+            Assert.Inconclusive(
+                "Could not run test because there is already an encryption key set up.  Likely one that handles very long passwords");
+
+        var password = "a";
+        for (var i = 0; i < 200; i++)
+            password += "a";
+
+        var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
+        Assert.AreEqual(
+            "The free text Value supplied to this class was too long to be encrypted (Length of string was 201)",
+            ex.Message);
     }
 }

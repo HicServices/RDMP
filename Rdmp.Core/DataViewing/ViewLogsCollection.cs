@@ -4,59 +4,46 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.DataAccess;
-using System.Collections.Generic;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Collection that builds SQL for querying the logging database tables
+/// </summary>
+public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    /// <summary>
-    /// Collection that builds SQL for querying the logging database tables
-    /// </summary>
-    public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    private ExternalDatabaseServer _loggingServer;
+    private LogViewerFilter _filter;
+
+    public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
-        private ExternalDatabaseServer _loggingServer;
-        private LogViewerFilter _filter;
+        _loggingServer = loggingServer;
+        _filter = filter;
+    }
 
-        public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
-        {
-            _loggingServer = loggingServer;
-            _filter = filter;
-        }
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
+    public IDataAccessPoint GetDataAccessPoint() => _loggingServer;
 
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _loggingServer.GetQuerySyntaxHelper();
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return _loggingServer;
-        }
+    public string GetSql() =>
+        $@"Select * from {_filter.LoggingTable}
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return _loggingServer.GetQuerySyntaxHelper();
-        }
+{_filter.GetWhereSql()}";
 
-        public string GetSql()
-        {
-            return $@"Select * from {_filter.LoggingTable }
+    public string GetTabName() => _filter.ToString();
 
-{_filter.GetWhereSql() }";
-        }
-
-        public string GetTabName()
-        {
-            return _filter.ToString();
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return _loggingServer;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return _loggingServer;
     }
 }

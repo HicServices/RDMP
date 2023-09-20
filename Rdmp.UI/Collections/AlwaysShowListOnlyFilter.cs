@@ -7,24 +7,20 @@
 using System.Collections.Generic;
 using BrightIdeasSoftware;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// Filter which always shows a given list of objects (the allowList).  This class is an <see cref="IModelFilter"/>
+/// for use with ObjectListView
+/// </summary>
+public class AlwaysShowListOnlyFilter : IModelFilter
 {
-    /// <summary>
-    /// Filter which always shows a given list of objects (the allowList).  This class is an <see cref="IModelFilter"/>
-    /// for use with ObjectListView
-    /// </summary>
-    public class AlwaysShowListOnlyFilter : IModelFilter
+    public HashSet<object> AlwaysShowList { get; private set; }
+
+    public AlwaysShowListOnlyFilter(IEnumerable<object> alwaysShowList)
     {
-        public HashSet<object> AlwaysShowList { get; private set; }
-
-        public AlwaysShowListOnlyFilter(IEnumerable<object> alwaysShowList)
-        {
-            AlwaysShowList = new HashSet<object>(alwaysShowList);
-        }
-
-        public bool Filter(object modelObject)
-        {
-            return AlwaysShowList.Contains(modelObject);
-        }
+        AlwaysShowList = new HashSet<object>(alwaysShowList);
     }
+
+    public bool Filter(object modelObject) => AlwaysShowList.Contains(modelObject);
 }

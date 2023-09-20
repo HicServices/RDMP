@@ -16,63 +16,66 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
 {
-    public class ToMemoryDataLoadJob : ToMemoryDataLoadEventListener, IDataLoadJob
+    private List<NotifyEventArgs> _crashAtEnd = new();
+
+    /// <inheritdoc/>
+    public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+
+    public ToMemoryDataLoadJob(bool throwOnErrorEvents = true) : base(throwOnErrorEvents)
     {
-        private List<NotifyEventArgs> _crashAtEnd = new ();
-        /// <inheritdoc/>
-        public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
+    }
 
-        public ToMemoryDataLoadJob(bool throwOnErrorEvents = true): base(throwOnErrorEvents)
-        {
-        }
+    public string Description { get; private set; }
+    public IDataLoadInfo DataLoadInfo { get; private set; }
+    public ILoadDirectory LoadDirectory { get; set; }
+    public int JobID { get; set; }
+    public ILoadMetadata LoadMetadata { get; private set; }
+    public bool DisposeImmediately { get; private set; }
+    public string ArchiveFilepath { get; private set; }
+    public List<ITableInfo> RegularTablesToLoad { get; private set; } = new();
+    public List<ITableInfo> LookupTablesToLoad { get; private set; } = new();
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
 
-        public string Description { get; private set; }
-        public IDataLoadInfo DataLoadInfo { get; private set; }
-        public ILoadDirectory LoadDirectory { get; set; }
-        public int JobID { get; set; }
-        public ILoadMetadata LoadMetadata { get; private set; }
-        public bool DisposeImmediately { get; private set; }
-        public string ArchiveFilepath { get; private set; }
-        public List<ITableInfo> RegularTablesToLoad { get; private set; } = new List<ITableInfo>();
-        public List<ITableInfo> LookupTablesToLoad { get; private set; } = new List<ITableInfo>();
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get { return null; }}
+    public void StartLogging()
+    {
+    }
 
-        public void StartLogging()
-        {
-        }
+    public void CloseLogging()
+    {
+    }
 
-        public void CloseLogging()
-        {
-        }
+    public HICDatabaseConfiguration Configuration { get; private set; }
 
-        public HICDatabaseConfiguration Configuration { get; private set; }
+    public object Payload { get; set; }
+    public bool PersistentRaw { get; set; }
 
-        public object Payload { get; set; }
-        public bool PersistentRaw { get; set; }
+    public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
+    {
+    }
 
-        public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
-        {
-        }
+    public void PushForDisposal(IDisposeAfterDataLoad disposeable)
+    {
+    }
 
-        public void PushForDisposal(IDisposeAfterDataLoad disposeable)
-        {
-        }
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
+    {
+    }
 
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-        }
-        public ColumnInfo[] GetAllColumns()
-        {
-            return RegularTablesToLoad.SelectMany(t=>t.ColumnInfos).Union(LookupTablesToLoad.SelectMany(t=>t.ColumnInfos)).Distinct().ToArray();
-        }
-        /// <inheritdoc/>
-        public void CrashAtEnd(NotifyEventArgs because)
-        {
-            _crashAtEnd.Add(because);
-        }
+    public ColumnInfo[] GetAllColumns()
+    {
+        return RegularTablesToLoad.SelectMany(t => t.ColumnInfos)
+            .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
+    }
+
+    /// <inheritdoc/>
+    public void CrashAtEnd(NotifyEventArgs because)
+    {
+        _crashAtEnd.Add(because);
     }
 }

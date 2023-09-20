@@ -7,19 +7,19 @@
 using CommandLine;
 using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.Core.CommandLine.Gui
+namespace Rdmp.Core.CommandLine.Gui;
+
+/// <summary>
+/// Runs a the RDMP console gui.
+/// </summary>
+[Verb("gui", HelpText = "Run the RDMP console user interface")]
+public class ConsoleGuiOptions : RDMPCommandLineOptions
 {
     /// <summary>
-    /// Runs a the RDMP console gui.
+    /// Sets UseSystemConsole to true for Terminal.gui (i.e. uses the NetDriver which is based on System.Console)
     /// </summary>
-    [Verb("gui",HelpText = "Run the RDMP console user interface")]
-    public class ConsoleGuiOptions : RDMPCommandLineOptions
-    {
-
-        /// <summary>
-        /// Sets UseSystemConsole to true for Terminal.gui (i.e. uses the NetDriver which is based on System.Console)
-        /// </summary>
-        [Option("usc", HelpText = "Sets UseSystemConsole to true for Terminal.gui (i.e. uses the NetDriver which is based on System.Console)")]
-        public bool UseSystemConsole { get; internal set; }
-    }
+    [Option("usc",
+        HelpText =
+            "Sets UseSystemConsole to true for Terminal.gui (i.e. uses the NetDriver which is based on System.Console)")]
+    public bool UseSystemConsole { get; internal set; }
 }

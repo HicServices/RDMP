@@ -6,89 +6,84 @@
 
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Changes the set operation on a <see cref="CohortAggregateContainer"/>
+/// </summary>
+public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 {
-    /// <summary>
-    /// Changes the set operation on a <see cref="CohortAggregateContainer"/>
-    /// </summary>
-    public class ExecuteCommandSetContainerOperation : BasicCommandExecution
+    private readonly CohortAggregateContainer _container;
+    private readonly SetOperation _operation;
+
+    public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container,
+        SetOperation operation) : base(activator)
     {
-        private CohortAggregateContainer _container;
-        private SetOperation _operation;
+        if (container.Operation == operation)
+            SetImpossible($"Container already uses {operation}");
 
-        public ExecuteCommandSetContainerOperation(IBasicActivateItems activator, CohortAggregateContainer container, SetOperation operation) : base(activator)
+        _container = container;
+        _operation = operation;
+
+        if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
+
+        Weight = _operation switch
         {
-            if (container.Operation == operation)
-                SetImpossible($"Container already uses {operation}");
+            SetOperation.UNION => 0.21f,
+            SetOperation.EXCEPT => 0.22f,
+            SetOperation.INTERSECT => 0.23f,
+            _ => Weight
+        };
+    }
 
-            _container = container;
-            _operation = operation;
+    public override string GetCommandName() => !string.IsNullOrWhiteSpace(OverrideCommandName)
+        ? OverrideCommandName
+        : $"Set operation {_operation}";
 
-            if (container.ShouldBeReadOnly(out string reason))
-            {
-                SetImpossible(reason);
-            }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return _operation switch
+        {
+            SetOperation.EXCEPT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT)),
+            SetOperation.INTERSECT => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT)),
+            SetOperation.UNION => iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION)),
+            _ => base.GetImage(iconProvider)
+        };
+    }
 
-            switch (_operation)
-            {
-                case SetOperation.UNION: Weight = 0.21f; break;
-                case SetOperation.EXCEPT: Weight = 0.22f; break;
-                case SetOperation.INTERSECT: Weight = 0.23f; break;
-            }
+    public override void Execute()
+    {
+        base.Execute();
+
+        var oldOperation = _container.Operation;
+
+        //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
+        if (_container.Name.StartsWith(oldOperation.ToString()))
+        {
+            _container.Name = _operation + _container.Name[oldOperation.ToString().Length..];
         }
-
-        public override string GetCommandName()
+        else
         {
-            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
-
-            return "Set operation " + _operation;
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            switch(_operation)
+            if (BasicActivator.TypeText("New name for container?",
+                    "You have changed the operation, do you want to give it a new description?", 1000, _container.Name,
+                    out var newName, false))
             {
-                case SetOperation.EXCEPT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.EXCEPT));
-                case SetOperation.INTERSECT: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.INTERSECT));
-                case SetOperation.UNION: return iconProvider.GetImage(Image.Load<Rgba32>(CatalogueIcons.UNION));
+                _container.Name = newName;
             }
-
-            return base.GetImage(iconProvider);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var oldOperation = _container.Operation;
-
-            //if the old name was UNION and we are changing to INTERSECT Operation then we should probably change the Name too! even if they have something like 'INTERSECT the people who are big and small' and they change to UNION we want it to be changed to 'UNION the people who are big and small'
-            if (_container.Name.StartsWith(oldOperation.ToString()))
-                _container.Name = _operation + _container.Name.Substring(oldOperation.ToString().Length);
             else
             {
-                if (BasicActivator.TypeText("New name for container?", "You have changed the operation, do you want to give it a new description?", 1000, _container.Name, out string newName, false))
-                {
-                    _container.Name = newName;
-                }
-                else
-                {
-                    Show("Cancelled changing operation");
-                    // user cancelled the operation
-                    return;
-                }
-
+                Show("Cancelled changing operation");
+                // user cancelled the operation
+                return;
             }
-
-            _container.Operation = _operation;
-            _container.SaveToDatabase();
-            Publish(_container);
-
         }
+
+        _container.Operation = _operation;
+        _container.SaveToDatabase();
+        Publish(_container);
     }
 }

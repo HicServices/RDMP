@@ -10,115 +10,111 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components
+namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
+
+/// <summary>
+/// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
+/// </summary>
+public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
 {
+    private Stopwatch sw = new();
+    private int totalRecordsProcessed = 0;
+    private int totalDuplicatesFound = 0;
+    private readonly Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
+
     /// <summary>
-    /// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
+    /// Turns off notify messages about number of duplicates found/replaced
     /// </summary>
-    public class RemoveDuplicates :IPluginDataFlowComponent<DataTable>
+    public bool NoLogging { get; set; }
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
     {
-        Stopwatch sw = new Stopwatch();
-        private int totalRecordsProcessed = 0;
-        private int totalDuplicatesFound = 0;
+        sw.Start();
 
-        Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
-        
-        /// <summary>
-        /// Turns off notify messages about number of duplicates found/replaced
-        /// </summary>
-        public bool NoLogging { get; set; }
+        var toReturn = toProcess.Clone();
 
-        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        //now sort rows
+        foreach (DataRow row in toProcess.Rows)
         {
-            sw.Start();
-            
-            DataTable toReturn = toProcess.Clone();
+            totalRecordsProcessed++;
+            var hashOfItems = GetHashCode(row.ItemArray);
 
-            //now sort rows
-            foreach (DataRow row in toProcess.Rows)
+            if (_uniqueHashesSeen.TryGetValue(hashOfItems, out var collisions))
             {
-                totalRecordsProcessed++;
-                int hashOfItems = GetHashCode(row.ItemArray);
-
-                if (unqiueHashesSeen.ContainsKey(hashOfItems))
+                //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just in case.
+                if (collisions.Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
                 {
-                    //GetHashCode on ItemArray of row has been seen before but it could be a collision so call Enumerable.SequenceEqual just incase.
-                    if (unqiueHashesSeen[hashOfItems].Any(r => r.ItemArray.SequenceEqual(row.ItemArray)))
-                    {
-                        totalDuplicatesFound++;
-                        continue; //it's a duplicate
-                    }
-
-                    unqiueHashesSeen[hashOfItems].Add(row);
-                }
-                else
-                {
-                    //its not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
-                    unqiueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
+                    totalDuplicatesFound++;
+                    continue; //it's a duplicate
                 }
 
-                toReturn.Rows.Add(row.ItemArray);
+                collisions.Add(row);
             }
-            
-            sw.Stop();
-
-            if(!NoLogging)
+            else
             {
-                listener.OnProgress(this, new ProgressEventArgs("Evaluating For Duplicates", new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
-                listener.OnProgress(this,new ProgressEventArgs("Discarding Duplicates",new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records),sw.Elapsed));
+                //it's not a duplicate hashcode so add it to the return array and the record of everything we have seen so far (in order that we do not run across issues across batches)
+                _uniqueHashesSeen.Add(hashOfItems, new List<DataRow>(new[] { row }));
             }
-            return toReturn;
-        }
-        
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
+
+            toReturn.Rows.Add(row.ItemArray);
         }
 
-        public void Abort(IDataLoadEventListener listener)
+        sw.Stop();
+
+        if (!NoLogging)
         {
-            
+            listener.OnProgress(this,
+                new ProgressEventArgs("Evaluating For Duplicates",
+                    new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
+            listener.OnProgress(this,
+                new ProgressEventArgs("Discarding Duplicates",
+                    new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records), sw.Elapsed));
         }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            
-        }
+        return toReturn;
+    }
 
-        /// <summary>
-        /// Gets the hash code for the contents of the array since the default hash code
-        /// for an array is unique even if the contents are the same.
-        /// </summary>
-        /// <remarks>
-        /// See Jon Skeet (C# MVP) response in the StackOverflow thread 
-        /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
-        /// </remarks>
-        /// <param name="array">The array to generate a hash code for.</param>
-        /// <returns>The hash code for the values in the array.</returns>
-        public int GetHashCode(object[] array)
-        {
-            // if non-null array then go into unchecked block to avoid overflow
-            if (array != null)
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+    }
+
+    /// <summary>
+    /// Gets the hash code for the contents of the array since the default hash code
+    /// for an array is unique even if the contents are the same.
+    /// </summary>
+    /// <remarks>
+    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
+    /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+    /// </remarks>
+    /// <param name="array">The array to generate a hash code for.</param>
+    /// <returns>The hash code for the values in the array.</returns>
+    public static int GetHashCode(object[] array)
+    {
+        // if non-null array then go into unchecked block to avoid overflow
+        if (array != null)
+            unchecked
             {
-                unchecked
-                {
-                    int hash = 17;
+                var hash = 17;
 
-                    // get hash code for all items in array
-                    foreach (var item in array)
-                    {
-                        hash = hash * 23 + ((item != null) ? item.GetHashCode() : 0);
-                    }
+                // get hash code for all items in array
+                foreach (var item in array) hash = hash * 23 + (item != null ? item.GetHashCode() : 0);
 
-                    return hash;
-                }
+                return hash;
             }
 
-            // if null, hash code is zero
-            return 0;
-        }
-
+        // if null, hash code is zero
+        return 0;
     }
 }

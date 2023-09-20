@@ -5,26 +5,26 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.DataRelease
+namespace Rdmp.Core.DataExport.DataRelease;
+
+/// <summary>
+/// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
+/// </summary>
+public class ReleaseEngineSettings : ICheckable
 {
-    /// <summary>
-    /// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
-    /// </summary>
-    public class ReleaseEngineSettings:ICheckable
+    [DemandsInitialization("Delete the released files from the origin location if release is succesful",
+        DefaultValue = true)]
+    public bool DeleteFilesOnSuccess { get; set; }
+
+    public ReleaseEngineSettings()
     {
-        [DemandsInitialization("Delete the released files from the origin location if release is succesful", DefaultValue = true)]
-        public bool DeleteFilesOnSuccess { get; set; }
+        DeleteFilesOnSuccess = true;
+    }
 
-        public ReleaseEngineSettings()
-        {
-            DeleteFilesOnSuccess = true;
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("All green!",CheckResult.Success));
-        }
+    public void Check(ICheckNotifier notifier)
+    {
+        notifier.OnCheckPerformed(new CheckEventArgs("All green!", CheckResult.Success));
     }
 }

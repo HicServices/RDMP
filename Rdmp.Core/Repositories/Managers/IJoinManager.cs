@@ -6,16 +6,15 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Subcomponent of <see cref="ICatalogueRepository"/> which manages the objects which describe how to
+/// link two <see cref="ITableInfo"/> using joins on column sets between the two tables.
+/// </summary>
+public interface IJoinManager
 {
-    /// <summary>
-    /// Subcomponent of <see cref="ICatalogueRepository"/> which manages the objects which describe how to
-    /// link two <see cref="ITableInfo"/> using joins on column sets between the two tables.
-    /// </summary>
-    public interface IJoinManager
-    {
-        JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2);
-        JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2);
-        JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type);
-    }
+    JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2);
+    JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2);
+    JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type);
 }

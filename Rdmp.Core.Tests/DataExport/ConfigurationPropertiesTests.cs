@@ -8,19 +8,20 @@ using NUnit.Framework;
 using Rdmp.Core.Repositories.Managers;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataExport
-{
-    public class ConfigurationPropertiesTests : DatabaseTests
-    {
-        [Test]
-        public void CreateNewArgumentAndGetValue()
-        {            
-            DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "hi");
-            Assert.AreEqual(DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), "hi");
+namespace Rdmp.Core.Tests.DataExport;
 
-            //make sure delete
-            DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, null);
-            Assert.AreEqual(DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), null);
-        }
+public class ConfigurationPropertiesTests : DatabaseTests
+{
+    [Test]
+    public void CreateNewArgumentAndGetValue()
+    {
+        DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "hi");
+        Assert.AreEqual(
+            DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), "hi");
+
+        //make sure delete
+        DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, null);
+        Assert.AreEqual(
+            DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), null);
     }
 }

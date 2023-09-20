@@ -6,26 +6,26 @@
 
 using System.Threading;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports;
+
+public abstract class DataQualityReport : IDataQualityReport
 {
-    public abstract class DataQualityReport : IDataQualityReport
+    protected ICatalogue _catalogue;
+    public abstract void Check(ICheckNotifier notifier);
+
+    public virtual bool CatalogueSupportsReport(ICatalogue c)
     {
-        protected ICatalogue _catalogue;
-        public abstract void Check(ICheckNotifier notifier);
+        _catalogue = c;
 
-        public virtual bool CatalogueSupportsReport(ICatalogue c)
-        {
-            _catalogue = c;
+        var checkNotifier = new ToMemoryCheckNotifier();
+        Check(checkNotifier);
 
-            ToMemoryCheckNotifier checkNotifier = new ToMemoryCheckNotifier();
-            Check(checkNotifier);
-
-            return checkNotifier.GetWorst() <= CheckResult.Warning;
-
-        }
-        public abstract void GenerateReport(ICatalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken);
+        return checkNotifier.GetWorst() <= CheckResult.Warning;
     }
+
+    public abstract void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
+        CancellationToken cancellationToken);
 }

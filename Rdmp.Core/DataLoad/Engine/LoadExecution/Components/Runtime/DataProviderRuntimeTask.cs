@@ -11,69 +11,68 @@ using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+
+/// <summary>
+/// RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
+/// RuntimeArgumentCollection
+/// </summary>
+public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
-    /// <summary>
-    /// RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
-    /// RuntimeArgumentCollection
-    /// </summary>
-    public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
+    public IDataProvider Provider { get; private set; }
+    public ICheckable MEFPluginClassInstance => Provider;
+
+    public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
+        : base(task, args)
     {
-        public IDataProvider Provider { get; private set; }
-        public ICheckable MEFPluginClassInstance { get { return Provider; } }
+        var classNameToInstantiate = task.Path;
 
-        public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args, MEF mef)
-            : base(task, args)
+        if (string.IsNullOrWhiteSpace(task.Path))
+            throw new ArgumentException(
+                $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IDataProvider)}");
+
+        Provider = MEF.CreateA<IDataProvider>(classNameToInstantiate);
+
+        try
         {
-            string classNameToInstantiate = task.Path;
-
-            if (string.IsNullOrWhiteSpace(task.Path))
-                throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IDataProvider).Name);
-
-            Provider = mef.CreateA<IDataProvider>(classNameToInstantiate);
-
-            try
-            {
-                SetPropertiesForClass(RuntimeArguments, Provider);
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Error when trying to set the properties for '" + task.Name + "'", e);
-            }
-
-            Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
+            SetPropertiesForClass(RuntimeArguments, Provider);
+        }
+        catch (Exception e)
+        {
+            throw new Exception($"Error when trying to set the properties for '{task.Name}'", e);
         }
 
-        public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
-        {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to run Task '" + ProcessTask.Name + "'"));
+        Provider.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
+    }
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch data using class " + Provider.GetType().FullName));
+    public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        job.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
 
-            return Provider.Fetch(job, cancellationToken);
-        }
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"About to fetch data using class {Provider.GetType().FullName}"));
 
-        public override bool Exists()
-        {
-            return true;
-        }
-        
-        public override void Abort(IDataLoadEventListener postLoadEventListener)
-        {
-        }
+        return Provider.Fetch(job, cancellationToken);
+    }
 
-        public override void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
-        {
-            Provider.LoadCompletedSoDispose(exitCode,postLoadEventListener);
-        }
+    public override bool Exists() => true;
 
-        public override void Check(ICheckNotifier checker)
-        {
-            new MandatoryPropertyChecker(Provider).Check(checker);
-            Provider.Check(checker);
-        }
+    public override void Abort(IDataLoadEventListener postLoadEventListener)
+    {
+    }
+
+    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    {
+        Provider.LoadCompletedSoDispose(exitCode, postLoadEventListener);
+    }
+
+    public override void Check(ICheckNotifier checker)
+    {
+        new MandatoryPropertyChecker(Provider).Check(checker);
+        Provider.Check(checker);
     }
 }

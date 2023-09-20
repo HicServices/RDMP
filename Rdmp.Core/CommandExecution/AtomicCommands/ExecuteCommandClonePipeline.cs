@@ -4,37 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
+    private readonly Pipeline _pipeline;
+
+    public ExecuteCommandClonePipeline(IBasicActivateItems activator, Pipeline pipeline)
+        : base(activator)
     {
-        private readonly Pipeline _pipeline;
-
-        public ExecuteCommandClonePipeline(IBasicActivateItems activator, Pipeline pipeline)
-            : base(activator)
-        {
-            _pipeline = pipeline;
-            if (_pipeline == null)
-                SetImpossible("You can only clone an existing pipeline"); 
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            _pipeline.Clone();
-            Publish(_pipeline);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
-        }
+        _pipeline = pipeline;
+        if (_pipeline == null)
+            SetImpossible("You can only clone an existing pipeline");
     }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        _pipeline.Clone();
+        Publish(_pipeline);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
 }

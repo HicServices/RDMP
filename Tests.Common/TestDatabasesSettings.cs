@@ -7,58 +7,62 @@
 using System;
 using FAnsi;
 
-namespace Tests.Common
+namespace Tests.Common;
+
+public class TestDatabasesSettings
 {
-    public class TestDatabasesSettings
+#pragma warning disable CA1822 // Mark members as static - that upsets the YAML hack used for loading settings
+    public string Prefix
     {
-        public string Prefix { get { return TestDatabaseNames.Prefix; } set { TestDatabaseNames.Prefix = value; } }
+        get => TestDatabaseNames.Prefix;
+        set => TestDatabaseNames.Prefix = value;
+    }
+#pragma warning restore CA1822 // Mark members as static
 
-        public string ServerName { get; set; }
-        public string Username { get; set; }
-        public string Password { get; set; }
+    public string ServerName { get; set; }
+    public string Username { get; set; }
+    public string Password { get; set; }
 
-        public string SqlServerLowPrivilegeUsername { get; set; }
-        public string SqlServerLowPrivilegePassword { get; set; }
-        
-        public string MySql { get; set; }
-        public string MySqlLowPrivilegeUsername { get; set; }
-        public string MySqlLowPrivilegePassword { get; set; }
+    public string SqlServerLowPrivilegeUsername { get; set; }
+    public string SqlServerLowPrivilegePassword { get; set; }
 
-        public string Oracle { get; set; }
-        public string OracleLowPrivilegeUsername { get; set; }
-        public string OracleLowPrivilegePassword { get; set; }
-        
-        public string PostgreSql { get; set; }
-        public string PostgreSqlLowPrivilegeUsername { get; set; }
-        public string PostgreSqlLowPrivilegePassword { get; set; }
+    public string MySql { get; set; }
+    public string MySqlLowPrivilegeUsername { get; set; }
+    public string MySqlLowPrivilegePassword { get; set; }
+
+    public string Oracle { get; set; }
+    public string OracleLowPrivilegeUsername { get; set; }
+    public string OracleLowPrivilegePassword { get; set; }
+
+    public string PostgreSql { get; set; }
+    public string PostgreSqlLowPrivilegeUsername { get; set; }
+    public string PostgreSqlLowPrivilegePassword { get; set; }
 
 
-        public bool UseFileSystemRepo { get; set; }
+    public bool UseFileSystemRepo { get; set; }
 
-        public string GetLowPrivilegeUsername(DatabaseType databaseType)
+    public string GetLowPrivilegeUsername(DatabaseType databaseType)
+    {
+        return databaseType switch
         {
-            return databaseType switch
-            {
-                DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegeUsername,
-                DatabaseType.MySql => MySqlLowPrivilegeUsername,
-                DatabaseType.Oracle => OracleLowPrivilegeUsername,
-                DatabaseType.PostgreSql => PostgreSqlLowPrivilegeUsername,
-                _ => throw new ArgumentOutOfRangeException("databaseType"),
-            };
-        }
+            DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegeUsername,
+            DatabaseType.MySql => MySqlLowPrivilegeUsername,
+            DatabaseType.Oracle => OracleLowPrivilegeUsername,
+            DatabaseType.PostgreSql => PostgreSqlLowPrivilegeUsername,
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
+        };
+    }
 
-        
 
-        public string GetLowPrivilegePassword(DatabaseType databaseType)
+    public string GetLowPrivilegePassword(DatabaseType databaseType)
+    {
+        return databaseType switch
         {
-            return databaseType switch
-            {
-                DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegePassword,
-                DatabaseType.MySql => MySqlLowPrivilegePassword,
-                DatabaseType.Oracle => OracleLowPrivilegePassword,
-                DatabaseType.PostgreSql => PostgreSqlLowPrivilegePassword,
-                _ => throw new ArgumentOutOfRangeException("databaseType"),
-            };
-        }
+            DatabaseType.MicrosoftSQLServer => SqlServerLowPrivilegePassword,
+            DatabaseType.MySql => MySqlLowPrivilegePassword,
+            DatabaseType.Oracle => OracleLowPrivilegePassword,
+            DatabaseType.PostgreSql => PostgreSqlLowPrivilegePassword,
+            _ => throw new ArgumentOutOfRangeException(nameof(databaseType))
+        };
     }
 }

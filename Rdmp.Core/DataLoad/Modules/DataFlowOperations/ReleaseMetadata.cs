@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -16,71 +15,73 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+
+/// <summary>
+/// Data release pipeline component which generates <see cref="ShareDefinition"/> files for all <see cref="Catalogue"/> being
+/// extracted.  These contain the dataset and column descriptions in a format that can be loaded by any remote RDMP instance via ExecuteCommandImportShareDefinitionList.
+/// 
+/// <para>This serialization includes the allocation of SharingUIDs to allow for later updates and to prevent duplicate loading in the destination.  In addition it handles
+/// system boundaries e.g. it doesn't serialize <see cref="LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
+/// </summary>
+public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>,
+    IPipelineRequirement<IBasicActivateItems>
 {
-    /// <summary>
-    /// Data release pipeline component which generates <see cref="ShareDefinition"/> files for all <see cref="Catalogue"/> being
-    /// extracted.  These contain the dataset and column descriptions in a format that can be loaded by any remote RDMP instance via ExecuteCommandImportShareDefinitionList.
-    /// 
-    /// <para>This serialization includes the allocation of SharingUIDs to allow for later updates and to prevent duplicate loading in the destination.  In addition it handles
-    /// system boundaries e.g. it doesn't serialize <see cref="LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
-    /// </summary>
-    public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>, IPipelineRequirement<IBasicActivateItems>
-    {
-        private ReleaseData _releaseData;
-        private IBasicActivateItems _activator;
+    private ReleaseData _releaseData;
+    private IBasicActivateItems _activator;
 
-        public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            var allCatalogues = 
-                _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
+    public ReleaseAudit ProcessPipelineData(ReleaseAudit toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
+    {
+        var allCatalogues =
+            _releaseData.SelectedDatasets.Values.SelectMany(sd => sd.ToList())
                 .Select(sds => sds.ExtractableDataSet.Catalogue)
                 .Distinct()
                 .Cast<IMapsDirectlyToDatabaseTable>()
                 .ToArray();
-            
-            if(!allCatalogues.Any())
-            {
-                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "No Catalogues are selected for release"));
-                return toProcess;
-            }
 
-            var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent;
-            if (sourceFolder == null)
-                throw new Exception("Could not find Source Folder. DOes the project have an Extraction Directory defined?");
-
-            var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
-            
-            var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
-            cmd.Execute();
-            
+        if (!allCatalogues.Any())
+        {
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, "No Catalogues are selected for release"));
             return toProcess;
         }
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-        }
+        var sourceFolder = _releaseData.ConfigurationsForRelease.First().Value.First().ExtractDirectory.Parent ??
+                           throw new Exception(
+                               "Could not find Source Folder. DOes the project have an Extraction Directory defined?");
+        var outputFolder = sourceFolder.CreateSubdirectory(ExtractionDirectory.METADATA_FOLDER_NAME);
 
-        public void Abort(IDataLoadEventListener listener)
-        {
-        }
+        var cmd = new ExecuteCommandExportObjectsToFile(_activator, allCatalogues, outputFolder);
+        cmd.Execute();
 
-        public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
-        {
-            _releaseData = value;
-        }
+        return toProcess;
+    }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            notifier.OnCheckPerformed(new CheckEventArgs("No checking needed", CheckResult.Success));
-        }
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
 
-        public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
-        {
-            _activator = value;
-        }
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    {
+        _releaseData = value;
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        notifier.OnCheckPerformed(new CheckEventArgs("No checking needed", CheckResult.Success));
+    }
+
+    public void PreInitialize(IBasicActivateItems value, IDataLoadEventListener listener)
+    {
+        _activator = value;
     }
 }

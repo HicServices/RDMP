@@ -8,57 +8,56 @@ using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 
-namespace Tests.Common.Scenarios
+namespace Tests.Common.Scenarios;
+
+/// <summary>
+/// Tests which require two test databases and handles moving data from one to the other
+/// </summary>
+public class FromToDatabaseTests : DatabaseTests
 {
+    private readonly string _suffix;
+    protected DiscoveredDatabase From;
+    protected DiscoveredDatabase To;
+
     /// <summary>
-    /// Tests which require two test databases and handles moving data from one to the other
+    /// The runtime name of <see cref="To"/>.  This is the same as calling <see cref="DiscoveredDatabase.GetRuntimeName()"/>
     /// </summary>
-    public class FromToDatabaseTests:DatabaseTests
+    protected string DatabaseName => To.GetRuntimeName();
+
+    public FromToDatabaseTests(string suffix = "_STAGING")
     {
-        protected readonly string Suffix;
-        protected DiscoveredDatabase From;
-        protected DiscoveredDatabase To;
+        _suffix = suffix;
+    }
 
-        /// <summary>
-        /// The runtime name of <see cref="To"/>.  This is the same as calling <see cref="DiscoveredDatabase.GetRuntimeName()"/>
-        /// </summary>
-        protected string DatabaseName => To.GetRuntimeName();
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
+    {
+        base.OneTimeSetUp();
 
-        public FromToDatabaseTests(string suffix = "_STAGING")
-        {
-            Suffix = suffix;
-        }
+        SetupFromTo(DatabaseType.MicrosoftSQLServer);
+    }
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+    /// <summary>
+    /// Sets up the databases <see cref="From"/> and <see cref="To"/> on the test database server of the given
+    /// <paramref name="dbType"/>.  This method is automatically called with <see cref="DatabaseType.MicrosoftSQLServer"/>
+    /// in <see cref="OneTimeSetUp()"/> (nunit automatically fires it).
+    /// </summary>
+    /// <param name="dbType"></param>
+    protected void SetupFromTo(DatabaseType dbType)
+    {
+        To = GetCleanedServer(dbType);
+        From = To.Server.ExpectDatabase(To.GetRuntimeName() + _suffix);
 
-            SetupFromTo(DatabaseType.MicrosoftSQLServer);
-        }
+        // ensure the test staging and live databases are empty
+        if (!From.Exists())
+            From.Create();
+        else
+            DeleteTables(From);
+    }
 
-        /// <summary>
-        /// Sets up the databases <see cref="From"/> and <see cref="To"/> on the test database server of the given
-        /// <paramref name="dbType"/>.  This method is automatically called with <see cref="DatabaseType.MicrosoftSQLServer"/>
-        /// in <see cref="OneTimeSetUp()"/> (nunit automatically fires it).
-        /// </summary>
-        /// <param name="dbType"></param>
-        protected void SetupFromTo(DatabaseType dbType)
-        {
-            To = GetCleanedServer(dbType);
-            From = To.Server.ExpectDatabase(To.GetRuntimeName() + Suffix);
-            
-            // ensure the test staging and live databases are empty
-            if(!From.Exists())
-                From.Create();
-            else
-                DeleteTables(From);
-        }
-
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
-        }
+    [SetUp]
+    protected override void SetUp()
+    {
+        base.SetUp();
     }
 }

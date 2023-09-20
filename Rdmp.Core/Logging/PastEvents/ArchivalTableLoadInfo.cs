@@ -8,103 +8,90 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents;
+
+/// <summary>
+/// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
+/// </summary>
+public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
-    /// <summary>
-    /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
-    /// </summary>
-    public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable,IHasSummary
+    public ArchivalDataLoadInfo Parent { get; private set; }
+
+    private readonly DiscoveredDatabase _loggingDatabase;
+
+    public int ID { get; internal set; }
+    public DateTime Start { get; internal set; }
+    public DateTime? End { get; internal set; }
+    public string TargetTable { get; internal set; }
+    public int? Inserts { get; internal set; }
+    public int? Deletes { get; internal set; }
+    public int? Updates { get; internal set; }
+    public string Notes { get; internal set; }
+
+    public List<ArchivalDataSource> DataSources => _knownDataSource.Value;
+
+    private readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
+
+    public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r, DiscoveredDatabase loggingDatabase)
     {
-        public ArchivalDataLoadInfo Parent { get; private set; }
+        Parent = parent;
+        _loggingDatabase = loggingDatabase;
 
-        private readonly DiscoveredDatabase _loggingDatabase;
+        ID = Convert.ToInt32(r["ID"]);
+        Start = (DateTime)r["startTime"];
 
-        public int ID { get; internal set; }
-        public DateTime Start { get; internal set; }
-        public DateTime? End { get; internal set; }
-        public string TargetTable { get; internal set; }
-        public int? Inserts { get; internal set; }
-        public int? Deletes { get; internal set; }
-        public int? Updates { get; internal set; }
-        public string Notes { get; internal set; }
+        var e = r["endTime"];
+        if (e == null || e == DBNull.Value)
+            End = null;
+        else
+            End = (DateTime)e;
 
-        public List<ArchivalDataSource> DataSources { get { return _knownDataSource.Value; }}
+        TargetTable = (string)r["targetTable"];
 
-        readonly Lazy<List<ArchivalDataSource>> _knownDataSource;
+        Inserts = ToNullableInt(r["inserts"]);
+        Updates = ToNullableInt(r["updates"]);
+        Deletes = ToNullableInt(r["deletes"]);
+        Notes = r["notes"] as string;
 
-        public ArchivalTableLoadInfo(ArchivalDataLoadInfo parent, DbDataReader r,DiscoveredDatabase loggingDatabase)
-        {
-            Parent = parent;
-            _loggingDatabase = loggingDatabase;
+        _knownDataSource = new Lazy<List<ArchivalDataSource>>(GetDataSources);
+    }
 
-            ID = Convert.ToInt32(r["ID"]);
-            Start = (DateTime)r["startTime"];
+    private List<ArchivalDataSource> GetDataSources()
+    {
+        var toReturn = new List<ArchivalDataSource>();
 
-            var e = r["endTime"];
-            if (e == null || e == DBNull.Value)
-                End = null;
-            else
-                End = (DateTime)e;
+        using var con = _loggingDatabase.Server.GetConnection();
+        con.Open();
 
-            TargetTable = (string)r["targetTable"];
+        using var cmd = _loggingDatabase.Server.GetCommand($"SELECT * FROM DataSource WHERE tableLoadRunID={ID}", con);
+        using var r = cmd.ExecuteReader();
+        while (r.Read())
+            toReturn.Add(new ArchivalDataSource(r));
 
-            Inserts = ToNullableInt(r["inserts"]);
-            Updates = ToNullableInt(r["updates"]);
-            Deletes = ToNullableInt(r["deletes"]);
-            Notes = r["notes"] as string;
+        return toReturn;
+    }
 
-            _knownDataSource = new Lazy<List<ArchivalDataSource>>(GetDataSources);
-        }
-        private List<ArchivalDataSource> GetDataSources()
-        {
-            List<ArchivalDataSource> toReturn = new List<ArchivalDataSource>();
+    private static int? ToNullableInt(object i) => i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
 
-            using (var con = _loggingDatabase.Server.GetConnection())
-            {
-                con.Open();
+    public override string ToString() =>
+        $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
 
-                using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM DataSource WHERE tableLoadRunID=" + ID, con))
-                    using(var r = cmd.ExecuteReader())
-                        while (r.Read())
-                            toReturn.Add(new ArchivalDataSource(r));
-            }
+    public int CompareTo(object obj)
+    {
+        if (obj is ArchivalTableLoadInfo other)
+            return Start == other.Start ? 0 : Start > other.Start ? 1 : -1;
 
-            return toReturn;
-        }
-        private int? ToNullableInt(object i)
-        {
-            if (i == null || i == DBNull.Value)
-                return null;
+        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+    }
 
-            return Convert.ToInt32(i);
-
-        }
-        
-        public override string ToString()
-        {
-            return Start + " - " + TargetTable + " (Inserts=" + Inserts + ",Updates=" + Updates + ",Deletes=" + Deletes +")";
-        }
-
-        public int CompareTo(object obj)
-        {
-            var other = obj as ArchivalTableLoadInfo;
-            if (other != null)
-                if (Start == other.Start)
-                    return 0;
-                else
-                    return Start > other.Start ? 1 : -1;
-
-            return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
-        }
-        public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
-        {
-            title = $"{TargetTable} ({Start})";
-            body =  $"Start:{Start}\r\nEnd:{End}\r\nINSERTS:{Inserts}\r\nUPDATES:{Updates}\r\nDELETES:{Deletes}";
-            stackTrace = null;
-            level = CheckResult.Success;                
-        }
+    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+    {
+        title = $"{TargetTable} ({Start})";
+        body = $"Start:{Start}\r\nEnd:{End}\r\nINSERTS:{Inserts}\r\nUPDATES:{Updates}\r\nDELETES:{Deletes}";
+        stackTrace = null;
+        level = CheckResult.Success;
     }
 }

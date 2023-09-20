@@ -9,64 +9,69 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution
 {
-    internal class ExecuteCommandReOrderAggregateContainer : BasicUICommandExecution 
+    private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainerCombineable;
+
+    private CohortAggregateContainer _targetParent;
+    private IOrderable _targetOrderable;
+    private readonly InsertOption _insertOption;
+
+    public ExecuteCommandReOrderAggregateContainer(IActivateItems activator,
+        CohortAggregateContainerCombineable sourceCohortAggregateContainerCombineable,
+        CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption) : this(activator,
+        targetCohortAggregateContainer, insertOption)
     {
-        private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainerCombineable;
+        _sourceCohortAggregateContainerCombineable = sourceCohortAggregateContainerCombineable;
 
-        private CohortAggregateContainer _targetParent;
-        private IOrderable _targetOrderable;
-        private readonly InsertOption _insertOption;
+        _targetParent = targetCohortAggregateContainer.GetParentContainerIfAny();
 
-        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainerCombineable, CohortAggregateContainer targetCohortAggregateContainer, InsertOption insertOption):this(activator,targetCohortAggregateContainer,insertOption)
-        {
-            _sourceCohortAggregateContainerCombineable = sourceCohortAggregateContainerCombineable;
-            
-            _targetParent = targetCohortAggregateContainer.GetParentContainerIfAny();
-            
-            //reorder is only possible within a container
-            if (!_sourceCohortAggregateContainerCombineable.ParentContainerIfAny.Equals(_targetParent))
-                SetImpossible("First move containers to share the same parent container");
+        //reorder is only possible within a container
+        if (!_sourceCohortAggregateContainerCombineable.ParentContainerIfAny.Equals(_targetParent))
+            SetImpossible("First move containers to share the same parent container");
 
-            if(_insertOption == InsertOption.Default)
-                SetImpossible("Insert must be above/below");
-            
-            if(_targetParent.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-        }
+        if (_insertOption == InsertOption.Default)
+            SetImpossible("Insert must be above/below");
 
-        public ExecuteCommandReOrderAggregateContainer(IActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainerCombineable, AggregateConfiguration targetAggregate, InsertOption insertOption):this(activator,targetAggregate,insertOption)
-        {
-            _sourceCohortAggregateContainerCombineable = sourceCohortAggregateContainerCombineable;
-            _targetParent = targetAggregate.GetCohortAggregateContainerIfAny();
+        if (_targetParent.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+    }
 
-            //if they do not share the same parent container
-            if(!_sourceCohortAggregateContainerCombineable.ParentContainerIfAny.Equals(_targetParent))
-                SetImpossible("First move objects into the same parent container");
-        }
+    public ExecuteCommandReOrderAggregateContainer(IActivateItems activator,
+        CohortAggregateContainerCombineable sourceCohortAggregateContainerCombineable,
+        AggregateConfiguration targetAggregate, InsertOption insertOption) : this(activator, targetAggregate,
+        insertOption)
+    {
+        _sourceCohortAggregateContainerCombineable = sourceCohortAggregateContainerCombineable;
+        _targetParent = targetAggregate.GetCohortAggregateContainerIfAny();
 
-        private ExecuteCommandReOrderAggregateContainer(IActivateItems activator,IOrderable orderable, InsertOption insertOption) : base(activator)
-        {
-            _targetOrderable = orderable;
-            _insertOption = insertOption;
+        //if they do not share the same parent container
+        if (!_sourceCohortAggregateContainerCombineable.ParentContainerIfAny.Equals(_targetParent))
+            SetImpossible("First move objects into the same parent container");
+    }
 
-        }
+    private ExecuteCommandReOrderAggregateContainer(IActivateItems activator, IOrderable orderable,
+        InsertOption insertOption) : base(activator)
+    {
+        _targetOrderable = orderable;
+        _insertOption = insertOption;
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override void Execute()
+    {
+        base.Execute();
 
-            var source = _sourceCohortAggregateContainerCombineable.AggregateContainer;
+        var source = _sourceCohortAggregateContainerCombineable.AggregateContainer;
 
-            int order = _targetOrderable.Order;
-            
-            _targetParent.CreateInsertionPointAtOrder(source,order,_insertOption == InsertOption.InsertAbove);
-            source.Order = order;
-            source.SaveToDatabase();
+        var order = _targetOrderable.Order;
 
-            //refresh the parent container
-            Publish(_sourceCohortAggregateContainerCombineable.ParentContainerIfAny);
-        }
+        _targetParent.CreateInsertionPointAtOrder(source, order, _insertOption == InsertOption.InsertAbove);
+        source.Order = order;
+        source.SaveToDatabase();
+
+        //refresh the parent container
+        Publish(_sourceCohortAggregateContainerCombineable.ParentContainerIfAny);
     }
 }

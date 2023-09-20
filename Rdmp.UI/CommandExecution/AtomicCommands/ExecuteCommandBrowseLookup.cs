@@ -8,46 +8,43 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandBrowseLookup : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandBrowseLookup : BasicUICommandExecution,IAtomicCommand
+    private Lookup _lookup;
+
+    public ExecuteCommandBrowseLookup(IActivateItems activator, Lookup lookup) : base(activator)
     {
-        private Lookup _lookup;
+        _lookup = lookup;
+    }
 
-        public ExecuteCommandBrowseLookup(IActivateItems activator, Lookup lookup):base(activator)
-        {
-            _lookup = lookup;
-        }
+    public ExecuteCommandBrowseLookup(IActivateItems activator, IFilter filter) : base(activator)
+    {
+        var colInfo = filter.GetColumnInfoIfExists();
 
-        public ExecuteCommandBrowseLookup(IActivateItems activator, IFilter filter) : base(activator)
-        {
-            var colInfo = filter.GetColumnInfoIfExists();
+        if (colInfo != null)
+            _lookup =
+                colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).FirstOrDefault() ??
+                colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).FirstOrDefault();
 
-            if (colInfo != null)
-                _lookup = 
-                    colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).FirstOrDefault() ??
-                    colInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).FirstOrDefault();
+        if (_lookup == null)
+            SetImpossible("No Lookups found");
+    }
 
-            if (_lookup == null)
-                SetImpossible("No Lookups found");
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Shortcut);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.Lookup,OverlayKind.Shortcut);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-            
-            Activator.Activate<LookupBrowserUI, Lookup>(_lookup);
-        }
+        Activator.Activate<LookupBrowserUI, Lookup>(_lookup);
     }
 }

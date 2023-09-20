@@ -9,126 +9,128 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.UI.Progress
+namespace Rdmp.UI.Progress;
+
+/// <summary>
+/// Cut down version of ProgressUI which shows progress events as bars.  If a progress event has a known target number the bar will indicate progress otherwise
+/// it will be a Marquee bar (one with a moving unknown progress animation).  All Notify events are displayed under the smiley face (or frowning if the process
+/// has crashed)
+/// </summary>
+public partial class ProgressBarsUI : UserControl, IDataLoadEventListener
 {
-    /// <summary>
-    /// Cut down version of ProgressUI which shows progress events as bars.  If a progress event has a known target number the bar will indicate progress otherwise
-    /// it will be a Marquee bar (one with a moving unknown progress animation).  All Notify events are displayed under the smiley face (or frowning if the process
-    /// has crashed)
-    /// </summary>
-    public partial class ProgressBarsUI : UserControl,IDataLoadEventListener
+    private readonly Dictionary<string, ProgressBar> _progressBars = new();
+    private readonly ToolTip _tt = new();
+
+    public float EmSize = 9f;
+
+    public ProgressBarsUI()
     {
-        Dictionary<string,ProgressBar> progressBars = new Dictionary<string, ProgressBar>();
-        ToolTip tt = new ToolTip();
+        InitializeComponent();
+    }
 
-        public float EmSize = 9f;
+    public ProgressBarsUI(string caption, bool showClose = false)
+    {
+        InitializeComponent();
+        btnClose.Visible = showClose;
+        lblTask.Text = caption;
+    }
 
-        public ProgressBarsUI()
+    public void Done()
+    {
+        btnClose.Enabled = true;
+
+        foreach (var pb in _progressBars.Values.Where(pb => pb.Style == ProgressBarStyle.Marquee))
         {
-            InitializeComponent();
+            pb.Style = ProgressBarStyle.Continuous;
+            pb.Maximum = 1;
+            pb.Value = 1;
         }
-        public ProgressBarsUI(string caption,bool showClose = false)
+    }
+
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        ragSmiley1.OnCheckPerformed(e.ToCheckEventArgs());
+    }
+
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        if (InvokeRequired)
         {
-            InitializeComponent();
-            btnClose.Visible = showClose;
-            lblTask.Text = caption;
+            Invoke(new MethodInvoker(() => OnProgress(sender, e)));
+            return;
         }
 
-        public void Done()
+        if (_progressBars.TryGetValue(e.TaskDescription, out var bar))
         {
-            btnClose.Enabled = true;
+            UpdateProgressBar(bar, e);
+        }
+        else
+        {
+            var y = GetRowYForNewProgressBar();
 
-            foreach (var pb in progressBars.Values)
+            var lbl = new Label
             {
-                if (pb.Style == ProgressBarStyle.Marquee)
-                {
-                    pb.Style = ProgressBarStyle.Continuous;
-                    pb.Maximum = 1;
-                    pb.Value = 1;
-                }
-            }
-        }
+                Text = e.TaskDescription,
+                Font = new Font(Font.FontFamily, EmSize),
+                Location = new Point(0, y)
+            };
+            Controls.Add(lbl);
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            ragSmiley1.OnCheckPerformed(e.ToCheckEventArgs());
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            if (InvokeRequired)
+            var pb = new ProgressBar
             {
-                Invoke(new MethodInvoker(() => OnProgress(sender, e)));
-                return;
-            }
+                Location = new Point(lbl.Right, y),
+                Size = new Size(ragSmiley1.Left - lbl.Right, lbl.Height - 2),
+                Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right
+            };
+            Controls.Add(pb);
 
-            if (progressBars.ContainsKey(e.TaskDescription))
-                UpdateProgressBar(progressBars[e.TaskDescription], e);
-            else
-            {
-                var y = GetRowYForNewProgressBar();
+            UpdateProgressBar(pb, e);
 
-                Label lbl = new Label();
-                lbl.Text = e.TaskDescription;
-                lbl.Font = new Font(Font.FontFamily,EmSize);
-                lbl.Location = new Point(0,y);
-                Controls.Add(lbl);
-
-                ProgressBar pb = new ProgressBar();
-                pb.Location = new Point(lbl.Right,y);
-                pb.Size = new Size(ragSmiley1.Left - lbl.Right,lbl.Height-2);
-                pb.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right;
-                Controls.Add(pb);
-
-                UpdateProgressBar(pb,e);
-
-                progressBars.Add(e.TaskDescription,pb);
-            }
+            _progressBars.Add(e.TaskDescription, pb);
         }
+    }
 
-        private int GetRowYForNewProgressBar()
+    private int GetRowYForNewProgressBar()
+    {
+        return !_progressBars.Any() ? ragSmiley1.Bottom : _progressBars.Max(kvp => kvp.Value.Bottom);
+    }
+
+    private void UpdateProgressBar(ProgressBar progressBar, ProgressEventArgs progressEventArgs)
+    {
+        var text = $"{progressEventArgs.Progress.Value} {progressEventArgs.Progress.UnitOfMeasurement}";
+
+        _tt.SetToolTip(progressBar, text);
+
+        if (progressEventArgs.Progress.KnownTargetValue != 0)
         {
-            if (!progressBars.Any())
-                return ragSmiley1.Bottom;
-
-            return progressBars.Max(kvp => kvp.Value.Bottom);
+            progressBar.Maximum = progressEventArgs.Progress.KnownTargetValue;
+            progressBar.Value = Math.Min(progressBar.Maximum, progressEventArgs.Progress.Value);
+            progressBar.Style = ProgressBarStyle.Continuous;
         }
-
-        private void UpdateProgressBar(ProgressBar progressBar, ProgressEventArgs progressEventArgs)
+        else
         {
-            string text = progressEventArgs.Progress.Value + " " + progressEventArgs.Progress.UnitOfMeasurement;
-
-            tt.SetToolTip(progressBar,text);
-
-            if (progressEventArgs.Progress.KnownTargetValue != 0)
-            {
-                progressBar.Maximum = progressEventArgs.Progress.KnownTargetValue;
-                progressBar.Value = Math.Min(progressBar.Maximum,progressEventArgs.Progress.Value);
-                progressBar.Style = ProgressBarStyle.Continuous;
-            }
-            else
-                progressBar.Style = ProgressBarStyle.Marquee;
+            progressBar.Style = ProgressBarStyle.Marquee;
         }
+    }
 
-        private void btnClose_Click(object sender, EventArgs e)
-        {
-            if(ParentForm != null && ParentForm.IsHandleCreated)
-                ParentForm.Close();
-        }
+    private void btnClose_Click(object sender, EventArgs e)
+    {
+        if (ParentForm is { IsHandleCreated: true })
+            ParentForm.Close();
+    }
 
-        public void Clear()
-        {
-            //remove existing progress bars
-            foreach (var pb in Controls.OfType<ProgressBar>().ToArray()) 
-                Controls.Remove(pb);
+    public void Clear()
+    {
+        //remove existing progress bars
+        foreach (var pb in Controls.OfType<ProgressBar>().ToArray())
+            Controls.Remove(pb);
 
-            //clear our record of them
-            progressBars.Clear();
+        //clear our record of them
+        _progressBars.Clear();
 
-            //reset the smiley
-            ragSmiley1.Reset();
-        }
+        //reset the smiley
+        ragSmiley1.Reset();
     }
 }

@@ -8,86 +8,86 @@ using System;
 using NUnit.Framework;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
+namespace Rdmp.Core.Tests.Validation.Constraints.Secondary;
+
+[Category("Unit")]
+internal class PredictionChiSexTest
 {
+    private readonly DateTime _wrongType = DateTime.Now;
 
-    [Category("Unit")]
-    class PredictionChiSexTest
+    [Test]
+    public void Validate_IncompatibleChiType_ThrowsException()
     {
-        private readonly DateTime _wrongType = DateTime.Now;
-        
-        [Test]
-        public void Validate_IncompatibleChiType_ThrowsException()
-        {
-            var p = new Prediction(new ChiSexPredictor(),"gender");
-            Assert.Throws<ArgumentException>(()=>p.Validate(_wrongType, new[] { "M" }, new[] { "gender" }));
-        }
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        Assert.Throws<ArgumentException>(() => p.Validate(_wrongType, new[] { "M" }, new[] { "gender" }));
+    }
 
-        [Test]
-        public void Validate_IncompatibleGenderType_ThrowsException()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            Assert.Throws<ArgumentException>(()=>p.Validate(TestConstants._VALID_CHI, new object[] { _wrongType }, new string[] { "gender" }));
-        }
+    [Test]
+    public void Validate_IncompatibleGenderType_ThrowsException()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        Assert.Throws<ArgumentException>(() =>
+            p.Validate(TestConstants._VALID_CHI, new object[] { _wrongType }, new string[] { "gender" }));
+    }
 
-        [Test]
-        public void Validate_NullChiAndGender_IsIgnored()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            Assert.Throws<ArgumentException>(()=>p.Validate(TestConstants._VALID_CHI, null, null));
-        }
+    [Test]
+    public void Validate_NullChiAndGender_IsIgnored()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        Assert.Throws<ArgumentException>(() => p.Validate(TestConstants._VALID_CHI, null, null));
+    }
 
-        [Test]
-        public void Validate_TargetFieldNotPresent_ThrowsException()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] {"M"};
-            var otherColsNames = new string[] {"amagad"};
-            Assert.Throws<MissingFieldException>(()=>p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
-        }
+    [Test]
+    public void Validate_TargetFieldNotPresent_ThrowsException()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { "M" };
+        var otherColsNames = new string[] { "amagad" };
+        Assert.Throws<MissingFieldException>(() => p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
+    }
 
-        [Test]
-        public void Validate_ConsistentChiAndSex_String_Succeeds()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] { "M" };
-            var otherColsNames = new string[] { "gender" };
-            p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
-        }
-        [Test]
-        public void Validate_ConsistentChiAndSex_Char_Succeeds()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] { 'M' };
-            var otherColsNames = new string[] { "gender" };
-            p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
-        }
+    [Test]
+    public void Validate_ConsistentChiAndSex_String_Succeeds()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { "M" };
+        var otherColsNames = new string[] { "gender" };
+        p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
+    }
 
-        [Test]
-        public void Validate_InconsistentChiAndSex_ThrowsException()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] { "F" };
-            var otherColsNames = new string[] { "gender" };
-            Assert.NotNull(p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
-        }
+    [Test]
+    public void Validate_ConsistentChiAndSex_Char_Succeeds()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { 'M' };
+        var otherColsNames = new string[] { "gender" };
+        p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
+    }
 
-        [Test]
-        public void Validate_ChiAndUnspecifiedGender_Ignored()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] { "U" };
-            var otherColsNames = new string[] { "gender" };
-            p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
-        }
+    [Test]
+    public void Validate_InconsistentChiAndSex_ThrowsException()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { "F" };
+        var otherColsNames = new string[] { "gender" };
+        Assert.NotNull(p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
+    }
 
-        [Test]
-        public void Validate_ChiAndNullGender_Ignored()
-        {
-            var p = new Prediction(new ChiSexPredictor(), "gender");
-            var otherCols = new object[] { null };
-            var otherColsNames = new string[] { "gender" };
-            p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
-        }
+    [Test]
+    public void Validate_ChiAndUnspecifiedGender_Ignored()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { "U" };
+        var otherColsNames = new string[] { "gender" };
+        p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
+    }
+
+    [Test]
+    public void Validate_ChiAndNullGender_Ignored()
+    {
+        var p = new Prediction(new ChiSexPredictor(), "gender");
+        var otherCols = new object[] { null };
+        var otherColsNames = new string[] { "gender" };
+        p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames);
     }
 }

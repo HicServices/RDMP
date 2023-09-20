@@ -11,56 +11,59 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.DataProvider
+namespace Rdmp.Core.DataLoad.Modules.DataProvider;
+
+/// <summary>
+/// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
+/// </summary>
+public class ShareDefinitionImporter : IPluginDataProvider
 {
-    /// <summary>
-    /// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
-    /// </summary>
-    public class ShareDefinitionImporter: IPluginDataProvider
+    public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
-        public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
-        {
-            
-        }
+    }
 
-        public void Check(ICheckNotifier notifier)
-        {
-            
-        }
+    public void Check(ICheckNotifier notifier)
+    {
+    }
 
-        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
-        {
-            
-        }
+    public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
+    {
+    }
 
-        public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
+    {
+        var imported = 0;
+        try
         {
-            int imported = 0;
-            try
+            var shareManager = new ShareManager(job.RepositoryLocator);
+
+            foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
             {
-                var shareManager = new ShareManager(job.RepositoryLocator);
-
-                foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Found '{shareDefinitionFile.Name}'"));
+                using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))
                 {
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found '" + shareDefinitionFile.Name + "'"));
-                    using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))
-                        shareManager.ImportSharedObject(stream);
-
-                    imported++;
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Imported '" + shareDefinitionFile.Name + "' Succesfully"));
+                    shareManager.ImportSharedObject(stream);
                 }
-            }
-            catch (SharingException ex)
-            {
-                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning, "Error occured importing ShareDefinitions",ex));
-            }
 
-            job.OnNotify(this, new NotifyEventArgs(imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information, "Imported " + imported + " ShareDefinition files"));
-
-            return ExitCodeType.Success;
+                imported++;
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Imported '{shareDefinitionFile.Name}' Successfully"));
+            }
         }
+        catch (SharingException ex)
+        {
+            job.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, "Error occurred importing ShareDefinitions", ex));
+        }
+
+        job.OnNotify(this, new NotifyEventArgs(
+            imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+            $"Imported {imported} ShareDefinition files"));
+
+        return ExitCodeType.Success;
     }
 }

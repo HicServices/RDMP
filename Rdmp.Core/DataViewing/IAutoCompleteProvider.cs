@@ -8,35 +8,34 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Interface for autocomplete controls which gather RDMP objects and supply user with text suggestions during typing
+/// </summary>
+public interface IAutoCompleteProvider
 {
     /// <summary>
-    /// Interface for autocomplete controls which gather RDMP objects and supply user with text suggestions during typing
+    /// Add autocomplete strings/controls that represent <paramref name="tableInfo"/> to the user interface
     /// </summary>
-    public interface IAutoCompleteProvider
-    {
-        /// <summary>
-        /// Add autocomplete strings/controls that represent <paramref name="tableInfo"/> to the user interface
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        void Add(ITableInfo tableInfo);
-        
-        /// <summary>
-        /// Add autocomplete strings/controls that represent <paramref name="aggregateConfiguration"/> to the user interface
-        /// </summary>
-        /// <param name="aggregateConfiguration"></param>
-        void Add(AggregateConfiguration aggregateConfiguration);
-        
-        /// <summary>
-        /// Add autocomplete strings/controls that represent <paramref name="table"/> to the user interface
-        /// </summary>
-        /// <param name="table"></param>
-        void Add(DiscoveredTable table);
-        
-        /// <summary>
-        /// Add autocomplete strings/controls that represent <paramref name="columnInfo"/> to the user interface
-        /// </summary>
-        /// <param name="columnInfo"></param>
-        void Add(ColumnInfo columnInfo);
-    }
+    /// <param name="tableInfo"></param>
+    void Add(ITableInfo tableInfo);
+
+    /// <summary>
+    /// Add autocomplete strings/controls that represent <paramref name="aggregateConfiguration"/> to the user interface
+    /// </summary>
+    /// <param name="aggregateConfiguration"></param>
+    void Add(AggregateConfiguration aggregateConfiguration);
+
+    /// <summary>
+    /// Add autocomplete strings/controls that represent <paramref name="table"/> to the user interface
+    /// </summary>
+    /// <param name="table"></param>
+    void Add(DiscoveredTable table);
+
+    /// <summary>
+    /// Add autocomplete strings/controls that represent <paramref name="columnInfo"/> to the user interface
+    /// </summary>
+    /// <param name="columnInfo"></param>
+    void Add(ColumnInfo columnInfo);
 }

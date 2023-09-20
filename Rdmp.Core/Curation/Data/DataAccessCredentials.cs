@@ -8,165 +8,154 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.DataAccess;
-using static Rdmp.Core.Curation.Data.EncryptedPasswordHost;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.Curation.Data
-{ 
-    /// <summary>
-    /// Stores a username and encrypted password the Password property of the entity will be a hex value formatted as string which can be decrypted at runtime via 
-    /// the methods of base class EncryptedPasswordHost which currently uses SimpleStringValueEncryption which is a wrapper for RSACryptoServiceProvider.  The layout
-    /// of this hierarchy however allows for future plugin utility e.g. using different encryption keys for different tables / user access rights etc. 
-    /// </summary>
-    public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials,INamed,IHasDependencies
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Stores a username and encrypted password the Password property of the entity will be a hex value formatted as string which can be decrypted at runtime via
+/// the methods of base class EncryptedPasswordHost which currently uses SimpleStringValueEncryption which is a wrapper for RSACryptoServiceProvider.  The layout
+/// of this hierarchy however allows for future plugin utility e.g. using different encryption keys for different tables / user access rights etc.
+/// </summary>
+public class DataAccessCredentials : DatabaseEntity, IDataAccessCredentials, INamed, IHasDependencies
+{
+    private EncryptedPasswordHost _encryptedPasswordHost;
+
+    #region Database Properties
+
+    private string _name;
+    private string _username;
+
+    /// <inheritdoc/>
+    [Unique]
+    [NotNull]
+    public string Name
     {
-        private EncryptedPasswordHost _encryptedPasswordHost;
+        get => _name;
+        set => SetField(ref _name, value);
+    }
 
-        #region Database Properties
-        private string _name;
-        private string _username;
+    /// <inheritdoc/>
+    public string Username
+    {
+        get => _username;
+        set => SetField(ref _username, value);
+    }
 
-        /// <inheritdoc/>
-        [Unique]
-        [NotNull]
-        public string Name
+    /// <inheritdoc/>
+    public string Password
+    {
+        get => _encryptedPasswordHost.Password;
+        set
         {
-            get { return _name; }
-            set { SetField(ref  _name, value); }
+            _encryptedPasswordHost.Password = value;
+            OnPropertyChanged(null, value);
         }
+    }
 
-        /// <inheritdoc/>
-        public string Username
+    #endregion
+
+    public DataAccessCredentials()
+    {
+        _encryptedPasswordHost = new EncryptedPasswordHost();
+    }
+
+    /// <summary>
+    /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
+    /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>
+    /// 
+    /// <para>You can also use <see cref="DataAccessCredentialsFactory"/> for easier credentials creation</para>
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="name"></param>
+    public DataAccessCredentials(ICatalogueRepository repository, string name = null)
+    {
+        name ??= $"New Credentials {Guid.NewGuid()}";
+
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _username; }
-            set { SetField(ref  _username, value); }
-        }
-        
-        /// <inheritdoc/>
-        public string Password
+            { "Name", name }
+        });
+    }
+
+    internal DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+
+        Name = (string)r["Name"];
+        Username = r["Username"].ToString();
+        Password = r["Password"].ToString();
+    }
+
+    /// <inheritdoc/>
+    public override void DeleteInDatabase()
+    {
+        var users = CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+
+        // if there are any contexts where there are any associated tables using this credentials
+        if (users.Any(k => k.Value.Any()))
+            throw new CredentialsInUseException(
+                $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
+
+        try
         {
-            get { return _encryptedPasswordHost.Password; }
-            set
-            {
-                _encryptedPasswordHost.Password = value;
-                OnPropertyChanged(null, value);
-            }
+            base.DeleteInDatabase();
         }
-
-        #endregion
-
-        public DataAccessCredentials()
+        catch (Exception e)
         {
-            _encryptedPasswordHost = new EncryptedPasswordHost();
+            if (e.Message.Contains("FK_DataAccessCredentials_TableInfo_DataAccessCredentials"))
+                throw new CredentialsInUseException(
+                    $"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join("", GetAllTableInfosThatUseThis().Values.Select(t => string.Join(",", t)))})",
+                    e);
+
+            throw;
         }
+    }
 
-        /// <summary>
-        /// Records a new (initially blank) set of credentials that can be used to access a <see cref="TableInfo"/> or other object requiring authentication.
-        /// <para>A single <see cref="DataAccessCredentials"/> can be shared by multiple tables</para>
-        /// 
-        /// <para>You can also use <see cref="DataAccessCredentialsFactory"/> for easier credentials creation</para>
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="name"></param>
-        public DataAccessCredentials(ICatalogueRepository repository, string name= null)
-        {
-            name = name ?? "New Credentials " + Guid.NewGuid();
+    /// <summary>
+    /// Returns all the <see cref="TableInfo"/> that rely on the credentials to access the table(s).  This is split into the contexts under which the
+    /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
+    /// </summary>
+    /// <returns></returns>
+    public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTableInfosThatUseThis() =>
+        CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
 
-            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
+    /// <inheritdoc/>
+    public override string ToString() => Name;
 
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"Name", name}
-            });
-        }
+    /// <inheritdoc/>
+    public string GetDecryptedPassword() =>
+        _encryptedPasswordHost == null
+            ? throw new Exception(
+                $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
+            : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
 
-        internal DataAccessCredentials(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            _encryptedPasswordHost = new EncryptedPasswordHost(repository);
-            
-            Name = (string)r["Name"];
-            Username = r["Username"].ToString();
-            Password = r["Password"].ToString();
-        }
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
-        /// <inheritdoc/>
-        public override void DeleteInDatabase()
-        {
-            var users = CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return GetAllTableInfosThatUseThis().SelectMany(kvp => kvp.Value).Cast<IHasDependencies>().ToArray();
+    }
 
-            // if there are any contexts where there are any associated tables using this credentials
-            if (users.Any(k => k.Value.Any()))
-                throw new CredentialsInUseException($"Cannot delete credentials {Name} because it is in use by one or more TableInfo objects({string.Join(",", users.SelectMany(u => u.Value).Distinct().Select(t => t.Name))})");
+    public bool PasswordIs(string password)
+    {
+        var p = GetDecryptedPassword();
 
-            try
-            {
-                base.DeleteInDatabase();
-            }
-            catch (Exception e)
-            {
-                if(e.Message.Contains("FK_DataAccessCredentials_TableInfo_DataAccessCredentials"))
-                    throw new CredentialsInUseException("Cannot delete credentials " + Name + " because it is in use by one or more TableInfo objects(" + string.Join("",GetAllTableInfosThatUseThis().Values.Select(t=>string.Join(",",t)))+")",e);
+        return string.IsNullOrWhiteSpace(p) ? string.IsNullOrWhiteSpace(password) : p.Equals(password);
+    }
 
-                throw;
-            }
-        }
-        
-        /// <summary>
-        /// Returns all the <see cref="TableInfo"/> that rely on the credentials to access the table(s).  This is split into the contexts under which the 
-        /// credentials are used e.g. <see cref="DataAccessContext.DataLoad"/>
-        /// </summary>
-        /// <returns></returns>
-        public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTableInfosThatUseThis()
-        {
-            return CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
-        }
-
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        /// <inheritdoc/>
-        public string GetDecryptedPassword()
-        {
-            if (_encryptedPasswordHost == null)
-                throw new Exception($"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established");
-
-            return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
-        }
-
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsThisDependsOn()
-        {
-            return new IHasDependencies[0];
-        }
-
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsDependingOnThis()
-        {
-            return GetAllTableInfosThatUseThis().SelectMany(kvp=>kvp.Value).Cast<IHasDependencies>().ToArray();
-        }
-
-        public bool PasswordIs(string password)
-        {
-            var p = GetDecryptedPassword();
-
-            if (string.IsNullOrWhiteSpace(p))
-                return string.IsNullOrWhiteSpace(password);
-
-            return p.Equals(password);
-        }
-
-        internal void SetRepository(ICatalogueRepository repository)
-        {
-            _encryptedPasswordHost.SetRepository(repository);
-        }
+    internal void SetRepository(ICatalogueRepository repository)
+    {
+        _encryptedPasswordHost.SetRepository(repository);
     }
 }

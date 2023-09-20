@@ -4,70 +4,61 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public sealed class ExecuteCommandAddFavourite : BasicCommandExecution
 {
-    public class ExecuteCommandAddFavourite : BasicCommandExecution
+    private readonly DatabaseEntity _databaseEntity;
+
+    public ExecuteCommandAddFavourite(IBasicActivateItems activator) : base(activator)
     {
-        private DatabaseEntity _databaseEntity;
+        Weight = 100.1f;
+    }
 
-        public ExecuteCommandAddFavourite(IBasicActivateItems activator) : base(activator)
+    public ExecuteCommandAddFavourite(IBasicActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
+    {
+        _databaseEntity = databaseEntity;
+    }
+
+    public override string GetCommandName() =>
+        _databaseEntity == null
+            ? base.GetCommandName()
+            : BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity)
+                ? "UnFavourite"
+                : "Favourite";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (_databaseEntity != null)
         {
-            Weight = 100.1f;
-        }
-
-        public ExecuteCommandAddFavourite(IBasicActivateItems activator, DatabaseEntity databaseEntity) : this(activator)
-        {
-            _databaseEntity = databaseEntity;
-
-            Weight = 100.1f;
-        }
-
-        public override string GetCommandName()
-        {
-            if (_databaseEntity == null)
-                return base.GetCommandName();
-
-            return BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity) ? "UnFavourite" : "Favourite";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (_databaseEntity != null)
-            {
-                if (BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
-                    BasicActivator.FavouritesProvider.RemoveFavourite(this, _databaseEntity);
-                else
-                    BasicActivator.FavouritesProvider.AddFavourite(this, _databaseEntity);
-            }
+            if (BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
+                BasicActivator.FavouritesProvider.RemoveFavourite(this, _databaseEntity);
             else
-            {
-                
-                BasicActivator.SelectAnythingThen("Add Favourite",
-                    (a) =>
+                BasicActivator.FavouritesProvider.AddFavourite(this, _databaseEntity);
+        }
+        else
+        {
+            BasicActivator.SelectAnythingThen("Add Favourite",
+                a =>
                 {
                     if (BasicActivator.FavouritesProvider.IsFavourite(a))
                         Show($"'{a}' is already a Favourite");
                     else
                         BasicActivator.FavouritesProvider.AddFavourite(this, a);
                 });
-            }
-
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            if (_databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity))
-                return Image.Load<Rgba32>(CatalogueIcons.StarHollow);
-
-            return iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
         }
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        _databaseEntity != null && BasicActivator.FavouritesProvider.IsFavourite(_databaseEntity)
+            ? Image.Load<Rgba32>(CatalogueIcons.StarHollow)
+            : iconProvider.GetImage(RDMPConcept.Favourite, OverlayKind.Add);
 }

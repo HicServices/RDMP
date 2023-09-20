@@ -4,34 +4,32 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandShowRelatedObject : BasicCommandExecution
 {
-    public class ExecuteCommandShowRelatedObject : BasicCommandExecution
+    private DatabaseEntity _toShow;
+
+    public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) :
+        base(activator)
     {
-        private DatabaseEntity _toShow;
+        _toShow = (DatabaseEntity)node.GetReferencedObject(BasicActivator.RepositoryLocator);
+        if (_toShow == null)
+            SetImpossible("Reference is an orphan");
+    }
 
-        public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) : base(activator)
-        {
-            _toShow = (DatabaseEntity)node.GetReferencedObject(BasicActivator.RepositoryLocator);
-            if (_toShow == null)
-                SetImpossible("Reference is an orphan");
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
-        }
-
-        public override void Execute()
-        {
-            Emphasise(_toShow);
-        }
+    public override void Execute()
+    {
+        Emphasise(_toShow);
     }
 }

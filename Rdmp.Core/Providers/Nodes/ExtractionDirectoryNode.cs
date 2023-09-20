@@ -10,55 +10,43 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
+/// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
+/// </summary>
+public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    /// <summary>
-    /// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
-    /// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
-    /// </summary>
-    public class ExtractionDirectoryNode : Node,IDirectoryInfoNode, IOrderable
+    public Project Project { get; }
+
+    public ExtractionDirectoryNode(Project project)
     {
-        public Project Project { get; private set; }
+        Project = project;
+    }
 
-        public ExtractionDirectoryNode(Project project)
-        {
-            Project = project;
-        }
+    public override string ToString() =>
+        string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
 
-        public override string ToString()
-        {
-            if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                return "???";
+    protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
 
-            return Project.ExtractionDirectory;
-        }
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ExtractionDirectoryNode)obj);
+    }
 
-        protected bool Equals(ExtractionDirectoryNode other)
-        {
-            return Equals(Project, other.Project);
-        }
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ExtractionDirectoryNode) obj);
-        }
+    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
+        ? null
+        : new DirectoryInfo(Project.ExtractionDirectory);
 
-        public override int GetHashCode()
-        {
-            return (Project != null ? Project.GetHashCode() : 0);
-        }
-
-        public DirectoryInfo GetDirectoryInfoIfAny()
-        {
-            if (string.IsNullOrWhiteSpace(Project.ExtractionDirectory))
-                return null;
-
-            return new DirectoryInfo(Project.ExtractionDirectory);
-        }
-
-        public int Order{ get { return 4; } set { }}
+    public int Order
+    {
+        get => 4;
+        set { }
     }
 }

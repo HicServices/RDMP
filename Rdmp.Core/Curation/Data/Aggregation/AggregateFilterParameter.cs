@@ -8,141 +8,128 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Curation.Data.Aggregation
+namespace Rdmp.Core.Curation.Data.Aggregation;
+
+/// <summary>
+/// Each AggregateFilter can have 1 or more AggregateFilterParameters, these allows you to specify an SQL parameter that the user can adjust at runtime to change
+/// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParameter called @startDate with an appropriate
+/// user friendly description.
+/// </summary>
+public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 {
+    #region Database Properties
+
+    private int _aggregateFilterID;
+    private string _parameterSQL;
+    private string _value;
+    private string _comment;
+
     /// <summary>
-    /// Each AggregateFilter can have 1 or more AggregateFilterParameters, these allows you to specify an SQL parameter that the user can adjust at runtime to change
-    /// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParameter called @startDate with an appropriate
-    /// user friendly description.
+    /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
+    /// in its WhereSQL.
     /// </summary>
-    public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
+    [Relationship(typeof(AggregateFilter), RelationshipType.SharedObject)]
+    public int AggregateFilter_ID
     {
-        #region Database Properties
-        private int _aggregateFilterID;
-        private string _parameterSQL;
-        private string _value;
-        private string _comment;
+        get => _aggregateFilterID;
+        set => SetField(ref _aggregateFilterID, value);
+    } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
-        /// <summary>
-        /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
-        /// in its WhereSQL.
-        /// </summary>
-        [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
-        public int AggregateFilter_ID
+
+    /// <inheritdoc/>
+    [Sql]
+    public string ParameterSQL
+    {
+        get => _parameterSQL;
+        set => SetField(ref _parameterSQL, value);
+    }
+
+    /// <inheritdoc/>
+    [Sql]
+    public string Value
+    {
+        get => _value;
+        set => SetField(ref _value, value);
+    }
+
+    /// <inheritdoc/>
+    public string Comment
+    {
+        get => _comment;
+        set => SetField(ref _comment, value);
+    }
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc cref="AggregateFilter_ID"/>
+    [NoMappingToDatabase]
+    public AggregateFilter AggregateFilter => Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID);
+
+    #endregion
+
+    /// <summary>
+    /// extracts the name ofthe parameter from the SQL
+    /// </summary>
+    [NoMappingToDatabase]
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
+
+    public AggregateFilterParameter()
+    {
+    }
+
+    /// <summary>
+    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
+    /// constructor.
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="parameterSQL"></param>
+    /// <param name="parent"></param>
+    internal AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, AggregateFilter parent)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _aggregateFilterID; }
-            set { SetField(ref  _aggregateFilterID, value); }
-        } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
-
-        
-        /// <inheritdoc/>
-        [Sql]
-        public string ParameterSQL
-        {
-            get { return _parameterSQL; }
-            set { SetField(ref  _parameterSQL, value); }
-        }
-         
-        /// <inheritdoc/>
-        [Sql]
-        public string Value
-        {
-            get { return _value; }
-            set { SetField(ref  _value, value); }
-        }
-
-        /// <inheritdoc/>
-        public string Comment
-        {
-            get { return _comment; }
-            set { SetField(ref  _comment, value); }
-        }
-
-        #endregion
-
-        #region Relationships
-
-        /// <inheritdoc cref="AggregateFilter_ID"/>
-        [NoMappingToDatabase]
-        public AggregateFilter AggregateFilter{ get { return Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID); }}
-        
-        #endregion
-
-        /// <summary>
-        /// extracts the name ofthe parameter from the SQL
-        /// </summary>
-        [NoMappingToDatabase]
-        public string ParameterName
-        {
-            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-        }
-
-        public AggregateFilterParameter()
-        {
-
-        }
-
-        /// <summary>
-        /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this 
-        /// constructor.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="parameterSQL"></param>
-        /// <param name="parent"></param>
-        internal AggregateFilterParameter(ICatalogueRepository repository, string parameterSQL, AggregateFilter parent)
-        {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>
-            {
-                {"ParameterSQL", parameterSQL},
-                {"AggregateFilter_ID", parent.ID}
-            });
-        }
+            { "ParameterSQL", parameterSQL },
+            { "AggregateFilter_ID", parent.ID }
+        });
+    }
 
 
-        internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r): base(repository, r)
-        {
-            AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
-            ParameterSQL = r["ParameterSQL"] as string;
-            Value = r["Value"] as string;
-            Comment = r["Comment"] as string;
-        }
+    internal AggregateFilterParameter(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
+    {
+        AggregateFilter_ID = int.Parse(r["AggregateFilter_ID"].ToString());
+        ParameterSQL = r["ParameterSQL"] as string;
+        Value = r["Value"] as string;
+        Comment = r["Comment"] as string;
+    }
 
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return ParameterName + " = " + Value;
-        }
+    /// <inheritdoc/>
+    public override string ToString() => $"{ParameterName} = {Value}";
 
-        /// <inheritdoc cref="ParameterSyntaxChecker"/>
-        public void Check(ICheckNotifier notifier)
-        {
-            new ParameterSyntaxChecker(this).Check(notifier);
-        }
+    /// <inheritdoc cref="ParameterSyntaxChecker"/>
+    public void Check(ICheckNotifier notifier)
+    {
+        new ParameterSyntaxChecker(this).Check(notifier);
+    }
 
-        /// <inheritdoc/>
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return AggregateFilter.GetQuerySyntaxHelper();
-        }
+    /// <inheritdoc/>
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateFilter.GetQuerySyntaxHelper();
 
-        /// <inheritdoc/>
-        public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-        {
-            return AggregateFilter;
-        }
+    /// <inheritdoc/>
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => AggregateFilter;
 
 
-        public AggregateFilterParameter ShallowClone(AggregateFilter into)
-        {
-            var clone = new AggregateFilterParameter(CatalogueRepository, ParameterSQL, into);
-            CopyShallowValuesTo(clone);
-            return clone;
-        }
+    public AggregateFilterParameter ShallowClone(AggregateFilter into)
+    {
+        var clone = new AggregateFilterParameter(CatalogueRepository, ParameterSQL, into);
+        CopyShallowValuesTo(clone);
+        return clone;
     }
 }

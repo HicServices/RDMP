@@ -5,43 +5,45 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using MapsDirectlyToDatabaseTable;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+internal class ExecutableProcessTaskTests
 {
-    [Category("Unit")]
-    class ExecutableProcessTaskTests
+    [Test]
+    public void TestCreateArgString()
     {
-        [Test]
-        public void TestCreateArgString()
+        const string db = "my-db";
+
+        var customArgs = new List<SpontaneouslyInventedArgument>
         {
-            const string db = "my-db";
+            new(new MemoryRepository(), "DatabaseName", db)
+        };
 
-            var customArgs = new List<SpontaneouslyInventedArgument>();
-            customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
+        var processTask = Substitute.For<IProcessTask>();
+        var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
 
-            var processTask = Mock.Of<IProcessTask>();
-            var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
-            
-            var argString = task.CreateArgString();
-            var expectedArgString = "--database-name=" + db;
+        var argString = task.CreateArgString();
+        const string expectedArgString = $"--database-name={db}";
 
-            Assert.AreEqual(expectedArgString, argString);
-        }
+        Assert.AreEqual(expectedArgString, argString);
+    }
 
-        [Test]
-        public void TestConstructionFromProcessTask()
-        {
-            var processTask = Mock.Of<IProcessTask>(pt => pt.Path=="path");
+    [Test]
+    public void TestConstructionFromProcessTask()
+    {
+        var processTask = Substitute.For<IProcessTask>();
+        processTask.Path.Returns("path");
 
-            var runtimeTask = new ExecutableRuntimeTask(processTask, null);
-            Assert.AreEqual("path", runtimeTask.ExeFilepath);
-        }
+        var runtimeTask = new ExecutableRuntimeTask(processTask, null);
+        Assert.AreEqual("path", runtimeTask.ExeFilepath);
     }
 }

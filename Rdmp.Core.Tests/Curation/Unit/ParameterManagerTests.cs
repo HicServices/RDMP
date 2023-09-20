@@ -4,137 +4,144 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Parameters;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+[Category("Unit")]
+public class ParameterManagerTests
 {
-    [Category("Unit")]
-    public class ParameterManagerTests
+    [Test]
+    public void Test_ParameterManager_SimpleRename()
     {
-        [Test]
-        public void Test_ParameterManager_SimpleRename()
-        {
-            var p1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-            var p2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
+        var p1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
+        var p2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
 
-            var pm1 = new ParameterManager();
-            var pm2 = new ParameterManager();
-            var pm3 = new ParameterManager();
+        var pm1 = new ParameterManager();
+        var pm2 = new ParameterManager();
+        var pm3 = new ParameterManager();
+
+        pm1.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p1);
+        pm2.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p2);
+
+        pm3.ImportAndElevateResolvedParametersFromSubquery(pm1, out var renames1);
+        pm3.ImportAndElevateResolvedParametersFromSubquery(pm2, out var renames2);
+
+        var final = pm3.GetFinalResolvedParametersList().ToArray();
+
+        //the final composite parameters should have a rename in them
+        Assert.AreEqual("@fish", final[0].ParameterName);
+        Assert.AreEqual("@fish_2", final[1].ParameterName);
+
+        Assert.IsEmpty(renames1);
+
+        Assert.AreEqual("@fish", renames2.Single().Key);
+        Assert.AreEqual("@fish_2", renames2.Single().Value);
+    }
+
+    [Test]
+    [TestCase(ParameterLevel.TableInfo, ParameterLevel.Global)]
+    [TestCase(ParameterLevel.QueryLevel, ParameterLevel.Global)]
+    [TestCase(ParameterLevel.TableInfo, ParameterLevel.CompositeQueryLevel)]
+    [TestCase(ParameterLevel.TableInfo, ParameterLevel.QueryLevel)]
+    public void FindOverridenParameters_OneOnlyTest(ParameterLevel addAt, ParameterLevel overridingLevel)
+    {
+        var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
+        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value",
+            MicrosoftQuerySyntaxHelper.Instance);
+
+        var pm = new ParameterManager();
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter);
+        pm.ParametersFoundSoFarInQueryGeneration[overridingLevel].Add(overridingParameter);
+
+        var overrides = pm.GetOverridenParameters().ToArray();
+
+        Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
+        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter), overridingParameter);
+
+        Assert.AreEqual(1, overrides.Length);
+        Assert.AreEqual(myParameter, overrides[0]);
+        var final = pm.GetFinalResolvedParametersList().ToArray();
+
+        Assert.AreEqual(1, final.Length);
+        Assert.AreEqual(overridingParameter, final[0]);
+    }
+
+    [Test]
+    public void FindOverridenParameters_CaseSensitivityTest()
+    {
+        var baseParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
+        var overridingParameter = new ConstantParameter("DECLARE @Fish as int", "3", "overriding value",
+            MicrosoftQuerySyntaxHelper.Instance);
+
+        var pm = new ParameterManager();
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(baseParameter);
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(overridingParameter);
+
+        var parameters = pm.GetFinalResolvedParametersList().ToArray();
+
+        Assert.AreEqual(1, parameters.Length);
             
-            pm1.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p1);
-            pm2.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p2);
+        var final = parameters.Single();
+        Assert.AreEqual("@Fish", final.ParameterName);
+        Assert.AreEqual("3", final.Value);
+    }
 
-            pm3.ImportAndElevateResolvedParametersFromSubquery(pm1, out Dictionary<string,string> renames1);
-            pm3.ImportAndElevateResolvedParametersFromSubquery(pm2, out Dictionary<string,string> renames2);
+    [Test]
+    public void FindOverridenParameters_TwoTest()
+    {
+        var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
+        var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",
+            MicrosoftQuerySyntaxHelper.Instance);
 
-            var final = pm3.GetFinalResolvedParametersList().ToArray();
+        var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value",
+            MicrosoftQuerySyntaxHelper.Instance);
 
-            //the final composite parameters should have a rename in them
-            Assert.AreEqual("@fish",final[0].ParameterName);
-            Assert.AreEqual("@fish_2",final[1].ParameterName);
+        var pm = new ParameterManager();
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter1);
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(myParameter2);
+        pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].Add(overridingParameter);
 
-            Assert.IsEmpty(renames1);
+        var overrides = pm.GetOverridenParameters().ToArray();
 
-            Assert.AreEqual("@fish",renames2.Single().Key);
-            Assert.AreEqual("@fish_2",renames2.Single().Value);
-        }
+        Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
+        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter1), overridingParameter);
+        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter2), overridingParameter);
 
-        [Test]
-        [TestCase(ParameterLevel.TableInfo,ParameterLevel.Global)]
-        [TestCase(ParameterLevel.QueryLevel, ParameterLevel.Global)]
-        [TestCase(ParameterLevel.TableInfo,ParameterLevel.CompositeQueryLevel)]
-        [TestCase(ParameterLevel.TableInfo,ParameterLevel.QueryLevel)]
-        public void FindOverridenParameters_OneOnlyTest(ParameterLevel addAt, ParameterLevel overridingLevel)
-        {
-            var myParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "999", "overriding value",new MicrosoftQuerySyntaxHelper());
+        Assert.AreEqual(2, overrides.Length);
+        Assert.AreEqual(myParameter1, overrides[0]);
+        Assert.AreEqual(myParameter2, overrides[1]);
 
-            var pm = new ParameterManager();
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter);
-            pm.ParametersFoundSoFarInQueryGeneration[overridingLevel].Add(overridingParameter);
+        var final = pm.GetFinalResolvedParametersList().ToArray();
+        Assert.AreEqual(1, final.Length);
+        Assert.AreEqual(overridingParameter, final[0]);
+    }
 
-            var overrides = pm.GetOverridenParameters().ToArray();
+    [Test]
+    public void ParameterDeclarationAndDeconstruction()
+    {
+        var param = new ConstantParameter("DECLARE @Fish as int;", "3", "I've got a lovely bunch of coconuts",
+            MicrosoftQuerySyntaxHelper.Instance);
+        var sql = QueryBuilder.GetParameterDeclarationSQL(param);
 
-            Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
-            Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter), overridingParameter);
-
-            Assert.AreEqual(1,overrides.Length);
-            Assert.AreEqual(myParameter, overrides[0]);
-            var final = pm.GetFinalResolvedParametersList().ToArray();
-
-            Assert.AreEqual(1, final.Length);
-            Assert.AreEqual(overridingParameter, final[0]);
-        }
-        
-        [Test]
-        public void FindOverridenParameters_CaseSensitivityTest()
-        {
-            var baseParameter = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here", new MicrosoftQuerySyntaxHelper());
-            var overridingParameter = new ConstantParameter("DECLARE @Fish as int", "3", "overriding value", new MicrosoftQuerySyntaxHelper());
-
-            var pm = new ParameterManager();
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(baseParameter);
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(overridingParameter);
-
-            var parameters = pm.GetFinalResolvedParametersList().ToArray();
-
-            Assert.AreEqual(1,parameters.Count());
-            
-            var final = parameters.Single();
-            Assert.AreEqual("@Fish",final.ParameterName);
-            Assert.AreEqual("3", final.Value);
-        }
-
-        [Test]
-        public void FindOverridenParameters_TwoTest()
-        {
-            var myParameter1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
-            var myParameter2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
-
-            var overridingParameter = new ConstantParameter("DECLARE @fish as int", "3", "overriding value",new MicrosoftQuerySyntaxHelper());
-
-            var pm = new ParameterManager();
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Add(myParameter1);
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.CompositeQueryLevel].Add(myParameter2);
-            pm.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].Add(overridingParameter);
-
-            var overrides = pm.GetOverridenParameters().ToArray();
-
-            Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
-            Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter1), overridingParameter);
-            Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter2), overridingParameter);
-
-            Assert.AreEqual(2, overrides.Length);
-            Assert.AreEqual(myParameter1, overrides[0]);
-            Assert.AreEqual(myParameter2, overrides[1]);
-
-            var final = pm.GetFinalResolvedParametersList().ToArray();
-            Assert.AreEqual(1,final.Length);
-            Assert.AreEqual(overridingParameter, final[0]);
-        }
-
-        [Test]
-        public void ParameterDeclarationAndDeconstruction()
-        {
-            var param = new ConstantParameter("DECLARE @Fish as int;","3","I've got a lovely bunch of coconuts",new MicrosoftQuerySyntaxHelper());
-            var sql = QueryBuilder.GetParameterDeclarationSQL(param);
-
-            Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
+        Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
 DECLARE @Fish as int;
 SET @Fish=3;
 ", sql);
 
-            var after = ConstantParameter.Parse(sql, new MicrosoftQuerySyntaxHelper());
+        var after = ConstantParameter.Parse(sql, MicrosoftQuerySyntaxHelper.Instance);
 
-            Assert.AreEqual(param.ParameterSQL,after.ParameterSQL);
-            Assert.AreEqual(param.Value, after.Value);
-            Assert.AreEqual(param.Comment, after.Comment);
-        }
-
+        Assert.AreEqual(param.ParameterSQL, after.ParameterSQL);
+        Assert.AreEqual(param.Value, after.Value);
+        Assert.AreEqual(param.Comment, after.Comment);
     }
 }

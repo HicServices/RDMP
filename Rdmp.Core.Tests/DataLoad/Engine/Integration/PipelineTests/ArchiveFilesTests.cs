@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
@@ -18,86 +18,88 @@ using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests;
+
+public class ArchiveFilesTests : DatabaseTests
 {
-    public class ArchiveFilesTests : DatabaseTests
+    [Test]
+    public void TestAllFilesAreArchived()
     {
-        [Test]
-        public void TestAllFilesAreArchived()
+        var directoryHelper = new TestDirectoryHelper(GetType());
+        directoryHelper.SetUp();
+
+        var forArchiving = directoryHelper.Directory.CreateSubdirectory("forArchiving");
+        var forLoading = directoryHelper.Directory.CreateSubdirectory("forLoading");
+        File.WriteAllText(Path.Combine(forLoading.FullName, "test.txt"), "test data");
+        var subDir = forLoading.CreateSubdirectory("subdir");
+        File.WriteAllText(Path.Combine(subDir.FullName, "subdir.txt"), "test data in subdir");
+
+        // test the hidden dir which the archiver should ignore
+        var hiddenDir = forLoading.CreateSubdirectory(ArchiveFiles.HiddenFromArchiver);
+        File.WriteAllText(Path.Combine(hiddenDir.FullName, "hidden.txt"), "I should not appear in the archive");
+
+        var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
+
+        var dataLoadInfo = Substitute.For<IDataLoadInfo>();
+        dataLoadInfo.ID.Returns(1);
+
+        var LoadDirectory = Substitute.For<ILoadDirectory>();
+        LoadDirectory.ForArchiving.Returns(forArchiving);
+        LoadDirectory.ForLoading.Returns(forLoading);
+
+        var job = Substitute.For<IDataLoadJob>();
+        job.DataLoadInfo.Returns(dataLoadInfo);
+        job.LoadDirectory.Returns(LoadDirectory);
+
+        try
         {
-            var directoryHelper = new TestDirectoryHelper(GetType());
-            directoryHelper.SetUp();
+            archiveComponent.Run(job, new GracefulCancellationToken());
 
-            var forArchiving = directoryHelper.Directory.CreateSubdirectory("forArchiving");
-            var forLoading = directoryHelper.Directory.CreateSubdirectory("forLoading");
-            File.WriteAllText(Path.Combine(forLoading.FullName, "test.txt"), "test data");
-            var subDir = forLoading.CreateSubdirectory("subdir");
-            File.WriteAllText(Path.Combine(subDir.FullName, "subdir.txt"), "test data in subdir");
+            // first we expect a file in forArchiving called 1.zip
+            var zipFilename = Path.Combine(forArchiving.FullName, "1.zip");
+            Assert.True(File.Exists(zipFilename));
 
-            // test the hidden dir which the archiver should ignore
-            var hiddenDir = forLoading.CreateSubdirectory(ArchiveFiles.HiddenFromArchiver);
-            File.WriteAllText(Path.Combine(hiddenDir.FullName, "hidden.txt"), "I should not appear in the archive");
-
-            var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
-            
-            var dataLoadInfo = Mock.Of<IDataLoadInfo>(info => info.ID==1);
-
-            var LoadDirectory = Mock.Of<ILoadDirectory>(d => d.ForArchiving==forArchiving && d.ForLoading==forLoading);
-
-            var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo==dataLoadInfo);
-            job.LoadDirectory = LoadDirectory;
-
-            try
-            {
-                archiveComponent.Run(job, new GracefulCancellationToken());
-
-                // first we expect a file in forArchiving called 1.zip
-                var zipFilename = Path.Combine(forArchiving.FullName, "1.zip");
-                Assert.True(File.Exists(zipFilename));
-
-                // there should be two entries
-                using (var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read))
-                {
-                    Assert.AreEqual(2, archive.Entries.Count, "There should be two entries in this archive: one from the root and one from the subdirectory");
-                    Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
-                    Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
-                }
-            }
-            finally
-            {
-                directoryHelper.TearDown();
-            }
+            // there should be two entries
+            using var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read);
+            Assert.AreEqual(2, archive.Entries.Count,
+                "There should be two entries in this archive: one from the root and one from the subdirectory");
+            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
+            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
         }
-        
-        [Test]
-        public void CreateArchiveWithNoFiles_ShouldThrow()
+        finally
         {
-            var directoryHelper = new TestDirectoryHelper(GetType());
-            directoryHelper.SetUp();
-            
-            var testDir = directoryHelper.Directory.CreateSubdirectory("CreateArchiveWithNoFiles_ShouldThrow");
-            
-            var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
-            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
-            
-            var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo==Mock.Of<IDataLoadInfo>());
-            job.LoadDirectory = loadDirectory;
-
-            try
-            {
-                archiveFiles.Run(job, new GracefulCancellationToken());
-
-                foreach (FileInfo fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
-                    Console.WriteLine("About to throw SetUp because of zip file:" + fileInfo.FullName);
-
-                Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),"There should not be any zip files in the archive directory!");
-            }
-            finally
-            {
-                directoryHelper.TearDown();
-            }
+            directoryHelper.TearDown();
         }
-      
+    }
+
+    [Test]
+    public void CreateArchiveWithNoFiles_ShouldThrow()
+    {
+        var directoryHelper = new TestDirectoryHelper(GetType());
+        directoryHelper.SetUp();
+
+        var testDir = directoryHelper.Directory.CreateSubdirectory("CreateArchiveWithNoFiles_ShouldThrow");
+
+        var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
+        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
+
+        var job = Substitute.For<IDataLoadJob>();
+        job.DataLoadInfo.Returns(Substitute.For<IDataLoadInfo>());
+        job.LoadDirectory.Returns(loadDirectory);
+
+        try
+        {
+            archiveFiles.Run(job, new GracefulCancellationToken());
+
+            foreach (var fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
+                Console.WriteLine($"About to throw SetUp because of zip file:{fileInfo.FullName}");
+
+            Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),
+                "There should not be any zip files in the archive directory!");
+        }
+        finally
+        {
+            directoryHelper.TearDown();
+        }
     }
 }
-

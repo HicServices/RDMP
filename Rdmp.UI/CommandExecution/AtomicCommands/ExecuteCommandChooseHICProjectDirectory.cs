@@ -8,44 +8,39 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAtomicCommand
+    private readonly LoadMetadata _loadMetadata;
+
+    public ExecuteCommandChooseLoadDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
-        private readonly LoadMetadata _loadMetadata;
+        _loadMetadata = loadMetadata;
+    }
 
-        public ExecuteCommandChooseLoadDirectory(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
+    public override string GetCommandHelp() =>
+        "Changes the load location\\working directory for the DLE load configuration";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
+        if (dialog.ShowDialog() == DialogResult.OK)
         {
-            _loadMetadata = loadMetadata;
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Changes the load location\\working directory for the DLE load configuration";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var dialog = new ChooseLoadDirectoryUI(Activator,_loadMetadata);
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                _loadMetadata.LocationOfFlatFiles = dialog.Result;
-                _loadMetadata.SaveToDatabase();
-                Publish(_loadMetadata);
-            }
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.LoadDirectoryNode);
+            _loadMetadata.LocationOfFlatFiles = dialog.Result;
+            _loadMetadata.SaveToDatabase();
+            Publish(_loadMetadata);
         }
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.LoadDirectoryNode);
 }

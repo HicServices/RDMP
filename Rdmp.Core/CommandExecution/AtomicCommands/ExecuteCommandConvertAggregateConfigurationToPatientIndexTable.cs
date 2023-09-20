@@ -10,53 +10,55 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicCommandExecution
 {
-    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicCommandExecution
+    private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCombineable;
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator,
+        AggregateConfiguration aggregate, CohortIdentificationConfiguration cic)
+        : this(activator, new AggregateConfigurationCombineable(aggregate), cic)
     {
-        private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCombineable;
-        private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfiguration aggregate, CohortIdentificationConfiguration cic) 
-            : this(activator,new AggregateConfigurationCombineable(aggregate),cic)
-        {
+    public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator,
+        AggregateConfigurationCombineable sourceAggregateConfigurationCommand,
+        CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
+    {
+        _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
+        _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
 
-        }
+        if (sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
+            SetImpossible("Aggregate is already a Patient Index Table");
 
-        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
-        {
-            _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
-            _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
+        var cic = _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny;
 
-            if(sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
-                SetImpossible("Aggregate is already a Patient Index Table");
+        if (cic != null && cic.ID != _cohortIdentificationConfiguration.ID)
+            SetImpossible(
+                $"Aggregate '{_sourceAggregateConfigurationCombineable.Aggregate}'  belongs to a different Cohort Identification Configuration");
 
-            var cic = _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny;
+        if (cic != null && cic.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+    }
 
-            if( cic != null && cic.ID != _cohortIdentificationConfiguration.ID)
-                SetImpossible("Aggregate '" + _sourceAggregateConfigurationCombineable.Aggregate + "'  belongs to a different Cohort Identification Configuration");
-            
-            if(cic != null && cic.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        var sourceAggregate = _sourceAggregateConfigurationCombineable.Aggregate;
 
-            var sourceAggregate = _sourceAggregateConfigurationCombineable.Aggregate;
-            
-            //make sure it is not part of any folders
-            var parent = sourceAggregate.GetCohortAggregateContainerIfAny();
-            if (parent != null)
-                parent.RemoveChild(sourceAggregate);
+        //make sure it is not part of any folders
+        var parent = sourceAggregate.GetCohortAggregateContainerIfAny();
+        parent?.RemoveChild(sourceAggregate);
 
-            //create a new patient index table usage allowance for this aggregate
-            new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
-            
-            Publish(_cohortIdentificationConfiguration);
-            Emphasise(sourceAggregate);
-        }
+        //create a new patient index table usage allowance for this aggregate
+        new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,
+            _cohortIdentificationConfiguration, sourceAggregate);
+
+        Publish(_cohortIdentificationConfiguration);
+        Emphasise(sourceAggregate);
     }
 }

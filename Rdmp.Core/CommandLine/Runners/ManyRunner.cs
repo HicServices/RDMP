@@ -13,178 +13,182 @@ using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.CommandLine.Runners
+namespace Rdmp.Core.CommandLine.Runners;
+
+public abstract class ManyRunner : Runner
 {
-    public abstract class ManyRunner: Runner
+    private readonly ConcurrentRDMPCommandLineOptions _options;
+
+    protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+    protected GracefulCancellationToken Token { get; private set; }
+
+    private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
+
+    /// <summary>
+    /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
+    /// </summary>
+    private readonly object _oLock = new();
+
+    protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {
-        private readonly ConcurrentRDMPCommandLineOptions _options;
+        _options = options;
+    }
 
-        protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        protected GracefulCancellationToken Token { get;private set; }
+    public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
+        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+    {
+        RepositoryLocator = repositoryLocator;
+        Token = token;
+        var tasks = new List<Task>();
 
-        private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new Dictionary<ICheckable, ToMemoryCheckNotifier>();
+        Semaphore semaphore = null;
+        if (_options.MaxConcurrentExtractions != null)
+            semaphore = new Semaphore(_options.MaxConcurrentExtractions.Value, _options.MaxConcurrentExtractions.Value);
 
-        /// <summary>
-        /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
-        /// </summary>
-        private readonly object _oLock = new object();
+        Initialize();
 
-        protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
+        switch (_options.Command)
         {
-            _options = options;
-        }
+            case CommandLineActivity.none:
+                break;
+            case CommandLineActivity.run:
 
-        public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
-        {
-            RepositoryLocator = repositoryLocator;
-            Token = token;
-            List<Task> tasks = new List<Task>();
+                var runnables = GetRunnables();
 
-            Semaphore semaphore = null;
-            if (_options.MaxConcurrentExtractions != null)
-                semaphore = new Semaphore(_options.MaxConcurrentExtractions.Value, _options.MaxConcurrentExtractions.Value);
+                foreach (var runnable in runnables)
+                {
+                    semaphore?.WaitOne();
 
-            Initialize();
-            
-            switch (_options.Command)
-            {
-                case CommandLineActivity.none:
-                    break;
-                case CommandLineActivity.run:
-                        
-                    object[] runnables = GetRunnables();
-
-                    foreach (object runnable in runnables)
+                    var r = runnable;
+                    tasks.Add(Task.Run(() =>
                     {
-                        if (semaphore != null)
-                            semaphore.WaitOne();
-
-                        object r = runnable;
-                        tasks.Add(Task.Run(() =>
+                        try
                         {
-                            try
-                            {
-                                ExecuteRun(r, new OverrideSenderIDataLoadEventListener(r.ToString(), listener));
-                            }
-                            finally
-                            {
-                                if (semaphore != null)
-                                    semaphore.Release();
-                            }
-                        }));
-                    }
+                            ExecuteRun(r, new OverrideSenderIDataLoadEventListener(r.ToString(), listener));
+                        }
+                        finally
+                        {
+                            semaphore?.Release();
+                        }
+                    }));
+                }
 
-                    break;
-                case CommandLineActivity.check:
+                break;
+            case CommandLineActivity.check:
+
+                lock (_oLock)
+                {
+                    _checksDictionary.Clear();
+                }
+
+                var checkables = GetCheckables(checkNotifier);
+                foreach (var checkable in checkables)
+                {
+                    semaphore?.WaitOne();
+
+                    var checkable1 = checkable;
+                    var memory = new ToMemoryCheckNotifier(checkNotifier);
 
                     lock (_oLock)
-                        _checksDictionary.Clear();
-
-                    ICheckable[] checkables = GetCheckables(checkNotifier);
-                    foreach (ICheckable checkable in checkables)
                     {
-                        if (semaphore != null)
-                            semaphore.WaitOne();
-
-                        ICheckable checkable1 = checkable;
-                        var memory = new ToMemoryCheckNotifier(checkNotifier);
-
-                        lock (_oLock)
-                            _checksDictionary.Add(checkable1, memory);
-
-                        tasks.Add(Task.Run(() =>
-                        {
-                            try
-                            {
-                                checkable1.Check(memory);
-                            }
-                            finally
-                            {
-                                if (semaphore != null)
-                                    semaphore.Release();
-                            }
-                        }));
+                        _checksDictionary.Add(checkable1, memory);
                     }
 
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-            
-            Task.WaitAll(tasks.ToArray());
+                    tasks.Add(Task.Run(() =>
+                    {
+                        try
+                        {
+                            checkable1.Check(memory);
+                        }
+                        finally
+                        {
+                            semaphore?.Release();
+                        }
+                    }));
+                }
 
-            AfterRun();
-
-            return 0;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
-        protected abstract void Initialize();
-        protected abstract void AfterRun();
+        Task.WaitAll(tasks.ToArray());
 
-        protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
-        
-        protected abstract object[] GetRunnables();
-        protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);
+        AfterRun();
+
+        return 0;
+    }
+
+    protected abstract void Initialize();
+    protected abstract void AfterRun();
+
+    protected abstract ICheckable[] GetCheckables(ICheckNotifier checkNotifier);
+
+    protected abstract object[] GetRunnables();
+    protected abstract void ExecuteRun(object runnable, OverrideSenderIDataLoadEventListener listener);
 
 
-        /// <summary>
-        /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in the dictionary e.g. a globals checker).
-        /// 
-        /// <para>Use GetCheckerResults to get multiple </para>
-        /// 
-        /// <para>Returns null if there are no checkers of the given Type</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
-        /// <returns></returns>
-        protected ToMemoryCheckNotifier GetSingleCheckerResults<T>() where T : ICheckable
+    /// <summary>
+    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in the dictionary e.g. a globals checker).
+    /// 
+    /// <para>Use GetCheckerResults to get multiple </para>
+    /// 
+    /// <para>Returns null if there are no checkers of the given Type</para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
+    /// <returns></returns>
+    protected ToMemoryCheckNotifier GetSingleCheckerResults<T>() where T : ICheckable
+    {
+        return GetSingleCheckerResults<T>(s => true);
+    }
+
+    /// <summary>
+    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
+    /// 
+    /// <para>Returns null if there are no checkers of the given Type matching the func</para>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
+    /// <returns></returns>
+    protected ToMemoryCheckNotifier GetSingleCheckerResults<T>(Func<T, bool> func) where T : ICheckable
+    {
+        lock (_oLock)
         {
-            return GetSingleCheckerResults<T>(s => true);
+            var arr = GetCheckerResults(func);
+
+            if (arr.Length == 0)
+                return null;
+
+            return arr.Length == 1
+                ? arr[0].Value
+                : throw new InvalidOperationException($"There were {arr.Length} Checkers of type {typeof(T)}");
         }
+    }
 
-        /// <summary>
-        /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
-        /// 
-        /// <para>Returns null if there are no checkers of the given Type matching the func</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
-        /// <returns></returns>
-        protected ToMemoryCheckNotifier GetSingleCheckerResults<T>(Func<T, bool> func) where T : ICheckable
+    /// <summary>
+    /// Returns the results for the given <see cref="ICheckable"/> type which match the function
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="func"></param>
+    /// <returns></returns>
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func)
+        where T : ICheckable
+    {
+        lock (_oLock)
         {
-            lock (_oLock)
-            {
-                var arr = GetCheckerResults(func);
-
-                if (arr.Length == 0)
-                    return null;
-
-                if (arr.Length == 1)
-                    return arr[0].Value;
-
-                throw new InvalidOperationException("There were " + arr.Length + " Checkers of type " + typeof(T));
-            }
+            return GetCheckerResults<T>().Where(kvp => func((T)kvp.Key)).ToArray();
         }
+    }
 
-        /// <summary>
-        /// Returns the results for the given <see cref="ICheckable"/> type which match the function
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>(Func<T, bool> func) where T : ICheckable
+    protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T : ICheckable
+    {
+        lock (_oLock)
         {
-            lock (_oLock)
-                return GetCheckerResults<T>().Where(kvp=>func((T) kvp.Key)).ToArray();
-        }
-
-        protected KeyValuePair<ICheckable, ToMemoryCheckNotifier>[] GetCheckerResults<T>() where T:ICheckable
-        {
-            lock (_oLock)
-                return _checksDictionary.Where(kvp => kvp.Key is T).ToArray();
+            return _checksDictionary.Where(kvp => kvp.Key is T).ToArray();
         }
     }
 }

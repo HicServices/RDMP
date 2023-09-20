@@ -8,34 +8,27 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ScintillaHelper;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Allows you to view a given piece of SQL.  This dialog is used whenever the RDMP wants to show you some SQL and includes syntax highlighting.  It may be readonly or editable
+/// depending on the context in which the dialog was launched.
+/// </summary>
+public partial class ShowSQLUI : Form
 {
-    /// <summary>
-    /// Allows you to view a given piece of SQL.  This dialog is used whenever the RDMP wants to show you some SQL and includes syntax highlighting.  It may be readonly or editable
-    /// depending on the context in which the dialog was launched.
-    /// </summary>
-    public partial class ShowSQLUI : Form
+    public ShowSQLUI(string sql, bool isReadOnly = false)
     {
+        InitializeComponent();
 
-        private ScintillaNET.Scintilla QueryEditor;
-        private bool _designMode;
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+            return;
 
-        public ShowSQLUI(string sql, bool isReadOnly = false)
-        {
-            InitializeComponent();
+        var queryEditor = new ScintillaTextEditorFactory().Create();
+        queryEditor.Text = sql;
+        queryEditor.ReadOnly = isReadOnly;
 
-            _designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-
-            if (_designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
-
-            QueryEditor = new ScintillaTextEditorFactory().Create();
-            QueryEditor.Text = sql;
-            QueryEditor.ReadOnly = isReadOnly;
-
-            this.Controls.Add(QueryEditor);
-
-        }
+        Controls.Add(queryEditor);
     }
 }

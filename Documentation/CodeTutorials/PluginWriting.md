@@ -9,7 +9,7 @@
 5. [Tests](#tests)
   * [Unit Tests](#unitTests)
   * [Setting up Database Tests](#databaseTestsSetup)
-  * [Writting a Database Test](#databaseTestsWritting)
+  * [Writing a Database Test](#databaseTestsWriting)
 6. [Checks](#checks)
   * [Version 4](#anoPluginVersion4)
 7. [Progress Logging](#progress)
@@ -602,8 +602,8 @@ Create these databases you can use the main RDMP UI:
 
 Clean and Rebuild your project and run the unit test again. It should pass this time.
 
-<a name="databaseTestsWritting"></a>
-## Writting a Database Test
+<a name="databaseTestsWriting"></a>
+## Writing a Database Test
 Add a new test 
 
 ```csharp
@@ -809,7 +809,7 @@ Go to your unit tests and write a test for it passing it a `ThrowImmediatelyChec
 public void TestBasicDataTableAnonymiser4_FailConditions()
 {
     var a = new BasicDataTableAnonymiser4();
-    a.Check(new ThrowImmediatelyCheckNotifier());
+    a.Check(ThrowImmediatelyCheckNotifier.Quiet());
 }
 ```
 
@@ -855,7 +855,7 @@ namespace MyPipelinePlugin
         
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
-            GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+            GetCommonNamesTable(ThrowImmediatelyCheckNotifier.Quiet());
 
             //Go through each row in the table
             foreach (DataRow row in toProcess.Rows)
@@ -948,7 +948,7 @@ Now we can run our test and see an error that makes sense
 public void TestBasicDataTableAnonymiser4_FailConditions()
 {
     var a = new BasicDataTableAnonymiser4();
-    var ex = Assert.Throws<Exception>(()=>a.Check(new ThrowImmediatelyCheckNotifier()));
+    var ex = Assert.Throws<Exception>(()=>a.Check(ThrowImmediatelyCheckNotifier.Quiet()));
     Assert.IsTrue(ex.Message.Contains("No NamesTable has been set"));
 }
 ```
@@ -1042,7 +1042,7 @@ This will let us record how long is specifically spent on the anonymisation of t
 ```csharp
 public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
 {
-    GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+    GetCommonNamesTable(ThrowImmediatelyCheckNotifier.Quiet());
 
     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Ready to process batch with row count " + toProcess.Rows.Count));
 

@@ -4,17 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Curation.Data.Cohort
+namespace Rdmp.Core.Curation.Data.Cohort;
+
+/// <summary>
+/// Any class which should appear in a specific order
+/// </summary>
+public interface IOrderable
 {
     /// <summary>
-    /// Any class which should appear in a specific order
+    /// Order object should appear in relative to other <see cref="IOrderable"/> objects
+    /// in the same scope
     /// </summary>
-    public interface IOrderable
-    {
-        /// <summary>
-        /// Order object should appear in relative to other <see cref="IOrderable"/> objects 
-        /// in the same scope
-        /// </summary>
-        int Order { get; set; }
-    }
+    int Order { get; set; }
 }

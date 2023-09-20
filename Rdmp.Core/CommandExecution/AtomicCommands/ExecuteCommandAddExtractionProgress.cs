@@ -6,48 +6,45 @@
 
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Adds a new <see cref="ExtractionProgress"/> for windowed date based extractions of a dataset.
+/// </summary>
+public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
 {
-    /// <summary>
-    /// Adds a new <see cref="ExtractionProgress"/> for windowed date based extractions of a dataset.
-    /// </summary>
-    public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
+    private readonly ISelectedDataSets _sds;
+
+    public ExecuteCommandAddExtractionProgress(IBasicActivateItems activator, ISelectedDataSets sds) : base(activator)
     {
-        private readonly ISelectedDataSets _sds;
+        _sds = sds;
 
-        public ExecuteCommandAddExtractionProgress(IBasicActivateItems activator, ISelectedDataSets sds) : base(activator)
+        if (_sds.ExtractionProgressIfAny != null)
         {
-            _sds = sds;
-
-            if (_sds.ExtractionProgressIfAny != null)
-            {
-                SetImpossible("Catalogue already has an ExtractionProgress");
-                return;
-            }
-
-            if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
-            {
-                SetImpossible("Catalogue does not have a time coverage field configured");
-                return;
-            }
+            SetImpossible("Catalogue already has an ExtractionProgress");
+            return;
         }
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
         {
-            return iconProvider.GetImage(RDMPConcept.ExtractionProgress,OverlayKind.Add);
+            SetImpossible("Catalogue does not have a time coverage field configured");
+            return;
         }
+    }
 
-        public override void Execute()
-        {
-            base.Execute();
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionProgress, OverlayKind.Add);
 
-            var ep = new ExtractionProgress(BasicActivator.RepositoryLocator.DataExportRepository, _sds);
-            Publish(ep);
-            Activate(ep);
-        }
+    public override void Execute()
+    {
+        base.Execute();
+
+        var ep = new ExtractionProgress(BasicActivator.RepositoryLocator.DataExportRepository, _sds);
+        Publish(ep);
+        Activate(ep);
     }
 }

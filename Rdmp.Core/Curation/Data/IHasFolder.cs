@@ -4,21 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Interface for objects that exist within a hierarchy of virtual folders.  The
+/// <see cref="Folder"/> is primarily used in <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+/// to build a virtual folder structure based on the current string values.
+/// </summary>
+public interface IHasFolder : IMapsDirectlyToDatabaseTable, ISaveable
 {
     /// <summary>
-    /// Interface for objects that exist within a hierarchy of virtual folders.  The
-    /// <see cref="Folder"/> is primarily used in <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
-    /// to build a virtual folder structure based on the current string values.
+    /// A useful virtual folder in which to depict the object.  Note that this is not usually
+    /// a Directory (i.e. not a file system folder)
     /// </summary>
-    public interface IHasFolder : IMapsDirectlyToDatabaseTable, ISaveable
-    {
-        /// <summary>
-        /// A useful virtual folder in which to depict the object.  Note that this is not usually
-        /// a Directory (i.e. not a file system folder)
-        /// </summary>
-        string Folder { get; set; }
-    }
+    string Folder { get; set; }
 }

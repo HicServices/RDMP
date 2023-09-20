@@ -7,37 +7,37 @@
 using System.IO;
 using Rdmp.Core.Repositories.Managers;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and will be lost (unless you have the original key)
+/// </summary>
+public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
 {
-    /// <summary>
-    /// Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and will be lost (unless you have the original key)
-    /// </summary>
-    public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
+    private readonly FileInfo _keyFileToCreate;
+    private PasswordEncryptionKeyLocation _encryption;
+
+    public ExecuteCommandCreatePrivateKey(IBasicActivateItems activator, FileInfo keyFileToCreate) : base(activator)
     {
-        private readonly FileInfo _keyFileToCreate;
-        private PasswordEncryptionKeyLocation _encryption;
+        _keyFileToCreate = keyFileToCreate;
+        _encryption =
+            activator.RepositoryLocator.CatalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
 
-        public ExecuteCommandCreatePrivateKey(IBasicActivateItems activator, FileInfo keyFileToCreate) : base(activator)
+        if (_encryption == null)
         {
-            _keyFileToCreate = keyFileToCreate;
-            _encryption = activator.RepositoryLocator.CatalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
-
-            if (_encryption == null)
-            {
-                SetImpossible("Current Encryption manager is not based on key files");
-                return;
-            }
-
-            var existing = _encryption.GetKeyFileLocation();
-            if (existing != null) 
-                SetImpossible($"There is already a key file at '{existing}'");
+            SetImpossible("Current Encryption manager is not based on key files");
+            return;
         }
 
-        public override void Execute()
-        {
-            base.Execute();
+        var existing = _encryption.GetKeyFileLocation();
+        if (existing != null)
+            SetImpossible($"There is already a key file at '{existing}'");
+    }
 
-            _encryption.CreateNewKeyFile(_keyFileToCreate.FullName);
-        }
+    public override void Execute()
+    {
+        base.Execute();
+
+        _encryption.CreateNewKeyFile(_keyFileToCreate.FullName);
     }
 }

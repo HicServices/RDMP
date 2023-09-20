@@ -5,160 +5,152 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using Microsoft.Data.SqlClient;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
-
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 
-namespace Rdmp.UI.Versioning
+namespace Rdmp.UI.Versioning;
+
+/// <summary>
+/// Allows you to create a new managed database (e.g. Logging database, Catalogue Manager database etc).
+/// 
+/// <para>Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file
+/// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See
+/// PasswordEncryptionKeyLocationUI).</para>
+/// 
+/// <para>You will be shown the initial creation script for the database so you can see what is being created and make sure it matches your expectations.  The database
+/// will then be patched up to date with the current version of the RDMP.</para>
+/// </summary>
+public partial class CreatePlatformDatabase : Form
 {
+    private bool _completed;
+
+    private bool _programaticClose;
+    private IPatcher _patcher;
+
+    private Task _tCreateDatabase;
+    public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; }
+
     /// <summary>
-    /// Allows you to create a new managed database (e.g. Logging database, Catalogue Manager database etc).
-    /// 
-    /// <para>Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file 
-    /// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See 
-    /// PasswordEncryptionKeyLocationUI).</para>
-    /// 
-    /// <para>You will be shown the initial creation script for the database so you can see what is being created and make sure it matches your expectations.  The database
-    /// will then be patched up to date with the current version of the RDMP.</para>
+    /// Calls the main constructor but passing control of what scripts to extract to the Patch class
     /// </summary>
-    public partial class CreatePlatformDatabase : Form
+    public CreatePlatformDatabase(IPatcher patcher)
     {
-        private bool _completed = false;
+        _patcher = patcher;
+        InitializeComponent();
 
-        private bool _programaticClose;
-        private IPatcher _patcher;
-        
-        private Task _tCreateDatabase;
-        public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; } = null;
+        //show only Database section
+        serverDatabaseTableSelector1.HideTableComponents();
 
-        /// <summary>
-        /// Calls the main constructor but passing control of what scripts to extract to the Patch class
-        /// </summary>
-        public CreatePlatformDatabase(IPatcher patcher)
+        if (patcher.SqlServerOnly)
+            serverDatabaseTableSelector1.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
+    }
+
+
+    private void btnCreate_Click(object sender, EventArgs e)
+    {
+        var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
+
+        if (db == null)
         {
-            _patcher = patcher;
-            InitializeComponent();
-
-            //show only Database section
-            serverDatabaseTableSelector1.HideTableComponents();
-
-            if(patcher.SqlServerOnly)
-                serverDatabaseTableSelector1.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
+            MessageBox.Show(
+                "You must pick an empty database or enter the name of a new one");
+            return;
         }
 
-        
-        private void btnCreate_Click(object sender, EventArgs e)
+        if (_completed)
         {
-            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-            if (db == null)
-            {
-                MessageBox.Show(
-                    "You must pick an empty database or enter the name of a new one");
-                return;
-            }
-
-            if (_completed)
-            {
-                MessageBox.Show("Setup completed already, review progress messages then close Form");
-                return;
-            }
-
-            if (_tCreateDatabase != null && !_tCreateDatabase.IsCompleted)
-            {
-                MessageBox.Show("Setup already underaway");
-                return;
-            }
-            
-            var createSql = _patcher.GetInitialCreateScriptContents(db);
-            var patches = _patcher.GetAllPatchesInAssembly(db);
-
-            var preview = new SQLPreviewWindow("Confirm happiness with SQL",
-                "The following SQL is about to be executed:", createSql.EntireScript);
-
-            var executor = new MasterDatabaseScriptExecutor(db);
-            
-            if (preview.ShowDialog() == DialogResult.OK)
-            {
-                _tCreateDatabase = Task.Run(()=>
-                    
-                    {
-                        var memory = new ToMemoryCheckNotifier(checksUI1);
-
-                        if (executor.CreateDatabase(createSql, memory))
-                        {
-                            _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
-
-                            DatabaseCreatedIfAny = db;
-
-                            var worst = memory.GetWorst();
-                            if(worst == CheckResult.Success || worst == CheckResult.Warning)
-                                if (MessageBox.Show("Succesfully created database, close form?", "Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                {
-                                    _programaticClose = true;
-                                    Invoke(new MethodInvoker(Close));
-                                }
-                        }
-                        else
-                            _completed = false;//failed to create database
-                    }
-                    );
-            }
+            MessageBox.Show("Setup completed already, review progress messages then close Form");
+            return;
         }
 
-        
-
-        private bool silentlyApplyPatchCallback(Patch p)
+        if (_tCreateDatabase is { IsCompleted: false })
         {
-            checksUI1.OnCheckPerformed(new CheckEventArgs("About to apply patch " + p.locationInAssembly, CheckResult.Success, null));
-            return true;
+            MessageBox.Show("Setup already underway");
+            return;
         }
-        
-        private void CreatePlatformDatabase_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if(_tCreateDatabase != null)
-            {
-                if (!_tCreateDatabase.IsCompleted && !_programaticClose)
+
+        var createSql = _patcher.GetInitialCreateScriptContents(db);
+        var patches = _patcher.GetAllPatchesInAssembly(db);
+
+        var preview = new SQLPreviewWindow("Confirm happiness with SQL",
+            "The following SQL is about to be executed:", createSql.EntireScript);
+
+        var executor = new MasterDatabaseScriptExecutor(db);
+
+        if (preview.ShowDialog() == DialogResult.OK)
+            _tCreateDatabase = Task.Run(() =>
+
                 {
-                    if(
-                        MessageBox.Show("CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.","Really Close?",MessageBoxButtons.YesNoCancel) 
-                        != DialogResult.Yes)
-                        e.Cancel = true;
+                    var memory = new ToMemoryCheckNotifier(checksUI1);
+
+                    if (executor.CreateDatabase(createSql, memory))
+                    {
+                        _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
+
+                        DatabaseCreatedIfAny = db;
+
+                        if (memory.GetWorst() is not (CheckResult.Success or CheckResult.Warning) ||
+                            MessageBox.Show("Successfully created database, close form?", "Success",
+                                MessageBoxButtons.YesNo) != DialogResult.Yes) return;
+                        _programaticClose = true;
+                        Invoke(new MethodInvoker(Close));
+                    }
+                    else
+                    {
+                        _completed = false; //failed to create database
+                    }
                 }
-            }
-        }
-        
-        public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
+            );
+    }
+
+
+    private bool silentlyApplyPatchCallback(Patch p)
+    {
+        checksUI1.OnCheckPerformed(new CheckEventArgs($"About to apply patch {p.locationInAssembly}",
+            CheckResult.Success, null));
+        return true;
+    }
+
+    private void CreatePlatformDatabase_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        if (_tCreateDatabase != null)
+            if (!_tCreateDatabase.IsCompleted && !_programaticClose)
+                if (
+                    MessageBox.Show(
+                        "CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.",
+                        "Really Close?", MessageBoxButtons.YesNoCancel)
+                    != DialogResult.Yes)
+                    e.Cancel = true;
+    }
+
+    public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,
+        PermissableDefaults defaultToSet, IPatcher patcher)
+    {
+        var createPlatform = new CreatePlatformDatabase(patcher);
+        createPlatform.ShowDialog();
+
+        var db = createPlatform.DatabaseCreatedIfAny;
+
+        if (db != null)
         {
-            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(patcher);
-            createPlatform.ShowDialog();
+            var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
+            newServer.SetProperties(db);
 
-            var db = createPlatform.DatabaseCreatedIfAny;
+            if (defaultToSet != PermissableDefaults.None)
+                repository.SetDefault(defaultToSet, newServer);
 
-            if (db != null)
-            {
-                var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
-                newServer.SetProperties(db);
-                
-                if(defaultToSet != PermissableDefaults.None)
-                    repository.SetDefault(defaultToSet, newServer);
-
-                return newServer;
-            }
-
-            return null;
+            return newServer;
         }
+
+        return null;
     }
 }

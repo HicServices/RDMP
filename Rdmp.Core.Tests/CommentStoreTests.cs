@@ -6,41 +6,40 @@
 
 using System.Xml;
 using NUnit.Framework;
-using ReusableLibraryCode.Comments;
+using Rdmp.Core.ReusableLibraryCode.Comments;
 
-namespace Rdmp.Core.Tests
+namespace Rdmp.Core.Tests;
+
+internal class CommentStoreTests
 {
-    class CommentStoreTests
+    [Test]
+    public void Test_CommentStoreXmlDoc_Basic()
     {
-        [Test]
-        public void Test_CommentStoreXmlDoc_Basic()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        var store = new CommentStore();
+
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
                 Does some stuff 
                 </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
+        store.AddXmlDoc(doc.FirstChild);
 
-            Assert.AreEqual(
-                @"Does some stuff"
-                ,store["WindowFactory"]);
+        Assert.AreEqual(
+            @"Does some stuff"
+            , store["WindowFactory"]);
+    }
 
-        }
+    [Test]
+    public void Test_CommentStoreXmlDoc_OnePara()
+    {
+        var store = new CommentStore();
 
-        [Test]
-        public void Test_CommentStoreXmlDoc_OnePara()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
                 <para>
                 Does some stuff 
@@ -48,22 +47,21 @@ namespace Rdmp.Core.Tests
                 </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
+        store.AddXmlDoc(doc.FirstChild);
 
-            Assert.AreEqual(
-                @"Does some stuff"
-                ,store["WindowFactory"]);
+        Assert.AreEqual(
+            @"Does some stuff"
+            , store["WindowFactory"]);
+    }
 
-        }
+    [Test]
+    public void Test_CommentStoreXmlDoc_TwoPara()
+    {
+        var store = new CommentStore();
 
-        [Test]
-        public void Test_CommentStoreXmlDoc_TwoPara()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
                 Does some stuff 
                 This is still one para
@@ -73,65 +71,64 @@ namespace Rdmp.Core.Tests
                 </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
+        store.AddXmlDoc(doc.FirstChild);
 
-            Assert.AreEqual(
-                @"Does some stuff This is still one para
+        Assert.AreEqual(
+            @"Does some stuff This is still one para
 
 this is next para"
-                ,store["WindowFactory"]);
+            , store["WindowFactory"]);
+    }
 
-        }
 
+    [Test]
+    public void Test_CommentStoreXmlDoc_EmptyElements()
+    {
+        var store = new CommentStore();
 
-        [Test]
-        public void Test_CommentStoreXmlDoc_EmptyElements()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary></summary>
                 </member>");
 
-            //shouldn't bomb
-            store.AddXmlDoc(null);
-            //also shouldn't bomb but should be 0
-            store.AddXmlDoc(doc.FirstChild.FirstChild);
-            
-            Assert.IsEmpty(store);
+        //shouldn't bomb
+        store.AddXmlDoc(null);
+        //also shouldn't bomb but should be 0
+        store.AddXmlDoc(doc.FirstChild.FirstChild);
 
-            store.AddXmlDoc(doc.FirstChild);
-            Assert.IsEmpty(store);
+        Assert.IsEmpty(store);
 
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        store.AddXmlDoc(doc.FirstChild);
+        Assert.IsEmpty(store);
+
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>  </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
-            Assert.IsEmpty(store);
+        store.AddXmlDoc(doc.FirstChild);
+        Assert.IsEmpty(store);
 
-            
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary> a </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
-            Assert.IsNotEmpty(store);
-        }
+        store.AddXmlDoc(doc.FirstChild);
+        Assert.IsNotEmpty(store);
+    }
 
 
-        [Test]
-        public void Test_CommentStoreXmlDoc_TwoParaBothFormatted()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+    [Test]
+    public void Test_CommentStoreXmlDoc_TwoParaBothFormatted()
+    {
+        var store = new CommentStore();
+
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
                 <para>
                 Does some stuff 
@@ -143,25 +140,24 @@ this is next para"
                 </summary>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
+        store.AddXmlDoc(doc.FirstChild);
 
-            Assert.AreEqual(
-                @"Does some stuff This is still one para
+        Assert.AreEqual(
+            @"Does some stuff This is still one para
 
 this is next para"
-                ,store["WindowFactory"]);
+            , store["WindowFactory"]);
+    }
 
-        }
 
+    [Test]
+    public void Test_CommentStoreXmlDoc_WithCrefAndTwoPara()
+    {
+        var store = new CommentStore();
 
-        [Test]
-        public void Test_CommentStoreXmlDoc_WithCrefAndTwoPara()
-        {
-            var store = new CommentStore();
-            
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml(
-                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+        var doc = new XmlDocument();
+        doc.LoadXml(
+            @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
                 <summary>
                 Does some stuff 
                 And some more stuff
@@ -174,14 +170,12 @@ got it?
                 <exception cref=""T:System.ArgumentOutOfRangeException"">This text shouldn't appear</exception>
                 </member>");
 
-            store.AddXmlDoc(doc.FirstChild);
+        store.AddXmlDoc(doc.FirstChild);
 
-            Assert.AreEqual(
-                @"Does some stuff And some more stuff IObjectCollectionControl (for RDMPCollectionUI see WindowManager ).
+        Assert.AreEqual(
+            @"Does some stuff And some more stuff IObjectCollectionControl (for RDMPCollectionUI see WindowManager ).
 
 paragraph 2 got it?"
-                ,store["WindowFactory"]);
-
-        }
+            , store["WindowFactory"]);
     }
 }

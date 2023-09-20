@@ -9,57 +9,54 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ANOEngineeringUIs;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCommandWithTarget
 {
-    public class ExecuteCommandCreateANOVersion:BasicUICommandExecution,IAtomicCommandWithTarget
+    private Catalogue _catalogue;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator)
     {
-        private Catalogue _catalogue;
+        SetTarget(catalogue);
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateANOVersion(IActivateItems activator, Catalogue catalogue) : this(activator) => SetTarget(catalogue);
+    public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
+    {
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
-        {
-            UseTripleDotSuffix = true;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.ANOTable);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ANOTable);
-        }
+    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
+    {
+        _catalogue = (Catalogue)target;
 
-        public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-        {
-            _catalogue = (Catalogue) target;
+        if (!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+            SetImpossible("Catalogue does not have any Extractable Columns");
 
-            if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
-                SetImpossible("Catalogue does not have any Extractable Columns");
+        return this;
+    }
 
-            return this;
-        }
+    public override string GetCommandHelp() =>
+        "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
 
-        public override string GetCommandHelp()
-        {
-            return "Create an anonymous version of the dataset.  This will be an initially empty anonymous schema and a load configuration for migrating the data.";
-        }
+    public override void Execute()
+    {
+        if (_catalogue == null)
+            SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
 
-        public override void Execute()
-        {
-            if (_catalogue == null)
-                SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
+        if (_catalogue == null)
+            return;
 
-            if(_catalogue == null)
-                return;
-            
-            base.Execute();
+        base.Execute();
 
-            Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
-        }
+        Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
     }
 }

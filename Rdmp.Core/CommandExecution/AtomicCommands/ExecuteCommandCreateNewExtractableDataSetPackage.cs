@@ -4,44 +4,39 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecution,IAtomicCommand
+    public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
     {
-        public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
-        {
-            if(BasicActivator.RepositoryLocator.DataExportRepository == null)
-                SetImpossible("Data export database is not setup");
+        if (BasicActivator.RepositoryLocator.DataExportRepository == null)
+            SetImpossible("Data export database is not setup");
 
-            UseTripleDotSuffix = true;
-        }
+        UseTripleDotSuffix = true;
+    }
 
-        public override string GetCommandHelp()
-        {
-            return "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
-        }
+    public override string GetCommandHelp() =>
+        "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
 
-        public override void Execute()
-        {
-            base.Execute();
-            
-            if (TypeText("Name for package", "Name", 500, null, out string name))
-            {
-                var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
-                Publish(p);
-                Emphasise(p);
-            }
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+        if (TypeText("Name for package", "Name", 500, null, out var name))
         {
-            return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
+            var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
+            Publish(p);
+            Emphasise(p);
         }
     }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
 }

@@ -6,54 +6,47 @@
 
 using System;
 using System.Data.Common;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using System.Globalization;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents;
+
+/// <summary>
+/// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
+/// </summary>
+public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
-    /// <summary>
-    /// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
-    /// </summary>
-    public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
+    public int ID { get; internal set; }
+    public DateTime Date { get; internal set; }
+    public string EventType { get; internal set; }
+    public string Description { get; internal set; }
+
+    public ArchivalProgressLog(DbDataReader r)
     {
-        public int ID { get; internal set; }
-        public DateTime Date { get; internal set; }
-        public string EventType { get; internal set; }
-        public string Description { get; internal set; }
+        ID = (int)r["ID"];
 
-        public ArchivalProgressLog(DbDataReader r)
-        {
-            ID = (int)r["ID"];
+        if (r["time"] != DBNull.Value)
+            Date = Convert.ToDateTime(r["time"]);
 
-            if (r["time"] != DBNull.Value)
-                Date = Convert.ToDateTime(r["time"]);
+        EventType = r["eventType"] as string;
+        Description = r["description"] as string;
+    }
 
-            EventType = r["eventType"] as string;
-            Description = r["description"] as string;
-        }
-        public override string ToString()
-        {
-            return Date + " - " + Description;
-        }
+    public override string ToString() => $"{Date} - {Description}";
 
-        public int CompareTo(object obj)
-        {
-            var other = obj as ArchivalProgressLog;
-            if (other != null)
-                if (Date == other.Date)
-                    return 0;
-                else
-                    return Date > other.Date ? 1 : -1;
+    public int CompareTo(object obj)
+    {
+        if (obj is not ArchivalProgressLog other)
+            return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+        return Date == other.Date ? 0 : Date > other.Date ? 1 : -1;
+    }
 
-            return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
-        }
-
-        public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
-        {
-            level = EventType == "OnWarning"? CheckResult.Warning : CheckResult.Success;
-            title = Date.ToString();
-            body = Description;
-            stackTrace = null;
-        }
+    public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+    {
+        level = EventType == "OnWarning" ? CheckResult.Warning : CheckResult.Success;
+        title = Date.ToString(CultureInfo.InvariantCulture);
+        body = Description;
+        stackTrace = null;
     }
 }

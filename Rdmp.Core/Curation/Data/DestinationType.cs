@@ -4,26 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// Describes the destination of an artifact (e.g. a linked project extract)
+/// </summary>
+public enum DestinationType
 {
     /// <summary>
-    /// Describes the destination of an artifact (e.g. a linked project extract)
+    /// Destination is unknown
     /// </summary>
-    public enum DestinationType
-    {
-        /// <summary>
-        /// Destination is unknown
-        /// </summary>
-        Unknown = 0,
+    Unknown = 0,
 
-        /// <summary>
-        /// Artifact destination is a database (e.g. into an sql server instance)
-        /// </summary>
-        Database,
+    /// <summary>
+    /// Artifact destination is a database (e.g. into an sql server instance)
+    /// </summary>
+    Database,
 
-        /// <summary>
-        /// Artifact destination is the file system (e.g. into a folder)
-        /// </summary>
-        FileSystem
-    }
+    /// <summary>
+    /// Artifact destination is the file system (e.g. into a folder)
+    /// </summary>
+    FileSystem
 }

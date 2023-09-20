@@ -4,19 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataFlowPipeline
+namespace Rdmp.Core.DataFlowPipeline;
+
+/// <summary>
+/// MEF discoverable version of for IDataFlowComponent.  Also forces you to write a Check implementation in which you confirm or deny that your component is in a runnable
+/// state.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public interface IPluginDataFlowComponent<T> : IDataFlowComponent<T>, ICheckable
 {
-    /// <summary>
-    /// MEF discoverable version of for IDataFlowComponent.  Also forces you to write a Check implementation in which you confirm or deny that your component is in a runnable
-    /// state.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    
-    
-    public interface IPluginDataFlowComponent<T>:IDataFlowComponent<T>,ICheckable
-    {
-        
-    }
 }

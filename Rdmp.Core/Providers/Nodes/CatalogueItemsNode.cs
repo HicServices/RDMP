@@ -4,41 +4,41 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
+/// </summary>
+public class CatalogueItemsNode : Node, IOrderable
 {
-    /// <summary>
-    /// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
-    /// </summary>
-    public class CatalogueItemsNode : Node, IOrderable
+    public Catalogue Catalogue { get; }
+    public CatalogueItem[] CatalogueItems { get; }
+
+    public ExtractionCategory? Category { get; }
+
+    public int Order
     {
-        public Catalogue Catalogue { get; }
-        public CatalogueItem[] CatalogueItems { get; }
+        get => Category.HasValue ? (int)Category + 1 : 20;
+        set { } // no setter, we are orderable to enforce specific order in tree
+    }
 
-        public ExtractionCategory? Category { get; }
-        public int Order
-        {
-            get { return Category.HasValue ? (int)Category +1: 20; }
-            set { } // no setter, we are orderable to enforce specific order in tree
-        }
+    public CatalogueItemsNode(Catalogue catalogue, IEnumerable<CatalogueItem> cis, ExtractionCategory? category)
+    {
+        Catalogue = catalogue;
+        CatalogueItems = cis.ToArray();
+        Category = category;
+    }
 
-        public CatalogueItemsNode(Catalogue catalogue, IEnumerable<CatalogueItem> cis, ExtractionCategory? category)
-        {
-            Catalogue = catalogue;
-            CatalogueItems = cis.ToArray();
-            Category = category;
-        }
-
-        public override string ToString()
-        {
-            if(Category == null)
-                return "Non Extractable";
-
-            return Category switch
+    public override string ToString()
+    {
+        return Category == null
+            ? "Non Extractable"
+            : Category switch
             {
                 ExtractionCategory.Core => "Core Items",
                 ExtractionCategory.Supplemental => "Supplemental Items",
@@ -47,27 +47,17 @@ namespace Rdmp.Core.Providers.Nodes
                 ExtractionCategory.Deprecated => "Deprecated Items",
                 _ => "Catalogue Items"
             };
-        }
-
-        protected bool Equals(CatalogueItemsNode other)
-        {
-            return Catalogue.Equals(other.Catalogue) && Equals(Category,other.Category);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (CatalogueItemsNode)) return false;
-            return Equals((CatalogueItemsNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return Catalogue.GetHashCode() * (Category?.GetHashCode() ?? -12342);
-            }
-        }
     }
+
+    protected bool Equals(CatalogueItemsNode other) =>
+        Catalogue.Equals(other.Catalogue) && Equals(Category, other.Category);
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        return obj.GetType() == typeof(CatalogueItemsNode) && Equals((CatalogueItemsNode)obj);
+    }
+
+    public override int GetHashCode() => System.HashCode.Combine(Catalogue, Category);
 }

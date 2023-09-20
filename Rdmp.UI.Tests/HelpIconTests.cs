@@ -5,31 +5,30 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-
 using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+internal class HelpIconTests
 {
-    class HelpIconTests
+    [Test]
+    public void TestNullInputs_HelpIcon()
     {
-        [Test]
-        public void TestNullInputs_HelpIcon()
-        {
-            var hi = new HelpIcon();
-            hi.SetHelpText(null,null);
-            hi.SetHelpText("","");
-            Assert.IsNull(hi.HoverText);
-        }
+        var hi = new HelpIcon();
+        hi.SetHelpText(null, null);
+        hi.SetHelpText("", "");
+        Assert.IsNull(hi.HoverText);
+    }
 
-        [Test]
-        public void TestLongInputs_HelpIcon()
-        {
-            var hi = new HelpIcon();
+    [Test]
+    public void TestLongInputs_HelpIcon()
+    {
+        var hi = new HelpIcon();
 
-            //length is over 150 characters
-            string testLongString = "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
-            hi.SetHelpText(null,testLongString);
-            Assert.AreEqual(HelpIcon.MaxHoverTextLength,hi.HoverText.Length);
-        }
+        //length is over 150 characters
+        const string testLongString =
+            "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
+        hi.SetHelpText(null, testLongString);
+        Assert.AreEqual(HelpIcon.MaxHoverTextLength, hi.HoverText.Length);
     }
 }

@@ -9,35 +9,35 @@ using System.Xml.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
+
+public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
+    private Catalogue _target;
+    private FileInfo _toImport;
+    private readonly DublinCoreTranslater _translater = new();
+
+    public ExecuteCommandImportDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
     {
-        private Catalogue _target;
-        private FileInfo _toImport;
-        readonly DublinCoreTranslater _translater = new DublinCoreTranslater();
+        _target = catalogue;
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandImportDublinCoreFormat(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
-        {
-            _target = catalogue;
-            UseTripleDotSuffix = true;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
+        if ((_toImport ??= BasicActivator.SelectFile("Enter Dublin Core Xml File Path:", "Dublin Core Xml", "*.xml")) ==
+            null)
+            return;
 
-            if ((_toImport = _toImport ?? BasicActivator.SelectFile("Enter Dublin Core Xml File Path:","Dublin Core Xml","*.xml")) == null)
-                return;
+        var dc = new DublinCoreDefinition();
+        var doc = XDocument.Load(_toImport.FullName);
+        dc.LoadFrom(doc.Root);
 
-            var dc = new DublinCoreDefinition();
-            var doc = XDocument.Load(_toImport.FullName);
-            dc.LoadFrom(doc.Root);
+        DublinCoreTranslater.Fill(_target, dc);
+        _target.SaveToDatabase();
 
-            _translater.Fill(_target, dc);
-            _target.SaveToDatabase();
-
-            Publish(_target);
-        }
+        Publish(_target);
     }
 }

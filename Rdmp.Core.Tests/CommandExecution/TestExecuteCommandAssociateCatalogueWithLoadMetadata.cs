@@ -9,34 +9,29 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCliTests
 {
-    class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCliTests
+    [Test]
+    public void TestExecuteCommandAssociateCatalogueWithLoadMetadata_Simple()
     {
+        var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository, "fff");
+        var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository, "bbb");
 
-        [Test]
-        public void TestExecuteCommandAssociateCatalogueWithLoadMetadata_Simple()
-        {
-            var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository,"fff");
-            var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository,"bbb");
+        Assert.IsNull(cata1.LoadMetadata);
+        Assert.IsNull(cata2.LoadMetadata);
 
-            Assert.IsNull(cata1.LoadMetadata);
-            Assert.IsNull(cata2.LoadMetadata);
+        var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository, "mylmd");
 
-            var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository,"mylmd");
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata),
+            new CommandLineObjectPicker(new[] { $"LoadMetadata:{lmd.ID}", "Catalogue:fff" }, GetActivator()));
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandAssociateCatalogueWithLoadMetadata),
-                new CommandLineObjectPicker(new[]{$"LoadMetadata:{lmd.ID}", "Catalogue:fff"}, GetActivator()));
+        cata1.RevertToDatabaseState();
+        cata2.RevertToDatabaseState();
 
-            cata1.RevertToDatabaseState();
-            cata2.RevertToDatabaseState();
-
-            Assert.AreEqual(lmd.ID,cata1.LoadMetadata_ID);
-            Assert.IsNull(cata2.LoadMetadata);
-        }
+        Assert.AreEqual(lmd.ID, cata1.LoadMetadata_ID);
+        Assert.IsNull(cata2.LoadMetadata);
     }
 }

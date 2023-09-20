@@ -7,44 +7,38 @@
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes
+namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+
+/// <summary>
+/// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are
+/// associated with the <see cref="Project"/> via the project number.
+/// </summary>
+public class ProjectSavedCohortsNode : Node, IOrderable
 {
-    /// <summary>
-    /// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are 
-    /// associated with the <see cref="Project"/> via the project number.
-    /// </summary>
-    public class ProjectSavedCohortsNode:Node,IOrderable
+    public Project Project { get; }
+
+    public ProjectSavedCohortsNode(Project project)
     {
-        public Project Project { get; set; }
+        Project = project;
+    }
 
-        public ProjectSavedCohortsNode(Project project)
-        {
-            Project = project;
-        }
+    public override string ToString() => "Saved Cohorts";
 
-        public override string ToString()
-        {
-            return "Saved Cohorts";
-        }
+    protected bool Equals(ProjectSavedCohortsNode other) => Equals(Project, other.Project);
 
-        protected bool Equals(ProjectSavedCohortsNode other)
-        {
-            return Equals(Project, other.Project);
-        }
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ProjectSavedCohortsNode)obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ProjectSavedCohortsNode) obj);
-        }
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
-        public override int GetHashCode()
-        {
-            return (Project != null ? Project.GetHashCode() : 0);
-        }
-
-        public int Order { get { return 2; } set{}}
+    public int Order
+    {
+        get => 2;
+        set { }
     }
 }

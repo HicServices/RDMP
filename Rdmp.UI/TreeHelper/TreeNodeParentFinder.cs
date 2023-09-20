@@ -6,54 +6,57 @@
 
 using BrightIdeasSoftware;
 
-namespace Rdmp.UI.TreeHelper
+namespace Rdmp.UI.TreeHelper;
+
+/// <summary>
+/// Helper class for finding parents in a <see cref="TreeListView"/> that match a given Type.
+/// </summary>
+public class TreeNodeParentFinder
 {
-    /// <summary>
-    /// Helper class for finding parents in a <see cref="TreeListView"/> that match a given Type.
-    /// </summary>
-    public class TreeNodeParentFinder
+    private readonly TreeListView _tree;
+
+    public TreeNodeParentFinder(TreeListView tree)
     {
-        private TreeListView _tree;
+        _tree = tree;
+    }
 
-        public TreeNodeParentFinder(TreeListView tree)
-        {
-            _tree = tree;
-        }
-        public T GetFirstOrNullParentRecursivelyOfType<T>(object modelObject) where T : class
-        {
-            //get parent of node
-            var parent = _tree.GetParent(modelObject);
+    public T GetFirstOrNullParentRecursivelyOfType<T>(object modelObject) where T : class
+    {
+        //get parent of node
+        var parent = _tree.GetParent(modelObject);
 
+        return parent switch
+        {
             //if there is no parent
-            if (parent == null)
-                return default(T);//return null
-            
+            null => default,
             //if parent is correct type return it
-            var correctType = parent as T;
-            if (correctType != null)
-                return correctType;
+            T correctType => correctType,
+            _ => GetFirstOrNullParentRecursivelyOfType<T>(parent)
+        };
 
-            //otherwise explore upwards on parent to get parent of correct type
-            return GetFirstOrNullParentRecursivelyOfType<T>(parent);
-        }
+        //otherwise explore upwards on parent to get parent of correct type
+    }
 
-        public T GetLastOrNullParentRecursivelyOfType<T>(object modelObject,T lastOneFound = null) where T:class
+    public T GetLastOrNullParentRecursivelyOfType<T>(object modelObject, T lastOneFound = null) where T : class
+    {
+        while (true)
         {
             //get parent of node
             var parent = _tree.GetParent(modelObject);
 
-            //if there are no parents
-            if (parent == null)
-                return lastOneFound;//return what we found (if any)
-
-            //found a parent of the correct type
-            var correctType = parent as T;
-            if (correctType != null)
-                lastOneFound = correctType;
+            switch (parent)
+            {
+                //if there are no parents
+                case null:
+                    return lastOneFound; //return what we found (if any)
+                //found a parent of the correct type
+                case T correctType:
+                    lastOneFound = correctType;
+                    break;
+            }
 
             //but either way we need to look further up for the last one
-            return GetLastOrNullParentRecursivelyOfType<T>(parent, lastOneFound);
-
+            modelObject = parent;
         }
     }
 }

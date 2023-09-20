@@ -5,56 +5,55 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.Ticketing
+namespace Rdmp.Core.Ticketing;
+
+/// <summary>
+/// Simple implementation of an RDMP ticketing system.  Opens a browser
+/// at the Url + ticket name.  Has no validation restrictions based on
+/// ticket states.
+/// </summary>
+public class SimpleTicketingSystem : ICheckable, ITicketingSystem
 {
-    /// <summary>
-    /// Simple implementation of an RDMP ticketing system.  Opens a browser
-    /// at the Url + ticket name.  Has no validation restrictions based on 
-    /// ticket states.
-    /// </summary>
-    public class SimpleTicketingSystem : ICheckable, ITicketingSystem
+    protected IDataAccessCredentials Credentials { get; set; }
+    protected string Url { get; set; }
+
+    protected SimpleTicketingSystem(TicketingSystemConstructorParameters parameters)
     {
-        protected IDataAccessCredentials Credentials { get; set; }
-        protected string Url { get; set; }
-
-        protected SimpleTicketingSystem(TicketingSystemConstructorParameters parameters)
-        {
-            Credentials = parameters.Credentials;
-            Url = parameters.Url;
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            // all ticket names are valid
-            return;
-        }
-        public bool IsValidTicketName(string ticketName)
-        {
-            // all ticket names are valid
-            return true;
-        }
-        public void NavigateToTicket(string ticketName)
-        {
-            // if the user has added a URL just append the ticket name to it
-            // and open e.g. "www.myticketing?q=" + "HDD-123"
-            if(!string.IsNullOrWhiteSpace(Url))
-                UsefulStuff.OpenUrl(Url + ticketName);
-        }
-
-        public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception)
-        {
-            reason = null;
-            exception = null;
-            // No restrictions on releasability
-            return TicketingReleaseabilityEvaluation.Releaseable;
-        }
-        public string GetProjectFolderName(string masterTicket)
-        {
-            return UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
-        }
+        Credentials = parameters.Credentials;
+        Url = parameters.Url;
     }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        // all ticket names are valid
+        return;
+    }
+
+    public bool IsValidTicketName(string ticketName) =>
+        // all ticket names are valid
+        true;
+
+    public void NavigateToTicket(string ticketName)
+    {
+        // if the user has added a URL just append the ticket name to it
+        // and open e.g. "www.myticketing?q=" + "HDD-123"
+        if (!string.IsNullOrWhiteSpace(Url))
+            UsefulStuff.OpenUrl(Url + ticketName);
+    }
+
+    public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
+        string releaseTicket, out string reason, out Exception exception)
+    {
+        reason = null;
+        exception = null;
+        // No restrictions on releasability
+        return TicketingReleaseabilityEvaluation.Releaseable;
+    }
+
+    public string GetProjectFolderName(string masterTicket) =>
+        UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
 }

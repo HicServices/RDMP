@@ -9,90 +9,82 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction;
+
+public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
 {
-    public class EmptyDataExtractionTests:TestsRequiringAnExtractionConfiguration
+    private void TruncateDataTable()
     {
+        var server = Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
 
-        private void TruncateDataTable()
+        var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable", con);
+        cmdTruncate.ExecuteNonQuery();
+
+        con.Close();
+    }
+
+    [Test]
+    [TestCase(false)]
+    [TestCase(true)]
+    public void TestAllowingEmptyDatasets(bool allowEmptyDatasetExtractions)
+    {
+        var p = SetupPipeline();
+
+        TruncateDataTable();
+
+        var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),
+            _request.Configuration.Project, _request, p, DataLoadInfo.Empty);
+
+        var engine = host.GetEngine(p, ThrowImmediatelyDataLoadEventListener.Quiet);
+        host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
+
+        var token = new GracefulCancellationToken();
+
+        if (allowEmptyDatasetExtractions)
         {
-            var server = Database.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
+            var dt = host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token);
+            Assert.IsNull(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
-                var cmdTruncate = server.GetCommand("TRUNCATE TABLE TestTable",con);
-                cmdTruncate.ExecuteNonQuery();
+            Assert.AreEqual(0, dt.Rows.Count);
+            Assert.AreEqual(3, dt.Columns.Count);
+        }
+        else
+        {
+            var exception = Assert.Throws<Exception>(() =>
+                host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
-                con.Close();
-            }
-
+            Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
         }
 
-        [Test]
-        [TestCase(false)]
-        [TestCase(true)]
-        public void TestAllowingEmptyDatasets(bool allowEmptyDatasetExtractions)
-        {
-            Pipeline p = SetupPipeline();
-            
-            TruncateDataTable();
+        p.DeleteInDatabase();
+    }
 
-            var host = new ExtractionPipelineUseCase(new ThrowImmediatelyActivator(RepositoryLocator),_request.Configuration.Project, _request, p, DataLoadInfo.Empty);
+    [Test]
+    public void ProducesEmptyCSV()
+    {
+        TruncateDataTable();
+        AllowEmptyExtractions = true;
 
-            var engine = host.GetEngine(p, new ThrowImmediatelyDataLoadEventListener());
-            host.Source.AllowEmptyExtractions = allowEmptyDatasetExtractions;
+        Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
 
-            var token = new GracefulCancellationToken();
-            
-            if(allowEmptyDatasetExtractions)
-            {
+        Execute(out _, out var result);
 
-                var dt = host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token);
-                Assert.IsNull(host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
+        var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
-                Assert.AreEqual(0,dt.Rows.Count);
-                Assert.AreEqual(3, dt.Columns.Count);
-            }
-            else
-            {
-                var exception = Assert.Throws<Exception>(() => host.Source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), token));
+        //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
+        Assert.AreEqual(@"ReleaseID,Name,DateOfBirth", File.ReadAllText(r.OutputFile).Trim());
 
-                Assert.IsTrue(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
-            }
-
-            p.DeleteInDatabase();
-        }
-
-        [Test]
-        public void ProducesEmptyCSV()
-        {
-            TruncateDataTable();
-            AllowEmptyExtractions = true;
-
-            ExtractionPipelineUseCase execute;
-            IExecuteDatasetExtractionDestination result;
-
-            Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
-
-            base.Execute(out execute, out result);
-
-            var r = (ExecuteDatasetExtractionFlatFileDestination)result;
-
-            //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-            Assert.AreEqual(@"ReleaseID,Name,DateOfBirth", File.ReadAllText(r.OutputFile).Trim());
-
-            Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
-            File.Delete(r.OutputFile);
-        }
+        Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
+        File.Delete(r.OutputFile);
     }
 }

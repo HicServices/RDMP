@@ -8,78 +8,75 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
 {
-    internal class ExecuteCommandReOrderProcessTask : BasicUICommandExecution
+    private readonly ProcessTask _targetProcessTask;
+    private readonly InsertOption _insertOption;
+    private ProcessTask _sourceProcessTask;
+
+    public ExecuteCommandReOrderProcessTask(IActivateItems activator,
+        ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask,
+        InsertOption insertOption) : base(activator)
     {
-        private readonly ProcessTask _targetProcessTask;
-        private readonly InsertOption _insertOption;
-        private ProcessTask _sourceProcessTask;
+        _targetProcessTask = targetProcessTask;
+        _insertOption = insertOption;
+        _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
 
-        public ExecuteCommandReOrderProcessTask(IActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, ProcessTask targetProcessTask, InsertOption insertOption) : base(activator)
+        if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
+            SetImpossible("ProcessTasks must belong to the same Load");
+        else if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
+            SetImpossible("ProcessTasks must belong in the same LoadStage to be ReOrdered");
+        else if (_insertOption == InsertOption.Default)
+            SetImpossible("Drag above or below to ReOrder");
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        int destinationOrder;
+
+        var lmd = _targetProcessTask.LoadMetadata;
+
+        if (_insertOption == InsertOption.InsertAbove)
         {
-            _targetProcessTask = targetProcessTask;
-            _insertOption = insertOption;
-            _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
+            destinationOrder = _targetProcessTask.Order - 1;
 
-            if (_sourceProcessTask.LoadMetadata_ID != targetProcessTask.LoadMetadata_ID)
-                SetImpossible("ProcessTasks must belong to the same Load");
-            else
-            if (_sourceProcessTask.LoadStage != targetProcessTask.LoadStage)
-                SetImpossible("ProcessTasks must belong in the same LoadStage to be ReOrdered");
-            else
-            if(_insertOption == InsertOption.Default)
-                SetImpossible("Drag above or below to ReOrder");
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var destinationOrder = 0;
-
-            var lmd = _targetProcessTask.LoadMetadata;
-
-            if (_insertOption == InsertOption.InsertAbove)
+            foreach (var pt in lmd.ProcessTasks)
             {
+                //don't change the current one again
+                if (pt.Equals(_sourceProcessTask))
+                    continue;
 
-                destinationOrder = _targetProcessTask.Order - 1;
-                
-                foreach (var pt in lmd.ProcessTasks)
+                if (pt.Order <= destinationOrder)
                 {
-                    //don't change the current one again
-                    if (pt.Equals(_sourceProcessTask))
-                        continue;
-
-                    if (pt.Order <= destinationOrder)
-                    {
-                        pt.Order--;
-                        pt.SaveToDatabase();
-                    }
+                    pt.Order--;
+                    pt.SaveToDatabase();
                 }
             }
-            else
+        }
+        else
+        {
+            destinationOrder = _targetProcessTask.Order + 1;
+
+            foreach (var pt in lmd.ProcessTasks)
             {
+                //don't change the current one again
+                if (pt.Equals(_sourceProcessTask))
+                    continue;
 
-                destinationOrder = _targetProcessTask.Order + 1;
-
-                foreach (var pt in lmd.ProcessTasks)
+                if (pt.Order >= destinationOrder)
                 {
-                    //don't change the current one again
-                    if (pt.Equals(_sourceProcessTask))
-                        continue;
-
-                    if (pt.Order >= destinationOrder)
-                    {
-                        pt.Order++;
-                        pt.SaveToDatabase();
-                    }
+                    pt.Order++;
+                    pt.SaveToDatabase();
                 }
             }
-
-            _sourceProcessTask.Order = destinationOrder;
-            _sourceProcessTask.SaveToDatabase();
-            Publish(lmd);
         }
+
+        _sourceProcessTask.Order = destinationOrder;
+        _sourceProcessTask.SaveToDatabase();
+        Publish(lmd);
     }
 }

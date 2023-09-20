@@ -8,116 +8,116 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests
+namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTests;
+
+internal class QueryBuilderUnitTests : UnitTests
 {
-    class QueryBuilderUnitTests:UnitTests
+    [Test]
+    public void Test_IsPrimaryExtractionTable_TwoTables()
     {
-        [Test]
-        public void Test_IsPrimaryExtractionTable_TwoTables()
+        var c1 = WhenIHaveA<ColumnInfo>();
+        var c2 = WhenIHaveA<ColumnInfo>();
+
+        c1.TableInfo.IsPrimaryExtractionTable = true;
+        c1.TableInfo.SaveToDatabase();
+
+        c2.TableInfo.IsPrimaryExtractionTable = true;
+        c2.TableInfo.SaveToDatabase();
+
+        var builder = new QueryBuilder(null, null);
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
+
+        var ex = Assert.Throws<QueryBuildingException>(() =>
         {
-            var c1 = WhenIHaveA<ColumnInfo>();
-            var c2 = WhenIHaveA<ColumnInfo>();
+            var s = builder.SQL;
+        });
 
-            c1.TableInfo.IsPrimaryExtractionTable = true;
-            c1.TableInfo.SaveToDatabase();
+        StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable", ex.Message);
+    }
 
-            c2.TableInfo.IsPrimaryExtractionTable = true;
-            c2.TableInfo.SaveToDatabase();
+    [Test]
+    public void Test_TwoTables_JoinFound()
+    {
+        //4 tables
+        var c1 = WhenIHaveA<ColumnInfo>();
+        var c2 = WhenIHaveA<ColumnInfo>();
 
-            QueryBuilder builder = new QueryBuilder(null, null);
-            builder.AddColumn(new ColumnInfoToIColumn(Repository,c1));
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
+        //1 is primary
+        c1.TableInfo.IsPrimaryExtractionTable = true;
+        c1.TableInfo.SaveToDatabase();
 
-            var ex = Assert.Throws<QueryBuildingException>(()=>{var s = builder.SQL;});
+        var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
 
-            StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable",ex.Message);
-        }
+        var builder = new QueryBuilder(null, null);
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        [Test]
-        public void Test_TwoTables_JoinFound()
-        {
-            //4 tables
-            var c1 = WhenIHaveA<ColumnInfo>();
-            var c2 = WhenIHaveA<ColumnInfo>();
+        StringAssert.Contains("JOIN", builder.SQL);
 
-            //1 is primary
-            c1.TableInfo.IsPrimaryExtractionTable = true;
-            c1.TableInfo.SaveToDatabase();
+        //we have 1 legit join go go team!
+        Assert.AreEqual(1, builder.JoinsUsedInQuery.Count);
+        Assert.AreEqual(j1, builder.JoinsUsedInQuery[0]);
+    }
 
-            var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
+    [Test]
+    public void Test_FourTables_MultipleRoutes()
+    {
+        //4 tables
+        var c1 = WhenIHaveA<ColumnInfo>();
+        c1.Name = "c1";
+        c1.SaveToDatabase();
+        c1.TableInfo.Name = "t1";
+        c1.TableInfo.IsPrimaryExtractionTable = true; //t1 is primary
+        c1.TableInfo.SaveToDatabase();
 
-            QueryBuilder builder = new QueryBuilder(null, null);
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
+        var c2 = WhenIHaveA<ColumnInfo>();
+        c2.Name = "c2";
+        c2.SaveToDatabase();
+        c2.TableInfo.Name = "t2";
+        c2.TableInfo.SaveToDatabase();
 
-            StringAssert.Contains("JOIN", builder.SQL);
+        var c3 = WhenIHaveA<ColumnInfo>();
+        c3.Name = "c3";
+        c3.SaveToDatabase();
+        c3.TableInfo.Name = "t3";
+        c3.TableInfo.SaveToDatabase();
 
-            //we have 1 legit join go go team!
-            Assert.AreEqual(1, builder.JoinsUsedInQuery.Count);
-            Assert.AreEqual(j1, builder.JoinsUsedInQuery[0]);
-        }
-
-        [Test]
-        public void Test_FourTables_MultipleRoutes()
-        {
-            //4 tables
-            var c1 = WhenIHaveA<ColumnInfo>();
-            c1.Name = "c1";
-            c1.SaveToDatabase();
-            c1.TableInfo.Name = "t1";
-            c1.TableInfo.IsPrimaryExtractionTable = true;  //t1 is primary
-            c1.TableInfo.SaveToDatabase();
-
-            var c2 = WhenIHaveA<ColumnInfo>();
-            c2.Name = "c2";
-            c2.SaveToDatabase();
-            c2.TableInfo.Name = "t2";
-            c2.TableInfo.SaveToDatabase();
-
-            var c3 = WhenIHaveA<ColumnInfo>();
-            c3.Name = "c3";
-            c3.SaveToDatabase();
-            c3.TableInfo.Name = "t3";
-            c3.TableInfo.SaveToDatabase();
-
-            var c4 = WhenIHaveA<ColumnInfo>();
-            c4.Name = "c4";
-            c4.SaveToDatabase();
-            c4.TableInfo.Name = "t4";
-            c4.TableInfo.SaveToDatabase();
-                
-
-            /*       c2
-             *     /    \
-             *   c1      c4
-             *     \   /
-             *       c3 
-             * 
-             * */
-
-            var j1 = new JoinInfo(Repository,c2,c1,ExtractionJoinType.Inner,null);
-            var j2 = new JoinInfo(Repository, c3, c1, ExtractionJoinType.Inner, null);
-            var j3 = new JoinInfo(Repository, c4, c2, ExtractionJoinType.Inner, null);
-            var j4 = new JoinInfo(Repository, c4, c3, ExtractionJoinType.Inner, null);
+        var c4 = WhenIHaveA<ColumnInfo>();
+        c4.Name = "c4";
+        c4.SaveToDatabase();
+        c4.TableInfo.Name = "t4";
+        c4.TableInfo.SaveToDatabase();
 
 
-            QueryBuilder builder = new QueryBuilder(null, null);
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c2)); 
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c3));
-            builder.AddColumn(new ColumnInfoToIColumn(Repository, c4));
+        /*       c2
+         *     /    \
+         *   c1      c4
+         *     \   /
+         *       c3
+         *
+         * */
 
-            Console.WriteLine(builder.SQL);
+        var j1 = new JoinInfo(Repository, c2, c1, ExtractionJoinType.Inner, null);
+        var j2 = new JoinInfo(Repository, c3, c1, ExtractionJoinType.Inner, null);
+        var j3 = new JoinInfo(Repository, c4, c2, ExtractionJoinType.Inner, null);
+        var j4 = new JoinInfo(Repository, c4, c3, ExtractionJoinType.Inner, null);
 
-            //should be using only 3 of the 4 joins because we already have a route to c4 without a fourth join
-            Assert.AreEqual(3, builder.JoinsUsedInQuery.Count);
-            Assert.Contains(j1,builder.JoinsUsedInQuery);
-            Assert.Contains(j2, builder.JoinsUsedInQuery);
-            Assert.Contains(j3, builder.JoinsUsedInQuery);
-        }
+
+        var builder = new QueryBuilder(null, null);
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c3));
+        builder.AddColumn(new ColumnInfoToIColumn(Repository, c4));
+
+        Console.WriteLine(builder.SQL);
+
+        //should be using only 3 of the 4 joins because we already have a route to c4 without a fourth join
+        Assert.AreEqual(3, builder.JoinsUsedInQuery.Count);
+        Assert.Contains(j1, builder.JoinsUsedInQuery);
+        Assert.Contains(j2, builder.JoinsUsedInQuery);
+        Assert.Contains(j3, builder.JoinsUsedInQuery);
     }
 }

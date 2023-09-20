@@ -10,7 +10,7 @@ using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -20,114 +20,125 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class DistincterTests : DatabaseTests
 {
-    public class DistincterTests : DatabaseTests
+    [Test]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    public void TestDistincter_Duplicates(DatabaseType type)
     {
-        [Test]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        public void TestDistincter_Duplicates(DatabaseType type)
+        var db = GetCleanedServer(type, "TestCoalescer");
+
+        const int batchCount = 1000;
+
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
+        dt.Columns.Add("pk");
+        dt.Columns.Add("f1");
+        dt.Columns.Add("f2");
+        dt.Columns.Add("f3");
+        dt.Columns.Add("f4");
+
+        var r = new Random(123);
+
+        for (var i = 0; i < batchCount; i++)
         {
-            var db = GetCleanedServer(type, "TestCoalescer");
+            var randInt = r.Next(int.MaxValue);
 
-            int batchCount = 1000;
-
-            DataTable dt = new DataTable("TestCoalescer_RampantNullness");
-            dt.Columns.Add("pk");
-            dt.Columns.Add("f1");
-            dt.Columns.Add("f2");
-            dt.Columns.Add("f3");
-            dt.Columns.Add("f4");
-
-            Random r = new Random(123);
-
-            for (int i = 0; i < batchCount; i++)
-            {
-                int randInt = r.Next(int.MaxValue);
-                
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-            }
-
-            var tbl = db.CreateTable(dt.TableName, dt);
-
-            var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var tableInfo, out var colInfos);
-
-            //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
-            var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
-
-            var rowsBefore = tbl.GetRowCount();
-
-            var distincter = new Distincter();
-            distincter.TableRegexPattern = new Regex(".*");
-            distincter.Initialize(db, LoadStage.AdjustRaw);
-
-            var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo })&& p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
-
-            distincter.Mutilate(job);
-
-            var rowsAfter = tbl.GetRowCount();
-
-            Assert.AreEqual(rowsBefore/2,rowsAfter);
-
-            db.Drop();
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
         }
 
-        [Test]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        public void TestDistincter_NoDuplicates(DatabaseType type)
+        dt.EndLoadData();
+        var tbl = db.CreateTable(dt.TableName, dt);
+
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out var tableInfo, out var colInfos);
+
+        //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
+        var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
+
+        var rowsBefore = tbl.GetRowCount();
+
+        var distincter = new Distincter
         {
-            var db = GetCleanedServer(type, "TestCoalescer");
+            TableRegexPattern = new Regex(".*")
+        };
+        distincter.Initialize(db, LoadStage.AdjustRaw);
 
-            int batchCount = 1000;
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo>(new[] { tableInfo }));
+        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server, null, null, null));
 
-            DataTable dt = new DataTable("TestCoalescer_RampantNullness");
-            dt.Columns.Add("pk");
-            dt.Columns.Add("f1");
-            dt.Columns.Add("f2");
-            dt.Columns.Add("f3");
-            dt.Columns.Add("f4");
+        distincter.Mutilate(job);
 
-            Random r = new Random(123);
+        var rowsAfter = tbl.GetRowCount();
 
-            for (int i = 0; i < batchCount; i++)
-            {
-                int randInt = r.Next(int.MaxValue);
+        Assert.AreEqual(rowsBefore / 2, rowsAfter);
 
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt+1 });
-            }
+        db.Drop();
+    }
 
-            var tbl = db.CreateTable(dt.TableName, dt);
+    [Test]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    [TestCase(DatabaseType.MySql)]
+    public void TestDistincter_NoDuplicates(DatabaseType type)
+    {
+        var db = GetCleanedServer(type, "TestCoalescer");
 
-            var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var tableInfo, out var colInfos);
+        const int batchCount = 1000;
 
-            //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
-            var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
+        dt.Columns.Add("pk");
+        dt.Columns.Add("f1");
+        dt.Columns.Add("f2");
+        dt.Columns.Add("f3");
+        dt.Columns.Add("f4");
 
-            var rowsBefore = tbl.GetRowCount();
+        var r = new Random(123);
 
-            var distincter = new Distincter();
-            distincter.TableRegexPattern = new Regex(".*");
-            distincter.Initialize(db, LoadStage.AdjustRaw);
+        for (var i = 0; i < batchCount; i++)
+        {
+            var randInt = r.Next(int.MaxValue);
 
-            var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo }) && p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
-
-            distincter.Mutilate(job);
-
-            var rowsAfter = tbl.GetRowCount();
-
-            Assert.AreEqual(rowsBefore, rowsAfter);
-
-            db.Drop();
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt + 1 });
         }
+
+        dt.EndLoadData();
+        var tbl = db.CreateTable(dt.TableName, dt);
+
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out var tableInfo, out var colInfos);
+
+        //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
+        var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
+
+        var rowsBefore = tbl.GetRowCount();
+
+        var distincter = new Distincter
+        {
+            TableRegexPattern = new Regex(".*")
+        };
+        distincter.Initialize(db, LoadStage.AdjustRaw);
+
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo>(new[] { tableInfo }));
+        job.Configuration.Returns(new HICDatabaseConfiguration(db.Server, null, null, null));
+
+        distincter.Mutilate(job);
+
+        var rowsAfter = tbl.GetRowCount();
+
+        Assert.AreEqual(rowsBefore, rowsAfter);
+
+        db.Drop();
     }
 }

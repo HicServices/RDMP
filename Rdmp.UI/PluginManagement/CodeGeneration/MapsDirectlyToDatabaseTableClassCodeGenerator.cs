@@ -7,50 +7,53 @@
 using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.UI.PluginManagement.CodeGeneration
+namespace Rdmp.UI.PluginManagement.CodeGeneration;
+
+/// <summary>
+/// Generates template code for a <see cref="IMapsDirectlyToDatabaseTable"/> implementation class which
+/// models the data in the table (like a budget version of entity framework).
+/// </summary>
+public class MapsDirectlyToDatabaseTableClassCodeGenerator
 {
-    /// <summary>
-    /// Generates template code for a <see cref="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable"/> implementation class which
-    /// models the data in the table (like a budget version of entity framework).
-    /// </summary>
-    public class MapsDirectlyToDatabaseTableClassCodeGenerator
+    private readonly DiscoveredTable _table;
+
+    public MapsDirectlyToDatabaseTableClassCodeGenerator(DiscoveredTable table)
     {
-        private readonly DiscoveredTable _table;
+        _table = table;
+    }
 
-        public MapsDirectlyToDatabaseTableClassCodeGenerator(DiscoveredTable table)
-        {
-            _table = table;
-        }
+    public string GetCode()
+    {
+        var columns = _table.DiscoverColumns();
 
-        public string GetCode()
-        {
-            var columns = _table.DiscoverColumns();
+        if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
+            throw new CodeGenerationException(
+                "Table must have an ID autonum column to become an IMapsDirectlyToDatabaseTable class");
 
-            if (!columns.Any(c => c.GetRuntimeName().Equals("ID")))
-                throw new CodeGenerationException("Table must have an ID automnum column to become an IMapsDirectlyToDatabaseTable class");
-            
-            StringBuilder classStart = new StringBuilder();
+        var classStart = new StringBuilder();
 
-            classStart.Append("public class " + _table.GetRuntimeName() + ": DatabaseEntity");
+        classStart.Append($"public class {_table.GetRuntimeName()}: DatabaseEntity");
 
-            bool isINamed = columns.Any(c => c.GetRuntimeName() == "Name");
-            if (isINamed)
-                classStart.Append(",INamed");
+        var isINamed = columns.Any(c => c.GetRuntimeName() == "Name");
+        if (isINamed)
+            classStart.Append(",INamed");
 
-            classStart.AppendLine();
-            classStart.AppendLine("{");
+        classStart.AppendLine();
+        classStart.AppendLine("{");
 
-            StringBuilder databaseFields = new StringBuilder();
-            databaseFields.AppendLine("\t#region Database Properties");
-            databaseFields.AppendLine();
+        var databaseFields = new StringBuilder();
+        databaseFields.AppendLine("\t#region Database Properties");
+        databaseFields.AppendLine();
 
-            StringBuilder databaseProperties = new StringBuilder();
+        var databaseProperties = new StringBuilder();
 
-            StringBuilder constructors = new StringBuilder();
+        var constructors = new StringBuilder();
 
-            constructors.AppendLine("\tpublic " + _table.GetRuntimeName() + "(IRepository repository/*, TODO Required Construction Properties For NEW*/)");
-            constructors.AppendLine(@"  {
+        constructors.AppendLine(
+            $"\tpublic {_table.GetRuntimeName()}(IRepository repository/*, TODO Required Construction Properties For NEW*/)");
+        constructors.AppendLine(@"  {
         repository.InsertAndHydrate(this,new Dictionary<string, object>()
         {
             //TODO Any parameters here as key value pairs
@@ -61,99 +64,92 @@ namespace Rdmp.UI.PluginManagement.CodeGeneration
     }");
 
 
-            constructors.AppendLine("\tpublic " + _table.GetRuntimeName() + "(IRepository repository, DbDataReader r): base(repository, r)");
-            constructors.AppendLine("\t{");
-            
-            foreach (var col in columns.Where(c=>c.GetRuntimeName() != "ID"))
-            {
-                string setCode;
-                var type = GetCSharpTypeFor(col,out setCode);
-                var propertyName = col.GetRuntimeName();
-                var fieldString = col.GetRuntimeName();
-                
-                //cammel case it
-                fieldString = "_" + fieldString.Substring(0, 1).ToLower() + fieldString.Substring(1);
+        constructors.AppendLine(
+            $"\tpublic {_table.GetRuntimeName()}(IRepository repository, DbDataReader r): base(repository, r)");
+        constructors.AppendLine("\t{");
 
-                databaseFields.AppendLine("\tprivate " + type + " " + fieldString + ";");
+        foreach (var col in columns.Where(c => c.GetRuntimeName() != "ID"))
+        {
+            var type = GetCSharpTypeFor(col, out var setCode);
+            var propertyName = col.GetRuntimeName();
+            var fieldString = col.GetRuntimeName();
 
-                databaseProperties.AppendLine("\tpublic " + type + " " + propertyName);
-                databaseProperties.AppendLine("\t{");
-                databaseProperties.AppendLine("\t\tget { return " + fieldString + ";}");
-                databaseProperties.AppendLine("\t\tset { SetField(ref " + fieldString + ", value);}");
-                databaseProperties.AppendLine("\t}");
+            //camel case it
+            fieldString = $"_{fieldString[..1].ToLower()}{fieldString[1..]}";
 
-                constructors.AppendLine("\t\t" + propertyName + " = "+ setCode);
-            }
+            databaseFields.AppendLine($"\tprivate {type} {fieldString};");
 
-            databaseFields.AppendLine("\t#endregion");
-            databaseFields.AppendLine();
-            
-            constructors.AppendLine("\t}");
+            databaseProperties.AppendLine($"\tpublic {type} {propertyName}");
+            databaseProperties.AppendLine("\t{");
+            databaseProperties.AppendLine($"\t\tget {{ return {fieldString};}}");
+            databaseProperties.AppendLine($"\t\tset {{ SetField(ref {fieldString}, value);}}");
+            databaseProperties.AppendLine("\t}");
 
-            if (isINamed)
-                constructors.AppendLine("\t" + @"public override string ToString()
+            constructors.AppendLine($"\t\t{propertyName} = {setCode}");
+        }
+
+        databaseFields.AppendLine("\t#endregion");
+        databaseFields.AppendLine();
+
+        constructors.AppendLine("\t}");
+
+        if (isINamed)
+            constructors.AppendLine("\t" + @"public override string ToString()
     {
         return Name;
     }");
 
-            return classStart.ToString() + databaseFields + databaseProperties + constructors + "}";
+        return $"{classStart}{databaseFields}{databaseProperties}{constructors}}}";
+    }
 
+    private static string GetCSharpTypeFor(DiscoveredColumn col, out string setCode)
+    {
+        var r = $"r[\"{col.GetRuntimeName()}\"]";
+
+        if (col.DataType.GetLengthIfString() != -1)
+        {
+            setCode = col.AllowNulls ? $"{r} as string;" : $"{r}.ToString();";
+            return "string";
         }
 
-        private string GetCSharpTypeFor(DiscoveredColumn col,out string setCode)
-        {
-            var r = "r[\"" + col.GetRuntimeName() + "\"]";
-
-            if (col.DataType.GetLengthIfString() != -1)
+        if (col.DataType.SQLType.Contains("date"))
+            if (col.AllowNulls)
             {
-                if (col.AllowNulls)
-                    setCode = r + " as string;";
-                else
-                    setCode = r + ".ToString();";
-
-                return "string";
+                setCode = $"ObjectToNullableDateTime({r});";
+                return "DateTime?";
+            }
+            else
+            {
+                setCode = $"Convert.ToDateTime({r});";
+                return "DateTime";
             }
 
-            if (col.DataType.SQLType.Contains("date"))
-                if (col.AllowNulls)
-                {
-                    setCode = "ObjectToNullableDateTime(" + r + ");";
-                    return "DateTime?";
-                }
-                else
-                {
-                    setCode = "Convert.ToDateTime(" + r + ");";
-                    return "DateTime";
-                }
+        if (col.DataType.SQLType.Contains("int"))
+            if (col.AllowNulls)
+            {
+                setCode = $"ObjectToNullableInt({r});";
+                return "int?";
+            }
+            else
+            {
+                setCode = $"Convert.ToInt32({r});";
+                return "int";
+            }
 
-            if (col.DataType.SQLType.Contains("int"))
-                if (col.AllowNulls)
-                {
-                    setCode = "ObjectToNullableInt(" + r + ");";
-                    return "int?";
-                }
-                else
-                {
-                    setCode = "Convert.ToInt32(" + r + ");";
-                    return "int";
-                }
-            
-            if (col.DataType.SQLType.Contains("bit"))
-                if (col.AllowNulls)
-                {
-                    setCode = "ObjectToNullableBool(" + r + ");//TODO: Confirm you actually mean true/false/null?";
-                    return "bool?";
-                }
-                else
-                {
-                    setCode = "Convert.ToBoolean(" + r + ");";
-                    return "bool";
-                }
-            
+        if (col.DataType.SQLType.Contains("bit"))
+            if (col.AllowNulls)
+            {
+                setCode = $"ObjectToNullableBool({r});//TODO: Confirm you actually mean true/false/null?";
+                return "bool?";
+            }
+            else
+            {
+                setCode = $"Convert.ToBoolean({r});";
+                return "bool";
+            }
 
-            setCode = "TODO Unrecognised Type";
-            return "TODO  Unrecognised Type";
-        }
+
+        setCode = "TODO Unrecognised Type";
+        return "TODO  Unrecognised Type";
     }
 }
-

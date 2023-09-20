@@ -12,108 +12,113 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components
+namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
+
+/// <summary>
+/// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns
+/// are only processed if they are destined to go into a char field in the database (According to the TableInfo being processed).
+/// </summary>
+public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
-    /// <summary>
-    /// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns
-    /// are only processed if they are destined to go into a char field in the database (According to the TableInfo being processed).
-    /// </summary>
-    public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
+    private int _rowsProcessed;
+    private string _taskDescription;
+    private Stopwatch timer = new();
+
+    public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
+        GracefulCancellationToken cancellationToken)
     {
-        private int _rowsProcessed = 0;
-        private string _taskDescription;
-        Stopwatch timer = new Stopwatch();
-
-        public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+        timer.Start();
+        toProcess.BeginLoadData();
+    StartAgain:
+        foreach (DataRow row in toProcess.Rows)
         {
-            timer.Start();
-
-            StartAgain:
-            foreach (DataRow row in toProcess.Rows)
+            for (var i = 0; i < columnsToClean.Count; i++)
             {
-                for (int i = 0; i < columnsToClean.Count; i++)
+                var toClean = columnsToClean[i];
+                string val = null;
+                try
                 {
-                    string toClean = columnsToClean[i];
-                    string val = null;
-                    try
-                    {
-                        object o = row[toClean];
+                    var o = row[toClean];
 
-                        if(o == DBNull.Value || o == null)
-                            continue;
+                    if (o == DBNull.Value || o == null)
+                        continue;
 
-                        if(!(o is string))
-                            throw new ArgumentException("Despite being marked as a string column, object found in column " + toClean + " was of type " + o.GetType());
+                    if (o is not string s)
+                        throw new ArgumentException(
+                            $"Despite being marked as a string column, object found in column {toClean} was of type {o.GetType()}");
 
-                        val = o as string;
-                    }
-                    catch (ArgumentException e)
-                    {
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,e.Message)); //column could not be found
-                        columnsToClean.Remove(columnsToClean[i]);
-                        goto StartAgain;
-                    }
-
-
-                    //it is empty
-                    if (string.IsNullOrWhiteSpace(val))
-                        row[toClean] = DBNull.Value;
-                    else
-                    {
-                        //trim it
-                        var valAfterClean = val.Trim();
-
-                        //set it
-                        if (val != valAfterClean)
-                            row[toClean] = valAfterClean;
-                    }
+                    val = s;
                 }
-                _rowsProcessed++;
+                catch (ArgumentException e)
+                {
+                    job.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Warning, e.Message)); //column could not be found
+                    columnsToClean.Remove(columnsToClean[i]);
+                    goto StartAgain;
+                }
+
+
+                //it is empty
+                if (string.IsNullOrWhiteSpace(val))
+                {
+                    row[toClean] = DBNull.Value;
+                }
+                else
+                {
+                    //trim it
+                    var valAfterClean = val.Trim();
+
+                    //set it
+                    if (val != valAfterClean)
+                        row[toClean] = valAfterClean;
+                }
             }
-            timer.Stop();
 
-            job.OnProgress(this,new ProgressEventArgs(_taskDescription,new ProgressMeasurement(_rowsProcessed, ProgressType.Records),timer.Elapsed));
-
-            return toProcess;
+            _rowsProcessed++;
         }
 
-        List<string> columnsToClean = new List<string>();
+        timer.Stop();
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-        }
+        job.OnProgress(this,
+            new ProgressEventArgs(_taskDescription, new ProgressMeasurement(_rowsProcessed, ProgressType.Records),
+                timer.Elapsed));
+        toProcess.EndLoadData();
+        return toProcess;
+    }
 
-        public void Abort(IDataLoadEventListener listener)
-        {
-            
-        }
+    private List<string> columnsToClean = new();
 
-        public void PreInitialize(TableInfo target,IDataLoadEventListener listener)
-        {
-            if (target == null)
-                throw new Exception("Without TableInfo we cannot figure out what columns to clean");
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
 
-            _taskDescription = "Clean Strings " + target.GetRuntimeName() + ":";
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
 
-            foreach (ColumnInfo col in target.ColumnInfos)
-                if (col.Data_type != null && col.Data_type.Contains("char"))
-                    columnsToClean.Add(col.GetRuntimeName());
-            if (columnsToClean.Any())
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    "Preparing to perform clean " + columnsToClean.Count + " string columns (" +
-                    string.Join(",", columnsToClean) + ") in table " + target.GetRuntimeName()));
-            else
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    "Skipping CleanString on table " + target.GetRuntimeName() + " because there are no String columns in the table"));
-        }
+    public void PreInitialize(TableInfo target, IDataLoadEventListener listener)
+    {
+        if (target == null)
+            throw new Exception("Without TableInfo we cannot figure out what columns to clean");
 
-        
-        public void Check(ICheckNotifier notifier)
-        {
-            
-        }
+        _taskDescription = $"Clean Strings {target.GetRuntimeName()}:";
+
+        foreach (var col in target.ColumnInfos)
+            if (col.Data_type != null && col.Data_type.Contains("char"))
+                columnsToClean.Add(col.GetRuntimeName());
+        if (columnsToClean.Any())
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Preparing to perform clean {columnsToClean.Count} string columns ({string.Join(",", columnsToClean)}) in table {target.GetRuntimeName()}"));
+        else
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
+    }
+
+
+    public void Check(ICheckNotifier notifier)
+    {
     }
 }

@@ -9,27 +9,21 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI.DashboardTabs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsDashboardLayout : RDMPCommandExecutionProposal<DashboardLayout>
 {
-    class ProposeExecutionWhenTargetIsDashboardLayout:RDMPCommandExecutionProposal<DashboardLayout>
+    public ProposeExecutionWhenTargetIsDashboardLayout(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsDashboardLayout(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(DashboardLayout target)
-        {
-            return true;
-        }
-
-        public override void Activate(DashboardLayout target)
-        {
-            ItemActivator.Activate<DashboardLayoutUI, DashboardLayout>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
     }
+
+    public override bool CanActivate(DashboardLayout target) => true;
+
+    public override void Activate(DashboardLayout target)
+    {
+        ItemActivator.Activate<DashboardLayoutUI, DashboardLayout>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

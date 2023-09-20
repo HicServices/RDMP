@@ -11,136 +11,130 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+internal class ColumnInfoTests : DatabaseTests
 {
-    class ColumnInfoTests : DatabaseTests
+    [Test]
+    public void CreateNewColumnInfoInDatabase_NewColumns_NewColumnsAreEqualAfterSave()
     {
+        TableInfo parent = null;
+        ColumnInfo child = null;
 
- 
-
-        [Test]
-        public void CreateNewColumnInfoInDatabase_NewColumns_NewColumnsAreEqualAfterSave()
+        try
         {
-            TableInfo parent = null;
-            ColumnInfo child=null;
-
-            try
+            parent = new TableInfo(CatalogueRepository, "CHI");
+            child = new ColumnInfo(CatalogueRepository, "chi", "varchar(10)", parent)
             {
-                parent = new TableInfo(CatalogueRepository, "CHI");
-                child = new ColumnInfo(CatalogueRepository, "chi", "varchar(10)", parent)
-                {
-                    Description = "The community health index, 10 digits of which the first 6 are date of birth",
-                    Status = ColumnInfo.ColumnStatus.Active,
-                    RegexPattern = "\\d*",
-                    ValidationRules = "Last digit must be odd for gents and even for ladies"
-                };
+                Description = "The community health index, 10 digits of which the first 6 are date of birth",
+                Status = ColumnInfo.ColumnStatus.Active,
+                RegexPattern = "\\d*",
+                ValidationRules = "Last digit must be odd for gents and even for ladies"
+            };
 
-                child.SaveToDatabase();
+            child.SaveToDatabase();
 
-                ColumnInfo childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
+            var childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
 
-                Assert.AreEqual(child.Name, childAfter.Name);
-                Assert.AreEqual(child.Description, childAfter.Description);
-                Assert.AreEqual(child.Status, childAfter.Status);
-                Assert.AreEqual(child.RegexPattern, childAfter.RegexPattern);
-                Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules); 
-
-            }
-            finally 
-            {
-                child.DeleteInDatabase();
-                parent.DeleteInDatabase();
-            }
-            
-
+            Assert.AreEqual(child.Name, childAfter.Name);
+            Assert.AreEqual(child.Description, childAfter.Description);
+            Assert.AreEqual(child.Status, childAfter.Status);
+            Assert.AreEqual(child.RegexPattern, childAfter.RegexPattern);
+            Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules);
         }
-
-        [Test]
-        public void GetAllColumnInfos_moreThan1_pass()
+        finally
         {
+            child.DeleteInDatabase();
+            parent.DeleteInDatabase();
+        }
+    }
 
-            TableInfo parent = new TableInfo(CatalogueRepository, "Slalom");
+    [Test]
+    public void GetAllColumnInfos_moreThan1_pass()
+    {
+        var parent = new TableInfo(CatalogueRepository, "Slalom");
+
+        try
+        {
+            var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn", "varchar(1000)", parent);
 
             try
             {
-                var ci = new ColumnInfo(CatalogueRepository, "MyAwesomeColumn","varchar(1000)", parent);
-           
-                try
-                {
-                    Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Count() ==1);
-                }
-                finally
-                {
-                    ci.DeleteInDatabase();
-                }
+                Assert.IsTrue(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Length == 1);
             }
             finally
             {
-                parent.DeleteInDatabase();
+                ci.DeleteInDatabase();
             }
         }
-
-        [Test]
-        public void CreateNewColumnInfoInDatabase_valid_pass()
+        finally
         {
-            TableInfo parent = new TableInfo(CatalogueRepository, "Lazors");
-            ColumnInfo columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol","varchar(1000)",parent);
-
-            Assert.NotNull(columnInfo);
-
-            columnInfo.DeleteInDatabase();
-
-            var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
-            Assert.IsTrue(ex.Message.StartsWith("Could not find ColumnInfo with ID " + columnInfo.ID), ex.Message);
-
             parent.DeleteInDatabase();
         }
+    }
 
-        [Test]
-        public void update_changeAllProperties_pass()
+    [Test]
+    public void CreateNewColumnInfoInDatabase_valid_pass()
+    {
+        var parent = new TableInfo(CatalogueRepository, "Lazors");
+        var columnInfo = new ColumnInfo(CatalogueRepository, "Lazor Reflection Vol", "varchar(1000)", parent);
+
+        Assert.NotNull(columnInfo);
+
+        columnInfo.DeleteInDatabase();
+
+        var ex = Assert.Throws<KeyNotFoundException>(() =>
+            CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
+        Assert.IsTrue(ex.Message.StartsWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
+
+        parent.DeleteInDatabase();
+    }
+
+    [Test]
+    public void update_changeAllProperties_pass()
+    {
+        var parent = new TableInfo(CatalogueRepository, "Rokkits");
+        var column = new ColumnInfo(CatalogueRepository, "ExplosiveVol", "varchar(1000)", parent)
         {
-            TableInfo parent = new TableInfo(CatalogueRepository, "Rokkits");
-            ColumnInfo column = new ColumnInfo(CatalogueRepository, "ExplosiveVol","varchar(1000)", parent)
-            {
-                Digitisation_specs = "Highly digitizable",
-                Format = "Jpeg",
-                Name = "mycol",
-                Source = "Bazooka",
-                Data_type = "Whatever"
-            };
+            Digitisation_specs = "Highly digitizable",
+            Format = "Jpeg",
+            Name = "mycol",
+            Source = "Bazooka",
+            Data_type = "Whatever"
+        };
 
-            column.SaveToDatabase();
+        column.SaveToDatabase();
 
-            ColumnInfo columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
+        var columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
 
-            Assert.IsTrue(columnAfter.Digitisation_specs == "Highly digitizable");
-            Assert.IsTrue(columnAfter.Format == "Jpeg");
-            Assert.IsTrue(columnAfter.Name == "mycol");
-            Assert.IsTrue(columnAfter.Source == "Bazooka");
-            Assert.IsTrue(columnAfter.Data_type == "Whatever");
+        Assert.IsTrue(columnAfter.Digitisation_specs == "Highly digitizable");
+        Assert.IsTrue(columnAfter.Format == "Jpeg");
+        Assert.IsTrue(columnAfter.Name == "mycol");
+        Assert.IsTrue(columnAfter.Source == "Bazooka");
+        Assert.IsTrue(columnAfter.Data_type == "Whatever");
 
-            columnAfter.DeleteInDatabase();
-            parent.DeleteInDatabase();
-        }
+        columnAfter.DeleteInDatabase();
+        parent.DeleteInDatabase();
+    }
 
-        [Test]
-        public void  Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
+    [Test]
+    public void Test_GetRAWStageTypeWhenPreLoadDiscardedDilution()
+    {
+        var parent = new TableInfo(CatalogueRepository, "Rokkits");
+        var column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
+
+        var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol")
         {
-            TableInfo parent = new TableInfo(CatalogueRepository, "Rokkits");
-            ColumnInfo column = new ColumnInfo(CatalogueRepository, "MyCol", "varchar(4)", parent);
+            SqlDataType = "varchar(10)",
+            Destination = DiscardedColumnDestination.Dilute
+        };
+        discard.SaveToDatabase();
 
-            var discard = new PreLoadDiscardedColumn(CatalogueRepository, parent, "MyCol");
-            discard.SqlDataType = "varchar(10)";
-            discard.Destination = DiscardedColumnDestination.Dilute;
-            discard.SaveToDatabase();
+        Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.PostLoad));
+        Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.AdjustStaging));
+        Assert.AreEqual("varchar(10)", column.GetRuntimeDataType(LoadStage.AdjustRaw));
 
-            Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.PostLoad));
-            Assert.AreEqual("varchar(4)", column.GetRuntimeDataType(LoadStage.AdjustStaging));
-            Assert.AreEqual("varchar(10)", column.GetRuntimeDataType(LoadStage.AdjustRaw));
-
-            discard.DeleteInDatabase();
-            parent.DeleteInDatabase();
-       
-        }
+        discard.DeleteInDatabase();
+        parent.DeleteInDatabase();
     }
 }

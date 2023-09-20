@@ -4,39 +4,34 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandEditLoadMetadataDescription : BasicUICommandExecution,IAtomicCommand
+    private LoadMetadata _loadMetadata;
+
+    public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata) :
+        base(activator)
     {
-        private LoadMetadata _loadMetadata;
+        _loadMetadata = loadMetadata;
+    }
 
-        public ExecuteCommandEditLoadMetadataDescription(IActivateItems activator, LoadMetadata loadMetadata):base(activator)
-        {
-            _loadMetadata = loadMetadata;
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Edit);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
-        }
+    public override string GetCommandName() => "Edit Description";
 
-        public override string GetCommandName()
-        {
-            return "Edit Description";
-        }
-
-        public override void Execute()
-        {
-            Activator.Activate<LoadMetadataUI, LoadMetadata>(_loadMetadata);
-        }
+    public override void Execute()
+    {
+        Activator.Activate<LoadMetadataUI, LoadMetadata>(_loadMetadata);
     }
 }

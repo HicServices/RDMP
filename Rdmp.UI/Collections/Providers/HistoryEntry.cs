@@ -6,82 +6,57 @@
 
 using System;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.Collections.Providers
+namespace Rdmp.UI.Collections.Providers;
+
+/// <summary>
+/// Records and persists a users access of an <see cref="Object"/> including the time (<see cref="Date"/>) it was accessed
+/// </summary>
+public class HistoryEntry : IMasqueradeAs
 {
-    /// <summary>
-    /// Records and persists a users access of an <see cref="Object"/> including the time (<see cref="Date"/>) it was accessed
-    /// </summary>
-    public class HistoryEntry : IMasqueradeAs
+    public IMapsDirectlyToDatabaseTable Object { get; }
+    public DateTime Date { get; }
+
+    public HistoryEntry(IMapsDirectlyToDatabaseTable o, DateTime date)
     {
-        public IMapsDirectlyToDatabaseTable Object { get; private set; }
-        public DateTime Date { get; private set; }
+        Object = o;
+        Date = date;
+    }
 
-        private HistoryEntry()
+    public string Serialize() =>
+        $"{PersistStringHelper.GetObjectCollectionPersistString(Object)}{PersistStringHelper.ExtraText}{Date}";
+
+    public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
+    {
+        try
         {
-            
+            var objectString = s[..s.IndexOf(PersistStringHelper.ExtraText, StringComparison.Ordinal)];
+            return new HistoryEntry(
+                PersistStringHelper.GetObjectCollectionFromPersistString(objectString, locator).Single(),
+                DateTime.Parse(PersistStringHelper.GetExtraText(s)));
         }
-
-        public HistoryEntry(IMapsDirectlyToDatabaseTable o, DateTime date)
+        catch (PersistenceException)
         {
-            Object = o;
-            Date = date;
-        }
-        
-        public string Serialize()
-        {
-            var helper = new PersistStringHelper();
-            return helper.GetObjectCollectionPersistString(Object) + PersistStringHelper.ExtraText + Date;
-        }
-
-        public static HistoryEntry Deserialize(string s, IRDMPPlatformRepositoryServiceLocator locator)
-        {
-            var e = new HistoryEntry();
-
-            try
-            {
-                var helper = new PersistStringHelper();
-                e.Date = DateTime.Parse(helper.GetExtraText(s));
-
-                var objectString = s.Substring(0, s.IndexOf(PersistStringHelper.ExtraText));
-                
-
-                e.Object = helper.GetObjectCollectionFromPersistString(objectString,locator).Single();
-            }
-            catch (PersistenceException )
-            {
-                return null;
-            }
-
-            return e;
-        }
-
-
-        protected bool Equals(HistoryEntry other)
-        {
-            return Equals(Object, other.Object);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((HistoryEntry) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Object != null ? Object.GetHashCode() : 0);
-        }
-
-        public object MasqueradingAs()
-        {
-            return Object;
+            return null;
         }
     }
+
+
+    protected bool Equals(HistoryEntry other) => Equals(Object, other.Object);
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((HistoryEntry)obj);
+    }
+
+    public override int GetHashCode() => Object?.GetHashCode() ?? 0;
+
+    public object MasqueradingAs() => Object;
 }

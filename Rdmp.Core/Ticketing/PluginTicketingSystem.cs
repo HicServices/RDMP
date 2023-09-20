@@ -5,27 +5,28 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.Ticketing
+namespace Rdmp.Core.Ticketing;
+
+public abstract class PluginTicketingSystem : ITicketingSystem
 {
-    public abstract class PluginTicketingSystem : ICheckable, ITicketingSystem
+    protected IDataAccessCredentials Credentials { get; set; }
+    protected string Url { get; set; }
+
+    protected PluginTicketingSystem(TicketingSystemConstructorParameters parameters)
     {
-        protected IDataAccessCredentials Credentials { get; set; }
-        protected string Url { get; set; }
-        
-        protected PluginTicketingSystem(TicketingSystemConstructorParameters parameters)
-        {
-            Credentials = parameters.Credentials;
-            Url = parameters.Url;
-        }
-
-        public abstract void Check(ICheckNotifier notifier);
-        public abstract bool IsValidTicketName(string ticketName);
-        public abstract void NavigateToTicket(string ticketName);
-
-        public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket, string releaseTicket, out string reason, out Exception exception);
-        public abstract string GetProjectFolderName(string masterTicket);
+        Credentials = parameters.Credentials;
+        Url = parameters.Url;
     }
+
+    public abstract void Check(ICheckNotifier notifier);
+    public abstract bool IsValidTicketName(string ticketName);
+    public abstract void NavigateToTicket(string ticketName);
+
+    public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket,
+        string requestTicket, string releaseTicket, out string reason, out Exception exception);
+
+    public abstract string GetProjectFolderName(string masterTicket);
 }

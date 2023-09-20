@@ -11,77 +11,81 @@ using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
 using Rdmp.UI.SimpleControls;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector"/>)
+/// </summary>
+public partial class ServerDatabaseTableSelectorDialog : Form
 {
-    /// <summary>
-    /// Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector"/>)
-    /// </summary>
-    public partial class ServerDatabaseTableSelectorDialog : Form
+    public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel,
+        IBasicActivateItems activator)
     {
-        public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel, IBasicActivateItems activator)
+        //start at cancel so if they hit the X nothing is selected
+        DialogResult = DialogResult.Cancel;
+
+        InitializeComponent();
+
+        lblTaskDescription.Text = taskDescription;
+
+        if (!includeTable)
+            serverDatabaseTableSelector1.HideTableComponents();
+
+        serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;
+        serverDatabaseTableSelector1.SetItemActivator(activator);
+    }
+
+    public DiscoveredDatabase SelectedDatabase => serverDatabaseTableSelector1.GetDiscoveredDatabase();
+    public DiscoveredTable SelectedTable => serverDatabaseTableSelector1.GetDiscoveredTable();
+
+    public bool AllowTableValuedFunctionSelection
+    {
+        get => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;
+        set => serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;
+    }
+
+    private void btnOk_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+
+    private void btnCancel_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
+    }
+
+    private void btnCreate_Click(object sender, EventArgs e)
+    {
+        try
         {
-            //start at cancel so if they hit the X nothing is selected
-            DialogResult = DialogResult.Cancel;
-            
-            InitializeComponent();
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
-            lblTaskDescription.Text = taskDescription;
-            
-            if(!includeTable)
-                serverDatabaseTableSelector1.HideTableComponents();
-
-            serverDatabaseTableSelector1.TableShouldBeNovel = tableShouldBeNovel;
-            serverDatabaseTableSelector1.SetItemActivator(activator);
-        }
-
-        public DiscoveredDatabase SelectedDatabase { get { return serverDatabaseTableSelector1.GetDiscoveredDatabase(); } }
-        public DiscoveredTable SelectedTable { get { return serverDatabaseTableSelector1.GetDiscoveredTable(); }}
-
-        public bool AllowTableValuedFunctionSelection { get { return serverDatabaseTableSelector1.AllowTableValuedFunctionSelection;} set { serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = value;}}
-
-        private void btnOk_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.OK;
-            Close();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            Close();
-        }
-
-        private void btnCreate_Click(object sender, EventArgs e)
-        {
-            try
+            if (db == null)
             {
-                var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
-
-                if(db == null)
-                {
-                    MessageBox.Show("You must specify a database name");
-                    return;
-                }
-
-                if (!db.Exists())
-                {
-                    db.Create();
-                    MessageBox.Show("Database Created");
-                }
-                else
-                {
-                    MessageBox.Show("Database already exists");
-                }
+                MessageBox.Show("You must specify a database name");
+                return;
             }
-            catch (Exception ex)
+
+            if (!db.Exists())
             {
-                ExceptionViewer.Show(ex);
+                db.Create();
+                MessageBox.Show("Database Created");
+            }
+            else
+            {
+                MessageBox.Show("Database already exists");
             }
         }
-
-        public void LockDatabaseType(DatabaseType databaseType)
+        catch (Exception ex)
         {
-            serverDatabaseTableSelector1.LockDatabaseType(databaseType);
+            ExceptionViewer.Show(ex);
         }
+    }
+
+    public void LockDatabaseType(DatabaseType databaseType)
+    {
+        serverDatabaseTableSelector1.LockDatabaseType(databaseType);
     }
 }

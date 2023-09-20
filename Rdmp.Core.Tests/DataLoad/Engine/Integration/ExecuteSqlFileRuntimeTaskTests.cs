@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using FAnsi;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -20,190 +20,199 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 {
-    class ExecuteSqlFileRuntimeTaskTests:DatabaseTests
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void ExecuteSqlFileRuntimeTask_BasicScript(DatabaseType dbType)
     {
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void ExecuteSqlFileRuntimeTask_BasicScript(DatabaseType dbType)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("Lawl");
-            dt.Rows.Add(new object []{2});
+        var dt = new DataTable();
+        dt.Columns.Add("Lawl");
+        dt.Rows.Add(new object[] { 2 });
 
-            var db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
 
-            var tbl = db.CreateTable("Fish",dt);
-            
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
+        var tbl = db.CreateTable("Fish", dt);
 
-            File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
-            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
+        File.WriteAllText(f.FullName, @"UPDATE Fish Set Lawl = 1");
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
 
-            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+            "ExecuteSqlFileRuntimeTaskTests", true);
 
-            task.Check(new ThrowImmediatelyCheckNotifier());
+        var task = new ExecuteSqlFileRuntimeTask(pt,
+            new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-            IDataLoadJob job = Mock.Of<IDataLoadJob>();
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
-            task.Run(job, new GracefulCancellationToken());
+        var job = Substitute.For<IDataLoadJob>();
 
-            Assert.AreEqual(1,tbl.GetDataTable().Rows[0][0]);
+        task.Run(job, new GracefulCancellationToken());
 
-            tbl.Drop();
-        }
+        Assert.AreEqual(1, tbl.GetDataTable().Rows[0][0]);
 
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void ExecuteSqlFileRuntimeTask_InvalidID(DatabaseType dbType)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("Lawl");
-            dt.Rows.Add(new object[] { 2 });
+        tbl.Drop();
+    }
 
-            var db = GetCleanedServer(dbType);
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void ExecuteSqlFileRuntimeTask_InvalidID(DatabaseType dbType)
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("Lawl");
+        dt.Rows.Add(new object[] { 2 });
 
-            var tbl = db.CreateTable("Fish", dt);
+        var db = GetCleanedServer(dbType);
 
-            Import(tbl,out var ti,out var cols);
+        var tbl = db.CreateTable("Fish", dt);
 
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
-            
-            File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
+        Import(tbl, out var ti, out var cols);
 
-            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+        File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
+
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
+
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+            "ExecuteSqlFileRuntimeTaskTests", true);
 
 
+        var task = new ExecuteSqlFileRuntimeTask(pt,
+            new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
+        var configuration = new HICDatabaseConfiguration(db.Server);
 
-            task.Check(new ThrowImmediatelyCheckNotifier());
-            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>());
+        job.Configuration.Returns(configuration);
 
-            IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
-            x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
-            x.LookupTablesToLoad == new List<ITableInfo>() &&
-            x.Configuration == configuration);
-                                  
-            var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
-            StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
+        var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(() =>
+            task.Run(job, new GracefulCancellationToken()));
+        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.Message);
 
-            task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
-        }
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+    }
 
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void ExecuteSqlRuntimeTask_InvalidID(DatabaseType dbType)
-        {
-            var dt = new DataTable();
-            dt.Columns.Add("Lawl");
-            dt.Rows.Add(new object[] { 2 });
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void ExecuteSqlRuntimeTask_InvalidID(DatabaseType dbType)
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("Lawl");
+        dt.Rows.Add(new object[] { 2 });
 
-            var db = GetCleanedServer(dbType);
+        var db = GetCleanedServer(dbType);
 
-            var tbl = db.CreateTable("Fish", dt);
+        var tbl = db.CreateTable("Fish", dt);
 
-            Import(tbl,out var ti,out var cols);
+        Import(tbl, out var ti, out var cols);
 
-            string sql = @"UPDATE {T:0} Set {C:0} = 1";
-            
-            IRuntimeTask task;
-            IProcessTask pt;
-            
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+        var sql = @"UPDATE {T:0} Set {C:0} = 1";
+
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+            "ExecuteSqlFileRuntimeTaskTests", true);
 
 #pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
-            var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
-            x.Name == "Sql" &&
-            x.Value == sql &&
-            x.GetValueAsSystemType() == sql) };
+        var _arg = Substitute.For<IArgument>();
+        _arg.Name.Returns("Sql");
+        _arg.Value.Returns(sql);
+        _arg.GetValueAsSystemType().Returns(sql);
+        var sqlArg = new IArgument[]
+        {
+          _arg
+        };
 #pragma warning restore CS0252, CS0253
 
-            var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
+        var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
-            pt = Mock.Of<IProcessTask>(x => 
-            x.Path == typeof(ExecuteSqlMutilation).FullName &&
-            x.GetAllArguments() == sqlArg
-            );
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(typeof(ExecuteSqlMutilation).FullName);
+        pt.GetAllArguments().Returns(sqlArg);
 
-            task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
-                        
-            task.Check(new ThrowImmediatelyCheckNotifier());
-            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
+        IRuntimeTask task = new MutilateDataTablesRuntimeTask(pt, args);
 
-            var job = new ThrowImmediatelyDataLoadJob();
-            
-            job.RegularTablesToLoad = new List<ITableInfo> {ti};
-            job.LookupTablesToLoad = new List<ITableInfo>();
-            job.Configuration = configuration;
-                                  
-            var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
+        var configuration = new HICDatabaseConfiguration(db.Server);
 
-            StringAssert.Contains("Mutilate failed",ex.Message);
-            StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.InnerException.Message);
-
-            task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
-        }
-
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void ExecuteSqlFileRuntimeTask_ValidID_CustomNamer(DatabaseType dbType)
+        var job = new ThrowImmediatelyDataLoadJob
         {
-            var dt = new DataTable();
-            dt.Columns.Add("Lawl");
-            dt.Rows.Add(new object[] { 2 });
+            RegularTablesToLoad = new List<ITableInfo> { ti },
+            LookupTablesToLoad = new List<ITableInfo>(),
+            Configuration = configuration
+        };
 
-            var db = GetCleanedServer(dbType);
+        var ex = Assert.Throws<Exception>(() => task.Run(job, new GracefulCancellationToken()));
 
-            var tbl = db.CreateTable("Fish", dt);
+        StringAssert.Contains("Mutilate failed", ex.Message);
+        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.InnerException.Message);
 
-            var tableName = "AAAAAAA";
+        task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+    }
 
-            Import(tbl, out var ti, out var cols);
-            
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
+    [TestCase(DatabaseType.MySql)]
+    [TestCase(DatabaseType.MicrosoftSQLServer)]
+    public void ExecuteSqlFileRuntimeTask_ValidID_CustomNamer(DatabaseType dbType)
+    {
+        var dt = new DataTable();
+        dt.Columns.Add("Lawl");
+        dt.Rows.Add(new object[] { 2 });
 
-            File.WriteAllText(f.FullName, @"UPDATE {T:"+ti.ID+ "} Set {C:"+cols[0].ID+ "} = 1");
+        var db = GetCleanedServer(dbType);
 
-            tbl.Rename(tableName);
+        var tbl = db.CreateTable("Fish", dt);
 
-            //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
-            Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
+        var tableName = "AAAAAAA";
 
-            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
+        Import(tbl, out var ti, out var cols);
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
-            var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
+        File.WriteAllText(f.FullName, $@"UPDATE {{T:{ti.ID}}} Set {{C:{cols[0].ID}}} = 1");
 
-            task.Check(new ThrowImmediatelyCheckNotifier());
+        tbl.Rename(tableName);
 
-            
-            //create a namer that tells the user 
-            var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
-            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
+        //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
+        Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
 
-            IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
-            x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
-            x.LookupTablesToLoad == new List<ITableInfo>() &&
-            x.Configuration == configuration);
+        var pt = Substitute.For<IProcessTask>();
+        pt.Path.Returns(f.FullName);
+        var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
+            "ExecuteSqlFileRuntimeTaskTests", true);
 
-            task.Run(job, new GracefulCancellationToken());
+        var task = new ExecuteSqlFileRuntimeTask(pt,
+            new RuntimeArgumentCollection(Array.Empty<IArgument>(), new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
-            Assert.AreEqual(1, tbl.GetDataTable().Rows[0][0]);
+        task.Check(ThrowImmediatelyCheckNotifier.Quiet);
 
-            tbl.Drop();
-        }
+
+        //create a namer that tells the user
+        var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
+        var configuration = new HICDatabaseConfiguration(db.Server, namer);
+
+        var job = Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>());
+        job.Configuration.Returns(configuration);
+
+        task.Run(job, new GracefulCancellationToken());
+
+        Assert.AreEqual(1, tbl.GetDataTable().Rows[0][0]);
+
+        tbl.Drop();
     }
 }

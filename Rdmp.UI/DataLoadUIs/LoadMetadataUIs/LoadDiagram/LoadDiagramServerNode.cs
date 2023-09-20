@@ -12,137 +12,116 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Providers.Nodes;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
-namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
+
+/// <summary>
+/// Depicts a server in a given DLE <see cref="LoadBubble"/> (e.g. the RAW server or the STAGING/LIVE server).
+/// </summary>
+public class LoadDiagramServerNode : TableInfoServerNode, IKnowWhatIAm, IOrderable
 {
-    /// <summary>
-    /// Depicts a server in a given DLE <see cref="LoadBubble"/> (e.g. the RAW server or the STAGING/LIVE server).
-    /// </summary>
-    public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
+    private readonly LoadBubble _bubble;
+    private readonly DiscoveredDatabase _database;
+    private readonly string _description;
+
+    public string ErrorDescription { get; private set; }
+
+    private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
+
+    public readonly List<LoadDiagramDatabaseNode> Children = new();
+
+    public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables,
+        HICDatabaseConfiguration config)
+        : base(database.Server.Name, database.Server.DatabaseType, loadTables)
     {
-        private readonly LoadBubble _bubble;
-        private readonly DiscoveredDatabase _database;
-        private readonly TableInfo[] _loadTables;
-        private readonly HICDatabaseConfiguration _config;
-        private string _description;
-        
-        public string ErrorDescription { get; private set; }
+        _bubble = bubble;
+        _database = database;
+        var config1 = config;
+        var serverName = database.Server.Name;
 
-        private Dictionary<DiscoveredDatabase, TableInfo[]> _liveDatabaseDictionary;
-
-        public readonly List<LoadDiagramDatabaseNode> Children = new List<LoadDiagramDatabaseNode>();
-
-        public LoadDiagramServerNode(LoadBubble bubble, DiscoveredDatabase database, TableInfo[] loadTables, HICDatabaseConfiguration config)
-            :base(database.Server.Name,database.Server.DatabaseType, loadTables)
+        _description = bubble switch
         {
+            LoadBubble.Raw => $"RAW Server:{serverName}",
+            LoadBubble.Staging => $"STAGING Server:{serverName}",
+            LoadBubble.Live => $"LIVE Server:{serverName}",
+            _ => throw new ArgumentOutOfRangeException(nameof(bubble))
+        };
 
-            _bubble = bubble;
-            _database = database;
-            _loadTables = loadTables;
-            _config = config;
-            string serverName = database.Server.Name;
-
-            switch (bubble)
+        //Live can have multiple databases (for lookups)
+        if (_bubble == LoadBubble.Live)
+        {
+            var servers = loadTables.Select(static t => t.Server).Distinct().ToArray();
+            if (servers.Length > 1)
             {
-                case LoadBubble.Raw:
-                    _description = "RAW Server:" + serverName;
-                    break;
-                case LoadBubble.Staging:
-                    _description = "STAGING Server:" + serverName;
-                    break;
-                case LoadBubble.Live:
-                    _description = "LIVE Server:" + serverName;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("bubble");
+                _description = $"Ambiguous LIVE Servers:{string.Join(",", servers)}";
+                ErrorDescription =
+                    $"The TableInfo collection that underlie the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:{string.Join(",", servers)}.  All TableInfos in a load must belong on the same server or the load will not work.";
             }
 
-            //Live can have multiple databases (for lookups)
-            if (_bubble == LoadBubble.Live)
-            {
-                var servers = loadTables.Select(t => t.Server).Distinct().ToArray();
-                if (servers.Length > 1)
-                {
-                    _description = "Ambiguous LIVE Servers:" + string.Join(",", servers);
-                    ErrorDescription = "The TableInfo collection that underly the Catalogues in this data load configuration are on different servers.  The servers they believe they live on are:" +  string.Join(",", servers) + ".  All TableInfos in a load must belong on the same server or the load will not work.";
-                }
+            var databases = loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
 
-                string[] databases = _loadTables.Select(t => t.GetDatabaseRuntimeName()).Distinct().ToArray();
+            _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
 
-                _liveDatabaseDictionary = new Dictionary<DiscoveredDatabase, TableInfo[]>();
-
-                foreach (string dbname in databases)
-                    _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),_loadTables.Where(t => t.GetDatabaseRuntimeName().Equals(dbname,StringComparison.CurrentCultureIgnoreCase)).ToArray());
-            }
-
-                        //if it is live yield all the lookups
-            if(_bubble == LoadBubble.Live)
-                foreach (var kvp in _liveDatabaseDictionary)
-                    Children.Add(new LoadDiagramDatabaseNode(_bubble,kvp.Key,kvp.Value,_config));
-            else
-                Children.Add(new LoadDiagramDatabaseNode(_bubble,_database,_loadTables,_config));
+            foreach (var dbname in databases)
+                _liveDatabaseDictionary.Add(_database.Server.ExpectDatabase(dbname),
+                    loadTables.Where(t =>
+                            t.GetDatabaseRuntimeName().Equals(dbname, StringComparison.CurrentCultureIgnoreCase))
+                        .ToArray());
         }
 
-        public IEnumerable<LoadDiagramDatabaseNode> GetChildren()
-        {
-            return Children;
-        }
+        //if it is live yield all the lookups
+        if (_bubble == LoadBubble.Live)
+            foreach (var kvp in _liveDatabaseDictionary)
+                Children.Add(new LoadDiagramDatabaseNode(_bubble, kvp.Key, kvp.Value, config1));
+        else
+            Children.Add(new LoadDiagramDatabaseNode(_bubble, _database, loadTables, config1));
+    }
 
-        public override string ToString()
-        {
-            return _description;
-        }
-        
-        public void DiscoverState()
-        {
-            foreach (LoadDiagramDatabaseNode db in Children)
-                db.DiscoverState();
-        }
-        #region equality
-        protected bool Equals(LoadDiagramServerNode other)
-        {
-            return base.Equals(other) && _bubble == other._bubble && Equals(_database, other._database);
-        }
+    public IEnumerable<LoadDiagramDatabaseNode> GetChildren() => Children;
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LoadDiagramServerNode) obj);
-        }
+    public override string ToString() => _description;
 
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = base.GetHashCode();
-                hashCode = (hashCode*397) ^ (int) _bubble;
-                hashCode = (hashCode*397) ^ (_database != null ? _database.GetHashCode() : 0);
-                return hashCode;
-            }
-        }
+    public void DiscoverState()
+    {
+        foreach (var db in Children)
+            db.DiscoverState();
+    }
 
-        public string WhatIsThis()
-        {
-            switch (_bubble)
-            {
-                case LoadBubble.Raw:
-                    return "Depicts what server will be used for the RAW database and the tables/columns that are anticipated/found in that server currently";
-                case LoadBubble.Staging:
-                    return "Depicts what server will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently";
-                case LoadBubble.Live:
-                    return "Depicts the current live server that the load will target (based on which Catalogues are associated with the load)";
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+    #region equality
 
-        #endregion
+    protected bool Equals(LoadDiagramServerNode other) =>
+        base.Equals(other) && _bubble == other._bubble && Equals(_database, other._database);
 
-        public int Order
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDiagramServerNode)obj);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(base.GetHashCode(), _bubble, _database);
+
+    public string WhatIsThis()
+    {
+        return _bubble switch
         {
-            get { return (int) _bubble;} set{} }
+            LoadBubble.Raw =>
+                "Depicts what server will be used for the RAW database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Staging =>
+                "Depicts what server will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently",
+            LoadBubble.Live =>
+                "Depicts the current live server that the load will target (based on which Catalogues are associated with the load)",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    #endregion
+
+    public int Order
+    {
+        get => (int)_bubble;
+        set { }
     }
 }

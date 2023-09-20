@@ -7,40 +7,38 @@
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Performance;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Performance;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation.Integration
+namespace Rdmp.Core.Tests.Curation.Integration;
+
+public class ComprehensiveQueryPerformanceCounterTests : DatabaseTests
 {
-    public class ComprehensiveQueryPerformanceCounterTests : DatabaseTests
+    [Test]
+    public void TestPerformance()
     {
-        [Test]
-        public void TestPerformance()
+        if (TestDatabaseSettings.UseFileSystemRepo)
+            Assert.Inconclusive("No queries are run when using file back repository");
+
+        var pCounter = new ComprehensiveQueryPerformanceCounter();
+        //enable performance counting
+        DatabaseCommandHelper.PerformanceCounter = pCounter;
+        try
         {
-            if (TestDatabaseSettings.UseFileSystemRepo)
-                Assert.Inconclusive("No queries are run when using file back repository");
+            //send some queries
+            var cata = new Catalogue(CatalogueRepository, "Fish");
 
-            var pCounter =  new ComprehensiveQueryPerformanceCounter();
-            //enable performance counting
-            DatabaseCommandHelper.PerformanceCounter = pCounter;
-            try
-            {
+            Assert.IsTrue(cata.Name.Equals("Fish"));
 
-                //send some queries
-                var cata =  new Catalogue(CatalogueRepository, "Fish");
+            var commands = pCounter.DictionaryOfQueries.Values.ToArray();
+            Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
 
-                Assert.IsTrue(cata.Name.Equals("Fish"));
-
-                var commands = pCounter.DictionaryOfQueries.Values.ToArray();
-                Assert.IsTrue(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
-                
-                cata.DeleteInDatabase();
-            }
-            finally
-            {
-                DatabaseCommandHelper.PerformanceCounter = null;
-            }
+            cata.DeleteInDatabase();
+        }
+        finally
+        {
+            DatabaseCommandHelper.PerformanceCounter = null;
         }
     }
 }

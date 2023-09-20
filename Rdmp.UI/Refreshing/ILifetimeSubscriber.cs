@@ -5,18 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.UI.Refreshing
+namespace Rdmp.UI.Refreshing;
+
+/// <summary>
+/// <see cref="IRefreshBusSubscriber"/> for <see cref="Control"/> classes which want their lifetime to be linked to a single
+/// <see cref="IMapsDirectlyToDatabaseTable"/> object.  This grants notifications of publish events about the object and ensures
+/// your <see cref="Control"/> is closed when/if the object is deleted.
+///
+/// <para>See <see cref="RefreshBus.EstablishLifetimeSubscription"/></para>
+/// </summary>
+public interface ILifetimeSubscriber : IContainerControl, IRefreshBusSubscriber
 {
-    /// <summary>
-    /// <see cref="IRefreshBusSubscriber"/> for <see cref="Control"/> classes which want their lifetime to be linked to a single
-    /// <see cref="IMapsDirectlyToDatabaseTable"/> object.  This grants notifications of publish events about the object and ensures
-    /// your <see cref="Control"/> is closed when/if the object is deleted.
-    ///
-    /// <para>See <see cref="RefreshBus.EstablishLifetimeSubscription"/></para>
-    /// </summary>
-    public interface ILifetimeSubscriber:IContainerControl,IRefreshBusSubscriber
-    {
-    }
 }

@@ -5,85 +5,75 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode;
 using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs.Revertable
-{ 
-    /// <summary>
-    /// Used by OfferChanceToSaveDialog to tell you about a property difference between an RDMP object that is visible in an RDMP application but which has unaccountably become different
-    /// from the database version (for example because another user has modified the record in the database while we had an older copy of it). See OfferChanceToSaveDialog for full details
-    /// 
-    /// </summary>
-    public partial class RevertablePropertyDifferenceUI : RDMPUserControl
+namespace Rdmp.UI.SimpleDialogs.Revertable;
+
+/// <summary>
+/// Used by OfferChanceToSaveDialog to tell you about a property difference between an RDMP object that is visible in an RDMP application but which has unaccountably become different
+/// from the database version (for example because another user has modified the record in the database while we had an older copy of it). See OfferChanceToSaveDialog for full details
+/// 
+/// </summary>
+public partial class RevertablePropertyDifferenceUI : RDMPUserControl
+{
+    public RevertablePropertyDifferenceUI(RevertablePropertyDifference difference)
     {
-        private readonly RevertablePropertyDifference _difference;
-        
-        public RevertablePropertyDifferenceUI(RevertablePropertyDifference difference)
+        var difference1 = difference;
+        InitializeComponent();
+
+        if (VisualStudioDesignMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+            return;
+
+        //For documentation/control previewing
+        difference1 ??=
+            new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"), "Biochemistry", "byochemistry");
+
+        CreateScintillaComponents(
+            difference1.DatabaseValue != null ? difference1.DatabaseValue.ToString() : "<Null>",
+            difference1.LocalValue != null ? difference1.LocalValue.ToString() : "<Null>");
+
+        lblDbProperty.Text = $"{difference1.Property.Name} in Database";
+        lblMemoryProperty.Text = $"{difference1.Property.Name} in Memory";
+    }
+
+    private Scintilla QueryEditorBefore;
+    private Scintilla QueryEditorAfter;
+
+
+    public void CreateScintillaComponents(string textBefore, string textAfter,
+        SyntaxLanguage language = SyntaxLanguage.SQL)
+    {
+        QueryEditorBefore = new ScintillaTextEditorFactory().Create();
+        QueryEditorBefore.Text = textBefore;
+        QueryEditorBefore.ReadOnly = true;
+
+        splitContainer1.Panel1.Controls.Add(QueryEditorBefore);
+
+        QueryEditorAfter = new ScintillaTextEditorFactory().Create();
+        QueryEditorAfter.Text = textAfter;
+        QueryEditorAfter.ReadOnly = true;
+
+        splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
+
+        //compute difference
+        textBefore ??= "";
+        textAfter ??= "";
+
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(QueryEditorBefore);
+
+        foreach (var item in Diff.DiffText(textBefore, textAfter))
         {
-            _difference = difference;
-            InitializeComponent();
-            
-            if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
-            
-            //For documentation/control previewing
-             if(_difference==null)
-                 _difference = new RevertablePropertyDifference(typeof(Catalogue).GetProperty("Name"),"Biochemistry","byochemistry");
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorBefore, i, Color.Pink);
 
-            CreateScintillaComponents(
-                _difference.DatabaseValue != null ? _difference.DatabaseValue.ToString() : "<Null>",
-                _difference.LocalValue != null ? _difference.LocalValue.ToString() : "<Null>");
-
-            lblDbProperty.Text = _difference.Property.Name + " in Database";
-            lblMemoryProperty.Text = _difference.Property.Name + " in Memory";
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
         }
-        
-        private Scintilla QueryEditorBefore;
-        private Scintilla QueryEditorAfter;
-
-
-        public void CreateScintillaComponents(string textBefore, string textAfter, SyntaxLanguage language = SyntaxLanguage.SQL)
-        {
-            QueryEditorBefore = new ScintillaTextEditorFactory().Create();
-            QueryEditorBefore.Text = textBefore;
-            QueryEditorBefore.ReadOnly = true;
-
-            splitContainer1.Panel1.Controls.Add(QueryEditorBefore);
-
-            QueryEditorAfter = new ScintillaTextEditorFactory().Create();
-            QueryEditorAfter.Text = textAfter;
-            QueryEditorAfter.ReadOnly = true;
-
-            splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
-            
-            //compute difference
-            if (textBefore == null)
-                textBefore = "";
-            if (textAfter == null)
-                textAfter = "";
-
-            Diff diff = new Diff();
-
-            var highlighter = new ScintillaLineHighlightingHelper();
-            
-            highlighter.ClearAll(QueryEditorAfter);
-            highlighter.ClearAll(QueryEditorBefore);
-
-            foreach (Diff.Item item in diff.DiffText(textBefore, textAfter))
-            {
-                for (int i = item.StartA; i < item.StartA + item.deletedA; i++)
-                    highlighter.HighlightLine(QueryEditorBefore,i, Color.Pink);
-                    
-                for (int i = item.StartB; i < item.StartB+item.insertedB; i++)
-                    highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
-            }
-            
-        }
-
     }
 }

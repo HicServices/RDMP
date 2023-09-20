@@ -5,52 +5,42 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconOverlays;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public sealed class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class AggregateConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
+    private static readonly Image<Rgba32> CohortAggregates = Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
+    private static readonly Image<Rgba32> Aggregates = Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
+    private static readonly Image<Rgba32> PatientIndexTable = Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        private readonly IconOverlayProvider _overlayProvider;
-        private readonly Image<Rgba32> _cohortAggregates;
-        private readonly Image<Rgba32> _aggregates;
-        private readonly Image<Rgba32> _patientIndexTable;
+        if (o is Type && o.Equals(typeof(AggregateConfiguration)))
+            return Aggregates;
 
-        public AggregateConfigurationStateBasedIconProvider(IconOverlayProvider overlayProvider)
-        {
-            _overlayProvider = overlayProvider;
-            _cohortAggregates = Image.Load<Rgba32>(CatalogueIcons.CohortAggregate);
-            _aggregates = Image.Load<Rgba32>(CatalogueIcons.AggregateGraph);
-            _patientIndexTable = Image.Load<Rgba32>(CatalogueIcons.PatientIndexTable);
-        }
+        if (o is not AggregateConfiguration ac)
+            return null;
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is Type && o.Equals(typeof (AggregateConfiguration)))
-                return _aggregates;
+        var img = ac.IsCohortIdentificationAggregate ? CohortAggregates : Aggregates;
 
-            if (o is not AggregateConfiguration ac)
-                return null;
-            
-            var img = ac.IsCohortIdentificationAggregate ? _cohortAggregates : _aggregates;
+        if (ac.IsJoinablePatientIndexTable())
+            img = PatientIndexTable;
 
-            if (ac.IsJoinablePatientIndexTable())
-                img = _patientIndexTable;
+        if (ac.IsExtractable)
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Extractable);
 
-            if (ac.IsExtractable)
-                img = _overlayProvider.GetOverlay(img, OverlayKind.Extractable);
+        if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Shortcut);
 
-            if (ac.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID != null)
-                img =_overlayProvider.GetOverlay(img, OverlayKind.Shortcut);
+        if (ac.Catalogue.IsApiCall())
+            img = IconOverlayProvider.GetOverlay(img, OverlayKind.Cloud);
 
-            if (ac.Catalogue.IsApiCall())
-                img = _overlayProvider.GetOverlay(img, OverlayKind.Cloud);
-
-            return img;
-        }
+        return img;
     }
 }

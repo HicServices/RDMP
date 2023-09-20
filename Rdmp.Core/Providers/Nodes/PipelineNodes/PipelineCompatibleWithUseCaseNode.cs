@@ -5,74 +5,59 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Providers.Nodes.PipelineNodes
+namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
+
+/// <summary>
+/// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source /
+/// destination components and flow type etc).
+/// 
+/// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
+/// </summary>
+public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
 {
-    /// <summary>
-    /// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source / 
-    /// destination components and flow type etc).
-    /// 
-    /// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
-    /// </summary>
-    public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
+    public Pipeline Pipeline { get; }
+    public PipelineUseCase UseCase { get; }
+    private readonly Type _useCaseType;
+
+    public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase) :
+        base(null)
     {
-        public Pipeline Pipeline { get; set; }
-        public PipelineUseCase UseCase { get; set; }
-        private Type _useCaseType;
-
-        public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase):base(null)
-        {
-            Pipeline = pipeline;
-            UseCase = useCase;
-            Repository = repo;
-            _useCaseType = UseCase.GetType();
-        }
-
-        public object MasqueradingAs()
-        {
-            return Pipeline;
-        }
-
-        public override string ToString()
-        {
-            return Pipeline.Name;
-        }
-
-        public override void DeleteInDatabase()
-        {
-            Pipeline.DeleteInDatabase();
-        }
-
-        public override bool Exists()
-        {
-            return Pipeline.Exists();
-        }
-
-        #region Equality
-        protected bool Equals(PipelineCompatibleWithUseCaseNode other)
-        {
-            return _useCaseType.Equals(other._useCaseType) && Pipeline.Equals(other.Pipeline);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((PipelineCompatibleWithUseCaseNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (_useCaseType.GetHashCode()*397) ^ Pipeline.GetHashCode();
-            }
-        }
-        #endregion
+        Pipeline = pipeline;
+        UseCase = useCase;
+        Repository = repo;
+        _useCaseType = UseCase.GetType();
     }
+
+    public object MasqueradingAs() => Pipeline;
+
+    public override string ToString() => Pipeline.Name;
+
+    public override void DeleteInDatabase()
+    {
+        Pipeline.DeleteInDatabase();
+    }
+
+    public override bool Exists() => Pipeline.Exists();
+
+    #region Equality
+
+    protected bool Equals(PipelineCompatibleWithUseCaseNode other) =>
+        _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((PipelineCompatibleWithUseCaseNode)obj);
+    }
+
+    public override int GetHashCode() => HashCode.Combine(_useCaseType, Pipeline);
+
+    #endregion
 }

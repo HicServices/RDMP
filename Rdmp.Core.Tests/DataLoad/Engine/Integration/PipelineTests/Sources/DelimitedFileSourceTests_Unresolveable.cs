@@ -9,77 +9,76 @@ using NUnit.Framework;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
+
+internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTestsBase
 {
-    class DelimitedFileSourceTests_Unresolveable: DelimitedFileSourceTestsBase
+    [TestCase(BadDataHandlingStrategy.DivertRows)]
+    [TestCase(BadDataHandlingStrategy.ThrowException)]
+    [TestCase(BadDataHandlingStrategy.IgnoreRows)]
+    public void BadCSV_UnclosedQuote(BadDataHandlingStrategy strategy)
     {
+        var file = CreateTestFile(
+            "Name,Description,Age",
+            "Frank,\"Is, the greatest\",100", //<---- how you should be doing it
+            "Frank,Is the greatest,100",
+            "Frank,\"Is the greatest,100", //<----- no closing quote! i.e. read the rest of the file!
+            "Frank,Is the greatest,100",
+            "Frank,Is the greatest,100",
+            "Frank,Is the greatest,100",
+            "Frank,Is the greatest,100");
 
-        [TestCase(BadDataHandlingStrategy.DivertRows)]
-        [TestCase(BadDataHandlingStrategy.ThrowException)]
-        [TestCase(BadDataHandlingStrategy.IgnoreRows)]
-        public void BadCSV_UnclosedQuote(BadDataHandlingStrategy strategy)
+        void Adjust(DelimitedFlatFileDataFlowSource a)
         {
-            var file = CreateTestFile(
-                "Name,Description,Age",
-                "Frank,\"Is, the greatest\",100", //<---- how you should be doing it
-                "Frank,Is the greatest,100",
-                "Frank,\"Is the greatest,100", //<----- no closing quote! i.e. read the rest of the file!
-                "Frank,Is the greatest,100",
-                "Frank,Is the greatest,100",
-                "Frank,Is the greatest,100",
-                "Frank,Is the greatest,100");
-
-            Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
-            {
-                a.BadDataHandlingStrategy = strategy;
-                a.ThrowOnEmptyFiles = true;
-                a.IgnoreQuotes = false;
-            };
-
-            switch (strategy)
-            {
-                case BadDataHandlingStrategy.ThrowException:
-                    var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, adjust));
-                    Assert.AreEqual("Bad data found on line 9", ex.Message);
-                    break;
-                case BadDataHandlingStrategy.IgnoreRows:
-                    var dt = RunGetChunk(file, adjust);
-                    Assert.AreEqual(2, dt.Rows.Count);  //reads first 2 rows and chucks the rest!
-                    break;
-                case BadDataHandlingStrategy.DivertRows:
-
-                    //read 2 rows and rejected the rest
-                    var dt2 = RunGetChunk(file, adjust);
-                    Assert.AreEqual(2, dt2.Rows.Count);
-                    AssertDivertFileIsExactly($"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
-
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("strategy");
-            }
+            a.BadDataHandlingStrategy = strategy;
+            a.ThrowOnEmptyFiles = true;
+            a.IgnoreQuotes = false;
         }
-        
-        [Test]
-        public void BadCSV_UnclosedQuote_IgnoreQuotes()
+
+        switch (strategy)
         {
-            var file = CreateTestFile(
-                "Name,Description,Age",
-                "Frank,Is the greatest,100",
-                "Frank,\"Is the greatest,100",
-                "Frank,Is the greatest,100",
-                "Frank,Is the greatest,100",
-                "Frank,Is the greatest,100");
+            case BadDataHandlingStrategy.ThrowException:
+                var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, Adjust));
+                Assert.AreEqual("Bad data found on line 9", ex?.Message);
+                break;
+            case BadDataHandlingStrategy.IgnoreRows:
+                var dt = RunGetChunk(file, Adjust);
+                Assert.AreEqual(2, dt.Rows.Count); //reads first 2 rows and chucks the rest!
+                break;
+            case BadDataHandlingStrategy.DivertRows:
 
-            Action<DelimitedFlatFileDataFlowSource> adjust = (a) =>
-            {
-                a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
-                a.ThrowOnEmptyFiles = true;
-                a.IgnoreQuotes = true;
-            };
+                //read 2 rows and rejected the rest
+                var dt2 = RunGetChunk(file, Adjust);
+                Assert.AreEqual(2, dt2.Rows.Count);
+                AssertDivertFileIsExactly(
+                    $"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
 
-            var dt2 = RunGetChunk(file, adjust);
-            Assert.AreEqual(5, dt2.Rows.Count);
-            Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(strategy));
         }
+    }
+
+    [Test]
+    public void BadCSV_UnclosedQuote_IgnoreQuotes()
+    {
+        var file = CreateTestFile(
+            "Name,Description,Age",
+            "Frank,Is the greatest,100",
+            "Frank,\"Is the greatest,100",
+            "Frank,Is the greatest,100",
+            "Frank,Is the greatest,100",
+            "Frank,Is the greatest,100");
+
+        static void Adjust(DelimitedFlatFileDataFlowSource a)
+        {
+            a.BadDataHandlingStrategy = BadDataHandlingStrategy.ThrowException;
+            a.ThrowOnEmptyFiles = true;
+            a.IgnoreQuotes = true;
+        }
+
+        var dt2 = RunGetChunk(file, Adjust);
+        Assert.AreEqual(5, dt2.Rows.Count);
+        Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
     }
 }

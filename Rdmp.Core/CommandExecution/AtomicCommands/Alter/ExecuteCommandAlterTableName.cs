@@ -7,43 +7,36 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+
+/// <summary>
+/// Renames a table in the live database
+/// </summary>
+public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 {
-    /// <summary>
-    /// Renames a table in the live database
-    /// </summary>
-    public class ExecuteCommandAlterTableName : AlterTableCommandExecution
+    public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,
+        tableInfo)
     {
-        private SelectSQLRefactorer _refactorer;
+        if (IsImpossible)
+            return;
 
-        public ExecuteCommandAlterTableName(IBasicActivateItems activator, ITableInfo tableInfo) : base(activator,tableInfo)
+        if (!SelectSQLRefactorer.IsRefactorable(TableInfo))
+            SetImpossible($"Cannot rename table because {SelectSQLRefactorer.GetReasonNotRefactorable(TableInfo)}");
+    }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (TypeText("Rename Table (in database)", "New Name:", 500, TableInfo.GetRuntimeName(), out var newName, true))
         {
-            if(IsImpossible)
-                return;
-            
-            _refactorer = new SelectSQLRefactorer();
+            //rename the underlying table
+            Table.Rename(newName);
 
-            if (!_refactorer.IsRefactorable(TableInfo))
-            {
-                SetImpossible("Cannot rename table because " + _refactorer.GetReasonNotRefactorable(TableInfo));
-                return;
-            }
+            var newNameFullyQualified = Table.Database.ExpectTable(newName, TableInfo.Schema).GetFullyQualifiedName();
+            SelectSQLRefactorer.RefactorTableName(TableInfo, newNameFullyQualified);
         }
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            if (TypeText("Rename Table (in database)", "New Name:", 500, TableInfo.GetRuntimeName(), out string newName, true))
-            {
-                //rename the underlying table
-                Table.Rename(newName);
-
-                var newNameFullyQualified = Table.Database.ExpectTable(newName, TableInfo.Schema).GetFullyQualifiedName();
-                _refactorer.RefactorTableName(TableInfo, newNameFullyQualified);
-            }
-
-            Publish(TableInfo);
-        }
+        Publish(TableInfo);
     }
 }

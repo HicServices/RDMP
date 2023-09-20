@@ -4,18 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class ExtractionConfigurationsNodeMenu : RDMPContextMenuStrip
 {
-    class ExtractionConfigurationsNodeMenu:RDMPContextMenuStrip
+    public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args,
+        ExtractionConfigurationsNode extractionConfigurationsNode) : base(args, extractionConfigurationsNode)
     {
-        public ExtractionConfigurationsNodeMenu(RDMPContextMenuStripArgs args, ExtractionConfigurationsNode extractionConfigurationsNode): base(args, extractionConfigurationsNode)
-        {
-            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project) { Weight = -10.2f});
-            Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
-        }
+        Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, extractionConfigurationsNode.Project)
+        { Weight = -10.2f });
+        Add(new ExecuteCommandRelease(_activator) { Weight = -10.1f }.SetTarget(extractionConfigurationsNode.Project));
     }
 }

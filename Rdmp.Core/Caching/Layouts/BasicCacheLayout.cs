@@ -8,19 +8,17 @@ using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.Caching.Layouts
+namespace Rdmp.Core.Caching.Layouts;
+
+/// <summary>
+/// Specifies how files are laid out by date.  This is the default implementation in which the cache root directory (usually .\Data\Cache) is populated with folders
+/// yyyy-MM-dd which contains unzipped lists of files for that day.
+/// </summary>
+public class BasicCacheLayout : CacheLayout
 {
-    /// <summary>
-    /// Specifies how files are laid out by date.  This is the default implementation in which the cache root directory (usually .\Data\Cache) is populated with folders
-    /// yyyy-MM-dd which contains unzipped lists of files for that day.
-    /// </summary>
-    
-    public class BasicCacheLayout:CacheLayout
+    public BasicCacheLayout(DirectoryInfo rootCacheDirectory)
+        : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.None, CacheFileGranularity.Day,
+            new NoSubdirectoriesCachePathResolver())
     {
-        public BasicCacheLayout(DirectoryInfo rootCacheDirectory)
-            : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.None, CacheFileGranularity.Day, new NoSubdirectoriesCachePathResolver())
-        {
-            
-        }
     }
 }

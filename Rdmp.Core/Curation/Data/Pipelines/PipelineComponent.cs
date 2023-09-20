@@ -8,179 +8,153 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 
-namespace Rdmp.Core.Curation.Data.Pipelines
+namespace Rdmp.Core.Curation.Data.Pipelines;
+
+/// <inheritdoc cref="IPipelineComponent"/>
+public class PipelineComponent : DatabaseEntity, IPipelineComponent
 {
-    /// <inheritdoc cref="IPipelineComponent"/>
-    public class PipelineComponent : DatabaseEntity, IPipelineComponent
+    #region Database Properties
+
+    private string _name;
+    private int _order;
+    private int _pipelineID;
+    private string _class;
+
+    /// <inheritdoc/>
+    public string Name
     {
-        #region Database Properties
+        get => _name;
+        set => SetField(ref _name, value);
+    }
 
-        private string _name;
-        private int _order;
-        private int _pipelineID;
-        private string _class;
+    /// <inheritdoc/>
+    public int Order
+    {
+        get => _order;
+        set => SetField(ref _order, value);
+    }
 
-        /// <inheritdoc/>
-        public string Name
+    /// <inheritdoc/>
+    public int Pipeline_ID
+    {
+        get => _pipelineID;
+        set => SetField(ref _pipelineID, value);
+    }
+
+    /// <inheritdoc/>
+    public string Class
+    {
+        get => _class;
+        set => SetField(ref _class, value);
+    }
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments =>
+        Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this);
+
+    /// <inheritdoc cref="Pipeline_ID"/>
+    [NoMappingToDatabase]
+    public IHasDependencies Pipeline => Repository.GetObjectByID<Pipeline>(Pipeline_ID);
+
+    #endregion
+
+    public PipelineComponent()
+    {
+    }
+
+    /// <inheritdoc/>
+    public override string ToString() => Name;
+
+    /// <summary>
+    /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
+    /// will instantiate and run the given <paramref name="componentType"/>.
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="parent"></param>
+    /// <param name="componentType"></param>
+    /// <param name="order"></param>
+    /// <param name="name"></param>
+    public PipelineComponent(ICatalogueRepository repository, IPipeline parent, Type componentType, int order,
+        string name = null)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            get { return _name; }
-            set { SetField(ref  _name, value); }
-        }
+            { "Name", name ?? $"Run {componentType.Name}" },
+            { "Pipeline_ID", parent.ID },
+            { "Class", componentType.ToString() },
+            { "Order", order }
+        });
+    }
 
-        /// <inheritdoc/>
-        public int Order
-        {
-            get { return _order; }
-            set { SetField(ref  _order, value); }
-        }
-        /// <inheritdoc/>
-        public int Pipeline_ID
-        {
-            get { return _pipelineID; }
-            set { SetField(ref  _pipelineID, value); }
-        }
-        /// <inheritdoc/>
-        public string Class
-        {
-            get { return _class; }
-            set { SetField(ref  _class, value); }
-        }
+    internal PipelineComponent(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Order = int.Parse(r["Order"].ToString());
+        Pipeline_ID = int.Parse(r["Pipeline_ID"].ToString());
+        Class = r["Class"].ToString();
+        Name = r["Name"].ToString();
+    }
 
-        #endregion
+    /// <inheritdoc/>
+    public IEnumerable<IArgument> GetAllArguments() => PipelineComponentArguments;
 
-        #region Relationships
+    /// <inheritdoc/>
+    public IArgument CreateNewArgument() => new PipelineComponentArgument((ICatalogueRepository)Repository, this);
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments {
-            get { return Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this); }
-        }
+    /// <inheritdoc/>
+    public string GetClassNameWhoArgumentsAreFor() => Class;
 
-        /// <inheritdoc cref="Pipeline_ID"/>
-        [NoMappingToDatabase]
-        public IHasDependencies Pipeline {
-            get { return Repository.GetObjectByID<Pipeline>(Pipeline_ID); }
-        }
+    /// <inheritdoc/>
+    public Type GetClassAsSystemType() => MEF.GetType(Class);
 
-        #endregion
+    /// <inheritdoc/>
+    public string GetClassNameLastPart() =>
+        string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
 
-        public PipelineComponent()
-        {
+    /// <inheritdoc/>
+    public PipelineComponent Clone(Pipeline intoTargetPipeline)
+    {
+        var cataRepo = (ICatalogueRepository)intoTargetPipeline.Repository;
 
-        }
+        var type = GetClassAsSystemType();
 
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Name;
-        }
+        var clone = new PipelineComponent(cataRepo, intoTargetPipeline, type ?? typeof(object), Order);
 
-        /// <summary>
-        /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
-        /// will instantiate and run the given <paramref name="componentType"/>.
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="parent"></param>
-        /// <param name="componentType"></param>
-        /// <param name="order"></param>
-        /// <param name="name"></param>
-        public PipelineComponent(ICatalogueRepository repository, IPipeline parent, Type componentType, int order,
-            string name = null)
-        {
-         repository.InsertAndHydrate(this,new Dictionary<string, object>
-            {
-                {"Name", name ?? "Run " + componentType.Name},
-                {"Pipeline_ID", parent.ID},
-                {"Class", componentType.ToString()},
-                {"Order", order}
-            });   
-        }
+        // the Type for the PipelineComponent could not be resolved
+        // Maybe the user created this pipe with a Plugin and then uninstalled
+        // the plugin.  So tell the API its an Object then update the Class
+        // to the name of it even though it doesnt exist (its just cloning afterall)
 
-        internal PipelineComponent(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Order = int.Parse(r["Order"].ToString());
-            Pipeline_ID = int.Parse(r["Pipeline_ID"].ToString());
-            Class = r["Class"].ToString();
-            Name = r["Name"].ToString();
-        }
-        
-        /// <inheritdoc/>
-        public IEnumerable<IArgument> GetAllArguments()
-        {
-            return PipelineComponentArguments;
-        }
-        /// <inheritdoc/>
-        public IArgument CreateNewArgument()
-        {
-            return new PipelineComponentArgument((ICatalogueRepository)Repository,this);
-        }
-        /// <inheritdoc/>
-        public string GetClassNameWhoArgumentsAreFor()
-        {
-            return Class;
-        }
+        if (type == null)
+            clone.Class = Class;
 
-        /// <inheritdoc/>
-        public Type GetClassAsSystemType()
-        {
-            return CatalogueRepository.MEF.GetType(Class);
-        }
+        foreach (var argument in PipelineComponentArguments) argument.Clone(clone);
 
-        /// <inheritdoc/>
-        public string GetClassNameLastPart()
-        {
-            if (string.IsNullOrWhiteSpace(Class))
-                return Class;
+        clone.Name = Name;
+        clone.SaveToDatabase();
 
-            return Class.Substring(Class.LastIndexOf('.') + 1);
-        }
-        
-        /// <inheritdoc/>
-        public PipelineComponent Clone(Pipeline intoTargetPipeline)
-        {
-            var cataRepo = (ICatalogueRepository) intoTargetPipeline.Repository;
+        return clone;
+    }
 
-            var type = GetClassAsSystemType();
+    /// <inheritdoc/>
+    public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));
 
-            var clone = new PipelineComponent(cataRepo, intoTargetPipeline,type ?? typeof(object) , Order);
-    
-            // the Type for the PipelineComponent could not be resolved
-            // Maybe the user created this pipe with a Plugin and then uninstalled
-            // the plugin.  So tell the API its an Object then update the Class
-            // to the name of it even though it doesnt exist (its just cloning afterall)
-
-            if(type == null)
-                clone.Class = Class;
-
-            foreach (var argument in PipelineComponentArguments)
-            {
-                argument.Clone(clone);
-            }
-
-            clone.Name = Name;
-            clone.SaveToDatabase();
-            
-            return clone;
-        }
-
-        /// <inheritdoc/>
-        public IArgument[] CreateArgumentsForClassIfNotExists<T>()
-        {
-            return CreateArgumentsForClassIfNotExists(typeof(T));
-        }
-
-        /// <inheritdoc/>
-        public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
-        {
-            var argFactory = new ArgumentFactory();
-            return argFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
+    /// <inheritdoc/>
+    public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
+    {
+        var argFactory = new ArgumentFactory();
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(underlyingComponentType,
 
                 //tell it how to create new instances of us related to parent
                 this,
@@ -188,58 +162,49 @@ namespace Rdmp.Core.Curation.Data.Pipelines
                 //what arguments already exist
                 PipelineComponentArguments.ToArray())
 
-                //convert the result back from generic to specific (us)
-                .Cast<PipelineComponentArgument>().ToArray();
-        }
+            //convert the result back from generic to specific (us)
+            .Cast<PipelineComponentArgument>().ToArray();
+    }
 
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsThisDependsOn()
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return new IHasDependencies[] { Pipeline };
+    }
+
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsDependingOnThis() =>
+        PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
+
+    public override void DeleteInDatabase()
+    {
+        if (Pipeline is Pipeline parent)
         {
-            return new IHasDependencies[] {Pipeline};
+            if (parent.SourcePipelineComponent_ID == ID)
+                CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);
+
+            if (parent.DestinationPipelineComponent_ID == ID)
+                CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "DestinationPipelineComponent_ID", null);
         }
 
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsDependingOnThis()
-        {
-            return PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
-        }
+        base.DeleteInDatabase();
+    }
 
-        public override void DeleteInDatabase()
-        {
-            var parent = Pipeline as Pipeline;
-            if(parent != null)
-            {
-                if(parent.SourcePipelineComponent_ID == ID)
-                {
-                    CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "SourcePipelineComponent_ID", null);
-                }
+    private static bool IsGenericType(Type toCheck, Type genericType)
+    {
+        return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
+    }
 
-                if (parent.DestinationPipelineComponent_ID == ID)
-                {
-                    CatalogueRepository.SaveSpecificPropertyOnlyToDatabase(parent, "DestinationPipelineComponent_ID", null);
-                }
-            }
+    public static PipelineComponentRole GetRoleFor(Type componentType)
+    {
+        if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
+            return PipelineComponentRole.Source;
 
-            base.DeleteInDatabase();
-        }
+        if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
+            return PipelineComponentRole.Destination;
 
-        private static bool IsGenericType(Type toCheck, Type genericType)
-        {
-            return toCheck.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == genericType);
-        }
-
-        public static PipelineComponentRole GetRoleFor(Type componentType)
-        {
-            if (IsGenericType(componentType, typeof(IDataFlowSource<>)))
-                return PipelineComponentRole.Source;
-
-            if (IsGenericType(componentType, typeof(IDataFlowDestination<>)))
-                return PipelineComponentRole.Destination;
-
-            if (IsGenericType(componentType, typeof(IDataFlowComponent<>)))
-                return PipelineComponentRole.Middle;
-
-            throw new ArgumentException("Object must be an IDataFlowComponent<> but was " + componentType);
-        }
+        return IsGenericType(componentType, typeof(IDataFlowComponent<>))
+            ? PipelineComponentRole.Middle
+            : throw new ArgumentException($"Object must be an IDataFlowComponent<> but was {componentType}");
     }
 }

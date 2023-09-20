@@ -8,19 +8,18 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.Attachers
+namespace Rdmp.Core.DataLoad.Engine.Attachers;
+
+/// <summary>
+/// See Attacher
+/// </summary>
+public interface IAttacher : IDisposeAfterDataLoad, ICheckable
 {
-    /// <summary>
-    /// See Attacher
-    /// </summary>
-    public interface IAttacher: IDisposeAfterDataLoad, ICheckable
-    {
-        ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
-        void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
-        
-        ILoadDirectory LoadDirectory { get; set; }
-        bool RequestsExternalDatabaseCreation { get; }
-    }
+    ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken);
+    void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo);
+
+    ILoadDirectory LoadDirectory { get; set; }
+    bool RequestsExternalDatabaseCreation { get; }
 }

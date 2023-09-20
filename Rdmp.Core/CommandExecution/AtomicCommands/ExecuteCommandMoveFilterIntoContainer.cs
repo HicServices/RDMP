@@ -8,38 +8,38 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
 {
-    public class ExecuteCommandMoveFilterIntoContainer : BasicCommandExecution
+    private readonly FilterCombineable _filterCombineable;
+    private readonly IContainer _targetContainer;
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, IFilter toMove, IContainer into)
+        : this(activator, new FilterCombineable(toMove), into)
     {
-        private readonly FilterCombineable _filterCombineable;
-        private readonly IContainer _targetContainer;
+    }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, IFilter toMove, IContainer into) 
-            : this(activator,new FilterCombineable(toMove),into)
-        {
+    public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator, FilterCombineable filterCombineable,
+        IContainer targetContainer) : base(activator)
+    {
+        _filterCombineable = filterCombineable;
+        _targetContainer = targetContainer;
 
-        }
-        public ExecuteCommandMoveFilterIntoContainer(IBasicActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
-        {
-            _filterCombineable = filterCombineable;
-            _targetContainer = targetContainer;
+        if (!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
+            SetImpossible("Filters can only be moved within their own container tree");
 
-            if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                SetImpossible("Filters can only be moved within their own container tree");
+        if (targetContainer.ShouldBeReadOnly(out var reason))
+            SetImpossible(reason);
+    }
 
-            if(targetContainer.ShouldBeReadOnly(out string reason))
-                SetImpossible(reason);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            _filterCombineable.Filter.FilterContainer_ID = _targetContainer.ID;
-            ((DatabaseEntity)_filterCombineable.Filter).SaveToDatabase();
-            Publish((DatabaseEntity) _targetContainer);
-        }
+        _filterCombineable.Filter.FilterContainer_ID = _targetContainer.ID;
+        ((DatabaseEntity)_filterCombineable.Filter).SaveToDatabase();
+        Publish((DatabaseEntity)_targetContainer);
     }
 }

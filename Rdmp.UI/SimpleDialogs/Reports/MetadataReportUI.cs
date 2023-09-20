@@ -11,270 +11,264 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Reports;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Menus;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Icons;
-using ReusableLibraryCode.Progress;
 
-namespace Rdmp.UI.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports;
+
+/// <summary>
+/// This dialog is the preferred way of extracting per dataset documentation for users.  It will generate a report for each (or a single) dataset (Catalogue) including:
+/// 
+/// <para>- The dataset description</para>
+/// 
+/// <para>- Descriptions of all extractable columns / extraction transforms</para>
+/// 
+/// <para>- Counts of the number of records and unique patient identifiers (See ExtractionInformationUI and the IsExtractionIdentifier flag)</para>
+/// 
+/// <para>- Complete extract of the lookup tables configured for the dataset (See LookupConfiguration)</para>
+/// 
+/// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
+/// 
+/// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an
+/// Aggregate run faster) or just increase the Query Timeout (default is 30s).</para>
+/// </summary>
+public partial class MetadataReportUI : RDMPForm
 {
-    /// <summary>
-    /// This dialog is the preferred way of extracting per dataset documentation for users.  It will generate a report for each (or a single) dataset (Catalogue) including:
-    /// 
-    /// <para>- The dataset description</para>
-    /// 
-    /// <para>- Descriptions of all extractable columns / extraction transforms</para>
-    /// 
-    /// <para>- Counts of the number of records and unique patient identifiers (See ExtractionInformationUI and the IsExtractionIdentifier flag)</para>
-    /// 
-    /// <para>- Complete extract of the lookup tables configured for the dataset (See LookupConfiguration)</para>
-    /// 
-    /// <para>- Graphs of each IsExtractable aggregate on the dataset (See AggregateGraph)</para>
-    /// 
-    /// <para>You can untick any of the above options if desired.  If any aspect times out then you can either fix the underlying problem (maybe you need an index that helps an 
-    /// Aggregate run faster) or just increase the Query Timeout (default is 30s).</para>
-    /// </summary>
-    public partial class MetadataReportUI : RDMPForm
+    private MetadataReport _report;
+    private readonly Catalogue[] _catalogues;
+    private bool _firstTime = true;
+
+    public MetadataReportUI(IActivateItems activator, ICatalogue[] initialSelection = null) : base(activator)
     {
-        MetadataReport _report;
-        private readonly Catalogue[] _catalogues;
-        bool _firstTime = true;
+        InitializeComponent();
 
-        public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
-        {
-            InitializeComponent();
+        _catalogues = Activator.CoreChildProvider.AllCatalogues;
+        cbxCatalogues.Items.AddRange(_catalogues);
 
-            _catalogues = Activator.CoreChildProvider.AllCatalogues;
-            cbxCatalogues.Items.AddRange(_catalogues);
+        if (initialSelection != null)
+            SetCatalogueSelection(initialSelection);
 
-            if (initialSelection != null) 
-                SetCatalogueSelection(initialSelection);
+        aggregateGraph1.Silent = true;
 
-            aggregateGraph1.Silent = true;
+        btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder).ImageToBitmap();
+    }
 
-            btnFolder.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueFolder).ImageToBitmap();
-        }
+    private void btnGenerateReport_Click(object sender, EventArgs e)
+    {
+        progressBarsUI1.Clear();
 
-        private void btnGenerateReport_Click(object sender, EventArgs e)
-        {
-            progressBarsUI1.Clear();
+        IEnumerable<Catalogue> toReportOn = _catalogues;
 
-            IEnumerable<Catalogue> toReportOn = _catalogues;
-
-            if(rbAllCatalogues.Checked)
-                toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated).ToArray();
-            else if (_cataloguesToRun == null || !_catalogues.Any())
-                return;
-            else
-                toReportOn = _cataloguesToRun.Cast<Catalogue>();
-
-            var args = new MetadataReportArgs(toReportOn)
-            {
-                Timeout = _timeout,
-                IncludeRowCounts = cbIncludeRowCounts.Checked,
-                IncludeDistinctIdentifierCounts =  cbIncludeDistinctIdentifiers.Checked,
-                SkipImages =  !cbIncludeGraphs.Checked,
-                TimespanCalculator = new DatasetTimespanCalculator(),
-                IncludeDeprecatedItems = cbIncludeDeprecatedCatalogueItems.Checked,
-                IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
-                IncludeNonExtractableItems = cbIncludeNonExtractable.Checked,
-                MaxLookupRows = (int)nMaxLookupRows.Value
-            };
-
-            _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
-
-            _report.RequestCatalogueImages += report_RequestCatalogueImages;
-            _report.GenerateWordFileAsync(progressBarsUI1,true);
-
-            btnGenerateReport.Enabled = false;
-            btnStop.Enabled = true;
-        }
-
-        public BitmapWithDescription[] report_RequestCatalogueImages(Catalogue catalogue)
-        {
-            //cross thread
-            if (InvokeRequired)
-                return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages), catalogue);
-
-            var toReturn = new List<BitmapWithDescription>();
-                
-            
-            aggregateGraph1.Width = (int) _report.PageWidthInPixels;
-            aggregateGraph1.Visible = true;
-
-
-            //only graph extractable aggregates
-            foreach (AggregateConfiguration aggregate in catalogue.AggregateConfigurations.Where(config=>config.IsExtractable))
-            {
-                if (_firstTime)
-                {
-                    aggregateGraph1.SetDatabaseObject(Activator, aggregate);
-                    _firstTime = false;
-                }
-                else
-                    aggregateGraph1.SetAggregate(Activator,aggregate);
-
-                aggregateGraph1.LoadGraphAsync();
-                
-                while(aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
-                {
-                    Thread.Sleep(100);
-                    Application.DoEvents();
-                }
-
-                if (aggregateGraph1.Crashed)
-                {
-                    progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,"Aggregate with ID " + aggregate.ID + " crashed",aggregateGraph1.Exception));
-                    continue;
-                }
-
-                //wait 2 seconds for screen refresh?
-                Task.Delay(2000).Wait();
-
-                toReturn.AddRange(aggregateGraph1.GetImages());
-            }
-
-            aggregateGraph1.Visible = false;
-
-            return toReturn.ToArray();
-
-        }
-        
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            _report.Abort();
-            aggregateGraph1.AbortLoadGraph();
-
-            btnStop.Enabled = false;
-            btnGenerateReport.Enabled = true;
-        }
-
-        private void ConfigureMetadataReport_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if(_report != null)
-                _report.Abort();
-
-            aggregateGraph1.AbortLoadGraph();
-        }
-
-        private void rbAllCatalogues_CheckedChanged(object sender, EventArgs e)
-        {
-            if(bLoading)
-                return;
-
-            cbxCatalogues.Enabled = false;
-            btnPick.Enabled = false;
-        }
-
-        private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
-        {
-            if(bLoading)
-                return;
-
-            cbxCatalogues.Enabled = true;
-            btnPick.Enabled = true;
-        }
-
-
-        private int _timeout = 30;
-        private ICatalogue[] _cataloguesToRun;
-
-        private void tbTimeout_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                _timeout = int.Parse(tbTimeout.Text);
-                aggregateGraph1.Timeout = _timeout;
-                tbTimeout.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                tbTimeout.ForeColor = Color.Red;
-            }
-        }
-
-        private void cbIncludeDistinctIdentifiers_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void btnPick_Click(object sender, EventArgs e)
-        {
-            if(Activator.SelectObjects(new DialogArgs
-            {
-                TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
-            }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(),out var selected))
-            {
-                SetCatalogueSelection(selected);
-            }
-                
-        }
-
-        private bool bLoading = false;
-        private void SetCatalogueSelection(ICatalogue[] array)
-        {
-            bLoading = true;
-            if (array.Length > 1)
-            {
-                rbSpecificCatalogue.Checked = true;
-                cbxCatalogues.SelectedItem = null;
-                cbxCatalogues.Enabled = false;
-                _cataloguesToRun = array;
-            }
-            else if(array.Length == 1)
-            {
-                rbSpecificCatalogue.Checked = true;
-                cbxCatalogues.SelectedItem = array[0];
-                cbxCatalogues.Enabled = true;
-                _cataloguesToRun = array;
-            }
-            else
-            {
-                rbAllCatalogues.Checked = true;
-                cbxCatalogues.SelectedItem = null;
-                cbxCatalogues.Enabled = true;
-                _cataloguesToRun = array;
-            }
-
-            bLoading = false;
-        }
-
-        private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if(bLoading)
-                return;
-
-            if (cbxCatalogues.SelectedItem != null) 
-                _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
-        }
-
-        private void btnFolder_Click(object sender, EventArgs e)
-        {
-            var folders = Activator.CoreChildProvider
-                .AllCatalogues
-                .Select(c => c.Folder)
-                .Distinct()
+        if (rbAllCatalogues.Checked)
+            toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated)
                 .ToArray();
+        else if (_cataloguesToRun == null || !_catalogues.Any())
+            return;
+        else
+            toReportOn = _cataloguesToRun.Cast<Catalogue>();
 
-            if(Activator.SelectObject(new DialogArgs
+        var args = new MetadataReportArgs(toReportOn)
+        {
+            Timeout = _timeout,
+            IncludeRowCounts = cbIncludeRowCounts.Checked,
+            IncludeDistinctIdentifierCounts = cbIncludeDistinctIdentifiers.Checked,
+            SkipImages = !cbIncludeGraphs.Checked,
+            TimespanCalculator = new DatasetTimespanCalculator(),
+            IncludeDeprecatedItems = cbIncludeDeprecatedCatalogueItems.Checked,
+            IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
+            IncludeNonExtractableItems = cbIncludeNonExtractable.Checked,
+            MaxLookupRows = (int)nMaxLookupRows.Value
+        };
+
+        _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
+
+        _report.RequestCatalogueImages += report_RequestCatalogueImages;
+        _report.GenerateWordFileAsync(progressBarsUI1, true);
+
+        btnGenerateReport.Enabled = false;
+        btnStop.Enabled = true;
+    }
+
+    public BitmapWithDescription[] report_RequestCatalogueImages(Catalogue catalogue)
+    {
+        //cross thread
+        if (InvokeRequired)
+            return (BitmapWithDescription[])Invoke(new RequestCatalogueImagesHandler(report_RequestCatalogueImages),
+                catalogue);
+
+        var toReturn = new List<BitmapWithDescription>();
+
+
+        aggregateGraph1.Width = (int)_report.PageWidthInPixels;
+        aggregateGraph1.Visible = true;
+
+
+        //only graph extractable aggregates
+        foreach (var aggregate in catalogue.AggregateConfigurations.Where(config => config.IsExtractable))
+        {
+            if (_firstTime)
             {
-                TaskDescription = "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
-            }, folders,out var selected))
+                aggregateGraph1.SetDatabaseObject(Activator, aggregate);
+                _firstTime = false;
+            }
+            else
             {
-                SetCatalogueSelection(
-                    Activator.CoreChildProvider
+                aggregateGraph1.SetAggregate(Activator, aggregate);
+            }
+
+            aggregateGraph1.LoadGraphAsync();
+
+            while (aggregateGraph1.Done == false && aggregateGraph1.Crashed == false)
+            {
+                Thread.Sleep(100);
+                Application.DoEvents();
+            }
+
+            if (aggregateGraph1.Crashed)
+            {
+                progressBarsUI1.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                    $"Aggregate with ID {aggregate.ID} crashed", aggregateGraph1.Exception));
+                continue;
+            }
+
+            //wait 2 seconds for screen refresh?
+            Task.Delay(2000).Wait();
+
+            toReturn.AddRange(aggregateGraph1.GetImages());
+        }
+
+        aggregateGraph1.Visible = false;
+
+        return toReturn.ToArray();
+    }
+
+    private void btnStop_Click(object sender, EventArgs e)
+    {
+        _report.Abort();
+        aggregateGraph1.AbortLoadGraph();
+
+        btnStop.Enabled = false;
+        btnGenerateReport.Enabled = true;
+    }
+
+    private void ConfigureMetadataReport_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        _report?.Abort();
+
+        aggregateGraph1.AbortLoadGraph();
+    }
+
+    private void rbAllCatalogues_CheckedChanged(object sender, EventArgs e)
+    {
+        if (bLoading)
+            return;
+
+        cbxCatalogues.Enabled = false;
+        btnPick.Enabled = false;
+    }
+
+    private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
+    {
+        if (bLoading)
+            return;
+
+        cbxCatalogues.Enabled = true;
+        btnPick.Enabled = true;
+    }
+
+
+    private int _timeout = 30;
+    private ICatalogue[] _cataloguesToRun;
+
+    private void tbTimeout_TextChanged(object sender, EventArgs e)
+    {
+        try
+        {
+            _timeout = int.Parse(tbTimeout.Text);
+            aggregateGraph1.Timeout = _timeout;
+            tbTimeout.ForeColor = Color.Black;
+        }
+        catch (Exception)
+        {
+            tbTimeout.ForeColor = Color.Red;
+        }
+    }
+
+    private void cbIncludeDistinctIdentifiers_CheckedChanged(object sender, EventArgs e)
+    {
+    }
+
+    private void btnPick_Click(object sender, EventArgs e)
+    {
+        if (Activator.SelectObjects(new DialogArgs
+        {
+            TaskDescription = "Which Catalogue(s) do you want to generate metadata for?"
+        }, cbxCatalogues.Items.OfType<Catalogue>().ToArray(), out var selected))
+            SetCatalogueSelection(selected);
+    }
+
+    private bool bLoading;
+
+    private void SetCatalogueSelection(ICatalogue[] array)
+    {
+        bLoading = true;
+        if (array.Length > 1)
+        {
+            rbSpecificCatalogue.Checked = true;
+            cbxCatalogues.SelectedItem = null;
+            cbxCatalogues.Enabled = false;
+            _cataloguesToRun = array;
+        }
+        else if (array.Length == 1)
+        {
+            rbSpecificCatalogue.Checked = true;
+            cbxCatalogues.SelectedItem = array[0];
+            cbxCatalogues.Enabled = true;
+            _cataloguesToRun = array;
+        }
+        else
+        {
+            rbAllCatalogues.Checked = true;
+            cbxCatalogues.SelectedItem = null;
+            cbxCatalogues.Enabled = true;
+            _cataloguesToRun = array;
+        }
+
+        bLoading = false;
+    }
+
+    private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (bLoading)
+            return;
+
+        if (cbxCatalogues.SelectedItem != null)
+            _cataloguesToRun = new[] { (ICatalogue)cbxCatalogues.SelectedItem };
+    }
+
+    private void btnFolder_Click(object sender, EventArgs e)
+    {
+        var folders = Activator.CoreChildProvider
+            .AllCatalogues
+            .Select(c => c.Folder)
+            .Distinct()
+            .ToArray();
+
+        if (Activator.SelectObject(new DialogArgs
+        {
+            TaskDescription =
+                    "Which folder do you want to generate metadata for? All Catalogues in that folder will be included in the metadata report generated"
+        }, folders, out var selected))
+            SetCatalogueSelection(
+                Activator.CoreChildProvider
                     .AllCatalogues
                     .Where(c => c.Folder.Equals(selected))
                     .ToArray());
-            }   
-        }
     }
 }

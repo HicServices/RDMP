@@ -9,152 +9,146 @@ using System.Data;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+[Category("Unit")]
+public class PreInitializeTests
 {
-    [Category("Unit")]
-    public class PreInitializeTests
+    private DataFlowPipelineContext<DataTable> context = new();
+    private Fish fish = new();
+
+    [Test]
+    public void TestNormal()
     {
+        var fishUser = new FishUser();
 
-        DataFlowPipelineContext<DataTable> context = new DataFlowPipelineContext<DataTable>();
-        Fish fish = new Fish();
+        Assert.AreNotEqual(fishUser.IFish, fish);
+        context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, fish);
+        Assert.AreEqual(fishUser.IFish, fish);
+    }
 
-        [Test]
-        public void TestNormal()
+    [Test]
+    public void TestOneOFMany()
+    {
+        var fishUser = new FishUser();
+
+        Assert.AreNotEqual(fishUser.IFish, fish);
+        context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, new object(), fish);
+        Assert.AreEqual(fishUser.IFish, fish);
+    }
+
+    [Test]
+    public void TestCasting()
+    {
+        var fishUser = new FishUser();
+
+        Assert.AreNotEqual(fishUser.IFish, fish);
+        context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, (IFish)fish);
+        Assert.AreEqual(fishUser.IFish, fish);
+    }
+
+    [Test]
+    public void TestDownCasting()
+    {
+        var fishUser = new SpecificFishUser();
+
+        IFish f = fish;
+        Assert.AreNotEqual(fishUser.IFish, fish);
+        context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, f);
+        Assert.AreEqual(fishUser.IFish, fish);
+    }
+
+    [Test]
+    public void TestNoObjects()
+    {
+        var fishUser = new SpecificFishUser();
+        var ex = Assert.Throws<Exception>(() =>
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, Array.Empty<object>()));
+        Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
+    }
+
+    [Test]
+    public void TestWrongObjects()
+    {
+        var fishUser = new SpecificFishUser();
+        var ex = Assert.Throws<Exception>(() =>
+            context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, new Penguin()));
+        Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
+        Assert.IsTrue(ex.Message.Contains("The object types passed were:"));
+        Assert.IsTrue(ex.Message.Contains("Penguin"));
+    }
+
+
+    private class FishUser : IPipelineRequirement<IFish>, IDataFlowComponent<DataTable>
+    {
+        public IFish IFish;
+
+        public void PreInitialize(IFish value, IDataLoadEventListener listener)
         {
-
-            FishUser fishUser = new FishUser();
-
-            Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(),fishUser, fish);
-            Assert.AreEqual(fishUser.IFish, fish);
+            IFish = value;
         }
 
-        [Test]
-        public void TestOneOFMany()
-        {
+        #region boiler plate
 
-            FishUser fishUser = new FishUser();
-            
-            Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser,new object(), fish);
-            Assert.AreEqual(fishUser.IFish, fish);
-        }
-        [Test]
-        public void TestCasting()
-        {
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+            GracefulCancellationToken cancellationToken) =>
+            throw new NotImplementedException();
 
-            FishUser fishUser = new FishUser();
-
-            Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, (IFish)fish);
-            Assert.AreEqual(fishUser.IFish, fish);
-        }
-           
-        [Test]
-        public void TestDownCasting()
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            SpecificFishUser fishUser = new SpecificFishUser();
-
-            IFish f = fish;
-            Assert.AreNotEqual(fishUser.IFish, fish);
-            context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, f);
-            Assert.AreEqual(fishUser.IFish, fish);
-        }
-        [Test]
-        public void TestNoObjects()
-        {
-            SpecificFishUser fishUser = new SpecificFishUser();
-            var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new object[0]));
-            Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
+            throw new NotImplementedException();
         }
 
-        [Test]
-        public void TestWrongObjects()
+        public void Abort(IDataLoadEventListener listener)
         {
-            SpecificFishUser fishUser = new SpecificFishUser();
-            var ex = Assert.Throws<Exception>(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), fishUser, new Penguin()));
-            Assert.IsTrue(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
-            Assert.IsTrue(ex.Message.Contains("The object types passed were:"));
-            Assert.IsTrue(ex.Message.Contains("Penguin"));
+            throw new NotImplementedException();
         }
 
+        #endregion
+    }
 
+    private class SpecificFishUser : IPipelineRequirement<Fish>, IDataFlowComponent<DataTable>
+    {
+        public IFish IFish;
 
-
-        private class FishUser:IPipelineRequirement<IFish>, IDataFlowComponent<DataTable>
+        public void PreInitialize(Fish value, IDataLoadEventListener listener)
         {
-            public IFish IFish;
-
-            public void PreInitialize(IFish value, IDataLoadEventListener listener)
-            {
-                IFish = value;
-
-            }
-            #region boiler plate
-            public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-                GracefulCancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Abort(IDataLoadEventListener listener)
-            {
-                throw new NotImplementedException();
-            }
-            #endregion
-        }
-        private class SpecificFishUser : IPipelineRequirement<Fish>, IDataFlowComponent<DataTable>
-        {
-            public IFish IFish;
-
-            public void PreInitialize(Fish value, IDataLoadEventListener listener)
-            {
-                IFish = value;
-
-            }
-            #region boiler plate
-            public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
-                GracefulCancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void Abort(IDataLoadEventListener listener)
-            {
-                throw new NotImplementedException();
-            }
-            #endregion
-        }
-        private interface IFish
-        {
-            string GetFish();
+            IFish = value;
         }
 
-        private class Fish:IFish
+        #region boiler plate
+
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
+            GracefulCancellationToken cancellationToken) =>
+            throw new NotImplementedException();
+
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-            public string GetFish()
-            {
-                return "fish";
-            }
+            throw new NotImplementedException();
         }
-        private class Penguin
+
+        public void Abort(IDataLoadEventListener listener)
         {
-            public string GetPenguin()
-            {
-                return "Penguin";
-            }
+            throw new NotImplementedException();
         }
+
+        #endregion
+    }
+
+    private interface IFish
+    {
+        string GetFish();
+    }
+
+    private class Fish : IFish
+    {
+        public string GetFish() => "fish";
+    }
+
+    private class Penguin
+    {
+        public static string GetPenguin() => "Penguin";
     }
 }

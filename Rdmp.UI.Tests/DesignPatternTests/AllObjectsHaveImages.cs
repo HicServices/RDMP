@@ -5,64 +5,46 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests.DesignPatternTests
+namespace Rdmp.UI.Tests.DesignPatternTests;
+
+public class AllObjectsHaveImages : DatabaseTests
 {
-    public class AllObjectsHaveImages:DatabaseTests
+    [Test]
+    public void AllIHasDependenciesHaveIcons()
     {
-        [Test]
-        public void AllIHasDependenciesHaveIcons()
+        var exceptionsAllowed = new[]
         {
-            List<string> missingConcepts = new List<string>();
+            "IHasDependencies", //base interface of which nobody is who isn't otherwise on this list
+            "ITableInfo", //handled because they are all secretly TableInfos
+            "AggregateConfiguration", //handled by AggregateConfigurationStateBasedIconProvider
+            "AnyTableSqlParameter", //handled by CatalogueIconProvider looking for ISqlParameter classes
+            "ICatalogue", //handled because they are all secretly Catalogues
+            "ExtractionFilter", //handled by CatalogueIconProvider looking for IFilter
+            "ExtractionFilterParameter",
+            //handled by CatalogueIconProvider just like AnyTableSqlParameter by looking for the ISqlParameter classes
 
+            "StackFrame"
+            //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
+        };
 
-            string[] ExceptionsAllowed = new[]
-            {
+        var missingConcepts = Core.Repositories.MEF.GetAllTypes()
+            .Where(t => typeof(IHasDependencies).IsAssignableFrom(t) && !t.IsInterface)
+            .Where(type => !typeof(IMasqueradeAs).IsAssignableFrom(type))
+            .Select(type => type.Name)
+            .Where(typeName => !exceptionsAllowed.Any(s => s.Equals(typeName)))
+            .Where(typeName => !Enum.TryParse(typeof(RDMPConcept), typeName, out _)).ToList();
 
-                "IHasDependencies", //base interface of which nobody is who isn't otherwise on this list
-                "ITableInfo", //handled because they are all secretly TableInfos
-                "AggregateConfiguration", //handled by AggregateConfigurationStateBasedIconProvider
-                "AnyTableSqlParameter", //handled by CatalogueIconProvider looking for ISqlParameter classes
-                "ICatalogue", //handled because they are all secretly Catalogues
-                "ExtractionFilter", //handled by CatalogueIconProvider looking for IFilter
-                "ExtractionFilterParameter",
-                //handled by CatalogueIconProvider just like AnyTableSqlParameter by looking for the ISqlParameter classes
+        if (missingConcepts.Count > 0)
+            Console.WriteLine(
+                $"The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingConcepts)}");
 
-                "StackFrame"
-                //not required , it's only ever dependent on itself and it doesn't have any visualisation on Catalogue / Export
-
-            };
-
-            foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(t => typeof (IHasDependencies).IsAssignableFrom(t) && !t.IsInterface))
-            {
-                //skip masqueraders
-                if(typeof(IMasqueradeAs).IsAssignableFrom(type))
-                    continue;
-
-                var typeName = type.Name;
-                if (ExceptionsAllowed.Any(s=>s.Equals(typeName)))
-                    continue;
-
-                try
-                {
-                    var c = Enum.Parse(typeof (RDMPConcept), typeName);
-                }
-                catch (Exception)
-                {
-                    missingConcepts.Add(typeName);
-                }
-            }
-
-            Console.WriteLine("The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe" + Environment.NewLine + string.Join("," + Environment.NewLine , missingConcepts));
-
-            Assert.AreEqual(0,missingConcepts.Count);
-        }
+        Assert.AreEqual(0, missingConcepts.Count);
     }
 }

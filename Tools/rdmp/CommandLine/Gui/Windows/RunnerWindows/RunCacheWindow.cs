@@ -8,18 +8,14 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cache;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows
-{
-    class RunCacheWindow : RunEngineWindow<CacheOptions>
-    {
-        public RunCacheWindow(IBasicActivateItems activator, ICacheProgress cp)
-            : base(activator, () => GetCommand(cp))
-        {
-        }
+namespace Rdmp.Core.CommandLine.Gui.Windows.RunnerWindows;
 
-        private static CacheOptions GetCommand(ICacheProgress cp)
-        {
-            return new CacheOptions() { CacheProgress = cp.ID.ToString() };
-        }
+internal class RunCacheWindow : RunEngineWindow<CacheOptions>
+{
+    public RunCacheWindow(IBasicActivateItems activator, ICacheProgress cp)
+        : base(activator, () => GetCommand(cp))
+    {
     }
+
+    private static CacheOptions GetCommand(ICacheProgress cp) => new() { CacheProgress = cp.ID.ToString() };
 }

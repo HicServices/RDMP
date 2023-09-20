@@ -9,53 +9,49 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace Rdmp.Core.Tests.Validation.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary;
+
+[Category("Unit")]
+internal class AlphaNumericTest : ValidationTests
 {
+    private IPrimaryConstraint _alphanum;
 
-    [Category("Unit")]
-    class AlphaNumericTest : ValidationTests
+    [SetUp]
+    protected override void SetUp()
     {
-        private IPrimaryConstraint _alphanum;
+        base.SetUp();
 
-        [SetUp]
-        protected override void SetUp()
-        {
-            base.SetUp();
-
-            _alphanum = (IPrimaryConstraint)Validator.CreateConstraint("alphanumeric", Consequence.Wrong);
-        }
-
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("A1 ")]
-        [TestCase("A ")]
-        [TestCase(" 1")]
-        public void Validate_Invalid_ThrowsException(string code)
-        {
-            Assert.NotNull(_alphanum.Validate(code));
-        }
-
-        [TestCase(null)]
-        [TestCase("1A")]
-        [TestCase("a1")]
-        [TestCase("1")]
-        [TestCase("1b2")]
-        [TestCase("aaaaaa")]
-        [TestCase("AAAAAA")]
-        public void Validate_Valid_Success(string code)
-        {
-            Assert.IsNull(_alphanum.Validate(code));
-        }
-
-        [Test]
-        public void Validate_Invalid_ExceptionContainsRequiredInfo()
-        {
-            ValidationFailure result = _alphanum.Validate(" ");
-            
-            Assert.NotNull(result.SourceConstraint);
-            Assert.AreEqual(typeof(AlphaNumeric), result.SourceConstraint.GetType());
-            
-        }
-
+        _alphanum = (IPrimaryConstraint)Validator.CreateConstraint("alphanumeric", Consequence.Wrong);
     }
-} 
+
+    [TestCase("")]
+    [TestCase(" ")]
+    [TestCase("A1 ")]
+    [TestCase("A ")]
+    [TestCase(" 1")]
+    public void Validate_Invalid_ThrowsException(string code)
+    {
+        Assert.NotNull(_alphanum.Validate(code));
+    }
+
+    [TestCase(null)]
+    [TestCase("1A")]
+    [TestCase("a1")]
+    [TestCase("1")]
+    [TestCase("1b2")]
+    [TestCase("aaaaaa")]
+    [TestCase("AAAAAA")]
+    public void Validate_Valid_Success(string code)
+    {
+        Assert.IsNull(_alphanum.Validate(code));
+    }
+
+    [Test]
+    public void Validate_Invalid_ExceptionContainsRequiredInfo()
+    {
+        var result = _alphanum.Validate(" ");
+
+        Assert.NotNull(result.SourceConstraint);
+        Assert.AreEqual(typeof(AlphaNumeric), result.SourceConstraint.GetType());
+    }
+}

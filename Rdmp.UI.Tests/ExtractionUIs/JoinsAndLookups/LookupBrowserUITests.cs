@@ -8,18 +8,18 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
-namespace Rdmp.UI.Tests.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.Tests.ExtractionUIs.JoinsAndLookups;
+
+public class LookupBrowserUITests : UITests
 {
-    public class LookupBrowserUITests :UITests
+    [Test]
+    [UITimeout(20000)]
+    public void Test_LookupBrowserUI_Constructor()
     {
-        [Test,UITimeout(20000)]
-        public void Test_LookupBrowserUI_Constructor()
-        {
-            var o = WhenIHaveA<Lookup>();
-            var ui = AndLaunch<LookupBrowserUI>(o);
-            Assert.IsNotNull(ui);
-            //AssertNoErrors(ExpectedErrorType.Fatal);
-            //AssertNoErrors(ExpectedErrorType.KilledForm);
-        }
+        var o = WhenIHaveA<Lookup>();
+        var ui = AndLaunch<LookupBrowserUI>(o);
+        Assert.IsNotNull(ui);
+        //AssertNoErrors(ExpectedErrorType.Fatal);
+        //AssertNoErrors(ExpectedErrorType.KilledForm);
     }
 }

@@ -4,117 +4,104 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
+using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Collection for generating SQL around the extractable columns of a catalogue
+/// </summary>
+public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    private QueryBuilder builder;
+
+    public Catalogue Catalogue => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();
+
+    public IFilter[] Filters => DatabaseObjects.OfType<IFilter>().ToArray();
+
+    public ExtractionInformation[] ExtractionInformations => DatabaseObjects.OfType<ExtractionInformation>().ToArray();
+
     /// <summary>
-    /// Collection for generating SQL around the extractable columns of a catalogue
+    /// The number of records to fetch (or null to fetch all records)
     /// </summary>
-    public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public int? TopX { get; set; }
+
+    public ViewCatalogueDataCollection(Catalogue catalogue)
     {
-        QueryBuilder builder;
+        DatabaseObjects.Add(catalogue);
+    }
 
-        public Catalogue Catalogue {get => DatabaseObjects.OfType<Catalogue>().FirstOrDefault();}
+    /// <summary>
+    /// Persistence constructor
+    /// </summary>
+    public ViewCatalogueDataCollection()
+    {
+    }
 
-        public IFilter[] Filters {get => DatabaseObjects.OfType<IFilter>().ToArray();}
-        
-        public ExtractionInformation[] ExtractionInformations {get => DatabaseObjects.OfType<ExtractionInformation>().ToArray();}
+    private void BuildBuilder()
+    {
+        if (builder != null)
+            return;
 
-        /// <summary>
-        /// The number of records to fetch (or null to fetch all records)
-        /// </summary>
-        public int? TopX { get; set; }
+        builder = new QueryBuilder(null, null);
 
-        public ViewCatalogueDataCollection(Catalogue catalogue)
-        {
-            DatabaseObjects.Add(catalogue);
-        }
+        if (TopX.HasValue)
+            builder.TopX = TopX.Value;
 
-        /// <summary>
-        /// Persistence constructor 
-        /// </summary>
-        public ViewCatalogueDataCollection()
-        {
+        var cols = ExtractionInformations;
 
-        }
-        
-        private void BuildBuilder()
-        {
-            if(builder != null)
-                return;
-
-            builder = new QueryBuilder(null,null);
-            
-            if(TopX.HasValue)
-                builder.TopX = TopX.Value;
-
-            var cols = ExtractionInformations;
-
-            // if there are no explicit columns use all
-            if (!cols.Any())
-            {
-                cols = 
-                    Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
+        // if there are no explicit columns use all
+        if (!cols.Any())
+            cols =
+                Catalogue.GetAllExtractionInformation(ExtractionCategory.Core)
                     .Union(Catalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific))
                     .ToArray();
-            }
 
-            builder.AddColumnRange(cols);
+        builder.AddColumnRange(cols);
 
-            List<ExtractionFilter> filters = new List<ExtractionFilter>();
+        builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+            Filters, FilterContainerOperation.AND);
+        builder.RegenerateSQL();
+    }
 
-            foreach (ExtractionFilter f in Filters)
-                filters.Add(f);
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+        BuildBuilder();
 
-            builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
-            builder.RegenerateSQL();
-        }
+        foreach (var t in builder.TablesUsedInQuery)
+            autoComplete.Add(t);
+    }
 
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-            BuildBuilder();
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        BuildBuilder();
+        return builder.TablesUsedInQuery.FirstOrDefault();
+    }
 
-            foreach(var t in builder.TablesUsedInQuery)
-                autoComplete.Add(t);
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        BuildBuilder();
+        return builder.QuerySyntaxHelper;
+    }
 
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            BuildBuilder();
-            return builder.TablesUsedInQuery.FirstOrDefault();
-        }
+    public string GetSql()
+    {
+        BuildBuilder();
+        return builder.SQL;
+    }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            BuildBuilder();
-            return builder.QuerySyntaxHelper;
-        }
+    public string GetTabName() => Catalogue.Name;
 
-        public string GetSql()
-        {
-            BuildBuilder();
-            return builder.SQL;
-        }
-
-        public string GetTabName()
-        {
-            return Catalogue.Name;
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return Catalogue;
-        }
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return Catalogue;
     }
 }

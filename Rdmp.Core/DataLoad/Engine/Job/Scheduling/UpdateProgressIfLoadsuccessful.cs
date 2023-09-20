@@ -6,47 +6,49 @@
 
 using System;
 using System.Linq;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+
+/// <summary>
+/// Data Load Engine disposal step for scheduled data loads (See ScheduledDataLoadJob) in which the LoadProgress head pointer date is updated.  E.g. if the
+/// job was to load 5 days then the LoadProgress.DataLoadProgress date would be updated to reflect the loaded date range.  This is non trivial because it might
+/// be that although the job was to load 100 days the source data read ended after 10 days so you might only want to update the DataLoadProgress date by 10
+/// days on teh assumption that more data will appear later to fill that gap.
+/// </summary>
+public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
 {
-    /// <summary>
-    /// Data Load Engine disposal step for scheduled data loads (See ScheduledDataLoadJob) in which the LoadProgress head pointer date is updated.  E.g. if the 
-    /// job was to load 5 days then the LoadProgress.DataLoadProgress date would be updated to reflect the loaded date range.  This is non trivial because it might
-    /// be that although the job was to load 100 days the source data read ended after 10 days so you might only want to update the DataLoadProgress date by 10
-    /// days on teh assumption that more data will appear later to fill that gap.
-    /// </summary>
-    public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
-    { 
-        protected readonly ScheduledDataLoadJob Job;
-        
+    protected readonly ScheduledDataLoadJob Job;
 
-        public DateTime DateToSetProgressTo;
 
-        public UpdateProgressIfLoadsuccessful(ScheduledDataLoadJob job)
-        {
-            Job = job;
+    public DateTime DateToSetProgressTo;
 
-            if (Job.DatesToRetrieve == null || !Job.DatesToRetrieve.Any())
-                throw new DataLoadProgressUpdateException("Job does not have any DatesToRetrieve! collection was null or empty");
+    public UpdateProgressIfLoadsuccessful(ScheduledDataLoadJob job)
+    {
+        Job = job;
 
-            DateToSetProgressTo = Job.DatesToRetrieve.Max();
-        }
+        if (Job.DatesToRetrieve == null || !Job.DatesToRetrieve.Any())
+            throw new DataLoadProgressUpdateException(
+                "Job does not have any DatesToRetrieve! collection was null or empty");
 
-        virtual public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-        {
-            if (exitCode != ExitCodeType.Success)
-                return;
+        DateToSetProgressTo = Job.DatesToRetrieve.Max();
+    }
 
-            var progress = Job.LoadProgress;
+    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    {
+        if (exitCode != ExitCodeType.Success)
+            return;
 
-            if (progress.DataLoadProgress > DateToSetProgressTo)
-                throw new DataLoadProgressUpdateException("Cannot set DataLoadProgress to " + DateToSetProgressTo + " because it is less than the currently recorded progress:"+progress.DataLoadProgress);
+        var progress = Job.LoadProgress;
 
-            postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Updating DataLoadProgress of '" + progress + "' to " + DateToSetProgressTo));
-            progress.DataLoadProgress = DateToSetProgressTo;
-            
-            progress.SaveToDatabase();
-        }
+        if (progress.DataLoadProgress > DateToSetProgressTo)
+            throw new DataLoadProgressUpdateException(
+                $"Cannot set DataLoadProgress to {DateToSetProgressTo} because it is less than the currently recorded progress:{progress.DataLoadProgress}");
+
+        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Updating DataLoadProgress of '{progress}' to {DateToSetProgressTo}"));
+        progress.DataLoadProgress = DateToSetProgressTo;
+
+        progress.SaveToDatabase();
     }
 }

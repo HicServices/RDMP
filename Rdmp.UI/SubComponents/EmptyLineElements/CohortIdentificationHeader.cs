@@ -4,54 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.SubComponents.EmptyLineElements
+namespace Rdmp.UI.SubComponents.EmptyLineElements;
+
+internal class CohortIdentificationHeader
 {
-    class CohortIdentificationHeader
-    {
-        public string GetCatalogueName()
-        {
-            return "";
-        }
+    public static string GetCatalogueName() => "";
 
-        public IMapsDirectlyToDatabaseTable Child
-        {
-            get { return null; }
-        }
+    public static IMapsDirectlyToDatabaseTable Child => null;
 
-        public IDataAccessPoint[] GetDataAccessPoints()
-        {
-            return null;
-        }
+    public static IDataAccessPoint[] GetDataAccessPoints() => null;
 
-        public override string ToString()
-        {
-            return "Cohort Query Results (Counts are unique people)";
-        }
+    public override string ToString() => "Cohort Query Results (Counts are unique people)";
 
-        public string FinalRowCount()
-        {
-            return "";
-        }
-        public int? CumulativeRowCount { set; get; }
+    public static string FinalRowCount() => "";
+    public int? CumulativeRowCount { set; get; }
 
-        public string GetStateDescription()
-        {
-            return "";
-        }
+    public static string GetStateDescription() => "";
 
-        public string Order()
-        {
-            return "";
-        }
-        
-        public string ElapsedTime = "";
+    public static string Order() => "";
 
-        public string GetCachedQueryUseCount()
-        {
-            return "";
-        }
-    }
+    public static string GetCachedQueryUseCount() => "";
 }

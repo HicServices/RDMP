@@ -6,73 +6,71 @@
 
 using System;
 using System.IO;
-using System.Text;
 using System.Xml.Linq;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports.DublinCore;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Curation
+namespace Rdmp.Core.Tests.Curation;
+
+[Category("Unit")]
+internal class DublinCoreTests
 {
-    [Category("Unit")]
-    class DublinCoreTests
+    [Test]
+    public void TestWritingDocument()
     {
-        [Test]
-        public void TestWrittingDocument()
+        var def = new DublinCoreDefinition
         {
-            var def = new DublinCoreDefinition()
-            {
-                Title =  "ssssshh",
-                Alternative =  "O'Rly",
-                Description = "Description of stuff",
-                Format = "text/html",
-                Identifier = new Uri("http://foo.com"),
-                Publisher = "University of Dundee",
-                IsPartOf = new Uri("http://foo2.com"),
-                Modified = new DateTime(2001,1,1),
-                Subject = "Interesting, PayAttention, HighPriority, Omg"
-            };
+            Title = "ssssshh",
+            Alternative = "O'Rly",
+            Description = "Description of stuff",
+            Format = "text/html",
+            Identifier = new Uri("http://foo.com"),
+            Publisher = "University of Dundee",
+            IsPartOf = new Uri("http://foo2.com"),
+            Modified = new DateTime(2001, 1, 1),
+            Subject = "Interesting, PayAttention, HighPriority, Omg"
+        };
 
-            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTest.xml"));
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTest.xml"));
 
-            using(var fw = f.OpenWrite())
-                def.WriteXml(fw);
-
-            var contents = File.ReadAllText(f.FullName);
-            StringAssert.Contains(def.Title, contents);
-            StringAssert.Contains(def.Alternative, contents);
-            StringAssert.Contains(def.Description, contents);
-            StringAssert.Contains(def.Format, contents);
-            StringAssert.Contains(def.Publisher, contents);
-            StringAssert.Contains(def.Subject, contents);
-
-            StringAssert.Contains("2001-01-01", contents);
-            StringAssert.Contains("http://foo.com", contents);
-            StringAssert.Contains("http://foo2.com", contents);
-
-            var def2 = new DublinCoreDefinition();
-            def2.LoadFrom(XDocument.Load(f.FullName).Root);
-
-            Assert.AreEqual(def.Title, def2.Title);
-            Assert.AreEqual(def.Alternative, def2.Alternative);
-            Assert.AreEqual(def.Description, def2.Description);
-            Assert.AreEqual(def.Format, def2.Format);
-            Assert.AreEqual(def.Publisher, def2.Publisher);
-            Assert.AreEqual(def.Subject, def2.Subject);
-
-            Assert.AreEqual(def.Modified, def2.Modified);
-            Assert.AreEqual(def.IsPartOf.ToString(), def2.IsPartOf.ToString());
-            Assert.AreEqual(def.Identifier.ToString(), def2.Identifier.ToString());
-
-
+        using (var fw = f.OpenWrite())
+        {
+            def.WriteXml(fw);
         }
 
-        [Test]
-        public void TestReadingDocument()
-        {
-            string xml =
-                @"<?xml version=""1.0""?>
+        var contents = File.ReadAllText(f.FullName);
+        StringAssert.Contains(def.Title, contents);
+        StringAssert.Contains(def.Alternative, contents);
+        StringAssert.Contains(def.Description, contents);
+        StringAssert.Contains(def.Format, contents);
+        StringAssert.Contains(def.Publisher, contents);
+        StringAssert.Contains(def.Subject, contents);
+
+        StringAssert.Contains("2001-01-01", contents);
+        StringAssert.Contains("http://foo.com", contents);
+        StringAssert.Contains("http://foo2.com", contents);
+
+        var def2 = new DublinCoreDefinition();
+        def2.LoadFrom(XDocument.Load(f.FullName).Root);
+
+        Assert.AreEqual(def.Title, def2.Title);
+        Assert.AreEqual(def.Alternative, def2.Alternative);
+        Assert.AreEqual(def.Description, def2.Description);
+        Assert.AreEqual(def.Format, def2.Format);
+        Assert.AreEqual(def.Publisher, def2.Publisher);
+        Assert.AreEqual(def.Subject, def2.Subject);
+
+        Assert.AreEqual(def.Modified, def2.Modified);
+        Assert.AreEqual(def.IsPartOf.ToString(), def2.IsPartOf.ToString());
+        Assert.AreEqual(def.Identifier.ToString(), def2.Identifier.ToString());
+    }
+
+    [Test]
+    public void TestReadingDocument()
+    {
+        var xml =
+            @"<?xml version=""1.0""?>
 
 <metadata
   xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""
@@ -126,64 +124,64 @@ namespace Rdmp.Core.Tests.Curation
   </dc:format>
 </metadata>";
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTestReading.xml"));
-            File.WriteAllText(fi.FullName,xml);
+        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTestReading.xml"));
+        File.WriteAllText(fi.FullName, xml);
 
-            var doc = XDocument.Load(fi.FullName);
+        var doc = XDocument.Load(fi.FullName);
 
-            var def = new DublinCoreDefinition();
+        var def = new DublinCoreDefinition();
 
-            def.LoadFrom(doc.Root);
+        def.LoadFrom(doc.Root);
 
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN",def.Title));
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking", def.Alternative));
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"national centre, network information support, library
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN", def.Title));
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking",
+            def.Alternative));
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"national centre, network information support, library
     community, awareness, research, information services,public
     library networking, bibliographic management, distributed
     library systems, metadata, resource discovery,
     conferences,lectures, workshops", def.Subject));
 
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"UKOLN is a national focus of expertise in digital information
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"UKOLN is a national focus of expertise in digital information
     management. It provides policy, research and awareness services
     to the UK library, information and cultural heritage communities.
     UKOLN is based at the University of Bath.", def.Description));
 
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN, University of Bath", def.Publisher));
-            StringAssert.AreEqualIgnoringCase("http://www.bath.ac.uk/", def.IsPartOf.AbsoluteUri);
-            StringAssert.AreEqualIgnoringCase("http://www.ukoln.ac.uk/", def.Identifier.AbsoluteUri);
-            Assert.IsTrue(DatabaseTests.AreBasicallyEquals(new DateTime(2001,07,18),def.Modified));
-        }
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN, University of Bath", def.Publisher));
+        StringAssert.AreEqualIgnoringCase("http://www.bath.ac.uk/", def.IsPartOf.AbsoluteUri);
+        StringAssert.AreEqualIgnoringCase("http://www.ukoln.ac.uk/", def.Identifier.AbsoluteUri);
+        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(new DateTime(2001, 07, 18), def.Modified));
+    }
 
-        /// <summary>
-        /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime. 
-        /// </summary>
-        [Test]
-        public void Test_DublinCore_WriteReadFile_NetCore()
+    /// <summary>
+    /// This test also appears in the Rdmp.UI.Tests project since it behaves differently in different runtime.
+    /// </summary>
+    [Test]
+    public void Test_DublinCore_WriteReadFile_NetCore()
+    {
+        var def1 = new DublinCoreDefinition
         {
-            var def1 = new DublinCoreDefinition()
-            {
-                Title =  "ssssshh",
-                Alternative =  "O'Rly",
-                Description = "Description of stuff",
-                Format = "text/html",
-                Identifier = new Uri("http://foo.com"),
-                Publisher = "University of Dundee",
-                IsPartOf = new Uri("http://foo2.com"),
-                Modified = new DateTime(2001,1,1),
-                Subject = "Interesting, PayAttention, HighPriority, Omg"
-            };
+            Title = "ssssshh",
+            Alternative = "O'Rly",
+            Description = "Description of stuff",
+            Format = "text/html",
+            Identifier = new Uri("http://foo.com"),
+            Publisher = "University of Dundee",
+            IsPartOf = new Uri("http://foo2.com"),
+            Modified = new DateTime(2001, 1, 1),
+            Subject = "Interesting, PayAttention, HighPriority, Omg"
+        };
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublin.xml"));
+        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublin.xml"));
 
-            using(var outStream = fi.OpenWrite())
-                def1.WriteXml(outStream);
-
-            using (var inStream = fi.OpenRead())
-            {
-                var def2 = new DublinCoreDefinition();
-                var doc = XDocument.Load(inStream);
-                def2.LoadFrom(doc.Root);
-            }
+        using (var outStream = fi.OpenWrite())
+        {
+            def1.WriteXml(outStream);
         }
+
+        using var inStream = fi.OpenRead();
+        var def2 = new DublinCoreDefinition();
+        var doc = XDocument.Load(inStream);
+        def2.LoadFrom(doc.Root);
     }
 }

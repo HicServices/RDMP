@@ -4,38 +4,36 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.UI.SimpleDialogs;
 using System;
 using System.Threading;
+using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.TestsAndSetup
+namespace Rdmp.UI.TestsAndSetup;
+
+/// <summary>
+/// Global singleton for registering/changing how global application errors are handled.
+/// </summary>
+public class GlobalExceptionHandler
 {
+    public static GlobalExceptionHandler Instance { get; } = new();
+
     /// <summary>
-    /// Global singleton for registering/changing how global application errors are handled.
+    /// What to do when errors occur, changing this discards the old action and sets a new one.  Defaults to launching a non modal <see cref="ExceptionViewer"/>
     /// </summary>
-    public class GlobalExceptionHandler
+    public Action<Exception> Handler { get; set; }
+
+    public GlobalExceptionHandler()
     {
-        public static GlobalExceptionHandler Instance {get;} = new GlobalExceptionHandler();
+        Handler = e => ExceptionViewer.Show(e, false);
+    }
 
-        /// <summary>
-        /// What to do when errors occur, changing this discards the old action and sets a new one.  Defaults to launching a non modal <see cref="ExceptionViewer"/>
-        /// </summary>
-        public Action<Exception> Handler {get;set;}
+    internal void Handle(object sender, UnhandledExceptionEventArgs args)
+    {
+        Handler((Exception)args.ExceptionObject);
+    }
 
-        public GlobalExceptionHandler()
-        {
-            Handler = (e)=>ExceptionViewer.Show(e,false);
-        }
-        internal void Handle(object sender, UnhandledExceptionEventArgs  args)
-        {
-            Handler((Exception)args.ExceptionObject);
-
-        }
-        internal void Handle(object sender, ThreadExceptionEventArgs args)
-        {
-            Handler(args.Exception);
-        }
-
-        
+    internal void Handle(object sender, ThreadExceptionEventArgs args)
+    {
+        Handler(args.Exception);
     }
 }

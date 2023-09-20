@@ -9,50 +9,43 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
-using Rdmp.UI.CohortUI.ImportCustomData;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class
+    ProposeExecutionWhenTargetIsProjectSavedCohortsNode : RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
 {
-    class ProposeExecutionWhenTargetIsProjectSavedCohortsNode:RDMPCommandExecutionProposal<ProjectSavedCohortsNode>
+    public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProjectSavedCohortsNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(ProjectSavedCohortsNode target)
-        {
-            return false;
-        }
+    public override bool CanActivate(ProjectSavedCohortsNode target) => false;
 
-        public override void Activate(ProjectSavedCohortsNode target)
-        {
-            
-        }
+    public override void Activate(ProjectSavedCohortsNode target)
+    {
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target, InsertOption insertOption = InsertOption.Default)
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectSavedCohortsNode target,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        return cmd switch
         {
             //drop a cic on a Saved Cohorts Node to commit it to that project
-            var cicCommand = cmd as CohortIdentificationConfigurationCommand;
-            if (cicCommand != null)
-                return
-                    new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator,null).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(target.Project);
-            
+            CohortIdentificationConfigurationCommand cicCommand =>
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(ItemActivator, null)
+                    .SetTarget(cicCommand.CohortIdentificationConfiguration)
+                    .SetTarget(target.Project),
             //drop a file on the SavedCohorts node to commit it
-            var fileCommand = cmd as FileCollectionCombineable;
-            if(fileCommand != null && fileCommand.Files.Length == 1)
-                return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0],null).SetTarget(target.Project);
-
+            FileCollectionCombineable fileCommand when fileCommand.Files.Length == 1 =>
+                new ExecuteCommandCreateNewCohortFromFile(ItemActivator, fileCommand.Files[0], null).SetTarget(
+                    target.Project),
             //drop a Project Specific Catalogue onto it
-            if (cmd is CatalogueCombineable catalogueCombineable)
-                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
-
-            var columnCommand = cmd as ColumnCombineable;
-
-            if (columnCommand != null && columnCommand.Column is ExtractionInformation)
-                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,(ExtractionInformation) columnCommand.Column);
-
-            return null;
-        }
+            CatalogueCombineable catalogueCombineable => new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator,
+                catalogueCombineable.Catalogue).SetTarget(target.Project),
+            ColumnCombineable { Column: ExtractionInformation } columnCommand => new
+                ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, (ExtractionInformation)columnCommand.Column),
+            _ => null
+        };
     }
 }

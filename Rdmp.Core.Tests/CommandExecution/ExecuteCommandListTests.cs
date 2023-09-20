@@ -4,59 +4,60 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using System.Text.RegularExpressions;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class TestsExecuteCommandList : CommandCliTests
 {
-    class TestsExecuteCommandList : CommandCliTests
+    [Test]
+    public void Test_ExecuteCommandList_NoCataloguesParsing()
     {
-        [Test]
-        public void Test_ExecuteCommandList_NoCataloguesParsing()
-        {
-            foreach(var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
-                cat.DeleteInDatabase();
+        foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+            cat.DeleteInDatabase();
 
-            Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),"Failed to clear CatalogueRepository");
+        Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),
+            "Failed to clear CatalogueRepository");
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-                new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
-        }
-        
-        [Test]
-        public void Test_ExecuteCommandList_OneCatalogueParsing()
-        {
-            var c = WhenIHaveA<Catalogue>();
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
+            new CommandLineObjectPicker(new string[] { "Catalogue" }, GetActivator()));
+    }
 
-            GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
-                new CommandLineObjectPicker(new string[]{ "Catalogue"}, GetActivator()));
-            
-            c.DeleteInDatabase();
-        }
-        [Test]
-        public void Test_ExecuteCommandList_OneCatalogue()
-        {
-            var c = WhenIHaveA<Catalogue>();
-            c.Name = "fff";
-            c.SaveToDatabase();
+    [Test]
+    public void Test_ExecuteCommandList_OneCatalogueParsing()
+    {
+        var c = WhenIHaveA<Catalogue>();
 
-            var mock = GetMockActivator();
+        GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
+            new CommandLineObjectPicker(new string[] { "Catalogue" }, GetActivator()));
 
-            var cmd = new ExecuteCommandList(mock.Object,new []{c});
-            Assert.IsFalse(cmd.IsImpossible,cmd.ReasonCommandImpossible);
+        c.DeleteInDatabase();
+    }
 
-            cmd.Execute();
+    [Test]
+    public void Test_ExecuteCommandList_OneCatalogue()
+    {
+        var c = WhenIHaveA<Catalogue>();
+        c.Name = "fff";
+        c.SaveToDatabase();
 
-            string contents = Regex.Escape($"{c.ID}:fff");
+        var mock = GetMockActivator();
 
-            // Called once
-            mock.Verify(m => m.Show(It.IsRegex(contents)), Times.Once());
+        var cmd = new ExecuteCommandList(mock, new[] { c });
+        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
 
-            c.DeleteInDatabase();
-        }
+        cmd.Execute();
+
+        var contents = Regex.Escape($"{c.ID}:fff");
+
+        // Called once
+        mock.Received(1).Show(Arg.Is<string>(i => i.Contains($"{c.ID}:fff")));
+
+        c.DeleteInDatabase();
     }
 }

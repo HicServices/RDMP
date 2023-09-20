@@ -17,286 +17,268 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
-using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.Collections;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.Overview
+namespace Rdmp.UI.Overview;
+
+/// <summary>
+/// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have
+/// not configured any data loads yet then this control will be blank.
+/// </summary>
+public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
 {
-    /// <summary>
-    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have
-    /// not configured any data loads yet then this control will be blank.
-    /// </summary>
-    public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
+    private DataLoadsGraphObjectCollection _collection;
+
+    public DataLoadsGraph()
     {
-        private DataLoadsGraphObjectCollection _collection;
-        
-        public DataLoadsGraph()
+        InitializeComponent();
+
+        SetupOlvDelegates();
+
+        olvDataLoads.AlwaysGroupByColumn = olvStatus;
+        olvDataLoads.UseCellFormatEvents = true;
+        olvDataLoads.FormatCell += olvDataLoads_FormatCell;
+
+        olvViewLog.AspectGetter += s => "View Log";
+
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName,
+            new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun,
+            new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvCategory,
+            new Guid("406173bc-44a0-40b7-8bd1-d01a214c277d"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvStatus,
+            new Guid("8c5cbcd2-9f06-4e24-9521-c3be7ea22eca"));
+        RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvViewLog,
+            new Guid("e9c04da0-0e91-442e-90a4-119a1b67ea06"));
+    }
+
+    private void SetupOlvDelegates()
+    {
+        olvName.ImageGetter = delegate
         {
-            InitializeComponent();
+            return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata).ImageToBitmap();
+        };
 
-            SetupOlvDelegates();
-
-            olvDataLoads.AlwaysGroupByColumn = olvStatus;
-            olvDataLoads.UseCellFormatEvents = true;
-            olvDataLoads.FormatCell += olvDataLoads_FormatCell;
-
-            olvViewLog.AspectGetter += (s) => "View Log";
-
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvName, new Guid("4a651e11-62f5-4d8f-8fe5-4db488ee7f3a"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvLastRun, new Guid("1aadf2e8-798d-4e85-8abc-7f45edb839b7"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvCategory, new Guid("406173bc-44a0-40b7-8bd1-d01a214c277d"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvStatus, new Guid("8c5cbcd2-9f06-4e24-9521-c3be7ea22eca"));
-            RDMPCollectionCommonFunctionality.SetupColumnTracking(olvDataLoads, olvViewLog, new Guid("e9c04da0-0e91-442e-90a4-119a1b67ea06"));
-        }
-
-        private void SetupOlvDelegates()
+        olvDataLoads.ButtonClick += delegate (object sender, CellClickEventArgs e)
         {
-            olvName.ImageGetter = delegate
-            {
-                return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata).ImageToBitmap();
-            };
+            var loadSummary = (DataLoadsGraphResult)e.Model;
+            var metadata =
+                Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
+                    .SingleOrDefault(m => m.ID == loadSummary.ID);
 
-            olvDataLoads.ButtonClick += delegate(object sender, CellClickEventArgs e)
+            if (metadata != null)
+                new ExecuteCommandViewLogs(Activator, metadata).Execute();
+        };
+
+        olvDataLoads.DoubleClick += delegate (object sender, EventArgs args)
+        {
+            var loadSummary = (DataLoadsGraphResult)olvDataLoads.GetItem(olvDataLoads.SelectedIndex).RowObject;
+            if (loadSummary != null)
             {
-                var loadSummary = (DataLoadsGraphResult)e.Model;
                 var metadata =
                     Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
                         .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                 if (metadata != null)
-                    new ExecuteCommandViewLogs(Activator,metadata).Execute();
-            };
+                    Activator.RequestItemEmphasis(sender, new EmphasiseRequest(metadata));
+            }
+        };
+    }
 
-            olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)
+    private void olvDataLoads_FormatCell(object sender, FormatCellEventArgs e)
+    {
+        if (e.ColumnIndex == olvStatus.Index)
+            e.SubItem.ForeColor = ((DataLoadsGraphResult)e.Model).Status != DataLoadsGraphResultStatus.Succeeding
+                ? Color.Red
+                : Color.Black;
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+
+        RefreshChartAsync();
+    }
+
+    public void RefreshChartAsync()
+    {
+        if (VisualStudioDesignMode)
+            return;
+
+        pbLoading.Visible = true;
+        olvDataLoads.ClearObjects();
+        ragSmiley1.Reset();
+        ragSmiley1.SetVisible(false);
+
+        var t = new Thread(() =>
+        {
+            try
             {
-                var loadSummary = (DataLoadsGraphResult)olvDataLoads.GetItem(olvDataLoads.SelectedIndex).RowObject;
-                if (loadSummary != null)
-                {
-                    var metadata =
-                        Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
-                            .SingleOrDefault(m => m.ID == loadSummary.ID);
+                var countManualLoadsuccessful = 0;
+                var countManualLoadFailure = 0;
 
-                    if (metadata != null)
-                        Activator.RequestItemEmphasis(sender, new EmphasiseRequest(metadata));
-                }
-            };
-        }
-
-        void olvDataLoads_FormatCell(object sender, FormatCellEventArgs e)
-        {
-            if (e.ColumnIndex == olvStatus.Index)
-                e.SubItem.ForeColor = ((DataLoadsGraphResult) e.Model).Status != DataLoadsGraphResultStatus.Succeeding
-                    ? Color.Red
-                    : Color.Black;
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            RefreshChartAsync();
-        }
-
-        public void RefreshChartAsync()
-        {
-            if (VisualStudioDesignMode)
-                return;
-
-            pbLoading.Visible = true;
-            olvDataLoads.ClearObjects();
-            ragSmiley1.Reset();
-            ragSmiley1.SetVisible(false);
-
-            Thread t = new Thread(() =>
-            {
-                try
-                {
-                    int countManualLoadsuccessful = 0;
-                    int countManualLoadFailure = 0;
-                    
-                    foreach (LoadMetadata metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                foreach (var metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                    try
                     {
+                        LogManager logManager;
+
                         try
                         {
-                            LogManager logManager;
+                            //get the logging connection
+                            logManager = new LogManager(metadata.GetDistinctLoggingDatabase());
+                        }
+                        catch (NotSupportedException e)
+                        {
+                            //sometimes a load metadata won't have any catalogues so we can't process its log history
+                            if (e.Message.Contains("does not have any Catalogues associated with it"))
+                                continue;
 
-                            try
+                            throw;
+                        }
+
+                        var archivalDataLoadInfo = logManager
+                            .GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
+
+                        var loadSummary = new DataLoadsGraphResult
+                        {
+                            ID = metadata.ID,
+                            Name = metadata.Name
+                        };
+
+                        if (archivalDataLoadInfo == null)
+                        {
+                            Invoke(new MethodInvoker(() =>
                             {
-                                //get the logging connection
-                                logManager = new LogManager(metadata.GetDistinctLoggingDatabase());
-                            }
-                            catch (NotSupportedException e)
-                            {
-                                //sometimes a load metadata won't have any catalogues so we can't process its log history
-                                if(e.Message.Contains("does not have any Catalogues associated with it"))
-                                    continue;
-                                
-                                throw;
-                            }
-
-                            ArchivalDataLoadInfo archivalDataLoadInfo = logManager.GetArchivalDataLoadInfos(metadata.GetDistinctLoggingTask()).FirstOrDefault();
-
-                            bool lastLoadWasError;
-
-                            var loadSummary = new DataLoadsGraphResult
-                            {
-                                ID = metadata.ID,
-                                Name = metadata.Name,
-                            };
-
-                            if (archivalDataLoadInfo == null)
-                            {
-                                this.Invoke(new MethodInvoker(() =>
-                                {
-                                    loadSummary.Status = DataLoadsGraphResultStatus.NeverBeenRun;
-                                    loadSummary.LastRun = "Never";
-                                    olvDataLoads.AddObject(loadSummary);
-                                }));
-                                continue; //has never been run (or has had test runs only)
-                            }
-                            
-                            lastLoadWasError = archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
-
-                            //while we were fetching data from database the form was closed
-                            if (IsDisposed || !IsHandleCreated)
-                                return;
-
-                            if (lastLoadWasError)
-                                countManualLoadFailure++;
-                            else
-                                countManualLoadsuccessful++;
-
-                            this.Invoke(new MethodInvoker(() =>
-                            {
-                                loadSummary.Status = lastLoadWasError ? DataLoadsGraphResultStatus.Failing : DataLoadsGraphResultStatus.Succeeding;
-                                loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
-                                
+                                loadSummary.Status = DataLoadsGraphResultStatus.NeverBeenRun;
+                                loadSummary.LastRun = "Never";
                                 olvDataLoads.AddObject(loadSummary);
                             }));
+                            continue; //has never been run (or has had test runs only)
                         }
-                        catch (Exception e)
-                        {
-                            ragSmiley1.Fatal(e);
-                            this.Invoke(new MethodInvoker(() =>
-                            {
-                                pbLoading.Visible = false;
-                            }));
-                        }
-                    }
 
+                        var lastLoadWasError =
+                            archivalDataLoadInfo.Errors.Any() || archivalDataLoadInfo.EndTime == null;
 
-                    //if there have been no loads at all ever
-                    if (countManualLoadsuccessful == 0 && countManualLoadFailure == 0)
-                    {
-                        this.Invoke(new MethodInvoker(() =>
+                        //while we were fetching data from database the form was closed
+                        if (IsDisposed || !IsHandleCreated)
+                            return;
+
+                        if (lastLoadWasError)
+                            countManualLoadFailure++;
+                        else
+                            countManualLoadsuccessful++;
+
+                        Invoke(new MethodInvoker(() =>
                         {
-                            lblNoDataLoadsFound.Visible = true;
-                            chart1.Visible = false;
-                            pbLoading.Visible = false;
+                            loadSummary.Status = lastLoadWasError
+                                ? DataLoadsGraphResultStatus.Failing
+                                : DataLoadsGraphResultStatus.Succeeding;
+                            loadSummary.LastRun = archivalDataLoadInfo.EndTime.ToString();
+
+                            olvDataLoads.AddObject(loadSummary);
                         }));
-                        
-                        return;
+                    }
+                    catch (Exception e)
+                    {
+                        ragSmiley1.Fatal(e);
+                        Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
                     }
 
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("Category");
-                    dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
-                    dt.Rows.Add(new object[] { "Manual Successful", countManualLoadsuccessful });
-                    dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
-
-
-                    this.Invoke(new MethodInvoker(() =>
-                    {
-                        chart1.Series[0].XValueMember = "Category";
-                        chart1.Series[0].YValueMembers = "NumberOfDataLoadsAtStatus";
-
-                        chart1.DataSource = dt;
-                        chart1.DataBind();
-
-                        chart1.Series[0].Points[0].Color = Color.Green;
-                        chart1.Series[0].Points[1].Color = Color.Red;
-
-                        var max = new int[]
-                        {
-                            countManualLoadFailure,
-                            countManualLoadsuccessful
-                        }.Max();
-
-                        int gridMarkEvery = max == 0 ? 1 : Math.Max(max/10, 1);
-
-
-                        chart1.ChartAreas[0].AxisY.Interval = gridMarkEvery;
-
-                        chart1.ChartAreas[0].AxisY.MajorGrid.Interval = gridMarkEvery;
-                        chart1.ChartAreas[0].AxisY.MajorTickMark.Interval = gridMarkEvery;
-                        chart1.ChartAreas[0].AxisY.MajorTickMark.IntervalOffset = 0;
-                        
-                        chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
-
-
-                        chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = false;
-                        chart1.ChartAreas[0].AxisY.MinorTickMark.Enabled = false;
-
-                        pbLoading.Visible = false;
-                    }));
-                }
-                catch (Exception e)
+                //if there have been no loads at all ever
+                if (countManualLoadsuccessful == 0 && countManualLoadFailure == 0)
                 {
-                    ragSmiley1.Fatal(e);
-                    this.Invoke(new MethodInvoker(() =>
+                    Invoke(new MethodInvoker(() =>
                     {
+                        lblNoDataLoadsFound.Visible = true;
+                        chart1.Visible = false;
                         pbLoading.Visible = false;
                     }));
+
+                    return;
                 }
 
-            });
-            //t.SetApartmentState(ApartmentState.STA);
-            t.Start();
-        }
+                var dt = new DataTable();
+                dt.Columns.Add("Category");
+                dt.Columns.Add("NumberOfDataLoadsAtStatus");
 
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            
-        }
+                dt.Rows.Add(new object[] { "Manual Successful", countManualLoadsuccessful });
+                dt.Rows.Add(new object[] { "Manual Fail", countManualLoadFailure });
 
-        public string GetTabName()
-        {
-            return Text;
-        }
 
-        public string GetTabToolTip()
-        {
-            return null;
-        }
+                Invoke(new MethodInvoker(() =>
+                {
+                    chart1.Series[0].XValueMember = "Category";
+                    chart1.Series[0].YValueMembers = "NumberOfDataLoadsAtStatus";
 
-        public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
-        {
-            SetItemActivator(activator);
-            _collection = (DataLoadsGraphObjectCollection)collection;
+                    chart1.DataSource = dt;
+                    chart1.DataBind();
 
-            if(IsHandleCreated && !IsDisposed)
-                RefreshChartAsync();
-        }
+                    chart1.Series[0].Points[0].Color = Color.Green;
+                    chart1.Series[0].Points[1].Color = Color.Red;
 
-        public IPersistableObjectCollection GetCollection()
-        {
-            return _collection;
-        }
+                    var max = new int[]
+                    {
+                        countManualLoadFailure,
+                        countManualLoadsuccessful
+                    }.Max();
 
-        public void NotifyEditModeChange(bool isEditModeOn)
-        {
-            
-        }
+                    var gridMarkEvery = max == 0 ? 1 : Math.Max(max / 10, 1);
 
-        public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord)
-        {
-            return new DataLoadsGraphObjectCollection();
-        }
+
+                    chart1.ChartAreas[0].AxisY.Interval = gridMarkEvery;
+
+                    chart1.ChartAreas[0].AxisY.MajorGrid.Interval = gridMarkEvery;
+                    chart1.ChartAreas[0].AxisY.MajorTickMark.Interval = gridMarkEvery;
+                    chart1.ChartAreas[0].AxisY.MajorTickMark.IntervalOffset = 0;
+
+                    chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
+
+
+                    chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = false;
+                    chart1.ChartAreas[0].AxisY.MinorTickMark.Enabled = false;
+
+                    pbLoading.Visible = false;
+                }));
+            }
+            catch (Exception e)
+            {
+                ragSmiley1.Fatal(e);
+                Invoke(new MethodInvoker(() => { pbLoading.Visible = false; }));
+            }
+        });
+        //t.SetApartmentState(ApartmentState.STA);
+        t.Start();
     }
+
+    public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
+    {
+    }
+
+    public string GetTabName() => Text;
+
+    public string GetTabToolTip() => null;
+
+    public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
+    {
+        SetItemActivator(activator);
+        _collection = (DataLoadsGraphObjectCollection)collection;
+
+        if (IsHandleCreated && !IsDisposed)
+            RefreshChartAsync();
+    }
+
+    public IPersistableObjectCollection GetCollection() => _collection;
+
+    public void NotifyEditModeChange(bool isEditModeOn)
+    {
+    }
+
+    public IPersistableObjectCollection ConstructEmptyCollection(DashboardControl databaseRecord) =>
+        new DataLoadsGraphObjectCollection();
 }

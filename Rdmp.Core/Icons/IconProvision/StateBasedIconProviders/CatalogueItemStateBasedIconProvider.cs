@@ -5,73 +5,63 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.Core.Icons.IconProvision.StateBasedIconProviders;
+
+public sealed class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
 {
-    public class CatalogueItemStateBasedIconProvider : IObjectStateBasedIconProvider
+    private static readonly Image<Rgba32> BasicImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
+    private static readonly Image<Rgba32> TransformImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemTransform);
+
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
-        private readonly Image<Rgba32> basicImage;
-        private readonly Image<Rgba32> transformImage;
-        private readonly IconOverlayProvider _overlayProvider;
+        if (o is not CatalogueItem ci)
+            return null;
 
-        public CatalogueItemStateBasedIconProvider(IconOverlayProvider overlayProvider)
+        var ei = ci.ExtractionInformation;
+        var toReturn = ei?.IsProperTransform() ?? false ? TransformImage : BasicImage;
+
+        //it's not extractable:
+        if (ei == null) return toReturn;
+
+        if (ei.HashOnDataRelease)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
+
+        if (ei.IsExtractionIdentifier)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
+
+        if (ei.IsPrimaryKey)
+            toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Key);
+
+        switch (ei.ExtractionCategory)
         {
-            basicImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItem);
-            transformImage = Image.Load<Rgba32>(CatalogueIcons.CatalogueItemTransform);
-            _overlayProvider = overlayProvider;
+            case ExtractionCategory.ProjectSpecific:
+            case ExtractionCategory.Core:
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+                break;
+            case ExtractionCategory.Supplemental:
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
+                break;
+            case ExtractionCategory.SpecialApprovalRequired:
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
+                break;
+            case ExtractionCategory.Internal:
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
+                break;
+            case ExtractionCategory.Deprecated:
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
+                toReturn = IconOverlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(o));
         }
 
-        public Image<Rgba32> GetImageIfSupportedObject(object o)
-        {
-            if (o is not CatalogueItem ci)
-                return null;
 
-            var ei = ci.ExtractionInformation;
-            var toReturn = ei?.IsProperTransform() ?? false ? transformImage: basicImage;
-
-            //it's not extractable:
-            if (ei == null) return toReturn;
-
-            if (ei.HashOnDataRelease) 
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Hashed);
-
-            if (ei.IsExtractionIdentifier)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.IsExtractionIdentifier);
-                
-            if (ei.IsPrimaryKey)
-                toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
-
-            switch (ei.ExtractionCategory)
-            {
-                case ExtractionCategory.ProjectSpecific:
-                case ExtractionCategory.Core:
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-                    break;
-                case ExtractionCategory.Supplemental:
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Supplemental);
-                    break;
-                case ExtractionCategory.SpecialApprovalRequired:
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_SpecialApproval);
-                    break;
-                case ExtractionCategory.Internal:
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable_Internal);
-                    break;
-                case ExtractionCategory.Deprecated:
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Extractable);
-                    toReturn = _overlayProvider.GetOverlay(toReturn, OverlayKind.Deprecated);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-
-
-            return toReturn;
-        }
+        return toReturn;
     }
 }

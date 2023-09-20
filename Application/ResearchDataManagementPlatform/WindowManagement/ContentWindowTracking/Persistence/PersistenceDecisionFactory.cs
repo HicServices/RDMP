@@ -7,7 +7,6 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Repositories;
@@ -16,119 +15,114 @@ using Rdmp.UI.LoadExecutionUIs;
 using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
 
-namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
+namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
+
+/// <summary>
+/// Translates persistence strings into DeserializeInstructions for restoring the RDMP main application window layout after application close/restart.
+/// </summary>
+public class PersistenceDecisionFactory
 {
-    /// <summary>
-    /// Translates persistence strings into DeserializeInstructions for restoring the RDMP main application window layout after application close/restart.
-    /// </summary>
-    public class PersistenceDecisionFactory
+    public PersistenceDecisionFactory()
     {
-        PersistStringHelper _persistStringHelper = new PersistStringHelper();
+        //ensure dashboard UI assembly is loaded
+        Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
+        //ensure data export UI assembly is loaded
+        Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
+        //ensure DLE UI assembly is loaded
+        Assembly.Load(typeof(ExecuteLoadMetadataUI).Assembly.FullName);
+    }
 
-        public PersistenceDecisionFactory()
-        {
-            //ensure dashboard UI assembly is loaded
-            Assembly.Load(typeof (RacewayRenderAreaUI).Assembly.FullName);
-            //ensure data export UI assembly is loaded
-            Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
-            //ensure DLE UI assembly is loaded
-            Assembly.Load(typeof(ExecuteLoadMetadataUI).Assembly.FullName);
-        }
+    /// <summary>
+    /// If <paramref name="persistString"/> describes the persisted control state
+    /// as described by the basic <see cref="RDMPSingleControlTab"/> class (rather
+    /// than a more specialised class like <see cref="RDMPSingleControlTab"/>) then
+    /// we return a new instruction of what Type of control to create
+    /// </summary>
+    /// <param name="persistString"></param>
+    /// <param name="repositoryLocator"></param>
+    /// <returns></returns>
+    public static DeserializeInstruction ShouldCreateBasicControl(string persistString,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
+            return null;
 
-        /// <summary>
-        /// If <paramref name="persistString"/> describes the persisted control state
-        /// as described by the basic <see cref="RDMPSingleControlTab"/> class (rather
-        /// than a more specialised class like <see cref="RDMPSingleControlTab"/>) then
-        /// we return a new instruction of what Type of control to create
-        /// </summary>
-        /// <param name="persistString"></param>
-        /// <param name="repositoryLocator"></param>
-        /// <returns></returns>
-        public DeserializeInstruction ShouldCreateBasicControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            if (!persistString.StartsWith(RDMPSingleControlTab.BasicPrefix))
-                return null;
+        //return BasicPrefix + s + Control.GetType().Name
+        var tokens = persistString.Split(PersistStringHelper.Separator);
 
-            //return BasicPrefix + s + Control.GetType().Name
-            var tokens = persistString.Split(PersistStringHelper.Separator);
+        if (tokens.Length != 2)
+            throw new PersistenceException(
+                $"Unexpected number of tokens ({tokens.Length}) for Persistence of Type {RDMPSingleControlTab.BasicPrefix}");
 
-            if (tokens.Length != 2)
-                throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + RDMPSingleControlTab.BasicPrefix);
+        var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
 
-            Type controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+        return new DeserializeInstruction(controlType);
+    }
 
-            return new DeserializeInstruction(controlType);
-        }
+    public static RDMPCollection? ShouldCreateCollection(string persistString) =>
+        !persistString.StartsWith(PersistableToolboxDockContent.Prefix)
+            ? null
+            : PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
 
-        public RDMPCollection? ShouldCreateCollection(string persistString)
-        {
-            if (!persistString.StartsWith(PersistableToolboxDockContent.Prefix))
-                return null;
+    public static DeserializeInstruction ShouldCreateSingleObjectControl(string persistString,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
+            return null;
 
-            return PersistableToolboxDockContent.GetToolboxFromPersistString(persistString);
-        }
+        //return Prefix + s + _control.GetType().Name + s + _databaseObject.Repository.GetType() +  s + _databaseObject.GetType().Name + s + _databaseObject.ID;
+        var tokens = persistString.Split(PersistStringHelper.Separator);
 
-        public DeserializeInstruction ShouldCreateSingleObjectControl(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            if (!persistString.StartsWith(PersistableSingleDatabaseObjectDockContent.Prefix))
-                return null;
+        if (tokens.Length != 5)
+            throw new PersistenceException(
+                $"Unexpected number of tokens ({tokens.Length}) for Persistence of Type {PersistableSingleDatabaseObjectDockContent.Prefix}");
 
-            //return Prefix + s + _control.GetType().Name + s + _databaseObject.Repository.GetType() +  s + _databaseObject.GetType().Name + s + _databaseObject.ID;
-            var tokens = persistString.Split(PersistStringHelper.Separator);
+        var controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+        var o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
 
-            if (tokens.Length != 5)
-                throw new PersistenceException("Unexpected number of tokens (" + tokens.Length + ") for Persistence of Type " + PersistableSingleDatabaseObjectDockContent.Prefix);
-            
-            Type controlType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
-            IMapsDirectlyToDatabaseTable o = repositoryLocator.GetArbitraryDatabaseObject(tokens[2], tokens[3], int.Parse(tokens[4]));
-            
-            return new DeserializeInstruction(controlType,o);
+        return new DeserializeInstruction(controlType, o);
+    }
 
-        }
+    public static DeserializeInstruction ShouldCreateObjectCollection(string persistString,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
+            return null;
 
-        public DeserializeInstruction ShouldCreateObjectCollection(string persistString, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            if (!persistString.StartsWith(PersistableObjectCollectionDockContent.Prefix))
-                return null;
-            
-            if(!persistString.Contains(PersistStringHelper.ExtraText))
-                throw new PersistenceException("Persistence string did not contain '" + PersistStringHelper.ExtraText);
+        if (!persistString.Contains(PersistStringHelper.ExtraText))
+            throw new PersistenceException($"Persistence string did not contain '{PersistStringHelper.ExtraText}");
 
-            //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
-            var tokens = persistString.Split(PersistStringHelper.Separator);
-            
-            var uiType = GetTypeByName(tokens[1],typeof(Control),repositoryLocator);
-            var collectionType = GetTypeByName(tokens[2], typeof (IPersistableObjectCollection), repositoryLocator);
+        //Looks something like this  RDMPObjectCollection:MyCoolControlUI:MyControlUIsBundleOfObjects:[CatalogueRepository:AggregateConfiguration:105,CatalogueRepository:AggregateConfiguration:102,CatalogueRepository:AggregateConfiguration:101]###EXTRA_TEXT###I've got a lovely bunch of coconuts
+        var tokens = persistString.Split(PersistStringHelper.Separator);
 
-            ObjectConstructor objectConstructor = new ObjectConstructor();
-            IPersistableObjectCollection collectionInstance = (IPersistableObjectCollection)objectConstructor.Construct(collectionType);
-                
-            if(collectionInstance.DatabaseObjects == null)
-                throw new PersistenceException("Constructor of Type '" +collectionType + "' did not initialise property DatabaseObjects");
-            
-            var allObjectsString = _persistStringHelper.MatchCollectionInString(persistString);
+        var uiType = GetTypeByName(tokens[1], typeof(Control), repositoryLocator);
+        var collectionType = GetTypeByName(tokens[2], typeof(IPersistableObjectCollection), repositoryLocator);
 
-            collectionInstance.DatabaseObjects.AddRange(_persistStringHelper.GetObjectCollectionFromPersistString(allObjectsString,repositoryLocator));
+        var collectionInstance = (IPersistableObjectCollection)ObjectConstructor.Construct(collectionType);
 
-            var extraText = _persistStringHelper.GetExtraText(persistString);
-            collectionInstance.LoadExtraText(extraText);
+        if (collectionInstance.DatabaseObjects == null)
+            throw new PersistenceException(
+                $"Constructor of Type '{collectionType}' did not initialise property DatabaseObjects");
 
-            return new DeserializeInstruction(uiType,collectionInstance);
-        }
+        var allObjectsString = PersistStringHelper.MatchCollectionInString(persistString);
 
-        private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s);
+        collectionInstance.DatabaseObjects.AddRange(
+            PersistStringHelper.GetObjectCollectionFromPersistString(allObjectsString, repositoryLocator));
 
-            if (toReturn == null)
-                throw new TypeLoadException("Could not find Type called '" + s + "'");
+        var extraText = PersistStringHelper.GetExtraText(persistString);
+        collectionInstance.LoadExtraText(extraText);
 
-            if (expectedBaseClassType != null)
-                if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                    throw new TypeLoadException("Persistence string included a reference to Type '" + s + "' which we managed to find but it did not match an expected base Type (" + expectedBaseClassType + ")");
+        return new DeserializeInstruction(uiType, collectionInstance);
+    }
 
-            return toReturn;
-        }
-    
+    private static Type GetTypeByName(string s, Type expectedBaseClassType,
+        IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        var toReturn = MEF.GetType(s) ?? throw new TypeLoadException($"Could not find Type called '{s}'");
+        if (expectedBaseClassType?.IsAssignableFrom(toReturn) == false)
+            throw new TypeLoadException(
+                $"Persistence string included a reference to Type '{s}' which we managed to find but it did not match an expected base Type ({expectedBaseClassType})");
+
+        return toReturn;
     }
 }

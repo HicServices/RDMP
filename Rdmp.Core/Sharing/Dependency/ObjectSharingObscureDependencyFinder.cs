@@ -5,40 +5,36 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Sharing.Dependency
+namespace Rdmp.Core.Sharing.Dependency;
+
+/// <summary>
+/// Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry in ObjectExport table) then you
+/// cannot delete it.  Also handles cascading deletes of imported classes e.g. if a Catalogue was imported from somewhere else (has an entry in ObjectImport) and
+/// then you delete it the ObjectImport reference will also be deleted.
+/// </summary>
+public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
 {
-    /// <summary>
-    /// Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry in ObjectExport table) then you
-    /// cannot delete it.  Also handles cascading deletes of imported classes e.g. if a Catalogue was imported from somewhere else (has an entry in ObjectImport) and
-    /// then you delete it the ObjectImport reference will also be deleted.
-    /// </summary>
-    public class ObjectSharingObscureDependencyFinder : IObscureDependencyFinder
+    private readonly ShareManager _shareManager;
+
+    public ObjectSharingObscureDependencyFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        private ShareManager _shareManager;
+        _shareManager = new ShareManager(repositoryLocator);
+    }
 
-        public ObjectSharingObscureDependencyFinder(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            _shareManager = new ShareManager(repositoryLocator);
-        }
+    public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    {
+        if (_shareManager.IsExportedObject(oTableWrapperObject))
+            throw new Exception(
+                $"You cannot Delete '{oTableWrapperObject}' because it is an Exported object declared in the ObjectExport table");
+    }
 
-        public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            if (_shareManager.IsExportedObject(oTableWrapperObject))
-                throw new Exception("You cannot Delete '" + oTableWrapperObject + "' because it is an Exported object declared in the ObjectExport table");
-        }
-
-        public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            if(_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
-                return;
-
-            if (oTableWrapperObject.GetType() != typeof (ObjectImport))
-                _shareManager.DeleteAllOrphanImportDefinitions();
-        }
-    
+    public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+    {
+        if (oTableWrapperObject.GetType() != typeof(ObjectImport))
+            _shareManager.DeleteAllOrphanImportDefinitions();
     }
 }

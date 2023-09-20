@@ -10,23 +10,22 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CohortCommitting.Pipeline
+namespace Rdmp.Core.CohortCommitting.Pipeline;
+
+/// <summary>
+/// See CohortCreationRequest
+///  </summary>
+public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
 {
-    /// <summary>
-    /// See CohortCreationRequest
-    ///  </summary>
-    public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
-    {
-        IProject Project { get; }
-        ICohortDefinition NewCohortDefinition { get; set; }
-        ExtractionInformation ExtractionIdentifierColumn { get; set; }
-        CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
-        ExtractableCohort CohortCreatedIfAny { get; }
-        FlatFileToLoad FileToLoad { get; set; }
+    IProject Project { get; }
+    ICohortDefinition NewCohortDefinition { get; set; }
+    ExtractionInformation ExtractionIdentifierColumn { get; set; }
+    CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+    ExtractableCohort CohortCreatedIfAny { get; }
+    FlatFileToLoad FileToLoad { get; set; }
 
-        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages);
-        void PushToServer(IManagedConnection transaction);
-    }
+    int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess, bool migrateUsages);
+    void PushToServer(IManagedConnection transaction);
 }

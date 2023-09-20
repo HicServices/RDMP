@@ -6,25 +6,20 @@
 
 using System;
 using NLog;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Logging.Listeners.Extensions
+namespace Rdmp.Core.Logging.Listeners.Extensions;
+
+public static class CheckEventArgsExtensions
 {
-    public static class CheckEventArgsExtensions
+    public static LogLevel ToLogLevel(this CheckEventArgs args)
     {
-        public static LogLevel ToLogLevel(this CheckEventArgs args)
+        return args.Result switch
         {
-            switch (args.Result)
-            {
-                case CheckResult.Success:
-                    return LogLevel.Info;
-                case CheckResult.Warning:
-                    return LogLevel.Warn;
-                case CheckResult.Fail:
-                    return LogLevel.Error;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+            CheckResult.Success => LogLevel.Info,
+            CheckResult.Warning => LogLevel.Warn,
+            CheckResult.Fail => LogLevel.Error,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

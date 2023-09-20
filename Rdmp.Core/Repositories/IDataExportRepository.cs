@@ -4,39 +4,40 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
+using System.Collections.Generic;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
-using System.Collections.Generic;
 
-namespace Rdmp.Core.Repositories
+namespace Rdmp.Core.Repositories;
+
+/// <summary>
+/// See DataExportRepository
+/// </summary>
+public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
 {
+    ICatalogueRepository CatalogueRepository { get; }
+    CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
+
+    ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
+
     /// <summary>
-    /// See DataExportRepository
+    /// Manager for AND/OR WHERE containers and filters
     /// </summary>
-    public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
-    {
-        ICatalogueRepository CatalogueRepository { get; }
-        CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
-
-        ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
-
-        /// <summary>
-        /// Manager for AND/OR WHERE containers and filters
-        /// </summary>
-        IFilterManager FilterManager { get; }
+    IFilterManager FilterManager { get; }
 
 
-        /// <summary>
-        /// Handles forbidding deleting stuff / cascading deletes into other objects
-        /// </summary>
-        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-        
-        IDataExportPropertyManager DataExportPropertyManager { get; }
-        
-        IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(IExtractionConfiguration configuration, IExtractableDataSet dataset);
-        IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
-    }
+    /// <summary>
+    /// Handles forbidding deleting stuff / cascading deletes into other objects
+    /// </summary>
+    IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+
+    IDataExportPropertyManager DataExportPropertyManager { get; }
+
+    IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
+        IExtractionConfiguration configuration, IExtractableDataSet dataset);
+
+    IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults);
 }

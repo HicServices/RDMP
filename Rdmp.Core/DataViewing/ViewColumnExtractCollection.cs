@@ -9,236 +9,202 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
+/// </summary>
+public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
+    public ViewType ViewType { get; private set; }
+
     /// <summary>
-    /// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
+    /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)
     /// </summary>
-    public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public ExtractionInformation ExtractionInformation =>
+        DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault();
+
+    /// <summary>
+    /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
+    /// </summary>
+    public ColumnInfo ColumnInfo => DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault();
+
+
+    #region Constructors
+
+    /// <summary>
+    /// for persistence, do not use
+    /// </summary>
+    public ViewColumnExtractCollection()
     {
-        public ViewType ViewType { get; private set; }
+    }
 
-        /// <summary>
-        /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)
-        /// </summary>
-        public ExtractionInformation ExtractionInformation
+    public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
+    {
+        DatabaseObjects.Add(c);
+        if (filter != null)
+            DatabaseObjects.Add(filter);
+        ViewType = viewType;
+    }
+
+    public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
+    {
+        DatabaseObjects.Add(c);
+        if (container != null)
+            DatabaseObjects.Add(container);
+        ViewType = viewType;
+    }
+
+    public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IFilter filter = null) : this()
+    {
+        DatabaseObjects.Add(ei);
+        if (filter != null)
+            DatabaseObjects.Add(filter);
+        ViewType = viewType;
+    }
+
+    public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IContainer container) : this()
+    {
+        DatabaseObjects.Add(ei);
+        if (container != null)
+            DatabaseObjects.Add(container);
+        ViewType = viewType;
+    }
+
+    #endregion
+
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+        { { "ViewType", ViewType.ToString() } });
+
+    public override void LoadExtraText(string s)
+    {
+        var value = PersistStringHelper.GetValueIfExistsFromPersistString("ViewType", s);
+        ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
+    }
+
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        if (GetFilterIfAny() is ConcreteFilter f)
+            yield return f;
+
+        if (GetContainerIfAny() is ConcreteContainer c)
+            yield return c;
+
+        yield return GetTableInfo() as TableInfo;
+    }
+
+    public IDataAccessPoint GetDataAccessPoint() => GetTableInfo();
+
+    private ITableInfo GetTableInfo() => ExtractionInformation != null
+        ? ExtractionInformation.ColumnInfo?.TableInfo
+        : (ITableInfo)ColumnInfo?.TableInfo;
+
+    public string GetSql()
+    {
+        var qb = new QueryBuilder(null, null, new[] { GetTableInfo() });
+
+        if (ViewType == ViewType.TOP_100)
+            qb.TopX = 100;
+
+        if (ViewType == ViewType.Distribution)
+            AddDistributionColumns(qb);
+        else
+            qb.AddColumn(GetIColumn());
+
+        var filter = GetFilterIfAny();
+        var container = GetContainerIfAny();
+
+        if (filter != null && container != null)
+            throw new Exception("Cannot generate SQL with both filter and container");
+
+        if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,
+                new[] { filter }, FilterContainerOperation.AND);
+        else if (container != null) qb.RootFilterContainer = container;
+
+        if (ViewType == ViewType.Aggregate)
+            qb.AddCustomLine("count(*) as Count,", QueryComponent.QueryTimeColumn);
+
+        var sql = qb.SQL;
+
+        if (ViewType == ViewType.Aggregate)
+            sql += $"{Environment.NewLine} GROUP BY {GetColumnSelectSql()}";
+
+        if (ViewType == ViewType.Aggregate)
+            sql += $"{Environment.NewLine} ORDER BY count(*) DESC";
+
+        return sql;
+    }
+
+    private IColumn GetIColumn()
+    {
+        if (ExtractionInformation != null) return ExtractionInformation;
+        return ColumnInfo != null ? new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo) : (IColumn)null;
+    }
+
+    private void AddDistributionColumns(QueryBuilder qb)
+    {
+        var repo = new MemoryRepository();
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountTotal", "count(1)"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull",
+            $"SUM(CASE WHEN {GetColumnSelectSql()} IS NULL THEN 1 ELSE 0  END)"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero",
+            $"SUM(CASE WHEN {GetColumnSelectSql()} = 0 THEN 1  ELSE 0 END)"));
+
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", $"max({GetColumnSelectSql()})"));
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", $"min({GetColumnSelectSql()})"));
+
+        switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
         {
-            get { return DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault(); }
+            case DatabaseType.MicrosoftSQLServer:
+                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", $"stdev({GetColumnSelectSql()})"));
+                break;
+            case DatabaseType.MySql:
+            case DatabaseType.Oracle:
+                qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", $"stddev({GetColumnSelectSql()})"));
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
 
-        /// <summary>
-        /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
-        /// </summary>
-        public ColumnInfo ColumnInfo
-        {
-            get { return DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault(); }
-        }
+        qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", $"avg({GetColumnSelectSql()})"));
+    }
+
+    /// <summary>
+    /// Returns the column Select SQL (without alias) for use in query building
+    /// </summary>
+    /// <returns></returns>
+    private string GetColumnSelectSql() => GetIColumn().SelectSQL;
+
+    public string GetTabName() => $"{GetIColumn()}({ViewType})";
+
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+        if (ColumnInfo != null) autoComplete.Add(ColumnInfo);
+    }
+
+    private IFilter GetFilterIfAny()
+    {
+        return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
+    }
+
+    private IContainer GetContainerIfAny()
+    {
+        return (IContainer)DatabaseObjects.SingleOrDefault(o => o is IContainer);
+    }
 
 
-        #region Constructors
-        /// <summary>
-        /// for persistence, do not use
-        /// </summary>
-        public ViewColumnExtractCollection()
-        {
-        }
-
-        public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IFilter filter = null) : this()
-        {
-            DatabaseObjects.Add(c);
-            if (filter != null)
-                DatabaseObjects.Add(filter);
-            ViewType = viewType;
-        }
-        public ViewColumnExtractCollection(ColumnInfo c, ViewType viewType, IContainer container) : this()
-        {
-            DatabaseObjects.Add(c);
-            if (container != null)
-                DatabaseObjects.Add(container);
-            ViewType = viewType;
-        }
-        public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IFilter filter = null) : this()
-        {
-            DatabaseObjects.Add(ei);
-            if (filter != null)
-                DatabaseObjects.Add(filter);
-            ViewType = viewType;
-        }
-        public ViewColumnExtractCollection(ExtractionInformation ei, ViewType viewType, IContainer container) : this()
-        {
-            DatabaseObjects.Add(ei);
-            if (container != null)
-                DatabaseObjects.Add(container);
-            ViewType = viewType;
-        }
-        #endregion
-
-        public override string SaveExtraText()
-        {
-            return Helper.SaveDictionaryToString(new Dictionary<string, string>() { { "ViewType", ViewType.ToString() } });
-        }
-
-        public override void LoadExtraText(string s)
-        {
-            string value = Helper.GetValueIfExistsFromPersistString("ViewType", s);
-            ViewType = (ViewType)Enum.Parse(typeof(ViewType), value);
-        }
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            if (GetFilterIfAny() is ConcreteFilter f)
-                yield return f;
-
-            if (GetContainerIfAny() is ConcreteContainer c)
-                yield return c;
-
-            yield return GetTableInfo() as TableInfo;
-        }
-
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return GetTableInfo();
-        }
-
-        private ITableInfo GetTableInfo()
-        {
-            if (ExtractionInformation != null)
-            {
-                return ExtractionInformation.ColumnInfo?.TableInfo;
-            }
-
-            if (ColumnInfo != null)
-                return ColumnInfo.TableInfo;
-
-            return null;
-        }
-
-        public string GetSql()
-        {
-            var qb = new QueryBuilder(null, null, new[] { GetTableInfo()});
-
-            if (ViewType == ViewType.TOP_100)
-                qb.TopX = 100;
-
-            if (ViewType == ViewType.Distribution)
-                AddDistributionColumns(qb);
-            else
-                qb.AddColumn(GetIColumn());
-
-            var filter = GetFilterIfAny();
-            var container = GetContainerIfAny();
-
-            if(filter != null && container != null)
-                throw new Exception("Cannot generate SQL with both filter and container");
-
-            if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
-            {
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
-            }
-            else if(container != null)
-            {
-                qb.RootFilterContainer = container;
-            }
-
-            if (ViewType == ViewType.Aggregate)
-                qb.AddCustomLine("count(*) as Count,", QueryComponent.QueryTimeColumn);
-
-            var sql = qb.SQL;
-
-            if (ViewType == ViewType.Aggregate)
-                sql += Environment.NewLine + " GROUP BY " + GetColumnSelectSql();
-
-            if (ViewType == ViewType.Aggregate)
-                sql += Environment.NewLine + " ORDER BY count(*) DESC";
-
-            return sql;
-        }
-
-        private IColumn GetIColumn()
-        {
-            if(ExtractionInformation != null)
-            {
-                return ExtractionInformation;
-            }
-            if(ColumnInfo != null)
-            {
-                return new ColumnInfoToIColumn(new MemoryRepository(), ColumnInfo);
-            }
-
-            return null;
-        }
-
-        private void AddDistributionColumns(QueryBuilder qb)
-        {
-            var repo = new MemoryRepository();
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountTotal", "count(1)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountNull", "SUM(CASE WHEN " + GetColumnSelectSql() + " IS NULL THEN 1 ELSE 0  END)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "CountZero", "SUM(CASE WHEN " + GetColumnSelectSql() + " = 0 THEN 1  ELSE 0 END)"));
-
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Max", "max(" + GetColumnSelectSql() + ")"));
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "Min", "min(" + GetColumnSelectSql() + ")"));
-
-            switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stdev ", "stdev(" + GetColumnSelectSql() + ")"));
-                    break;
-                case DatabaseType.MySql:
-                case DatabaseType.Oracle:
-                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", "stddev(" + GetColumnSelectSql() + ")"));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-
-            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", "avg(" + GetColumnSelectSql() + ")"));
-
-        }
-
-        /// <summary>
-        /// Returns the column Select SQL (without alias) for use in query building
-        /// </summary>
-        /// <returns></returns>
-        private string GetColumnSelectSql()
-        {
-            return GetIColumn().SelectSQL;
-        }
-
-        public string GetTabName()
-        {
-            return GetIColumn() + "(" + ViewType + ")";
-        }
-
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-            if(ColumnInfo != null)
-            {
-                autoComplete.Add(ColumnInfo);
-            }   
-        }
-
-        private IFilter GetFilterIfAny()
-        {
-            return (IFilter)DatabaseObjects.SingleOrDefault(o => o is IFilter);
-        }
-        private IContainer GetContainerIfAny()
-        {
-            return (IContainer)DatabaseObjects.SingleOrDefault(o => o is IContainer);
-        }
-
-
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            var c = ColumnInfo;
-            return c != null ? c.GetQuerySyntaxHelper() : null;
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        var c = ColumnInfo;
+        return c?.GetQuerySyntaxHelper();
     }
 }

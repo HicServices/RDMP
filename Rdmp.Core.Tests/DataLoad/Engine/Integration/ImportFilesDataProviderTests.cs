@@ -8,105 +8,103 @@
 using System;
 using System.IO;
 using System.Linq;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class ImportFilesDataProviderTests : DatabaseTests
 {
-    public class ImportFilesDataProviderTests:DatabaseTests
+    [Test]
+    public void CopyFiles()
     {
-        [Test]
-        public void CopyFiles()
-        {
-            var sourceDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("subdir");
-            var targetDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("loaddir");
-            
-            //make sure target is empty
-            foreach (var f in targetDir.GetFiles())
-                f.Delete();
-            
-            var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
+        var sourceDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("subdir");
+        var targetDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory).CreateSubdirectory("loaddir");
 
-            File.WriteAllText(originpath,"fish");
+        //make sure target is empty
+        foreach (var f in targetDir.GetFiles())
+            f.Delete();
 
-            var job = new ThrowImmediatelyDataLoadJob();
-            var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
-            job.LoadDirectory = mockProjectDirectory;
+        var originpath = Path.Combine(sourceDir.FullName, "myFile.txt");
+
+        File.WriteAllText(originpath, "fish");
+
+        var job = new ThrowImmediatelyDataLoadJob();
+        var mockProjectDirectory = Substitute.For<ILoadDirectory>();
+        mockProjectDirectory.ForLoading.Returns(targetDir);
+        job.LoadDirectory = mockProjectDirectory;
 
 
-            //Create the provider
-            var provider = new ImportFilesDataProvider();
+        //Create the provider
+        var provider = new ImportFilesDataProvider();
 
-            //it doesn't know what to load yet
-            Assert.Throws<Exception>(() => provider.Check(new ThrowImmediatelyCheckNotifier()));
-            
-            //now it does
-            provider.DirectoryPath = sourceDir.FullName;
+        //it doesn't know what to load yet
+        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            //but it doesn't have a file pattern
-            Assert.Throws<Exception>(() => provider.Check(new ThrowImmediatelyCheckNotifier()));
+        //now it does
+        provider.DirectoryPath = sourceDir.FullName;
 
-            //now it does but its not a matching one
-            provider.FilePattern = "cannonballs.bat";
+        //but it doesn't have a file pattern
+        Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            //either way it passes checking
-            Assert.DoesNotThrow(() => provider.Check(new ThrowImmediatelyCheckNotifier()));
+        //now it does but its not a matching one
+        provider.FilePattern = "cannonballs.bat";
 
-            //execute the provider
-            provider.Fetch(job, new GracefulCancellationToken());
+        //either way it passes checking
+        Assert.DoesNotThrow(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            //destination is empty because nothing matched 
-            Assert.IsEmpty(targetDir.GetFiles());
+        //execute the provider
+        provider.Fetch(job, new GracefulCancellationToken());
 
-            //give it correct pattern
-            provider.FilePattern = "*.txt";
+        //destination is empty because nothing matched
+        Assert.IsEmpty(targetDir.GetFiles());
 
-            //execute the provider
-            provider.Fetch(job, new GracefulCancellationToken());
+        //give it correct pattern
+        provider.FilePattern = "*.txt";
 
-            //both files should exist
-            Assert.AreEqual(1,targetDir.GetFiles().Count());
-            Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        //execute the provider
+        provider.Fetch(job, new GracefulCancellationToken());
 
-            //simulate load failure
-            provider.LoadCompletedSoDispose(ExitCodeType.Abort, new ThrowImmediatelyDataLoadJob());
+        //both files should exist
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
-            //both files should exist
-            Assert.AreEqual(1, targetDir.GetFiles().Count());
-            Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        //simulate load failure
+        provider.LoadCompletedSoDispose(ExitCodeType.Abort, new ThrowImmediatelyDataLoadJob());
 
-            //simulate load success
-            provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
+        //both files should exist
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
-            //both files should exist because Delete on success is false
-            Assert.AreEqual(1, targetDir.GetFiles().Count());
-            Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        //simulate load success
+        provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
-            //change behaviour to delete on successful data loads
-            provider.DeleteFilesOnsuccessfulLoad = true;
+        //both files should exist because Delete on success is false
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
-            //simulate load failure
-            provider.LoadCompletedSoDispose(ExitCodeType.Error, new ThrowImmediatelyDataLoadJob());
+        //change behaviour to delete on successful data loads
+        provider.DeleteFilesOnsuccessfulLoad = true;
 
-            //both files should exist
-            Assert.AreEqual(1, targetDir.GetFiles().Count());
-            Assert.AreEqual(1, sourceDir.GetFiles().Count());
+        //simulate load failure
+        provider.LoadCompletedSoDispose(ExitCodeType.Error, new ThrowImmediatelyDataLoadJob());
 
-            //simulate load success
-            provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
+        //both files should exist
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(1, sourceDir.GetFiles().Length);
 
-            //only forLoading file should exist (in real life that one would be handled by archivng already)
-            Assert.AreEqual(1, targetDir.GetFiles().Count());
-            Assert.AreEqual(0, sourceDir.GetFiles().Count());
+        //simulate load success
+        provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
-        }
-
+        //only forLoading file should exist (in real life that one would be handled by archivng already)
+        Assert.AreEqual(1, targetDir.GetFiles().Length);
+        Assert.AreEqual(0, sourceDir.GetFiles().Length);
     }
 }

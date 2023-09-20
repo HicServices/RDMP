@@ -4,33 +4,32 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Logging.Listeners
+namespace Rdmp.Core.Logging.Listeners;
+
+/// <summary>
+/// Acts as wrapper for another <see cref="IDataLoadEventListener"/> but changes all messages that flow through to appear to come from the same
+/// sender (string).  You can use this to help with distinguishing message dispatchers (senders) between discrete tasks / threads.
+/// </summary>
+public class OverrideSenderIDataLoadEventListener : IDataLoadEventListener
 {
-    /// <summary>
-    /// Acts as wrapper for another <see cref="IDataLoadEventListener"/> but changes all messages that flow through to appear to come from the same
-    /// sender (string).  You can use this to help with distinguishing message dispatchers (senders) between discrete tasks / threads.
-    /// </summary>
-    public class OverrideSenderIDataLoadEventListener : IDataLoadEventListener
+    private readonly string _overridingSender;
+    private IDataLoadEventListener _child;
+
+    public OverrideSenderIDataLoadEventListener(string overridingSender, IDataLoadEventListener childToPassTo)
     {
-        private readonly string _overridingSender;
-        private IDataLoadEventListener _child;
+        _overridingSender = overridingSender;
+        _child = childToPassTo;
+    }
 
-        public OverrideSenderIDataLoadEventListener(string overridingSender, IDataLoadEventListener childToPassTo)
-        {
-            _overridingSender = overridingSender;
-            _child = childToPassTo;
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        _child.OnNotify(_overridingSender, e);
+    }
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            _child.OnNotify(_overridingSender,e);
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            _child.OnProgress(_overridingSender,e);
-        }
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        _child.OnProgress(_overridingSender, e);
     }
 }

@@ -7,43 +7,45 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+
+/// <summary>
+/// Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are ANOTableInfoSynchronizer and IdentifierDumper.
+/// </summary>
+public class AnonymisationChecks : ICheckable
 {
-    /// <summary>
-    /// Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are ANOTableInfoSynchronizer and IdentifierDumper.
-    /// </summary>
-    public class AnonymisationChecks : ICheckable
-    {
-        private readonly TableInfo _tableInfo;
+    private readonly TableInfo _tableInfo;
 
-        public AnonymisationChecks(TableInfo tableInfo)
+    public AnonymisationChecks(TableInfo tableInfo)
+    {
+        _tableInfo = tableInfo;
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        //check ANO stuff is synchronized
+        notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success,
+            null));
+
+        var synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
+
+        try
         {
-            _tableInfo = tableInfo;
+            synchronizer.Synchronize(notifier);
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Synchronization of Anonymisation configurations of table {_tableInfo.GetRuntimeName()} failed with Exception",
+                CheckResult.Fail, e, null));
         }
 
-        public void Check(ICheckNotifier notifier)
+        if (_tableInfo.IdentifierDumpServer_ID != null)
         {
-            //check ANO stuff is synchronized
-            notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success, null));
-
-            ANOTableInfoSynchronizer synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
-
-            try
-            {
-                synchronizer.Synchronize(notifier);
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Synchronization of Anonymsiation configurations of table " + _tableInfo.GetRuntimeName() + " failed with Exception", CheckResult.Fail, e, null));
-            }
-
-            if(_tableInfo.IdentifierDumpServer_ID != null)
-            {
-                var identifierDumper = new IdentifierDumper(_tableInfo);
-                identifierDumper.Check(notifier);
-            }
+            var identifierDumper = new IdentifierDumper(_tableInfo);
+            identifierDumper.Check(notifier);
         }
     }
 }

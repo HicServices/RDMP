@@ -7,23 +7,23 @@
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataLoad.Engine.Mutilators
+namespace Rdmp.Core.DataLoad.Engine.Mutilators;
+
+/// <summary>
+/// A user configurable component which will run during Data Load Engine execution and result in the modification of an existing table in of the load
+/// stages (RAW, STAGING or LIVE).  For example a PrimaryKeyCollisionResolverMutilation will delete records out of the table such that the Primary Key
+/// is unique (based on a column preference order).
+/// </summary>
+public interface IMutilateDataTables : ICheckable, IDisposeAfterDataLoad
 {
     /// <summary>
-    /// A user configurable component which will run during Data Load Engine execution and result in the modification of an existing table in of the load
-    /// stages (RAW, STAGING or LIVE).  For example a PrimaryKeyCollisionResolverMutilation will delete records out of the table such that the Primary Key
-    /// is unique (based on a column preference order). 
+    /// Called after construction to tell you where you will be running.  Note that at Checks time this might not exist yet (if you are in RAW/STAGING)
     /// </summary>
-    public interface IMutilateDataTables : ICheckable, IDisposeAfterDataLoad
-    {
-        /// <summary>
-        /// Called after construction to tell you where you will be running.  Note that at Checks time this might not exist yet (if you are in RAW/STAGING)
-        /// </summary>
-        /// <param name="dbInfo"></param>
-        /// <param name="loadStage"></param>
-        void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage);
-        ExitCodeType Mutilate(IDataLoadJob job);
-    }
+    /// <param name="dbInfo"></param>
+    /// <param name="loadStage"></param>
+    void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage);
+
+    ExitCodeType Mutilate(IDataLoadJob job);
 }

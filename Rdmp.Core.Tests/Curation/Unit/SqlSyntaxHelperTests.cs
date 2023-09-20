@@ -5,59 +5,58 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Implementations.MicrosoftSQL;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.Tests.Curation.Unit
+namespace Rdmp.Core.Tests.Curation.Unit;
+
+[Category("Unit")]
+public class SqlSyntaxHelperTests
 {
-    [Category("Unit")]
-    public class SqlSyntaxHelperTests
+    [Test]
+    public void GetNullSubstituteTests()
     {
-        [Test]
-        public void GetNullSubstituteTests()
-        {
-
-            var ti = Mock.Of<ITableInfo>(t=>t.GetQuerySyntaxHelper() == new MicrosoftQuerySyntaxHelper());
-
-            var pk = new PrimaryKeyCollisionResolver(ti);
-
-            Assert.AreEqual("-999",pk.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
-            Assert.AreEqual("-9999999999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
-            Assert.AreEqual("-99.9", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
-            Assert.AreEqual("-.9999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
+        Assert.AreEqual("-999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
+        Assert.AreEqual("-9999999999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
+        Assert.AreEqual("-99.9",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
+        Assert.AreEqual("-.9999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
 
 
-            Assert.AreEqual("999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
-            Assert.AreEqual("9999999999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
-            Assert.AreEqual("99.9", pk.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
-            Assert.AreEqual(".9999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
+        Assert.AreEqual("999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
+        Assert.AreEqual("9999999999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
+        Assert.AreEqual("99.9",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
+        Assert.AreEqual(".9999",
+            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
+    }
 
-        }
+    [Test]
+    public void SplitMethod()
+    {
+        var syntaxHelper = MicrosoftQuerySyntaxHelper.Instance;
 
-        [Test]
-        public void SplitMethod()
-        {
-            var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)", out var method, out var contents);
 
-            string contents;
-            string method;
-            syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)",out method,out contents);
-            
-            Assert.AreEqual("count",method);
-            Assert.AreEqual("*",contents);
+        Assert.AreEqual("count", method);
+        Assert.AreEqual("*", contents);
 
-            syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count()", out method, out contents);
+        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count()", out method, out contents);
 
-            Assert.AreEqual("count", method);
-            Assert.AreEqual("", contents);
+        Assert.AreEqual("count", method);
+        Assert.AreEqual("", contents);
 
 
-            syntaxHelper.SplitLineIntoOuterMostMethodAndContents("LTRIM(RTRIM([Fish]))", out method, out contents);
+        syntaxHelper.SplitLineIntoOuterMostMethodAndContents("LTRIM(RTRIM([Fish]))", out method, out contents);
 
-            Assert.AreEqual("LTRIM", method);
-            Assert.AreEqual("RTRIM([Fish])", contents);
-        }
+        Assert.AreEqual("LTRIM", method);
+        Assert.AreEqual("RTRIM([Fish])", contents);
     }
 }

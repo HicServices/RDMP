@@ -4,57 +4,46 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconProvision;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+public sealed class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution
 {
-    public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAtomicCommand
+    private readonly CohortIdentificationConfiguration _cic;
+    private readonly ExternalDatabaseServer[] _caches;
+
+    public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator, CohortIdentificationConfiguration cic) :
+        base(activator)
     {
-        private readonly CohortIdentificationConfiguration _cic;
-        private ExternalDatabaseServer[] _caches;
-
-        public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
-        {
-            _cic = cic;
-
-            _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-                .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
-
-            if(!_caches.Any())
-                SetImpossible("There are no Query Caching databases set up");
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-            
-            if (SelectOne(_caches.ToList(), out ExternalDatabaseServer selected))
-            {
-                if (selected == null)
-                    _cic.QueryCachingServer_ID = null;
-                else
-                    _cic.QueryCachingServer_ID = selected.ID;
-
-                _cic.SaveToDatabase();
-                Publish(_cic);
-            }
-        }
-
-        public override string GetCommandName()
-        {
-            return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
-        }
+        _cic = cic;
+        _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            .Where(static s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
+        if (!_caches.Any())
+            SetImpossible("There are no Query Caching databases set up");
     }
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        if (!SelectOne(_caches.ToList(), out var selected)) return;
+
+        _cic.QueryCachingServer_ID = selected?.ID;
+        _cic.SaveToDatabase();
+        Publish(_cic);
+    }
+
+    public override string GetCommandName() =>
+        _cic.QueryCachingServer_ID == null ? "Set Query Cache" : "Change Query Cache";
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
 }

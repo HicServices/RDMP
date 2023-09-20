@@ -17,78 +17,60 @@ using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests.DesignPatternTests
+namespace Rdmp.UI.Tests.DesignPatternTests;
+
+public class AllUIsDocumentedTest : UnitTests
 {
-    public class AllUIsDocumentedTest : UnitTests
+    [Test]
+    public void EveryClassInAppropriateNamespace()
     {
-        private int evaluatedClasses = 0;
+        var Errors = new List<string>();
 
-        [Test]
-        public void EveryClassInAppropriateNamespace()
-        {
-            List<string> Errors = new List<string>();
+        Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
+        Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
+        // Assembly.Load(typeof(ActivateItems).Assembly.FullName);
 
-            Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
-            Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
-           // Assembly.Load(typeof(ActivateItems).Assembly.FullName);
+        //commands
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecution),
+            "CommandExecution",
+            "CommandExecution.AtomicCommands",
+            "CommandExecution.AtomicCommands.PluginCommands",
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
-            //commands
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecution),
-                "CommandExecution",
-                "CommandExecution.AtomicCommands",
-                "CommandExecution.AtomicCommands.PluginCommands",
-                "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand),
+            "CommandExecution",
+            "CommandExecution.AtomicCommands",
+            "CommandExecution.AtomicCommands.PluginCommands",
+            "CommandExecution.AtomicCommands.WindowArranging")); //legal namespaces
 
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand), 
-                "CommandExecution",
-                "CommandExecution.AtomicCommands",
-                "CommandExecution.AtomicCommands.PluginCommands",
-                "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
+        //proposals
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecutionProposal), "CommandExecution.Proposals"));
 
-            //proposals
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ICommandExecutionProposal), "CommandExecution.Proposals"));
+        //menus
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ContextMenuStrip), "Menus"));
+        Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ToolStripMenuItem), "Menus.MenuItems"));
 
-            //menus
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ContextMenuStrip), "Menus"));
-            Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(ToolStripMenuItem), "Menus.MenuItems"));
-            
-            foreach (string error in Errors)
-                Console.WriteLine("FATAL NAMESPACE ERROR FAILURE:" + error);
+        foreach (var error in Errors)
+            Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
-            Assert.AreEqual(Errors.Count,0);
-        }
+        Assert.AreEqual(Errors.Count, 0);
+    }
 
-        private string[] _exemptNamespaces = new string[]
-        {
-            "System.ComponentModel.Design",
-            "System.Windows.Forms",
-            "Rdmp.UI.ScintillaHelper"
-        };
+    private string[] _exemptNamespaces =
+    {
+        "System.ComponentModel.Design",
+        "System.Windows.Forms",
+        "Rdmp.UI.ScintillaHelper"
+    };
 
-        private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
-        {
-
-            SetupMEF();
-            foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
-            {
-                if (type.Namespace == null) 
-                    continue;
-
-                //don't validate classes in testing code
-                if (type.Namespace.Contains(".Tests"))
-                    continue;
-
-                //theese guys can be wherever they want
-                if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
-                    continue;
-
-                if (!legalNamespaces.Any(ns=>type.Namespace.Contains(ns)))
-                    yield return "Expected Type '" + type.Name + "' to be in namespace(s) '" + string.Join("' or '",legalNamespaces) + "' but it was in '" + type.Namespace + "'";
-                
-                evaluatedClasses++;
-            }
-
-            Console.WriteLine("Evaluated " + evaluatedClasses + " classes for namespace compatibility");
-        }
+    private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
+    {
+        return Core.Repositories.MEF.GetAllTypes()
+            .Where(InterfaceType.IsAssignableFrom)
+            .Where(type => type.Namespace?.Contains(".Tests") == false &&
+                           !_exemptNamespaces.Any(e => type.Namespace.Contains(e)) &&
+                           !legalNamespaces.Any(ns => type.Namespace.Contains(ns)))
+            .Select(type =>
+                $"Expected Type '{type.Name}' to be in namespace(s) '{string.Join("' or '", legalNamespaces)}' but it was in '{type.Namespace}'");
     }
 }

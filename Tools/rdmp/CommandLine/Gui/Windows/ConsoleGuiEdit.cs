@@ -8,177 +8,157 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows
+namespace Rdmp.Core.CommandLine.Gui.Windows;
+
+internal class ConsoleGuiEdit : Window
 {
-    class ConsoleGuiEdit : Window
+    private readonly IBasicActivateItems _activator;
+    private List<PropertyInListView> collection;
+    private ListView list;
+
+    public IRevertable DatabaseObject { get; }
+
+    public ConsoleGuiEdit(IBasicActivateItems activator, IRevertable databaseObject)
     {
-        private readonly IBasicActivateItems _activator;
-        private List<PropertyInListView> collection;
-        private ListView list;
+        _activator = activator;
+        DatabaseObject = databaseObject;
 
-        public IRevertable DatabaseObject { get; }
+        ColorScheme = ConsoleMainWindow.ColorScheme;
+        collection =
+            TableRepository.GetPropertyInfos(DatabaseObject.GetType())
+                .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
 
-        public ConsoleGuiEdit(IBasicActivateItems activator, IRevertable databaseObject)
+        list = new ListView(collection)
         {
-            _activator = activator;
-            DatabaseObject = databaseObject;
+            X = 0,
+            Y = 0,
+            Width = Dim.Fill(2),
+            Height = Dim.Fill(2)
+        };
+        list.KeyPress += List_KeyPress;
 
-            ColorScheme = ConsoleMainWindow.ColorScheme;
-            collection =
-
-                TableRepository.GetPropertyInfos(DatabaseObject.GetType())
-                    .Select(p => new PropertyInListView(p, DatabaseObject)).ToList();
-
-            list = new ListView(collection)
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(2),
-                Height = Dim.Fill(2)
-            };
-            list.KeyPress += List_KeyPress;
-
-            var btnSet = new Button("Set")
-            {
-                X = 0,
-                Y = Pos.Bottom(list),
-                IsDefault = true
-            };            
-
-            btnSet.Clicked += () =>
-            {
-                SetProperty(false);
-            };
-
-            var btnClose = new Button("Close")
-            {
-                X =  Pos.Right(btnSet),
-                Y = Pos.Bottom(list)
-            };
-            btnClose.Clicked += ()=>Application.RequestStop();
-            
-            this.Add(list);
-            this.Add(btnSet);
-            this.Add(btnClose);
-        }
-
-        private void SetProperty(bool setNull)
+        var btnSet = new Button("Set")
         {
-            if (list.SelectedItem != -1)
+            X = 0,
+            Y = Pos.Bottom(list),
+            IsDefault = true
+        };
+
+        btnSet.Clicked += () => { SetProperty(false); };
+
+        var btnClose = new Button("Close")
+        {
+            X = Pos.Right(btnSet),
+            Y = Pos.Bottom(list)
+        };
+        btnClose.Clicked += () => Application.RequestStop();
+
+        Add(list);
+        Add(btnSet);
+        Add(btnClose);
+    }
+
+    private void SetProperty(bool setNull)
+    {
+        if (list.SelectedItem != -1)
+            try
             {
-                try
+                var p = collection[list.SelectedItem];
+
+                var cmd = setNull
+                    ? new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo.Name, "null")
+                    : new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
+
+                if (cmd.IsImpossible)
                 {
-                    var p = collection[list.SelectedItem];
-
-                    var cmd = setNull ? new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo.Name, "null")
-                                      : new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
-
-                    if (cmd.IsImpossible)
-                    {
-                        _activator.Show("Error", cmd.ReasonCommandImpossible);
-                        return;
-                    }
-
-                    cmd.Execute();
-
-                    if (cmd.Success)
-                    {
-
-                        //redraws the list and re selects the current item
-                        DatabaseObject.RevertToDatabaseState();
-                        p.UpdateValue();
-
-                        var oldSelected = list.SelectedItem;
-                        list.SetSource(collection = collection.ToList());
-                        list.SelectedItem = oldSelected;
-                        list.EnsureSelectedItemVisible();
-                    }
-
+                    _activator.Show("Error", cmd.ReasonCommandImpossible);
+                    return;
                 }
-                catch (Exception e)
+
+                cmd.Execute();
+
+                if (cmd.Success)
                 {
-                    _activator.ShowException("Failed to set Property", e);
+                    //redraws the list and re selects the current item
+                    DatabaseObject.RevertToDatabaseState();
+                    p.UpdateValue();
+
+                    var oldSelected = list.SelectedItem;
+                    list.SetSource(collection = collection.ToList());
+                    list.SelectedItem = oldSelected;
+                    list.EnsureSelectedItemVisible();
                 }
             }
-        }
+            catch (Exception e)
+            {
+                _activator.ShowException("Failed to set Property", e);
+            }
+    }
 
-        private void List_KeyPress(KeyEventEventArgs obj)
+    private void List_KeyPress(KeyEventEventArgs obj)
+    {
+        if (obj.KeyEvent.Key == Key.DeleteChar)
         {
-            if(obj.KeyEvent.Key == Key.DeleteChar)
+            var rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
+            if (rly == 0)
             {
-                int rly = MessageBox.Query("Clear", "Clear Property Value?", "Yes", "Cancel");
-                if(rly == 0)
-                {
-                    obj.Handled = true;
-                    SetProperty(true);
-                }
-            }
-        }
-
-        /// <summary>
-        /// A list view entry with the value of the field and 
-        /// </summary>
-        private class PropertyInListView
-        {
-            public PropertyInfo PropertyInfo;
-            public string DisplayMember;
-            
-            public IMapsDirectlyToDatabaseTable Object;
-
-            public PropertyInListView(PropertyInfo p, IMapsDirectlyToDatabaseTable o)
-            {
-                PropertyInfo = p;
-                Object = o;
-                UpdateValue();
-
-            }
-
-            public override string ToString()
-            {
-                return DisplayMember;
-            }
-
-            /// <summary>
-            /// Updates the <see cref="DisplayMember"/> to indicate the new value
-            /// </summary>
-            /// <param name="newValue"></param>
-            public void UpdateValue()
-            {
-                var val = PropertyInfo.GetValue(Object) ?? string.Empty;
-
-                // If it is a password property
-                if(PropertyInfo.Name.Contains("Password",StringComparison.InvariantCultureIgnoreCase))
-                {
-                    // With a non null value
-                    if(!string.IsNullOrWhiteSpace(val.ToString()))
-                    {
-                            val = "****";
-                    }
-                }
-                
-                DisplayMember = PropertyInfo.Name + ":" + val;
+                obj.Handled = true;
+                SetProperty(true);
             }
         }
     }
 
-    public static class ListViewExtensions
+    /// <summary>
+    /// A list view entry with the value of the field and
+    /// </summary>
+    private class PropertyInListView
     {
-        public static void EnsureSelectedItemVisible(this ListView list)
+        public PropertyInfo PropertyInfo;
+        public string DisplayMember;
+
+        public IMapsDirectlyToDatabaseTable Object;
+
+        public PropertyInListView(PropertyInfo p, IMapsDirectlyToDatabaseTable o)
         {
-            if (list.SelectedItem < list.TopItem)
-            {
-                list.TopItem = list.SelectedItem;
-            }
-            else if (list.Frame.Height > 0 && list.SelectedItem >= list.TopItem + list.Frame.Height)
-            {
-                list.TopItem = Math.Max(list.SelectedItem - list.Frame.Height + 2, 0);
-            }
+            PropertyInfo = p;
+            Object = o;
+            UpdateValue();
         }
+
+        public override string ToString() => DisplayMember;
+
+        /// <summary>
+        /// Updates the <see cref="DisplayMember"/> to indicate the new value
+        /// </summary>
+        /// <param name="newValue"></param>
+        public void UpdateValue()
+        {
+            var val = PropertyInfo.GetValue(Object) ?? string.Empty;
+
+            // If it is a password property
+            if (PropertyInfo.Name.Contains("Password", StringComparison.InvariantCultureIgnoreCase))
+                // With a non null value
+                if (!string.IsNullOrWhiteSpace(val.ToString()))
+                    val = "****";
+
+            DisplayMember = $"{PropertyInfo.Name}:{val}";
+        }
+    }
+}
+
+public static class ListViewExtensions
+{
+    public static void EnsureSelectedItemVisible(this ListView list)
+    {
+        if (list.SelectedItem < list.TopItem)
+            list.TopItem = list.SelectedItem;
+        else if (list.Frame.Height > 0 && list.SelectedItem >= list.TopItem + list.Frame.Height)
+            list.TopItem = Math.Max(list.SelectedItem - list.Frame.Height + 2, 0);
     }
 }

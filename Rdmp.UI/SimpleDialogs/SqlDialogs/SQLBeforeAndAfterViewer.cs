@@ -8,101 +8,89 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ScintillaHelper;
-using ReusableLibraryCode;
-using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs.SqlDialogs
+namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
+
+/// <summary>
+/// Shows two pieces of SQL and the differences between them.  This is used by the RDMP for example to show you what the audited extraction SQL for a dataset was and what you
+/// last extracted it (e.g. before the weekend) and what the active configuration looks like today (e.g. if somebody snuck in a couple of extra columns into a data extraction
+/// after the extract file had already been generated).
+/// </summary>
+public partial class SQLBeforeAndAfterViewer : Form
 {
-    /// <summary>
-    /// Shows two pieces of SQL and the differences between them.  This is used by the RDMP for example to show you what the audited extraction SQL for a dataset was and what you 
-    /// last extracted it (e.g. before the weekend) and what the active configuration looks like today (e.g. if somebody snuck in a couple of extra columns into a data extraction
-    /// after the extract file had already been generated).
-    /// </summary>
-    public partial class SQLBeforeAndAfterViewer : Form
+    public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore,
+        string headerTextForAfter, string caption, MessageBoxButtons buttons,
+        SyntaxLanguage language = SyntaxLanguage.SQL)
     {
-        private Scintilla QueryEditorBefore;
-        private Scintilla QueryEditorAfter;
+        InitializeComponent();
+
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
+
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+            return;
+
+        var queryEditorBefore = new ScintillaTextEditorFactory().Create();
+        queryEditorBefore.Text = sqlBefore;
+        queryEditorBefore.ReadOnly = true;
+
+        splitContainer1.Panel1.Controls.Add(queryEditorBefore);
 
 
-        public SQLBeforeAndAfterViewer(string sqlBefore, string sqlAfter, string headerTextForBefore, string headerTextForAfter, string caption, MessageBoxButtons buttons, SyntaxLanguage language = SyntaxLanguage.SQL)
+        var queryEditorAfter = new ScintillaTextEditorFactory().Create();
+        queryEditorAfter.Text = sqlAfter;
+        queryEditorAfter.ReadOnly = true;
+
+        splitContainer1.Panel2.Controls.Add(queryEditorAfter);
+
+
+        //compute difference
+        ScintillaLineHighlightingHelper.ClearAll(queryEditorAfter);
+        ScintillaLineHighlightingHelper.ClearAll(queryEditorBefore);
+
+        sqlBefore ??= "";
+        sqlAfter ??= "";
+
+        foreach (var item in Diff.DiffText(sqlBefore, sqlAfter))
         {
-            InitializeComponent();
+            for (var i = item.StartA; i < item.StartA + item.deletedA; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(queryEditorBefore, i, Color.Pink);
 
-            bool designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-
-            if (designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
-
-            QueryEditorBefore = new ScintillaTextEditorFactory().Create();
-            QueryEditorBefore.Text = sqlBefore;
-            QueryEditorBefore.ReadOnly = true;
-
-            splitContainer1.Panel1.Controls.Add(QueryEditorBefore);
-
-
-            QueryEditorAfter = new ScintillaTextEditorFactory().Create();
-            QueryEditorAfter.Text = sqlAfter;
-            QueryEditorAfter.ReadOnly = true;
-
-            splitContainer1.Panel2.Controls.Add(QueryEditorAfter);
-
-            
-            //compute difference
-            var highlighter = new ScintillaLineHighlightingHelper();
-            highlighter.ClearAll(QueryEditorAfter);
-            highlighter.ClearAll(QueryEditorBefore);
-            
-            if (sqlBefore == null)
-                sqlBefore = "";
-            if (sqlAfter == null)
-                sqlAfter = "";
-
-            Diff diff = new Diff();
-
-            foreach (Diff.Item item in diff.DiffText(sqlBefore, sqlAfter))
-            {
-                for (int i = item.StartA; i < item.StartA+item.deletedA; i++)
-                        highlighter.HighlightLine(QueryEditorBefore,i,Color.Pink);
-                    
-                for (int i = item.StartB; i < item.StartB+item.insertedB; i++)
-                    highlighter.HighlightLine(QueryEditorAfter, i, Color.LawnGreen);
-                
-            }
-
-            switch (buttons)
-            {
-                case MessageBoxButtons.OK:
-                    btnYes.Visible = true;
-                    btnYes.Text = "Ok";
-                    btnNo.Visible = false;
-                    break;
-                case MessageBoxButtons.YesNo:
-                    btnYes.Visible = true;
-                    btnNo.Visible = true;
-                    break;
-                default:
-                    throw new NotSupportedException("buttons");
-            }
-
-            lblBefore.Text = headerTextForBefore;
-            lblAfter.Text = headerTextForAfter;
-
-            this.Text = caption;
-        }
-        
-        private void btnYes_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Yes;
-            this.Close();
+            for (var i = item.StartB; i < item.StartB + item.insertedB; i++)
+                ScintillaLineHighlightingHelper.HighlightLine(queryEditorAfter, i, Color.LawnGreen);
         }
 
-        private void btnNo_Click(object sender, EventArgs e)
+        switch (buttons)
         {
-            DialogResult = DialogResult.No;
-           this.Close();
+            case MessageBoxButtons.OK:
+                btnYes.Visible = true;
+                btnYes.Text = "Ok";
+                btnNo.Visible = false;
+                break;
+            case MessageBoxButtons.YesNo:
+                btnYes.Visible = true;
+                btnNo.Visible = true;
+                break;
+            default:
+                throw new NotSupportedException("buttons");
         }
 
+        lblBefore.Text = headerTextForBefore;
+        lblAfter.Text = headerTextForAfter;
 
+        Text = caption;
+    }
+
+    private void btnYes_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Yes;
+        Close();
+    }
+
+    private void btnNo_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.No;
+        Close();
     }
 }

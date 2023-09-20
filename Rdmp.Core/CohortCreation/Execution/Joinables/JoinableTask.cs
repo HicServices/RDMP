@@ -9,104 +9,80 @@ using System;
 using System.Data;
 using System.Linq;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.CohortCreation.Execution.Joinables
+namespace Rdmp.Core.CohortCreation.Execution.Joinables;
+
+/// <summary>
+/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The
+/// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
+/// result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
+/// </summary>
+public class JoinableTask : CacheableTask
 {
-    /// <summary>
-    /// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 
-    /// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
-    /// result table can/will be commited as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
-    /// </summary>
-    public class JoinableTask:CacheableTask
+    private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly string _catalogueName;
+
+    public JoinableCohortAggregateConfiguration Joinable { get; }
+
+
+    public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
     {
-        private CohortIdentificationConfiguration _cohortIdentificationConfiguration;
-        private AggregateConfiguration _aggregate;
-        private string _catalogueName;
+        Joinable = joinable;
+        _aggregate = Joinable.AggregateConfiguration;
+        _cohortIdentificationConfiguration = _aggregate.GetCohortIdentificationConfigurationIfAny();
 
-        public JoinableCohortAggregateConfiguration Joinable { get; private set; }
-
-        
-        public JoinableTask(JoinableCohortAggregateConfiguration joinable, CohortCompiler compiler) : base(compiler)
-        {
-            
-            Joinable = joinable;
-            _aggregate = Joinable.AggregateConfiguration;
-            _cohortIdentificationConfiguration =_aggregate.GetCohortIdentificationConfigurationIfAny();
-            
-            _catalogueName = Joinable.AggregateConfiguration.Catalogue.Name;
-            RefreshIsUsedState();
-        }
-
-        public override string GetCatalogueName()
-        {
-            return _catalogueName;
-        }
-
-        public override IMapsDirectlyToDatabaseTable Child
-        {
-            get { return Joinable; }
-        }
-
-        public override IDataAccessPoint[] GetDataAccessPoints()
-        {
-            return Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
-        }
-
-        public override bool IsEnabled()
-        {
-            return !_aggregate.IsDisabled;
-        }
-
-        public override string ToString()
-        {
-            
-            string name = _aggregate.Name;
-
-            string expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
-
-            if (name.StartsWith(expectedTrimStart))
-                return name.Substring(expectedTrimStart.Length);
-
-            return name;
-        }
-        
-        public override AggregateConfiguration GetAggregateConfiguration()
-        {
-            return Joinable.AggregateConfiguration;
-        }
-
-        public override CacheCommitArguments GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
-        {
-            return new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes, Timeout);
-        }
-
-        public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
-        {
-            manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
-        }
-
-        public override int Order { get { return Joinable.ID; }
-            set { throw new NotSupportedException();}
-        }
-
-        public bool IsUnused { get; private set; }
-
-        public void RefreshIsUsedState()
-        {
-            IsUnused = !Joinable.Users.Any();
-        }
-
-        public string GetUnusedWarningText()
-        {
-            return
-"Patient Index Table '" + ToString() + @"' is not used by any of your sets (above).";
-        }
+        _catalogueName = Joinable.AggregateConfiguration.Catalogue.Name;
+        RefreshIsUsedState();
     }
+
+    public override string GetCatalogueName() => _catalogueName;
+
+    public override IMapsDirectlyToDatabaseTable Child => Joinable;
+
+    public override IDataAccessPoint[] GetDataAccessPoints() =>
+        Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
+
+    public override bool IsEnabled() => !_aggregate.IsDisabled;
+
+    public override string ToString()
+    {
+        var name = _aggregate.Name;
+        var expectedTrimStart = _cohortIdentificationConfiguration.GetNamingConventionPrefixForConfigurations();
+        return name.StartsWith(expectedTrimStart, StringComparison.Ordinal) ? name[expectedTrimStart.Length..] : name;
+    }
+
+    public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
+
+    public override CacheCommitArguments
+        GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes) =>
+        new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes, Timeout);
+
+    public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
+    {
+        manager.DeleteCacheEntryIfAny(Joinable.AggregateConfiguration, AggregateOperation.JoinableInceptionQuery);
+    }
+
+    public override int Order
+    {
+        get => Joinable.ID;
+        set => throw new NotSupportedException();
+    }
+
+    public bool IsUnused { get; private set; }
+
+    public void RefreshIsUsedState()
+    {
+        IsUnused = !Joinable.Users.Any();
+    }
+
+    public string GetUnusedWarningText() =>
+        $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
 }

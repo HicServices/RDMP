@@ -6,65 +6,51 @@
 
 using System;
 using System.Linq;
-using FAnsi.Discovery;
 using Rdmp.Core.DataLoad.Triggers;
 
-namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
+namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
+
+/// <summary>
+/// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL
+/// for merging STAGING into LIVE during a data load.
+/// </summary>
+public class MigrationColumnSetQueryHelper
 {
-    /// <summary>
-    /// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL
-    /// for merging STAGING into LIVE during a data load.
-    /// </summary>
-    public class MigrationColumnSetQueryHelper
+    private readonly MigrationColumnSet _migrationColumnSet;
+
+    public MigrationColumnSetQueryHelper(MigrationColumnSet migrationColumnSet)
     {
-        private readonly MigrationColumnSet _migrationColumnSet;
+        _migrationColumnSet = migrationColumnSet;
+    }
 
-        public MigrationColumnSetQueryHelper(MigrationColumnSet migrationColumnSet)
-        {
-            _migrationColumnSet = migrationColumnSet;
-        }
+    public string BuildSelectListForAllColumnsExceptStandard(string tableAlias = "")
+    {
+        var sql = _migrationColumnSet.FieldsToDiff
+            .Where(col => !SpecialFieldNames.IsHicPrefixed(col) && !col.IsAutoIncrement).Aggregate("", (current, col) =>
+                $"{current}{tableAlias}[{col.GetRuntimeName()}],");
 
-        public string BuildSelectListForAllColumnsExceptStandard(string tableAlias = "")
-        {
-            string sql = "";
+        return sql.TrimEnd(',');
+    }
 
-            foreach (DiscoveredColumn col in _migrationColumnSet.FieldsToDiff)
-            {
-                //if it is hic_ or identity specification
-                if(SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
-                    continue;
+    public string BuildPrimaryKeyNotNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
 
-                sql += tableAlias + "[" + col.GetRuntimeName() + "],";
-            }
+    public string BuildPrimaryKeyNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NULL");
 
-            return sql.TrimEnd(',');
-        }
+    private string BuildPrimaryKeyCondition(string columnPrefix, string condition)
+    {
+        // Allow either 'prefix' or 'prefix.' to be passed through
+        if (!columnPrefix.EndsWith("."))
+            columnPrefix += ".";
 
-        public string BuildPrimaryKeyNotNullTest(string columnPrefix)
-        {
-            return BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
-        }
+        return string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(col =>
+            $"{columnPrefix}[{col.GetRuntimeName()}] IS {condition}"));
+    }
 
-        public string BuildPrimaryKeyNullTest(string columnPrefix)
-        {
-            return BuildPrimaryKeyCondition(columnPrefix, "NULL");
-        }
-
-        private string BuildPrimaryKeyCondition(string columnPrefix,string condition)
-        {
-            // Allow either 'prefix' or 'prefix.' to be passed through
-            if (!columnPrefix.EndsWith("."))
-                columnPrefix += ".";
-
-            return String.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(col => columnPrefix + "[" + col.GetRuntimeName() + "] IS " + condition));
-        }
-
-        public string BuildJoinClause(string sourceAlias = "source", string destAlias = "dest")
-        {
-            if (!_migrationColumnSet.PrimaryKeys.Any())
-                throw new InvalidOperationException("None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.");
-
-            return "ON (" + String.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => String.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName()))) + ")";
-        }
+    public string BuildJoinClause(string sourceAlias = "source", string destAlias = "dest")
+    {
+        return !_migrationColumnSet.PrimaryKeys.Any()
+            ? throw new InvalidOperationException(
+                "None of the columns to be migrated are configured as a Primary Key, the JOIN clause for migration cannot be created. Please ensure that at least one of the columns in the MigrationColumnSet is configured as a Primary Key.")
+            : $"ON ({string.Join(" AND ", _migrationColumnSet.PrimaryKeys.Select(pk => string.Format(sourceAlias + ".[{0}] = " + destAlias + ".[{0}]", pk.GetRuntimeName())))})";
     }
 }

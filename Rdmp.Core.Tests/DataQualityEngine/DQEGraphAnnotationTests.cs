@@ -11,54 +11,51 @@ using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataQualityEngine
+namespace Rdmp.Core.Tests.DataQualityEngine;
+
+public class DQEGraphAnnotationTests : DatabaseTests
 {
-    public class DQEGraphAnnotationTests:DatabaseTests
+    [Test]
+    public void TestCreatingOne()
     {
-        [Test]
-        public void TestCreatingOne()
+        var c = new Catalogue(CatalogueRepository, "FrankyMicky");
+
+
+        try
         {
-            Catalogue c = new Catalogue(CatalogueRepository,"FrankyMicky");
+            var dqeRepo = new DQERepository(CatalogueRepository);
+            var evaluation = new Evaluation(dqeRepo, c);
 
-            
-            try
-            {
+            var annotation = new DQEGraphAnnotation(dqeRepo, 1, 2, 3, 4, "Fishesfly", evaluation,
+                DQEGraphType.TimePeriodicityGraph, "ALL");
 
-                var dqeRepo = new DQERepository(CatalogueRepository);
-                Evaluation evaluation = new Evaluation(dqeRepo, c);
-            
-                var annotation = new DQEGraphAnnotation(dqeRepo,1, 2, 3, 4, "Fishesfly", evaluation,DQEGraphType.TimePeriodicityGraph,"ALL");
-                
-                Assert.AreEqual(annotation.StartX,1);
-                Assert.AreEqual(annotation.StartY, 2);
-                Assert.AreEqual(annotation.EndX, 3);
-                Assert.AreEqual(annotation.EndY, 4);
-                Assert.AreEqual(annotation.AnnotationIsForGraph,DQEGraphType.TimePeriodicityGraph);
+            Assert.AreEqual(annotation.StartX, 1);
+            Assert.AreEqual(annotation.StartY, 2);
+            Assert.AreEqual(annotation.EndX, 3);
+            Assert.AreEqual(annotation.EndY, 4);
+            Assert.AreEqual(annotation.AnnotationIsForGraph, DQEGraphType.TimePeriodicityGraph);
 
-                //should be about 2 milliseconds ago
-                Assert.IsTrue(annotation.CreationDate <= DateTime.Now.AddSeconds(3));
-                //certainly shouldnt be before yesterday!
-                Assert.IsTrue(annotation.CreationDate > DateTime.Now.AddDays(-1));
+            //should be about 2 milliseconds ago
+            Assert.IsTrue(annotation.CreationDate <= DateTime.Now.AddSeconds(3));
+            //certainly shouldnt be before yesterday!
+            Assert.IsTrue(annotation.CreationDate > DateTime.Now.AddDays(-1));
 
-                //text should match
-                Assert.AreEqual(annotation.Text, "Fishesfly");
+            //text should match
+            Assert.AreEqual(annotation.Text, "Fishesfly");
 
-                annotation.Text = "flibble";
-                annotation.SaveToDatabase();
+            annotation.Text = "flibble";
+            annotation.SaveToDatabase();
 
-                annotation.Text = "";
-                
-                //new copy is flibble
-                Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text); 
+            annotation.Text = "";
 
-                annotation.DeleteInDatabase();
-            }
-            finally
-            {
-                c.DeleteInDatabase();
-            }
+            //new copy is flibble
+            Assert.AreEqual("flibble", dqeRepo.GetObjectByID<DQEGraphAnnotation>(annotation.ID).Text);
 
-
+            annotation.DeleteInDatabase();
+        }
+        finally
+        {
+            c.DeleteInDatabase();
         }
     }
 }

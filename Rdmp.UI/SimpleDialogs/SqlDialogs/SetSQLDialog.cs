@@ -11,49 +11,42 @@ using Rdmp.UI.CommandExecution;
 using Rdmp.UI.ScintillaHelper;
 using ScintillaNET;
 
-namespace Rdmp.UI.SimpleDialogs.SqlDialogs
+namespace Rdmp.UI.SimpleDialogs.SqlDialogs;
+
+/// <summary>
+/// Allows the user to view and edit some SQL they have written.  Basically the same as ShowSQL but this window expects you to have populated some meaningful SQL that the
+/// caller will store/use somehow.
+/// </summary>
+public partial class SetSQLDialog : Form
 {
-    /// <summary>
-    /// Allows the user to view and edit some SQL they have written.  Basically the same as ShowSQL but this window expects you to have populated some meaningful SQL that the
-    /// caller will store/use somehow.
-    /// </summary>
-    public partial class SetSQLDialog : Form
-    {   
-        public Scintilla QueryEditor;
-        private bool _designMode;
+    public Scintilla QueryEditor;
 
-        public string Result
-        {
-            get { return QueryEditor.Text; }
-        }
+    public string Result => QueryEditor.Text;
 
-        public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
-        {
-            InitializeComponent();
-            
-            _designMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
+    public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
+    {
+        InitializeComponent();
 
-            if (_designMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
-                return;
+        var designMode = LicenseManager.UsageMode == LicenseUsageMode.Designtime;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);
-            QueryEditor.Text = originalSQL;
-            
-            panel1.Controls.Add(QueryEditor);
-        
-        }
+        if (designMode) //don't add the QueryEditor if we are in design time (visual studio) because it breaks
+            return;
 
-        private void button1_Click(object sender, EventArgs e)
-        {
+        QueryEditor = new ScintillaTextEditorFactory().Create(commandFactory);
+        QueryEditor.Text = originalSQL;
 
-            DialogResult = DialogResult.OK;
-            this.Close();
-        }
+        panel1.Controls.Add(QueryEditor);
+    }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            DialogResult = DialogResult.Cancel;
-            this.Close();
-        }
+    private void button1_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.OK;
+        Close();
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+        DialogResult = DialogResult.Cancel;
+        Close();
     }
 }

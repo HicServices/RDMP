@@ -8,191 +8,170 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Sharing.Dependency.Gathering;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs;
+
+/// <summary>
+/// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The
+/// feature is primarily intended for system wide operations such as when you change a network UNC folder location or mapped network drive and you need to change ALL references
+/// to the root path to the new location.
+/// 
+/// <para>Sql properties are also exposed but this is even more dangerous to modify.  For example if you change a database name and want to perform a system wide rename on all
+/// references including filters, extractable columns, extracted project definitions etc etc</para>
+/// 
+/// <para>You should always back up both your Catalogue and DataExport databases before embarking on a Find and Replace</para>
+/// </summary>
+public partial class FindAndReplaceUI : RDMPUserControl
 {
-    /// <summary>
-    /// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The 
-    /// feature is primarily intended for system wide operations such as when you change a network UNC folder location or mapped network drive and you need to change ALL references
-    /// to the root path to the new location.
-    /// 
-    /// <para>Sql properties are also exposed but this is even more dangerous to modify.  For example if you change a database name and want to perform a system wide rename on all
-    /// references including filters, extractable columns, extracted project definitions etc etc</para>
-    /// 
-    /// <para>You should always back up both your Catalogue and DataExport databases before embarking on a Find and Replace</para>
-    /// </summary>
-    public partial class FindAndReplaceUI : RDMPUserControl
+    private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
+
+    private IAttributePropertyFinder _adjustableLocationPropertyFinder;
+    private List<FindAndReplaceNode> _locationNodes = new();
+
+    private IAttributePropertyFinder _sqlPropertyFinder;
+    private List<FindAndReplaceNode> _sqlNodes = new();
+
+
+    public FindAndReplaceUI(IActivateItems activator)
     {
-        private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
+        SetItemActivator(activator);
 
-        private IAttributePropertyFinder _adjustableLocationPropertyFinder;
-        private List<FindAndReplaceNode> _locationNodes = new List<FindAndReplaceNode>(); 
-        
-        private IAttributePropertyFinder _sqlPropertyFinder;
-        private List<FindAndReplaceNode> _sqlNodes = new List<FindAndReplaceNode>();
+        GetAllObjects(activator);
 
-        
-        public FindAndReplaceUI(IActivateItems activator)
-        {
-            SetItemActivator(activator);
+        _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
+        _sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
 
-            GetAllObjects(activator);
+        InitializeComponent();
 
-            _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
-            _sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
+        olvObject.ImageGetter += ImageGetter;
+        olvProperty.AspectGetter += PropertyAspectGetter;
+        olvValue.AspectGetter += ValueAspectGetter;
 
-            InitializeComponent();
+        olvAllObjects.AlwaysGroupByColumn = olvProperty;
 
-            olvObject.ImageGetter += ImageGetter;
-            olvProperty.AspectGetter += PropertyAspectGetter;
-            olvValue.AspectGetter += ValueAspectGetter;
-            
-            olvAllObjects.AlwaysGroupByColumn = olvProperty;
+        //allow editing
+        olvAllObjects.CellEditFinished += OlvAllObjectsCellEditFinished;
 
-            //allow editing
-            olvAllObjects.CellEditFinished += OlvAllObjectsCellEditFinished;
+        //Create all the nodes up front
+        foreach (var o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
+            foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
+                _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
-            //Create all the nodes up front
-            foreach (IMapsDirectlyToDatabaseTable o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
-                foreach (PropertyInfo propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
-                    _locationNodes.Add( new FindAndReplaceNode(o,propertyInfo));
+        foreach (var o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
+            foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
+                _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
-            foreach (IMapsDirectlyToDatabaseTable o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
-                foreach (PropertyInfo propertyInfo in _sqlPropertyFinder.GetProperties(o))
-                    _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+        olvAllObjects.BeginUpdate();
+        olvAllObjects.AddObjects(_locationNodes);
+        olvAllObjects.EndUpdate();
+    }
 
-            olvAllObjects.BeginUpdate();
-            olvAllObjects.AddObjects(_locationNodes);
-            olvAllObjects.EndUpdate();
-        }
+    private void GetAllObjects(IActivateItems activator)
+    {
+        var g = new Gatherer(activator.RepositoryLocator);
 
-        private void GetAllObjects(IActivateItems activator)
-        {
+        //We get these from the child provider because some objects (those below go off looking stuff up if you get them
+        //and do not inject known good values first)
+        foreach (var o in Activator.CoreChildProvider.AllExtractionInformations)
+            _allObjects.Add(o);
 
-            Gatherer g = new Gatherer(activator.RepositoryLocator);
+        foreach (var o in Activator.CoreChildProvider.AllCatalogueItems)
+            _allObjects.Add(o);
 
-            //We get these from the child provider because some objects (those below go off looking stuff up if you get them
-            //and do not inject known good values first)
-            foreach (var o in Activator.CoreChildProvider.AllExtractionInformations)
+        if (Activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
+            foreach (var o in dxmChildProvider.GetAllExtractableColumns(
+                         Activator.RepositoryLocator.DataExportRepository))
                 _allObjects.Add(o);
 
-            foreach (var o in Activator.CoreChildProvider.AllCatalogueItems)
-                _allObjects.Add(o);
+        foreach (var o in g.GetAllObjectsInAllDatabases())
+            _allObjects.Add(o);
+    }
 
-            var dxmChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
+    private void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
+    {
+        if (e?.RowObject == null)
+            return;
 
-            if (dxmChildProvider != null)
-                foreach (var o in dxmChildProvider.GetAllExtractableColumns(Activator.RepositoryLocator.DataExportRepository))
-                    _allObjects.Add(o);
+        var node = (FindAndReplaceNode)e.RowObject;
+        node.SetValue(e.NewValue);
+        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));
+    }
 
-            foreach (var o in g.GetAllObjectsInAllDatabases())
-                _allObjects.Add(o);
-        }
+    private object ValueAspectGetter(object rowobject) => ((FindAndReplaceNode)rowobject).GetCurrentValue();
 
-        void OlvAllObjectsCellEditFinished(object sender, CellEditEventArgs e)
+    private object PropertyAspectGetter(object rowobject)
+    {
+        var node = (FindAndReplaceNode)rowobject;
+
+        return node.PropertyName;
+    }
+
+    private Bitmap ImageGetter(object rowObject) => rowObject == null
+        ? null
+        : Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
+
+
+    private void CheckedChanged(object sender, EventArgs e)
+    {
+        var cb = (RadioButton)sender;
+
+        olvAllObjects.BeginUpdate();
+        if (cb.Checked)
         {
-            if( e == null || e.RowObject == null)
-                return;
-            
-            var node = (FindAndReplaceNode)e.RowObject;
-            node.SetValue(e.NewValue);
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));
+            olvAllObjects.ClearObjects();
+            olvAllObjects.SuspendLayout();
+
+            olvAllObjects.AddObjects(sender == rbLocationsAttribute ? _locationNodes : _sqlNodes);
+
+            olvAllObjects.ResumeLayout();
         }
 
-        private object ValueAspectGetter(object rowobject)
-        {
-            return ((FindAndReplaceNode)rowobject).GetCurrentValue();
-        }
+        olvAllObjects.EndUpdate();
+    }
 
-        private object PropertyAspectGetter(object rowobject)
-        {
-            var node = ((FindAndReplaceNode) rowobject);
+    private void btnReplaceAll_Click(object sender, EventArgs e)
+    {
+        if (Activator.YesNo(
+                "Are you sure you want to do a system wide find and replace? This operation cannot be undone",
+                "Are you sure"))
+            foreach (FindAndReplaceNode node in olvAllObjects.FilteredObjects)
+                node.FindAndReplace(tbFind.Text, tbReplace.Text, !cbMatchCase.Checked);
+    }
 
-            return node.PropertyName;
-        }
+    private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
+    {
+        if (olvAllObjects.SelectedObject is not FindAndReplaceNode node) return;
+        var cmd = new ExecuteCommandActivate(Activator, node.Instance);
+        if (!cmd.IsImpossible)
+            cmd.Execute();
+    }
 
-        private Bitmap ImageGetter(object rowObject)
-        {
-            if(rowObject == null)
-                return null;
+    private TextMatchFilter _textMatchFilter;
 
-            return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
-        }
+    private void btnFind_Click(object sender, EventArgs e)
+    {
+        if (olvAllObjects.ModelFilter is not CompositeAllFilter all)
+            olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
 
+        if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))
+            all.Filters.Remove(_textMatchFilter);
 
-        private void CheckedChanged(object sender, EventArgs e)
-        {
-            var cb = (RadioButton)sender;
+        _textMatchFilter = new TextMatchFilter(olvAllObjects, tbFind.Text,
+            cbMatchCase.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
 
-            olvAllObjects.BeginUpdate();
-            if(cb.Checked)
-            {
-                olvAllObjects.ClearObjects();
-                olvAllObjects.SuspendLayout();
+        all.Filters.Add(_textMatchFilter);
 
-                if (sender == rbLocationsAttribute)
-                    olvAllObjects.AddObjects(_locationNodes);
-                else
-                    olvAllObjects.AddObjects(_sqlNodes);
-
-                olvAllObjects.ResumeLayout();
-            }
-            olvAllObjects.EndUpdate();
-        }
-        
-        private void btnReplaceAll_Click(object sender, EventArgs e)
-        {
-            if (Activator.YesNo("Are you sure you want to do a system wide find and replace? This operation cannot be undone","Are you sure"))
-            {
-                foreach (FindAndReplaceNode node in olvAllObjects.FilteredObjects)
-                {
-                    node.FindAndReplace(tbFind.Text, tbReplace.Text,!cbMatchCase.Checked);
-
-                }
-            }
-        }
-
-        private void tlvAllObjects_ItemActivate(object sender, EventArgs e)
-        {
-            var node = olvAllObjects.SelectedObject as FindAndReplaceNode;
-
-            if (node != null)
-            {
-                var cmd = new ExecuteCommandActivate(Activator, node.Instance);
-                if(!cmd.IsImpossible)
-                    cmd.Execute();
-            }
-        }
-
-        private TextMatchFilter _textMatchFilter;
-        private void btnFind_Click(object sender, EventArgs e)
-        {
-            var all = olvAllObjects.ModelFilter as CompositeAllFilter;
-
-            if(all == null)
-                olvAllObjects.ModelFilter = all = new CompositeAllFilter(new List<IModelFilter>());
-            
-            if (_textMatchFilter != null && all.Filters.Contains(_textMatchFilter))
-                all.Filters.Remove(_textMatchFilter);
-
-            _textMatchFilter = new TextMatchFilter(olvAllObjects, tbFind.Text, cbMatchCase.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
-
-            all.Filters.Add(_textMatchFilter);
-
-            olvAllObjects.ModelFilter = all;
-        }
+        olvAllObjects.ModelFilter = all;
     }
 }

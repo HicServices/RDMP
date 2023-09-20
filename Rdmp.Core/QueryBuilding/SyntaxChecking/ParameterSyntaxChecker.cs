@@ -5,33 +5,32 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.QueryBuilding.SyntaxChecking
+namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
+
+/// <summary>
+/// Checks syntax validity of ISqlParameter
+/// </summary>
+public class ParameterSyntaxChecker : SyntaxChecker
 {
+    private readonly ISqlParameter _parameter;
+
     /// <summary>
-    /// Checks syntax validity of ISqlParameter
+    /// Prepares the checker to check the ISqlParameter supplied
     /// </summary>
-    public class ParameterSyntaxChecker : SyntaxChecker
+    /// <param name="parameter"></param>
+    public ParameterSyntaxChecker(ISqlParameter parameter)
     {
-        private readonly ISqlParameter _parameter;
+        _parameter = parameter;
+    }
 
-        /// <summary>
-        /// Prepares the checker to check the ISqlParameter supplied
-        /// </summary>
-        /// <param name="parameter"></param>
-        public ParameterSyntaxChecker(ISqlParameter parameter)
-        {
-            _parameter = parameter;
-        }
-
-        /// <summary>
-        /// Checks to see if the syntax of char based parameters is valid (see CheckSyntax for more details)
-        /// </summary>
-        /// <param name="notifier"></param>
-        public override void Check(ICheckNotifier notifier)
-        {
-            CheckSyntax(_parameter);
-        }
+    /// <summary>
+    /// Checks to see if the syntax of char based parameters is valid (see CheckSyntax for more details)
+    /// </summary>
+    /// <param name="notifier"></param>
+    public override void Check(ICheckNotifier notifier)
+    {
+        CheckSyntax(_parameter);
     }
 }

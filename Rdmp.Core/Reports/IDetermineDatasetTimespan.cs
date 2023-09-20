@@ -7,30 +7,30 @@
 using System;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Reports
+namespace Rdmp.Core.Reports;
+
+/// <summary>
+/// A class that can determine the actual dataset span of a given catalogue e.g. one strategy might be to have the user enter manually the start and end date.  A better
+/// strategy would be to consult the latest Data Quality Engine results to see what the realistic start/end dates are (e.g. discarding outliers / future dates etc)
+/// </summary>
+public interface IDetermineDatasetTimespan
 {
     /// <summary>
-    /// A class that can determine the actual dataset span of a given catalogue e.g. one strategy might be to have the user enter manually the start and end date.  A better
-    /// strategy would be to consult the latest Data Quality Engine results to see what the realistic start/end dates are (e.g. discarding outliers / future dates etc)
+    /// Summarises the range of data in the tables that underly the <paramref name="catalogue"/> if known (e.g. based on the last recorded DQE results).
     /// </summary>
-    public interface IDetermineDatasetTimespan
-    {
-        /// <summary>
-        /// Summarises the range of data in the tables that underly the <paramref name="catalogue"/> if known (e.g. based on the last recorded DQE results).
-        /// </summary>
-        /// <param name="catalogue"></param>
-        /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
-        /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
-        /// <returns></returns>
-        string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf);
+    /// <param name="catalogue"></param>
+    /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
+    /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
+    /// <returns></returns>
+    string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf);
 
-        /// <summary>
-        /// Summarises the range of data in the tables that underly the <paramref name="catalogue"/> if known (e.g. based on the last recorded DQE results).
-        /// </summary>
-        /// <param name="catalogue"></param>
-        /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
-        /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
-        /// <returns></returns>
-        Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers, out DateTime? accurateAsOf);
-    }
+    /// <summary>
+    /// Summarises the range of data in the tables that underly the <paramref name="catalogue"/> if known (e.g. based on the last recorded DQE results).
+    /// </summary>
+    /// <param name="catalogue"></param>
+    /// <param name="discardOutliers">True to attempt to throw out outlier rows when determining the dataset timespan</param>
+    /// <param name="accurateAsOf">The date at which the timespan was calculated e.g. if the result is cached</param>
+    /// <returns></returns>
+    Tuple<DateTime?, DateTime?> GetMachineReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,
+        out DateTime? accurateAsOf);
 }

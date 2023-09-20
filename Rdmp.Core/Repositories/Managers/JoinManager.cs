@@ -9,61 +9,60 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Repositories.Managers
+namespace Rdmp.Core.Repositories.Managers;
+
+/// <summary>
+/// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
+/// table between ColumnInfos (with join direction / collation).
+/// </summary>
+public class JoinManager : IJoinManager
 {
-    /// <summary>
-    /// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
-    /// table between ColumnInfos (with join direction / collation).
-    /// </summary>
-    public class JoinManager : IJoinManager
+    private readonly ICatalogueRepository _repository;
+
+    public JoinManager(ICatalogueRepository repository)
     {
-        private readonly ICatalogueRepository _repository;
+        _repository = repository;
+    }
 
-        public JoinManager(ICatalogueRepository repository)
+    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2)
+    {
+        //assemble the IN SQL arrays
+        if (set1.Length == 0)
+            throw new NullReferenceException("Cannot find joins because column set 1 was empty");
+        if (set2.Length == 0)
+            throw new NullReferenceException("Cannot find joins because column set 2 was empty");
+
+        var idSet1 = new HashSet<int>(set1.Select(o => o.ID));
+        var idSet2 = new HashSet<int>(set2.Select(o => o.ID));
+
+        return
+            joinInfos
+                .Where(j =>
+                    (idSet1.Contains(j.ForeignKey_ID) && idSet2.Contains(j.PrimaryKey_ID))
+                    ||
+                    (idSet1.Contains(j.PrimaryKey_ID) && idSet2.Contains(j.ForeignKey_ID)))
+                .ToArray();
+    }
+
+    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2) =>
+        GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
+
+    public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type)
+    {
+        var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
+
+        return type switch
         {
-            _repository = repository;
-        }
-
-        public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(JoinInfo[] joinInfos, ColumnInfo[] set1, ColumnInfo[] set2)
-        {
-            //assemble the IN SQL arrays
-            if (set1.Length == 0)
-                throw new NullReferenceException("Cannot find joins because column set 1 was empty");
-            if (set2.Length == 0)
-                throw new NullReferenceException("Cannot find joins because column set 2 was empty");
-
-            var idSet1 = new HashSet<int>(set1.Select(o => o.ID));
-            var idSet2 = new HashSet<int>(set2.Select(o => o.ID));
-
-            return
-                joinInfos
-                    .Where(j =>
-                        (idSet1.Contains(j.ForeignKey_ID) && idSet2.Contains(j.PrimaryKey_ID))
-                        ||
-                        (idSet1.Contains(j.PrimaryKey_ID) && idSet2.Contains(j.ForeignKey_ID)))
-                    .ToArray();
-        }
-        public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
-        {
-            return GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
-        }
-
-        public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo,JoinInfoType type)
-        {
-            var ids = new HashSet<int>(tableInfo.ColumnInfos.Select(c => c.ID));
-
-            switch (type)
-            {
-                case JoinInfoType.AnyKey:
-                    return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID)).ToArray();
-                case JoinInfoType.ForeignKey:
-                    return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.ForeignKey_ID)).ToArray();
-                case JoinInfoType.PrimaryKey:
-                    return _repository.GetAllObjects<JoinInfo>().Where(j => ids.Contains(j.PrimaryKey_ID)).ToArray();
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-        }
-        
+            JoinInfoType.AnyKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.ForeignKey_ID) || ids.Contains(j.PrimaryKey_ID))
+                .ToArray(),
+            JoinInfoType.ForeignKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.ForeignKey_ID))
+                .ToArray(),
+            JoinInfoType.PrimaryKey => _repository.GetAllObjects<JoinInfo>()
+                .Where(j => ids.Contains(j.PrimaryKey_ID))
+                .ToArray(),
+            _ => throw new ArgumentOutOfRangeException(nameof(type))
+        };
     }
 }

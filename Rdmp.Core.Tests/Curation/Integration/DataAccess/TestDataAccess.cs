@@ -14,282 +14,286 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
-using ReusableLibraryCode.Exceptions;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.Exceptions;
 using Tests.Common;
-using MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
+namespace Rdmp.Core.Tests.Curation.Integration.DataAccess;
+
+public class TestDataAccess : DatabaseTests
 {
-    public class TestDataAccess:DatabaseTests
+    #region Distinct Connection String (from Collection tests - Failing)
+
+    [Test]
+    public void TestDistinctCredentials_PasswordMismatch()
     {
-       
-        #region Distinct Connection String (from Collection tests - Failing)
-
-        [Test]
-        public void TestDistinctCredentials_PasswordMismatch()
+        var testPoints = new List<TestAccessPoint>
         {
-            List<TestAccessPoint>  testPoints = new List<TestAccessPoint>();
+            new("frank", "bob", "username", "mypas"),
+            new("frank", "bob", "username", "mydifferentPass")
+        };
 
-            testPoints.Add(new TestAccessPoint("frank","bob","username","mypas"));
-            testPoints.Add(new TestAccessPoint("frank","bob","username","mydifferentPass"));
+        //call this
+        var ex = Assert.Throws<Exception>(() =>
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
+                true));
+        StringAssert.Contains("collection could not agree on a single Password", ex.Message);
+    }
 
-            //call this
-            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
-            StringAssert.Contains("collection could not agree on a single Password",ex.Message);
+    [Test]
+    public void TestDistinctCredentials_UsernamePasswordAreNull()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "bob", null, null),
+            new("frank", "bob", "username", "mydifferentPass")
+        };
 
+        //call this
+        var ex = Assert.Throws<Exception>(() =>
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
+                true));
+        StringAssert.Contains("collection could not agree whether to use Credentials", ex.Message);
+    }
+
+    [Test]
+    public void TestDistinctCredentials_UsernameMismatch()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "bob", "usernameasdasd", "mydifferentpass"),
+            new("frank", "bob", "username", "mydifferentPass")
+        };
+
+        //call this
+
+        var ex = Assert.Throws<Exception>(() =>
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
+                true));
+        StringAssert.Contains("collection could not agree on a single Username", ex.Message);
+    }
+
+
+    [Test]
+    public void TestDistinctCredentials_ServerMixedCapitalization_Allowed()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "bob", null, null),
+            new("FRANK", "bob", null, null)
+        };
+
+        var server =
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+        Assert.AreEqual("frank", server.Name);
+    }
+
+    [Test]
+    public void TestDistinctCredentials_DatabaseMixedCapitalization_NotAllowed()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "bob", null, null),
+            new("frank", "BOB", null, null)
+        };
+
+        var ex = Assert.Throws<ExpectedIdenticalStringsException>(() =>
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
+                true));
+        StringAssert.Contains(
+            "All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases",
+            ex.Message);
+    }
+
+    #endregion
+
+    #region Distinct Connection String (from Collection tests - Passing)
+
+    [Test]
+    public void TestDistinctCredentials_WrappedDatabaseName()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "[bob's Database]", "username", "mypas"),
+            new("frank", "bob's Database", "username", "mypas")
+        };
+
+        //call this
+        var result =
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+
+        //test result
+        Assert.AreEqual("bob's Database", result.Builder["Initial Catalog"]);
+    }
+
+    [Test]
+    public void TestDistinctCredentials_PasswordMatch()
+    {
+        var testPoints = new List<TestAccessPoint>
+        {
+            new("frank", "bob", "username", "mypas"),
+            new("frank", "bob", "username", "mypas")
+        };
+
+        //call this
+        var result =
+            DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
+
+        //test result
+        Assert.AreEqual("mypas", result.Builder["Password"]);
+    }
+
+    #endregion
+
+    [Test]
+    public void AsyncTest()
+    {
+        if (CatalogueRepository is not TableRepository)
+            Assert.Inconclusive("Test only applies to database repositories");
+
+        var threads = new List<Thread>();
+
+
+        for (var i = 0; i < 30; i++)
+            threads.Add(new Thread(MessWithCatalogue));
+
+        foreach (var t in threads)
+            t.Start();
+
+        while (threads.Any(t => t.ThreadState != ThreadState.Stopped))
+            Thread.Sleep(100);
+
+        for (var index = 0; index < asyncExceptions.Count; index++)
+        {
+            Console.WriteLine($"Exception {index}");
+            var asyncException = asyncExceptions[index];
+            Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(asyncException, true));
         }
 
-        [Test]
-        public void TestDistinctCredentials_UsernamePasswordAreNull()
+        Assert.IsEmpty(asyncExceptions);
+    }
+
+    private List<Exception> asyncExceptions = new();
+
+    private void MessWithCatalogue()
+    {
+        try
         {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
-            testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
-
-            //call this
-            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
-            StringAssert.Contains("collection could not agree whether to use Credentials",ex.Message);
-
-        }
-
-        [Test]
-        public void TestDistinctCredentials_UsernameMismatch()
-        {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "bob", "usernameasdasd", "mydifferentpass"));
-            testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mydifferentPass"));
-
-            //call this
-            
-            var ex = Assert.Throws<Exception>(()=>DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
-            StringAssert.Contains("collection could not agree on a single Username",ex.Message);
-
-        }
-
-
-        [Test]
-        public void TestDistinctCredentials_ServerMixedCapitalization_Allowed()
-        {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "bob", null,null));
-            testPoints.Add(new TestAccessPoint("FRANK", "bob", null, null));
-
-            var server = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
-            Assert.AreEqual("frank", server.Name);
-        }
-
-        [Test]
-        public void TestDistinctCredentials_DatabaseMixedCapitalization_NotAllowed()
-        {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "bob", null, null));
-            testPoints.Add(new TestAccessPoint("frank", "BOB", null, null));
-
-            var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true));
-            StringAssert.Contains("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases", ex.Message);
-        }
-        #endregion
-
-        #region Distinct Connection String (from Collection tests - Passing)
-
-        [Test]
-        public void TestDistinctCredentials_WrappedDatabaseName()
-        {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "[bob's Database]", "username", "mypas"));
-            testPoints.Add(new TestAccessPoint("frank", "bob's Database", "username", "mypas"));
-            //call this
-            var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
-
-            //test result
-            Assert.AreEqual("bob's Database", result.Builder["Initial Catalog"]);
-        }
-
-        [Test]
-        public void TestDistinctCredentials_PasswordMatch()
-        {
-            List<TestAccessPoint> testPoints = new List<TestAccessPoint>();
-
-            testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
-            testPoints.Add(new TestAccessPoint("frank", "bob", "username", "mypas"));
-
-            //call this
-            var result = DataAccessPortal.GetInstance().ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
-
-            //test result
-            Assert.AreEqual("mypas", result.Builder["Password"]);
-
-        }
-        #endregion
-
-        [Test]
-        public void AsyncTest()
-        {
-            if (CatalogueRepository is not TableRepository)
-                Assert.Inconclusive("Test only applies to database repositories");
-
-            List<Thread> threads = new List<Thread>();
-
-
-            for (int i = 0; i < 30; i++)
-                threads.Add(new Thread(MessWithCatalogue));
-
-            foreach (Thread t in threads)
-                t.Start();
-
-            while(threads.Any(t=>t.ThreadState != ThreadState.Stopped))
-                Thread.Sleep(100);
-
-            for (int index = 0; index < asyncExceptions.Count; index++)
+            var repository = new CatalogueRepository(CatalogueTableRepository.ConnectionStringBuilder);
+            var cata = new Catalogue(repository, "bob")
             {
-                Console.WriteLine("Exception " + index);
-                Exception asyncException = asyncExceptions[index];
-                Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(asyncException, true));
-            }
-            Assert.IsEmpty(asyncExceptions);
+                Name = "Fuss"
+            };
+            cata.SaveToDatabase();
+            cata.DeleteInDatabase();
         }
-
-        private List<Exception> asyncExceptions = new List<Exception>();
-
-        private void MessWithCatalogue()
+        catch (Exception ex)
         {
+            asyncExceptions.Add(ex);
+        }
+    }
+
+
+    /// <summary>
+    /// Real life test case where TableInfo is the IDataAccessPoint not just the test class
+    /// </summary>
+    [Test]
+    public void TestGettingConnectionStrings()
+    {
+        foreach (var tbl in CatalogueRepository.GetAllObjects<TableInfo>()
+                     .Where(table => table.Name.ToLower().Equals("bob")))
+            tbl.DeleteInDatabase();
+
+        foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>()
+                     .Where(cred => cred.Name.ToLower().Equals("bob")))
+            c.DeleteInDatabase();
+
+        //test it with TableInfos
+        var t = new TableInfo(CatalogueRepository, "Bob");
+        try
+        {
+            t.Server = "fish";
+            t.Database = "bobsDatabase";
+            t.SaveToDatabase();
+
+            //t has no credentials
+            var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
+
+            Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
+            Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
+            Assert.AreEqual("bobsDatabase", ((SqlConnectionStringBuilder)server.Builder).InitialCatalog);
+            Assert.AreEqual(true, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
+
+            var creds = new DataAccessCredentials(CatalogueRepository, "Bob");
             try
             {
-                var repository = new CatalogueRepository(CatalogueTableRepository.ConnectionStringBuilder);
-                var cata = new Catalogue(repository, "bob");
-                cata.Name = "Fuss";
-                cata.SaveToDatabase();
-                cata.DeleteInDatabase();
-            }
-            catch (Exception ex)
-            {
-                asyncExceptions.Add(ex);
-            }
-        }
+                t.SetCredentials(creds, DataAccessContext.InternalDataProcessing, true);
+                creds.Username = "frank";
+                creds.Password = "bobsPassword";
+                creds.SaveToDatabase();
 
+                //credentials are cached
+                t.ClearAllInjections();
 
-        /// <summary>
-        /// Real life test case where TableInfo is the IDataAccessPoint not just the test class
-        /// </summary>
-        [Test]
-        public void TestGettingConnectionStrings()
-        {
-            foreach (TableInfo tbl in CatalogueRepository.GetAllObjects<TableInfo>().Where(table => table.Name.ToLower().Equals("bob")))
-                tbl.DeleteInDatabase();
-
-            foreach (var c in CatalogueRepository.GetAllObjects<DataAccessCredentials>().Where(cred=>cred.Name.ToLower().Equals("bob")))
-                c.DeleteInDatabase();
-            
-            //test it with TableInfos
-            TableInfo t = new TableInfo(CatalogueRepository, "Bob");
-            try
-            {
-                t.Server = "fish";
-                t.Database = "bobsDatabase";
-                t.SaveToDatabase();
-
-                //t has no credentials 
-                var server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
+                ////t has some credentials now
+                server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
                 Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
                 Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
                 Assert.AreEqual("bobsDatabase", ((SqlConnectionStringBuilder)server.Builder).InitialCatalog);
-                Assert.AreEqual(true, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
-
-                var creds = new DataAccessCredentials(CatalogueRepository, "Bob");
-                try
-                {
-                    t.SetCredentials(creds, DataAccessContext.InternalDataProcessing, true);
-                    creds.Username = "frank";
-                    creds.Password = "bobsPassword";
-                    creds.SaveToDatabase();
-
-                    //credentials are cached
-                    t.ClearAllInjections();
-
-                    ////t has some credentials now
-                    server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);
-
-                    Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
-                    Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
-                    Assert.AreEqual("bobsDatabase", ((SqlConnectionStringBuilder)server.Builder).InitialCatalog);
-                    Assert.AreEqual("frank", ((SqlConnectionStringBuilder)server.Builder).UserID);
-                    Assert.AreEqual("bobsPassword", ((SqlConnectionStringBuilder)server.Builder).Password);
-                    Assert.AreEqual(false, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
-                }
-                finally
-                {
-                    var linker = new TableInfoCredentialsManager(CatalogueTableRepository);
-                    linker.BreakAllLinksBetween(creds, t);
-                    creds.DeleteInDatabase();
-                }
-
+                Assert.AreEqual("frank", ((SqlConnectionStringBuilder)server.Builder).UserID);
+                Assert.AreEqual("bobsPassword", ((SqlConnectionStringBuilder)server.Builder).Password);
+                Assert.AreEqual(false, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
             }
             finally
             {
-                t.DeleteInDatabase();
-
+                var linker = new TableInfoCredentialsManager(CatalogueTableRepository);
+                linker.BreakAllLinksBetween(creds, t);
+                creds.DeleteInDatabase();
             }
         }
-
-        
-        internal class TestAccessPoint:IDataAccessPoint,IDataAccessCredentials
+        finally
         {
-            public string Server { get; set; }
-            public string Database { get; set; }
-            public DatabaseType DatabaseType { get; set; }
+            t.DeleteInDatabase();
+        }
+    }
 
-            public string Username { get; set; }
-            public string Password { get; set; }
 
-            public TestAccessPoint(string server, string database, string username, string password)
-            {
-                Server = server;
-                Database = database;
-                Username = username;
-                Password = password;
-            }
+    internal class TestAccessPoint : IDataAccessPoint, IDataAccessCredentials
+    {
+        public string Server { get; set; }
+        public string Database { get; set; }
+        public DatabaseType DatabaseType { get; set; }
 
-            public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
-            {
-                if (Username != null)
-                    return this;
+        public string Username { get; set; }
+        public string Password { get; set; }
 
-                return null;
-            }
-
-            
-            public string GetDecryptedPassword()
-            {
-                return Password?? "";
-            }
-
-            public override string ToString()
-            {
-                return Server + Database;
-            }
-
-            public IQuerySyntaxHelper GetQuerySyntaxHelper()
-            {
-                return new MicrosoftQuerySyntaxHelper();
-            }
-
-            public bool DiscoverExistence(DataAccessContext context, out string reason)
-            {
-                reason = "TestDataAccess never finds anything, it's a test";
-                return false;
-            }
+        public TestAccessPoint(string server, string database, string username, string password)
+        {
+            Server = server;
+            Database = database;
+            Username = username;
+            Password = password;
         }
 
+        public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+            Username != null ? this : (IDataAccessCredentials)null;
 
+
+        public string GetDecryptedPassword() => Password ?? "";
+
+        public override string ToString() => Server + Database;
+
+        public IQuerySyntaxHelper GetQuerySyntaxHelper() => MicrosoftQuerySyntaxHelper.Instance;
+
+        public bool DiscoverExistence(DataAccessContext context, out string reason)
+        {
+            reason = "TestDataAccess never finds anything, it's a test";
+            return false;
+        }
     }
 }

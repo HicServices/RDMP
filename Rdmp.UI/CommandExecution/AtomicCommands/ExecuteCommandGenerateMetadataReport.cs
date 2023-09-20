@@ -9,24 +9,24 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Reports;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandGenerateMetadataReport : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandGenerateMetadataReport:BasicUICommandExecution,IAtomicCommand
+    private readonly ICatalogue[] _initialSelection;
+
+
+    public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) :
+        base(activator)
     {
-        private readonly ICatalogue[] _initialSelection;
+        _initialSelection = initialSelection;
+    }
 
+    public override void Execute()
+    {
+        base.Execute();
 
-        public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) : base(activator)
-        {
-            _initialSelection = initialSelection;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            MetadataReportUI dialog = new MetadataReportUI(Activator, _initialSelection);
-            dialog.Show();
-        }
+        var dialog = new MetadataReportUI(Activator, _initialSelection);
+        dialog.Show();
     }
 }

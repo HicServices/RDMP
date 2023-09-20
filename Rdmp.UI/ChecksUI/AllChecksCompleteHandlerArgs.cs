@@ -5,20 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.ChecksUI
+namespace Rdmp.UI.ChecksUI;
+
+/// <summary>
+/// Event arguments for when a <see cref="ICheckable"/> UI finishes checking an object.
+/// </summary>
+public class AllChecksCompleteHandlerArgs : EventArgs
 {
-    /// <summary>
-    /// Event arguments for when a <see cref="ICheckable"/> UI finishes checking an object.
-    /// </summary>
-    public class AllChecksCompleteHandlerArgs: EventArgs
-    {
-        public ToMemoryCheckNotifier CheckResults { get; private set; }
+    public ToMemoryCheckNotifier CheckResults { get; private set; }
 
-        public AllChecksCompleteHandlerArgs(ToMemoryCheckNotifier checkResults)
-        {
-            CheckResults = checkResults;
-        }
+    public AllChecksCompleteHandlerArgs(ToMemoryCheckNotifier checkResults)
+    {
+        CheckResults = checkResults;
     }
 }

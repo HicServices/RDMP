@@ -10,99 +10,82 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Collections.Providers
+namespace Rdmp.UI.Collections.Providers;
+
+/// <summary>
+/// Handles creating the 'Favourite' column in <see cref="TreeListView"/>.  This column depicts whether a given RDMP object is a favourite
+/// of the user (see <see cref="Favourite"/>).
+/// </summary>
+public class FavouriteColumnProvider
 {
-    /// <summary>
-    /// Handles creating the 'Favourite' column in <see cref="TreeListView"/>.  This column depicts whether a given RDMP object is a favourite
-    /// of the user (see <see cref="Favourite"/>).
-    /// </summary>
-    public class FavouriteColumnProvider
+    private readonly IActivateItems _activator;
+    private readonly TreeListView _tlv;
+    private OLVColumn _olvFavourite;
+
+    private Bitmap _starFull;
+    private Bitmap _starHollow;
+
+
+    public FavouriteColumnProvider(IActivateItems activator, TreeListView tlv)
     {
-        private readonly IActivateItems _activator;
-        private readonly TreeListView _tlv;
-        OLVColumn _olvFavourite;
+        _activator = activator;
+        _tlv = tlv;
 
-        private Bitmap _starFull;
-        private Bitmap _starHollow;
+        _starFull = CatalogueIcons.Favourite.ImageToBitmap();
+        _starHollow = CatalogueIcons.StarHollow.ImageToBitmap();
+    }
 
-
-
-        public FavouriteColumnProvider(IActivateItems activator,TreeListView tlv)
+    public OLVColumn CreateColumn()
+    {
+        _olvFavourite = new OLVColumn("Favourite", null)
         {
-            _activator = activator;
-            _tlv = tlv;
+            Text = "Favourite"
+        };
+        _olvFavourite.ImageGetter += FavouriteImageGetter;
+        _olvFavourite.IsEditable = false;
+        _olvFavourite.Sortable = true;
 
-            _starFull = CatalogueIcons.Favourite.ImageToBitmap();
-            _starHollow = CatalogueIcons.StarHollow.ImageToBitmap();
-        }
+        // setup value of column as 1 (favourite) or 0 (not favourite)
+        _olvFavourite.AspectGetter = FavouriteAspectGetter;
+        // but don't actually write that value when rendering (just use for sort etc)
+        _olvFavourite.AspectToStringConverter = st => "";
 
-        public OLVColumn CreateColumn()
+        _tlv.CellClick += OnCellClick;
+
+        _tlv.AllColumns.Add(_olvFavourite);
+        _tlv.RebuildColumns();
+
+        return _olvFavourite;
+    }
+
+    private void OnCellClick(object sender, CellClickEventArgs cellClickEventArgs)
+    {
+        var col = cellClickEventArgs.Column;
+
+
+        if (col == _olvFavourite && cellClickEventArgs.Model is DatabaseEntity o)
         {
-            _olvFavourite = new OLVColumn("Favourite", null);
-            _olvFavourite.Text = "Favourite";
-            _olvFavourite.ImageGetter += FavouriteImageGetter;
-            _olvFavourite.IsEditable = false;
-            _olvFavourite.Sortable = true;
+            if (_activator.FavouritesProvider.IsFavourite(o))
+                _activator.FavouritesProvider.RemoveFavourite(this, o);
+            else
+                _activator.FavouritesProvider.AddFavourite(this, o);
 
-            // setup value of column as 1 (favourite) or 0 (not favourite)
-            _olvFavourite.AspectGetter = FavouriteAspectGetter;
-            // but don't actually write that value when rendering (just use for sort etc)
-            _olvFavourite.AspectToStringConverter = (st) => "";
-
-            _tlv.CellClick += OnCellClick;
-            
-            _tlv.AllColumns.Add(_olvFavourite);
-            _tlv.RebuildColumns();
-            
-            return _olvFavourite;
-        }
-
-        private void OnCellClick(object sender, CellClickEventArgs cellClickEventArgs)
-        {
-            var col = cellClickEventArgs.Column;
-            var o = cellClickEventArgs.Model as DatabaseEntity;
-
-
-            if (col == _olvFavourite && o != null)
+            try
             {
-                if (_activator.FavouritesProvider.IsFavourite(o))
-                    _activator.FavouritesProvider.RemoveFavourite(this, o);
-                else
-                    _activator.FavouritesProvider.AddFavourite(this, o);
-                
-                try
-                {
-                    _tlv.RefreshObject(o);
-                }
-                catch (ArgumentException)
-                {
-                    
-                }
+                _tlv.RefreshObject(o);
+            }
+            catch (ArgumentException)
+            {
             }
         }
-
-        private Bitmap FavouriteImageGetter(object rowobject)
-        {
-            var o = rowobject as DatabaseEntity;
-
-            if (o != null)
-                return _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow;
-                    
-
-            return null;
-        }
-        private object FavouriteAspectGetter(object rowobject)
-        {
-            var o = rowobject as DatabaseEntity;
-
-            if (o != null)
-                return _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0;
-                    
-
-            return null;
-        }
-
     }
+
+    private Bitmap FavouriteImageGetter(object rowobject) => rowobject is DatabaseEntity o
+        ? _activator.FavouritesProvider.IsFavourite(o) ? _starFull : _starHollow
+        : null;
+
+    private object FavouriteAspectGetter(object rowobject) => rowobject is DatabaseEntity o
+        ? _activator.FavouritesProvider.IsFavourite(o) ? 1 : 0
+        : (object)null;
 }

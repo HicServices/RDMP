@@ -4,32 +4,33 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Repositories;
 using System;
 using System.Runtime.Serialization;
+using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Startup
+namespace Rdmp.Core.Startup;
+
+/// <summary>
+/// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
+/// </summary>
+[Serializable]
+public class CorruptRepositoryConnectionDetailsException : Exception
 {
-    /// <summary>
-    /// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
-    /// </summary>
-    [Serializable]
-    public class CorruptRepositoryConnectionDetailsException : Exception
+    public CorruptRepositoryConnectionDetailsException()
     {
-        public CorruptRepositoryConnectionDetailsException()
-        {
-        }
+    }
 
-        public CorruptRepositoryConnectionDetailsException(string message) : base(message)
-        {
-        }
+    public CorruptRepositoryConnectionDetailsException(string message) : base(message)
+    {
+    }
 
-        public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
+    public CorruptRepositoryConnectionDetailsException(string message, Exception innerException) : base(message,
+        innerException)
+    {
+    }
 
-        protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info, context)
-        {
-        }
+    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info,
+        context)
+    {
     }
 }

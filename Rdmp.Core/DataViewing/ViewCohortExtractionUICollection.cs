@@ -7,145 +7,121 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.Core.DataViewing
+namespace Rdmp.Core.DataViewing;
+
+/// <summary>
+/// <see cref="IViewSQLAndResultsCollection"/> for querying a sample of records in an <see cref="ExtractableCohort"/> (list of patient identifiers)
+/// </summary>
+public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    /// <summary>
-    /// <see cref="IViewSQLAndResultsCollection"/> for querying a sample of records in an <see cref="ExtractableCohort"/> (list of patient identifiers)
-    /// </summary>
-    public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
+    public int Top
     {
-        public int Top
-        {
-            get => _arguments.ContainsKey(TopKey) ? int.Parse(_arguments[TopKey]) : 100;
-            set => _arguments[TopKey] = value.ToString();
-        }
-
-        Dictionary<string, string> _arguments = new Dictionary<string, string>();
-        private const string TopKey = "Top";
-
-        private const string IncludeCohortIDKey = "IncludeCohortID";
-
-        /// <summary>
-        /// True to fetch the cohort ID (OriginID) from the cohort table as a SELECT column when retrieving records
-        /// </summary>
-        public bool IncludeCohortID
-        {
-            get => _arguments.ContainsKey(IncludeCohortIDKey) ? bool.Parse(_arguments[IncludeCohortIDKey]) : true;
-            set => _arguments[IncludeCohortIDKey] = value.ToString();
-        }
-
-        public ViewCohortExtractionUICollection()
-        {
-        }
-
-        public ViewCohortExtractionUICollection(ExtractableCohort cohort) : this()
-        {
-            DatabaseObjects.Add(cohort);
-        }
-
-        public override string SaveExtraText()
-        {
-            return Helper.SaveDictionaryToString(_arguments);
-        }
-        public override void LoadExtraText(string s)
-        {
-            _arguments = Helper.LoadDictionaryFromString(s);
-        }
-
-        public ExtractableCohort Cohort { get { return DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault(); } }
-
-        
-
-        public IEnumerable<DatabaseEntity> GetToolStripObjects()
-        {
-            yield return Cohort;
-        }
-
-        public IDataAccessPoint GetDataAccessPoint()
-        {
-            return Cohort.ExternalCohortTable;
-        }
-
-        public string GetSql()
-        {
-            if (Cohort == null)
-                return "";
-
-            var ect = Cohort.ExternalCohortTable;
-            var tableName = ect.TableName;
-
-            var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
-
-            var selectSql = GetSelectList(ect);
-
-            // Don't bother with top/limit SQL if theres none set
-            if (Top <= 0)
-            {
-                response.SQL = "";
-            }
-
-            return response.Location switch
-            {
-                QueryComponent.SELECT  => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
-                QueryComponent.WHERE   => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
-                QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
-                _ => throw new ArgumentOutOfRangeException()
-            };
-        }
-
-        /// <summary>
-        /// Returns a block that should be inserted after the SELECT keyword in the query
-        /// that contains all relevant columns to be extracted for cohorts in the given cohort
-        /// database
-        /// </summary>
-        /// <param name="ect"></param>
-        /// <returns></returns>
-        private string GetSelectList(IExternalCohortTable ect)
-        {
-            var selectList = new List<string>();
-
-            selectList.Add(ect.PrivateIdentifierField);
-
-            // if it is not an identifiable extraction
-            if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))
-            {
-                // add the release identifier too
-                selectList.Add(ect.ReleaseIdentifierField);
-            }
-
-            if (IncludeCohortID)
-            {
-                selectList.Add(ect.DefinitionTableForeignKeyField);
-            }
-
-            return Environment.NewLine + string.Join($",{Environment.NewLine}", selectList) + Environment.NewLine;
-        }
-
-        public string GetTabName()
-        {
-            return $"View {Cohort}(V{Cohort.ExternalVersion})";
-        }
-
-        public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
-        {
-            if (Cohort == null)
-                return;
-
-            var ect = Cohort.ExternalCohortTable;
-            var table = ect.DiscoverCohortTable();
-            autoComplete.Add(table);
-        }
-
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return Cohort?.GetQuerySyntaxHelper();
-        }
+        get => _arguments.TryGetValue(TopKey, out var value) ? int.Parse(value) : 100;
+        set => _arguments[TopKey] = value.ToString();
     }
+
+    private Dictionary<string, string> _arguments = new();
+    private const string TopKey = "Top";
+
+    private const string IncludeCohortIDKey = "IncludeCohortID";
+
+    /// <summary>
+    /// True to fetch the cohort ID (OriginID) from the cohort table as a SELECT column when retrieving records
+    /// </summary>
+    public bool IncludeCohortID
+    {
+        get => !_arguments.TryGetValue(IncludeCohortIDKey, out var value) || bool.Parse(value);
+        set => _arguments[IncludeCohortIDKey] = value.ToString();
+    }
+
+    public ViewCohortExtractionUICollection()
+    {
+    }
+
+    public ViewCohortExtractionUICollection(ExtractableCohort cohort) : this()
+    {
+        DatabaseObjects.Add(cohort);
+    }
+
+    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
+
+    public override void LoadExtraText(string s)
+    {
+        _arguments = PersistStringHelper.LoadDictionaryFromString(s);
+    }
+
+    public ExtractableCohort Cohort => DatabaseObjects.OfType<ExtractableCohort>().SingleOrDefault();
+
+
+    public IEnumerable<DatabaseEntity> GetToolStripObjects()
+    {
+        yield return Cohort;
+    }
+
+    public IDataAccessPoint GetDataAccessPoint() => Cohort.ExternalCohortTable;
+
+    public string GetSql()
+    {
+        if (Cohort == null)
+            return "";
+
+        var ect = Cohort.ExternalCohortTable;
+        var tableName = ect.TableName;
+
+        var response = GetQuerySyntaxHelper().HowDoWeAchieveTopX(Top);
+
+        var selectSql = GetSelectList(ect);
+
+        // Don't bother with top/limit SQL if theres none set
+        if (Top <= 0) response.SQL = "";
+
+        return response.Location switch
+        {
+            QueryComponent.SELECT => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
+            QueryComponent.WHERE => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
+            QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
+            _ => throw new ArgumentOutOfRangeException()
+        };
+    }
+
+    /// <summary>
+    /// Returns a block that should be inserted after the SELECT keyword in the query
+    /// that contains all relevant columns to be extracted for cohorts in the given cohort
+    /// database
+    /// </summary>
+    /// <param name="ect"></param>
+    /// <returns></returns>
+    private string GetSelectList(IExternalCohortTable ect)
+    {
+        var selectList = new List<string> { ect.PrivateIdentifierField };
+
+        // if it is not an identifiable extraction
+        if (!string.Equals(ect.PrivateIdentifierField, ect.ReleaseIdentifierField))
+            // add the release identifier too
+            selectList.Add(ect.ReleaseIdentifierField);
+
+        if (IncludeCohortID) selectList.Add(ect.DefinitionTableForeignKeyField);
+
+        return Environment.NewLine + string.Join($",{Environment.NewLine}", selectList) + Environment.NewLine;
+    }
+
+    public string GetTabName() => $"View {Cohort}(V{Cohort.ExternalVersion})";
+
+    public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
+    {
+        if (Cohort == null)
+            return;
+
+        var ect = Cohort.ExternalCohortTable;
+        var table = ect.DiscoverCohortTable();
+        autoComplete.Add(table);
+    }
+
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => Cohort?.GetQuerySyntaxHelper();
 }

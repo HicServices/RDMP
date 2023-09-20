@@ -16,91 +16,92 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
+
+/// <summary>
+/// This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory form!
+/// </summary>
+public class HICDataLoadFactory
 {
-    /// <summary>
-    /// This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory form!
-    /// </summary>
-    public class HICDataLoadFactory
+    private readonly HICDatabaseConfiguration _databaseConfiguration;
+    private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
+    private readonly ICatalogueRepository _repository;
+    private readonly ILogManager _logManager;
+    private readonly IList<ICatalogue> _cataloguesToLoad;
+
+    public ILoadMetadata LoadMetadata { get; private set; }
+
+    public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+        HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
     {
-        private readonly HICDatabaseConfiguration _databaseConfiguration;
-        private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-        private readonly ICatalogueRepository _repository;
-        private readonly ILogManager _logManager;
-        private readonly IList<ICatalogue> _cataloguesToLoad;
+        _databaseConfiguration = databaseConfiguration;
+        _loadConfigurationFlags = loadConfigurationFlags;
+        _repository = repository;
+        _logManager = logManager;
+        LoadMetadata = loadMetadata;
 
-        public ILoadMetadata LoadMetadata { get; private set; }
+        // If we are not supplied any catalogues to load, it is expected that we will load all catalogues associated with the provided ILoadMetadata
+        _cataloguesToLoad = LoadMetadata.GetAllCatalogues().ToList();
+        if (!_cataloguesToLoad.Any())
+            throw new InvalidOperationException(
+                $"LoadMetadata {LoadMetadata.ID} is not related to any Catalogues, there is nothing to load");
+    }
 
-        public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
+    public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
+    {
+        var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo);
+
+        //warn user about disabled tasks
+        var processTasks = LoadMetadata.ProcessTasks.ToList();
+        foreach (var task in processTasks
+                     .Where(p => p.IsDisabled))
+            postLoadEventListener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Warning, $"Found disabled ProcessTask{task}"));
+
+        //Get all the runtime tasks which are not disabled
+        var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs,
+            _cataloguesToLoad, _repository);
+
+        var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
+
+        var mounting = new PopulateRAW(factory.GetRuntimeTasksForStage(LoadStage.Mounting), _databaseConfiguration);
+
+        var adjustRaw = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustRaw, "Adjust RAW");
+
+        var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, _loadConfigurationFlags);
+
+        var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
+
+        var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration, _loadConfigurationFlags);
+
+        var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
+
+        var archiveFiles = new ArchiveFiles(_loadConfigurationFlags);
+
+        var loadStagingDatabase = new CompositeDataLoadComponent(new List<IDataLoadComponent>
         {
-            _databaseConfiguration = databaseConfiguration;
-            _loadConfigurationFlags = loadConfigurationFlags;
-            _repository = repository;
-            _logManager = logManager;
-            LoadMetadata = loadMetadata;
+            mounting,
+            adjustRaw,
+            migrateToStaging
+        });
 
-            // If we are not supplied any catalogues to load, it is expected that we will load all catalogues associated with the provided ILoadMetadata
-            _cataloguesToLoad = LoadMetadata.GetAllCatalogues().ToList();
-            if (!_cataloguesToLoad.Any())
-                throw new InvalidOperationException("LoadMetadata " + LoadMetadata.ID + " is not related to any Catalogues, there is nothing to load");
-        }
-
-        public IDataLoadExecution Create(IDataLoadEventListener postLoadEventListener)
+        var adjustStagingAndMigrateToLive = new CompositeDataLoadComponent(new List<IDataLoadComponent>
         {
-            var loadArgsDictionary = new LoadArgsDictionary(LoadMetadata, _databaseConfiguration.DeployInfo);
+            loadStagingDatabase,
+            adjustStaging,
+            migrateStagingToLive,
+            postLoad
+        });
 
-            //warn user about disabled tasks
-            var processTasks = LoadMetadata.ProcessTasks.ToList();
-            foreach (IProcessTask task in processTasks
-                .Where(p => p.IsDisabled))
-                postLoadEventListener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Warning, "Found disabled ProcessTask" + task));
+        var components = new List<IDataLoadComponent>
+        {
+            getFiles,
+            adjustStagingAndMigrateToLive,
+            archiveFiles
+        };
 
-            //Get all the runtime tasks which are not disabled
-            var factory = new RuntimeTaskPackager(processTasks.Where(p => !p.IsDisabled), loadArgsDictionary.LoadArgs, _cataloguesToLoad, _repository);
-
-            var getFiles = new LoadFiles(factory.GetRuntimeTasksForStage(LoadStage.GetFiles));
-            
-            var mounting = new PopulateRAW(factory.GetRuntimeTasksForStage(LoadStage.Mounting), _databaseConfiguration);
-            
-            var adjustRaw = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustRaw, "Adjust RAW");
-
-            var migrateToStaging = new MigrateRAWToStaging(_databaseConfiguration, _loadConfigurationFlags);
-            
-            var adjustStaging = factory.CreateCompositeDataLoadComponentFor(LoadStage.AdjustStaging, "Adjust Staging");
-
-            var migrateStagingToLive = new MigrateStagingToLive(_databaseConfiguration,_loadConfigurationFlags);
-
-            var postLoad = factory.CreateCompositeDataLoadComponentFor(LoadStage.PostLoad, "Post Load");
-
-            var archiveFiles = new ArchiveFiles(_loadConfigurationFlags);
-                    
-            var loadStagingDatabase = new CompositeDataLoadComponent(new List<IDataLoadComponent>
-            {
-                mounting,
-                adjustRaw,
-                migrateToStaging
-            });
-
-            var adjustStagingAndMigrateToLive = new CompositeDataLoadComponent(new List<IDataLoadComponent>
-            {
-                loadStagingDatabase,
-                adjustStaging,
-                migrateStagingToLive,
-                postLoad
-            });
-            
-            var components = new List<IDataLoadComponent>
-            {
-                getFiles,
-                adjustStagingAndMigrateToLive,
-                archiveFiles
-            };
-            
-            return new SingleJobExecution(components);
-
-        }
+        return new SingleJobExecution(components);
     }
 }

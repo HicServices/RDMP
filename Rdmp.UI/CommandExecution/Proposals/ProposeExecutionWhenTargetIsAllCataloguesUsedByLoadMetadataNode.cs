@@ -9,42 +9,36 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class
+    ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<
+        AllCataloguesUsedByLoadMetadataNode>
 {
-    class ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode : RDMPCommandExecutionProposal<AllCataloguesUsedByLoadMetadataNode>
+    public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(
+        itemActivator)
     {
-        public ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode(IActivateItems itemActivator) : base(itemActivator)
+    }
+
+    public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target) => false;
+
+    public override void Activate(AllCataloguesUsedByLoadMetadataNode target)
+    {
+        throw new NotSupportedException();
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
+        AllCataloguesUsedByLoadMetadataNode target, InsertOption insertOption = InsertOption.Default)
+    {
+        return cmd switch
         {
-        }
-
-        public override bool CanActivate(AllCataloguesUsedByLoadMetadataNode target)
-        {
-            return false;
-        }
-
-        public override void Activate(AllCataloguesUsedByLoadMetadataNode target)
-        {
-            throw new NotSupportedException();
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
-        {
-            var cata = cmd as CatalogueCombineable;
-            var manyCata = cmd as ManyCataloguesCombineable;
-
-            ICommandExecution cmdExecution = null;
-
-            if (cata != null)
-                cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,target.LoadMetadata).SetTarget(new[]{cata.Catalogue});
-
-            if(manyCata != null)
-                cmdExecution = new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator, target.LoadMetadata).SetTarget(manyCata.Catalogues);
-
-
-            return cmdExecution;
-        }
+            CatalogueCombineable cata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+                target.LoadMetadata).SetTarget(new[] { cata.Catalogue }),
+            ManyCataloguesCombineable manyCata => new ExecuteCommandAssociateCatalogueWithLoadMetadata(ItemActivator,
+                target.LoadMetadata).SetTarget(manyCata.Catalogues),
+            _ => null
+        };
     }
 }

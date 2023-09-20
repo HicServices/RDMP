@@ -5,54 +5,44 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.Core.Curation.Data.Spontaneous
+namespace Rdmp.Core.Curation.Data.Spontaneous;
+
+/// <summary>
+/// Spontaneous (memory only) implementation of IArgument.
+/// </summary>
+public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
 {
-    /// <summary>
-    /// Spontaneous (memory only) implementation of IArgument.
-    /// </summary>
-    public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
+    private readonly object _value;
+
+    public SpontaneouslyInventedArgument(MemoryRepository repo, string name, object value) : base(repo)
     {
-        private readonly object _value;
+        Name = name;
+        _value = value;
+    }
 
-        public SpontaneouslyInventedArgument(MemoryRepository repo,string name, object value):base(repo)
-        {
-            Name = name;
-            _value = value;
-        }
-
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string Value { get { return _value.ToString(); }}
+    public string Name { get; set; }
+    public string Description { get; set; }
+    public string Value => _value.ToString();
 
 
-        public string Type { get { return _value.GetType().FullName; }}
+    public string Type => _value.GetType().FullName;
 
-        public void SetValue(object o)
-        {
-            throw new NotSupportedException();
-        }
+    public void SetValue(object o)
+    {
+        throw new NotSupportedException();
+    }
 
-        public object GetValueAsSystemType()
-        {
-            return _value;
-        }
+    public object GetValueAsSystemType() => _value;
 
-        public Type GetSystemType()
-        {
-            return _value.GetType();
-        }
+    public Type GetSystemType() => _value.GetType();
 
-        public Type GetConcreteSystemType()
-        {
-            return _value.GetType();
-        }
+    public Type GetConcreteSystemType() => _value.GetType();
 
-        public void SetType(Type t)
-        {
-            throw new NotImplementedException();
-        }
+    public void SetType(Type t)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -8,317 +8,299 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.DataRelease.Potential
+namespace Rdmp.Core.DataExport.DataRelease.Potential;
+
+/// <summary>
+/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.
+/// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
+/// based on the extraction method used.
+/// </summary>
+public abstract class ReleasePotential : ICheckable
 {
-    /// <summary>
-    /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 
-    /// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
-    /// based on the extraction method used.
-    /// </summary>
-    public abstract class ReleasePotential:ICheckable
+    protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+    private readonly IRepository _repository;
+    private List<IColumn> _columnsToExtract;
+
+    public ISelectedDataSets SelectedDataSet { get; private set; }
+    public IExtractionConfiguration Configuration { get; private set; }
+    public IExtractableDataSet DataSet { get; private set; }
+
+    public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue
     {
-        protected readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        private readonly IRepository _repository;
-        private List<IColumn> _columnsToExtract;
+        get;
+        private set;
+    }
 
-        public ISelectedDataSets SelectedDataSet { get; private set; }
-        public IExtractionConfiguration Configuration { get; private set; }
-        public IExtractableDataSet DataSet { get; private set; }
+    public Exception Exception { get; private set; }
+    public ICumulativeExtractionResults DatasetExtractionResult { get; protected set; }
+    public DateTime DateOfExtraction { get; private set; }
 
-        public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue { get; private set; }
+    /// <summary>
+    /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
+    /// </summary>
+    public string SqlExtracted { get; private set; }
 
-        public Exception Exception { get; private set; }
-        public ICumulativeExtractionResults DatasetExtractionResult { get; protected set; }
-        public DateTime DateOfExtraction { get; private set; }
+    /// <summary>
+    /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
+    /// </summary>
+    public string SqlCurrentConfiguration { get; private set; }
 
-        /// <summary>
-        /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
-        /// </summary>
-        public string SqlExtracted { get; private set; }
+    /// <summary>
+    /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
+    /// </summary>
+    public DirectoryInfo ExtractDirectory { get; protected set; }
 
-        /// <summary>
-        /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
-        /// </summary>
-        public string SqlCurrentConfiguration { get; private set; }
+    /// <summary>
+    /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
+    /// </summary>
+    public FileInfo ExtractFile { get; set; }
 
-        /// <summary>
-        /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
-        /// </summary>
-        public DirectoryInfo ExtractDirectory { get; protected set; }
+    public Dictionary<IExtractionResults, Releaseability> Assessments { get; protected set; }
 
-        /// <summary>
-        /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
-        /// </summary>
-        public FileInfo ExtractFile { get; set; }
+    protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+        ISelectedDataSets selectedDataSet)
+    {
+        _repositoryLocator = repositoryLocator;
+        _repository = selectedDataSet.Repository;
+        SelectedDataSet = selectedDataSet;
+        Configuration = selectedDataSet.ExtractionConfiguration;
+        DataSet = selectedDataSet.ExtractableDataSet;
+        Assessments = new Dictionary<IExtractionResults, Releaseability>();
 
-        public Dictionary<IExtractionResults, Releaseability> Assessments { get; protected set; }
+        //see what has been extracted before
+        DatasetExtractionResult =
+            Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
+    }
 
-        protected ReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
+    private Releaseability MakeAssessment(ICumulativeExtractionResults extractionResults)
+    {
+        //always try to figure out what the current SQL is
+        SqlCurrentConfiguration = GetCurrentConfigurationSQL();
+
+        //let the user know when the data was extracted
+        DateOfExtraction = extractionResults.DateOfExtraction;
+        SqlExtracted = extractionResults.SQLExecuted;
+
+        //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
+        if (extractionResults.CohortExtracted != Configuration.Cohort_ID)
+            return Releaseability.CohortDesynchronisation;
+
+        if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
+            return Releaseability.ExtractionSQLDesynchronisation;
+
+        if (ExtractionProgressIsIncomplete(null))
+            return Releaseability.NeverBeenSuccessfullyExecuted;
+
+        var finalAssessment = GetSpecificAssessment(extractionResults);
+
+        return finalAssessment == Releaseability.Undefined
+            ? SqlDifferencesVsLiveCatalogue()
+                ? Releaseability.ColumnDifferencesVsCatalogue
+                : Releaseability.Releaseable
+            : finalAssessment;
+    }
+
+    private bool ExtractionProgressIsIncomplete(ICheckNotifier notifier)
+    {
+        var progress = SelectedDataSet.ExtractionProgressIfAny;
+
+        if (progress == null) return false;
+
+        if (progress.ProgressDate == null)
         {
-            _repositoryLocator = repositoryLocator;
-            _repository = selectedDataSet.Repository;
-            SelectedDataSet = selectedDataSet;
-            Configuration = selectedDataSet.ExtractionConfiguration;
-            DataSet = selectedDataSet.ExtractableDataSet;
-            Assessments = new Dictionary<IExtractionResults, Releaseability>();
-
-            //see what has been extracted before
-            DatasetExtractionResult = Configuration.CumulativeExtractionResults.FirstOrDefault(r => r.ExtractableDataSet_ID == DataSet.ID);
+            notifier?.OnCheckPerformed(new CheckEventArgs(
+                $"ExtractionProgress ProgressDate is null for '{SelectedDataSet}'.", CheckResult.Warning));
+            return true;
         }
 
-        private Releaseability MakeAssesment(ICumulativeExtractionResults extractionResults)
+        if (progress.ProgressDate < progress.EndDate)
         {
-            //always try to figure out what the current SQL is
-            SqlCurrentConfiguration = GetCurrentConfigurationSQL();
-
-            //let the user know when the data was extracted
-            DateOfExtraction = extractionResults.DateOfExtraction;
-            SqlExtracted = extractionResults.SQLExecuted;
-
-            //the cohort has been changed in the configuration in the time elapsed since the file we are evaluating was generated (that was when CummatliveExtractionResults was populated)
-            if (extractionResults.CohortExtracted != Configuration.Cohort_ID)
-                return Releaseability.CohortDesynchronisation;
-
-            if (SqlOutOfSyncWithDataExportManagerConfiguration(extractionResults))
-                return Releaseability.ExtractionSQLDesynchronisation;
-
-            if (ExtractionProgressIsIncomplete(null))
-                return Releaseability.NeverBeenSuccessfullyExecuted;
-
-            var finalAssessment = GetSpecificAssessment(extractionResults);
-
-            if (finalAssessment == Releaseability.Undefined)
-                return SqlDifferencesVsLiveCatalogue()
-                    ? Releaseability.ColumnDifferencesVsCatalogue
-                    : Releaseability.Releaseable;
-
-            return finalAssessment;
+            notifier?.OnCheckPerformed(new CheckEventArgs(
+                $"ExtractionProgress is incomplete for '{SelectedDataSet}'.  ProgressDate is {progress.ProgressDate} but EndDate is {progress.EndDate}",
+                CheckResult.Warning));
+            return true;
         }
 
-        private bool ExtractionProgressIsIncomplete(ICheckNotifier notifier)
-        {
-            var progress = SelectedDataSet.ExtractionProgressIfAny;
-            
-            if (progress == null)
-            {
-                return false;
-            }
+        return false;
+    }
 
-            if (progress.ProgressDate == null)
-            {
-                notifier?.OnCheckPerformed(new CheckEventArgs($"ExtractionProgress ProgressDate is null for '{SelectedDataSet}'.", CheckResult.Warning));
-                return true;
-            }
-
-            if (progress.ProgressDate < progress.EndDate)
-            {
-                notifier?.OnCheckPerformed(new CheckEventArgs($"ExtractionProgress is incomplete for '{SelectedDataSet}'.  ProgressDate is {progress.ProgressDate} but EndDate is {progress.EndDate}", CheckResult.Warning));
-                return true;
-            }
-
-            return false;
-        }
-
-        private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
-        {
-            var extractedObject = _repositoryLocator.GetArbitraryDatabaseObject(
+    private Releaseability MakeSupplementalAssesment(ISupplementalExtractionResults supplementalExtractionResults)
+    {
+        if (_repositoryLocator.GetArbitraryDatabaseObject(
                 supplementalExtractionResults.ReferencedObjectRepositoryType,
                 supplementalExtractionResults.ReferencedObjectType,
-                supplementalExtractionResults.ReferencedObjectID) as INamed;
+                supplementalExtractionResults.ReferencedObjectID) is not INamed extractedObject)
+            return Releaseability.Undefined;
 
-            if (extractedObject == null)
-                return Releaseability.Undefined;
+        if (extractedObject is SupportingSQLTable table && table.SQL != supplementalExtractionResults.SQLExecuted)
+            return Releaseability.ExtractionSQLDesynchronisation;
 
-            if (extractedObject is SupportingSQLTable)
+        var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
+
+        return finalAssessment == Releaseability.Undefined
+            ? extractedObject.Name != supplementalExtractionResults.ExtractedName
+                ? Releaseability.ExtractionSQLDesynchronisation
+                : Releaseability.Releaseable
+            : finalAssessment;
+    }
+
+    protected abstract Releaseability GetSupplementalSpecificAssessment(
+        IExtractionResults supplementalExtractionResults);
+
+    protected abstract Releaseability GetSpecificAssessment(IExtractionResults extractionResults);
+
+    private bool SqlDifferencesVsLiveCatalogue()
+    {
+        ColumnsThatAreDifferentFromCatalogue = new Dictionary<ExtractableColumn, ExtractionInformation>();
+
+        foreach (var column in _columnsToExtract)
+        {
+            var extractableColumn = (ExtractableColumn)column;
+            if (extractableColumn.HasOriginalExtractionInformationVanished())
             {
-                if ((extractedObject as SupportingSQLTable).SQL != supplementalExtractionResults.SQLExecuted)
-                    return Releaseability.ExtractionSQLDesynchronisation;
+                ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, null);
+                continue;
             }
 
-            var finalAssessment = GetSupplementalSpecificAssessment(supplementalExtractionResults);
+            var masterCatalogueVersion = extractableColumn.CatalogueExtractionInformation;
 
-            if (finalAssessment == Releaseability.Undefined)
-                return (extractedObject.Name != supplementalExtractionResults.ExtractedName
-                    ? Releaseability.ExtractionSQLDesynchronisation
-                    : Releaseability.Releaseable);
-
-            return finalAssessment;
+            if (!masterCatalogueVersion.SelectSQL.Equals(extractableColumn.SelectSQL))
+                ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, masterCatalogueVersion);
         }
 
-        protected abstract Releaseability GetSupplementalSpecificAssessment(IExtractionResults supplementalExtractionResults);
+        return ColumnsThatAreDifferentFromCatalogue.Any();
+    }
 
-        protected abstract Releaseability GetSpecificAssessment(IExtractionResults extractionResults);
+    private string GetCurrentConfigurationSQL()
+    {
+        //get the cohort
+        var cohort = _repository.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
 
-        private bool SqlDifferencesVsLiveCatalogue()
-        {
-            ColumnsThatAreDifferentFromCatalogue = new Dictionary<ExtractableColumn, ExtractionInformation>();
+        //get the columns that are configured today
+        _columnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(DataSet));
+        _columnsToExtract.Sort();
 
-            foreach (ExtractableColumn extractableColumn in _columnsToExtract)
+        //get the salt
+        var project = _repository.GetObjectByID<Project>(Configuration.Project_ID);
+        var salt = new HICProjectSalt(project);
+
+        //create a request for an empty bundle - only the dataset
+        var request = new ExtractDatasetCommand(Configuration, cohort, new ExtractableDatasetBundle(DataSet),
+            _columnsToExtract, salt, null);
+
+        request.GenerateQueryBuilder();
+
+        //Generated the SQL as it would exist today for this extraction
+        var resultLive = request.QueryBuilder;
+
+        return resultLive.SQL;
+    }
+
+    private bool SqlOutOfSyncWithDataExportManagerConfiguration(IExtractionResults extractionResults)
+    {
+        if (extractionResults.SQLExecuted == null)
+            throw new Exception(
+                "Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
+
+        // When using extraction progress the SQL can be whatever you want
+        // if the progress date says End then we blindly assume that whatever you
+        // executed was legit
+        if (SelectedDataSet.ExtractionProgressIfAny != null) return false;
+
+        //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
+        return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
+    }
+
+    public override string ToString()
+    {
+        return DatasetExtractionResult?.DestinationDescription == null
+            ? "Never extracted..."
+            : Assessments[DatasetExtractionResult] switch
             {
-                if(extractableColumn.HasOriginalExtractionInformationVanished())
-                {
-                    ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn,null);
-                    continue;
-                }
+                Releaseability.ExceptionOccurredWhileEvaluatingReleaseability => Exception.ToString(),
+                _ =>
+                    $"Dataset: {DataSet} DateOfExtraction: {DateOfExtraction} Status: {Assessments[DatasetExtractionResult]}"
+            };
+    }
 
-                var masterCatalogueVersion = extractableColumn.CatalogueExtractionInformation;
+    public virtual void Check(ICheckNotifier notifier)
+    {
+        if (DatasetExtractionResult?.DestinationDescription == null)
+            return;
 
-                if (!masterCatalogueVersion.SelectSQL.Equals(extractableColumn.SelectSQL))
-                    ColumnsThatAreDifferentFromCatalogue.Add(extractableColumn, masterCatalogueVersion);
+        // check if we have a halfway completed extraction
+        ExtractionProgressIsIncomplete(notifier);
+
+        if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
+            notifier.OnCheckPerformed(new CheckEventArgs(
+                $"Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release.Offending dataset was ({DataSet}).  You can probably fix this problem by reloading/refreshing the Releaseability window. If you have already added them to a planned Release you will need to add the newly recalculated one instead.",
+                CheckResult.Fail));
+
+        var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
+        if (existingReleaseLog != null)
+             if (notifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
+                    CheckResult.Warning,
+                    null,
+                    "Do you want to delete the old release Log? You should check the values first.")))
+                existingReleaseLog.DeleteInDatabase();
+
+        var cols = Configuration.GetAllExtractableColumnsFor(DataSet)
+            .OfType<ExtractableColumn>()
+            .Select(c => c.CatalogueExtractionInformation)
+            .ToArray();
+
+        SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols,
+            ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
+        SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols,
+            ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
+        SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols,
+            ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
+
+        if (!Assessments.ContainsKey(DatasetExtractionResult))
+            try
+            {
+                Assessments.Add(DatasetExtractionResult, MakeAssessment(DatasetExtractionResult));
+            }
+            catch (Exception e)
+            {
+                Assessments.Add(DatasetExtractionResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
+                notifier.OnCheckPerformed(new CheckEventArgs($"FAILURE: {e.Message}", CheckResult.Fail, e));
             }
 
-            return ColumnsThatAreDifferentFromCatalogue.Any();
-        }
-
-        private string GetCurrentConfigurationSQL()
-        {
-            //get the cohort
-            var cohort = _repository.GetObjectByID<ExtractableCohort>((int)Configuration.Cohort_ID);
-
-            //get the columns that are configured today
-            _columnsToExtract = new List<IColumn>(Configuration.GetAllExtractableColumnsFor(DataSet));
-            _columnsToExtract.Sort();
-
-            //get the salt
-            var project = _repository.GetObjectByID<Project>(Configuration.Project_ID);
-            var salt = new HICProjectSalt(project);
-
-            //create a request for an empty bundle - only the dataset
-            var request = new ExtractDatasetCommand( Configuration, cohort, new ExtractableDatasetBundle(DataSet), _columnsToExtract, salt, null);
-            
-            request.GenerateQueryBuilder();
-
-            //Generated the SQL as it would exist today for this extraction
-            var resultLive = request.QueryBuilder;
-
-            return resultLive.SQL;
-        }
-        
-        private bool SqlOutOfSyncWithDataExportManagerConfiguration(IExtractionResults extractionResults)
-        {
-            if (extractionResults.SQLExecuted == null)
-                throw new Exception("Cumulative Extraction Results for the extraction in which this dataset was involved in does not have any SQLExecuted recorded for it.");
-            
-            // When using extraction progress the SQL can be whatever you want
-            // if the progress date says End then we blindly assume that whatever you
-            // executed was legit
-            if(SelectedDataSet.ExtractionProgressIfAny != null)
-            {
-                return false;
-            }
-
-            //if the SQL today is different to the SQL that was run when the user last extracted the data then there is a desync in the SQL (someone has changed something in the catalogue/data export manager configuration since the data was extracted)
-            return !SqlCurrentConfiguration.Equals(extractionResults.SQLExecuted);
-        }
-        
-        public override string ToString()
-        {
-            if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
-                return "Never extracted...";
-
-            switch (Assessments[DatasetExtractionResult])
-            {
-                case Releaseability.ExceptionOccurredWhileEvaluatingReleaseability:
-                    return Exception.ToString();
-                default:
-                    string toReturn = "Dataset: " + DataSet;
-                    toReturn += " DateOfExtraction: " + DateOfExtraction;
-                    toReturn += " Status: " + Assessments[DatasetExtractionResult];
-
-                    return toReturn;
-            }
-        }
-
-        public virtual void Check(ICheckNotifier notifier)
-        {
-            if (DatasetExtractionResult == null || DatasetExtractionResult.DestinationDescription == null)
-                return;
-
-            // check if we have a halfway completed extraction
-            ExtractionProgressIsIncomplete(notifier);
-
-            if (DatasetExtractionResult.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted)
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Release potential relates to expired (stale) extraction; you or someone else has executed another data extraction since you added this dataset to the release." +
-                    "Offending dataset was (" + DataSet +
-                    ").  You can probably fix this problem by reloading/refreshing the Releaseability window. " +
-                    "If you have already added them to a planned Release you will need to add the newly recalculated one instead.", CheckResult.Fail));
-
-            var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
-            if (existingReleaseLog != null)
-            {
-                if (notifier.OnCheckPerformed(new CheckEventArgs(String.Format("Dataset {0} has probably already been released as per {1}!",
-                                                DataSet, existingReleaseLog),
-                                                CheckResult.Warning,
-                                                null,
-                                                "Do you want to delete the old release Log? You should check the values first.")))
-                    existingReleaseLog.DeleteInDatabase();
-            }
-
-            var cols = Configuration.GetAllExtractableColumnsFor(DataSet)
-                .OfType<ExtractableColumn>()
-                .Select(c => c.CatalogueExtractionInformation)
-                .ToArray();
-
-            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier,Configuration, DataSet, cols,ErrorCodes.ExtractionContainsSpecialApprovalRequired, ExtractionCategory.SpecialApprovalRequired);
-            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols, ErrorCodes.ExtractionContainsInternal, ExtractionCategory.Internal);
-            SelectedDataSetsChecker.WarnAboutExtractionCategory(notifier, Configuration, DataSet, cols, ErrorCodes.ExtractionContainsDeprecated, ExtractionCategory.Deprecated);
-
-            if (!Assessments.ContainsKey(DatasetExtractionResult))
+        foreach (var supplementalResult in DatasetExtractionResult.SupplementalExtractionResults)
+            if (!Assessments.ContainsKey(supplementalResult))
                 try
                 {
-                    Assessments.Add(DatasetExtractionResult, MakeAssesment(DatasetExtractionResult));
+                    Assessments.Add(supplementalResult, MakeSupplementalAssesment(supplementalResult));
                 }
                 catch (Exception e)
                 {
-                    Assessments.Add(DatasetExtractionResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                    notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
+                    Assessments.Add(supplementalResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
+                    notifier.OnCheckPerformed(new CheckEventArgs($"FAILURE: {e.Message}", CheckResult.Fail, e));
                 }
 
-            foreach (var supplementalResult in DatasetExtractionResult.SupplementalExtractionResults)
+        foreach (var kvp in Assessments)
+        {
+            var checkResult = kvp.Value switch
             {
-                if (!Assessments.ContainsKey(supplementalResult))
-                    try
-                    {
-                        Assessments.Add(supplementalResult, MakeSupplementalAssesment(supplementalResult));
-                    }
-                    catch (Exception e)
-                    {
-                        Assessments.Add(supplementalResult, Releaseability.ExceptionOccurredWhileEvaluatingReleaseability);
-                        notifier.OnCheckPerformed(new CheckEventArgs("FAILURE: " + e.Message, CheckResult.Fail, e));
-                    }
-            }
+                Releaseability.ColumnDifferencesVsCatalogue => CheckResult.Warning,
+                Releaseability.Releaseable => CheckResult.Success,
+                _ => CheckResult.Fail
+            };
 
-            foreach (KeyValuePair<IExtractionResults, Releaseability> kvp in Assessments)
-            {
-                CheckResult checkResult;
-                switch (kvp.Value)
-                {
-                    case Releaseability.ColumnDifferencesVsCatalogue:
-                        checkResult = CheckResult.Warning;
-                        break;
-                    case Releaseability.Releaseable:
-                        checkResult = CheckResult.Success;
-                        break;
-                    default:
-                        checkResult = CheckResult.Fail;
-                        break;
-                }
-
-                notifier.OnCheckPerformed(new CheckEventArgs(kvp.Key + " is " + kvp.Value, checkResult));
-            }
+            notifier.OnCheckPerformed(new CheckEventArgs($"{kvp.Key} is {kvp.Value}", checkResult));
         }
-
     }
 }

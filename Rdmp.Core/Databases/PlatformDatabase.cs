@@ -4,38 +4,36 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
-namespace Rdmp.Core.Databases
+namespace Rdmp.Core.Databases;
+
+public sealed class ANOStorePatcher : Patcher
 {
-    public sealed class ANOStorePatcher:Patcher
+    public ANOStorePatcher() : base(2, "Databases.ANOStoreDatabase")
     {
-        public ANOStorePatcher():base(2,"Databases.ANOStoreDatabase")
-        {
-            LegacyName = "ANOStore.Database";
-        }
+        LegacyName = "ANOStore.Database";
     }
+}
 
-    public sealed class IdentifierDumpDatabasePatcher:Patcher
+public sealed class IdentifierDumpDatabasePatcher : Patcher
+{
+    public IdentifierDumpDatabasePatcher() : base(2, "Databases.IdentifierDumpDatabase")
     {
-        public IdentifierDumpDatabasePatcher():base(2,"Databases.IdentifierDumpDatabase")
-        {
-            LegacyName = "IdentifierDump.Database";
-        }
+        LegacyName = "IdentifierDump.Database";
     }
+}
 
-    public sealed class DataExportPatcher:Patcher
+public sealed class DataExportPatcher : Patcher
+{
+    public DataExportPatcher() : base(1, "Databases.DataExportDatabase")
     {
-        public DataExportPatcher():base(1,"Databases.DataExportDatabase")
-        {
-            
-        }
     }
+}
 
-    public sealed class CataloguePatcher:Patcher
+public sealed class CataloguePatcher : Patcher
+{
+    public CataloguePatcher() : base(1, "Databases.CatalogueDatabase")
     {
-        public CataloguePatcher():base(1,"Databases.CatalogueDatabase")
-        {
-        }
     }
 }

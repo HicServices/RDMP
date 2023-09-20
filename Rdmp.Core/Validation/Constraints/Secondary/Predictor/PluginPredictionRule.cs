@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
-namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor
+namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
+
+/// <summary>
+/// Abstract base for plugin developers to write new <see cref="PredictionRule"/> for the data quality engine
+/// </summary>
+public abstract class PluginPredictionRule : PredictionRule
 {
-    /// <summary>
-    /// Abstract base for plugin developers to write new <see cref="PredictionRule"/> for the data quality engine
-    /// </summary>
-    public abstract class PluginPredictionRule:PredictionRule
-    {
-    }
 }

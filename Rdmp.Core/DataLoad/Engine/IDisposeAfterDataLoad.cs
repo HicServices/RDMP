@@ -4,15 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine
+namespace Rdmp.Core.DataLoad.Engine;
+
+/// <summary>
+/// Interface for all data load components which allows for post load cleanup (even if the load crashed).  See DataLoadProcess.
+/// </summary>
+public interface IDisposeAfterDataLoad
 {
-    /// <summary>
-    /// Interface for all data load components which allows for post load cleanup (even if the load crashed).  See DataLoadProcess.
-    /// </summary>
-    public interface IDisposeAfterDataLoad
-    {
-        void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener);
-    }
+    void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener);
 }

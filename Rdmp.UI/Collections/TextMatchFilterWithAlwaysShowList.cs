@@ -9,50 +9,44 @@ using System.Collections.Generic;
 using System.Linq;
 using BrightIdeasSoftware;
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// <see cref="TextMatchFilter"/> which always shows a given list of objects (the alwaysShowList).  This class is an <see cref="IModelFilter"/>
+/// for use with ObjectListView
+/// </summary>
+public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
 {
-    /// <summary>
-    /// <see cref="TextMatchFilter"/> which always shows a given list of objects (the alwaysShowList).  This class is an <see cref="IModelFilter"/>
-    /// for use with ObjectListView
-    /// </summary>
-    public class TextMatchFilterWithAlwaysShowList : TextMatchFilter
+    public readonly HashSet<object> AlwaysShow = new();
+    private readonly CompositeAllFilter _compositeFilter;
+
+    public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow, ObjectListView olv, string text,
+        StringComparison comparison) : base(olv, text, comparison)
     {
-        public HashSet<object>  AlwaysShow = new HashSet<object>();
-        private string[] _tokens;
-        private CompositeAllFilter _compositeFilter;
-
-        public TextMatchFilterWithAlwaysShowList(IEnumerable<object> alwaysShow ,ObjectListView olv, string text, StringComparison comparison): base(olv, text, comparison)
+        if (!string.IsNullOrWhiteSpace(text) && text.Contains(' '))
         {
-            if(!string.IsNullOrWhiteSpace(text) && text.Contains(" "))
-            {
-                List<IModelFilter> filters = new List<IModelFilter>();
-                
-                _tokens = text.Split(' ');
-                foreach (string token in _tokens)
-                    filters.Add(new TextMatchFilter(olv,token,comparison));
+            var tokens = text.Split(' ');
+            var filters = tokens.Select(token => new TextMatchFilter(olv, token, comparison)).Cast<IModelFilter>()
+                .ToList();
 
-                _compositeFilter = new CompositeAllFilter(filters);
-            }
-
-            foreach (object o in alwaysShow)
-                AlwaysShow.Add(o);
+            _compositeFilter = new CompositeAllFilter(filters);
         }
 
-        /// <summary>
-        /// Returns true if the object should be included in the list
-        /// </summary>
-        /// <param name="modelObject"></param>
-        /// <returns></returns>
-        public override bool Filter(object modelObject)
-        {
-            //gets us the highlight and composite match if the user put in spaces
-            bool showing = _compositeFilter != null ? _compositeFilter.Filter(modelObject) : base.Filter(modelObject);
+        foreach (var o in alwaysShow)
+            AlwaysShow.Add(o);
+    }
 
-            //if its in the always show it
-            if (AlwaysShow.Contains(modelObject))
-                return true;
+    /// <summary>
+    /// Returns true if the object should be included in the list
+    /// </summary>
+    /// <param name="modelObject"></param>
+    /// <returns></returns>
+    public override bool Filter(object modelObject)
+    {
+        //gets us the highlight and composite match if the user put in spaces
+        var showing = _compositeFilter?.Filter(modelObject) ?? base.Filter(modelObject);
 
-            return showing;
-        }
+        //if it's in the always show it list, do so
+        return AlwaysShow.Contains(modelObject) || showing;
     }
 }

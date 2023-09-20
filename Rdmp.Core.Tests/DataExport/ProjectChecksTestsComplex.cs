@@ -10,36 +10,41 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport
+namespace Rdmp.Core.Tests.DataExport;
+
+public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
 {
-    public class ProjectChecksTestsComplex:TestsRequiringAnExtractionConfiguration
+    [Test]
+    public void CheckBasicConfiguration()
     {
-        [Test]
-        public void CheckBasicConfiguration()
-        {
-            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator),_project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true });
-        }
+        new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(
+            ThrowImmediatelyCheckNotifier.QuietPicky);
+    }
 
-        [Test]
-        public void DatasetIsDisabled()
-        {
-            _extractableDataSet.DisableExtraction = true;
-            _extractableDataSet.SaveToDatabase();
+    [Test]
+    public void DatasetIsDisabled()
+    {
+        _extractableDataSet.DisableExtraction = true;
+        _extractableDataSet.SaveToDatabase();
 
-            //checking should fail
-            var exception = Assert.Throws<Exception>(() => new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(new ThrowImmediatelyCheckNotifier { ThrowOnWarning = true }));
-            Assert.AreEqual("Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment", exception.Message);
+        //checking should fail
+        var exception = Assert.Throws<Exception>(() =>
+            new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(
+                ThrowImmediatelyCheckNotifier.QuietPicky));
+        Assert.AreEqual(
+            "Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
+            exception.Message);
 
-            //but if the user goes ahead and executes the extraction that should fail too
-            var source = new ExecuteDatasetExtractionSource();
-            source.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            var exception2 = Assert.Throws<Exception>(() => source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken()));
+        //but if the user goes ahead and executes the extraction that should fail too
+        var source = new ExecuteDatasetExtractionSource();
+        source.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var exception2 = Assert.Throws<Exception>(() =>
+            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
 
-            Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2.Message);
-        }
+        Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2?.Message);
     }
 }

@@ -8,35 +8,32 @@ using System;
 using System.Windows.Forms;
 using Rdmp.UI.Tutorials;
 
-namespace ResearchDataManagementPlatform.Menus.MenuItems
+namespace ResearchDataManagementPlatform.Menus.MenuItems;
+
+/// <summary>
+/// Clears all user progress on Tutorials
+/// </summary>
+[System.ComponentModel.DesignerCategory("")]
+public sealed class ResetTutorialsMenuItem : ToolStripMenuItem
 {
-    /// <summary>
-    /// Clears all user progress on Tutorials
-    /// </summary>
-    [System.ComponentModel.DesignerCategory("")]
-    public class ResetTutorialsMenuItem : ToolStripMenuItem
+    private readonly TutorialTracker _tracker;
+
+    public ResetTutorialsMenuItem(ToolStripMenuItem parent, TutorialTracker tracker)
     {
-        private readonly TutorialTracker _tracker;
+        _tracker = tracker;
+        Text = "Reset Tutorials";
+        parent.DropDownOpening += parent_DropDownOpening;
+    }
 
-        public ResetTutorialsMenuItem(ToolStripMenuItem parent, TutorialTracker tracker)
-        {
-            _tracker = tracker;
-            Text = "Reset Tutorials";
-            parent.DropDownOpening += parent_DropDownOpening;
-        }
+    protected override void OnClick(EventArgs e)
+    {
+        base.OnClick(e);
 
-        protected override void OnClick(EventArgs e)
-        {
-            base.OnClick(e);
+        _tracker.ClearCompleted();
+    }
 
-            _tracker.ClearCompleted();
-        }
-
-        void parent_DropDownOpening(object sender, EventArgs e)
-        {
-            Enabled = _tracker.IsClearable();
-        }
-
-
+    private void parent_DropDownOpening(object sender, EventArgs e)
+    {
+        Enabled = _tracker.IsClearable();
     }
 }

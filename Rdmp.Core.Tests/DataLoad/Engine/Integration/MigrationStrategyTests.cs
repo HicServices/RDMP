@@ -7,34 +7,31 @@
 using System;
 using FAnsi.Connections;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+internal class MigrationStrategyTests : DatabaseTests
 {
-    class MigrationStrategyTests : DatabaseTests
+    [Test]
+    public void OverwriteMigrationStrategy_NoPrimaryKey()
     {
-        [Test]
-        public void OverwriteMigrationStrategy_NoPrimaryKey()
-        {
-            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-            var from = db.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
-            var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
+        var from = db.CreateTable("Bob", new[] { new DatabaseColumnRequest("Field", "int") });
+        var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
-            var connection = Mock.Of<IManagedConnection>();
-            var job = Mock.Of<IDataLoadJob>();
-            var strategy = new OverwriteMigrationStrategy(connection);
+        var connection = Substitute.For<IManagedConnection>();
+        var strategy = new OverwriteMigrationStrategy(connection);
 
-            var migrationFieldProcessor = Mock.Of<IMigrationFieldProcessor>();
+        var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
 
-            var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
-            Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);
-        }
+        var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
+        Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);
     }
-
 }

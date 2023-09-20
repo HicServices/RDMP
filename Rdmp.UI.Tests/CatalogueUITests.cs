@@ -5,105 +5,106 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Runtime.Versioning;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.UI.MainFormUITabs;
 
-namespace Rdmp.UI.Tests
+namespace Rdmp.UI.Tests;
+
+[SupportedOSPlatform("windows7.0")]
+public class CatalogueUITests : UITests
 {
-    [SupportedOSPlatform("windows7.0")]
-    public class CatalogueUITests : UITests
+    [Test]
+    [UITimeout(20000)]
+    public void Test_CatalogueUI_NormalState()
     {
-        [Test, UITimeout(20000)]
-        public void Test_CatalogueUI_NormalState()
-        {
-            var cata = WhenIHaveA<Catalogue>();
-            var ui = AndLaunch<CatalogueUI>(cata);
+        var cata = WhenIHaveA<Catalogue>();
+        var ui = AndLaunch<CatalogueUI>(cata);
 
-            //there no unsaved changes
-            Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
+        //there no unsaved changes
+        Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
 
-            //but when I type text
-            ui._scintillaDescription.Text = "amagad zombies";
+        //but when I type text
+        ui._scintillaDescription.Text = "amagad zombies";
 
-            //my class should get the typed text but it shouldn't be saved into the database yet
-            Assert.AreEqual("amagad zombies", cata.Description);
-            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, cata.HasLocalChanges().Evaluation);
+        //my class should get the typed text but it shouldn't be saved into the database yet
+        Assert.AreEqual("amagad zombies", cata.Description);
+        Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, cata.HasLocalChanges().Evaluation);
 
-            //when I press undo
-            var saver = ui.GetObjectSaverButton();
-            saver.Undo();
+        //when I press undo
+        var saver = ui.GetObjectSaverButton();
+        saver.Undo();
 
-            //it should set the text editor back to blank
-            Assert.AreEqual("", ui._scintillaDescription.Text);
-            //and clear my class property
-            Assert.AreEqual(null, cata.Description);
+        //it should set the text editor back to blank
+        Assert.AreEqual("", ui._scintillaDescription.Text);
+        //and clear my class property
+        Assert.AreEqual(null, cata.Description);
 
-            //redo should update both the local class and text box
-            saver.Redo();
-            Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
-            Assert.AreEqual("amagad zombies", cata.Description);
+        //redo should update both the local class and text box
+        saver.Redo();
+        Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
+        Assert.AreEqual("amagad zombies", cata.Description);
 
-            //undo a redo should still be valid
-            saver.Undo();
-            Assert.AreEqual("", ui._scintillaDescription.Text);
-            Assert.AreEqual(null, cata.Description);
+        //undo a redo should still be valid
+        saver.Undo();
+        Assert.AreEqual("", ui._scintillaDescription.Text);
+        Assert.AreEqual(null, cata.Description);
 
-            saver.Redo();
-            Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
-            Assert.AreEqual("amagad zombies", cata.Description);
-            
-            //when I save
-            saver.Save();
+        saver.Redo();
+        Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
+        Assert.AreEqual("amagad zombies", cata.Description);
 
-            //my class should have no changes (vs the database) and should have the proper description
-            Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
-            Assert.AreEqual("amagad zombies", cata.Description);
+        //when I save
+        saver.Save();
 
-            AssertNoErrors(ExpectedErrorType.Any);
+        //my class should have no changes (vs the database) and should have the proper description
+        Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
+        Assert.AreEqual("amagad zombies", cata.Description);
 
-            //clear the name
-            cata.Name = null;
-            AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Value cannot be null");
-            cata.Name = "omg";
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        AssertNoErrors(ExpectedErrorType.Any);
 
-        [Test, UITimeout(50000)]
-        public void Test_CatalogueUI_AcronymDuplicates()
-        {
-            var cata1 = WhenIHaveA<Catalogue>();
-            var cata2 = WhenIHaveA<Catalogue>();
+        //clear the name
+        cata.Name = null;
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Value cannot be null");
+        cata.Name = "omg";
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
 
-            cata1.Name = "hey";
-            cata1.Acronym = null;
-            cata1.SaveToDatabase();
+    [Test]
+    [UITimeout(50000)]
+    public void Test_CatalogueUI_AcronymDuplicates()
+    {
+        var cata1 = WhenIHaveA<Catalogue>();
+        var cata2 = WhenIHaveA<Catalogue>();
 
-            cata2.Name = "fish";
-            cata2.Acronym = null;
-            cata2.SaveToDatabase();
-            
-            var ui = AndLaunch<CatalogueUI>(cata1);
-            AssertNoErrors(ExpectedErrorType.Any);
+        cata1.Name = "hey";
+        cata1.Acronym = null;
+        cata1.SaveToDatabase();
 
-            //now cata 2 has an acronym
-            cata2.Acronym = "AB";
-            cata2.SaveToDatabase();
+        cata2.Name = "fish";
+        cata2.Acronym = null;
+        cata2.SaveToDatabase();
 
-            AssertNoErrors(ExpectedErrorType.Any);
+        var ui = AndLaunch<CatalogueUI>(cata1);
+        AssertNoErrors(ExpectedErrorType.Any);
 
-            //when I type the Acronym of another Catalogue
-            ui.tbAcronym.Text = "AB";
+        //now cata 2 has an acronym
+        cata2.Acronym = "AB";
+        cata2.SaveToDatabase();
 
-            //it tells me that I have to make it unique
-            AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Must be unique");
-            
-            //so I make it unique
-            ui.tbAcronym.Text = "ABC";
-            
-            //and all is good again
-            AssertNoErrors(ExpectedErrorType.Any);
-        }
+        AssertNoErrors(ExpectedErrorType.Any);
+
+        //when I type the Acronym of another Catalogue
+        ui.tbAcronym.Text = "AB";
+
+        //it tells me that I have to make it unique
+        AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Must be unique");
+
+        //so I make it unique
+        ui.tbAcronym.Text = "ABC";
+
+        //and all is good again
+        AssertNoErrors(ExpectedErrorType.Any);
     }
 }

@@ -8,49 +8,39 @@ using System;
 using System.Drawing;
 using Rdmp.Core;
 
-namespace Rdmp.UI.Theme
+namespace Rdmp.UI.Theme;
+
+/// <summary>
+/// Determines which colour to use for the background on controls relating to this collection concept
+/// </summary>
+public static class BackColorProvider
 {
-    /// <summary>
-    /// Determines which colour to use for the background on controls relating to this collection concept
-    /// </summary>
-    public class BackColorProvider
+    public const int IndicatorBarSuggestedHeight = 4;
+
+    public static Color GetColor(RDMPCollection collection)
     {
-        public const int IndicatorBarSuggestedHeight = 4;
-
-        public Color GetColor(RDMPCollection collection)
+        return collection switch
         {
-            switch (collection)
-            {
-                case RDMPCollection.None:
-                    return SystemColors.Control;
-                case RDMPCollection.Tables:
-                    return Color.FromArgb(255, 220, 255);
-                case RDMPCollection.Catalogue:
-                    return Color.FromArgb(255, 255, 220);
-                case RDMPCollection.DataExport:
-                    return Color.FromArgb(200, 255, 220);
-                case RDMPCollection.SavedCohorts:
-                    return Color.FromArgb(255, 220, 220);
-                case RDMPCollection.Favourites:
-                    return SystemColors.Control;
-                case RDMPCollection.Cohort:
-                    return Color.FromArgb(210, 240, 255);
-                case RDMPCollection.DataLoad:
-                    return Color.DarkGray;
-                default:
-                    throw new ArgumentOutOfRangeException("collection");
-            }
-        }
+            RDMPCollection.None => SystemColors.Control,
+            RDMPCollection.Tables => Color.FromArgb(255, 220, 255),
+            RDMPCollection.Catalogue => Color.FromArgb(255, 255, 220),
+            RDMPCollection.DataExport => Color.FromArgb(200, 255, 220),
+            RDMPCollection.SavedCohorts => Color.FromArgb(255, 220, 220),
+            RDMPCollection.Favourites => SystemColors.Control,
+            RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
+            RDMPCollection.DataLoad => Color.DarkGray,
+            _ => throw new ArgumentOutOfRangeException(nameof(collection))
+        };
+    }
 
-        public Image GetBackgroundImage(Size size, RDMPCollection collection)
-        {
-            var bmp = new Bitmap(size.Width, size.Height);
+    public static Image GetBackgroundImage(Size size, RDMPCollection collection)
+    {
+        var bmp = new Bitmap(size.Width, size.Height);
 
-            using (var g = Graphics.FromImage(bmp))
-                g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight, size.Width - 4, IndicatorBarSuggestedHeight);
+        using var g = Graphics.FromImage(bmp);
+        g.FillRectangle(new SolidBrush(GetColor(collection)), 2, size.Height - IndicatorBarSuggestedHeight,
+            size.Width - 4, IndicatorBarSuggestedHeight);
 
-            return bmp;
-        }
-
+        return bmp;
     }
 }

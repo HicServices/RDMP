@@ -9,52 +9,42 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
+namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
+
+/// <summary>
+/// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
+/// to be extracted/copied to the output ExtractionDirectory.
+/// </summary>
+public class GlobalsBundle : Bundle
 {
-    /// <summary>
-    /// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
-    /// to be extracted/copied to the output ExtractionDirectory.
-    /// </summary>
-    public class GlobalsBundle:Bundle
+    public List<SupportingDocument> Documents { get; private set; }
+    public List<SupportingSQLTable> SupportingSQL { get; private set; }
+
+    public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
+        base(
+            Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
+        //pass all the objects to the base class so it can allocate initial States
+        )
     {
-        public List<SupportingDocument> Documents { get; private set; }
-        public List<SupportingSQLTable> SupportingSQL { get; private set; }
+        Documents = documents.ToList();
+        SupportingSQL = supportingSQL.ToList();
+    }
 
-        public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
-                base(
-                new object[0].Union(documents).Union(supportingSQL).ToArray()
-                //pass all the objects to the base class so it can allocate initial States
-                )
+    public bool Any() => Documents.Any() || SupportingSQL.Any();
+
+
+    protected override void OnDropContent(object toDrop)
+    {
+        switch (toDrop)
         {
-            Documents = documents.ToList();
-            SupportingSQL = supportingSQL.ToList();
-        }
-
-        public bool Any()
-        {
-            return Documents.Any() || SupportingSQL.Any();
-        }
-
-
-        protected override void OnDropContent(object toDrop)
-        {
-            var item = toDrop as SupportingDocument;
-            if (item != null)
-            {
+            case SupportingDocument item:
                 Documents.Remove(item);
                 return;
-            }
-
-            var drop = toDrop as SupportingSQLTable;
-            if (drop != null)
-            {
+            case SupportingSQLTable drop:
                 SupportingSQL.Remove(drop);
                 return;
-            }
-
-
-            throw new NotSupportedException("Did not know how to drop object of type "+toDrop.GetType());
-
+            default:
+                throw new NotSupportedException($"Did not know how to drop object of type {toDrop.GetType()}");
         }
     }
 }

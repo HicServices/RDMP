@@ -5,38 +5,37 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.QueryCaching
+namespace Rdmp.Core.Tests.QueryCaching;
+
+public class QueryCachingDatabaseTests : DatabaseTests
 {
-    public class QueryCachingDatabaseTests:DatabaseTests
+    protected string QueryCachingDatabaseName = TestDatabaseNames.GetConsistentName("QueryCaching");
+    public DiscoveredDatabase DiscoveredQueryCachingDatabase { get; set; }
+    public ExternalDatabaseServer QueryCachingDatabaseServer;
+
+    [OneTimeSetUp]
+    protected override void OneTimeSetUp()
     {
-        protected string QueryCachingDatabaseName = global::Tests.Common.TestDatabaseNames.GetConsistentName("QueryCaching");
-        public DiscoveredDatabase DiscoveredQueryCachingDatabase { get; set; }
-        public ExternalDatabaseServer QueryCachingDatabaseServer;
+        base.OneTimeSetUp();
 
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
+        DiscoveredQueryCachingDatabase =
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
 
-            DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
+        if (DiscoveredQueryCachingDatabase.Exists())
+            DiscoveredQueryCachingDatabase.Drop();
 
-            if(DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.Drop();
+        var scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
+        var p = new QueryCachingPatcher();
+        scripter.CreateAndPatchDatabase(p, ThrowImmediatelyCheckNotifier.Quiet);
 
-            MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
-            var p = new QueryCachingPatcher();
-            scripter.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
-
-            QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,QueryCachingDatabaseName,p);
-            QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
-        }
-
+        QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, QueryCachingDatabaseName, p);
+        QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
     }
 }

@@ -13,61 +13,64 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
+
+/// <summary>
+/// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
+/// </summary>
+public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
 {
-    /// <summary>
-    /// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
-    /// </summary>
-    public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
+    private readonly Catalogue _targetCatalogue;
+
+    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator,
+        FileCollectionCombineable sourceFileCollection, Catalogue targetCatalogue) : base(activator,
+        sourceFileCollection)
     {
-        private readonly Catalogue _targetCatalogue;
+        _targetCatalogue = targetCatalogue;
+        UseTripleDotSuffix = true;
+    }
 
-        public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, FileCollectionCombineable sourceFileCollection, Catalogue targetCatalogue) : base(activator, sourceFileCollection)
+    [UseWithObjectConstructor]
+    public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, Catalogue targetCatalogue)
+        : base(activator, null)
+    {
+        _targetCatalogue = targetCatalogue;
+        UseTripleDotSuffix = true;
+    }
+
+    protected override void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions)
+    {
+        var first = shareDefinitions.First();
+
+        if (first.Type != typeof(Catalogue))
+            throw new Exception("ShareDefinition was not for a Catalogue");
+
+        if (_targetCatalogue.Name != (string)first.Properties["Name"])
+            if (!YesNo(
+                    $"Catalogue Name is '{_targetCatalogue.Name}' but ShareDefinition is for, '{first.Properties["Name"]}'.  Import Anyway?",
+                    "Import Anyway?"))
+                return;
+
+        ShareManager.ImportPropertiesOnly(_targetCatalogue, first);
+        _targetCatalogue.SaveToDatabase();
+
+        var liveCatalogueItems = _targetCatalogue.CatalogueItems;
+
+        foreach (var sd in shareDefinitions.Skip(1))
         {
-            _targetCatalogue = targetCatalogue;
-            UseTripleDotSuffix = true;
+            if (sd.Type != typeof(CatalogueItem))
+                throw new Exception(
+                    $"Unexpected shared object of Type {sd.Type} (Expected ShareDefinitionList to have 1 Catalogue + N CatalogueItems)");
+
+            var shareName = (string)sd.Properties["Name"];
+
+            var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName)) ??
+                                new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository,
+                                    _targetCatalogue, shareName);
+            ShareManager.ImportPropertiesOnly(existingMatch, sd);
+            existingMatch.SaveToDatabase();
         }
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandImportCatalogueDescriptionsFromShare(IBasicActivateItems activator, Catalogue targetCatalogue) : base(activator, null)
-        {
-            _targetCatalogue = targetCatalogue;
-            UseTripleDotSuffix = true;
-        }
-
-        protected override void ExecuteImpl(ShareManager shareManager, List<ShareDefinition> shareDefinitions)
-        {
-            var first = shareDefinitions.First();
-
-            if (first.Type != typeof(Catalogue))
-                throw new Exception("ShareDefinition was not for a Catalogue");
-
-            if (_targetCatalogue.Name != (string)first.Properties["Name"])
-                if (!YesNo("Catalogue Name is '" + _targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] + "'.  Import Anyway?", "Import Anyway?"))
-                    return;
-
-            shareManager.ImportPropertiesOnly(_targetCatalogue, first);
-            _targetCatalogue.SaveToDatabase();
-
-            var liveCatalogueItems = _targetCatalogue.CatalogueItems;
-
-            foreach (ShareDefinition sd in shareDefinitions.Skip(1))
-            {
-                if (sd.Type != typeof(CatalogueItem))
-                    throw new Exception("Unexpected shared object of Type " + sd.Type + " (Expected ShareDefinitionList to have 1 Catalogue + N CatalogueItems)");
-
-                var shareName = (string)sd.Properties["Name"];
-
-                var existingMatch = liveCatalogueItems.FirstOrDefault(ci => ci.Name.Equals(shareName));
-
-                if (existingMatch == null)
-                    existingMatch = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _targetCatalogue, shareName);
-
-                shareManager.ImportPropertiesOnly(existingMatch, sd);
-                existingMatch.SaveToDatabase();
-            }
-
-            Publish(_targetCatalogue);
-        }
+        Publish(_targetCatalogue);
     }
 }

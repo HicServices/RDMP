@@ -10,32 +10,30 @@ using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
-namespace Rdmp.UI.Collections
+namespace Rdmp.UI.Collections;
+
+/// <summary>
+/// TECHNICAL: the base class for all collections of RDMP objects in a given toolbox.
+/// </summary>
+[TechnicalUI]
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
+public abstract class RDMPCollectionUI : RDMPCollectionUI_Design, IConsultableBeforeClosing
 {
-    /// <summary>
-    /// TECHNICAL: the base class for all collections of RDMP objects in a given toolbox.
-    /// </summary>
-    [TechnicalUI]
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
-    public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBeforeClosing
+    public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
+
+    protected RDMPCollectionUI()
     {
-        public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
-        
-        protected RDMPCollectionUI()
-        {
-            CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();
-        }
-
-
-        public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e)
-        {
-            CommonTreeFunctionality.TearDown();
-        }
-
+        CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI_Design, UserControl>))]
-    public class RDMPCollectionUI_Design : RDMPUserControl
+
+    public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e)
     {
+        CommonTreeFunctionality.TearDown();
     }
+}
+
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI_Design, UserControl>))]
+public class RDMPCollectionUI_Design : RDMPUserControl
+{
 }

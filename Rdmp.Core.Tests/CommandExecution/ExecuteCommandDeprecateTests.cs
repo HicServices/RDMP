@@ -7,20 +7,19 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class ExecuteCommandDeprecateTests : CommandCliTests
 {
-    class ExecuteCommandDeprecateTests : CommandCliTests
+    [Test]
+    public void TestDeprecateCommand()
     {
-        [Test]
-        public void TestDeprecateCommand()
-        {
-            var c = WhenIHaveA<Catalogue>();
+        var c = WhenIHaveA<Catalogue>();
 
-            Assert.IsFalse(c.IsDeprecated);
+        Assert.IsFalse(c.IsDeprecated);
 
-            Run("Deprecate", $"Catalogue:{c.ID}");
+        Run("Deprecate", $"Catalogue:{c.ID}");
 
-            Assert.IsTrue(c.IsDeprecated);
-        }
+        Assert.IsTrue(c.IsDeprecated);
     }
 }

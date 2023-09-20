@@ -4,70 +4,56 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi;
 using FAnsi.Discovery;
-using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Progress;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Tests.Common;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction;
+
+internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
 {
-    class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiringAnExtractionConfiguration
+    [TestCase(true)]
+    [TestCase(false)]
+    public void ExtractionDestination_FloatRounding(bool lotsOfDecimalPlaces)
     {
-        [TestCase(true)]
-        [TestCase(false)]
-        public void ExtractionDestination_FloatRounding(bool lotsOfDecimalPlaces)
-        {
-            var dest = new ExecuteDatasetExtractionFlatFileDestination();
+        var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-            var dt = new DataTable();
-            dt.Columns.Add("Floats", typeof(decimal));
+        var dt = new DataTable();
+        dt.Columns.Add("Floats", typeof(decimal));
 
-            dt.Rows.Add(Math.PI);
+        dt.Rows.Add(Math.PI);
 
-            var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
-            lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
+        var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+        lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
 
-            var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding", nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
-            
-            if(_request.QueryBuilder == null)
-            {
-                _request.GenerateQueryBuilder();
-            }
-            dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
+        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding",
+            nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
 
-            dest.PreInitialize(_request, new ThrowImmediatelyDataLoadEventListener());
-            dest.PreInitialize(_project, new ThrowImmediatelyDataLoadEventListener());
-            dest.PreInitialize((DataLoadInfo)dli, new ThrowImmediatelyDataLoadEventListener());
+        if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
+        dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
-            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+        dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize(_project, ThrowImmediatelyDataLoadEventListener.Quiet);
+        dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-            Assert.IsNotNull(dest.OutputFile);
-            FileAssert.Exists(dest.OutputFile);
+        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
-            if (lotsOfDecimalPlaces)
-            {
-                Assert.AreEqual($"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
-            }
-            else
-            {
-                Assert.AreEqual($"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
-            }
+        Assert.IsNotNull(dest.OutputFile);
+        FileAssert.Exists(dest.OutputFile);
 
-            dt.Dispose();
-        }
+        Assert.AreEqual(
+            lotsOfDecimalPlaces
+                ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
+                : $"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
+
+        dt.Dispose();
     }
 }

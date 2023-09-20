@@ -7,46 +7,37 @@
 using System;
 using System.IO;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataExport.DataRelease.Pipeline
+namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
+
+/// <summary>
+/// Prepares the Source Global Folder for the ReleaseEngine.
+/// </summary>
+public class FlatFileReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
-    /// <summary>
-    /// Prepares the Source Global Folder for the ReleaseEngine.
-    /// </summary>
-    /// <typeparam name="T">The ReleaseAudit object passed around in the pipeline</typeparam>
-    public class FlatFileReleaseSource<T> : FixedReleaseSource<ReleaseAudit>
+    protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken) =>
+        flowData ?? new ReleaseAudit
+        {
+            SourceGlobalFolder = PrepareSourceGlobalFolder()
+        };
+
+    public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            return flowData ?? new ReleaseAudit()
-            {
-                SourceGlobalFolder = PrepareSourceGlobalFolder()
-            };
-        }
-
-        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-            firstTime = true;
-        }
-
-        public override void Abort(IDataLoadEventListener listener)
-        {
-            firstTime = true;
-        }
-
-        protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
-        {
-            
-        }
-
-        protected override DirectoryInfo PrepareSourceGlobalFolder()
-        {
-            if (_releaseData.ReleaseGlobals)
-                return base.PrepareSourceGlobalFolder();
-
-            return null;
-        }
+        firstTime = true;
     }
+
+    public override void Abort(IDataLoadEventListener listener)
+    {
+        firstTime = true;
+    }
+
+    protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
+    {
+    }
+
+    protected override DirectoryInfo PrepareSourceGlobalFolder() =>
+        _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
 }

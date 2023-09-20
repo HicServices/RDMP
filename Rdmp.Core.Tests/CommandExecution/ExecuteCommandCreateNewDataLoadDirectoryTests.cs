@@ -8,41 +8,34 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using System.IO;
 
-namespace Rdmp.Core.Tests.CommandExecution
+namespace Rdmp.Core.Tests.CommandExecution;
+
+internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
 {
-    class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
+    [Test]
+    public void TestCreateNewDataLoadDirectory_CreateDeepFolder_NoLmd()
     {
-        [Test]
-        public void TestCreateNewDataLoadDirectory_CreateDeepFolder_NoLmd()
-        {
-            var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "abc");
-            if(Directory.Exists(root))
-            {
-                Directory.Delete(root, true);
-            }
-            var toCreate = Path.Combine(root, "def", "ghi");
+        var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "abc");
+        if (Directory.Exists(root)) Directory.Delete(root, true);
+        var toCreate = Path.Combine(root, "def", "ghi");
 
-            Run("CreateNewDataLoadDirectory","null", toCreate);
+        Run("CreateNewDataLoadDirectory", "null", toCreate);
 
-            Assert.IsTrue(Directory.Exists(root));
-        }
+        Assert.IsTrue(Directory.Exists(root));
+    }
 
-        [Test]
-        public void TestCreateNewDataLoadDirectory_WithLoadMetadata()
-        {
-            var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "def");
-            if (Directory.Exists(root))
-            {
-                Directory.Delete(root, true);
-            }
-            var lmd = WhenIHaveA<LoadMetadata>();
+    [Test]
+    public void TestCreateNewDataLoadDirectory_WithLoadMetadata()
+    {
+        var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "def");
+        if (Directory.Exists(root)) Directory.Delete(root, true);
+        var lmd = WhenIHaveA<LoadMetadata>();
 
-            Assert.IsNull(lmd.LocationOfFlatFiles);
+        Assert.IsNull(lmd.LocationOfFlatFiles);
 
-            Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
+        Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
 
-            Assert.IsTrue(Directory.Exists(root));
-            Assert.AreEqual(root,lmd.LocationOfFlatFiles);
-        }
+        Assert.IsTrue(Directory.Exists(root));
+        Assert.AreEqual(root, lmd.LocationOfFlatFiles);
     }
 }

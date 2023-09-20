@@ -4,123 +4,122 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Rdmp.Core.CommandExecution;
 using Terminal.Gui;
 
-namespace Rdmp.Core.CommandLine.Gui.Windows
+namespace Rdmp.Core.CommandLine.Gui.Windows;
+
+/// <summary>
+/// Allows the user to select one or more objects in a modal console dialog
+/// </summary>
+public class ConsoleGuiSelectMany : Window
 {
+    private ListView lv;
+    private readonly IBasicActivateItems _activator;
+
     /// <summary>
-    /// Allows the user to select one or more objects in a modal console dialog
+    /// The final object selection made.  Note that you should
+    /// also check <see cref="ResultOk"/> in case of user cancellation
     /// </summary>
-    public class ConsoleGuiSelectMany : Window
+    public object[] Result
     {
-        private ListView lv;
-        private readonly IBasicActivateItems _activator;
+        get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); }
+    }
 
-        /// <summary>
-        /// The final object selection made.  Note that you should
-        /// also check <see cref="ResultOk"/> in case of user cancellation
-        /// </summary>
-        public object[] Result { get { return _available.Where((e, idx) => lv.Source.IsMarked(idx)).ToArray(); } }
+    /// <summary>
+    /// True if the user made a final selection or False if they exited without
+    /// making a choice e.g. Hit Ctrl+Q
+    /// </summary>
+    public bool ResultOk { get; internal set; }
 
-        /// <summary>
-        /// True if the user made a final selection or False if they exited without
-        /// making a choice e.g. Hit Ctrl+Q
-        /// </summary>
-        public bool ResultOk { get; internal set; }
-        private object[] _available;
-        private IReadOnlyCollection<object> _original;
-        private TextField _tbSearch;
+    private object[] _available;
+    private IReadOnlyCollection<object> _original;
+    private TextField _tbSearch;
 
-        public ConsoleGuiSelectMany(IBasicActivateItems activator,string prompt, object[] available)
+    public ConsoleGuiSelectMany(IBasicActivateItems activator, string prompt, object[] available)
+    {
+        _available = available;
+        _original = available.ToList().AsReadOnly();
+
+        // By using Dim.Fill(), it will automatically resize without manual intervention
+        Width = Dim.Fill();
+        Height = Dim.Fill();
+        Modal = true;
+        ColorScheme = ConsoleMainWindow.ColorScheme;
+
+        lv = new ListView(available)
         {
-            _available = available;
-            _original = available.ToList().AsReadOnly();
+            AllowsMarking = true,
+            AllowsMultipleSelection = true,
 
-            // By using Dim.Fill(), it will automatically resize without manual intervention
-            Width = Dim.Fill();
-            Height = Dim.Fill();
-            Modal = true;
-            ColorScheme = ConsoleMainWindow.ColorScheme;
+            Width = Dim.Fill(),
+            Height = Dim.Fill(1)
+        };
+        lv.KeyPress += Lv_KeyPress;
+        Add(lv);
 
-            lv = new ListView(available);
-            lv.AllowsMarking = true;
-            lv.AllowsMultipleSelection = true;
+        var lblSearch = new Label
+        {
+            Text = "Search:",
+            Y = Pos.Bottom(lv)
+        };
+        Add(lblSearch);
 
-            lv.Width = Dim.Fill();
-            lv.Height = Dim.Fill(1);
-            lv.KeyPress += Lv_KeyPress;
-            Add(lv);
+        _tbSearch = new TextField
+        {
+            X = Pos.Right(lblSearch),
+            Y = Pos.Bottom(lv),
+            Width = Dim.Fill()
+        };
+        _tbSearch.TextChanged += TbSearch_TextChanged;
+        Add(_tbSearch);
 
-            var lblSearch = new Label
-            {
-                Text = "Search:",
-                Y = Pos.Bottom(lv),
-            };
-            Add(lblSearch);
+        Title = prompt;
 
-            _tbSearch = new TextField
-            {
-                X = Pos.Right(lblSearch),
-                Y = Pos.Bottom(lv),
-                Width = Dim.Fill()
-            };
-            _tbSearch.TextChanged += TbSearch_TextChanged;
-            Add(_tbSearch);
+        _activator = activator;
+    }
 
-            Title = prompt;
-            
-            this._activator = activator;
+    private void TbSearch_TextChanged(NStack.ustring obj)
+    {
+        // everything they have ticked so far
+        var ticked = Result;
+        var search = _tbSearch.Text?.ToString();
+
+        // plus everything else that matches on search text
+        var matchingFilter = _original.Except(ticked)
+            .Where(o => string.IsNullOrWhiteSpace(search) ||
+                        o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
+            .ToArray();
+
+        // make a list of all marked followed by unmarked but matching filter
+        var all = ticked.ToList();
+        all.AddRange(matchingFilter);
+
+        // update the available list in the list view (destructive recreate)
+        _available = all.ToArray();
+        lv.SetSource(all);
+
+        // since we changed the source we need to remark the originally ticked ones
+        for (var i = 0; i < ticked.Length; i++) lv.Source.SetMark(i, true);
+        SetNeedsDisplay();
+    }
+
+    private void Lv_KeyPress(KeyEventEventArgs obj)
+    {
+        if (obj.KeyEvent.Key == Key.Enter)
+        {
+            // if there are no selected objects (user hits space to select many)
+            // then they probably want a single object selection
+            if (Result.Length == 0) lv.MarkUnmarkRow();
+
+            obj.Handled = true;
+            ResultOk = true;
+            Application.RequestStop();
         }
 
-        private void TbSearch_TextChanged(NStack.ustring obj)
-        {
-            // everything they have ticked so far
-            var ticked = Result;
-            var search = _tbSearch.Text?.ToString();
-
-            // plus everything else that matches on search text
-            var matchingFilter = _original.Except(ticked)
-                                          .Where(o => string.IsNullOrWhiteSpace(search) || o.ToString().Contains(search, StringComparison.CurrentCultureIgnoreCase))
-                                          .ToArray();
-            
-            // make a list of all marked followed by unmarked but matching filter
-            var all = ticked.ToList();
-            all.AddRange(matchingFilter);
-
-            // update the available list in the list view (destructive recreate)
-            _available = all.ToArray();
-            lv.SetSource(all);
-
-            // since we changed the source we need to remark the originally ticked ones
-            for(int i=0;i<ticked.Length;i++)
-            {
-                lv.Source.SetMark(i, true);
-            }
-            SetNeedsDisplay();
-        }
-
-        private void Lv_KeyPress(KeyEventEventArgs obj)
-        {
-            if(obj.KeyEvent.Key == Key.Enter)
-            {
-                // if there are no selected objects (user hits space to select many)
-                // then they probably want a single object selection
-                if(Result.Length == 0)
-                {
-                    lv.MarkUnmarkRow();
-                }
-
-                obj.Handled = true;
-                ResultOk = true;
-                Application.RequestStop();
-            }
-            SetNeedsDisplay();
-        }
+        SetNeedsDisplay();
     }
 }

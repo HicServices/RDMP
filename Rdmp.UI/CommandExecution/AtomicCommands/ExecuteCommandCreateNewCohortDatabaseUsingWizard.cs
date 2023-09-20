@@ -6,43 +6,37 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.CohortUI.CohortSourceManagement;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandExecution, IAtomicCommand
 {
-    public class ExecuteCommandCreateNewCohortDatabaseUsingWizard : BasicUICommandExecution,IAtomicCommand
+    public ExecuteCommandCreateNewCohortDatabaseUsingWizard(IActivateItems activator) : base(activator)
     {
-        public ExecuteCommandCreateNewCohortDatabaseUsingWizard(IActivateItems activator):base(activator)
-        {
-            UseTripleDotSuffix = true;
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Create a new empty cohort list storage database with a private identifier that matches your datasets extraction identifier column name\\type (e.g. PatientId varchar(10)";
-        }
-
-        public override void Execute()
-        {
-            base.Execute(); 
-
-            var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
-            wizard.SetItemActivator(Activator);
-            var f = Activator.ShowWindow(wizard,true);
-            f.FormClosed += (s, e) =>
-            {
-                if (wizard.ExternalCohortTableCreatedIfAny != null)
-                    Publish(wizard.ExternalCohortTableCreatedIfAny);
-            };
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(FamFamFamIcons.wand);
-        }
+        UseTripleDotSuffix = true;
     }
+
+    public override string GetCommandHelp() =>
+        "Create a new empty cohort list storage database with a private identifier that matches your datasets extraction identifier column name\\type (e.g. PatientId varchar(10)";
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var wizard = new CreateNewCohortDatabaseWizardUI(Activator);
+        wizard.SetItemActivator(Activator);
+        var f = Activator.ShowWindow(wizard, true);
+        f.FormClosed += (s, e) =>
+        {
+            if (wizard.ExternalCohortTableCreatedIfAny != null)
+                Publish(wizard.ExternalCohortTableCreatedIfAny);
+        };
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(FamFamFamIcons.wand);
 }

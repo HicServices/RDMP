@@ -4,21 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.DataLoad.Modules.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers;
+
+/// <summary>
+/// Determines the approach used to attach an mdf file to an Sql Server instance
+/// </summary>
+public enum MdfAttachStrategy
 {
     /// <summary>
-    /// Determines the approach used to attach an mdf file to an Sql Server instance
+    /// Adds the attach command directly into the connection string sent to the server
     /// </summary>
-    public enum MdfAttachStrategy
-    {
-        /// <summary>
-        /// Adds the attach command directly into the connection string sent to the server
-        /// </summary>
-        AttachWithConnectionString,
+    AttachWithConnectionString,
 
-        /// <summary>
-        /// Runs the tsql command to attatch the database once an active connection has been established with the server
-        /// </summary>
-        ExecuteCreateDatabaseForAttachSql
-    }
+    /// <summary>
+    /// Runs the tsql command to attatch the database once an active connection has been established with the server
+    /// </summary>
+    ExecuteCreateDatabaseForAttachSql
 }

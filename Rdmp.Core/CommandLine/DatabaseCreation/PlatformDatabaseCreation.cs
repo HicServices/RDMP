@@ -5,80 +5,86 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Microsoft.Data.SqlClient;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Versioning;
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandLine.DatabaseCreation
+namespace Rdmp.Core.CommandLine.DatabaseCreation;
+
+/// <summary>
+/// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
+/// pipelines for common activities.
+/// </summary>
+public class PlatformDatabaseCreation
 {
+    public const string DefaultCatalogueDatabaseName = "Catalogue";
+    public const string DefaultDataExportDatabaseName = "DataExport";
+    public const string DefaultDQEDatabaseName = "DQE";
+    public const string DefaultLoggingDatabaseName = "Logging";
+
     /// <summary>
-    /// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
-    /// pipelines for common activities.
+    /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
-    public class PlatformDatabaseCreation
+    /// <param name="options"></param>
+    public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
-        public const string DefaultCatalogueDatabaseName = "Catalogue";
-        public const string DefaultDataExportDatabaseName = "DataExport";
-        public const string DefaultDQEDatabaseName = "DQE";
-        public const string DefaultLoggingDatabaseName = "Logging";
+        DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
-        /// <summary>
-        /// Creates new databases on the given server for RDMP platform databases
-        /// </summary>
-        /// <param name="options"></param>
-        public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
+        Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
+        Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
+
+        var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
+
+        SqlConnectionStringBuilder logging = null;
+        if (options.CreateLoggingServer)
         {
-            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
+            logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
+        }
+        CatalogueRepository.SuppressHelpLoading = true;
 
-            Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
-            Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
+        var repo = new PlatformDatabaseCreationRepositoryFinder(options);
 
-            var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
-            var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
-
-            CatalogueRepository.SuppressHelpLoading = true;
-
-            var repo = new PlatformDatabaseCreationRepositoryFinder(options);
-
-            if (!options.SkipPipelines)
-            {
-                var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
-                creator.Create();
-            }
-
-            if(options.ExampleDatasets || options.Nightmare)
-            {
-                var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo,null),repo);
-                var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
-                
-                examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);
-            }
+        if (!options.SkipPipelines)
+        {
+            var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
+            creator.Create(options);
         }
 
-        private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
+        if (options.ExampleDatasets || options.Nightmare)
         {
-            SqlConnection.ClearAllPools();
+            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
+            var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
 
-            var builder = options.GetBuilder(databaseName);
-
-            DiscoveredDatabase db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
-
-            if (options.DropDatabases && db.Exists())
-            {
-                Console.WriteLine("Dropping Database:" + builder.InitialCatalog);
-                db.Drop();
-            }
-
-            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
-            executor.BinaryCollation = options.BinaryCollation;
-            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
-            Console.WriteLine("Created " + builder.InitialCatalog + " on server " + builder.DataSource);
-            
-            return builder;
+            examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
+    }
+
+    private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher,
+        PlatformDatabaseCreationOptions options)
+    {
+        SqlConnection.ClearAllPools();
+
+        var builder = options.GetBuilder(databaseName);
+
+        var db = new DiscoveredServer(builder).ExpectDatabase(builder.InitialCatalog);
+
+        if (options.DropDatabases && db.Exists())
+        {
+            Console.WriteLine($"Dropping Database:{builder.InitialCatalog}");
+            db.Drop();
+        }
+
+        var executor = new MasterDatabaseScriptExecutor(db)
+        {
+            BinaryCollation = options.BinaryCollation
+        };
+        executor.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
+        Console.WriteLine($"Created {builder.InitialCatalog} on server {builder.DataSource}");
+
+        return builder;
     }
 }

@@ -6,29 +6,22 @@
 
 using System;
 using NLog;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Logging.Listeners.Extensions
+namespace Rdmp.Core.Logging.Listeners.Extensions;
+
+public static class NotifyEventArgsExtensions
 {
-    public static class NotifyEventArgsExtensions
+    public static LogLevel ToLogLevel(this NotifyEventArgs args)
     {
-        public static LogLevel ToLogLevel(this NotifyEventArgs args)
+        return args.ProgressEventType switch
         {
-            switch (args.ProgressEventType)
-            {
-                case ProgressEventType.Trace:
-                    return LogLevel.Trace;
-                case ProgressEventType.Debug:
-                    return LogLevel.Debug;
-                case ProgressEventType.Information:
-                    return LogLevel.Info;
-                case ProgressEventType.Warning:
-                    return LogLevel.Warn;
-                case ProgressEventType.Error:
-                    return LogLevel.Error;
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
+            ProgressEventType.Trace => LogLevel.Trace,
+            ProgressEventType.Debug => LogLevel.Debug,
+            ProgressEventType.Information => LogLevel.Info,
+            ProgressEventType.Warning => LogLevel.Warn,
+            ProgressEventType.Error => LogLevel.Error,
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 }

@@ -6,92 +6,85 @@
 
 using System;
 using System.Windows.Forms;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.ChecksUI
+namespace Rdmp.UI.ChecksUI;
+
+/// <summary>
+/// Popup dialog version of ChecksUI, See ChecksUI for description of functionality.
+/// </summary>
+public partial class PopupChecksUI : Form, ICheckNotifier
 {
-    /// <summary>
-    /// Popup dialog version of ChecksUI, See ChecksUI for description of functionality.
-    /// </summary>
-    public partial class PopupChecksUI : Form,ICheckNotifier
+    public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
+
+    public PopupChecksUI(string task, bool showOnlyWhenError)
     {
-        public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
+        InitializeComponent();
+        Text = task;
 
-        public PopupChecksUI(string task, bool showOnlyWhenError)
+        if (!showOnlyWhenError)
         {
-            InitializeComponent();
-            Text = task;
-
-            if (!showOnlyWhenError)
-            {
-                Show();
-                haveDemandedVisibility = true;
-            }
-            else
-                this.CreateHandle(); //let windows get a handle on the situation ;)
-
-            KeyPreview = true;
+            Show();
+            _haveDemandedVisibility = true;
+        }
+        else
+        {
+            CreateHandle(); //let windows get a handle on the situation ;)
         }
 
-        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
-        {
-            if (keyData == (Keys.Control | Keys.W))
-            {
-                Close();
-                return true;
-            }
+        KeyPreview = true;
+    }
 
-            return base.ProcessCmdKey(ref msg, keyData);
+    protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+    {
+        if (keyData != (Keys.Control | Keys.W)) return base.ProcessCmdKey(ref msg, keyData);
+        Close();
+        return true;
+    }
+
+    private bool _haveDemandedVisibility;
+    private CheckResult _worstSeen = CheckResult.Success;
+
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        if (_worstSeen < args.Result)
+            _worstSeen = args.Result;
+
+        if (args.Result is CheckResult.Fail or CheckResult.Warning && !_haveDemandedVisibility)
+        {
+            _haveDemandedVisibility = true;
+            Invoke(new MethodInvoker(Show));
         }
 
-        private bool haveDemandedVisibility = false;
-        private CheckResult _worstSeen = CheckResult.Success;
+        return checksUI1.OnCheckPerformed(args);
+    }
 
-        public bool OnCheckPerformed(CheckEventArgs args)
+    protected override void OnClosed(EventArgs e)
+    {
+        if (_haveDemandedVisibility)
+            checksUI1.TerminateWithExtremePrejudice();
+
+        base.OnClosed(e);
+    }
+
+    public void Check(ICheckable checkable)
+    {
+        try
         {
-            if (_worstSeen < args.Result)
-                _worstSeen = args.Result;
-
-            if(args.Result == CheckResult.Fail || args.Result == CheckResult.Warning)
-                if(!haveDemandedVisibility)
-                {
-                    haveDemandedVisibility = true;
-                    Invoke(new MethodInvoker(Show));
-                }
-
-            return checksUI1.OnCheckPerformed(args);
+            checkable.Check(this);
         }
-
-        protected override void OnClosed(EventArgs e)
+        catch (Exception ex)
         {
-            if (haveDemandedVisibility)
-                checksUI1.TerminateWithExtremePrejudice();
-
-            base.OnClosed(e);
-        }
-
-        public void Check(ICheckable checkable)
-        {
-            try
-            {
-                checkable.Check(this);
-            }
-            catch (Exception ex)
-            {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Entire checking process failed", CheckResult.Fail, ex));
-            }
-        }
-
-        public void StartChecking(ICheckable checkable)
-        {
-            this.Show();
-            checksUI1.AllChecksComplete += AllChecksComplete;
-            checksUI1.StartChecking(checkable);
-        }
-
-        public CheckResult GetWorst()
-        {
-            return _worstSeen;
+            checksUI1.OnCheckPerformed(new CheckEventArgs("Entire checking process failed", CheckResult.Fail, ex));
         }
     }
+
+    public void StartChecking(ICheckable checkable)
+    {
+        Show();
+        checksUI1.AllChecksComplete += AllChecksComplete;
+        checksUI1.StartChecking(checkable);
+    }
+
+    public CheckResult GetWorst() => _worstSeen;
 }

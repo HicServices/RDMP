@@ -11,65 +11,64 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
-namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers
+namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
+
+/// <summary>
+/// Factory for <see cref="IPipelineSelectionUI"/> instances based on <see cref="PipelineUseCase"/> (what activity the pipelines
+/// are intended for use in).
+/// </summary>
+public class PipelineSelectionUIFactory
 {
-    /// <summary>
-    /// Factory for <see cref="IPipelineSelectionUI"/> instances based on <see cref="PipelineUseCase"/> (what activity the pipelines
-    /// are intended for use in). 
-    /// </summary>
-    public class PipelineSelectionUIFactory
+    private readonly ICatalogueRepository _repository;
+    private readonly IPipelineUser _user;
+    private readonly IPipelineUseCase _useCase;
+
+    private IPipelineSelectionUI _pipelineSelectionUIInstance;
+
+    public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
     {
-        private readonly ICatalogueRepository _repository;
-        private readonly IPipelineUser _user;
-        private readonly IPipelineUseCase _useCase;
+        _repository = repository;
+        _user = user;
+        _useCase = useCase;
+    }
 
-        private IPipelineSelectionUI _pipelineSelectionUIInstance;
+    public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement,
+        ArgumentValueUIArgs args, object demanderInstance)
+    {
+        _repository = repository;
 
-        public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
+        var pluginUserAndCase = new PluginPipelineUser(requirement, args, demanderInstance);
+        _user = pluginUserAndCase;
+        _useCase = pluginUserAndCase;
+    }
+
+    public IPipelineSelectionUI Create(IActivateItems activator, string text = null, DockStyle dock = DockStyle.None,
+        Control containerControl = null)
+    {
+        //setup getter as an event handler for the selection ui
+        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _repository);
+
+        if (_user != null)
         {
-            _repository = repository;
-            _user = user;
-            _useCase = useCase;
+            _pipelineSelectionUIInstance.Pipeline = _user.Getter();
+
+            _pipelineSelectionUIInstance.PipelineChanged +=
+                (sender, args) =>
+                    _user.Setter(((IPipelineSelectionUI)sender).Pipeline as Pipeline);
         }
 
-        public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement, ArgumentValueUIArgs args, object demanderInstance)
-        {
-            _repository = repository;
+        var c = (Control)_pipelineSelectionUIInstance;
 
-            var pluginUserAndCase = new PluginPipelineUser(requirement, args, demanderInstance);
-            _user = pluginUserAndCase;
-            _useCase = pluginUserAndCase;
-        }
+        if (dock == DockStyle.None)
+            c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        else
+            c.Dock = dock;
 
-        public IPipelineSelectionUI Create(IActivateItems activator,string text = null, DockStyle dock = DockStyle.None, Control containerControl = null)
-        {
-            //setup getter as an event handler for the selection ui
-            _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase,_repository);
+        if (text != null)
+            c.Text = text;
 
-            if (_user != null)
-            {
-                _pipelineSelectionUIInstance.Pipeline = _user.Getter();
+        containerControl?.Controls.Add(c);
 
-                _pipelineSelectionUIInstance.PipelineChanged += 
-                    (sender, args) =>
-                        _user.Setter(((IPipelineSelectionUI)sender).Pipeline as Pipeline);
-            }
-
-            var c = (Control)_pipelineSelectionUIInstance;
-
-            if (dock == DockStyle.None)
-                c.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            else
-                c.Dock = dock;
-
-            if (text != null)
-                c.Text = text;
-
-            if (containerControl != null)
-                containerControl.Controls.Add(c);
-
-            return _pipelineSelectionUIInstance;
-        }
-
+        return _pipelineSelectionUIInstance;
     }
 }

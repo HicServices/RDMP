@@ -6,16 +6,14 @@
 
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class GovernancePeriodMenu : RDMPContextMenuStrip
 {
-    class GovernancePeriodMenu : RDMPContextMenuStrip
+    public GovernancePeriodMenu(RDMPContextMenuStripArgs args, GovernancePeriod period)
+        : base(args, period)
     {
-        public GovernancePeriodMenu(RDMPContextMenuStripArgs args, GovernancePeriod period)
-            : base(args, period)
-        {
-            Add(new ExecuteCommandAddNewGovernanceDocument(_activator,period));
-        }
+        Add(new ExecuteCommandAddNewGovernanceDocument(_activator, period));
     }
 }

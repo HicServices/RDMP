@@ -6,17 +6,15 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all encrypted <see cref="DataAccessCredentials"/> used to access tables in your database.  This will be empty if you
+/// connect with integrated security / windows authentication.
+/// </summary>
+public class AllDataAccessCredentialsNode : SingletonNode
 {
-    /// <summary>
-    /// Collection of all encrypted <see cref="DataAccessCredentials"/> used to access tables in your database.  This will be empty if you 
-    /// connect with integrated security / windows authentication. 
-    /// </summary>
-    public class AllDataAccessCredentialsNode:SingletonNode
+    public AllDataAccessCredentialsNode() : base("Data Access Credentials")
     {
-        public AllDataAccessCredentialsNode(): base("Data Access Credentials")
-        {
-            
-        }
     }
 }

@@ -8,51 +8,43 @@ using System.IO;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+
+public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
-    public class LoadDirectoryNode: Node,IDirectoryInfoNode, IOrderable
+    public LoadMetadata LoadMetadata { get; }
+
+    public LoadDirectoryNode(LoadMetadata loadMetadata)
     {
-        public LoadMetadata LoadMetadata { get; set; }
+        LoadMetadata = loadMetadata;
+    }
 
-        public LoadDirectoryNode(LoadMetadata loadMetadata)
-        {
-            LoadMetadata = loadMetadata;
-        }
+    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles);
 
-        public bool IsEmpty { get { return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles); } }
-        
 
-        public override string ToString()
-        {
-            return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) ? "???" : LoadMetadata.LocationOfFlatFiles;
-        }
+    public override string ToString() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
+        ? "???"
+        : LoadMetadata.LocationOfFlatFiles;
 
-        public DirectoryInfo GetDirectoryInfoIfAny()
-        {
-            if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles ))
-                return null;
+    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
+        ? null
+        : new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
 
-            return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
-        }
+    protected bool Equals(LoadDirectoryNode other) => Equals(LoadMetadata, other.LoadMetadata);
 
-        protected bool Equals(LoadDirectoryNode other)
-        {
-            return Equals(LoadMetadata, other.LoadMetadata);
-        }
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((LoadDirectoryNode)obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((LoadDirectoryNode) obj);
-        }
+    public override int GetHashCode() => System.HashCode.Combine(LoadMetadata);
 
-        public override int GetHashCode()
-        {
-            return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
-        }
-
-        public int Order { get { return 3; } set{} }
+    public int Order
+    {
+        get => 3;
+        set { }
     }
 }

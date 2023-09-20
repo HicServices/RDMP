@@ -4,28 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace Rdmp.Core.Startup.Events
+namespace Rdmp.Core.Startup.Events;
+
+/// <summary>
+/// Describes the result of attempting to download an RDMP plugin from the RDMP platform database into the
+/// local working disk for loading as a runtime assembly
+/// </summary>
+public enum MEFFileDownloadEventStatus
 {
     /// <summary>
-    /// Describes the result of attempting to download an RDMP plugin from the RDMP platform database into the
-    /// local working disk for loading as a runtime assembly
+    /// The file was successfully processed
     /// </summary>
-    public enum MEFFileDownloadEventStatus
-    {
-        
-        /// <summary>
-        /// The file was successfully processed
-        /// </summary>
-        Success,
+    Success,
 
-        /// <summary>
-        /// The file could not be written to disk because of an existing locked file
-        /// </summary>
-        FailedDueToFileLock,
+    /// <summary>
+    /// The file could not be written to disk because of an existing locked file
+    /// </summary>
+    FailedDueToFileLock,
 
-        /// <summary>
-        /// The file could not be processed due to a non file lock related error
-        /// </summary>
-        OtherError
-    }
+    /// <summary>
+    /// The file could not be processed due to a non file lock related error
+    /// </summary>
+    OtherError
 }

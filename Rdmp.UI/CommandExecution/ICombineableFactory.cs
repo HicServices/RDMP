@@ -9,54 +9,52 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution;
 
-namespace Rdmp.UI.CommandExecution
+namespace Rdmp.UI.CommandExecution;
+
+/// <summary>
+/// Handles the commencement of drag operations.  This involves deciding whether a given object can be dragged and parceling up the object
+/// into an <see cref="ICombineToMakeCommand"/> (which will gather relevant facts about the object).  Dropping is handled by <see cref="ICommandExecutionFactory"/>
+/// </summary>
+public interface ICombineableFactory
 {
     /// <summary>
-    /// Handles the commencement of drag operations.  This involves deciding whether a given object can be dragged and parceling up the object
-    /// into an <see cref="ICombineToMakeCommand"/> (which will gather relevant facts about the object).  Dropping is handled by <see cref="ICommandExecutionFactory"/>
+    /// Creates a new packaged command initiation object from the given Object List View <paramref name="o"/> e.g. for a drag
+    /// and drop operation.  The resulting <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test
+    /// for a valid command combination
     /// </summary>
-    public interface ICombineableFactory
-    {
-        /// <summary>
-        /// Creates a new packaged command initiation object from the given Object List View <paramref name="o"/> e.g. for a drag
-        /// and drop operation.  The resulting <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test
-        /// for a valid command combination
-        /// </summary>
-        /// <param name="o"></param>
-        /// <returns></returns>
-        ICombineToMakeCommand Create(OLVDataObject o);
+    /// <param name="o"></param>
+    /// <returns></returns>
+    ICombineToMakeCommand Create(OLVDataObject o);
 
-        /// <summary>
-        /// Creates a new packaged command initiation object from the given dragged object <paramref name="e"/>.  The resulting
-        /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        ICombineToMakeCommand Create(ModelDropEventArgs e);
+    /// <summary>
+    /// Creates a new packaged command initiation object from the given dragged object <paramref name="e"/>.  The resulting
+    /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
+    ICombineToMakeCommand Create(ModelDropEventArgs e);
 
-        /// <summary>
-        /// Creates a new packaged command initiation object from the given dragged object <paramref name="e"/>.  The resulting
-        /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        ICombineToMakeCommand Create(DragEventArgs e);
+    /// <summary>
+    /// Creates a new packaged command initiation object from the given dragged object <paramref name="e"/>.  The resulting
+    /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
+    /// </summary>
+    /// <param name="e"></param>
+    /// <returns></returns>
+    ICombineToMakeCommand Create(DragEventArgs e);
 
-        /// <summary>
-        /// Creates a new packaged command initiation object from the given dragged <paramref name="files"/>.  The resulting
-        /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
-        /// </summary>
-        /// <param name="files"></param>
-        /// <returns></returns>
-        ICombineToMakeCommand Create(FileInfo[] files);
+    /// <summary>
+    /// Creates a new packaged command initiation object from the given dragged <paramref name="files"/>.  The resulting
+    /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination
+    /// </summary>
+    /// <param name="files"></param>
+    /// <returns></returns>
+    ICombineToMakeCommand Create(FileInfo[] files);
 
-        /// <summary>
-        /// Creates a new packaged command initiation object from the given dragged <paramref name="modelObject"/>.  The resulting
-        /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination.
-        /// </summary>
-        /// <param name="modelObject">A C# object e.g. <see cref="Rdmp.Core.Curation.Data.Catalogue"/> that dragging has begun on</param>
-        /// <returns></returns>
-        ICombineToMakeCommand Create(object modelObject);
-        
-    }
+    /// <summary>
+    /// Creates a new packaged command initiation object from the given dragged <paramref name="modelObject"/>.  The resulting
+    /// <see cref="ICombineToMakeCommand"/> can be waved around over other objects to test for a valid command combination.
+    /// </summary>
+    /// <param name="modelObject">A C# object e.g. <see cref="Rdmp.Core.Curation.Data.Catalogue"/> that dragging has begun on</param>
+    /// <returns></returns>
+    ICombineToMakeCommand Create(object modelObject);
 }

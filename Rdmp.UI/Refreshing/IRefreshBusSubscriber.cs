@@ -6,20 +6,19 @@
 
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.Refreshing
+namespace Rdmp.UI.Refreshing;
+
+/// <summary>
+/// Interface for any class that wants to subscribe to publish events in the <see cref="RefreshBus"/>. You
+/// should consider using <see cref="ILifetimeSubscriber"/> if you are a UI or inherit from <see cref="RDMPSingleDatabaseObjectControl{T}"/>
+/// directly.
+/// </summary>
+public interface IRefreshBusSubscriber
 {
     /// <summary>
-    /// Interface for any class that wants to subscribe to publish events in the <see cref="RefreshBus"/>. You
-    /// should consider using <see cref="ILifetimeSubscriber"/> if you are a UI or inherit from <see cref="RDMPSingleDatabaseObjectControl{T}"/>
-    /// directly.
+    /// Called when
     /// </summary>
-    public interface IRefreshBusSubscriber
-    {
-        /// <summary>
-        /// Called when 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e);
-    }
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e);
 }

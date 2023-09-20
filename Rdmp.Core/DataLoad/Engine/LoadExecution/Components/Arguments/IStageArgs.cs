@@ -9,17 +9,16 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
-{
-    /// <summary>
-    /// See StageArgs
-    /// </summary>
-    public interface IStageArgs
-    {
-        DiscoveredDatabase DbInfo { get;}
-        Dictionary<string, object> ToDictionary();
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
-        ILoadDirectory RootDir { get; }
-        LoadStage LoadStage { get;}
-    }
+/// <summary>
+/// See StageArgs
+/// </summary>
+public interface IStageArgs
+{
+    DiscoveredDatabase DbInfo { get; }
+    Dictionary<string, object> ToDictionary();
+
+    ILoadDirectory RootDir { get; }
+    LoadStage LoadStage { get; }
 }

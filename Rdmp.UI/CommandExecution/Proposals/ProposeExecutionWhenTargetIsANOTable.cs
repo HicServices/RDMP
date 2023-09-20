@@ -9,28 +9,23 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ANOEngineeringUIs;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsANOTable : RDMPCommandExecutionProposal<ANOTable>
 {
-    class ProposeExecutionWhenTargetIsANOTable:RDMPCommandExecutionProposal<ANOTable>
+    public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsANOTable(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(ANOTable target)
-        {
-            return true;
-        }
-
-        public override void Activate(ANOTable target)
-        {
-            ItemActivator.Activate<ANOTableUI, ANOTable>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target, InsertOption insertOption = InsertOption.Default)
-        {
-            //no drag and drop support
-            return null;
-        }
     }
+
+    public override bool CanActivate(ANOTable target) => true;
+
+    public override void Activate(ANOTable target)
+    {
+        ItemActivator.Activate<ANOTableUI, ANOTable>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target,
+        InsertOption insertOption = InsertOption.Default) =>
+        //no drag and drop support
+        null;
 }

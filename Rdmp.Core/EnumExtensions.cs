@@ -7,35 +7,29 @@
 using System;
 using Rdmp.Core.DataLoad.Triggers;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+/// <summary>
+/// Extensions for the <see cref="Enum"/> class
+/// </summary>
+public static class EnumExtensions
 {
     /// <summary>
-    /// Extensions for the <see cref="Enum"/> class
+    /// Returns a culture specific string for the <see cref="Enum"/>
     /// </summary>
-    public static class EnumExtensions
+    /// <param name="e"></param>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    /// <returns></returns>
+    public static string S(this Enum e)
     {
-        /// <summary>
-        /// Returns a culture specific string for the <see cref="Enum"/>
-        /// </summary>
-        /// <param name="e"></param>
-        /// <returns></returns>
-        public static string S(this Enum e)
-        {
-            if(e is TriggerStatus ts)
-                switch (ts)
-                {
-                    case TriggerStatus.Enabled:
-                        return GlobalStrings.Enabled;
-                    case TriggerStatus.Disabled:
-                        return GlobalStrings.Disabled;
-                    case TriggerStatus.Missing:
-                        return GlobalStrings.Missing;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-
-            return e.ToString();
-        }
+        return e is TriggerStatus ts
+            ? ts switch
+            {
+                TriggerStatus.Enabled => GlobalStrings.Enabled,
+                TriggerStatus.Disabled => GlobalStrings.Disabled,
+                TriggerStatus.Missing => GlobalStrings.Missing,
+                _ => throw new ArgumentOutOfRangeException()
+            }
+            : e.ToString();
     }
 }

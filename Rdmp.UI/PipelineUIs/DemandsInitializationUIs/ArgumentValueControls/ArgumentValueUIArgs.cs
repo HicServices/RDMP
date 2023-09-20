@@ -8,45 +8,46 @@ using System;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
+
+/// <summary>
+/// Constructor arguments for <see cref="IArgumentValueUI"/> implementations.  Records what property the control
+/// should allow editing (See <see cref="RequiredPropertyInfo"/>) and on what <see cref="IArgumentHost"/>.
+/// </summary>
+public class ArgumentValueUIArgs
 {
+    public IArgumentHost Parent { get; set; }
+
+    public object InitialValue { get; set; }
+    public string ContextText { get; set; }
+    public Type Type { get; set; }
+    public RequiredPropertyInfo Required { get; set; }
+    public ICatalogueRepository CatalogueRepository { get; set; }
+
     /// <summary>
-    /// Constructor arguments for <see cref="IArgumentValueUI"/> implementations.  Records what property the control
-    /// should allow editing (See <see cref="RequiredPropertyInfo"/>) and on what <see cref="IArgumentHost"/>.
+    /// Call this when the value populated in the user interface is changed
     /// </summary>
-    public class ArgumentValueUIArgs
+    public Action<object> Setter { get; set; }
+
+    /// <summary>
+    /// Call this when the value populated in the user interface is illegal
+    /// </summary>
+    public Action<Exception> Fatal { get; set; }
+
+    public ArgumentValueUIArgs Clone()
     {
-        public IArgumentHost Parent { get; set; }
-
-        public object InitialValue { get; set; }
-        public string ContextText { get; set; }
-        public Type Type { get; set; }
-        public RequiredPropertyInfo Required { get; set; }
-        public ICatalogueRepository CatalogueRepository { get; set; }
-
-        /// <summary>
-        /// Call this when the value populated in the user interface is changed
-        /// </summary>
-        public Action<object> Setter { get; set; }
-
-        /// <summary>
-        /// Call this when the value populated in the user interface is illegal
-        /// </summary>
-        public Action<Exception> Fatal { get; set; }
-
-        public ArgumentValueUIArgs Clone()
+        var newInstance = new ArgumentValueUIArgs
         {
-            var newInstance = new ArgumentValueUIArgs();
-            newInstance.Parent = Parent;
-            newInstance.InitialValue = InitialValue;
-            newInstance.ContextText = ContextText;
-            newInstance.Type = Type;
-            newInstance.Required = Required;
-            newInstance.CatalogueRepository = CatalogueRepository;
-            newInstance.Setter = Setter;
-            newInstance.Fatal = Fatal;
-            
-            return newInstance;
-        }
+            Parent = Parent,
+            InitialValue = InitialValue,
+            ContextText = ContextText,
+            Type = Type,
+            Required = Required,
+            CatalogueRepository = CatalogueRepository,
+            Setter = Setter,
+            Fatal = Fatal
+        };
+
+        return newInstance;
     }
 }

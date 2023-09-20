@@ -6,57 +6,47 @@
 
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.Curation.Data.Spontaneous
+namespace Rdmp.Core.Curation.Data.Spontaneous;
+
+/// <summary>
+/// Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to inject new ISqlParameters into an ISqlQueryBuilder
+/// at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that have the exact same declaration/value into a single
+/// new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
+/// </summary>
+public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
 {
-    /// <summary>
-    /// Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to inject new ISqlParameters into an ISqlQueryBuilder
-    /// at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that have the exact same declaration/value into a single
-    /// new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
-    /// </summary>
-    public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
+    private readonly IQuerySyntaxHelper _syntaxHelper;
+
+    [Sql] public string ParameterSQL { get; set; }
+
+    [Sql] public string Value { get; set; }
+
+    public string Comment { get; set; }
+
+    public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment,
+        IQuerySyntaxHelper syntaxHelper) : base(repo)
     {
-        private readonly IQuerySyntaxHelper _syntaxHelper;
+        _syntaxHelper = syntaxHelper;
+        ParameterSQL = declarationSql;
+        Value = value;
+        Comment = comment;
+    }
 
-        [Sql]
-        public string ParameterSQL { get; set; }
+    public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
-        [Sql]
-        public string Value { get; set; }
-        
-        public string Comment { get; set; }
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() =>
+        //I am my own owner! mwahahaha
+        this;
 
-        public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper):base(repo)
-        {
-            _syntaxHelper = syntaxHelper;
-            ParameterSQL = declarationSql;
-            Value = value;
-            Comment = comment;
-        }
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper;
 
-        public string ParameterName
-        {
-            get { return QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL); }
-        }
-
-        public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
-        {
-            //I am my own owner! mwahahaha
-            return this;
-        }
-
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
-        {
-            return _syntaxHelper;
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            new ParameterSyntaxChecker(this).Check(notifier);
-        }
+    public void Check(ICheckNotifier notifier)
+    {
+        new ParameterSyntaxChecker(this).Check(notifier);
     }
 }

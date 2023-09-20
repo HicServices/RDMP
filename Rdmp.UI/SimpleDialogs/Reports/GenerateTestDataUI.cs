@@ -18,271 +18,271 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
 
-namespace Rdmp.UI.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports;
+
+/// <summary>
+/// Lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data
+/// generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescriptions for Paracetamol/Aspirin than Morphine) but
+/// complex relationships are not modelled (e.g. there's no concept of someone being diabetic so just because someone is on INSULIN doesn't mean they will have diabetic blood tests
+/// in biochemistry).  Likewise don't be surprised if people change address after they have died.
+///
+/// <para>Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only
+/// have very minimal intersection of patient identifiers.  For this reason it is important not to generate and load Prescribing one day and then generate and load Biochemistry the
+/// next day (instead you should generate all the data at once and use that as a reusable asset).</para>
+/// 
+/// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
+/// interesting/realistic).</para>
+/// </summary>
+public partial class GenerateTestDataUI : RDMPForm
 {
-    /// <summary>
-    /// Lets you generate interesting test data in which to practice tasks such as importing data, generating cohorts and performing project extractions.  Note that ALL the data 
-    /// generated is completely fictional.  Test data is generated randomly usually around a distribution (e.g. there are more prescriptions for Paracetamol/Aspirin than Morphine) but
-    /// complex relationships are not modelled (e.g. there's no concept of someone being diabetic so just because someone is on INSULIN doesn't mean they will have diabetic blood tests 
-    /// in biochemistry).  Likewise don't be surprised if people change address after they have died.
-    ///
-    /// <para>Identifiers are created from a central random pool and will be unique.  This means if you generate test data and then generate more tomorrow you are likely to only 
-    /// have very minimal intersection of patient identifiers.  For this reason it is important not to generate and load Prescribing one day and then generate and load Biochemistry the 
-    /// next day (instead you should generate all the data at once and use that as a reusable asset).</para>
-    /// 
-    /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
-    /// interesting/realistic).</para>
-    /// </summary>
-    public partial class GenerateTestDataUI : RDMPForm
+    public HelpWorkflow HelpWorkflow { get; private set; }
+    private int? _seed;
+
+    public GenerateTestDataUI(IActivateItems activator, ICommandExecution command) : base(activator)
     {
-        public HelpWorkflow HelpWorkflow { get; private set; }
-        int? _seed;
+        InitializeComponent();
 
-        public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
+        var dataGeneratorFactory = new DataGeneratorFactory();
+
+        var yLoc = 0;
+
+        foreach (var t in dataGeneratorFactory.GetAvailableGenerators())
         {
-            InitializeComponent();
-
-            var dataGeneratorFactory = new DataGeneratorFactory();
-
-            int yLoc = 0;
-
-            foreach(Type t in dataGeneratorFactory.GetAvailableGenerators())
+            var ui = new DataGeneratorUI
             {
-                var ui = new DataGeneratorUI();
-                ui.Generator = dataGeneratorFactory.Create(t,new Random());
-                ui.Location = new Point(0,yLoc);
-                yLoc += ui.Height;
-                pDatasets.Controls.Add(ui);
-            }
-            
-            lblDirectory.Visible = false;
-
-            EnableOrDisableGoButton();
-
-            if(command != null)
-                BuildHelpWorkflow(command);
-
-            helpIcon1.SetHelpText("Tutorial","Click for tutorial",HelpWorkflow);
+                Generator = dataGeneratorFactory.Create(t, new Random()),
+                Location = new Point(0, yLoc)
+            };
+            yLoc += ui.Height;
+            pDatasets.Controls.Add(ui);
         }
 
-        private void BuildHelpWorkflow(ICommandExecution command)
+        lblDirectory.Visible = false;
+
+        EnableOrDisableGoButton();
+
+        if (command != null)
+            BuildHelpWorkflow(command);
+
+        helpIcon1.SetHelpText("Tutorial", "Click for tutorial", HelpWorkflow);
+    }
+
+    private void BuildHelpWorkflow(ICommandExecution command)
+    {
+        HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(Activator));
+
+        var ds =
+            new HelpStage(pDatasets,
+                "This control will allow you to create flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in each dataset e.g. 1,000,000");
+        var pop =
+            new HelpStage(pPopulationSize,
+                "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
+
+        var location = new HelpStage(pOutputDirectory, @"Click browse to select a directory to create the 3 files in");
+
+        var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
+
+        ds.SetOption(">>", pop);
+        pop.SetOption(">>", location);
+        location.SetOption(">>", execute);
+
+        HelpWorkflow.RootStage = ds;
+    }
+
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+
+        ragSmileyPopulation.Visible = false;
+        ragSmileyDirectory.Visible = false;
+    }
+
+    private void groupBox1_Enter(object sender, EventArgs e)
+    {
+    }
+
+    private int populationSize;
+
+    private void tbPopulationSize_TextChanged(object sender, EventArgs e)
+    {
+        try
         {
+            populationSize = int.Parse(tbPopulationSize.Text);
+            if (populationSize < 1)
+                throw new IndexOutOfRangeException();
 
-            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(Activator));
+            tbPopulationSize.ForeColor = Color.Black;
 
-            var ds =
-                new HelpStage(pDatasets,
-                    "This control will allow you to create flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in each dataset e.g. 1,000,000");
-            var pop =
-                new HelpStage(pPopulationSize, "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
-
-            var location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
-
-            var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
-
-            ds.SetOption(">>", pop);
-            pop.SetOption(">>", location);
-            location.SetOption(">>", execute);
-
-            HelpWorkflow.RootStage = ds;
+            ragSmileyPopulation.Visible = true;
+            ragSmileyPopulation.Reset();
+        }
+        catch (Exception ex)
+        {
+            tbPopulationSize.ForeColor = Color.Red;
+            ragSmileyPopulation.Visible = true;
+            ragSmileyPopulation.Fatal(ex);
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
+        EnableOrDisableGoButton();
+    }
 
-            ragSmileyPopulation.Visible = false;
-            ragSmileyDirectory.Visible = false;
+    private void EnableOrDisableGoButton()
+    {
+        if (tbPopulationSize.ForeColor == Color.Red)
+            btnGenerate.Enabled = false;
+        else if (string.IsNullOrWhiteSpace(tbPopulationSize.Text) || !lblDirectory.Visible)
+            btnGenerate.Enabled = false;
+        else
+            btnGenerate.Enabled = true;
+    }
+
+    private bool started;
+
+    private List<DataGeneratorUI> Executing = new();
+    private DirectoryInfo _extractDirectory;
+
+    private void btnGenerate_Click(object sender, EventArgs e)
+    {
+        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui => ui.Generate).ToArray();
+
+        if (!uis.Any())
+        {
+            MessageBox.Show("At least one dataset must be selected");
+            return;
         }
 
-        private void groupBox1_Enter(object sender, EventArgs e)
+        try
         {
-
-        }
-
-        private int populationSize;
-
-        private void tbPopulationSize_TextChanged(object sender, EventArgs e)
-        {
-            try
+            if (started)
             {
-                populationSize = int.Parse(tbPopulationSize.Text);
-                if(populationSize < 1)
-                    throw new IndexOutOfRangeException();
-
-                tbPopulationSize.ForeColor = Color.Black;
-
-                ragSmileyPopulation.Visible = true;
-                ragSmileyPopulation.Reset();
-
-            }
-            catch (Exception ex)
-            {
-                tbPopulationSize.ForeColor = Color.Red;
-                ragSmileyPopulation.Visible = true;
-                ragSmileyPopulation.Fatal(ex);
-            }
-            EnableOrDisableGoButton();
-        }
-
-        private void EnableOrDisableGoButton()
-        {
-            if (tbPopulationSize.ForeColor == Color.Red)
-                btnGenerate.Enabled = false;
-            else
-            if (string.IsNullOrWhiteSpace(tbPopulationSize.Text) || !lblDirectory.Visible)
-                btnGenerate.Enabled = false;
-            else
-                btnGenerate.Enabled = true;
-
-        }
-
-        private bool started = false;
-        
-        private List<DataGeneratorUI> Executing = new List<DataGeneratorUI>();
-        private DirectoryInfo _extractDirectory;
-
-        private void btnGenerate_Click(object sender, EventArgs e)
-        {
-            
-            var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
-            
-            if(!uis.Any())
-            {
-                MessageBox.Show("At least one dataset must be selected");
+                MessageBox.Show("Generation already in progress");
                 return;
             }
-            
-            try
+
+            started = true;
+
+
+            var r = _seed.HasValue ? new Random(_seed.Value) : new Random();
+
+
+            var identifiers = new PersonCollection();
+            identifiers.GeneratePeople(populationSize, r);
+
+            if (cbLookups.Checked)
+                DataGenerator.WriteLookups(_extractDirectory);
+
+            //run them at the same time
+            if (!_seed.HasValue)
             {
-                if (started)
+                foreach (var ui in uis)
                 {
-                    MessageBox.Show("Generation already in progress");
-                    return;
-                }
-
-                started = true;
-
-
-                var r = _seed.HasValue ? new Random(_seed.Value):new Random();
-
-
-                var identifiers = new PersonCollection();
-                identifiers.GeneratePeople(populationSize,r);
-
-                if(cbLookups.Checked)
-                    DataGenerator.WriteLookups(_extractDirectory);
-
-                //run them at the same time
-                if(!_seed.HasValue)
-                {
-                    foreach (DataGeneratorUI ui in uis)
+                    Executing.Add(ui);
+                    ui.BeginGeneration(identifiers, _extractDirectory);
+                    var ui1 = ui;
+                    ui.Completed += () =>
                     {
-                        Executing.Add(ui);
-                        ui.BeginGeneration(identifiers, _extractDirectory);
-                        DataGeneratorUI ui1 = ui;
-                        ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
-                    }
-                }
-                else
-                { 
-                    Queue<DataGeneratorUI> queue = new Queue<DataGeneratorUI>(uis);
-                    Execute(identifiers,queue,queue.Dequeue(),r);
+                        Executing.Remove(ui1);
+                        AnnounceIfComplete();
+                    };
                 }
             }
-            catch (Exception exception)
+            else
             {
-                ExceptionViewer.Show(exception);
+                var queue = new Queue<DataGeneratorUI>(uis);
+                Execute(identifiers, queue, queue.Dequeue(), r);
             }
         }
-
-        private void Execute(PersonCollection identifiers, Queue<DataGeneratorUI> queue, DataGeneratorUI current, Random r)
+        catch (Exception exception)
         {
-            if(current == null)
-                return;
-
-            //tell form it is running
-            Executing.Add(current);
-
-            var dataGeneratorFactory = new DataGeneratorFactory();
-                    
-            //reset the current generator to use the seed provided    
-            current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
-
-
-            current.BeginGeneration(identifiers, _extractDirectory);
-
-            //when it is complete
-            current.Completed += () => 
-            {
-                if(queue.Count != 0)
-                    Execute(identifiers,queue,queue.Dequeue(),r);
-
-                Executing.Remove(current);
-                AnnounceIfComplete();
-            };    
+            ExceptionViewer.Show(exception);
         }
+    }
 
-        private void AnnounceIfComplete()
+    private void Execute(PersonCollection identifiers, Queue<DataGeneratorUI> queue, DataGeneratorUI current, Random r)
+    {
+        if (current == null)
+            return;
+
+        //tell form it is running
+        Executing.Add(current);
+
+        var dataGeneratorFactory = new DataGeneratorFactory();
+
+        //reset the current generator to use the seed provided
+        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(), r);
+
+
+        current.BeginGeneration(identifiers, _extractDirectory);
+
+        //when it is complete
+        current.Completed += () =>
         {
-            if(!Executing.Any())
-            {
-                MessageBox.Show("Finished generating test data");
-                Close();
-            }
+            if (queue.Count != 0)
+                Execute(identifiers, queue, queue.Dequeue(), r);
+
+            Executing.Remove(current);
+            AnnounceIfComplete();
+        };
+    }
+
+    private void AnnounceIfComplete()
+    {
+        if (!Executing.Any())
+        {
+            MessageBox.Show("Finished generating test data");
+            Close();
         }
-        
-        private void UserExercisesUI_FormClosing(object sender, FormClosingEventArgs e)
+    }
+
+    private void UserExercisesUI_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        //if it hasn't started let them close
+        if (!started)
+            return;
+
+        //warn them and cancel if any of them are still generating data
+        var stillRunning = Executing.FirstOrDefault();
+
+        if (stillRunning != null)
         {
-            //if it hasn't started let them close
-            if(!started)
-                return;
-
-            //warn them and cancel if any of them are still generating data
-            var stillRunning = Executing.FirstOrDefault();
-
-            if (stillRunning != null)
-            {
-                MessageBox.Show(stillRunning.Generator.GetType().Name + " is still generating data");
-                e.Cancel = true;
-            }
+            MessageBox.Show($"{stillRunning.Generator.GetType().Name} is still generating data");
+            e.Cancel = true;
         }
-        
-        private void btnBrowse_Click(object sender, EventArgs e)
+    }
+
+    private void btnBrowse_Click(object sender, EventArgs e)
+    {
+        var browserDialog = new FolderBrowserDialog();
+        var result = browserDialog.ShowDialog();
+
+        if (result == DialogResult.OK)
         {
-            var browserDialog = new FolderBrowserDialog();
-            var result = browserDialog.ShowDialog();
+            var directoryInfo = new DirectoryInfo(browserDialog.SelectedPath);
+            _extractDirectory = directoryInfo;
 
-            if (result == DialogResult.OK)
-            {
-                var directoryInfo = new DirectoryInfo(browserDialog.SelectedPath);
-                _extractDirectory = directoryInfo;
+            lblDirectory.Visible = true;
+            lblDirectory.Text = directoryInfo.FullName;
 
-                lblDirectory.Visible = true;
-                lblDirectory.Text = directoryInfo.FullName;
+            btnBrowse.Left = lblDirectory.Right + 5;
+            ragSmileyDirectory.Visible = true;
+            ragSmileyDirectory.Left = btnBrowse.Right + 5;
 
-                btnBrowse.Left = lblDirectory.Right + 5;
-                ragSmileyDirectory.Visible = true;
-                ragSmileyDirectory.Left = btnBrowse.Right + 5;
-
-                EnableOrDisableGoButton();
-            }
+            EnableOrDisableGoButton();
         }
-        
+    }
 
-        private void TbSeed_TextChanged(object sender, EventArgs e)
+
+    private void TbSeed_TextChanged(object sender, EventArgs e)
+    {
+        try
         {
-            try
-            {
-                _seed = int.Parse(tbSeed.Text);
-                tbSeed.ForeColor= Color.Black;
-
-            }catch(Exception )
-            {
-                _seed = null;
-                tbSeed.ForeColor= Color.Red;
-            }
-
+            _seed = int.Parse(tbSeed.Text);
+            tbSeed.ForeColor = Color.Black;
+        }
+        catch (Exception)
+        {
+            _seed = null;
+            tbSeed.ForeColor = Color.Red;
         }
     }
 }

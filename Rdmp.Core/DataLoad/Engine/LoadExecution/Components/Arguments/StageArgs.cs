@@ -10,31 +10,30 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+
+/// <summary>
+/// Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed at the RAW database). Also includes
+/// the location of the load directory
+/// </summary>
+public class StageArgs : IStageArgs
 {
-    /// <summary>
-    /// Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed at the RAW database). Also includes
-    /// the location of the load directory
-    /// </summary>
-    public class StageArgs : IStageArgs
+    public DiscoveredDatabase DbInfo { get; private set; }
+    public ILoadDirectory RootDir { get; private set; }
+
+    //Mandatory
+    public LoadStage LoadStage { get; private set; }
+
+    public StageArgs(LoadStage loadStage, DiscoveredDatabase database, ILoadDirectory projectDirectory)
     {
-        public DiscoveredDatabase DbInfo { get; private set; }
-        public ILoadDirectory RootDir { get; private set; }
-        
-        //Mandatory
-        public LoadStage LoadStage { get; private set; }
+        LoadStage = loadStage;
+        DbInfo = database;
+        RootDir = projectDirectory;
+    }
 
-        public StageArgs(LoadStage loadStage,DiscoveredDatabase database, ILoadDirectory projectDirectory)
-        {
-            LoadStage = loadStage;
-            DbInfo = database;
-            RootDir = projectDirectory;
-        }
-
-        public Dictionary<string, object> ToDictionary()
-        {
-            var props = GetType().GetProperties();
-            return props.ToDictionary(propertyInfo => propertyInfo.Name, propertyInfo => propertyInfo.GetValue(this, null));
-        }
+    public Dictionary<string, object> ToDictionary()
+    {
+        var props = GetType().GetProperties();
+        return props.ToDictionary(propertyInfo => propertyInfo.Name, propertyInfo => propertyInfo.GetValue(this, null));
     }
 }

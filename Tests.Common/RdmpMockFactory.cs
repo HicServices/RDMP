@@ -5,82 +5,82 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 
-namespace Tests.Common
+namespace Tests.Common;
+
+public class RdmpMockFactory
 {
-    public class RdmpMockFactory
+    private const string TestLoggingTask = "TestLoggingTask";
+
+    /// <summary>
+    /// Generates an implementation of <see cref="INameDatabasesAndTablesDuringLoads"/> which always returns the provided table regardless of the
+    /// DLE load stage.
+    /// </summary>
+    /// <param name="databaseNameToReturn">Database name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
+    /// <param name="tableNameToReturn">Table name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
+    /// <returns></returns>
+    public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(
+        string databaseNameToReturn, string tableNameToReturn)
     {
-        private const string TestLoggingTask = "TestLoggingTask";
+        var mock = Substitute.For<INameDatabasesAndTablesDuringLoads>();
 
-        /// <summary>
-        /// Generates an implementation of <see cref="INameDatabasesAndTablesDuringLoads"/> which always returns the provided table regardless of the
-        /// DLE load stage.
-        /// </summary>
-        /// <param name="databaseNameToReturn">Database name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
-        /// <param name="tableNameToReturn">Table name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
-        /// <returns></returns>
-        public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(string databaseNameToReturn,string tableNameToReturn )
-        {
-            return  Mock.Of<INameDatabasesAndTablesDuringLoads>(x=>
-                x.GetDatabaseName(It.IsAny<string>(), It.IsAny<LoadBubble>())==databaseNameToReturn &&
-                x.GetName(It.IsAny<string>(), It.IsAny<LoadBubble>())==tableNameToReturn);
+        mock.GetDatabaseName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(databaseNameToReturn);
+        mock.GetName(Arg.Any<string>(), Arg.Any<LoadBubble>()).Returns(tableNameToReturn);
+        return mock;
+    }
 
-        }
+    /// <inheritdoc cref="Mock_INameDatabasesAndTablesDuringLoads(string, string)"/>
+    public static INameDatabasesAndTablesDuringLoads
+        Mock_INameDatabasesAndTablesDuringLoads(DiscoveredDatabase databaseNameToReturn, string tableNameToReturn) =>
+        Mock_INameDatabasesAndTablesDuringLoads(databaseNameToReturn.GetRuntimeName(), tableNameToReturn);
 
-        /// <inheritdoc cref="Mock_INameDatabasesAndTablesDuringLoads(string, string)"/>
-        public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(DiscoveredDatabase databaseNameToReturn, string tableNameToReturn)
-        {
-            return Mock_INameDatabasesAndTablesDuringLoads(databaseNameToReturn.GetRuntimeName(), tableNameToReturn);
-        }
+    /// <summary>
+    /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="table"/>
+    /// </summary>
+    /// <param name="table"></param>
+    /// <returns></returns>
+    public static ILoadMetadata Mock_LoadMetadataLoadingTable(DiscoveredTable table) =>
+        Mock_LoadMetadataLoadingTable(Mock_TableInfo(table));
 
-        /// <summary>
-        /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="table"/>
-        /// </summary>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        public static ILoadMetadata Mock_LoadMetadataLoadingTable(DiscoveredTable table)
-        {
-            return Mock_LoadMetadataLoadingTable(Mock_TableInfo(table));
-        }
+    /// <summary>
+    /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="tableInfo"/>
+    /// </summary>
+    /// <param name="tableInfo"></param>
+    /// <returns></returns>
+    public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
+    {
+        var lmd = Substitute.For<ILoadMetadata>();
+        var cata = Substitute.For<ICatalogue>();
+        var server = tableInfo.Discover(DataAccessContext.DataLoad).Database.Server;
+        lmd.GetDistinctLiveDatabaseServer().Returns(server);
+        lmd.GetAllCatalogues().Returns(new[] { cata });
+        lmd.GetDistinctLoggingTask().Returns(TestLoggingTask);
 
-        /// <summary>
-        /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="tableInfo"/>
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        /// <returns></returns>
-        public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
-        {
-            var lmd = new Mock<ILoadMetadata>();
-            var cata = new Mock<ICatalogue>();
+        cata.GetTableInfoList(Arg.Any<bool>()).Returns(new[] { tableInfo });
+        cata.LoggingDataTask.Returns(TestLoggingTask);
+        return lmd;
+    }
 
-            lmd.Setup(m => m.GetDistinctLiveDatabaseServer()).Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
-            lmd.Setup(m => m.GetAllCatalogues()).Returns(new[] { cata.Object });
-            lmd.Setup(p => p.GetDistinctLoggingTask()).Returns(TestLoggingTask);
-            
-            cata.Setup(m => m.GetTableInfoList(It.IsAny<bool>())).Returns(new[] { tableInfo });
-            cata.Setup(m => m.LoggingDataTask).Returns(TestLoggingTask);
-            return lmd.Object;
-        }
+    /// <summary>
+    /// Creates a mock implementation of <see cref="ITableInfo"/> that points to the live database table <paramref name="table"/>
+    /// </summary>
+    /// <param name="table"></param>
+    /// <returns></returns>
+    public static ITableInfo Mock_TableInfo(DiscoveredTable table)
+    {
+        var mock = Substitute.For<ITableInfo>();
+        mock.Name.Returns(table.GetFullyQualifiedName());
+        mock.Database.Returns(table.Database.GetRuntimeName());
+        mock.DatabaseType.Returns(table.Database.Server.DatabaseType);
+        mock.IsTableValuedFunction.Returns(table.TableType == TableType.TableValuedFunction);
+        mock.Discover(Arg.Any<DataAccessContext>()).Returns(table);
+        return mock;
 
-        /// <summary>
-        /// Creates a mock implementation of <see cref="ITableInfo"/> that points to the live database table <paramref name="table"/>
-        /// </summary>
-        /// <param name="table"></param>
-        /// <returns></returns>
-        public static ITableInfo Mock_TableInfo(DiscoveredTable table)
-        {
-            return Mock.Of<ITableInfo>(p=>
-                p.Name == table.GetFullyQualifiedName() &&
-                p.Database==table.Database.GetRuntimeName() && 
-                p.DatabaseType==table.Database.Server.DatabaseType &&
-                p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
-                p.Discover(It.IsAny<DataAccessContext>())==table);
-        }
     }
 }

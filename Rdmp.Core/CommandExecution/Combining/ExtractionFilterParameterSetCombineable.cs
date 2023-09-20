@@ -6,20 +6,17 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+public class ExtractionFilterParameterSetCombineable : ICombineToMakeCommand
 {
-    public class ExtractionFilterParameterSetCombineable : ICombineToMakeCommand
+    public ExtractionFilterParameterSet ParameterSet { get; }
+
+    public ExtractionFilterParameterSetCombineable(ExtractionFilterParameterSet parameterSet)
     {
-        public ExtractionFilterParameterSet ParameterSet { get; }
-        public ExtractionFilterParameterSetCombineable(ExtractionFilterParameterSet parameterSet)
-        {
-            ParameterSet = parameterSet;
-        }
-
-
-        public string GetSqlString()
-        {
-            return null;
-        }
+        ParameterSet = parameterSet;
     }
+
+
+    public string GetSqlString() => null;
 }

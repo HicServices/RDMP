@@ -10,105 +10,98 @@ using System.Threading;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
-using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.DataExport.DataRelease
+namespace Rdmp.Core.DataExport.DataRelease;
+
+/// <summary>
+/// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
+///  / tickets in wrong status / safehaven down for maintencence etc.
+/// </summary>
+public class ReleaseEnvironmentPotential : ICheckable
 {
-    /// <summary>
-    /// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
-    ///  / tickets in wrong status / safehaven down for maintencence etc.
-    /// </summary>
-    public class ReleaseEnvironmentPotential : ICheckable
+    private readonly IDataExportRepository _repository;
+    public IExtractionConfiguration Configuration { get; private set; }
+    public IProject Project { get; private set; }
+
+    public Exception Exception { get; private set; }
+    public TicketingReleaseabilityEvaluation Assesment { get; private set; }
+    public string Reason { get; private set; }
+
+
+    public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
     {
-        private readonly IDataExportRepository _repository;
-        public IExtractionConfiguration Configuration { get; private set; }
-        public IProject Project { get; private set; }
+        _repository = configuration.DataExportRepository;
+        Configuration = configuration;
+        Project = configuration.Project;
+    }
 
-        public Exception Exception { get; private set; }
-        public TicketingReleaseabilityEvaluation Assesment { get; private set; }
-        public string Reason { get; private set; }
+    private void MakeAssessment()
+    {
+        Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-        
-        public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
+        var configuration = _repository.CatalogueRepository
+            .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
+        if (configuration == null) return;
+
+        var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
+
+
+        ITicketingSystem ticketingSystem;
+        try
         {
-            _repository = configuration.DataExportRepository;
-            Configuration = configuration;
-            Project = configuration.Project;
+            ticketingSystem = factory.CreateIfExists(configuration);
         }
-        
-        private void MakeAssessment()
+        catch (Exception e)
         {
-            Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
-
-            var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
-            if (configuration == null) return;
-
-            TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);
-
-
-            ITicketingSystem ticketingSystem;
-            try
-            {
-                ticketingSystem = factory.CreateIfExists(configuration);
-            }
-            catch (Exception e)
-            {
-                Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
-                Exception = e;
-                return;
-            }
-            
-            if (ticketingSystem == null) 
-                return;
-
-            try
-            {
-                Exception e;
-                string reason;
-                Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
-                    Configuration.RequestTicket, Configuration.ReleaseTicket, out reason, out e);
-                Exception = e;
-                Reason = reason;
-            }
-            catch (Exception e)
-            {
-                if (e is ThreadInterruptedException)
-                    throw;
-
-                Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
-                Exception = e;
-            }
+            Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
+            Exception = e;
+            return;
         }
 
-        public void Check(ICheckNotifier notifier)
+        if (ticketingSystem == null)
+            return;
+
+        try
         {
-            MakeAssessment();
-
-            var message = "Environment Releasability is " + Assesment;
-            if (!string.IsNullOrWhiteSpace(Reason))
-                message += " - " + Reason;
-
-            notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
+            Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
+                Configuration.RequestTicket, Configuration.ReleaseTicket, out var reason, out var e);
+            Exception = e;
+            Reason = reason;
         }
-
-        private CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
+        catch (Exception e)
         {
-            switch (assesment)
-            {
-                case TicketingReleaseabilityEvaluation.TicketingLibraryCrashed:
-                case TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer:
-                case TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer:
-                case TicketingReleaseabilityEvaluation.NotReleaseable:
-                    return CheckResult.Fail;
-                case TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly:
-                    return CheckResult.Warning;
-                case TicketingReleaseabilityEvaluation.Releaseable:
-                    return CheckResult.Success;
+            if (e is ThreadInterruptedException)
+                throw;
 
-                default:
-                    throw new ArgumentOutOfRangeException("assesment");
-            }
+            Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryCrashed;
+            Exception = e;
         }
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+        MakeAssessment();
+
+        var message = $"Environment Releasability is {Assesment}";
+        if (!string.IsNullOrWhiteSpace(Reason))
+            message += $" - {Reason}";
+
+        notifier.OnCheckPerformed(new CheckEventArgs(message, GetCheckResultFor(Assesment), Exception));
+    }
+
+    private static CheckResult GetCheckResultFor(TicketingReleaseabilityEvaluation assesment)
+    {
+        return assesment switch
+        {
+            TicketingReleaseabilityEvaluation.TicketingLibraryCrashed => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.CouldNotReachTicketingServer => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.CouldNotAuthenticateAgainstServer => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.NotReleaseable => CheckResult.Fail,
+            TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly => CheckResult.Warning,
+            TicketingReleaseabilityEvaluation.Releaseable => CheckResult.Success,
+            _ => throw new ArgumentOutOfRangeException(nameof(assesment))
+        };
     }
 }

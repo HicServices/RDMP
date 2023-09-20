@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -17,142 +16,127 @@ using Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs.NavigateTo;
-using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace Rdmp.UI.Tests.DesignPatternTests
+namespace Rdmp.UI.Tests.DesignPatternTests;
+
+public class RunUITests : DatabaseTests
 {
-    public class RunUITests:DatabaseTests
+    private List<Type> allowedToBeIncompatible
+        = new(new[]
+        {
+            typeof(ExecuteCommandShow),
+            typeof(ExecuteCommandSetDataAccessContextForCredentials),
+            typeof(ExecuteCommandActivate),
+            typeof(ExecuteCommandCreateNewExternalDatabaseServer),
+            typeof(ExecuteCommandShowTooltip),
+            typeof(ExecuteCommandShowKeywordHelp),
+            typeof(ExecuteCommandCollapseChildNodes),
+            typeof(ExecuteCommandExpandAllNodes),
+            typeof(ExecuteCommandViewCohortAggregateGraph),
+            typeof(ExecuteCommandExecuteExtractionAggregateGraph),
+
+            typeof(ExecuteCommandAddNewCatalogueItem),
+
+            typeof(ExecuteCommandCreateNewFilter),
+
+            //requires a use case
+            typeof(ExecuteCommandCreateNewPipeline),
+            typeof(ExecuteCommandEditPipelineWithUseCase),
+
+            typeof(ExecuteCommandExportLoggedDataToCsv),
+            typeof(ExecuteCommandGenerateRunCommand),
+            typeof(ExecuteCommandRunDetached),
+
+
+            typeof(ExecuteCommandShowXmlDoc),
+            typeof(ImpossibleCommand),
+
+            typeof(ExecuteCommandChangeLoadStage),
+            typeof(ExecuteCommandReOrderProcessTask),
+            typeof(ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer),
+            typeof(ExecuteCommandAddCatalogueToCohortIdentificationSetContainer),
+            typeof(ExecuteCommandAddCohortToExtractionConfiguration),
+            typeof(ExecuteCommandAddDatasetsToConfiguration),
+            typeof(ExecuteCommandConvertAggregateConfigurationToPatientIndexTable),
+            typeof(ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain),
+            typeof(ExecuteCommandMoveAggregateIntoContainer),
+            typeof(ExecuteCommandMoveCohortAggregateContainerIntoSubContainer),
+            typeof(ExecuteCommandMoveContainerIntoContainer),
+            typeof(ExecuteCommandMoveFilterIntoContainer),
+            typeof(ExecuteCommandPutIntoFolder),
+            typeof(ExecuteCommandReOrderAggregate),
+            typeof(ExecuteCommandReOrderAggregateContainer),
+            typeof(ExecuteCommandUseCredentialsToAccessTableInfoData),
+            typeof(ExecuteCommandCreateLookup),
+            typeof(ExecuteCommandImportFilterDescriptionsFromShare),
+            typeof(ExecuteCommandSetArgument),
+            typeof(ExecuteCommandAddToSession)
+        });
+
+    [Test]
+    public void AllCommandsCompatible()
     {
-        private List<Type> allowedToBeIncompatible
-            = new List<Type>(new[]
-            {
-                typeof(ExecuteCommandShow),
-                typeof(ExecuteCommandSetDataAccessContextForCredentials),
-                typeof(ExecuteCommandActivate),
-                typeof(ExecuteCommandCreateNewExternalDatabaseServer),
-                typeof(ExecuteCommandShowTooltip),
-                typeof(ExecuteCommandShowKeywordHelp),
-                typeof(ExecuteCommandCollapseChildNodes),
-                typeof(ExecuteCommandExpandAllNodes),
-                typeof(ExecuteCommandViewCohortAggregateGraph),
-                typeof(ExecuteCommandExecuteExtractionAggregateGraph),
-                
-                typeof(ExecuteCommandAddNewCatalogueItem),
+        var uiTests = new UITests();
+        var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
 
-                typeof(ExecuteCommandCreateNewFilter),
+        allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
 
-                //requires a use case
-                typeof(ExecuteCommandCreateNewPipeline),
-                typeof(ExecuteCommandEditPipelineWithUseCase),
+        var commandCaller = new CommandInvoker(activator);
 
-                typeof(ExecuteCommandExportLoggedDataToCsv),
-                typeof(ExecuteCommandGenerateRunCommand),
-                typeof(ExecuteCommandRunDetached),
+        Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
+        var notSupported = MEF.GetAllTypes()
+            .Where(t => typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract &&
+                        !t.IsInterface) //must be something we would normally expect to be a supported Type
+            .Except(allowedToBeIncompatible) //and isn't a permissible one
+            .Where(t => commandCaller.WhyCommandNotSupported(t) is not null) //but for some reason isn't
+            .ToArray();
 
-                typeof(ExecuteCommandShowXmlDoc),
-                typeof(ImpossibleCommand),
-     
-typeof(ExecuteCommandChangeLoadStage),
-typeof(ExecuteCommandReOrderProcessTask),
-typeof(ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer),
-typeof(ExecuteCommandAddCatalogueToCohortIdentificationSetContainer),
-typeof(ExecuteCommandAddCohortToExtractionConfiguration),
-typeof(ExecuteCommandAddDatasetsToConfiguration),
-typeof(ExecuteCommandConvertAggregateConfigurationToPatientIndexTable),
-typeof(ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain),
-typeof(ExecuteCommandMoveAggregateIntoContainer),
-typeof(ExecuteCommandMoveCohortAggregateContainerIntoSubContainer),
-typeof(ExecuteCommandMoveContainerIntoContainer),
-typeof(ExecuteCommandMoveFilterIntoContainer),
-typeof(ExecuteCommandPutIntoFolder),
-typeof(ExecuteCommandReOrderAggregate),
-typeof(ExecuteCommandReOrderAggregateContainer),
-typeof(ExecuteCommandUseCredentialsToAccessTableInfoData),
-typeof(ExecuteCommandCreateLookup),
-typeof(ExecuteCommandImportFilterDescriptionsFromShare),
-typeof(ExecuteCommandSetArgument),
-typeof(ExecuteCommandAddToSession)
-
-            });
-
-        [Test]
-        public void AllCommandsCompatible()
-        {
-            Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
-            Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
-            Console.WriteLine("Looking in" + typeof(ExecuteCommandAddToSession).Assembly);
-
-            var uiTests = new UITests();
-            var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
-            activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
-
-            allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
-
-            var commandCaller = new CommandInvoker(activator);
-            
-            Assert.IsTrue(commandCaller.IsSupported(typeof(ExecuteCommandDelete)));
-
-            var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
-                .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
-                .Where(t => !commandCaller.IsSupported(t)) //but for some reason isn't
-                .Except(allowedToBeIncompatible) //and isn't a permissable one
-                .ToArray();
-            
-            Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
-
-            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(commandCaller.IsSupported).ToArray();
-
-            Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
-
-        }
-
-        [TestCase(typeof(ExecuteCommandDelete))]
-        [TestCase(typeof(ExecuteCommandList))]
-        [TestCase(typeof(ExecuteCommandExportLoggedDataToCsv))]
-        [TestCase(typeof(TestCommand_DiscoveredDatabase))]
-        [TestCase(typeof(TestCommand_LotsOfParameters))]
-        [TestCase(typeof(TestCommand_TypeParameter))]
-        public void Test_IsSupported_BasicActivator(Type t)
-        {
-            IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
-
-            var commandCaller = new CommandInvoker(basic);
-            
-            Assert.IsTrue(commandCaller.IsSupported(t));
-        }
-
-        private class TestCommand_DiscoveredDatabase:BasicCommandExecution
-        {   
-            public TestCommand_DiscoveredDatabase(IActivateItems activator,DiscoveredDatabase db):base(activator)
-            {
-                
-            }
-        }
-
-        private class TestCommand_LotsOfParameters : BasicCommandExecution
-        {
-            public TestCommand_LotsOfParameters(IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredDatabase databaseToCreateInto, DirectoryInfo projectDirectory):base()
-            {
-                
-            }
-        }
-
-        private class TestCommand_TypeParameter : BasicCommandExecution
-        {
-            public TestCommand_TypeParameter(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Type myType):base()
-            {
-                
-            }
-        }
-
-
-
+        Assert.AreEqual(0, notSupported.Length,
+            "The following commands were not compatible with RunUI:" + Environment.NewLine +
+            string.Join(Environment.NewLine, notSupported.Select(t => t.Name)));
     }
 
-    
+    [Test]
+    public void Test_IsSupported_BasicActivator()
+    {
+        IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+
+        var commandCaller = new CommandInvoker(basic);
+        foreach (var t in new[]
+                 {
+                     typeof(ExecuteCommandDelete), typeof(ExecuteCommandList),
+                     typeof(ExecuteCommandExportLoggedDataToCsv), typeof(TestCommandDiscoveredDatabase),
+                     typeof(TestCommandLotsOfParameters), typeof(TestCommandTypeParameter)
+                 })
+        {
+            var isSupported = commandCaller.WhyCommandNotSupported(t);
+            Assert.IsTrue(isSupported is null, $"Unsupported type {t} due to {isSupported}");
+        }
+    }
+
+    private class TestCommandDiscoveredDatabase : BasicCommandExecution
+    {
+        public TestCommandDiscoveredDatabase(IBasicActivateItems activator, DiscoveredDatabase _) : base(activator)
+        {
+        }
+    }
+
+    private class TestCommandLotsOfParameters : BasicCommandExecution
+    {
+        public TestCommandLotsOfParameters(IRDMPPlatformRepositoryServiceLocator _1, DiscoveredDatabase _2,
+            DirectoryInfo _3) : base()
+        {
+        }
+    }
+
+    private class TestCommandTypeParameter : BasicCommandExecution
+    {
+        public TestCommandTypeParameter(IRDMPPlatformRepositoryServiceLocator _1, Type _2) : base()
+        {
+        }
+    }
 }

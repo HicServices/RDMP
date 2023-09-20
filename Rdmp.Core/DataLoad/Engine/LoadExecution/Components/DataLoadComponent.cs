@@ -6,33 +6,32 @@
 
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
+
+public abstract class DataLoadComponent : IDataLoadComponent
 {
-    public abstract class DataLoadComponent : IDataLoadComponent
+    public bool SkipComponent { get; set; }
+    public string Description { get; set; }
+
+    public abstract ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken);
+
+    protected DataLoadComponent()
     {
-        public bool SkipComponent { get; set; }
-        public string Description { get; set; }
-        
-        public abstract ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken);
+        SkipComponent = false;
+    }
 
-        protected DataLoadComponent()
-        {
-            SkipComponent = false;
-        }
+    protected bool Skip(IDataLoadJob job)
+    {
+        if (!SkipComponent) return false;
 
-        protected bool Skip(IDataLoadJob job)
-        {
-            if (!SkipComponent) return false;
-
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Skipped load component: " + Description));
-            return true;
-        }
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Skipped load component: {Description}"));
+        return true;
+    }
 
 
-        public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-        {
-        }
+    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
+    {
     }
 }

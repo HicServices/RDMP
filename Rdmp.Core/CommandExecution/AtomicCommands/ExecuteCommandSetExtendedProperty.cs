@@ -5,108 +5,89 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates or Updates an <see cref="ExtendedProperty"/> declaration on any RDMP object.
+/// </summary>
+public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicCommand
 {
+    private readonly IMapsDirectlyToDatabaseTable[] _setOn;
+    private readonly string _propertyName;
+    private readonly string _value;
+
     /// <summary>
-    /// Creates or Updates an <see cref="ExtendedProperty"/> declaration on any RDMP object.
+    /// Set to true to prompt user for the <see cref="_value"/> at execution time (e.g. for interactive UIs)
     /// </summary>
-    public class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicCommand
+    internal bool PromptForValue { get; init; }
+
+    /// <summary>
+    /// If <see cref="PromptForValue"/> is set to true then this is the description to show to the user
+    /// that explains what they should be entering as a <see cref="_value"/>
+    /// </summary>
+    internal string PromptForValueTaskDescription { get; init; }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandSetExtendedProperty(IBasicActivateItems activator,
+        [DemandsInitialization("The object(s) that you want to set the property on")]
+        IMapsDirectlyToDatabaseTable[] setOn,
+        [DemandsInitialization("The property you want to set")]
+        string propertyName,
+        [DemandsInitialization("The value to store")]
+        string value,
+        [DemandsInitialization(
+            "True to validate propertyName against known properties.  False to allow custom named properties.  Defaults to true.",
+            DefaultValue = true)]
+        bool strict = true
+    )
+        : base(activator)
     {
-        public IMapsDirectlyToDatabaseTable[] SetOn { get; }
-        public string PropertyName { get; }
-        public string Value { get; }
-        public bool Strict { get; }
-        
-        /// <summary>
-        /// Set to true to prompt user for the <see cref="Value"/> at execution time (e.g. for interactive UIs)
-        /// </summary>
-        public bool PromptForValue { get; set; }
+        if (strict && !ExtendedProperty.KnownProperties.Contains(propertyName))
+            SetImpossible(
+                $"{propertyName} is not a known property.  Known properties are: {Environment.NewLine}{string.Join(Environment.NewLine, ExtendedProperty.KnownProperties)}");
+        _setOn = setOn;
+        _propertyName = propertyName;
+        _value = value;
+    }
 
-        /// <summary>
-        /// If <see cref="PromptForValue"/> is set to true then this is the description to show to the user
-        /// that explains what they should be entering as a <see cref="Value"/>
-        /// </summary>
-        public string PromptForValueTaskDescription { get; set; }
+    public override string GetCommandName() => !string.IsNullOrWhiteSpace(OverrideCommandName)
+        ? OverrideCommandName
+        : $"Set {_propertyName}";
 
-        [UseWithObjectConstructor]
-        public ExecuteCommandSetExtendedProperty(IBasicActivateItems activator,
-            [DemandsInitialization("The object(s) that you want to set the property on")]
-            IMapsDirectlyToDatabaseTable[] setOn,
-            [DemandsInitialization("The property you want to set")]
-            string propertyName,
-            [DemandsInitialization("The value to store")]
-            string value,
-            [DemandsInitialization("True to validate propertyName against known properties.  False to allow custom named properties.  Defaults to true.",DefaultValue = true)]
-            bool strict = true
-            )
-            : base(activator)
+    public override void Execute()
+    {
+        base.Execute();
+
+        var catRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
+        var newValue = _value;
+
+        foreach (var o in _setOn)
         {
-            if (strict && !ExtendedProperty.KnownProperties.Contains(propertyName))
+            var props = catRepo.GetExtendedProperties(_propertyName, o).ToArray();
+            var oldValue = props.FirstOrDefault()?.Value;
+
+            if (PromptForValue && !BasicActivator.TypeText(new DialogArgs
             {
-                SetImpossible($"{propertyName} is not a known property.  Known properties are: {Environment.NewLine}{string.Join(Environment.NewLine,ExtendedProperty.KnownProperties)}");
-            }
-            SetOn = setOn;
-            PropertyName = propertyName;
-            Value = value;
-            Strict = strict;
+                WindowTitle = _propertyName,
+                TaskDescription = PromptForValueTaskDescription
+            }, int.MaxValue, oldValue, out newValue, false))
+                // user cancelled entering some text
+                return;
+
+            // delete any old versions
+            foreach (var d in props) d.DeleteInDatabase();
+
+            // Creates the new property into the db
+            // If the Value passed was null just leave it deleted
+            if (!string.IsNullOrWhiteSpace(newValue)) _ = new ExtendedProperty(catRepo, o, _propertyName, newValue);
         }
 
-        public override string GetCommandName()
-        {
-            if (!string.IsNullOrWhiteSpace(OverrideCommandName))
-                return OverrideCommandName;
-
-            return $"Set {PropertyName}";
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var cataRepo = BasicActivator.RepositoryLocator.CatalogueRepository;
-            string newValue = Value;
-                        
-            foreach(var o in SetOn)
-            {
-                var props = cataRepo.GetExtendedProperties(PropertyName, o).ToArray();
-                string oldValue = props.FirstOrDefault()?.Value;
-
-                if (PromptForValue)
-                {
-                    if (!BasicActivator.TypeText(new DialogArgs
-                    {
-                        WindowTitle = PropertyName,
-                        TaskDescription = PromptForValueTaskDescription
-                    }, int.MaxValue, oldValue, out newValue, false))
-                    {
-                        // user cancelled entering some text
-                        return;
-                    }
-                }
-
-                // delete any old versions
-                foreach (var d in props)
-                {
-                    d.DeleteInDatabase();
-                }
-
-                // Creates the new property into the db
-                // If the Value passed was null just leave it deleted
-                if(!string.IsNullOrWhiteSpace(newValue))
-                {
-                    new ExtendedProperty(cataRepo, o, PropertyName, newValue);
-                }
-                    
-            }
-
-            if(SetOn.Any())
-                Publish(SetOn.First());
-        }
+        if (_setOn.Any())
+            Publish(_setOn.First());
     }
 }

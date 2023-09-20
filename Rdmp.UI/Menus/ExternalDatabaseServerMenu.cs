@@ -12,43 +12,50 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
-using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.UI.DataViewing;
-using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.Menus;
+
+internal class ExternalDatabaseServerMenu : RDMPContextMenuStrip
 {
-    class ExternalDatabaseServerMenu : RDMPContextMenuStrip
+    private readonly ExternalDatabaseServer _server;
+
+    public ExternalDatabaseServerMenu(RDMPContextMenuStripArgs args, ExternalDatabaseServer server) : base(args, server)
     {
-        private readonly ExternalDatabaseServer _server;
+        _server = server;
+        args.SkipCommand<ExecuteCommandViewLogs>();
 
-        public ExternalDatabaseServerMenu(RDMPContextMenuStripArgs args, ExternalDatabaseServer server) : base(args, server)
+        if (server.WasCreatedBy(new LoggingDatabasePatcher()))
         {
-            _server = server;
-            args.SkipCommand<ExecuteCommandViewLogs>();
+            var viewLogs = new ToolStripMenuItem("View Logs", CatalogueIcons.Logging.ImageToBitmap());
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,
+                viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None,
+                viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None,
+                viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None,
+                viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None,
+                viewLogs);
+            Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None,
+                viewLogs);
 
-            if (server.WasCreatedBy(new LoggingDatabasePatcher()))
-            {
-                var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging.ImageToBitmap());
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadTask)), Keys.None,viewLogs);
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataLoadRun)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.FatalError)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.TableLoadRun)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.DataSource)), Keys.None, viewLogs);
-                Add(new ExecuteCommandViewLogs(_activator, new LogViewerFilter(LoggingTables.ProgressLog)), Keys.None, viewLogs);
+            viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
-                viewLogs.DropDownItems.Add(new ToolStripSeparator());
+            viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(),
+                ExecuteSqlOnLoggingDatabase));
 
-                viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL.ImageToBitmap(), ExecuteSqlOnLoggingDatabase));
-                
-                Items.Add(viewLogs);
-            }
+            Items.Add(viewLogs);
         }
+    }
 
-        private void ExecuteSqlOnLoggingDatabase(object sender, EventArgs e)
-        {
-            var collection = new ArbitraryTableExtractionUICollection(_server.Discover(DataAccessContext.Logging).ExpectTable("DataLoadTask"));
-            _activator.Activate<ViewSQLAndResultsWithDataGridUI>(collection);
-        }
+    private void ExecuteSqlOnLoggingDatabase(object sender, EventArgs e)
+    {
+        var collection =
+            new ArbitraryTableExtractionUICollection(_server.Discover(DataAccessContext.Logging)
+                .ExpectTable("DataLoadTask"));
+        _activator.Activate<ViewSQLAndResultsWithDataGridUI>(collection);
     }
 }

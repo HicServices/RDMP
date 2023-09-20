@@ -11,106 +11,109 @@ using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit;
+
+[Category("Unit")]
+internal class DataFlowComponentTests
 {
-    [Category("Unit")]
-    class DataFlowComponentTests
+    [Test]
+    public void ColumnRenamer_NoMatchingColumnAtRuntime()
     {
-        [Test]
-        public void ColumnRenamer_NoMatchingColumnAtRuntime()
+        var renamer = new ColumnRenamer
         {
-            var renamer = new ColumnRenamer
-            {
-                ColumnNameToFind = "DoesNotExist",
-                ReplacementName = "ReplacementName"
-            };
+            ColumnNameToFind = "DoesNotExist",
+            ReplacementName = "ReplacementName"
+        };
 
-            var cts = new GracefulCancellationTokenSource();
-            var toProcess = new DataTable();
-            toProcess.Columns.Add("Column1");
+        var cts = new GracefulCancellationTokenSource();
+        var toProcess = new DataTable();
+        toProcess.Columns.Add("Column1");
 
-            var ex = Assert.Throws<InvalidOperationException>(() => renamer.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token));
-            Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
-        }
-
-        [Test]
-        public void ColumnRenamer_Successful()
-        {
-            var renamer = new ColumnRenamer
-            {
-                ColumnNameToFind = "ToFind",
-                ReplacementName = "ReplacementName"
-            };
-
-            var cts = new GracefulCancellationTokenSource();
-            var toProcess = new DataTable();
-            toProcess.Columns.Add("ToFind");
-
-            var processed = renamer.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token);
-
-            Assert.AreEqual(1, processed.Columns.Count);
-            Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);
-        }
-
-        [Test]
-        public void ColumnDropper_NoMatchingColumnAtRuntime()
-        {
-            var dropper = new ColumnDropper
-            {
-                ColumnNameToDrop = "DoesNotExist"
-            };
-
-            var cts = new GracefulCancellationTokenSource();
-            var toProcess = new DataTable();
-            toProcess.Columns.Add("Column1");
-
-            var ex = Assert.Throws<InvalidOperationException>(() => dropper.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token));
-            Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
-        }
-
-        [Test]
-        public void ColumnDropper_Successful()
-        {
-            var dropper = new ColumnDropper
-            {
-                ColumnNameToDrop = "ToDrop"
-            };
-
-            var cts = new GracefulCancellationTokenSource();
-            var toProcess = new DataTable();
-            toProcess.Columns.Add("ToDrop");
-
-            var processed = dropper.ProcessPipelineData( toProcess, new ThrowImmediatelyDataLoadEventListener(), cts.Token);
-
-            Assert.AreEqual(0, processed.Columns.Count);
-            Assert.AreEqual(false, processed.Columns.Contains("ToDrop"));
-        }
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
+        Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
     }
 
-    [Category("Unit")]
-    class ColumnforbidlistTests
+    [Test]
+    public void ColumnRenamer_Successful()
     {
-        [Test]
-        public void ColumnForbidderTest_MatchingColumn()
+        var renamer = new ColumnRenamer
         {
-            var forbidlister = new ColumnForbidder();
-            forbidlister.CrashIfAnyColumnMatches = new Regex("^fish$");
+            ColumnNameToFind = "ToFind",
+            ReplacementName = "ReplacementName"
+        };
 
-            var toProcess = new DataTable();
-            toProcess.Columns.Add("ToFind");
+        var cts = new GracefulCancellationTokenSource();
+        var toProcess = new DataTable();
+        toProcess.Columns.Add("ToFind");
 
-            Assert.DoesNotThrow(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
-            toProcess.Columns.Add("fish");
+        var processed = renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
 
-            Assert.Throws<Exception>(()=>forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+        Assert.AreEqual(1, processed.Columns.Count);
+        Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);
+    }
 
-            forbidlister.Rationale = "kaleidoscope engage";
-            var ex = Assert.Throws<Exception>(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
-            Assert.IsTrue(ex.Message.Contains("kaleidoscope engage"));
+    [Test]
+    public void ColumnDropper_NoMatchingColumnAtRuntime()
+    {
+        var dropper = new ColumnDropper
+        {
+            ColumnNameToDrop = "DoesNotExist"
+        };
 
+        var cts = new GracefulCancellationTokenSource();
+        var toProcess = new DataTable();
+        toProcess.Columns.Add("Column1");
 
-        }
+        var ex = Assert.Throws<InvalidOperationException>(() =>
+            dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
+        Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
+    }
+
+    [Test]
+    public void ColumnDropper_Successful()
+    {
+        var dropper = new ColumnDropper
+        {
+            ColumnNameToDrop = "ToDrop"
+        };
+
+        var cts = new GracefulCancellationTokenSource();
+        var toProcess = new DataTable();
+        toProcess.Columns.Add("ToDrop");
+
+        var processed = dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
+
+        Assert.AreEqual(0, processed.Columns.Count);
+        Assert.AreEqual(false, processed.Columns.Contains("ToDrop"));
+    }
+}
+
+[Category("Unit")]
+internal class ColumnforbidlistTests
+{
+    [Test]
+    public void ColumnForbidderTest_MatchingColumn()
+    {
+        var forbidlister = new ColumnForbidder
+        {
+            CrashIfAnyColumnMatches = new Regex("^fish$")
+        };
+
+        var toProcess = new DataTable();
+        toProcess.Columns.Add("ToFind");
+
+        Assert.DoesNotThrow(() => forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+        toProcess.Columns.Add("fish");
+
+        Assert.Throws<Exception>(() =>
+            forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+
+        forbidlister.Rationale = "kaleidoscope engage";
+        var ex = Assert.Throws<Exception>(() =>
+            forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
+        Assert.IsTrue(ex.Message.Contains("kaleidoscope engage"));
     }
 }

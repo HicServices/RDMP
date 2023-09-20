@@ -4,39 +4,33 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandEditCacheProgress : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandEditCacheProgress : BasicUICommandExecution,IAtomicCommand
+    private readonly CacheProgress _cacheProgress;
+
+    public ExecuteCommandEditCacheProgress(IActivateItems activator, CacheProgress cacheProgress) : base(activator)
     {
-        private readonly CacheProgress _cacheProgress;
-
-        public ExecuteCommandEditCacheProgress(IActivateItems activator, CacheProgress cacheProgress):base(activator)
-        {
-            _cacheProgress = cacheProgress;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-            Activator.Activate<CacheProgressUI, CacheProgress>(_cacheProgress);
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(_cacheProgress);
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Change which pipeline is used to fetch data, what date the cache has progressed to etc";
-        }
+        _cacheProgress = cacheProgress;
     }
+
+    public override void Execute()
+    {
+        base.Execute();
+        Activator.Activate<CacheProgressUI, CacheProgress>(_cacheProgress);
+    }
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(_cacheProgress);
+
+    public override string GetCommandHelp() =>
+        "Change which pipeline is used to fetch data, what date the cache has progressed to etc";
 }

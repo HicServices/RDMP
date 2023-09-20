@@ -12,35 +12,30 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionProposal<Catalogue>
 {
-    class ProposeExecutionWhenTargetIsCatalogue:RDMPCommandExecutionProposal<Catalogue>
+    public ProposeExecutionWhenTargetIsCatalogue(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsCatalogue(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(Catalogue target)
-        {
-            return true;
-        }
+    public override bool CanActivate(Catalogue target) => true;
 
-        public override void Activate(Catalogue c)
-        {
-            ItemActivator.Activate<CatalogueUI, Catalogue>(c);
-        }
+    public override void Activate(Catalogue c)
+    {
+        ItemActivator.Activate<CatalogueUI, Catalogue>(c);
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)
-        {
-            var sourceFileCollection = cmd as FileCollectionCombineable;
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        if (cmd is FileCollectionCombineable sourceFileCollection)
+            return sourceFileCollection.IsShareDefinition
+                ? new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,
+                    targetCatalogue)
+                : new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
 
-            if(sourceFileCollection != null)
-                if (sourceFileCollection.IsShareDefinition)
-                    return new ExecuteCommandImportCatalogueDescriptionsFromShare(ItemActivator, sourceFileCollection,targetCatalogue);
-                else
-                    return new ExecuteCommandAddNewSupportingDocument(ItemActivator, sourceFileCollection, targetCatalogue);
-
-            return null;
-        }
+        return null;
     }
 }

@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
@@ -19,106 +18,108 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+public class CoalescerTests : DatabaseTests
 {
-    public class CoalescerTests:DatabaseTests
+    [TestCase(DatabaseType.MicrosoftSQLServer, true)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+    [TestCase(DatabaseType.MySql, true)]
+    [TestCase(DatabaseType.MySql, false)]
+    public void TestCoalescer_RampantNullness(DatabaseType type, bool useCustomNamer)
     {
-        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
-        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
-        [TestCase(DatabaseType.MySql,true)]
-        [TestCase(DatabaseType.MySql, false)]
-        public void TestCoalescer_RampantNullness(DatabaseType type,bool useCustomNamer)
+        var db = GetCleanedServer(type, "TestCoalescer");
+
+        const int batchCount = 1000;
+
+        using var dt = new DataTable("TestCoalescer_RampantNullness");
+        dt.BeginLoadData();
+        dt.Columns.Add("pk");
+        dt.Columns.Add("f1");
+        dt.Columns.Add("f2");
+        dt.Columns.Add("f3");
+        dt.Columns.Add("f4");
+
+        var r = new Random();
+
+        for (var i = 0; i < batchCount; i++)
         {
-            var db = GetCleanedServer(type, "TestCoalescer");
+            var randInt = r.Next(250);
+            var randCompleteness = r.Next(4);
 
-            int batchCount = 1000;
+            dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value });
+            dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, randInt });
 
-            DataTable dt = new DataTable("TestCoalescer_RampantNullness");
-            dt.Columns.Add("pk");
-            dt.Columns.Add("f1");
-            dt.Columns.Add("f2");
-            dt.Columns.Add("f3");
-            dt.Columns.Add("f4");
-
-            Random r = new Random();
-
-            for (int i = 0; i < batchCount; i++)
+            if (randCompleteness >= 1)
             {
-                int randInt = r.Next(250);
-                int randCompleteness = r.Next(4);
-
-                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, randInt });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, randInt });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, DBNull.Value });
-                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, randInt, randInt });
-
-                if (randCompleteness >=1)
-                {
-                    dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, randInt });
-                    dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, randInt });
-                }
-                 
-                if(randCompleteness >=2)
-                {
-                    dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, randInt });
-                    dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, randInt });
-                }
-
-
-                if(randCompleteness >= 3)
-                {
-                    dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, randInt });
-                    dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, DBNull.Value });
-                    dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value });
-                }
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, randInt, randInt, randInt });
             }
 
-            var tbl = db.CreateTable(dt.TableName, dt);
-
-            var importer = new TableInfoImporter(CatalogueRepository, tbl);
-            importer.DoImport(out var tableInfo,out var colInfos);
-
-            //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
-            var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
-            pk.IsPrimaryKey = true;
-            pk.SaveToDatabase();
-
-            INameDatabasesAndTablesDuringLoads namer = null;
-
-            if (useCustomNamer)
+            if (randCompleteness >= 2)
             {
-                tbl.Rename("AAAA");
-                namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
-            }
-            
-            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
-            
-            var coalescer = new Coalescer();
-            coalescer.TableRegexPattern = new Regex(".*");
-            coalescer.CreateIndex = true;
-            coalescer.Initialize(db,LoadStage.AdjustRaw);
-
-
-            var job = new ThrowImmediatelyDataLoadJob(configuration, tableInfo);
-            coalescer.Mutilate(job);
-
-            var dt2 = tbl.GetDataTable();
-
-            foreach (DataRow row in dt2.Rows)
-            {
-                Assert.AreNotEqual(DBNull.Value,row["f1"]);
-                Assert.AreNotEqual(DBNull.Value, row["f2"]);
-                Assert.AreNotEqual(DBNull.Value, row["f3"]);
-                Assert.AreNotEqual(DBNull.Value, row["f4"]);
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, DBNull.Value, randInt, randInt });
             }
 
-            db.Drop();
+
+            if (randCompleteness >= 3)
+            {
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, DBNull.Value, randInt });
+                dt.Rows.Add(new object[] { randInt, randInt, randInt, randInt, DBNull.Value });
+                dt.Rows.Add(new object[] { randInt, DBNull.Value, DBNull.Value, DBNull.Value, DBNull.Value });
+            }
         }
 
+        dt.EndLoadData();
+        var tbl = db.CreateTable(dt.TableName, dt);
+
+        var importer = new TableInfoImporter(CatalogueRepository, tbl);
+        importer.DoImport(out var tableInfo, out var colInfos);
+
+        //lie about what hte primary key is because this component is designed to run in the RAW environment and we are simulating a LIVE TableInfo (correctly)
+        var pk = colInfos.Single(c => c.GetRuntimeName().Equals("pk"));
+        pk.IsPrimaryKey = true;
+        pk.SaveToDatabase();
+
+        INameDatabasesAndTablesDuringLoads namer = null;
+
+        if (useCustomNamer)
+        {
+            tbl.Rename("AAAA");
+            namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "AAAA");
+        }
+
+        var configuration = new HICDatabaseConfiguration(db.Server, namer);
+
+        var coalescer = new Coalescer
+        {
+            TableRegexPattern = new Regex(".*"),
+            CreateIndex = true
+        };
+        coalescer.Initialize(db, LoadStage.AdjustRaw);
+
+
+        var job = new ThrowImmediatelyDataLoadJob(configuration, tableInfo);
+        coalescer.Mutilate(job);
+
+        var dt2 = tbl.GetDataTable();
+
+        foreach (DataRow row in dt2.Rows)
+        {
+            Assert.AreNotEqual(DBNull.Value, row["f1"]);
+            Assert.AreNotEqual(DBNull.Value, row["f2"]);
+            Assert.AreNotEqual(DBNull.Value, row["f3"]);
+            Assert.AreNotEqual(DBNull.Value, row["f4"]);
+        }
+
+        db.Drop();
     }
 }

@@ -8,28 +8,27 @@ using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.CommandExecution.Combining
+namespace Rdmp.Core.CommandExecution.Combining;
+
+/// <summary>
+/// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="ColumnInfo"/>
+/// </summary>
+public class ColumnInfoCombineable : ICombineToMakeCommand
 {
-    /// <summary>
-    /// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="ColumnInfo"/>
-    /// </summary>
-    public class ColumnInfoCombineable : ICombineToMakeCommand
+    public ColumnInfo[] ColumnInfos { get; private set; }
+
+    public ColumnInfoCombineable(ColumnInfo columnInfo)
     {
-        public ColumnInfo[] ColumnInfos { get; private set; }
+        ColumnInfos = new[] { columnInfo };
+    }
 
-        public ColumnInfoCombineable(ColumnInfo columnInfo)
-        {
-            ColumnInfos = new []{columnInfo};
-        }
+    public ColumnInfoCombineable(ColumnInfo[] columnInfos)
+    {
+        ColumnInfos = columnInfos;
+    }
 
-        public ColumnInfoCombineable(ColumnInfo[] columnInfos)
-        {
-            ColumnInfos = columnInfos;
-        }
-
-        public string GetSqlString()
-        {
-            return string.Join(Environment.NewLine,ColumnInfos.Select(c=>c.Name));
-        }
+    public string GetSqlString()
+    {
+        return string.Join(Environment.NewLine, ColumnInfos.Select(c => c.Name));
     }
 }

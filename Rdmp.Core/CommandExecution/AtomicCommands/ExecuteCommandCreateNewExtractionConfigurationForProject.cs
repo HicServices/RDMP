@@ -6,169 +6,148 @@
 
 using System;
 using System.Collections.Generic;
-using SixLabors.ImageSharp;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Creates a new <see cref="ExtractionConfiguration"/> under a given <see cref="Project"/>
+/// </summary>
+public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCommandExecution, IAtomicCommand
 {
+    private readonly Project _project;
+    private readonly string _name;
+    private ExtractableCohort cohort;
+
     /// <summary>
-    /// Creates a new <see cref="ExtractionConfiguration"/> under a given <see cref="Project"/>
+    /// True to prompt the user to pick an <see cref="ExtractableCohort"/> after creating the <see cref="ExtractionConfiguration"/>
     /// </summary>
-    public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCommandExecution, IAtomicCommand
+    public bool PromptForCohort { get; set; } = true;
+
+    /// <summary>
+    /// True to prompt the user to pick some <see cref="ExtractableDataSet"/> after creating the <see cref="ExtractionConfiguration"/>
+    /// </summary>
+    public bool PromptForDatasets { get; set; } = true;
+
+    /// <summary>
+    /// An explicit cohort to assign for the <see cref="ExtractionConfiguration"/>
+    /// </summary>
+    public ExtractableCohort CohortIfAny
     {
-        private readonly Project _project;
-        private readonly string _name;
-        private ExtractableCohort cohort;
-
-        /// <summary>
-        /// True to prompt the user to pick an <see cref="ExtractableCohort"/> after creating the <see cref="ExtractionConfiguration"/>
-        /// </summary>
-        public bool PromptForCohort { get; set; } = true;
-
-        /// <summary>
-        /// True to prompt the user to pick some <see cref="ExtractableDataSet"/> after creating the <see cref="ExtractionConfiguration"/>
-        /// </summary>
-        public bool PromptForDatasets { get; set; } = true;
-
-        /// <summary>
-        /// An explicit cohort to assign for the <see cref="ExtractionConfiguration"/>
-        /// </summary>
-        public ExtractableCohort CohortIfAny { get => cohort; set {
-
-                if (!GetProjects(value).Any())
-                {
-                    SetImpossible($"There are no Projects with ProjectNumber {value.ExternalProjectNumber}");
-                }
-                cohort = value; } 
-        }
-
-        private IEnumerable<Project> GetProjects(ExtractableCohort cohortIfAny)
+        get => cohort;
+        set
         {
-            if(cohortIfAny is null)
-            {
-                // no cohort so all Project are valid
-                return BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-            }
-
-            // we have a cohort so can only create an ExtractionConfiguration for Projects that share
-            // the cohorts project number
-
-            if (BasicActivator.CoreChildProvider is DataExportChildProvider dx)
-            {
-                return dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber);
-            }
-
-            return Enumerable.Empty<Project>();
-        }
-
-        [UseWithObjectConstructor]
-        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,
-
-            [DemandsInitialization("The Project under which to create the new ExtractionConfiguration")]
-            Project project,
-            [DemandsInitialization("The name for the new ExtractionConfiguration")]
-            string name = "") : base(activator)
-        {
-            _project = project;
-            this._name = name;
-        }
-
-        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)
-        {
-            if (!activator.GetAll<IProject>().Any())
-                SetImpossible("You do not have any projects yet");
-        }
-
-        public override string GetCommandHelp()
-        {
-            return "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
-        }
-
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add);
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            var p = _project;
-
-            if(p == null)
-            {
-                if (!SelectOne(new DialogArgs
-                {
-                    WindowTitle = "Select Project",
-                    TaskDescription = GetTaskDescription(),
-                }, GetProjects(CohortIfAny).ToList(), out p))
-                    return;
-
-            }
-            if (p == null)
-                return;
-
-            string name = _name;
-
-            // if we don't have a name and we are running in interactive mode
-            if (string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)
-            {
-                if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "New Extraction Configuration",
-                    TaskDescription = "Enter a name for the new Extraction Configuration",
-                    EntryLabel = "Name",
-                }, 255, $"{p.ProjectNumber} {DateTime.Now.ToString("yyyy-MM-dd")} Extraction".Trim(), out name, false))
-                    return;
-            }
-
-            // create the new config
-            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
-
-            if(CohortIfAny != null)
-            {
-                newConfig.Cohort_ID = CohortIfAny.ID;
-                newConfig.SaveToDatabase();
-            }
-            else
-            {
-                var chooseCohort = new ExecuteCommandChooseCohort(BasicActivator, newConfig) { NoPublish = true };
-                if (PromptForCohort && BasicActivator.IsInteractive && !chooseCohort.IsImpossible)
-                {
-                    chooseCohort.Execute();
-                }
-            }
-
-            // user didn't cancel picking a cohort so get them to pick datasets too.
-            if (newConfig.Cohort_ID != null)
-            {
-                var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig) { NoPublish = true};
-
-                if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
-                {
-                    chooseDatasetsCommand.Execute();
-                }
-            }
-
-            //refresh the project
-            Publish(p);
-            Activate(newConfig);
-            Emphasise(newConfig);
-        }
-
-        private string GetTaskDescription()
-        {
-            if (CohortIfAny == null)
-                return "Select which Project to create the ExtractionConfiguration under";
-
-            return $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
+            if (!GetProjects(value).Any())
+                SetImpossible($"There are no Projects with ProjectNumber {value.ExternalProjectNumber}");
+            cohort = value;
         }
     }
+
+    private IEnumerable<Project> GetProjects(ExtractableCohort cohortIfAny)
+    {
+        if (cohortIfAny is null)
+            // no cohort so all Project are valid
+            return BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+
+        // we have a cohort so can only create an ExtractionConfiguration for Projects that share
+        // the cohorts project number
+
+        return BasicActivator.CoreChildProvider is DataExportChildProvider dx
+            ? dx.Projects.Where(p => p.ProjectNumber == cohortIfAny.ExternalProjectNumber)
+            : Enumerable.Empty<Project>();
+    }
+
+    [UseWithObjectConstructor]
+    public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,
+        [DemandsInitialization("The Project under which to create the new ExtractionConfiguration")]
+        Project project,
+        [DemandsInitialization("The name for the new ExtractionConfiguration")]
+        string name = "") : base(activator)
+    {
+        _project = project;
+        _name = name;
+    }
+
+    public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator) : base(activator)
+    {
+        if (!activator.GetAll<IProject>().Any())
+            SetImpossible("You do not have any projects yet");
+    }
+
+    public override string GetCommandHelp() =>
+        "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
+
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add);
+
+    public override void Execute()
+    {
+        base.Execute();
+
+        var p = _project;
+
+        if (p == null)
+            if (!SelectOne(new DialogArgs
+            {
+                WindowTitle = "Select Project",
+                TaskDescription = GetTaskDescription()
+            }, GetProjects(CohortIfAny).ToList(), out p))
+                return;
+        if (p == null)
+            return;
+
+        var name = _name;
+
+        // if we don't have a name and we are running in interactive mode
+        if (string.IsNullOrWhiteSpace(name) && BasicActivator.IsInteractive)
+            if (!BasicActivator.TypeText(new DialogArgs
+            {
+                WindowTitle = "New Extraction Configuration",
+                TaskDescription = "Enter a name for the new Extraction Configuration",
+                EntryLabel = "Name"
+            }, 255, $"{p.ProjectNumber} {DateTime.Now:yyyy-MM-dd} Extraction".Trim(), out name, false))
+                return;
+
+        // create the new config
+        var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, p, name);
+
+        if (CohortIfAny != null)
+        {
+            newConfig.Cohort_ID = CohortIfAny.ID;
+            newConfig.SaveToDatabase();
+        }
+        else
+        {
+            var chooseCohort = new ExecuteCommandChooseCohort(BasicActivator, newConfig) { NoPublish = true };
+            if (PromptForCohort && BasicActivator.IsInteractive && !chooseCohort.IsImpossible) chooseCohort.Execute();
+        }
+
+        // user didn't cancel picking a cohort so get them to pick datasets too.
+        if (newConfig.Cohort_ID != null)
+        {
+            var chooseDatasetsCommand = new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, newConfig)
+            { NoPublish = true };
+
+            if (PromptForDatasets && BasicActivator.IsInteractive && !chooseDatasetsCommand.IsImpossible)
+                chooseDatasetsCommand.Execute();
+        }
+
+        //refresh the project
+        Publish(p);
+        Activate(newConfig);
+        Emphasise(newConfig);
+    }
+
+    private string GetTaskDescription() =>
+        CohortIfAny == null
+            ? "Select which Project to create the ExtractionConfiguration under"
+            : $"Select which Project to create the ExtractionConfiguration under.  Only Projects with ProjectNumber {CohortIfAny.ExternalProjectNumber} are shown.  This is because you are using ExtractableCohort '{CohortIfAny}' for this operation.";
 }

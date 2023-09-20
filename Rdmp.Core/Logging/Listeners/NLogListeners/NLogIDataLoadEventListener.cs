@@ -6,30 +6,28 @@
 
 using NLog;
 using Rdmp.Core.Logging.Listeners.Extensions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Logging.Listeners.NLogListeners
+namespace Rdmp.Core.Logging.Listeners.NLogListeners;
+
+/// <summary>
+/// <see cref="IDataLoadEventListener"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
+/// </summary>
+public class NLogIDataLoadEventListener : NLogListener, IDataLoadEventListener
 {
-    /// <summary>
-    /// <see cref="IDataLoadEventListener"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
-    /// </summary>
-    public class NLogIDataLoadEventListener : NLogListener,IDataLoadEventListener
+    public NLogIDataLoadEventListener(bool throwOnError) : base(throwOnError)
     {
-        public NLogIDataLoadEventListener(bool throwOnError):base(throwOnError)
-        {
-            
-        }
+    }
 
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            base.Log(sender,e.ToLogLevel(), e.Exception, e.Message);
-        }
+    public void OnNotify(object sender, NotifyEventArgs e)
+    {
+        Log(sender, e.ToLogLevel(), e.Exception, e.Message);
+    }
 
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-            base.Log(sender, LogLevel.Trace, null,
-                string.Format("Progress: {0} {1}{2}", e.Progress.Value, e.Progress.UnitOfMeasurement, e.Progress.KnownTargetValue == 0 ? "" : " of " + e.Progress.KnownTargetValue)
-                );
-        }
+    public void OnProgress(object sender, ProgressEventArgs e)
+    {
+        Log(sender, LogLevel.Trace, null,
+            $"Progress: {e.Progress.Value} {e.Progress.UnitOfMeasurement}{(e.Progress.KnownTargetValue == 0 ? "" : $" of {e.Progress.KnownTargetValue}")}"
+        );
     }
 }

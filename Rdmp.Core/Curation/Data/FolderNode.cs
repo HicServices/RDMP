@@ -4,89 +4,83 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data.Cohort;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.Core.Curation.Data
+namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
+/// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
+/// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class
+    FolderNode<T> : IFolderNode,
+        IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
+    where T : class, IHasFolder
 {
-    /// <summary>
-    /// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
-    /// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
-    /// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class FolderNode<T> : IFolderNode, IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/ 
-        where T: class, IHasFolder
+    public string Name { get; set; }
+    public List<T> ChildObjects { get; set; } = new();
+    public List<FolderNode<T>> ChildFolders { get; set; } = new();
+
+    public FolderNode<T> Parent { get; set; }
+
+    public string FullName => GetFullName();
+
+    int IOrderable.Order
     {
-        public string Name { get; set; }
-        public List<T> ChildObjects { get; set; } = new();
-        public List<FolderNode<T>> ChildFolders { get; set; } = new();
+        get => -1;
+        set => throw new NotSupportedException();
+    }
 
-        public FolderNode<T> Parent { get; set; }
+    public FolderNode(string name, FolderNode<T> parent = null)
+    {
+        Name = name;
+        Parent = parent;
+    }
 
-        public string FullName => GetFullName();
+    private string GetFullName()
+    {
+        // build the name by prepending each parent
+        // but start with our name
+        var sb = new StringBuilder(Name);
 
-        int IOrderable.Order { get => -1; set => throw new NotSupportedException(); }
+        var p = Parent;
 
-        public FolderNode(string name, FolderNode<T> parent = null)
+        while (p != null)
         {
-            Name = name;
-            Parent = parent;
-        }
-
-        private string GetFullName()
-        {
-            // build the name by prepending each parent
-            // but start with our name
-            StringBuilder sb = new(Name);
-
-            var p = Parent;            
-
-            while(p != null)
+            if(p.Name.Equals(FolderHelper.Root))
             {
-                if(p.Name.Equals(FolderHelper.Root))
-                {
-                    sb.Insert(0, p.Name);
-                }
-                else
-                {
-                    sb.Insert(0, p.Name + "\\");
-                }
-                                
-                p = p.Parent;
+                sb.Insert(0, p.Name);
+            }
+            else
+            {
+                sb.Insert(0, $"{p.Name}\\");
             }
 
-            return sb.ToString();
+            p = p.Parent;
         }
 
-        public FolderNode<T> this[string key]
-        {
-            get => GetChild(key);
-        }
-
-        private FolderNode<T> GetChild(string key)
-        {
-            return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
-                ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
-        }
-
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is FolderNode<T> node &&
-                   FullName == node.FullName;
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(FullName);
-        }
+        return sb.ToString();
     }
+
+    public FolderNode<T> this[string key] => GetChild(key);
+
+    private FolderNode<T> GetChild(string key)
+    {
+        return ChildFolders.FirstOrDefault(c => c.Name.Equals(key, StringComparison.CurrentCultureIgnoreCase))
+               ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
+    }
+
+    public override string ToString() => Name;
+
+    public override bool Equals(object obj) =>
+        obj is FolderNode<T> node &&
+        FullName == node.FullName;
+
+    public override int GetHashCode() => HashCode.Combine(FullName);
 }

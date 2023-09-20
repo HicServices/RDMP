@@ -7,7 +7,6 @@
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -20,15 +19,14 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.Logging;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
+
+internal class TestTemporalTables : DataLoadEngineTestsBase
 {
-    class TestTemporalTables : DataLoadEngineTestsBase
-    {
-
-        string sql = @"CREATE TABLE dbo.Employee
+    private string sql = @"CREATE TABLE dbo.Employee
 (
   [EmployeeID] int NOT NULL PRIMARY KEY CLUSTERED
   , [Name] nvarchar(100) NOT NULL
@@ -45,103 +43,106 @@ WITH (SYSTEM_VERSIONING = ON (HISTORY_TABLE = dbo.EmployeeHistory));
 INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) VALUES(1,'Frank','Security Guard','Arkham', '22 Innsmouth Way', 55000.5)
 ";
 
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestTemporalTable(bool ignoreWithGlobalPattern)
+    [TestCase(true)]
+    [TestCase(false)]
+    public void TestTemporalTable(bool ignoreWithGlobalPattern)
+    {
+        var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
+        var db = GetCleanedServer(dbtype);
+
+        using (var con = db.Server.GetConnection())
         {
-            var dbtype = FAnsi.DatabaseType.MicrosoftSQLServer;
-            var db = GetCleanedServer(dbtype);
+            con.Open();
+            db.Server.GetCommand(sql, con).ExecuteNonQuery();
+        }
 
-            using(var con = db.Server.GetConnection())
-            {
-                con.Open();
-                db.Server.GetCommand(sql,con).ExecuteNonQuery();
-            }
+        var tbl = db.ExpectTable("Employee");
 
-            var tbl = db.ExpectTable("Employee");
+        var defaults = CatalogueRepository;
+        var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+        var logManager = new LogManager(logServer);
 
-            var defaults = CatalogueRepository;
-            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
-            var logManager = new LogManager(logServer);
-            
-            var raw = db.Server.ExpectDatabase(db.GetRuntimeName() + "_RAW");
-            if(raw.Exists())
-                raw.Drop();
+        var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
+        if (raw.Exists())
+            raw.Drop();
 
-            //define a new load configuration
-            var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
-            lmd.IgnoreTrigger = true;
-            lmd.SaveToDatabase();
-              
-            ITableInfo ti = Import(tbl, lmd,logManager);
-            
-            var projectDirectory = SetupLoadDirectory(lmd);
+        //define a new load configuration
+        var lmd = new LoadMetadata(CatalogueRepository, "MyLoad")
+        {
+            IgnoreTrigger = true
+        };
+        lmd.SaveToDatabase();
 
-            CreateCSVProcessTask(lmd,ti,"*.csv");
-            
-            //create a text file to load where we update Frank's favourite colour (it's a pk field) and we insert a new record (MrMurder)
-            File.WriteAllText(
-                Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"),
-@"EmployeeID,Name,Position,Department,Address,AnnualSalary
+        var ti = Import(tbl, lmd, logManager);
+
+        var projectDirectory = SetupLoadDirectory(lmd);
+
+        CreateCSVProcessTask(lmd, ti, "*.csv");
+
+        //create a text file to load where we update Frank's favourite colour (it's a pk field) and we insert a new record (MrMurder)
+        File.WriteAllText(
+            Path.Combine(projectDirectory.ForLoading.FullName, "LoadMe.csv"),
+            @"EmployeeID,Name,Position,Department,Address,AnnualSalary
 1,Frank,Boss,Department of F'Tang, 22 Innsmouth Way, 55000.5
 2,Herbert,Super Boss,Department of F'Tang, 22 Innsmouth Way, 155000.5");
 
-            
-            //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
-            //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
-            var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
-            checker.Check(new AcceptAllCheckNotifier());
+        //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
-            if(ignoreWithGlobalPattern)
+        //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
+        var checker =
+            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+        checker.Check(new AcceptAllCheckNotifier());
+
+        if (ignoreWithGlobalPattern)
+        {
+            var regex = new StandardRegex(RepositoryLocator.CatalogueRepository)
             {
-                var regex = new StandardRegex(RepositoryLocator.CatalogueRepository)
-                {
-                    ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
-                    Regex = "^Valid((From)|(To))$"
-                };
+                ConceptName = StandardRegex.DataLoadEngineGlobalIgnorePattern,
+                Regex = "^Valid((From)|(To))$"
+            };
 
-                regex.SaveToDatabase();
-            }
-            else
-            {
-                var col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidFrom"));
-                col.IgnoreInLoads = true;
-                col.SaveToDatabase();
-
-                col = ti.ColumnInfos.Single(c=>c.GetRuntimeName().Equals("ValidTo"));
-                col.IgnoreInLoads = true;
-                col.SaveToDatabase();
-            }
-            
-            var dbConfig = new HICDatabaseConfiguration(lmd,null);
-
-            var loadFactory = new HICDataLoadFactory(
-                lmd,
-                dbConfig,
-                new HICLoadConfigurationFlags(),
-                CatalogueRepository,
-                logManager
-                );
-
-            var exe = loadFactory.Create(new ThrowImmediatelyDataLoadEventListener());
-            
-            var exitCode = exe.Run(
-                new DataLoadJob(RepositoryLocator,"Go go go!", logManager, lmd, projectDirectory,new ThrowImmediatelyDataLoadEventListener(),dbConfig),
-                new GracefulCancellationToken());
-
-            Assert.AreEqual(ExitCodeType.Success,exitCode);
-
-            //frank should be updated to his new departement and role
-            Assert.AreEqual(2,tbl.GetRowCount());
-            var result = tbl.GetDataTable();
-            var frank = result.Rows.Cast<DataRow>().Single(r => (string) r["Name"] == "Frank");
-            Assert.AreEqual("Department of F'Tang",frank["Department"]);
-            Assert.AreEqual("Boss",frank["Position"]);
-
-            //post test cleanup
-            foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())
-                regex.DeleteInDatabase();
+            regex.SaveToDatabase();
         }
+        else
+        {
+            var col = ti.ColumnInfos.Single(c => c.GetRuntimeName().Equals("ValidFrom"));
+            col.IgnoreInLoads = true;
+            col.SaveToDatabase();
+
+            col = ti.ColumnInfos.Single(c => c.GetRuntimeName().Equals("ValidTo"));
+            col.IgnoreInLoads = true;
+            col.SaveToDatabase();
+        }
+
+        var dbConfig = new HICDatabaseConfiguration(lmd, null);
+
+        var loadFactory = new HICDataLoadFactory(
+            lmd,
+            dbConfig,
+            new HICLoadConfigurationFlags(),
+            CatalogueRepository,
+            logManager
+        );
+
+        var exe = loadFactory.Create(ThrowImmediatelyDataLoadEventListener.Quiet);
+
+        var exitCode = exe.Run(
+            new DataLoadJob(RepositoryLocator, "Go go go!", logManager, lmd, projectDirectory,
+                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
+            new GracefulCancellationToken());
+
+        Assert.AreEqual(ExitCodeType.Success, exitCode);
+
+        //frank should be updated to his new departement and role
+        Assert.AreEqual(2, tbl.GetRowCount());
+        var result = tbl.GetDataTable();
+        var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
+        Assert.AreEqual("Department of F'Tang", frank["Department"]);
+        Assert.AreEqual("Boss", frank["Position"]);
+
+        //post test cleanup
+        foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())
+            regex.DeleteInDatabase();
     }
 }

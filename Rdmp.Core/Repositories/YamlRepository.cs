@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -16,8 +15,9 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Managers;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.Repositories;
@@ -33,9 +33,10 @@ public class YamlRepository : MemoryDataExportRepository
     /// All objects that are known about by this repository
     /// </summary>
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
+
     public DirectoryInfo Directory { get; }
 
-    object lockFs = new object();
+    private object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -52,10 +53,8 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(GetEncryptionKeyPathFile()))
             EncryptionKeyPath = File.ReadAllText(GetEncryptionKeyPathFile());
 
-        MEF = new MEF();
-
         // Don't create new objects with the ID of existing objects
-        NextObjectId = Objects.Count == 0 ? 0 : Objects.Max(o => o.Key.ID);
+        NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);
     }
 
     /// <summary>
@@ -64,7 +63,6 @@ public class YamlRepository : MemoryDataExportRepository
     /// <returns></returns>
     public static ISerializer CreateSerializer(IEnumerable<Type> supportedTypes)
     {
-
         var builder = new SerializerBuilder();
         builder.WithTypeConverter(new VersionYamlTypeConverter());
 
@@ -72,13 +70,8 @@ public class YamlRepository : MemoryDataExportRepository
         {
             var respect = TableRepository.GetPropertyInfos(type);
 
-            foreach (var prop in type.GetProperties())
-            {
-                if (!respect.Contains(prop))
-                {
-                    builder = builder.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute());
-                }
-            }
+            builder = type.GetProperties().Where(prop => !respect.Contains(prop)).Aggregate(builder,
+                (current, prop) => current.WithAttributeOverride(type, prop.Name, new YamlIgnoreAttribute()));
         }
 
         return builder.Build();
@@ -102,22 +95,21 @@ public class YamlRepository : MemoryDataExportRepository
                 Directory.CreateSubdirectory(t.Name);
                 continue;
             }
-            
-            lock(lockFs)
+
+            lock (lockFs)
             {
                 foreach (var yaml in typeDir.EnumerateFiles("*.yaml"))
-                {
                     try
                     {
-                        var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(File.ReadAllText(yaml.FullName), t);
+                        var obj = (IMapsDirectlyToDatabaseTable)deserializer.Deserialize(
+                            File.ReadAllText(yaml.FullName), t);
                         SetRepositoryOnObject(obj);
                         Objects.TryAdd(obj, 0);
                     }
                     catch (Exception ex)
                     {
-                        throw new Exception($"Error loading object in file {yaml.FullName}",ex);
+                        throw new Exception($"Error loading object in file {yaml.FullName}", ex);
                     }
-                }
             }
         }
 
@@ -127,11 +119,12 @@ public class YamlRepository : MemoryDataExportRepository
 
         LoadCredentialsDictionary();
 
-        PackageDictionary = Load<IExtractableDataSetPackage,IExtractableDataSet>(nameof(PackageDictionary)) ?? PackageDictionary;
+        PackageDictionary = Load<IExtractableDataSetPackage, IExtractableDataSet>(nameof(PackageDictionary)) ??
+                            PackageDictionary;
 
         GovernanceCoverage = Load<GovernancePeriod, ICatalogue>(nameof(GovernanceCoverage)) ?? GovernanceCoverage;
 
-        ForcedJoins = Load<AggregateConfiguration,ITableInfo>(nameof(ForcedJoins)) ?? ForcedJoins;
+        ForcedJoins = Load<AggregateConfiguration, ITableInfo>(nameof(ForcedJoins)) ?? ForcedJoins;
 
         LoadCohortContainerContents();
 
@@ -140,14 +133,11 @@ public class YamlRepository : MemoryDataExportRepository
 
     private int ObjectDependencyOrder(Type arg)
     {
-        // Load Plugin objects before dependent children 
-        if (arg == typeof(Rdmp.Core.Curation.Data.Plugin))
+        // Load Plugin objects before dependent children
+        if (arg == typeof(Plugin))
             return 1;
 
-        if (arg == typeof(LoadModuleAssembly))
-            return 2;
-
-        return 3;
+        return arg == typeof(LoadModuleAssembly) ? 2 : 3;
     }
 
 
@@ -178,11 +168,11 @@ public class YamlRepository : MemoryDataExportRepository
                 container.SetManager(this);
                 break;
             case LoadModuleAssembly lma:
-                lock(lockFs)
+                lock (lockFs)
                 {
                     var file = GetNupkgPath(lma);
 
-                    if(File.Exists(file))
+                    if (File.Exists(file))
                         lma.Bin = File.ReadAllBytes(file);
                     break;
                 }
@@ -194,7 +184,7 @@ public class YamlRepository : MemoryDataExportRepository
         base.InsertAndHydrate(toCreate, constructorParameters);
 
         // put it on disk
-        lock(lockFs)
+        lock (lockFs)
         {
             SaveToDatabase(toCreate);
         }
@@ -206,7 +196,7 @@ public class YamlRepository : MemoryDataExportRepository
         var path = Path.GetDirectoryName(GetPath(lma));
 
         //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path,  GetObjectByID<Rdmp.Core.Curation.Data.Plugin>(lma.Plugin_ID).Name);
+        return Path.Combine(path, GetObjectByID<Plugin>(lma.Plugin_ID).Name);
     }
 
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -217,17 +207,14 @@ public class YamlRepository : MemoryDataExportRepository
             File.Delete(GetPath(oTableWrapperObject));
 
             // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
-            if (oTableWrapperObject is LoadModuleAssembly lma)
-            {
-                File.Delete(GetNupkgPath(lma));
-            }             
+            if (oTableWrapperObject is LoadModuleAssembly lma) File.Delete(GetNupkgPath(lma));
         }
     }
 
     public override void SaveToDatabase(IMapsDirectlyToDatabaseTable o)
     {
         base.SaveToDatabase(o);
-        
+
         SetRepositoryOnObject(o);
 
         var yaml = _serializer.Serialize(o);
@@ -239,10 +226,8 @@ public class YamlRepository : MemoryDataExportRepository
             // Do not write plugin binary content into yaml that results in
             // a massive blob of binary yaml (not useful and slow to load)
             if (o is LoadModuleAssembly lma)
-            {
                 // write the nupkg as a binary file instead to the same folder
                 File.WriteAllBytes(GetNupkgPath(lma), lma.Bin);
-            }
         }
     }
 
@@ -251,42 +236,39 @@ public class YamlRepository : MemoryDataExportRepository
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    private string GetPath(IMapsDirectlyToDatabaseTable o)
-    {
-        return Path.Combine(Directory.FullName, o.GetType().Name, $"{o.ID}.yaml");
-    }
+    private string GetPath(IMapsDirectlyToDatabaseTable o) =>
+        Path.Combine(Directory.FullName, o.GetType().Name, $"{o.ID}.yaml");
 
     public override void DeleteEncryptionKeyPath()
     {
         base.DeleteEncryptionKeyPath();
 
-        if(File.Exists(GetEncryptionKeyPathFile()))
+        if (File.Exists(GetEncryptionKeyPathFile()))
             File.Delete(GetEncryptionKeyPathFile());
     }
+
     public override void SetEncryptionKeyPath(string fullName)
     {
         base.SetEncryptionKeyPath(fullName);
 
         // if setting it to null
-        if (string.IsNullOrWhiteSpace(fullName)) {
-
+        if (string.IsNullOrWhiteSpace(fullName))
+        {
             // delete the file on disk
             if (File.Exists(GetEncryptionKeyPathFile()))
                 File.Delete(GetEncryptionKeyPathFile());
         }
         else
+        {
             File.WriteAllText(GetEncryptionKeyPathFile(), fullName);
-    }
-    private string GetEncryptionKeyPathFile()
-    {
-        return Path.Combine(Directory.FullName, "EncryptionKeyPath");
+        }
     }
 
+    private string GetEncryptionKeyPathFile() => Path.Combine(Directory.FullName, "EncryptionKeyPath");
+
     #region Server Defaults Persistence
-    private string GetDefaultsFile()
-    {
-        return Path.Combine(Directory.FullName, "Defaults.yaml");
-    }
+
+    private string GetDefaultsFile() => Path.Combine(Directory.FullName, "Defaults.yaml");
 
     public override void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
@@ -300,7 +282,8 @@ public class YamlRepository : MemoryDataExportRepository
         var serializer = new Serializer();
 
         // save the default and the ID
-        File.WriteAllText(GetDefaultsFile(),serializer.Serialize(Defaults.ToDictionary(k=>k.Key,v=>v.Value?.ID ?? 0)));
+        File.WriteAllText(GetDefaultsFile(),
+            serializer.Serialize(Defaults.ToDictionary(k => k.Key, v => v.Value?.ID ?? 0)));
     }
 
     public void LoadDefaults()
@@ -309,7 +292,7 @@ public class YamlRepository : MemoryDataExportRepository
 
         var defaultsFile = GetDefaultsFile();
 
-        if(File.Exists(defaultsFile))
+        if (File.Exists(defaultsFile))
         {
             var yaml = File.ReadAllText(defaultsFile);
             var objectIds = deserializer.Deserialize<Dictionary<PermissableDefaults, int>>(yaml);
@@ -319,8 +302,10 @@ public class YamlRepository : MemoryDataExportRepository
                 return;
 
             Defaults = objectIds.ToDictionary(
-                k=>k.Key,
-                v=>v.Value == 0 ? null : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
+                k => k.Key,
+                v => v.Value == 0
+                    ? null
+                    : (IExternalDatabaseServer)GetObjectByIDIfExists<ExternalDatabaseServer>(v.Value));
         }
     }
 
@@ -330,7 +315,7 @@ public class YamlRepository : MemoryDataExportRepository
     /// <typeparam name="T"></typeparam>
     /// <param name="id"></param>
     /// <returns></returns>
-    private T GetObjectByIDIfExists<T>(int id) where T:DatabaseEntity
+    private T GetObjectByIDIfExists<T>(int id) where T : DatabaseEntity
     {
         try
         {
@@ -341,13 +326,13 @@ public class YamlRepository : MemoryDataExportRepository
             return null;
         }
     }
+
     #endregion
 
     #region DataExportProperties Persistence
-    private string GetDataExportPropertiesFile()
-    {
-        return Path.Combine(Directory.FullName, "DataExportProperties.yaml");
-    }
+
+    private string GetDataExportPropertiesFile() => Path.Combine(Directory.FullName, "DataExportProperties.yaml");
+
     public void LoadDataExportProperties()
     {
         var deserializer = new Deserializer();
@@ -359,10 +344,11 @@ public class YamlRepository : MemoryDataExportRepository
             var yaml = File.ReadAllText(defaultsFile);
             var props = deserializer.Deserialize<Dictionary<DataExportProperty, string>>(yaml);
 
-            if(props != null)
+            if (props != null)
                 PropertiesDictionary = props;
         }
     }
+
     private void SaveDataExportProperties()
     {
         var serializer = new Serializer();
@@ -370,15 +356,13 @@ public class YamlRepository : MemoryDataExportRepository
         // save the default and the ID
         File.WriteAllText(GetDataExportPropertiesFile(), serializer.Serialize(PropertiesDictionary));
     }
-    public override string GetValue(DataExportProperty property)
-    {
-        return base.GetValue(property);
-    }
+
     public override void SetValue(DataExportProperty property, string value)
     {
         base.SetValue(property, value);
         SaveDataExportProperties();
     }
+
     #endregion
 
     public override void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
@@ -390,14 +374,14 @@ public class YamlRepository : MemoryDataExportRepository
     public override void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
     {
         base.RemoveDataSetFromPackage(package, dataSet);
-        Save(PackageDictionary,nameof(PackageDictionary));
+        Save(PackageDictionary, nameof(PackageDictionary));
     }
 
 
     public override void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
     {
         base.Link(governancePeriod, catalogue);
-        Save(GovernanceCoverage,nameof(GovernanceCoverage));
+        Save(GovernanceCoverage, nameof(GovernanceCoverage));
     }
 
     public override void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
@@ -419,10 +403,9 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     #region Persist CredentialsDictionary
-    private string GetCredentialsDictionaryFile()
-    {
-        return Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
-    }
+
+    private string GetCredentialsDictionaryFile() => Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
+
     public void LoadCredentialsDictionary()
     {
         var deserializer = new Deserializer();
@@ -441,7 +424,7 @@ public class YamlRepository : MemoryDataExportRepository
 
             CredentialsDictionary = new Dictionary<ITableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
-            foreach(var tableToCredentialUsage in ids)
+            foreach (var tableToCredentialUsage in ids)
             {
                 var table = GetObjectByIDIfExists<TableInfo>(tableToCredentialUsage.Key);
 
@@ -450,29 +433,24 @@ public class YamlRepository : MemoryDataExportRepository
                     continue;
 
                 var valDictionary = new Dictionary<DataAccessContext, DataAccessCredentials>();
-                foreach(var credentialUsage in tableToCredentialUsage.Value)
+                foreach (var (usage, value) in tableToCredentialUsage.Value)
                 {
-                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(credentialUsage.Value);
-                    DataAccessContext usage = credentialUsage.Key;
+                    var credential = GetObjectByIDIfExists<DataAccessCredentials>(value);
 
-                    // Credentials deleted on the sly
-                    if (credential == null)
-                        continue;
-                    
-                    valDictionary.Add(usage, credential);
+                    // Credentials can be deleted on the sly
+                    if (credential != null) valDictionary.Add(usage, credential);
                 }
 
                 CredentialsDictionary.Add(table, valDictionary);
             }
-
-            
         }
     }
+
     private void SaveCredentialsDictionary()
     {
         var serializer = new Serializer();
 
-        Dictionary<int, Dictionary<DataAccessContext, int>> ids = 
+        var ids =
             CredentialsDictionary.ToDictionary(
                 k => k.Key.ID,
                 v => v.Value.ToDictionary(k => k.Key, v => v.Value.ID));
@@ -487,16 +465,21 @@ public class YamlRepository : MemoryDataExportRepository
 
         SaveCredentialsDictionary();
     }
-    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+
+    public override void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
     {
         base.BreakLinkBetween(credentials, tableInfo, context);
         SaveCredentialsDictionary();
     }
-    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
+
+    public override void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
+        DataAccessContext context)
     {
         base.CreateLinkBetween(credentials, tableInfo, context);
         SaveCredentialsDictionary();
     }
+
     #endregion
 
 
@@ -508,7 +491,8 @@ public class YamlRepository : MemoryDataExportRepository
         var file = Path.Combine(dir, $"{toSave.ID}.yaml");
 
         var serializer = new Serializer();
-        var yaml = serializer.Serialize(CohortContainerContents[toSave].Select(c => new PersistCohortContainerContent(c)).ToList());
+        var yaml = serializer.Serialize(CohortContainerContents[toSave]
+            .Select(c => new PersistCohortContainerContent(c)).ToList());
         File.WriteAllText(file, yaml);
     }
 
@@ -551,10 +535,9 @@ public class YamlRepository : MemoryDataExportRepository
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error reading file {f.FullName}",ex);
+                throw new Exception($"Error reading file {f.FullName}", ex);
             }
         }
-
     }
 
     public override void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order)
@@ -587,7 +570,7 @@ public class YamlRepository : MemoryDataExportRepository
         SaveCohortContainerContents(parent);
     }
 
-    class PersistCohortContainerContent
+    private class PersistCohortContainerContent
     {
         public string Type { get; set; }
         public int ID { get; set; }
@@ -595,8 +578,8 @@ public class YamlRepository : MemoryDataExportRepository
 
         public PersistCohortContainerContent()
         {
-
         }
+
         public PersistCohortContainerContent(CohortContainerContent c)
         {
             Type = c.Orderable.GetType().Name;
@@ -608,16 +591,11 @@ public class YamlRepository : MemoryDataExportRepository
         public CohortContainerContent GetContent(YamlRepository repository)
         {
             if (Type.Equals(nameof(AggregateConfiguration)))
-            {
                 return new CohortContainerContent(repository.GetObjectByID<AggregateConfiguration>(ID), Order);
-            }
 
-            if (Type.Equals(nameof(CohortAggregateContainer)))
-            {
-                return new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order);
-            }
-
-            throw new System.Exception($"Unexpected IOrderable Type name '{Type}'");
+            return Type.Equals(nameof(CohortAggregateContainer))
+                ? new CohortContainerContent(repository.GetObjectByID<CohortAggregateContainer>(ID), Order)
+                : throw new Exception($"Unexpected IOrderable Type name '{Type}'");
         }
     }
 
@@ -628,6 +606,7 @@ public class YamlRepository : MemoryDataExportRepository
         base.MakeIntoAnOrphan(container);
         SaveWhereSubContainers();
     }
+
     public override void AddSubContainer(IContainer parent, IContainer child)
     {
         base.AddSubContainer(parent, child);
@@ -638,30 +617,25 @@ public class YamlRepository : MemoryDataExportRepository
     {
         Save(WhereSubContainers.Where(kvp => kvp.Key is FilterContainer)
             .ToDictionary(
-            k => k.Key,
-            v => v.Value), "ExtractionFilters");
+                k => k.Key,
+                v => v.Value), "ExtractionFilters");
 
         Save(WhereSubContainers.Where(kvp => kvp.Key is AggregateFilterContainer)
             .ToDictionary(
-            k => k.Key,
-            v => v.Value), "AggregateFilters");
+                k => k.Key,
+                v => v.Value), "AggregateFilters");
     }
 
-    public override string ToString()
-    {
-        return $"{{YamlRepository {Directory.FullName}}}";
-    }
+    public override string ToString() => $"{{YamlRepository {Directory.FullName}}}";
 
     private void LoadWhereSubContainers()
-    {        
-        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ?? new())
-        {
+    {
+        foreach (var c in Load<FilterContainer, FilterContainer>("ExtractionFilters") ??
+                          new Dictionary<FilterContainer, HashSet<FilterContainer>>())
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-        }
-        foreach(var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ?? new())
-        {
+        foreach (var c in Load<AggregateFilterContainer, AggregateFilterContainer>("AggregateFilters") ??
+                          new Dictionary<AggregateFilterContainer, HashSet<AggregateFilterContainer>>())
             WhereSubContainers.Add(c.Key, new HashSet<IContainer>(c.Value));
-        }
     }
 
     private Dictionary<T, HashSet<T2>> Load<T, T2>(string filenameWithoutSuffix)
@@ -685,15 +659,13 @@ public class YamlRepository : MemoryDataExportRepository
                 return null;
 
             foreach (var ids in dict)
-            {
                 try
                 {
                     var key = GetObjectByID<T>(ids.Key);
 
                     var set = new HashSet<T2>();
 
-                    foreach(var val in ids.Value)
-                    {
+                    foreach (var val in ids.Value)
                         try
                         {
                             set.Add(GetObjectByID<T2>(val));
@@ -703,7 +675,6 @@ public class YamlRepository : MemoryDataExportRepository
                             // skip missing objects (they will disapear next save anyway)
                             continue;
                         }
-                    }
 
                     dictionary.Add(key, set);
                 }
@@ -712,13 +683,13 @@ public class YamlRepository : MemoryDataExportRepository
                     // skip missing container objects (they will disapear next save anyway)
                     continue;
                 }
-            }
 
             return dictionary;
         }
 
         return new Dictionary<T, HashSet<T2>>();
     }
+
     private void Save<T, T2>(Dictionary<T, HashSet<T2>> collection, string filenameWithoutSuffix)
         where T : IMapsDirectlyToDatabaseTable
         where T2 : IMapsDirectlyToDatabaseTable
@@ -731,8 +702,6 @@ public class YamlRepository : MemoryDataExportRepository
             collection.ToDictionary(
                 k => k.Key.ID,
                 v => v.Value.Select(c => c.ID).ToList()
-                )));
-
+            )));
     }
-
 }

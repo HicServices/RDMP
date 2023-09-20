@@ -6,150 +6,152 @@
 
 using FAnsi;
 using FAnsi.Discovery;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
-using Tests.Common.Scenarios;
 
-namespace Rdmp.Core.Tests.DataExport.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction;
+
+public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
 {
-    public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
+    private IProject _projectStub;
+    private IExtractCommand _commandStub;
+
+    public DiscoveredDatabase Database { get; set; }
+
+    [SetUp]
+    protected override void SetUp()
     {
-        private IProject _projectStub;
-        private IExtractCommand _commandStub;
-        
-        public DiscoveredDatabase Database { get; set; }
+        base.SetUp();
 
-        [SetUp]
-        protected override void SetUp()
+        _projectStub = Substitute.For<IProject>();
+        _projectStub.ProjectNumber = -123;
+
+        var cfg = Substitute.For<IExtractionConfiguration>();
+
+        _commandStub = Substitute.For<IExtractCommand>();
+        _commandStub.Configuration.Returns(cfg);
+        Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+    }
+
+
+    [Test]
+    public void NoServer()
+    {
+        var destination = new ExecuteFullExtractionToDatabaseMSSql();
+
+        var tomemory = new ToMemoryCheckNotifier();
+        destination.Check(tomemory);
+
+        Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
+        Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("Target database server property has not been set"));
+    }
+
+    [Test]
+    public void ServerMissingServerName()
+    {
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction", null);
+        try
         {
-            base.SetUp();
-
-            _projectStub = Mock.Of<IProject>();
-            _projectStub.ProjectNumber = -123;
-
-            var cfg = Mock.Of<IExtractionConfiguration>();
-            
-            _commandStub = Mock.Of<IExtractCommand>(cmd => cmd.Configuration==cfg);
-
-            Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
-        }
-
-        
-
-
-        [Test]
-        public void NoServer()
-        {
-            var destination = new ExecuteFullExtractionToDatabaseMSSql();
+            var destination = new ExecuteFullExtractionToDatabaseMSSql
+            {
+                TargetDatabaseServer = server
+            };
 
             var tomemory = new ToMemoryCheckNotifier();
             destination.Check(tomemory);
 
-            Assert.AreEqual(CheckResult.Fail,tomemory.Messages[0].Result);
-            Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("Target database server property has not been set"));
+            Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
+            Assert.IsTrue(tomemory.Messages[0].Message
+                .StartsWith("TargetDatabaseServer does not have a .Server specified"));
         }
-        [Test]
-        public void ServerMissingServerName()
+        finally
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
-            try
-            {
-                var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.TargetDatabaseServer = server;
+            server.DeleteInDatabase();
+        }
+    }
 
-                var tomemory = new ToMemoryCheckNotifier();
-                destination.Check(tomemory);
+    [TestCase(false)]
+    [TestCase(true)]
+    public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
+    {
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction", null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
 
-                Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
-                Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("TargetDatabaseServer does not have a .Server specified"));
-            }
-            finally
-            {
-                server.DeleteInDatabase();
-            }
+        //server.Database = "FictionalDatabase"; Ignored by the extractor!
+
+        try
+        {
+            var destination = new ExecuteFullExtractionToDatabaseMSSql();
+            destination.PreInitialize(_projectStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(_commandStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+
+            destination.TargetDatabaseServer = server;
+            destination.TableNamingPattern = "$d";
+
+            destination.DatabaseNamingPattern = alreadyExists
+                ? Database.GetRuntimeName()
+                : //database that exists
+                "Fictional$nDatabase"; //database does not exist (but server does)
+
+            var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
+            destination.Check(tomemory);
+
+            Assert.AreEqual(alreadyExists ? CheckResult.Warning : CheckResult.Success, tomemory.GetWorst());
+        }
+        finally
+        {
+            server.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void ServerDatabaseIsPresentAndCorrectButHasTablesInIt()
+    {
+        var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction", null)
+        {
+            Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name,
+            Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny,
+            Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
+        };
+        //server.Database = "FictionalDatabase"; Ignored by the extractor!
+
+        using (var con = Database.Server.GetConnection())
+        {
+            con.Open();
+
+            Database.Server.GetCommand("CREATE TABLE Bob(name varchar(10))", con).ExecuteNonQuery();
         }
 
-        [TestCase(false)]
-        [TestCase(true)]
-        public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
+        try
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
-            server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-            server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
-            
-            //server.Database = "FictionalDatabase"; Ignored by the extractor!
-            
-            try
-            {
+            var destination = new ExecuteFullExtractionToDatabaseMSSql();
+            destination.PreInitialize(_projectStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.PreInitialize(_commandStub, ThrowImmediatelyDataLoadEventListener.Quiet);
+            destination.TargetDatabaseServer = server;
+            destination.TableNamingPattern = "$d";
+            destination.DatabaseNamingPattern = "FictionalDatabase";
 
-                var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
-                destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
+            var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
+            destination.Check(tomemory);
 
-                destination.TargetDatabaseServer = server;
-                destination.TableNamingPattern = "$d";
+            Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
 
-                if (alreadyExists)
-                    destination.DatabaseNamingPattern = Database.GetRuntimeName(); //database that exists
-                else
-                    destination.DatabaseNamingPattern = "Fictional$nDatabase";  //database does not exist (but server does)
-
-                var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
-                destination.Check(tomemory);
-
-                Assert.AreEqual(alreadyExists? CheckResult.Warning: CheckResult.Success, tomemory.GetWorst());
-
-            }
-            finally
-            {
-                server.DeleteInDatabase();
-            }
+            Database.ExpectTable("Bob").Drop();
         }
-
-        [Test]
-        public void ServerDatabaseIsPresentAndCorrectButHasTablesInIt()
+        finally
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
-            server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
-            server.Username = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitUsernameIfAny;
-            server.Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny;
-            //server.Database = "FictionalDatabase"; Ignored by the extractor!
-            
-            using (var con = Database.Server.GetConnection())
-            {
-                con.Open();
-
-                Database.Server.GetCommand("CREATE TABLE Bob(name varchar(10))", con).ExecuteNonQuery();
-            }
-            
-            try
-            {
-                var destination = new ExecuteFullExtractionToDatabaseMSSql();
-                destination.PreInitialize(_projectStub, new ThrowImmediatelyDataLoadEventListener());
-                destination.PreInitialize(_commandStub, new ThrowImmediatelyDataLoadEventListener());
-                destination.TargetDatabaseServer = server;
-                destination.TableNamingPattern = "$d";
-                destination.DatabaseNamingPattern = "FictionalDatabase";
-
-                var tomemory = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
-                destination.Check(tomemory);
-
-                Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
-
-                Database.ExpectTable("Bob").Drop();
-            }
-            finally
-            {
-                server.DeleteInDatabase();
-            }
+            server.DeleteInDatabase();
         }
     }
 }

@@ -5,48 +5,37 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using BrightIdeasSoftware;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-namespace Rdmp.UI.Collections.Providers
+namespace Rdmp.UI.Collections.Providers;
+
+/// <summary>
+/// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null
+/// for all others
+/// </summary>
+public static class IDColumnProvider
 {
-    /// <summary>
-    /// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null
-    /// for all others
-    /// </summary>
-    public class IDColumnProvider
+    private static object IDColumnAspectGetter(object rowObject)
     {
-        private readonly TreeListView _tree;
-
-        public IDColumnProvider(TreeListView tree)
-        {
-            _tree = tree;
-        }
-
-        private object IDColumnAspectGetter(object rowObject)
+        return rowObject switch
         {
             // unwrap masqueraders to see if underlying object has an ID
-            if(rowObject is IMasqueradeAs m)
-            {
-                return IDColumnAspectGetter(m.MasqueradingAs());
-            }
+            IMasqueradeAs m => IDColumnAspectGetter(m.MasqueradingAs()),
+            IMapsDirectlyToDatabaseTable maps => maps.ID,
+            _ => null
+        };
+    }
 
-            if (rowObject is IMapsDirectlyToDatabaseTable imaps)
-            {
-                return imaps.ID;
-            }
-
-            return null;
-        }
-
-        public OLVColumn CreateColumn()
+    public static OLVColumn CreateColumn()
+    {
+        var toReturn = new OLVColumn
         {
-            var toReturn = new OLVColumn();
-            toReturn.Text = "ID";
-            toReturn.IsVisible = false;
-            toReturn.AspectGetter += IDColumnAspectGetter;
-            toReturn.IsEditable = false;
-            return toReturn;
-        }
+            Text = "ID",
+            IsVisible = false
+        };
+        toReturn.AspectGetter += IDColumnAspectGetter;
+        toReturn.IsEditable = false;
+        return toReturn;
     }
 }

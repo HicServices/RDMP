@@ -6,50 +6,46 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
 
-namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
+namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData;
+
+[Category("Unit")]
+public class TestPrescribingCreation
 {
-    [Category("Unit")]
-    public class TestPrescribingCreation
+    [Test]
+    [TestCase(1000)]
+    [TestCase(321)]
+    [TestCase(100000)]
+    public void CreateCSV(int numberOfRecords)
     {
-        [Test]
-        [TestCase(1000)]
-        [TestCase(321)]
-        [TestCase(100000)]
-        public void CreateCSV(int numberOfRecords)
+        var r = new Random(500);
+
+        var people = new PersonCollection();
+        people.GeneratePeople(100, r);
+
+        var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DeleteMeTestPrescribing.csv"));
+
+        var finished = false;
+        var finishedWithRecords = -1;
+
+        var prescribing = new Prescribing(r);
+        prescribing.RowsGenerated += (s, e) =>
         {
-            var r = new Random(500);
+            finished = e.IsFinished;
+            finishedWithRecords = e.RowsWritten;
+        };
 
-            var people = new PersonCollection();
-            people.GeneratePeople(100,r);
+        prescribing.GenerateTestDataFile(people, f, numberOfRecords);
 
-            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPrescribing.csv"));
+        //one progress task only, should have reported creating the correct number of rows
+        Assert.IsTrue(finished);
+        Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
-            bool finished = false;
-            int finishedWithRecords = -1;
-            
-            var prescribing = new Prescribing(r);
-            prescribing.RowsGenerated += (s, e) =>
-            {
-                finished = e.IsFinished;
-                finishedWithRecords = e.RowsWritten;
-            };
-
-            prescribing.GenerateTestDataFile(people, f, numberOfRecords);
-
-            //one progress task only, should have reported creating the correct number of rows
-            Assert.IsTrue(finished);
-            Assert.AreEqual(numberOfRecords, finishedWithRecords);
-
-            Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
-
-            Console.WriteLine("Created file: " + f.FullName);
-            f.Delete();
-        }
-
-
+        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords); //can be newlines in middle of file
+        f.Delete();
     }
 }

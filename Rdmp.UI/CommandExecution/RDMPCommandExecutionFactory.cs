@@ -9,177 +9,170 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
 
-namespace Rdmp.UI.CommandExecution
+namespace Rdmp.UI.CommandExecution;
+
+public class RDMPCommandExecutionFactory : ICommandExecutionFactory
 {
-    public class RDMPCommandExecutionFactory : ICommandExecutionFactory
+    private readonly IActivateItems _activator;
+    private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new();
+    private object oLockCachedAnswers = new();
+    private List<ICommandExecutionProposal> _proposers = new();
+
+    public RDMPCommandExecutionFactory(IActivateItems activator)
     {
-        private readonly IActivateItems _activator;
-        private Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>> _cachedAnswers = new Dictionary<ICombineToMakeCommand, Dictionary<CachedDropTarget, ICommandExecution>>();
-        private object oLockCachedAnswers = new object();
-        private List<ICommandExecutionProposal> _proposers = new List<ICommandExecutionProposal>();
+        _activator = activator;
 
-        public RDMPCommandExecutionFactory(IActivateItems activator)
-        {
-            _activator = activator;
-
-            foreach (Type proposerType in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<ICommandExecutionProposal>())
+        foreach (var proposerType in MEF.GetTypes<ICommandExecutionProposal>())
+            try
             {
-                try
-                {
-                    ObjectConstructor constructor = new ObjectConstructor();
-                    _proposers.Add((ICommandExecutionProposal)constructor.Construct(proposerType,activator));
-
-                }
-                catch (Exception ex)
-                {
-                    activator.GlobalErrorCheckNotifier.OnCheckPerformed(
-                        new CheckEventArgs("Could not instantiate ICommandExecutionProposal '" + proposerType + "'",
-                            CheckResult.Fail, ex));
-                }
+                _proposers.Add((ICommandExecutionProposal)ObjectConstructor.Construct(proposerType, activator));
             }
-        }
-
-        public ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
-        {
-            lock (oLockCachedAnswers)
+            catch (Exception ex)
             {
-                CachedDropTarget proposition = new CachedDropTarget(targetModel, insertOption);
-
-                //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
-                if (_cachedAnswers.ContainsKey(cmd))
-                {
-                    //if we already have a cached execution for the command and the target
-                    if (_cachedAnswers[cmd].ContainsKey(proposition))
-                        return _cachedAnswers[cmd][proposition];//return from cache
-                }
-                else
-                    _cachedAnswers.Add(cmd, new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
-
-                var result  = CreateNoCache(cmd, targetModel, insertOption);
-                _cachedAnswers[cmd].Add(new CachedDropTarget(targetModel,insertOption), result);
-
-                return result;
+                activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+                    new CheckEventArgs($"Could not instantiate ICommandExecutionProposal '{proposerType}'",
+                        CheckResult.Fail, ex));
             }
-        }
+    }
 
-        private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default)
+    public ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        lock (oLockCachedAnswers)
         {
-            ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
-            if (targetModel is IFolderNode folder)
-                return CreateWhenTargetIsFolder(cmd, folder);
-            
-            /////////////Table Info Drop Targets///////////////////////////////////
-            if (targetModel is TableInfo targetTableInfo)
-                return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
+            var proposition = new CachedDropTarget(targetModel, insertOption);
 
-            //////////////////////Cohort Drop Targets//////////////////
-
-            if (targetModel is JoinableCollectionNode targetJoinableCollectionNode)
-                return CreateWhenTargetIsJoinableCollectionNode(cmd,targetJoinableCollectionNode);
-
-            ///////////////Data Loading Drop Targets ///////////////////
-
-            if (targetModel is ProcessTask targetProcessTask)
-                return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
-            
-            /////////////Table Info Collection Drop Targets////////////////////
-
-            if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
-                return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
-
-            foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
+            //typically user might start a drag and then drag it all over the place so cache answers to avoid hammering database/loading donuts
+            if (_cachedAnswers.TryGetValue(cmd, out var cacheLine))
             {
-                var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
-                if (ce != null)
-                    return ce;
+                //if we already have a cached execution for the command and the target
+                if (cacheLine.TryGetValue(proposition, out var hit))
+                    return hit; //return from cache
+            }
+            else
+            {
+                _cachedAnswers.Add(cmd,
+                    cacheLine = new Dictionary<CachedDropTarget, ICommandExecution>()); //novel command
             }
 
-            //no valid combinations
-            return null;
-        }
+            var result = CreateNoCache(cmd, targetModel, insertOption);
+            cacheLine.Add(new CachedDropTarget(targetModel, insertOption), result);
 
-
-        public void Activate(object target)
-        {
-            foreach (ICommandExecutionProposal proposals in _proposers.Where(p => p.IsCompatibleTarget(target)))
-                proposals.Activate(target);
-        }
-
-        public bool CanActivate(object target)
-        {
-            return _proposers.Any(p => p.CanActivate(target));
-        }
-        
-        private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask, InsertOption insertOption)
-        {
-            if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
-                return new ExecuteCommandReOrderProcessTask(_activator,sourceProcessTaskCommand, targetProcessTask, insertOption);
-
-            return null;
-        }
-
-
-        private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
-        {
-            var sourceManyCatalogues = cmd as ManyCataloguesCombineable;
-            var file = cmd as FileCollectionCombineable;
-
-            if (cmd is IHasFolderCombineable sourceFolderable)
-                return new ExecuteCommandPutIntoFolder(_activator, sourceFolderable, targetFolder.FullName);
-            
-            if (sourceManyCatalogues != null)
-                return new ExecuteCommandPutIntoFolder(_activator, sourceManyCatalogues, targetFolder.FullName);
-
-            if(file != null)
-                if(file.Files.Length == 1)
-                {
-                    var toReturn = new ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator,file.Files[0]);
-                    toReturn.TargetFolder = targetFolder.FullName;
-                    return toReturn;
-                }
-
-            return null;
-        }
-
-        private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
-        {
-            if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
-                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo);
-
-            return null;
-        }
-
-
-        private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICombineToMakeCommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
-        {
-            if(cmd is AggregateConfigurationCombineable sourceAggregateConfigurationCombineable)
-                if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
-
-            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
-
-            return null;
-        }
-
-
-        private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd, PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
-        {
-            if(cmd is ColumnInfoCombineable sourceColumnInfoCombineable)
-                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCombineable);
-
-            return null;
+            return result;
         }
     }
+
+    private ICommandExecution CreateNoCache(ICombineToMakeCommand cmd, object targetModel,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        ///////////////Catalogue or ambiguous Drop Targets ////////////////////////
+        if (targetModel is IFolderNode folder)
+            return CreateWhenTargetIsFolder(cmd, folder);
+
+        /////////////Table Info Drop Targets///////////////////////////////////
+        if (targetModel is TableInfo targetTableInfo)
+            return CreateWhenTargetIsATableInfo(cmd, targetTableInfo);
+
+        //////////////////////Cohort Drop Targets//////////////////
+
+        if (targetModel is JoinableCollectionNode targetJoinableCollectionNode)
+            return CreateWhenTargetIsJoinableCollectionNode(cmd, targetJoinableCollectionNode);
+
+        ///////////////Data Loading Drop Targets ///////////////////
+
+        if (targetModel is ProcessTask targetProcessTask)
+            return CreateWhenTargetIsProcessTask(cmd, targetProcessTask, insertOption);
+
+        /////////////Table Info Collection Drop Targets////////////////////
+
+        if (targetModel is PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
+            return CreateWhenTargetIsPreLoadDiscardedColumnsNode(cmd, targetPreLoadDiscardedColumnsNode);
+
+        foreach (var proposals in _proposers.Where(p => p.IsCompatibleTarget(targetModel)))
+        {
+            var ce = proposals.ProposeExecution(cmd, targetModel, insertOption);
+            if (ce != null)
+                return ce;
+        }
+
+        //no valid combinations
+        return null;
+    }
+
+
+    public void Activate(object target)
+    {
+        foreach (var proposals in _proposers.Where(p => p.IsCompatibleTarget(target)))
+            proposals.Activate(target);
+    }
+
+    public bool CanActivate(object target)
+    {
+        return _proposers.Any(p => p.CanActivate(target));
+    }
+
+    private ICommandExecution CreateWhenTargetIsProcessTask(ICombineToMakeCommand cmd, ProcessTask targetProcessTask,
+        InsertOption insertOption) =>
+        cmd is ProcessTaskCombineable sourceProcessTaskCommand
+            ? new ExecuteCommandReOrderProcessTask(_activator, sourceProcessTaskCommand, targetProcessTask,
+                insertOption)
+            : (ICommandExecution)null;
+
+
+    private ICommandExecution CreateWhenTargetIsFolder(ICombineToMakeCommand cmd, IFolderNode targetFolder)
+    {
+        return cmd switch
+        {
+            IHasFolderCombineable sourceFolderable => new ExecuteCommandPutIntoFolder(_activator, sourceFolderable,
+                targetFolder.FullName),
+            ManyCataloguesCombineable sourceManyCatalogues => new ExecuteCommandPutIntoFolder(_activator,
+                sourceManyCatalogues, targetFolder.FullName),
+            FileCollectionCombineable file when file.Files.Length == 1 => new
+                ExecuteCommandCreateNewCatalogueByImportingFileUI(_activator, file.Files[0])
+            {
+                TargetFolder = targetFolder.FullName
+            },
+            _ => null
+        };
+    }
+
+    private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo) =>
+        cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable
+            ? new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,
+                sourceDataAccessCredentialsCombineable.DataAccessCredentials, targetTableInfo)
+            : (ICommandExecution)null;
+
+
+    private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICombineToMakeCommand cmd,
+        JoinableCollectionNode targetJoinableCollectionNode)
+    {
+        if (cmd is AggregateConfigurationCombineable sourceAggregateConfigurationCombineable)
+            if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
+                return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,
+                    sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
+
+        return cmd is CatalogueCombineable sourceCatalogueCombineable
+            ? new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,
+                sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration)
+            : (ICommandExecution)null;
+    }
+
+
+    private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd,
+        PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode) =>
+        cmd is ColumnInfoCombineable sourceColumnInfoCombineable
+            ? new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator, targetPreLoadDiscardedColumnsNode.TableInfo,
+                sourceColumnInfoCombineable)
+            : (ICommandExecution)null;
 }

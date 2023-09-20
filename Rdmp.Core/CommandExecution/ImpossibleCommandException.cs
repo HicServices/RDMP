@@ -6,21 +6,20 @@
 
 using System;
 
-namespace Rdmp.Core.CommandExecution
-{
-    /// <summary>
-    /// Thrown when the API tries to Execute a command marked IsImpossible
-    /// </summary>
-    public class ImpossibleCommandException : Exception
-    {
-        public ICommandExecution Command { get; private set; }
-        public string ReasonCommandImpossible { get; private set; }
+namespace Rdmp.Core.CommandExecution;
 
-        public ImpossibleCommandException(ICommandExecution command, string reasonCommandImpossible)
-            : base(string.Format("Command is marked as IsImpossible and should not be Executed.  Reason is '{0}'", reasonCommandImpossible))
-        {
-            Command = command;
-            ReasonCommandImpossible = reasonCommandImpossible;
-        }
+/// <summary>
+/// Thrown when the API tries to Execute a command marked IsImpossible
+/// </summary>
+public class ImpossibleCommandException : Exception
+{
+    public ICommandExecution Command { get; private set; }
+    public string ReasonCommandImpossible { get; private set; }
+
+    public ImpossibleCommandException(ICommandExecution command, string reasonCommandImpossible)
+        : base($"Command is marked as IsImpossible and should not be Executed.  Reason is '{reasonCommandImpossible}'")
+    {
+        Command = command;
+        ReasonCommandImpossible = reasonCommandImpossible;
     }
 }

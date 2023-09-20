@@ -7,45 +7,34 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
+/// </summary>
+public class AggregatesNode : Node
 {
     /// <summary>
-    /// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
+    /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
     /// </summary>
-    public class AggregatesNode:Node
+    public Catalogue Catalogue { get; set; }
+
+    public AggregatesNode(Catalogue c, AggregateConfiguration[] regularAggregates)
     {
-
-        /// <summary>
-        /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
-        /// </summary>
-        public Catalogue Catalogue { get; set; }
-
-        public AggregatesNode(Catalogue c, AggregateConfiguration[] regularAggregates)
-        {
-            Catalogue = c;
-        }
-
-        public override string ToString()
-        {
-            return "Aggregate Graphs";
-        }
-
-        protected bool Equals(AggregatesNode other)
-        {
-            return Catalogue.Equals(other.Catalogue);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((AggregatesNode) obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return Catalogue.GetHashCode() * this.GetType().GetHashCode();
-        }
+        Catalogue = c;
     }
+
+    public override string ToString() => "Aggregate Graphs";
+
+    protected bool Equals(AggregatesNode other) => Catalogue.Equals(other.Catalogue);
+
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((AggregatesNode)obj);
+    }
+
+    public override int GetHashCode() => Catalogue.GetHashCode() * GetType().GetHashCode();
 }

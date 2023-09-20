@@ -8,219 +8,218 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Annotations;
+using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
-namespace Rdmp.Core.Curation.Data.Pipelines
+namespace Rdmp.Core.Curation.Data.Pipelines;
+
+/// <inheritdoc cref="IPipeline"/>
+public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 {
-    /// <inheritdoc cref="IPipeline"/>
-    public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
+    #region Database Properties
+
+    private string _name;
+    private string _description;
+    private int? _destinationPipelineComponentID;
+    private int? _sourcePipelineComponentID;
+
+    /// <inheritdoc/>
+    [NotNull]
+    [Unique]
+    public string Name
     {
-        #region Database Properties
+        get => _name;
+        set => SetField(ref _name, value);
+    }
 
-        private string _name;
-        private string _description;
-        private int? _destinationPipelineComponentID;
-        private int? _sourcePipelineComponentID;
+    /// <inheritdoc/>
+    public string Description
+    {
+        get => _description;
+        set => SetField(ref _description, value);
+    }
 
-        /// <inheritdoc/>
-        [NotNull]
-        [Unique]
-        public string Name
+    /// <inheritdoc/>
+    public int? DestinationPipelineComponent_ID
+    {
+        get => _destinationPipelineComponentID;
+        set => SetField(ref _destinationPipelineComponentID, value);
+    }
+
+    /// <inheritdoc/>
+    public int? SourcePipelineComponent_ID
+    {
+        get => _sourcePipelineComponentID;
+        set => SetField(ref _sourcePipelineComponentID, value);
+    }
+
+    #endregion
+
+    #region Relationships
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IList<IPipelineComponent> PipelineComponents => _knownPipelineComponents.Value;
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IPipelineComponent Destination
+    {
+        get
         {
-            get { return _name; }
-            set { SetField(ref  _name, value); }
+            return DestinationPipelineComponent_ID == null
+                ? null
+                : _knownPipelineComponents.Value.Single(c => c.ID == DestinationPipelineComponent_ID.Value);
+        }
+    }
+
+    /// <inheritdoc/>
+    [NoMappingToDatabase]
+    public IPipelineComponent Source
+    {
+        get
+        {
+            return SourcePipelineComponent_ID == null
+                ? null
+                : _knownPipelineComponents.Value.Single(c => c.ID == SourcePipelineComponent_ID.Value);
+        }
+    }
+
+    #endregion
+
+    public Pipeline()
+    {
+        ClearAllInjections();
+    }
+
+    /// <summary>
+    /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
+    /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="name"></param>
+    public Pipeline(ICatalogueRepository repository, string name = null)
+    {
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        {
+            { "Name", name ?? $"NewPipeline {Guid.NewGuid()}" }
+        });
+
+        ClearAllInjections();
+    }
+
+    internal Pipeline(ICatalogueRepository repository, DbDataReader r)
+        : base(repository, r)
+    {
+        Name = r["Name"].ToString();
+
+        var o = r["DestinationPipelineComponent_ID"];
+        if (o == DBNull.Value)
+            DestinationPipelineComponent_ID = null;
+        else
+            DestinationPipelineComponent_ID = Convert.ToInt32(o);
+
+        o = r["SourcePipelineComponent_ID"];
+        if (o == DBNull.Value)
+            SourcePipelineComponent_ID = null;
+        else
+            SourcePipelineComponent_ID = Convert.ToInt32(o);
+
+        Description = r["Description"] as string;
+
+        ClearAllInjections();
+    }
+
+    /// <inheritdoc/>
+    public override string ToString() => Name;
+
+    /// <summary>
+    /// Creates (in the database) and returns a new <see cref="Pipeline"/> which is an identical copy of the current.  This includes creating new copies
+    /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>)
+    /// </summary>
+    /// <returns></returns>
+    public Pipeline Clone()
+    {
+        var name = GetUniqueCloneName();
+
+        var clonePipe = new Pipeline((ICatalogueRepository)Repository, name)
+        {
+            Description = Description
+        };
+
+        var originalSource = Source;
+        if (originalSource != null)
+        {
+            var cloneSource = originalSource.Clone(clonePipe);
+            clonePipe.SourcePipelineComponent_ID = cloneSource.ID;
         }
 
-        /// <inheritdoc/>
-        public string Description
+        var originalDestination = Destination;
+        if (originalDestination != null)
         {
-            get { return _description; }
-            set { SetField(ref  _description, value); }
+            var cloneDestination = originalDestination.Clone(clonePipe);
+            clonePipe.DestinationPipelineComponent_ID = cloneDestination.ID;
         }
 
-        /// <inheritdoc/>
-        public int? DestinationPipelineComponent_ID
+        clonePipe.SaveToDatabase();
+
+        foreach (var component in PipelineComponents)
         {
-            get { return _destinationPipelineComponentID; }
-            set { SetField(ref  _destinationPipelineComponentID, value); }
-        }
-        /// <inheritdoc/>
-        public int? SourcePipelineComponent_ID
-        {
-            get { return _sourcePipelineComponentID; }
-            set { SetField(ref  _sourcePipelineComponentID, value); }
+            //if the component is one of the ones we already cloned
+            if (Equals(originalSource, component) || Equals(originalDestination, component))
+                continue;
+
+            component.Clone(clonePipe);
         }
 
-        #endregion
 
-        #region Relationships
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IList<IPipelineComponent> PipelineComponents { get
-        {
-            return _knownPipelineComponents.Value;
-        }}
+        return clonePipe;
+    }
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IPipelineComponent Destination {
-            get
-            {
-                return DestinationPipelineComponent_ID == null
-                    ? null
-                    :_knownPipelineComponents.Value.Single(c=>c.ID == DestinationPipelineComponent_ID.Value);
-            }
-        }
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IPipelineComponent Source
+    private string GetUniqueCloneName()
+    {
+        var otherPipelines = CatalogueRepository.GetAllObjects<Pipeline>();
+
+        var proposedName = $"{Name} (Clone)";
+        var suffix = 1;
+
+        while (otherPipelines.Any(p => proposedName.Equals(p.Name, StringComparison.CurrentCultureIgnoreCase)))
         {
-            get
-            {
-                return SourcePipelineComponent_ID == null
-                    ? null
-                    :_knownPipelineComponents.Value.Single(c=>c.ID == SourcePipelineComponent_ID.Value);
-            }
+            suffix++;
+            proposedName = $"{Name} (Clone{suffix})";
         }
 
-        #endregion
-        public Pipeline()
-        {
-            ClearAllInjections();
-        }
-        /// <summary>
-        /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
-        /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).
-        /// </summary>
-        /// <param name="repository"></param>
-        /// <param name="name"></param>
-        public Pipeline(ICatalogueRepository repository, string name = null)
-        {
-            repository.InsertAndHydrate(this, new Dictionary<string, object>
-            {
-                {"Name", name ?? "NewPipeline " + Guid.NewGuid()}
-            });
-            
-            ClearAllInjections();
-        }
+        return proposedName;
+    }
 
-        internal Pipeline(ICatalogueRepository repository, DbDataReader r)
-            : base(repository, r)
-        {
-            Name = r["Name"].ToString();
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
 
-            object o=  r["DestinationPipelineComponent_ID"];
-            if (o == DBNull.Value)
-                DestinationPipelineComponent_ID = null;
-            else
-                DestinationPipelineComponent_ID = Convert.ToInt32(o);
+    /// <inheritdoc/>
+    public IHasDependencies[] GetObjectsDependingOnThis() => PipelineComponents.Cast<IHasDependencies>().ToArray();
 
-            o = r["SourcePipelineComponent_ID"];
-            if (o == DBNull.Value)
-                SourcePipelineComponent_ID = null;
-            else
-                SourcePipelineComponent_ID = Convert.ToInt32(o);
+    private Lazy<IList<IPipelineComponent>> _knownPipelineComponents;
 
-            Description = r["Description"] as string;
+    /// <inheritdoc/>
+    public void InjectKnown(IPipelineComponent[] instance)
+    {
+        _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(() => instance.OrderBy(p => p.Order).ToList());
+    }
 
-            ClearAllInjections();
-        }
-        
-        /// <inheritdoc/>
-        public override string ToString()
-        {
-            return Name;
-        }
+    /// <inheritdoc/>
+    public void ClearAllInjections()
+    {
+        _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(FetchPipelineComponents);
+    }
 
-        /// <summary>
-        /// Creates (in the database) and returns a new <see cref="Pipeline"/> which is an identical copy of the current.  This includes creating new copies
-        /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>) 
-        /// </summary>
-        /// <returns></returns>
-        public Pipeline Clone()
-        {
-            string name = GetUniqueCloneName();
-
-            var clonePipe = new Pipeline((ICatalogueRepository)Repository,name);
-            clonePipe.Description = Description;
-
-            var originalSource = Source;
-            if (originalSource != null)
-            {
-                var cloneSource = originalSource.Clone(clonePipe);
-                clonePipe.SourcePipelineComponent_ID = cloneSource.ID;
-            }
-            var originalDestination = Destination;
-            if (originalDestination != null)
-            {
-                var cloneDestination = originalDestination.Clone(clonePipe);
-                clonePipe.DestinationPipelineComponent_ID = cloneDestination.ID;
-            }
-
-            clonePipe.SaveToDatabase();
-
-            foreach (IPipelineComponent component in PipelineComponents)
-            {
-                //if the component is one of the ones we already cloned
-                if (Equals(originalSource, component) || Equals(originalDestination, component))
-                    continue;
-
-                component.Clone(clonePipe);
-            }
-
-
-            return clonePipe;
-        }
-
-        private string GetUniqueCloneName()
-        {
-            var otherPipelines = CatalogueRepository.GetAllObjects<Pipeline>();
-
-            string proposedName = $"{Name} (Clone)";
-            int suffix = 1;
-
-            while(otherPipelines.Any(p=>proposedName.Equals(p.Name,StringComparison.CurrentCultureIgnoreCase)))
-            {
-                suffix++;
-                proposedName = $"{Name} (Clone{suffix})";
-            }
-
-            return proposedName;
-        }
-
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsThisDependsOn()
-        {
-            return new IHasDependencies[0];
-        }
-        /// <inheritdoc/>
-        public IHasDependencies[] GetObjectsDependingOnThis()
-        {
-            return PipelineComponents.Cast<IHasDependencies>().ToArray();
-        }
-
-        private Lazy<IList<IPipelineComponent>> _knownPipelineComponents;
-        /// <inheritdoc/>
-        public void InjectKnown(IPipelineComponent[] instance)
-        {
-            _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(()=>instance.OrderBy(p=>p.Order).ToList());
-        }
-        /// <inheritdoc/>
-        public void ClearAllInjections()
-        {
-            _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(FetchPipelineComponents);
-        }
-
-        private IList<IPipelineComponent> FetchPipelineComponents()
-        {
-            return Repository.GetAllObjectsWithParent<PipelineComponent>(this)
-                .Cast<IPipelineComponent>()
-                .OrderBy(p => p.Order)
-                .ToList();
-        }
+    private IList<IPipelineComponent> FetchPipelineComponents()
+    {
+        return Repository.GetAllObjectsWithParent<PipelineComponent>(this)
+            .Cast<IPipelineComponent>()
+            .OrderBy(p => p.Order)
+            .ToList();
     }
 }

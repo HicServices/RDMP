@@ -7,44 +7,37 @@
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.Core.Providers.Nodes
+namespace Rdmp.Core.Providers.Nodes;
+
+/// <summary>
+/// Collection of all <see cref="ExtractionConfiguration"/> in a given <see cref="Project"/>
+/// </summary>
+public class ExtractionConfigurationsNode : Node, IOrderable
 {
-    /// <summary>
-    /// Collection of all <see cref="ExtractionConfiguration"/> in a given <see cref="Project"/>
-    /// </summary>
-    public class ExtractionConfigurationsNode:Node,IOrderable
+    public Project Project { get; }
+
+    public ExtractionConfigurationsNode(Project project)
     {
-        public Project Project { get; set; }
+        Project = project;
+    }
 
-        public ExtractionConfigurationsNode(Project project)
-        {
-            Project = project;
-        }
+    public override string ToString() => "Extraction Configurations";
 
-        public override string ToString()
-        {
-            return "Extraction Configurations";
-        }
+    protected bool Equals(ExtractionConfigurationsNode other) => Equals(Project, other.Project);
 
-        protected bool Equals(ExtractionConfigurationsNode other)
-        {
-            return Equals(Project, other.Project);
-        }
+    public override bool Equals(object obj)
+    {
+        if (obj is null) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != GetType()) return false;
+        return Equals((ExtractionConfigurationsNode)obj);
+    }
 
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((ExtractionConfigurationsNode) obj);
-        }
+    public override int GetHashCode() => System.HashCode.Combine(Project);
 
-        public override int GetHashCode()
-        {
-            return (Project != null ? Project.GetHashCode() : 0);
-        }
-
-        public int Order { get { return 3; } set{} }
-
+    public int Order
+    {
+        get => 3;
+        set { }
     }
 }

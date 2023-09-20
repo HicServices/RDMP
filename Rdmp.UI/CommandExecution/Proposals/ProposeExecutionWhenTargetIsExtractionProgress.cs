@@ -9,28 +9,23 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsExtractionProgress : RDMPCommandExecutionProposal<ExtractionProgress>
 {
-    class ProposeExecutionWhenTargetIsExtractionProgress : RDMPCommandExecutionProposal<ExtractionProgress>
+    public ProposeExecutionWhenTargetIsExtractionProgress(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsExtractionProgress(IActivateItems itemActivator) : base(itemActivator)
-        {
-
-        }
-        public override bool CanActivate(ExtractionProgress target)
-        {
-            return true;
-        }
-
-        public override void Activate(ExtractionProgress target)
-        {
-            ItemActivator.Activate<ExtractionProgressUI, ExtractionProgress>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionProgress target, InsertOption insertOption = InsertOption.Default)
-        {
-            // no drag and drop support
-            return null;
-        }
     }
+
+    public override bool CanActivate(ExtractionProgress target) => true;
+
+    public override void Activate(ExtractionProgress target)
+    {
+        ItemActivator.Activate<ExtractionProgressUI, ExtractionProgress>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionProgress target,
+        InsertOption insertOption = InsertOption.Default) =>
+        // no drag and drop support
+        null;
 }

@@ -7,22 +7,20 @@
 using System;
 using FAnsi;
 
-namespace Rdmp.Core
+namespace Rdmp.Core;
+
+/// <summary>
+/// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targeted but no determination
+/// can be made either because there are no objects of a known <see cref="DatabaseType"/> or because there are objects
+/// of multiple different <see cref="DatabaseType"/>.
+/// </summary>
+public class AmbiguousDatabaseTypeException : Exception
 {
     /// <summary>
-    /// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targetted but no determination
-    /// can be made either because there are no objects of a known <see cref="DatabaseType"/> or because there are objects
-    /// of multiple different <see cref="DatabaseType"/>.
+    /// Creates a new Exception with the given message
     /// </summary>
-    public class AmbiguousDatabaseTypeException : Exception
+    /// <param name="s"></param>
+    public AmbiguousDatabaseTypeException(string s) : base(s)
     {
-        /// <summary>
-        /// Creates a new Exception with the given message
-        /// </summary>
-        /// <param name="s"></param>
-        public AmbiguousDatabaseTypeException(string s):base(s)
-        {
-            
-        }
     }
 }

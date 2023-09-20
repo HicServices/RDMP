@@ -8,47 +8,48 @@ using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
 
 
-namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
+
+/// <summary>
+/// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
+/// 
+/// <para>This Control is for setting Properties that are of Type bool (true/false)</para>
+/// </summary>
+[TechnicalUI]
+public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
 {
-    /// <summary>
-    /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
-    /// 
-    /// <para>This Control is for setting Properties that are of Type bool (true/false)</para>
-    /// </summary>
-    [TechnicalUI]
-    public partial class ArgumentValueBoolUI : UserControl, IArgumentValueUI
+    private bool _bLoading = true;
+    private ArgumentValueUIArgs _args;
+
+    public ArgumentValueBoolUI()
     {
-        private bool _bLoading = true;
-        private ArgumentValueUIArgs _args;
+        InitializeComponent();
+    }
 
-        public ArgumentValueBoolUI()
+    public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
+    {
+        _args = args;
+        _bLoading = true;
+
+        //if no value has been selected set it to false
+        if (args.InitialValue == null)
         {
-            InitializeComponent();
+            cbValue.Checked = false;
+            args.Setter(false);
         }
-        
-        public void SetUp(IActivateItems activator, ArgumentValueUIArgs args)
+        else
         {
-            _args = args;
-            _bLoading = true;
-
-            //if no value has been selected set it to false
-            if (args.InitialValue == null)
-            {
-                cbValue.Checked = false;
-                args.Setter(false);
-            }
-            else
-                cbValue.Checked = (bool)args.InitialValue;//otherwise use the previous value
-
-            _bLoading = false;
+            cbValue.Checked = (bool)args.InitialValue; //otherwise use the previous value
         }
 
-        private void cbValue_CheckedChanged(object sender, System.EventArgs e)
-        {
-            if(_bLoading)
-                return;
+        _bLoading = false;
+    }
 
-            _args.Setter(cbValue.Checked);
-        }
+    private void cbValue_CheckedChanged(object sender, System.EventArgs e)
+    {
+        if (_bLoading)
+            return;
+
+        _args.Setter(cbValue.Checked);
     }
 }

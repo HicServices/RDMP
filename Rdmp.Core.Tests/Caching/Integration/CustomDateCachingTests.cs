@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Moq;
+using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Caching.Layouts;
@@ -22,176 +22,166 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
-using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.Caching.Integration
+namespace Rdmp.Core.Tests.Caching.Integration;
+
+public class CustomDateCachingTests : DatabaseTests
 {
-    public class CustomDateCachingTests : DatabaseTests
+    [TestCase(false)]
+    [TestCase(true)]
+    public void FetchMultipleDays_Success(bool singleDay)
     {
-        [TestCase(false)]
-        [TestCase(true)]
-        public void FetchMultipleDays_Success(bool singleDay)
-        {
-            var mef = RepositoryLocator.CatalogueRepository.MEF;
-            mef.AddTypeToCatalogForTesting(typeof(TestCacheSource));
-            mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheSource));
+        MEF.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
-            // Create a pipeline that will record the cache chunks
-                        var sourceComponent = Mock.Of<IPipelineComponent>(x=>
-                x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
-                x.GetClassAsSystemType()==typeof (TestCacheSource) &&
-                x.GetAllArguments()==new IArgument[0]);
+        // Create a pipeline that will record the cache chunks
+        var sourceComponent = Substitute.For<IPipelineComponent>();
+        sourceComponent.Class.Returns("CachingEngineTests.Integration.TestCacheSource");
+        sourceComponent.GetClassAsSystemType().Returns(typeof(TestCacheSource));
+        sourceComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
-            var destinationComponent = Mock.Of<IPipelineComponent>(x=>
-                x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
-                x.GetClassAsSystemType()==typeof (TestCacheDestination) &&
-                x.GetAllArguments()==new IArgument[0]);
+        var destinationComponent = Substitute.For<IPipelineComponent>();
+        destinationComponent.Class.Returns("CachingEngineTests.Integration.TestCacheDestination");
+        destinationComponent.GetClassAsSystemType().Returns(typeof(TestCacheDestination));
+        destinationComponent.GetAllArguments().Returns(Array.Empty<IArgument>());
 
-            var pipeline = Mock.Of<IPipeline>(p=>
-                p.Repository == CatalogueRepository &&
-                p.Source==sourceComponent &&
-                p.Destination==destinationComponent &&
-                p.Repository == CatalogueRepository &&
-                p.PipelineComponents==Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
-            
-            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme",true);
+        var pipeline = Substitute.For<IPipeline>();
+        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.Source.Returns(sourceComponent);
+        pipeline.Destination.Returns(destinationComponent);
+        pipeline.Repository.Returns(CatalogueRepository);
+        pipeline.PipelineComponents.Returns(Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
 
-            var lmd = Mock.Of<ILoadMetadata>();
-            lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+        var projDir =
+            LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
+                true);
 
-            var loadProgress = Mock.Of<ILoadProgress>(l=>
-            l.OriginDate == new DateTime(2001,01,01) &&
-            l.LoadMetadata==lmd);
+        var lmd = Substitute.For<ILoadMetadata>();
+        lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
 
-            var cacheProgress = Mock.Of<ICacheProgress>(c=>
+        var loadProgress = Substitute.For<ILoadProgress>();
+        loadProgress.OriginDate.Returns(new DateTime(2001, 01, 01));
+        loadProgress.LoadMetadata.Returns(lmd);
 
-            c.Pipeline_ID == -123 &&
-            c.Pipeline==pipeline &&
-            c.ChunkPeriod == new TimeSpan(1, 0, 0, 0) &&
-            c.LoadProgress_ID == -1 &&
-            c.Repository == CatalogueRepository &&
-            c.LoadProgress ==loadProgress &&
-            c.CacheFillProgress == new DateTime(2020, 1, 1));
+        var cacheProgress = Substitute.For<ICacheProgress>();
+        cacheProgress.Pipeline_ID.Returns(-123);
+        cacheProgress.Pipeline.Returns(pipeline);
+        cacheProgress.ChunkPeriod.Returns(new TimeSpan(1, 0, 0, 0));
+        cacheProgress.LoadProgress_ID.Returns(-1);
+        cacheProgress.Repository.Returns(CatalogueRepository);
+        cacheProgress.LoadProgress.Returns(loadProgress);
+        cacheProgress.CacheFillProgress.Returns(new DateTime(2020, 1, 1));
 
-            var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
-            var startDate = new DateTime(2016, 1, 1);
-            var endDate = singleDay? new DateTime(2016, 1, 1): new DateTime(2016, 1, 3);
+        var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
+        var startDate = new DateTime(2016, 1, 1);
+        var endDate = singleDay ? new DateTime(2016, 1, 1) : new DateTime(2016, 1, 3);
 
-            var listener = new LoggingListener();
-            var task = caching.Fetch(startDate, endDate, new GracefulCancellationToken(), listener);
-            task.Wait();
+        var listener = new LoggingListener();
+        var task = caching.Fetch(startDate, endDate, new GracefulCancellationToken(), listener);
+        task.Wait();
 
-            var dateNotifications = listener.Notifications.Where(n => n.Message.StartsWith("!!"))
-                .Select(n => n.Message.TrimStart('!'))
-                .ToArray();
+        var dateNotifications = listener.Notifications.Where(n => n.Message.StartsWith("!!"))
+            .Select(n => n.Message.TrimStart('!'))
+            .ToArray();
 
-            //should not have been updated because this is a backfill request
-            Assert.AreEqual(new DateTime(2020,1,1),cacheProgress.CacheFillProgress);
+        //should not have been updated because this is a backfill request
+        Assert.AreEqual(new DateTime(2020, 1, 1), cacheProgress.CacheFillProgress);
 
-            Assert.IsTrue(task.IsCompleted);
-            Assert.IsTrue(dateNotifications.Contains(startDate.ToString("g")));
-            Assert.IsTrue(dateNotifications.Contains(endDate.ToString("g")));
-            Assert.IsTrue(task.Status == TaskStatus.RanToCompletion);
+        Assert.IsTrue(task.IsCompleted);
+        Assert.IsTrue(dateNotifications.Contains(startDate.ToString("g")));
+        Assert.IsTrue(dateNotifications.Contains(endDate.ToString("g")));
+        Assert.IsTrue(task.Status == TaskStatus.RanToCompletion);
 
-            projDir.RootPath.Delete(true);
-        }
+        projDir.RootPath.Delete(true);
+    }
+}
+
+public class LoggingListener : IDataLoadEventListener
+{
+    public List<NotifyEventArgs> Notifications { get; private set; }
+
+    public LoggingListener()
+    {
+        Notifications = new List<NotifyEventArgs>();
     }
 
-    public class LoggingListener : IDataLoadEventListener
+    public void OnNotify(object sender, NotifyEventArgs e)
     {
-        public List<NotifyEventArgs> Notifications { get; private set; }
-
-        public LoggingListener()
-        {
-            Notifications = new List<NotifyEventArgs>();
-        }
-
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            Notifications.Add(e);
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
-        {
-        }
+        Notifications.Add(e);
     }
 
-    public class TestCacheChunk : ICacheChunk
+    public void OnProgress(object sender, ProgressEventArgs e)
     {
-        public ICacheFetchRequest Request { get; private set; }
+    }
+}
 
-        public TestCacheChunk(DateTime fetchDate)
-        {
-            Request = new CacheFetchRequest(null,fetchDate){ChunkPeriod = new TimeSpan(1,0,0)};
-        }
+public class TestCacheChunk : ICacheChunk
+{
+    public ICacheFetchRequest Request { get; private set; }
 
-        
+    public TestCacheChunk(DateTime fetchDate)
+    {
+        Request = new CacheFetchRequest(null, fetchDate) { ChunkPeriod = new TimeSpan(1, 0, 0) };
+    }
+}
+
+public class TestCacheSource : CacheSource<TestCacheChunk>
+{
+    public override TestCacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
+    {
+        var c = new TestCacheChunk(Request.Start);
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"!!{request.Start:g}"));
+        return c;
     }
 
-    public class TestCacheSource : CacheSource<TestCacheChunk>
+    public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
-        public override TestCacheChunk DoGetChunk(ICacheFetchRequest request, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            var c = new TestCacheChunk(Request.Start);
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "!!" + request.Start.ToString("g")));
-            return c;
-        }
-
-        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-        }
-
-        public override void Abort(IDataLoadEventListener listener)
-        {
-        }
-
-        public override TestCacheChunk TryGetPreview()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Check(ICheckNotifier notifier)
-        {
-        }
     }
 
-    public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>, ICacheFileSystemDestination 
+    public override void Abort(IDataLoadEventListener listener)
     {
-        public TestCacheChunk ProcessPipelineData(TestCacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            return toProcess;
-        }
-
-        public ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
-            GracefulCancellationToken cancellationToken)
-        {
-            return ProcessPipelineData((TestCacheChunk) toProcess, listener, cancellationToken);
-        }
-
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-        }
-
-        public void Abort(IDataLoadEventListener listener)
-        {
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-        }
-
-        private ILoadDirectory project;
-        public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
-        {
-            project = value;
-        }
-
-        public ICacheLayout CreateCacheLayout()
-        {
-            return new BasicCacheLayout(project.Cache);
-        }
-
     }
+
+    public override TestCacheChunk TryGetPreview() => throw new NotImplementedException();
+
+    public override void Check(ICheckNotifier notifier)
+    {
+    }
+}
+
+public class TestCacheDestination : IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>,
+    ICacheFileSystemDestination
+{
+    public static TestCacheChunk ProcessPipelineData(TestCacheChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken) => toProcess;
+
+    public ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken) =>
+        ProcessPipelineData((TestCacheChunk)toProcess, listener, cancellationToken);
+
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+    }
+
+    public void Abort(IDataLoadEventListener listener)
+    {
+    }
+
+    public void Check(ICheckNotifier notifier)
+    {
+    }
+
+    private ILoadDirectory project;
+
+    public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
+    {
+        project = value;
+    }
+
+    public ICacheLayout CreateCacheLayout() => new BasicCacheLayout(project.Cache);
 }

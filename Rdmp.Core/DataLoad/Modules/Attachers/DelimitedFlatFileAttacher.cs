@@ -11,154 +11,162 @@ using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.DataLoad.Modules.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers;
+
+/// <summary>
+/// See AnySeparatorFileAttacher
+/// </summary>
+public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 {
-    /// <summary>
-    /// See AnySeparatorFileAttacher
-    /// </summary>
-    public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
+    protected readonly DelimitedFlatFileDataFlowSource Source;
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
+    public string ForceHeaders
     {
-        protected DelimitedFlatFileDataFlowSource _source;
-        
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeaders_DemandDescription)]
-        public string ForceHeaders {
-            get { return _source.ForceHeaders; }
-            set { _source.ForceHeaders = value; }
-        }
-        
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
-        public bool IgnoreQuotes
+        get => Source.ForceHeaders;
+        set => Source.ForceHeaders = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreQuotes_DemandDescription)]
+    public bool IgnoreQuotes
+    {
+        get => Source.IgnoreQuotes;
+        set => Source.IgnoreQuotes = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBlankLines_DemandDescription)]
+    public bool IgnoreBlankLines
+    {
+        get => Source.IgnoreBlankLines;
+        set => Source.IgnoreBlankLines = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeadersReplacesFirstLineInFile_Description)]
+    public bool ForceHeadersReplacesFirstLineInFile
+    {
+        get => Source.ForceHeadersReplacesFirstLineInFile;
+        set => Source.ForceHeadersReplacesFirstLineInFile = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
+    public string IgnoreColumns
+    {
+        get => Source.IgnoreColumns;
+        set => Source.IgnoreColumns = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,
+        DefaultValue = BadDataHandlingStrategy.ThrowException)]
+    public BadDataHandlingStrategy BadDataHandlingStrategy
+    {
+        get => Source.BadDataHandlingStrategy;
+        set => Source.BadDataHandlingStrategy = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBadReads_DemandDescription)]
+    public bool IgnoreBadReads
+    {
+        get => Source.IgnoreBadReads;
+        set => Source.IgnoreBadReads = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription, DefaultValue = true)]
+    public bool ThrowOnEmptyFiles
+    {
+        get => Source.ThrowOnEmptyFiles;
+        set => Source.ThrowOnEmptyFiles = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription,
+        DefaultValue = false)]
+    public bool AttemptToResolveNewLinesInRecords
+    {
+        get => Source.AttemptToResolveNewLinesInRecords;
+        set => Source.AttemptToResolveNewLinesInRecords = value;
+    }
+
+    [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription, DefaultValue = 100)]
+    public int MaximumErrorsToReport
+    {
+        get => Source.MaximumErrorsToReport;
+        set => Source.MaximumErrorsToReport = value;
+    }
+
+    [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
+    public string AddFilenameColumnNamed { get; set; }
+
+    [DemandsInitialization(Culture_DemandDescription)]
+    public override CultureInfo Culture
+    {
+        get => Source.Culture;
+        set => Source.Culture = value;
+    }
+
+    [DemandsInitialization(ExplicitDateTimeFormat_DemandDescription)]
+    public override string ExplicitDateTimeFormat
+    {
+        get => Source.ExplicitDateTimeFormat;
+        set => Source.ExplicitDateTimeFormat = value;
+    }
+
+
+    protected DelimitedFlatFileAttacher(char separator)
+    {
+        Source = new DelimitedFlatFileDataFlowSource
         {
-            get { return _source.IgnoreQuotes; }
-            set { _source.IgnoreQuotes = value; }
-        }
+            Separator = separator.ToString(),
+            StronglyTypeInput = false,
+            StronglyTypeInputBatchSize = 0
+        };
+    }
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBlankLines_DemandDescription)]
-        public bool IgnoreBlankLines {
-            get { return _source.IgnoreBlankLines; }
-            set { _source.IgnoreBlankLines = value; }
-        }
+    private IDataLoadEventListener _listener;
+    private FileInfo _currentFile;
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.ForceHeadersReplacesFirstLineInFile_Description)]
-        public bool ForceHeadersReplacesFirstLineInFile
+    protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
+        GracefulCancellationToken cancellationToken)
+    {
+        Source.MaxBatchSize = maxBatchSize;
+        Source.SetDataTable(dt);
+        Source.GetChunk(_listener, cancellationToken);
+
+        //if we are adding a column to the data read which contains the file path
+        if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
         {
-            get { return _source.ForceHeadersReplacesFirstLineInFile; }
-            set { _source.ForceHeadersReplacesFirstLineInFile = value; }
+            if (!dt.Columns.Contains(AddFilenameColumnNamed))
+                throw new FlatFileLoadException(
+                    $"AddFilenameColumnNamed is set to '{AddFilenameColumnNamed}' but the column did not exist in RAW");
+
+            foreach (DataRow row in dt.Rows)
+                if (row[AddFilenameColumnNamed] == DBNull.Value)
+                    row[AddFilenameColumnNamed] = _currentFile.FullName;
         }
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
-        public string IgnoreColumns
-        {
-            get { return _source.IgnoreColumns; }
-            set { _source.IgnoreColumns = value; }
-        }
+        return dt.Rows.Count;
+    }
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.BadDataHandlingStrategy_DemandDescription,DefaultValue = BadDataHandlingStrategy.ThrowException)]
-        public BadDataHandlingStrategy BadDataHandlingStrategy
-        {
-            get { return _source.BadDataHandlingStrategy; }
-            set { _source.BadDataHandlingStrategy = value; }
-        }
+    protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
+        GracefulCancellationToken cancellationToken)
+    {
+        Source.StronglyTypeInput = false;
+        Source.StronglyTypeInputBatchSize = 0;
+        _listener = listener;
+        Source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
+        _currentFile = fileToLoad;
+    }
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreBadReads_DemandDescription)]
-        public bool IgnoreBadReads
-        {
-            get { return _source.IgnoreBadReads; }
-            set { _source.IgnoreBadReads = value; }
-        }
-        
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.ThrowOnEmptyFiles_DemandDescription,DefaultValue = true)]
-        public bool ThrowOnEmptyFiles
-        {
-            get { return _source.ThrowOnEmptyFiles; }
-            set { _source.ThrowOnEmptyFiles = value; }
-        }
+    protected override void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job)
+    {
+        //automatically handled by SetDataTable
+    }
 
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.AttemptToResolveNewLinesInRecords_DemandDescription, DefaultValue = false)]
-        public bool AttemptToResolveNewLinesInRecords
-        {
-            get { return _source.AttemptToResolveNewLinesInRecords; }
-            set { _source.AttemptToResolveNewLinesInRecords = value; }
-        }
-
-        [DemandsInitialization(DelimitedFlatFileDataFlowSource.MaximumErrorsToReport_DemandDescription,DefaultValue = 100)]
-        public int MaximumErrorsToReport
-        {
-            get { return _source.MaximumErrorsToReport; }
-            set { _source.MaximumErrorsToReport = value; }
-        }
-
-        [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
-        public string AddFilenameColumnNamed { get; set; }
-
-        [DemandsInitialization(Attacher.Culture_DemandDescription)]
-        public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
-
-        [DemandsInitialization(Attacher.ExplicitDateTimeFormat_DemandDescription)]
-        public override string ExplicitDateTimeFormat {get => _source.ExplicitDateTimeFormat; set => _source.ExplicitDateTimeFormat = value; }
-
-
-          protected DelimitedFlatFileAttacher(char separator)
-          {
-              SetupSource(separator);
-
-          }
-
-        private void SetupSource(char separator)
-        {
-            _source = new DelimitedFlatFileDataFlowSource();
-            _source.Separator = separator.ToString();
-            _source.StronglyTypeInput = false;
-            _source.StronglyTypeInputBatchSize = 0;
-            _source.Culture = Culture;
-        }
-
-        private IDataLoadEventListener _listener;
-        private FileInfo _currentFile;
-
-        protected override int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,GracefulCancellationToken cancellationToken)
-        {
-            _source.MaxBatchSize = maxBatchSize;
-            _source.SetDataTable(dt);
-            _source.GetChunk(_listener, cancellationToken);
-
-            //if we are adding a column to the data read which contains the file path
-            if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
-            {
-                if(!dt.Columns.Contains(AddFilenameColumnNamed))
-                    throw new FlatFileLoadException("AddFilenameColumnNamed is set to '" + AddFilenameColumnNamed + "' but the column did not exist in RAW");
-
-                foreach (DataRow row in dt.Rows)
-                    if (row[AddFilenameColumnNamed] == DBNull.Value)
-                        row[AddFilenameColumnNamed] = _currentFile.FullName;
-                
-            }
-            return dt.Rows.Count;
-        }
-
-        protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
-        {
-            _source.StronglyTypeInput = false;
-            _source.StronglyTypeInputBatchSize = 0;
-            _listener = listener;
-            _source.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
-            _currentFile = fileToLoad;
-        }
-
-        protected override void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job)
-        {
-            //automatically handled by SetDataTable
-        }
-
-        protected override void CloseFile()
-        {
-            _source.Dispose(_listener, null);
-        }
+    protected override void CloseFile()
+    {
+        Source.Dispose(_listener, null);
     }
 }

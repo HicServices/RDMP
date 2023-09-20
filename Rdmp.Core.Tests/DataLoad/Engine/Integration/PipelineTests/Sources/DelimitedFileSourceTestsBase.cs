@@ -11,66 +11,63 @@ using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 
-namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources;
+
+[Category("Unit")]
+public abstract class DelimitedFileSourceTestsBase
 {
-    [Category("Unit")]
-    public abstract class DelimitedFileSourceTestsBase
+    protected static FlatFileToLoad CreateTestFile(params string[] contents)
     {
-        protected FlatFileToLoad CreateTestFile(params string[] contents)
+        var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
+
+        if (File.Exists(filename))
+            File.Delete(filename);
+
+        File.WriteAllLines(filename, contents);
+
+        return new FlatFileToLoad(new FileInfo(filename));
+    }
+
+    protected static void AssertDivertFileIsExactly(string expectedContents)
+    {
+        var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
+
+        if (!File.Exists(filename))
+            Assert.Fail($"No Divert file was generated at expected path {filename}");
+
+        var contents = File.ReadAllText(filename);
+        Assert.AreEqual(expectedContents, contents);
+    }
+
+
+    protected static DataTable RunGetChunk(FlatFileToLoad file, BadDataHandlingStrategy strategy, bool throwOnEmpty)
+    {
+        return RunGetChunk(file, s =>
         {
-            var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
+            s.BadDataHandlingStrategy = strategy;
+            s.ThrowOnEmptyFiles = throwOnEmpty;
+        });
+    }
 
-            if (File.Exists(filename))
-                File.Delete(filename);
+    protected static DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
+    {
+        var source = new DelimitedFlatFileDataFlowSource();
+        source.PreInitialize(file, ThrowImmediatelyDataLoadEventListener.Quiet);
+        source.Separator = ",";
+        source.StronglyTypeInput = true; //makes the source interpret the file types properly
+        source.StronglyTypeInputBatchSize = 100;
+        source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
+        adjust?.Invoke(source);
 
-            File.WriteAllLines(filename, contents);
-
-            return new FlatFileToLoad(new FileInfo(filename));
+        try
+        {
+            return source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         }
-
-        protected void AssertDivertFileIsExactly(string expectedContents)
+        finally
         {
-            var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
-
-            if(!File.Exists(filename))
-                Assert.Fail("No Divert file was generated at expected path " + filename);
-
-            var contents = File.ReadAllText(filename);
-            Assert.AreEqual(expectedContents, contents);
-        }
-
-
-        protected DataTable RunGetChunk(FlatFileToLoad file,BadDataHandlingStrategy strategy, bool throwOnEmpty)
-        {
-            return RunGetChunk(file, s =>
-            {
-                s.BadDataHandlingStrategy = strategy;
-                s.ThrowOnEmptyFiles = throwOnEmpty;
-            });
-        }
-
-        protected DataTable RunGetChunk(FlatFileToLoad file, Action<DelimitedFlatFileDataFlowSource> adjust = null)
-        {
-            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
-            source.PreInitialize(file, new ThrowImmediatelyDataLoadEventListener());
-            source.Separator = ",";
-            source.StronglyTypeInput = true;//makes the source interpret the file types properly
-            source.StronglyTypeInputBatchSize = 100;
-            source.AttemptToResolveNewLinesInRecords = true; //maximise potential for conflicts
-            if (adjust != null)
-                adjust(source);
-
-            try
-            {
-                return source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
-            }
-            finally
-            {
-                source.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
-            }
-
+            source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
     }
 }

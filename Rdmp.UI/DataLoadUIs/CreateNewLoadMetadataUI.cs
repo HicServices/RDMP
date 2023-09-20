@@ -11,47 +11,47 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.DataLoadUIs
+namespace Rdmp.UI.DataLoadUIs;
+
+/// <summary>
+/// There is a M-1 relationship between Catalogues (datasets) and LoadMetadata (data load recipes).  This window is accessed by right clicking a Catalogue and choosing
+/// to configure its LoadMetadata (how data is loaded).  You can either select an existing LoadMetadata (which will probably need modifying such that it correctly loads
+/// the new table in addition to what other datasets it already loaded.  Or you can create a new LoadMetadata and create a load from scratch.
+/// 
+/// <para>Once selected you will be taken to the dataset load configuration screen (See LoadMetadataUI)</para>
+/// 
+/// </summary>
+public partial class CreateNewLoadMetadataUI : RDMPForm
 {
-    /// <summary>
-    /// There is a M-1 relationship between Catalogues (datasets) and LoadMetadata (data load recipes).  This window is accessed by right clicking a Catalogue and choosing
-    /// to configure its LoadMetadata (how data is loaded).  You can either select an existing LoadMetadata (which will probably need modifying such that it correctly loads
-    /// the new table in addition to what other datasets it already loaded.  Or you can create a new LoadMetadata and create a load from scratch.
-    /// 
-    /// <para>Once selected you will be taken to the dataset load configuration screen (See LoadMetadataUI)</para>
-    /// 
-    /// </summary>
-    public partial class CreateNewLoadMetadataUI : RDMPForm
+    private readonly Catalogue _catalogue;
+    public LoadMetadata LoadMetadataCreatedIfAny { get; set; }
+
+    public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator) : base(activator)
     {
-        private readonly Catalogue _catalogue;
-        public LoadMetadata LoadMetadataCreatedIfAny { get; set; }
+        _catalogue = catalogue;
+        InitializeComponent();
 
-        public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator):base(activator)
+        chooseLoggingTaskUI1.SetItemActivator(activator);
+        chooseLoggingTaskUI1.Catalogue = catalogue;
+    }
+
+    private void tbLoadMetadataNameToCreate_TextChanged(object sender, EventArgs e)
+    {
+        btnCreate.Enabled = !string.IsNullOrWhiteSpace(tbLoadMetadataNameToCreate.Text);
+    }
+
+    private void btnCreate_Click(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
         {
-            _catalogue = catalogue;
-            InitializeComponent();
-            
-            chooseLoggingTaskUI1.SetItemActivator(activator);
-            chooseLoggingTaskUI1.Catalogue = catalogue;
+            MessageBox.Show("You must configure a logging task first");
+            return;
         }
 
-        private void tbLoadMetadataNameToCreate_TextChanged(object sender, EventArgs e)
-        {
-            btnCreate.Enabled = !string.IsNullOrWhiteSpace(tbLoadMetadataNameToCreate.Text);
-        }
+        LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository,
+            tbLoadMetadataNameToCreate.Text);
 
-        private void btnCreate_Click(object sender, EventArgs e)
-        {
-            if(string.IsNullOrWhiteSpace(_catalogue.LoggingDataTask))
-            {
-                MessageBox.Show("You must configure a logging task first");
-                return;
-            }
-
-            LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository, tbLoadMetadataNameToCreate.Text);
-            
-            this.DialogResult = DialogResult.OK;
-            this.Close();
-        }
+        DialogResult = DialogResult.OK;
+        Close();
     }
 }

@@ -4,206 +4,204 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-#pragma warning disable 1591
 
-namespace Rdmp.Core.Icons.IconProvision
+namespace Rdmp.Core.Icons.IconProvision;
+
+/// <summary>
+/// Describes all the objects that exist in RDMP.  Serves as an index into <see cref="CatalogueIcons"/>
+/// </summary>
+public enum RDMPConcept
 {
-    /// <summary>
-    /// Describes all the objects that exist in RDMP.  Serves as an index into <see cref="CatalogueIcons"/> 
-    /// </summary>
-    public enum RDMPConcept 
-    {
-        Database,
-        SQL,
-        ReOrder,
+    Database,
+    SQL,
+    ReOrder,
 
-        DQE,
-        TimeCoverageField,
-        Clipboard,
-        
-        //catalogue database objects
-        AllAutomationServerSlotsNode,
-        AutomationServiceSlot,
-        AutomateablePipeline,
-        AutomationServiceException,
-        AllRDMPRemotesNode,
-        RemoteRDMP,
-        Favourite,
+    DQE,
+    TimeCoverageField,
+    Clipboard,
 
-        LoadMetadata,
-        CacheProgress,
-        LoadProgress,
-        LoadPeriodically,
-        Plugin,
+    //catalogue database objects
+    AllAutomationServerSlotsNode,
+    AutomationServiceSlot,
+    AutomateablePipeline,
+    AutomationServiceException,
+    AllRDMPRemotesNode,
+    RemoteRDMP,
+    Favourite,
 
-        ExternalDatabaseServer,
+    LoadMetadata,
+    CacheProgress,
+    LoadProgress,
+    LoadPeriodically,
+    Plugin,
 
-        Catalogue,
-        ProjectCatalogue,
-        CatalogueItemsNode,
-        CatalogueItem,
-        CatalogueItemIssue,
-        ExtractionInformation,
+    ExternalDatabaseServer,
 
-        TableInfo,
-        ColumnInfo,
-        ANOColumnInfo,
-        PreLoadDiscardedColumn,
+    Catalogue,
+    ProjectCatalogue,
+    CatalogueItemsNode,
+    CatalogueItem,
+    CatalogueItemIssue,
+    ExtractionInformation,
 
-        AllDataAccessCredentialsNode,
-        DataAccessCredentials,
-        
-        AllANOTablesNode,
-        ANOTable,
+    TableInfo,
+    ColumnInfo,
+    ANOColumnInfo,
+    PreLoadDiscardedColumn,
 
-        AllServersNode,
-        TableInfoServerNode,
+    AllDataAccessCredentialsNode,
+    DataAccessCredentials,
 
-        CatalogueFolder,
-        DocumentationNode,
-        CatalogueLookupsNode,
+    AllANOTablesNode,
+    ANOTable,
 
-        DashboardLayout,
-        DashboardControl,
-        
-        FilterContainer,
-        Filter,
-        ExtractionFilterParameterSet,
-        ParametersNode,
-        ExtendedProperty,
+    AllServersNode,
+    TableInfoServerNode,
 
-        AggregateTopX,
-        AggregateContinuousDateAxis,
-        AggregatesNode,
-        AggregateGraph,
+    CatalogueFolder,
+    DocumentationNode,
+    CatalogueLookupsNode,
 
-        AllOrphanAggregateConfigurationsNode,
-        AllTemplateAggregateConfigurationsNode,
-        CohortAggregate,
+    DashboardLayout,
+    DashboardControl,
 
-        JoinableCollectionNode,
-        PatientIndexTable,
+    FilterContainer,
+    Filter,
+    ExtractionFilterParameterSet,
+    ParametersNode,
+    ExtendedProperty,
 
-        SupportingSQLTable,
-        SupportingDocument,
+    AggregateTopX,
+    AggregateContinuousDateAxis,
+    AggregatesNode,
+    AggregateGraph,
 
-        //data export database objects
-        ExtractableDataSet,
-        ExtractionConfiguration,
-        Project,
-        ExtractableDataSetPackage,
-        ExternalCohortTable,
-        ExtractableCohort,
-        
-        StandardRegex,
-        
-        AllCohortsNode,
-        ProjectsNode,
-        ProjectCohortIdentificationConfigurationAssociationsNode,
-        ProjectSavedCohortsNode,
-        ExtractableDataSetsNode,
-        ExtractionDirectoryNode,
-        
-        CohortIdentificationConfiguration,
+    AllOrphanAggregateConfigurationsNode,
+    AllTemplateAggregateConfigurationsNode,
+    CohortAggregate,
 
-        AggregateDimension,
-        Lookup,
-        LookupCompositeJoinInfo,
-        JoinInfo,
+    JoinableCollectionNode,
+    PatientIndexTable,
 
-        //to release a completed project extract
-        Release,
-        EmptyProject,
-        NoIconAvailable,
-        File,
-        Help,
+    SupportingSQLTable,
+    SupportingDocument,
 
-        //Load metadata subcomponents
-        LoadDirectoryNode,
-        AllProcessTasksUsedByLoadMetadataNode,
-        AllCataloguesUsedByLoadMetadataNode,
-        LoadMetadataScheduleNode,
-        Logging,
+    //data export database objects
+    ExtractableDataSet,
+    ExtractionConfiguration,
+    Project,
+    ExtractableDataSetPackage,
+    ExternalCohortTable,
+    ExtractableCohort,
 
-        GetFilesStage,
-        LoadBubbleMounting,
-        LoadBubble,
-        LoadFinalDatabase,
+    StandardRegex,
 
-        AllExternalServersNode,
-        DecryptionPrivateKeyNode,
-        PreLoadDiscardedColumnsNode,
-        ExtractionConfigurationsNode,
+    AllCohortsNode,
+    ProjectsNode,
+    ProjectCohortIdentificationConfigurationAssociationsNode,
+    ProjectSavedCohortsNode,
+    ExtractableDataSetsNode,
+    ExtractionDirectoryNode,
 
-        PermissionWindow,
-        Pipeline,
-        PipelineComponent,
-        PipelineComponentArgument,
+    CohortIdentificationConfiguration,
+
+    AggregateDimension,
+    Lookup,
+    LookupCompositeJoinInfo,
+    JoinInfo,
+
+    //to release a completed project extract
+    Release,
+    EmptyProject,
+    NoIconAvailable,
+    File,
+    Help,
+
+    //Load metadata subcomponents
+    LoadDirectoryNode,
+    AllProcessTasksUsedByLoadMetadataNode,
+    AllCataloguesUsedByLoadMetadataNode,
+    LoadMetadataScheduleNode,
+    Logging,
+
+    GetFilesStage,
+    LoadBubbleMounting,
+    LoadBubble,
+    LoadFinalDatabase,
+
+    AllExternalServersNode,
+    DecryptionPrivateKeyNode,
+    PreLoadDiscardedColumnsNode,
+    ExtractionConfigurationsNode,
+
+    PermissionWindow,
+    Pipeline,
+    PipelineComponent,
+    PipelineComponentArgument,
 
 
-        ObjectExport,
-        ObjectImport,
+    ObjectExport,
+    ObjectImport,
 
-        AllObjectSharingNode,
-        AllObjectImportsNode,
-        AllObjectExportsNode,
-        AllConnectionStringKeywordsNode,
+    AllObjectSharingNode,
+    AllObjectImportsNode,
+    AllObjectExportsNode,
+    AllConnectionStringKeywordsNode,
 
-        ExtractableColumn,
-        ProjectCohortsNode,
-        FrozenExtractionConfigurationsNode,
-        ProjectCataloguesNode,
+    ExtractableColumn,
+    ProjectCohortsNode,
+    FrozenExtractionConfigurationsNode,
+    ProjectCataloguesNode,
 
-        AllPermissionWindowsNode,
-
-
-        Waiting,
-        WaitingForDatabase,
-        Writing,
-        Warning,
-        Diff,
-        FileMissing,
-
-        ConnectionStringKeyword,
-        AllStandardRegexesNode,
-
-        AllPipelinesNode,
-        OtherPipelinesNode,
-        StandardPipelineUseCaseNode,
-
-        AllGovernanceNode,
-        GovernancePeriod,
-        GovernanceDocument,
-
-        AllProjectCohortIdentificationConfigurationsNode,
-        AllFreeCohortIdentificationConfigurationsNode,
-        CohortAggregateContainer,
-
-        AllPluginsNode,
-        AllExpiredPluginsNode,
-        ProcessTask,
+    AllPermissionWindowsNode,
 
 
-        DQEGraphAnnotation,
-        Evaluation,
-        CumulativeExtractionResults,
-        ProjectCohortIdentificationConfigurationAssociation,
-        SelectedDataSetsForcedJoin,
-        SupplementalExtractionResults,
-        ReleaseLog,
-        LoadModuleAssembly,
-        TicketingSystemConfiguration,
-        WindowLayout,
-        SpontaneouslyInventedColumn,
-        ProcessTaskArgument,
-        CacheFetchFailure,
-        AllDashboardsNode,
-        ExtractionProgress,
-        Attacher,
-        DataProvider,
-        MutilateDataTables,
-        Commit,
-        Memento,
-        TableInfoDatabaseNode
-    }
+    Waiting,
+    WaitingForDatabase,
+    Writing,
+    Warning,
+    Diff,
+    FileMissing,
+
+    ConnectionStringKeyword,
+    AllStandardRegexesNode,
+
+    AllPipelinesNode,
+    OtherPipelinesNode,
+    StandardPipelineUseCaseNode,
+
+    AllGovernanceNode,
+    GovernancePeriod,
+    GovernanceDocument,
+
+    AllProjectCohortIdentificationConfigurationsNode,
+    AllFreeCohortIdentificationConfigurationsNode,
+    CohortAggregateContainer,
+
+    AllPluginsNode,
+    AllExpiredPluginsNode,
+    ProcessTask,
+
+
+    DQEGraphAnnotation,
+    Evaluation,
+    CumulativeExtractionResults,
+    ProjectCohortIdentificationConfigurationAssociation,
+    SelectedDataSetsForcedJoin,
+    SupplementalExtractionResults,
+    ReleaseLog,
+    LoadModuleAssembly,
+    TicketingSystemConfiguration,
+    WindowLayout,
+    SpontaneouslyInventedColumn,
+    ProcessTaskArgument,
+    CacheFetchFailure,
+    AllDashboardsNode,
+    ExtractionProgress,
+    Attacher,
+    DataProvider,
+    MutilateDataTables,
+    Commit,
+    Memento,
+    TableInfoDatabaseNode
 }

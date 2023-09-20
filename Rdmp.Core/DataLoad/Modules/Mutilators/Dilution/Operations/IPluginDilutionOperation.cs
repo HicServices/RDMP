@@ -6,14 +6,11 @@
 
 using Rdmp.Core.Curation.ANOEngineering;
 
-namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
+
+/// <summary>
+/// MEF discoverable version of IDilutionOperation
+/// </summary>
+public interface IPluginDilutionOperation : IDilutionOperation
 {
-    /// <summary>
-    /// MEF discoverable version of IDilutionOperation
-    /// </summary>
-
-
-    public interface IPluginDilutionOperation:IDilutionOperation
-    {
-    }
 }

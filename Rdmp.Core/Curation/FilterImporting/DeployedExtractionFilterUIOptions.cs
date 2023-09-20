@@ -9,47 +9,38 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.QueryBuilding;
 
-namespace Rdmp.Core.Curation.FilterImporting
+namespace Rdmp.Core.Curation.FilterImporting;
+
+/// <inheritdoc/>
+public class DeployedExtractionFilterUIOptions : FilterUIOptions
 {
-    /// <inheritdoc/>
-    public class DeployedExtractionFilterUIOptions : FilterUIOptions
+    private ISqlParameter[] _globals;
+    private ITableInfo[] _tables;
+    private IColumn[] _columns;
+
+    public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(
+        deployedExtractionFilter)
     {
-        private ISqlParameter[] _globals;
-        private ITableInfo[] _tables;
-        private IColumn[] _columns;
-
-        public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(deployedExtractionFilter)
-        {
-            var selectedDataSet = deployedExtractionFilter.GetDataset();
+        var selectedDataSet = deployedExtractionFilter.GetDataset();
 
 
-            var ds = selectedDataSet.ExtractableDataSet;
-            var c = selectedDataSet.ExtractionConfiguration;
+        var ds = selectedDataSet.ExtractableDataSet;
+        var c = selectedDataSet.ExtractionConfiguration;
 
-            _tables = ds.Catalogue.GetTableInfoList(false);
-            _globals = c.GlobalExtractionFilterParameters;
+        _tables = ds.Catalogue.GetTableInfoList(false);
+        _globals = c.GlobalExtractionFilterParameters;
 
-            List<IColumn> columns = new List<IColumn>();
+        var columns = new List<IColumn>();
 
-            columns.AddRange(c.GetAllExtractableColumnsFor(ds));
-            columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));
+        columns.AddRange(c.GetAllExtractableColumnsFor(ds));
+        columns.AddRange(c.Project.GetAllProjectCatalogueColumns(ExtractionCategory.ProjectSpecific));
 
-            _columns = columns.ToArray();
-        }
-
-        public override ITableInfo[] GetTableInfos()
-        {
-            return _tables;
-        }
-
-        public override ISqlParameter[] GetGlobalParametersInFilterScope()
-        {
-            return _globals;
-        }
-
-        public override IColumn[] GetIColumnsInFilterScope()
-        {
-            return _columns;
-        }
+        _columns = columns.ToArray();
     }
+
+    public override ITableInfo[] GetTableInfos() => _tables;
+
+    public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
+
+    public override IColumn[] GetIColumnsInFilterScope() => _columns;
 }

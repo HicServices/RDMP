@@ -6,20 +6,18 @@
 
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.Core.Providers.Nodes.UsedByNodes
+namespace Rdmp.Core.Providers.Nodes.UsedByNodes;
+
+public interface IObjectUsedByOtherObjectNode : IMasqueradeAs
 {
-    public interface IObjectUsedByOtherObjectNode:IMasqueradeAs
-    {
-        
-    }
+}
 
-    public interface IObjectUsedByOtherObjectNode<out T> : IObjectUsedByOtherObjectNode
-    {
-        T User {get;}
-    }
+public interface IObjectUsedByOtherObjectNode<out T> : IObjectUsedByOtherObjectNode
+{
+    T User { get; }
+}
 
-    public interface IObjectUsedByOtherObjectNode<T, out T2> : IObjectUsedByOtherObjectNode<T>
-    {
-        T2 ObjectBeingUsed { get; }
-    }
+public interface IObjectUsedByOtherObjectNode<out T, out T2> : IObjectUsedByOtherObjectNode<T>
+{
+    T2 ObjectBeingUsed { get; }
 }

@@ -4,62 +4,51 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using SixLabors.ImageSharp;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands;
+
+/// <summary>
+/// Command for double clicking objects.
+/// </summary>
+public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 {
+    private readonly object _o;
+
     /// <summary>
-    /// Command for double clicking objects.
+    /// Set to true to also emphasise the object being activated
     /// </summary>
-    public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
+    public bool AlsoShow { get; set; }
+
+    public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
     {
-        private readonly object _o;
+        _o = o;
 
-        /// <summary>
-        /// Set to true to also emphasise the object being activated
-        /// </summary>
-        public bool AlsoShow { get; set; }
+        //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
+        if (_o is IMasqueradeAs masquerader && !BasicActivator.CanActivate(masquerader))
+            _o = masquerader.MasqueradingAs();
 
-        public ExecuteCommandActivate(IBasicActivateItems activator, object o) : base(activator)
-        {
-            _o = o;
+        if (!BasicActivator.CanActivate(_o))
+            SetImpossible(GlobalStrings.ObjectCannotBeActivated);
 
-            var masquerader = _o as IMasqueradeAs;
+        Weight = -99.99999f;
+    }
 
-            //if we have a masquerader and we cannot activate the masquerader, maybe we can activate what it is masquerading as?
-            if (masquerader != null && !BasicActivator.CanActivate(masquerader))
-                _o = masquerader.MasqueradingAs();
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
 
-            if (!BasicActivator.CanActivate(_o))
-                SetImpossible(GlobalStrings.ObjectCannotBeActivated);
+    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;
 
-            Weight = -99.99999f;
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            if (_o == null)
-                return null;
+        BasicActivator.Activate(_o);
 
-            return iconProvider.GetImage(_o, OverlayKind.Edit);
-        }
-
-        public override string GetCommandName()
-        {
-            return OverrideCommandName ?? GlobalStrings.Activate;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            BasicActivator.Activate(_o);
-
-            if (_o is DatabaseEntity d && AlsoShow)
-                Emphasise(d);
-        }
+        if (_o is DatabaseEntity d && AlsoShow)
+            Emphasise(d);
     }
 }

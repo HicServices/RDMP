@@ -9,24 +9,20 @@ using System.Linq;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Sharing.Dependency
+namespace Rdmp.Core.Sharing.Dependency;
+
+/// <summary>
+/// Facilitiates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the local CatalogueRepository database.
+/// </summary>
+public class SharedPluginImporter
 {
-    
-    /// <summary>
-    /// Facilitiates importing plugins from a remote contributor and creating the local copies of the Plugin dlls in the local CatalogueRepository database.
-    /// </summary>
-    public class SharedPluginImporter
+    private readonly ShareManager _shareManager;
+
+    public SharedPluginImporter(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
-        private readonly ShareManager _shareManager;
-
-        public SharedPluginImporter(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
-        {
-            _shareManager = new ShareManager(repositoryLocator);
-        }
-
-        public Curation.Data.Plugin Import(Stream stream)
-        {
-            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Curation.Data.Plugin>().Single();
-        }
+        _shareManager = new ShareManager(repositoryLocator);
     }
+
+    public Curation.Data.Plugin Import(Stream stream) =>
+        _shareManager.ImportSharedObject(stream, true).OfType<Curation.Data.Plugin>().Single();
 }

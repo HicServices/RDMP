@@ -1,6 +1,0 @@
-extraction:
-  csharp:
-    index:
-      buildless: true
-      dotnet:
-        version: 6.0.x

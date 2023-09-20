@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Rdmp.Core.Curation.Data;
@@ -12,44 +11,36 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.DataExport.DataExtraction.Commands
+namespace Rdmp.Core.DataExport.DataExtraction.Commands;
+
+/// <summary>
+/// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.
+/// <see cref="SupportingSQLTable"/>)
+/// </summary>
+public class ExtractGlobalsCommand : ExtractCommand
 {
-    /// <summary>
-    /// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.
-    /// <see cref="SupportingSQLTable"/>)
-    /// </summary>
-    public class ExtractGlobalsCommand : ExtractCommand
+    private readonly IProject project;
+
+    public GlobalsBundle Globals { get; set; }
+
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+
+    public List<IExtractionResults> ExtractionResults { get; private set; }
+
+    public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project,
+        ExtractionConfiguration configuration, GlobalsBundle globals) : base(configuration)
     {
-        private readonly IProject project;
+        RepositoryLocator = repositoryLocator;
+        this.project = project;
+        Globals = globals;
 
-        public GlobalsBundle Globals { get; set; }
-
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-        
-        public List<IExtractionResults> ExtractionResults { get; private set; }
-
-        public ExtractGlobalsCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project, ExtractionConfiguration configuration, GlobalsBundle globals):base(configuration)
-        {
-            this.RepositoryLocator = repositoryLocator;
-            this.project = project;
-            this.Globals = globals;
-
-            ExtractionResults = new List<IExtractionResults>();
-        }
-
-        public override DirectoryInfo GetExtractionDirectory()
-        {
-            return new ExtractionDirectory(project.ExtractionDirectory, Configuration).GetGlobalsDirectory();
-        }
-
-        public override string DescribeExtractionImplementation()
-        {
-            return String.Join(";", Globals.Contents);
-        }
-
-        public override string ToString()
-        {
-            return ExtractionDirectory.GLOBALS_DATA_NAME;
-        }
+        ExtractionResults = new List<IExtractionResults>();
     }
+
+    public override DirectoryInfo GetExtractionDirectory() =>
+        new ExtractionDirectory(project.ExtractionDirectory, Configuration).GetGlobalsDirectory();
+
+    public override string DescribeExtractionImplementation() => string.Join(";", Globals.Contents);
+
+    public override string ToString() => ExtractionDirectory.GLOBALS_DATA_NAME;
 }

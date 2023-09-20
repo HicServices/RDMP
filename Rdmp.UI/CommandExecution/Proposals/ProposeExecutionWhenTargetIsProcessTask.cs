@@ -9,36 +9,32 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionProposal<ProcessTask>
 {
-    class ProposeExecutionWhenTargetIsProcessTask:RDMPCommandExecutionProposal<ProcessTask>
+    public ProposeExecutionWhenTargetIsProcessTask(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsProcessTask(IActivateItems itemActivator) : base(itemActivator)
+    }
+
+    public override bool CanActivate(ProcessTask target) => true;
+
+    public override void Activate(ProcessTask processTask)
+    {
+        if (processTask.IsPluginType())
+            ItemActivator.Activate<PluginProcessTaskUI, ProcessTask>(processTask);
+
+        switch (processTask.ProcessTaskType)
         {
-
-        }
-
-        public override bool CanActivate(ProcessTask target)
-        {
-            return true;
-        }
-
-        public override void Activate(ProcessTask processTask)
-        {
-
-            if (processTask.IsPluginType())
-                ItemActivator.Activate<PluginProcessTaskUI, ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.Executable)
+            case ProcessTaskType.Executable:
                 ItemActivator.Activate<ExeProcessTaskUI, ProcessTask>(processTask);
-
-            if (processTask.ProcessTaskType == ProcessTaskType.SQLFile)
+                break;
+            case ProcessTaskType.SQLFile:
                 ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
+                break;
         }
     }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

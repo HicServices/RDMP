@@ -10,50 +10,44 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionProposal<LoadStageNode>
 {
-    class ProposeExecutionWhenTargetIsLoadStageNode:RDMPCommandExecutionProposal<LoadStageNode>
+    public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsLoadStageNode(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
-        
-        public override bool CanActivate(LoadStageNode target)
-        {
-            return false;
-        }
+    }
 
-        public override void Activate(LoadStageNode target)
-        {
+    public override bool CanActivate(LoadStageNode target) => false;
+
+    public override void Activate(LoadStageNode target)
+    {
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        var sourceFileTaskCommand = cmd as FileCollectionCombineable;
             
-        }
+        if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
+            return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
+        if (sourceFileTaskCommand?.Files.Length == 1)
         {
-            var sourceProcessTaskCommand = cmd as ProcessTaskCombineable;
-            var sourceFileTaskCommand = cmd as FileCollectionCombineable;
-            
-            if (sourceProcessTaskCommand != null)
-                return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
-
-            if (sourceFileTaskCommand != null && sourceFileTaskCommand.Files.Length == 1)
+            var f = sourceFileTaskCommand.Files.Single();
+            switch (f.Extension)
             {
-
-                var f = sourceFileTaskCommand.Files.Single();
-
-                if(f.Extension == ".sql")
-                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
-
-
-                if (f.Extension == ".exe")
-                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable, targetStage.LoadMetadata, targetStage.LoadStage, f);
+                case ".sql":
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
+                case ".exe":
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
             }
-
-
-            return null;
         }
+
+        return null;
     }
 }

@@ -9,28 +9,22 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs.SubComponents;
 
-namespace Rdmp.UI.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals;
+
+internal class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<ExternalDatabaseServer>
 {
-    class ProposeExecutionWhenTargetIsExternalDatabaseServer : RDMPCommandExecutionProposal<ExternalDatabaseServer>
+    public ProposeExecutionWhenTargetIsExternalDatabaseServer(IActivateItems itemActivator)
+        : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsExternalDatabaseServer(IActivateItems itemActivator)
-            : base(itemActivator)
-        {
-        }
-
-        public override bool CanActivate(ExternalDatabaseServer target)
-        {
-            return true;
-        }
-
-        public override void Activate(ExternalDatabaseServer target)
-        {
-            ItemActivator.Activate<ExternalDatabaseServerUI, ExternalDatabaseServer>(target);
-        }
-
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalDatabaseServer target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
     }
+
+    public override bool CanActivate(ExternalDatabaseServer target) => true;
+
+    public override void Activate(ExternalDatabaseServer target)
+    {
+        ItemActivator.Activate<ExternalDatabaseServerUI, ExternalDatabaseServer>(target);
+    }
+
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalDatabaseServer target,
+        InsertOption insertOption = InsertOption.Default) => null;
 }

@@ -6,54 +6,51 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Checks;
-
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
-namespace Rdmp.UI.ChecksUI
+namespace Rdmp.UI.ChecksUI;
+
+/// <summary>
+/// Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix"/>.  Describes the fix and prompts the user for a response.  Includes
+/// support for Yes to All.
+/// </summary>
+public class MakeChangePopup : ICheckNotifier
 {
-    /// <summary>
-    /// Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix"/>.  Describes the fix and prompts the user for a response.  Includes
-    /// support for Yes to All.
-    /// </summary>
-    public class MakeChangePopup:ICheckNotifier
+    private readonly YesNoYesToAllDialog _dialog;
+
+    public MakeChangePopup(YesNoYesToAllDialog dialog)
     {
-        private readonly YesNoYesToAllDialog _dialog;
+        _dialog = dialog;
+    }
 
-        public MakeChangePopup(YesNoYesToAllDialog dialog)
-        {
-            _dialog = dialog;
-        }
+    public static bool ShowYesNoMessageBoxToApplyFix(YesNoYesToAllDialog dialog, string problem, string proposedChange)
+    {
+        var message =
+            $"The following configuration problem was detected:{Environment.NewLine}\"{problem}\"{Environment.NewLine}";
+        message += Environment.NewLine;
+        message += $" The proposed fix is to:{Environment.NewLine}\"{proposedChange}\"{Environment.NewLine}";
+        message += Environment.NewLine;
+        message += "Would you like to apply this fix?";
 
-        public static bool ShowYesNoMessageBoxToApplyFix(YesNoYesToAllDialog dialog, string problem, string proposedChange)
-        {
-            string message = "The following configuration problem was detected:" + Environment.NewLine + "\"" + problem + "\"" + Environment.NewLine;
-            message += Environment.NewLine;
-            message += " The proposed fix is to:" + Environment.NewLine + "\"" + proposedChange + "\"" + Environment.NewLine;
-            message += Environment.NewLine;
-            message += "Would you like to apply this fix?";
+        return dialog == null
+            ? MessageBox.Show(message, "Apply Fix?", MessageBoxButtons.YesNo) == DialogResult.Yes
+            : dialog.ShowDialog(message, "Apply Fix?") == DialogResult.Yes;
+    }
 
-            if (dialog == null)
-                return MessageBox.Show(message, "Apply Fix?", MessageBoxButtons.YesNo) == DialogResult.Yes;
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        //if there is a fix suggest it to the user
+        if (args.ProposedFix != null)
+            return ShowYesNoMessageBoxToApplyFix(_dialog, args.Message, args.ProposedFix);
 
-            return dialog.ShowDialog(message, "Apply Fix?") == DialogResult.Yes;
-        }
+        //else show an Exception
+        if (args.Ex != null)
+            ExceptionViewer.Show(args.Ex);
+        else if (args.Result == CheckResult.Fail)
+            WideMessageBox.Show(args.Message, "", Environment.StackTrace);
 
-        public bool OnCheckPerformed(CheckEventArgs args)
-        {
-            //if there is a fix suggest it to the user
-            if (args.ProposedFix != null)
-                return ShowYesNoMessageBoxToApplyFix(_dialog,args.Message, args.ProposedFix);
-            
-            //else show an Exception
-            if(args.Ex != null)
-                ExceptionViewer.Show(args.Ex);
-            else
-            if(args.Result == CheckResult.Fail)
-                WideMessageBox.Show(args.Message,"",environmentDotStackTrace: Environment.StackTrace);
-
-            return false;
-        }
+        return false;
     }
 }

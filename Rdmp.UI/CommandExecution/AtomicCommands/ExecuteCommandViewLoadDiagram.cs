@@ -8,37 +8,32 @@ using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
+
+internal class ExecuteCommandViewLoadDiagram : BasicUICommandExecution, IAtomicCommand
 {
-    internal class ExecuteCommandViewLoadDiagram :BasicUICommandExecution, IAtomicCommand
+    private readonly LoadMetadata _loadMetadata;
+
+    public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
-        private readonly LoadMetadata _loadMetadata;
+        _loadMetadata = loadMetadata;
 
-        public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
-        {
-            _loadMetadata = loadMetadata;
-            
-            if(!_loadMetadata.GetAllCatalogues().Any())
-                SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
+        if (!_loadMetadata.GetAllCatalogues().Any())
+            SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
+    }
 
-        }
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
 
-        public override Image<Rgba32> GetImage(IIconProvider iconProvider)
-        {
-            return Image.Load<Rgba32>(CatalogueIcons.LoadBubble);
-        }
+    public override void Execute()
+    {
+        base.Execute();
 
-        public override void Execute()
-        {
-            base.Execute();
-
-            Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
-        }
+        Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
     }
 }
