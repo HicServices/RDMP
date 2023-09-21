@@ -179,7 +179,6 @@ public enum RDMPConcept
     CohortAggregateContainer,
 
     AllPluginsNode,
-    AllExpiredPluginsNode,
     ProcessTask,
 
 
