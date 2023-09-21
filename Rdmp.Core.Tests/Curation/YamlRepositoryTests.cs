@@ -268,45 +268,6 @@ internal class YamlRepositoryTests
 
 
     [Test]
-    public void YamlRepository_LoadSavePluginClass()
-    {
-        var dir = GetUniqueDirectory();
-
-        var repo1 = new YamlRepository(dir);
-        var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Blah.zip"));
-        File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
-
-        var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
-
-        var lma1 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
-        var lma2 = UnitTests.WhenIHaveA<LoadModuleAssembly>(repo1);
-
-
-        lma1.Plugin.Name = "MyPlugin1.1.1.1.nupkg";
-        lma1.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted
-        lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
-        lma1.Plugin.SaveToDatabase();
-        lma1.SaveToDatabase();
-
-        lma2.Plugin.Name = "MyPlugin1.1.1.2.nupkg";
-        lma2.Plugin.RdmpVersion = new Version(version); //the version of Rdmp.Core targetted (same as above)
-        lma2.Plugin.PluginVersion = new Version(1, 1, 1, 2); //the version of the plugin (higher)
-        lma2.Plugin.SaveToDatabase();
-        lma2.SaveToDatabase();
-
-        var plugins = repo1.PluginManager.GetCompatiblePlugins();
-        Assert.That(plugins, Has.Length.EqualTo(1));
-        Assert.That(plugins[0], Is.EqualTo(lma2.Plugin));
-
-
-        // A fresh repo loaded from the same directory should have persisted object relationships
-        var repo2 = new YamlRepository(dir);
-        plugins = repo2.PluginManager.GetCompatiblePlugins();
-        Assert.That(plugins, Has.Length.EqualTo(1));
-        Assert.That(plugins.Single(), Is.EqualTo(lma2.Plugin));
-    }
-
-    [Test]
     public void TestYamlRepository_LoadObjects()
     {
         var dir = new DirectoryInfo(GetUniqueDirectoryName());

@@ -390,9 +390,6 @@ public partial class DatabaseTests
         DeleteAll<Pipeline>(y);
         DeleteAll<PipelineComponent>(y);
 
-        DeleteAll<LoadModuleAssembly>(y);
-        DeleteAll<Plugin>(y);
-
         DeleteAll<ReleaseLog>(y);
         DeleteAll<SupplementalExtractionResults>(y);
         DeleteAll<CumulativeExtractionResults>(y);

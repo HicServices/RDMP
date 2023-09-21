@@ -6,30 +6,25 @@
 
 using System.IO;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandExportPlugins : BasicCommandExecution
+public sealed class ExecuteCommandExportPlugins : BasicCommandExecution
 {
     private DirectoryInfo _outDir;
-    private Curation.Data.Plugin[] _plugins;
-
-    public ExecuteCommandExportPlugins(IBasicActivateItems activator) : this(activator, null)
-    {
-    }
 
     [UseWithObjectConstructor]
-    public ExecuteCommandExportPlugins(IBasicActivateItems activator, DirectoryInfo outputDirectory) : base(activator)
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator, [CanBeNull] DirectoryInfo outputDirectory=null) : base(activator)
     {
         _outDir = outputDirectory;
-        _plugins = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
-
-        if (!_plugins.Any())
+        if (!LoadModuleAssembly.assemblies.Any())
             SetImpossible("There are no compatible plugins (for the version of RDMP you are running)");
     }
 
@@ -42,11 +37,10 @@ public class ExecuteCommandExportPlugins : BasicCommandExecution
         base.Execute();
 
         _outDir ??= BasicActivator.SelectDirectory("Output directory");
-
         if (_outDir == null)
             return;
 
-        foreach (var p in _plugins)
-            p.LoadModuleAssemblies.FirstOrDefault()?.DownloadAssembly(_outDir);
+        foreach (var p in LoadModuleAssembly.assemblies)
+            p.DownloadAssembly(_outDir);
     }
 }

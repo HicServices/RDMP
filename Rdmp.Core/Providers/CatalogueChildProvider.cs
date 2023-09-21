@@ -187,9 +187,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
-    public Plugin[] AllPlugins { get; private set; }
-    public Plugin[] AllCompatiblePlugins { get; private set; }
-
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
     /// <summary>
@@ -432,9 +429,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         ReportProgress("After Governance");
 
         AllPluginsNode = new AllPluginsNode();
-        AllPlugins = GetAllObjects<Plugin>(repository);
-        AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
-
         AddChildren(AllPluginsNode);
 
         ReportProgress("After Plugins");
@@ -579,26 +573,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AllPluginsNode allPluginsNode)
     {
-        var children = new HashSet<object>();
+        var children = new HashSet<object>(LoadModuleAssembly.assemblies);
         var descendancy = new DescendancyList(allPluginsNode);
-
-        foreach (var p in AllCompatiblePlugins)
-            children.Add(p);
-
-        var expiredPluginsNode = new AllExpiredPluginsNode();
-        children.Add(expiredPluginsNode);
-        AddChildren(expiredPluginsNode, descendancy.Add(expiredPluginsNode));
-
-        AddToDictionaries(children, descendancy);
-    }
-
-    private void AddChildren(AllExpiredPluginsNode expiredPluginsNode, DescendancyList descendancy)
-    {
-        var children = new HashSet<object>();
-
-        foreach (var p in AllPlugins.Except(AllCompatiblePlugins))
-            children.Add(p);
-
         AddToDictionaries(children, descendancy);
     }
 
@@ -1781,8 +1757,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         GovernanceCoverage = otherCat.GovernanceCoverage;
         AllJoinableCohortAggregateConfigurationUse = otherCat.AllJoinableCohortAggregateConfigurationUse;
         AllPluginsNode = otherCat.AllPluginsNode;
-        AllPlugins = otherCat.AllPlugins;
-        AllCompatiblePlugins = otherCat.AllCompatiblePlugins;
         PipelineUseCases = otherCat.PipelineUseCases;
         OrphanAggregateConfigurationsNode = otherCat.OrphanAggregateConfigurationsNode;
         TemplateAggregateConfigurationsNode = otherCat.TemplateAggregateConfigurationsNode;

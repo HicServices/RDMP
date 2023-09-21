@@ -270,18 +270,6 @@ public class UnitTests
             return (T)(object)joinable.AddUser(config);
         }
 
-        if (typeof(T) == typeof(Plugin))
-            return (T)(object)new Plugin(repository, new FileInfo("bob.nupkg"), new Version(1, 1, 1),
-                new Version(1, 1, 1));
-
-        if (typeof(T) == typeof(LoadModuleAssembly))
-        {
-            var dll = Path.Combine(TestContext.CurrentContext.TestDirectory, "a.nupkg");
-            File.WriteAllBytes(dll, new byte[] { 0x11 });
-
-            return (T)(object)new LoadModuleAssembly(repository, new FileInfo(dll), WhenIHaveA<Plugin>(repository));
-        }
-
         if (typeof(T) == typeof(AggregateContinuousDateAxis))
         {
             var config = WhenIHaveA(repository, out var dateEi, out _);
