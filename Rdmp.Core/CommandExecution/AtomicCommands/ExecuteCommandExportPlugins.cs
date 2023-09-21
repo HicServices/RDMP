@@ -24,7 +24,7 @@ public sealed class ExecuteCommandExportPlugins : BasicCommandExecution
     public ExecuteCommandExportPlugins(IBasicActivateItems activator, [CanBeNull] DirectoryInfo outputDirectory=null) : base(activator)
     {
         _outDir = outputDirectory;
-        if (!LoadModuleAssembly.assemblies.Any())
+        if (!LoadModuleAssembly.Assemblies.Any())
             SetImpossible("There are no compatible plugins (for the version of RDMP you are running)");
     }
 
@@ -40,7 +40,7 @@ public sealed class ExecuteCommandExportPlugins : BasicCommandExecution
         if (_outDir == null)
             return;
 
-        foreach (var p in LoadModuleAssembly.assemblies)
+        foreach (var p in LoadModuleAssembly.Assemblies)
             p.DownloadAssembly(_outDir);
     }
 }

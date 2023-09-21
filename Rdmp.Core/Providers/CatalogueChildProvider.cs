@@ -573,7 +573,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AllPluginsNode allPluginsNode)
     {
-        var children = new HashSet<object>(LoadModuleAssembly.assemblies);
+        var children = new HashSet<object>(LoadModuleAssembly.Assemblies);
         var descendancy = new DescendancyList(allPluginsNode);
         AddToDictionaries(children, descendancy);
     }

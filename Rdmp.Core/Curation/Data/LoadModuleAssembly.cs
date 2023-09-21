@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public sealed class LoadModuleAssembly
 {
-    internal static readonly List<LoadModuleAssembly> assemblies=new();
+    internal static readonly List<LoadModuleAssembly> Assemblies=new();
     private readonly FileInfo _file;
 
     private LoadModuleAssembly(FileInfo file)
@@ -35,7 +35,7 @@ public sealed class LoadModuleAssembly
         if (!info.Exists || info.Length < 100) yield break; // Ignore missing or empty files
 
         var pluginStream = info.OpenRead();
-        assemblies.Add(new LoadModuleAssembly(info));
+        Assemblies.Add(new LoadModuleAssembly(info));
 
         var isWin = AppDomain.CurrentDomain.GetAssemblies()
             .Any(static a => a.FullName?.StartsWith("Rdmp.UI", StringComparison.Ordinal) == true);
@@ -70,5 +70,5 @@ public sealed class LoadModuleAssembly
     }
 
     /// <inheritdoc/>
-    public override string ToString() => $"LoadModuleAssembly_{_file.Name}";
+    public override string ToString() => _file.Name;
 }
