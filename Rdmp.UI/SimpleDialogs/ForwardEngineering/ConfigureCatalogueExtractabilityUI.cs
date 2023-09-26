@@ -393,7 +393,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         ColPair[] filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
         var toChangeTo = ddCategoriseMany.SelectedItem;
         ColPair[] itemsToChange = filteredObjects.Where(obj => obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo)).ToArray();
-        string columnChangeDetails = String.Format("{0}{1} columns",itemsToChange.Length == filteredObjects.Length?"All ":"",itemsToChange.Length);
+        string columnChangeDetails = String.Format("{0}{1} columns",itemsToChange.Length == filteredObjects.Length?"all ":"",itemsToChange.Length);
         if(itemsToChange.Length < 3)
         {
             columnChangeDetails = "";
