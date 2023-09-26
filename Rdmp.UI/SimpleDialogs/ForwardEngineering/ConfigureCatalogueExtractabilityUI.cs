@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery;
@@ -396,22 +397,22 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         string columnChangeDetails = String.Format("{0}{1} columns",itemsToChange.Length == filteredObjects.Length?"all ":"",itemsToChange.Length);
         if(itemsToChange.Length < 3)
         {
-            columnChangeDetails = "";
+            StringBuilder sb = new StringBuilder();
             foreach(var item in itemsToChange.Select((value, i) => new { i, value })) {
                 if (itemsToChange.Length > 1)
                 {
                     if (item.i == itemsToChange.Length - 1)
                     {
-                        columnChangeDetails += " and ";
+                        sb.Append(" and ");
                     }
                     else if(item.i >0)
                     {
-                        columnChangeDetails += ", ";
+                        sb.Append(", ");
                     }
                 }
-                columnChangeDetails += item.value.CatalogueItem.Name;
-
+                sb.Append(item.value.CatalogueItem.Name);
             }
+            columnChangeDetails = sb.ToString();
         }
         
         if (MessageBox.Show($"Set {columnChangeDetails} to '{toChangeTo}'?",
