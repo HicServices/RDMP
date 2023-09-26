@@ -390,10 +390,31 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
 
     private void ddCategoriseMany_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
+        ColPair[] filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
         var toChangeTo = ddCategoriseMany.SelectedItem;
+        ColPair[] itemsToChange = filteredObjects.Where(obj => obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo)).ToArray();
+        string columnChangeDetails = String.Format("{0}{1} columns",itemsToChange.Length == filteredObjects.Length?"All ":"",itemsToChange.Length);
+        if(itemsToChange.Length < 3)
+        {
+            columnChangeDetails = "";
+            foreach(var item in itemsToChange.Select((value, i) => new { i, value })) {
+                if (itemsToChange.Length > 1)
+                {
+                    if (item.i == itemsToChange.Length - 1)
+                    {
+                        columnChangeDetails += " and ";
+                    }
+                    else if(item.i >0)
+                    {
+                        columnChangeDetails += ", ";
+                    }
+                }
+                columnChangeDetails += item.value.CatalogueItem.Name;
 
-        if (MessageBox.Show($"Set {filteredObjects.Length} to '{toChangeTo}'?",
+            }
+        }
+        
+        if (MessageBox.Show($"Set {columnChangeDetails} to '{toChangeTo}'?",
                 "Confirm Overwrite?", MessageBoxButtons.OKCancel) == DialogResult.OK)
         {
             foreach (object o in filteredObjects)
