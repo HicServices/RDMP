@@ -38,6 +38,7 @@ jobs:
       - name: SecurityCodescan
         run: |
           dotnet tool install --global security-scan
+          mkdir -p sarif-results
           security-scan HIC.DataManagementPlatform.sln -n -x sarif-results/scs.sarif
           cat sarif-results/scs.sarif
 
