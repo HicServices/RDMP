@@ -40,7 +40,7 @@ jobs:
           dotnet tool install --global security-scan
           mkdir -p sarif-results
           security-scan HIC.DataManagementPlatform.sln -n -x sarif-results/scs.sarif
-          cat sarif-results/scs.sarif
+          sed -i 's/"language": ""/"language": "en-US"/' sarif-results/scs.sarif
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
