@@ -39,3 +39,15 @@ jobs:
         uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{ matrix.language }}"
+          upload: False
+          output: sarif-results
+      
+      - name: SecurityCodescan
+        run: |
+        dotnet tool install --global security-scan
+        security-scan -n -x sarif-results/scs.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: sarif-results
