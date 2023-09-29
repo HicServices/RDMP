@@ -324,7 +324,7 @@ INSERT [dbo].[z_DataLoadTaskStatus] ([ID], [status], [description]) VALUES (1, N
 GO
 INSERT [dbo].[z_DataLoadTaskStatus] ([ID], [status], [description]) VALUES (2, N'Ready', NULL)
 GO
-INSERT [dbo].[z_DataLoadTaskStatus] ([ID], [status], [description]) VALUES (3, N'Commited', NULL)
+INSERT [dbo].[z_DataLoadTaskStatus] ([ID], [status], [description]) VALUES (3, N'Committed', NULL)
 GO
 SET IDENTITY_INSERT [dbo].[z_DataLoadTaskStatus] OFF
 GO
