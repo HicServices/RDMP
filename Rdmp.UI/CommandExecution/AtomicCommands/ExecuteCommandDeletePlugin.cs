@@ -31,10 +31,10 @@ internal class ExecuteCommandDeletePlugin : BasicUICommandExecution, IAtomicComm
         base.Execute();
         if (YesNo(String.Format("Are you sure you want to delete {0}?", _assembly.GetFriendlyName()), "Delete Plugin"))
         {
-            var cmd = new ExecuteCommandRemovePlugin(_assembly);
+            _assembly.Delete();
             try
             {
-                cmd.Execute();
+                _assembly.Delete();
                 Show("Changes will take effect on restart");
             }
             catch (Exception ex)
