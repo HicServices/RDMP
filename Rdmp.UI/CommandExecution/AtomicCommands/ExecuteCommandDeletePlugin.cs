@@ -15,9 +15,9 @@ using SixLabors.ImageSharp.PixelFormats;
 using System;
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandDeletePlugin : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandDeletePlugin : BasicUICommandExecution
 {
-    private LoadModuleAssembly _assembly;
+    private readonly LoadModuleAssembly _assembly;
     public ExecuteCommandDeletePlugin(IActivateItems activator, LoadModuleAssembly assembly) : base(activator)
     {
         _assembly = assembly;
