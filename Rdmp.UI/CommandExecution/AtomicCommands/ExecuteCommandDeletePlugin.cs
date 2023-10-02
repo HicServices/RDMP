@@ -37,7 +37,7 @@ public class ExecuteCommandDeletePlugin : BasicUICommandExecution
                 _assembly.Delete();
                 Show("Changes will take effect on restart");
             }
-            catch (Exception ex)
+            catch (SystemException ex)
             {
                 Show($"Could not delete the {_assembly.GetFriendlyName()} plugin.", ex);
             }
