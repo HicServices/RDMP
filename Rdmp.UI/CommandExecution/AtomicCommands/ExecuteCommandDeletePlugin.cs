@@ -29,7 +29,7 @@ public class ExecuteCommandDeletePlugin : BasicUICommandExecution, IAtomicComman
     public override void Execute()
     {
         base.Execute();
-        if (YesNo(String.Format("Are you sure you want to delete {0}?", _assembly.GetFriendlyName()), "Delete Plugin"))
+        if (YesNo($"Are you sure you want to delete {_assembly.GetFriendlyName()}?", "Delete Plugin"))
         {
             _assembly.Delete();
             try
@@ -39,7 +39,7 @@ public class ExecuteCommandDeletePlugin : BasicUICommandExecution, IAtomicComman
             }
             catch (Exception ex)
             {
-                Show(String.Format("Could not delete the {0} plugin.", _assembly.GetFriendlyName()), ex);
+                Show($"Could not delete the {_assembly.GetFriendlyName()} plugin.", ex);
             }
         }
     }
