@@ -70,5 +70,10 @@ public sealed class LoadModuleAssembly
     }
 
     /// <inheritdoc/>
+    public override string ToString() => $"LoadModuleAssembly_{_file.Name}";
+
+    public string GetFriendlyName() => _file.Name;
+
+    public void Delete() => _file.Delete();
     public override string ToString() => _file.Name;
 }
