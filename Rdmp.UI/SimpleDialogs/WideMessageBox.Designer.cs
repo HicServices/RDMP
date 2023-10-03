@@ -112,6 +112,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.btnViewSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnViewSourceCode.Enabled = false;
+            this.btnViewSourceCode.Visible = false;
             this.btnViewSourceCode.Image = ((System.Drawing.Image)(resources.GetObject("btnViewSourceCode.Image")));
             this.btnViewSourceCode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.btnViewSourceCode.Location = new System.Drawing.Point(692, 0);
