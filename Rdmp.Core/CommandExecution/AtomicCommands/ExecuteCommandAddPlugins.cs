@@ -28,19 +28,10 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
     public ExecuteCommandAddPlugins(IBasicActivateItems itemActivator, FileCollectionCombineable fileCombineable) :
         base(itemActivator)
     {
-        if (fileCombineable.Files.Any(f => f.Extension != PackPluginRunner.PluginPackageSuffix))
-        {
-            SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
-            return;
-        }
-
-        var existing = BasicActivator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
-
         _files = fileCombineable.Files;
+        if (!_files.Any(static f => f.Extension != PackPluginRunner.PluginPackageSuffix)) return;
 
-        var collision = existing.FirstOrDefault(p => _files.Any(f => f.Name.Equals(p.Name)));
-        if (collision != null)
-            SetImpossible($"There is already a plugin called '{collision}'");
+        SetImpossible($"Plugins must end {PackPluginRunner.PluginPackageSuffix}");
     }
 
     public override void Execute()
@@ -65,11 +56,6 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
         }
 
         Show("Changes will take effect on restart");
-        var p = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>()
-            .FirstOrDefault();
-
-        if (p != null)
-            Publish(p);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

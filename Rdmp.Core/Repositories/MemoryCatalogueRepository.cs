@@ -42,7 +42,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public IEncryptionManager EncryptionManager { get; private set; }
 
     public IFilterManager FilterManager => this;
-    public IPluginManager PluginManager { get; private set; }
 
     public IJoinManager JoinManager { get; private set; }
 
@@ -73,7 +72,6 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
     {
         JoinManager = new JoinManager(this);
-        PluginManager = new PluginManager(this);
         CommentStore = new CommentStoreWithKeywords();
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
 

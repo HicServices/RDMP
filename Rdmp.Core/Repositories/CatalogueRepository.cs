@@ -55,8 +55,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
     public IEncryptionManager EncryptionManager { get; private set; }
 
-    public IPluginManager PluginManager { get; private set; }
-
     /// <summary>
     /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files.
     /// </summary>
@@ -79,7 +77,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         CohortContainerManager = new CohortContainerManager(this);
         FilterManager = new AggregateFilterManager(this);
         EncryptionManager = new PasswordEncryptionKeyLocation(this);
-        PluginManager = new PluginManager(this);
 
         CommentStore = new CommentStoreWithKeywords();
 
@@ -96,7 +93,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(StandardRegex), (rep, r) => new StandardRegex((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AnyTableSqlParameter),
             (rep, r) => new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(Plugin), (rep, r) => new Plugin((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(ANOTable), (rep, r) => new ANOTable((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(AggregateConfiguration),
             (rep, r) => new AggregateConfiguration((ICatalogueRepository)rep, r));
@@ -126,7 +122,6 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(LoadMetadata), (rep, r) => new LoadMetadata((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(ExtractionFilterParameterSetValue),
             (rep, r) => new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
-        Constructors.Add(typeof(LoadModuleAssembly), (rep, r) => new LoadModuleAssembly((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(LoadProgress), (rep, r) => new LoadProgress((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(Favourite), (rep, r) => new Favourite((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(Pipeline), (rep, r) => new Pipeline((ICatalogueRepository)rep, r));

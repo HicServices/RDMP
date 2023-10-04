@@ -116,9 +116,9 @@ public class GatherAndShareTests : DatabaseTests
         //change a property and save it
         anoTableAfter.Suffix = "CAMMELS!";
         CatalogueRepository.SaveToDatabase(anoTableAfter);
-        //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server refernced which is immaginary btw >< thats why we have the above line instead
+        //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server referenced which is imaginary btw >< that's why we have the above line instead
 
-        //reimport (this time it should be an update, we import the share definitions and it overrdies our database copy (sharing is UPSERT)
+        //reimport (this time it should be an update, we import the share definitions and it overrides our database copy (sharing is UPSERT)
         var anoTableAfter2 = new ANOTable(shareManager, defChild);
 
         Assert.AreEqual(anoTableAfter.ID, anoTableAfter2.ID);
@@ -129,29 +129,6 @@ public class GatherAndShareTests : DatabaseTests
 
         foreach (var o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
             o.DeleteInDatabase();
-    }
-
-    [Test]
-    public void GatherAndShare_Plugin_Test()
-    {
-        var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
-            $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
-        File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
-
-        var plugin = new Plugin(CatalogueRepository, new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
-        var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
-
-        Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
-
-        var g = new Gatherer(RepositoryLocator);
-        Assert.IsTrue(g.CanGatherDependencies(plugin));
-
-        var gObj = Gatherer.GatherDependencies(plugin);
-
-        //root should be the server
-        Assert.AreEqual(gObj.Object, plugin);
-        Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma1)));
     }
 
 

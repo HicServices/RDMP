@@ -312,9 +312,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
                     };
                     _configuration.SaveToDatabase();
                 }
-                foreach (ExtractableDataSet ds in _selectedDatasets)
+                foreach (var ds in _selectedDatasets)
                     _configuration.AddDatasetToConfiguration(ds);
-            
+
 
                 ICommandExecution cmdAssociateCicWithProject = null;
 
