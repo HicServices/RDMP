@@ -68,6 +68,7 @@ public partial class WideMessageBox : Form
 
         //can only write to clipboard in STA threads
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
+        btnViewStackTrace.Visible = true;
 
         //try to resize form to fit bounds
         Size = GetPreferredSizeOfTextControl(richTextBox1);
@@ -148,11 +149,13 @@ public partial class WideMessageBox : Form
             ViewSourceCodeDialog.SourceCodeIsAvailableFor($"{title}.cs"))
         {
             btnViewSourceCode.Enabled = true;
+            btnViewSourceCode.Visible = true;
             btnViewSourceCode.Tag = $"{title}.cs";
         }
         else
         {
             btnViewSourceCode.Enabled = false;
+            btnViewSourceCode.Visible = false;
         }
     }
 
