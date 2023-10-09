@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.CommandExecution;
+﻿using NPOI.SS.Formula.Functions;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -9,6 +10,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -34,7 +36,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     public DateTime afterDate { get; set; }
 
     [DemandsInitialization("The column that the befor and after date options use to filter holdout data")]
-    public String timestampColumn { get; set; }
+    public String dateColumn { get; set; }
 
     // We may want to automatically reimport into RDMP, but this is quite complicated. It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
     //Currently only support writting holdback data to a CSV
@@ -44,13 +46,50 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
 
     public IExtractDatasetCommand Request { get; private set; }
 
+
+    private DataTable FilterableData { get; set; } //Rows that are valid as holdout data based on the user filters
+
+    private bool validateIfRowShouldBeFiltered(DataRow row)
+    {
+        if (!string.IsNullOrEmpty(dateColumn))
+        {
+            //had a data column
+            DateTime dateCell = DateTime.Parse(row.Field<string>(dateColumn), CultureInfo.InvariantCulture);
+            if (afterDate != DateTime.MinValue)
+            {
+                //has date
+                if (dateCell <= afterDate)
+                {
+                    return false;
+                }
+            }
+            if (beforeDate != DateTime.MinValue)
+            {
+                //has date
+                if (dateCell >= beforeDate)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private DataTable filterRowsBasedOnHoldoutDates(DataTable toProcess)
+    {
+        DataTable filteredTable = toProcess.AsEnumerable().Where(row => validateIfRowShouldBeFiltered(row)).CopyToDataTable();
+        return filteredTable;
+    }
+
     private int getHoldoutRowCount(DataTable toProcess, IDataLoadEventListener listener)
     {
+
         int rowCount = holdoutCount;
-        if (rowCount >= toProcess.Rows.Count && !isPercentage)
+        if (rowCount >= FilterableData.Rows.Count && !isPercentage)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "More holdout data was requested than there is available data. All data will be held back"));
-            rowCount = toProcess.Rows.Count;
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "More holdout data was requested than there is available data. All valid data will be held back"));
+            rowCount = FilterableData.Rows.Count;
         }
         if (isPercentage)
         {
@@ -59,7 +98,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Holdout percentage was >100%. Will use 100%"));
                 holdoutCount = 100;
             }
-            rowCount = toProcess.Rows.Count / 100 * holdoutCount;
+            rowCount = FilterableData.Rows.Count / 100 * holdoutCount;
         }
         return rowCount;
     }
@@ -88,9 +127,10 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
             sb.AppendLine(string.Join(",", fields));
         }
-        String filename = Request.ToString();
+        string filename = Request.ToString();
         holdoutStorageLocation.TrimEnd('/');
         holdoutStorageLocation.TrimEnd('\\');
+        //todo this isn't the correct filename
         File.WriteAllText($"{holdoutStorageLocation}/holdout_{filename}.csv", sb.ToString());
     }
 
@@ -100,16 +140,24 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         {
             return toProcess;
         }
+        FilterableData = toProcess;
+        if (dateColumn is not null && (afterDate != DateTime.MinValue || beforeDate != DateTime.MinValue))
+        {
+            FilterableData = filterRowsBasedOnHoldoutDates(toProcess);
+        }
+
         DataTable holdoutData = toProcess.Clone();
         int holdoutCount = getHoldoutRowCount(toProcess, listener);
         var rand = new Random();
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
-        var rowsToMove = toProcess.AsEnumerable().OrderBy(r => rand.Next()).Take(holdoutCount);
+
+        var rowsToMove = FilterableData.AsEnumerable().OrderBy(r => rand.Next()).Take(holdoutCount);
         foreach (DataRow row in rowsToMove)
         {
             holdoutData.ImportRow(row);
-            row.Delete();
+            toProcess.Rows.Remove(row);
+            //row.Delete();
         }
         holdoutData.EndLoadData();
         toProcess.EndLoadData();
