@@ -1,4 +1,6 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -22,8 +24,11 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     [DemandsInitialization("Use a % as holdout value. If unselected, the actual number will be used.")]
     public bool isPercentage { get; set; }
 
-    [DemandsInitialization("Write the holdout data to disk.")]
+    [DemandsInitialization("Write the holdout data to disk. Leave blank if you don't want it exported somewhere")]
     public string holdoutStorageLocation { get; set; }
+
+    [DemandsInitialization("Re-Import the holdout data into RDMP as a new Catalogue.")]
+    public bool reImportToRDMP { get; set; }
 
 
     public IExtractDatasetCommand Request { get; private set; }
@@ -73,7 +78,12 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             sb.AppendLine(string.Join(",", fields));
         }
         String filename = Request.ToString();
+        //todo strip out extra stashes in sotrage location
         File.WriteAllText($"{holdoutStorageLocation}/holdout_{filename}.csv", sb.ToString());
+    }
+
+    private void StoreHoldoutDataAsNewCatalogue(DataTable dt)
+    {
     }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -99,13 +109,13 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         //maybe reimport it as a catalog?
         if (holdoutStorageLocation is not null && holdoutStorageLocation.Length > 0)
         {
-            //write this data somewhere
             writeDataTabletoCSV(holdoutData);
         }
-        {
 
+        if (reImportToRDMP)
+        {
+            StoreHoldoutDataAsNewCatalogue(holdoutData);
         }
-        Catalogue x = new Catalogue();
         return toProcess;
     }
 
