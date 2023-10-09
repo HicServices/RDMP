@@ -1,4 +1,5 @@
 ﻿using NPOI.SS.Formula.Functions;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
@@ -47,8 +48,6 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     public IExtractDatasetCommand Request { get; private set; }
 
 
-    private DataTable FilterableData { get; set; } //Rows that are valid as holdout data based on the user filters
-
     private bool validateIfRowShouldBeFiltered(DataRow row)
     {
         if (!string.IsNullOrEmpty(dateColumn))
@@ -76,20 +75,25 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         return true;
     }
 
-    private DataTable filterRowsBasedOnHoldoutDates(DataTable toProcess)
+    private void filterRowsBasedOnHoldoutDates(DataTable toProcess)
     {
-        DataTable filteredTable = toProcess.AsEnumerable().Where(row => validateIfRowShouldBeFiltered(row)).CopyToDataTable();
-        return filteredTable;
+        toProcess.Columns.Add("_isValidHoldout", typeof(bool));
+        foreach(DataRow row in toProcess.Rows)
+        {
+            row["_isValidHoldout"] = validateIfRowShouldBeFiltered(row);
+        }
+     //   DataTable filteredTable = toProcess.AsEnumerable().Where(row => validateIfRowShouldBeFiltered(row)).CopyToDataTable();
+      //  return filteredTable;
     }
 
     private int getHoldoutRowCount(DataTable toProcess, IDataLoadEventListener listener)
     {
 
         int rowCount = holdoutCount;
-        if (rowCount >= FilterableData.Rows.Count && !isPercentage)
+        if (rowCount >= toProcess.Rows.Count && !isPercentage)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "More holdout data was requested than there is available data. All valid data will be held back"));
-            rowCount = FilterableData.Rows.Count;
+            rowCount = toProcess.Rows.Count;
         }
         if (isPercentage)
         {
@@ -98,7 +102,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Holdout percentage was >100%. Will use 100%"));
                 holdoutCount = 100;
             }
-            rowCount = FilterableData.Rows.Count / 100 * holdoutCount;
+            rowCount = toProcess.Rows.Count / 100 * holdoutCount;
         }
         return rowCount;
     }
@@ -140,10 +144,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         {
             return toProcess;
         }
-        FilterableData = toProcess;
         if (dateColumn is not null && (afterDate != DateTime.MinValue || beforeDate != DateTime.MinValue))
         {
-            FilterableData = filterRowsBasedOnHoldoutDates(toProcess);
+            filterRowsBasedOnHoldoutDates(toProcess);
         }
 
         DataTable holdoutData = toProcess.Clone();
@@ -152,12 +155,11 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
 
-        var rowsToMove = FilterableData.AsEnumerable().OrderBy(r => rand.Next()).Take(holdoutCount);
+        var rowsToMove = toProcess.AsEnumerable().Where(row => row["_isValidHoldout"] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
         foreach (DataRow row in rowsToMove)
         {
             holdoutData.ImportRow(row);
             toProcess.Rows.Remove(row);
-            //row.Delete();
         }
         holdoutData.EndLoadData();
         toProcess.EndLoadData();
@@ -165,6 +167,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         {
             writeDataTabletoCSV(holdoutData);
         }
+        toProcess.Columns.Remove("_isValidHoldout");
         return toProcess;
     }
 
