@@ -469,7 +469,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, true) { Weight = -99.7f };
             yield return new ExecuteCommandViewData(_activator, cic, ViewType.All, null, false) { Weight = -99.6f };
-
+            yield return new ExecuteCommandCreateHoldoutCohort(_activator,cic) { Weight = -99.5f };
             yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
             { Weight = -50.5f };
 
