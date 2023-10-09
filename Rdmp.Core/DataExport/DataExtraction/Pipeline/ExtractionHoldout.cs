@@ -27,9 +27,20 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     [DemandsInitialization("Write the holdout data to disk. Leave blank if you don't want it exported somewhere")]
     public string holdoutStorageLocation { get; set; }
 
-    [DemandsInitialization("Re-Import the holdout data into RDMP as a new Catalogue.")]
-    public bool reImportToRDMP { get; set; }
+    [DemandsInitialization("Set this value to only select data for holdout that is before this date")]
+    public DateTime beforeDate { get; set; }
 
+    [DemandsInitialization("Set this value to only select data for holdout that is after this date")]
+    public DateTime afterDate { get; set; }
+
+    [DemandsInitialization("The column that the befor and after date options use to filter holdout data")]
+    public String timestampColumn { get; set; }
+
+    // We may want to automatically reimport into RDMP, but this is quite complicated. It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
+    //Currently only support writting holdback data to a CSV
+
+    //TODO - force date range
+    //TODO - force specific holdback criteria
 
     public IExtractDatasetCommand Request { get; private set; }
 
@@ -78,12 +89,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             sb.AppendLine(string.Join(",", fields));
         }
         String filename = Request.ToString();
-        //todo strip out extra stashes in sotrage location
+        holdoutStorageLocation.TrimEnd('/');
+        holdoutStorageLocation.TrimEnd('\\');
         File.WriteAllText($"{holdoutStorageLocation}/holdout_{filename}.csv", sb.ToString());
-    }
-
-    private void StoreHoldoutDataAsNewCatalogue(DataTable dt)
-    {
     }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -105,16 +113,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         }
         holdoutData.EndLoadData();
         toProcess.EndLoadData();
-        //todo need to sdo something with the holdoutCount
-        //maybe reimport it as a catalog?
         if (holdoutStorageLocation is not null && holdoutStorageLocation.Length > 0)
         {
             writeDataTabletoCSV(holdoutData);
-        }
-
-        if (reImportToRDMP)
-        {
-            StoreHoldoutDataAsNewCatalogue(holdoutData);
         }
         return toProcess;
     }
