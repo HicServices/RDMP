@@ -86,8 +86,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         //and document the request
 
         // if we have everything we need to create the cohort right here
-        if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
-            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription, ect);
+        //if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
+            //return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription, ect);
         // otherwise we are going to have to ask the user for it
 
         //Get a new request for the source they are trying to populate

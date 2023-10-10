@@ -847,7 +847,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() =>
                 GetCohortHoldoutCreationRequest(externalCohortTable, project, cohortInitialDescription));
 
-        var ui = new CohortCreationRequestUI(this, externalCohortTable, project);
+        var ui = new Rdmp.UI.CohortUI.CohortHoldout.CohortHoldoutCreationRequestUI(this, externalCohortTable, project);
 
         if (!string.IsNullOrWhiteSpace(cohortInitialDescription))
             ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
