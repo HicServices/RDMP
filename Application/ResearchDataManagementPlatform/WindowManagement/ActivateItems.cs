@@ -840,6 +840,22 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return configureAndExecuteDialog;
     }
 
+    public override CohortCreationRequest GetCohortHoldoutCreationRequest(ExternalCohortTable externalCohortTable, IProject project, string cohortInitialDescription)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+            return _mainDockPanel.Invoke(() =>
+                GetCohortHoldoutCreationRequest(externalCohortTable, project, cohortInitialDescription));
+
+        var ui = new CohortCreationRequestUI(this, externalCohortTable, project);
+
+        if (!string.IsNullOrWhiteSpace(cohortInitialDescription))
+            ui.CohortDescription = $"{cohortInitialDescription} ({Environment.UserName} - {DateTime.Now})";
+
+        return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
+    }
+
+
     public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
         IProject project, string cohortInitialDescription)
     {

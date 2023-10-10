@@ -5,14 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.Core.CommandExecution.AtomicCommands;
+namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
-public class ExecuteCommandCreateHoldoutCohort : BasicCommandExecution
+//Based off of ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration
+
+public class ExecuteCommandCreateHoldoutCohort : CohortCreationCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
     //private readonly bool _desiredFreezeState;
@@ -31,7 +34,8 @@ public class ExecuteCommandCreateHoldoutCohort : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-
+        var request = GetCohortHoldoutCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(_cic));
+        //here
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

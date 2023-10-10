@@ -163,6 +163,11 @@ public interface IBasicActivateItems
 
     #region Select X Modal methods
 
+
+    //todo description
+    CohortCreationRequest GetCohortHoldoutCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
+        string cohortInitialDescription);
+
     /// <summary>
     /// Prompts the user to enter a description for a cohort they are trying to create including whether it is intended to replace an old version of another cohort.
     /// </summary>

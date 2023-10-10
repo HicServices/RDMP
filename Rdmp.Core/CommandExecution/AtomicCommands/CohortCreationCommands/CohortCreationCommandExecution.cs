@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
@@ -66,6 +67,35 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
 
         if (!dataExport.CohortSources.Any())
             SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
+    }
+
+    protected ICohortCreationRequest GetCohortHoldoutCreationRequest(string auditLogDescription)
+    {
+        //user wants to create a new cohort
+        var ect = ExternalCohortTable;
+
+        //do we know where it's going to end up?
+        if (ect == null)
+            if (!SelectOne(
+                    GetChooseCohortDialogArgs(),
+                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    out ect)) //not yet, get user to pick one
+                return null; //user didn't select one and cancelled dialog
+
+
+        //and document the request
+
+        // if we have everything we need to create the cohort right here
+        if (!string.IsNullOrWhiteSpace(_explicitCohortName) && Project?.ProjectNumber != null)
+            return GenerateCohortCreationRequestFromNameAndProject(_explicitCohortName, auditLogDescription, ect);
+        // otherwise we are going to have to ask the user for it
+
+        //Get a new request for the source they are trying to populate
+        var req = BasicActivator.GetCohortHoldoutCreationRequest(ect, Project, auditLogDescription);
+
+        Project ??= req?.Project;
+
+        return req;
     }
 
     protected ICohortCreationRequest GetCohortCreationRequest(string auditLogDescription)
