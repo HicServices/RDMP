@@ -636,8 +636,8 @@ public abstract class BasicActivateItems : IBasicActivateItems
         new PipelineRunner(useCase, pipeline);
 
     /// <inheritdoc/>
-    public virtual CohortCreationRequest GetCohortHoldoutCreationRequest(ExternalCohortTable externalCohortTable,
-        IProject project, string cohortInitialDescription)
+    public virtual CohortHoldoutCreationRequest GetCohortHoldoutCreationRequest(ExternalCohortTable externalCohortTable,
+        IProject project, CohortIdentificationConfiguration cic)
     {
         int version;
         var projectNumber = project?.ProjectNumber;
@@ -658,10 +658,10 @@ public abstract class BasicActivateItems : IBasicActivateItems
         else
             throw new Exception("User chose not to enter a version number and none was provided");
 
-
-        return new CohortCreationRequest(project,
-            new CohortDefinition(null, name, version, projectNumber.Value, externalCohortTable),
-            RepositoryLocator.DataExportRepository, cohortInitialDescription);
+        return new CohortHoldoutCreationRequest(cic,"", 1, false, "");
+        //return new CohortCreationRequest(project,
+        //    new CohortDefinition(null, name, version, projectNumber.Value, externalCohortTable),
+        //    RepositoryLocator.DataExportRepository, cic.Description);
     }
 
     /// <inheritdoc/>

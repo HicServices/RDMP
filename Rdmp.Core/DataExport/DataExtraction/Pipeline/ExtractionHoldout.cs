@@ -43,6 +43,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     [DemandsInitialization("Allows for the filtering of what data can be used as holdout data. The filter only currently supports filtering on string columns, not dates. Filter References https://learn.microsoft.com/en-us/dotnet/api/system.data.dataview.rowfilter?view=net-7.0 and https://learn.microsoft.com/en-us/dotnet/api/system.data.datacolumn.expression?view=net-7.0")]
     public string whereCondition { get; set; }
 
+    //todo want to be able to override or append to the output file
+
+
     // We may want to automatically reimport into RDMP, but this is quite complicated. It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
     //Currently only support writting holdback data to a CSV
 

@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
@@ -69,7 +70,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             SetImpossible("There are no cohort sources configured, you must create one in the Saved Cohort tabs");
     }
 
-    protected ICohortCreationRequest GetCohortHoldoutCreationRequest(string auditLogDescription)
+    protected CohortHoldoutCreationRequest GetCohortHoldoutCreationRequest(CohortIdentificationConfiguration cic)
     {
         //user wants to create a new cohort
         var ect = ExternalCohortTable;
@@ -91,9 +92,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         // otherwise we are going to have to ask the user for it
 
         //Get a new request for the source they are trying to populate
-        var req = BasicActivator.GetCohortHoldoutCreationRequest(ect, Project, auditLogDescription);
+        var req = BasicActivator.GetCohortHoldoutCreationRequest(ect, Project, cic);
 
-        Project ??= req?.Project;
+        //Project ??= req?.Project;
 
         return req;
     }
