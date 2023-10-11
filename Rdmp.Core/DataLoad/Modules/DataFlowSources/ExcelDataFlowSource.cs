@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -198,7 +199,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <param name="cell">The cell whose value you want to retrieve</param>
     /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>
     /// <returns></returns>
-    private object GetCellValue(ICell cell, CellType treatAs = CellType.Unknown)
+    private object GetCellValue([CanBeNull] ICell cell, CellType treatAs = CellType.Unknown)
     {
         if (cell == null)
             return null;
@@ -218,8 +219,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 //some numerics are actually dates/times
                 if (cell.CellStyle.DataFormat == 0) return cell.NumericCellValue;
+
                 var format = cell.CellStyle.GetDataFormatString();
-                var f = new NumberFormat(format);
 
                 if (IsDateWithoutTime(format))
                     return cell.DateCellValue.ToString("yyyy-MM-dd");
@@ -230,19 +231,17 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 if (IsTimeWithoutDate(format))
                     return cell.DateCellValue.ToString("HH:mm:ss");
 
-                return IsDateFormat(format)
-                    ? f.Format(cell.DateCellValue, CultureInfo.InvariantCulture)
-                    : f.Format(cell.NumericCellValue, CultureInfo.InvariantCulture);
+                return new NumberFormat(format).Format(
+                    IsDateFormat(format) ? cell.DateCellValue : cell.NumericCellValue, CultureInfo.InvariantCulture);
 
             case CellType.String:
 
-                var v = cell.StringCellValue;
-
                 //if it is blank or 'null' then leave it null
-                if (string.IsNullOrWhiteSpace(v) || v.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase))
-                    return null;
+                return string.IsNullOrWhiteSpace(cell.StringCellValue) ||
+                       cell.StringCellValue.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase)
+                    ? null
+                    : cell.StringCellValue;
 
-                return cell.StringCellValue;
             case CellType.Formula:
                 return GetCellValue(cell, cell.CachedFormulaResultType);
             case CellType.Blank:
@@ -252,7 +251,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             case CellType.Error:
                 return null;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(treatAs));
         }
     }
 
