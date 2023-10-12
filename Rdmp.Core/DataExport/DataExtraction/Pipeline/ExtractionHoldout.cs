@@ -45,6 +45,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
 
     //todo want to be able to override or append to the output file
 
+    [DemandsInitialization("Overrides any data in the holdout file with new data")]
+    public bool overrideFile { get; set; }
+
 
     // We may want to automatically reimport into RDMP, but this is quite complicated. It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
     //Currently only support writting holdback data to a CSV
@@ -148,7 +151,20 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         string filename = Request.ToString();
         holdoutStorageLocation.TrimEnd('/');
         holdoutStorageLocation.TrimEnd('\\');
-        File.WriteAllText($"{holdoutStorageLocation}/holdout_{filename}.csv", sb.ToString());
+        string path = $"{holdoutStorageLocation}/holdout_{filename}.csv";
+        if (File.Exists(path))
+        {
+            if(!overrideFile)
+            {
+                using(StreamWriter sw = File.AppendText(path))
+                {
+                    sw.WriteLine(sb.ToString());
+                }
+                return;
+            }
+        }
+
+        File.WriteAllText(path, sb.ToString());
     }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
