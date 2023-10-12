@@ -83,7 +83,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         return section switch
         {
             AggregateEditorSection.Extractable => false,
-            AggregateEditorSection.TOPX => false,
+            AggregateEditorSection.TOPX => true,
             AggregateEditorSection.PIVOT => false,
             AggregateEditorSection.AXIS => false,
             _ => throw new ArgumentOutOfRangeException(nameof(section))
