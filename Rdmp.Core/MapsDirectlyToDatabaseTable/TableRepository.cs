@@ -174,7 +174,7 @@ public abstract class TableRepository : ITableRepository
             //if it is a complex type but IConvertible e.g. CatalogueFolder
             if (!prop.PropertyType.IsValueType && propValue is IConvertible c && c.GetTypeCode() == TypeCode.String)
                 propValue = c.ToString(CultureInfo.CurrentCulture);
-
+            //need to add a dimention first
             SetParameterToValue(p, propValue);
         }
 
