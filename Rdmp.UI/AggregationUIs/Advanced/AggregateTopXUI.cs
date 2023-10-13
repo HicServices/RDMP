@@ -6,7 +6,6 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
@@ -29,7 +28,6 @@ public partial class AggregateTopXUI : RDMPUserControl
     private AggregateConfiguration _aggregate;
 
     private const string CountColumn = "Count Column";
-    private const string RandomOrder = "Random";
 
     public AggregateTopXUI()
     {
@@ -65,7 +63,6 @@ public partial class AggregateTopXUI : RDMPUserControl
         bLoading = true;
         ddOrderByDimension.Items.Clear();
         ddOrderByDimension.Items.Add(CountColumn);
-        ddOrderByDimension.Items.Add(RandomOrder);
         ddOrderByDimension.Items.AddRange(_aggregate.AggregateDimensions);
 
         if (_topX != null)
@@ -146,12 +143,6 @@ public partial class AggregateTopXUI : RDMPUserControl
 
         if (ddOrderByDimension.SelectedItem is AggregateDimension dimension)
             _topX.OrderByDimensionIfAny_ID = dimension.ID;
-        //ddOrderByDimension.SelectedItem.GetType().Name is "String" and 
-        else if (ddOrderByDimension.SelectedItem.ToString() is RandomOrder)
-        {
-            //_topX.OrderByDimensionIfAny_ID = x.ID; //means use random
-            //todo need to add random to the query
-        }
         else
             _topX.OrderByDimensionIfAny_ID = null; //means use count column
 

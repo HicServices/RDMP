@@ -840,22 +840,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return configureAndExecuteDialog;
     }
 
-    public override CohortHoldoutCreationRequest GetCohortHoldoutCreationRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
-    {
-        // if on wrong Thread
-        if (_mainDockPanel?.InvokeRequired ?? false)
-            return _mainDockPanel.Invoke(() =>
-                GetCohortHoldoutCreationRequest(externalCohortTable, project, cic));
-
-        var ui = new Rdmp.UI.CohortUI.CohortHoldout.CohortHoldoutCreationRequestUI(this, externalCohortTable, project,cic);
-
-        if (!string.IsNullOrWhiteSpace(cic.Description))
-            ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
-        //todo the ui portion does not work currently 
-        return ui.ShowDialog() == DialogResult.OK ? ui.Result : ui.Result;
-    }
-
-
     public override CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable,
         IProject project, string cohortInitialDescription)
     {
