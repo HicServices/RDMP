@@ -58,7 +58,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     public IExtractDatasetCommand Request { get; private set; }
 
 
-    private bool validateIfRowShouldBeFiltered(DataRow row, DataTable toProcess)
+    private bool ValidateIfRowShouldBeFiltered(DataRow row, DataTable toProcess)
     {
         if (!string.IsNullOrWhiteSpace(dateColumn))
         {
@@ -100,16 +100,16 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         return true;
     }
 
-    private void filterRowsBasedOnHoldoutDates(DataTable toProcess)
+    private void FilterRowsBasedOnHoldoutDates(DataTable toProcess)
     {
         toProcess.Columns.Add(holdoutColumnName, typeof(bool));
         foreach (DataRow row in toProcess.Rows)
         {
-            row[holdoutColumnName] = validateIfRowShouldBeFiltered(row, toProcess);
+            row[holdoutColumnName] = ValidateIfRowShouldBeFiltered(row, toProcess);
         }
     }
 
-    private int getHoldoutRowCount(DataTable toProcess, IDataLoadEventListener listener)
+    private int GetHoldoutRowCount(DataTable toProcess, IDataLoadEventListener listener)
     {
 
         float rowCount = (float)holdoutCount;
@@ -138,7 +138,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             return;
     }
 
-    private void writeDataTabletoCSV(DataTable dt)
+    private void WriteDataTabletoCSV(DataTable dt)
     {
         StringBuilder sb = new();
         string filename = Request.ToString();
@@ -181,12 +181,12 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         if (dateColumn is not null && (afterDate != DateTime.MinValue || beforeDate != DateTime.MinValue))
         {
             //we only want to check for valid rows if dates are set, otherwise all rows are valid
-            filterRowsBasedOnHoldoutDates(toProcess);
+            FilterRowsBasedOnHoldoutDates(toProcess);
             toProcessDTModified = true;
         }
 
         DataTable holdoutData = toProcess.Clone();
-        int foundHoldoutCount = getHoldoutRowCount(toProcess, listener);
+        int foundHoldoutCount = GetHoldoutRowCount(toProcess, listener);
         var rand = new Random();
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
@@ -211,7 +211,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             {
                 holdoutData.Columns.Remove(holdoutColumnName);
             }
-            writeDataTabletoCSV(holdoutData);
+            WriteDataTabletoCSV(holdoutData);
         }
         if (toProcessDTModified)
         {
