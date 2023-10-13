@@ -43,14 +43,16 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     [DemandsInitialization("Allows for the filtering of what data can be used as holdout data. The filter only currently supports filtering on string columns, not dates. Filter References https://learn.microsoft.com/en-us/dotnet/api/system.data.dataview.rowfilter?view=net-7.0 and https://learn.microsoft.com/en-us/dotnet/api/system.data.datacolumn.expression?view=net-7.0")]
     public string whereCondition { get; set; }
 
-    //todo want to be able to override or append to the output file
-
     [DemandsInitialization("Overrides any data in the holdout file with new data")]
     public bool overrideFile { get; set; }
 
 
-    // We may want to automatically reimport into RDMP, but this is quite complicated. It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
+    // We may want to automatically reimport into RDMP, but this is quite complicated.
+    // It may be worth having users reimport the catalogue themself until it is proven that this is worth building.
     //Currently only support writting holdback data to a CSV
+
+
+    private string holdoutColumnName = "_isValidHoldout";
 
 
     public IExtractDatasetCommand Request { get; private set; }
@@ -61,7 +63,16 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         if (!string.IsNullOrWhiteSpace(dateColumn))
         {
             //had a data column
-            DateTime dateCell = DateTime.Parse(row.Field<string>(dateColumn), CultureInfo.InvariantCulture);
+            DateTime dateCell;
+            try
+            {
+                dateCell = row.Field<DateTime>(dateColumn);
+            }
+            catch (Exception)
+            {
+                dateCell = DateTime.Parse(row.Field<string>(dateColumn), CultureInfo.InvariantCulture);
+            }
+
             if (afterDate != DateTime.MinValue)
             {
                 //has date
@@ -96,17 +107,17 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
 
     private void filterRowsBasedOnHoldoutDates(DataTable toProcess)
     {
-        toProcess.Columns.Add("_isValidHoldout", typeof(bool));
-        foreach(DataRow row in toProcess.Rows)
+        toProcess.Columns.Add(holdoutColumnName, typeof(bool));
+        foreach (DataRow row in toProcess.Rows)
         {
-            row["_isValidHoldout"] = validateIfRowShouldBeFiltered(row,toProcess);
+            row[holdoutColumnName] = validateIfRowShouldBeFiltered(row, toProcess);
         }
     }
 
     private int getHoldoutRowCount(DataTable toProcess, IDataLoadEventListener listener)
     {
 
-        int rowCount = holdoutCount;
+        float rowCount = (float)holdoutCount;
         if (rowCount >= toProcess.Rows.Count && !isPercentage)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "More holdout data was requested than there is available data. All valid data will be held back"));
@@ -119,29 +130,28 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Holdout percentage was >100%. Will use 100%"));
                 holdoutCount = 100;
             }
-            rowCount = toProcess.Rows.Count / 100 * holdoutCount;
+            rowCount = (float)toProcess.Rows.Count / 100 * holdoutCount;
         }
-        return rowCount;
+        return (int)Math.Ceiling(rowCount);
     }
 
     public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
     {
         Request = request as IExtractDatasetCommand;
 
-        // We only care about dataset extraction requests
         if (Request == null)
             return;
-        //tod need to do a bunch of error handling
-
     }
 
     private void writeDataTabletoCSV(DataTable dt)
     {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new();
 
-        IEnumerable<string> columnNames = dt.Columns.Cast<DataColumn>().
-                                          Select(column => column.ColumnName);
-        sb.AppendLine(string.Join(",", columnNames));
+        IEnumerable<string> columnNames = dt.Columns.Cast<DataColumn>().Select(column => column.ColumnName);
+        if (overrideFile)
+        {
+            sb.AppendLine(string.Join(",", columnNames));
+        }
 
         foreach (DataRow row in dt.Rows)
         {
@@ -173,9 +183,11 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         {
             return toProcess;
         }
+        bool toProcessDTModified = false;
         if (dateColumn is not null && (afterDate != DateTime.MinValue || beforeDate != DateTime.MinValue))
         {
             filterRowsBasedOnHoldoutDates(toProcess);
+            toProcessDTModified = true;
         }
 
         DataTable holdoutData = toProcess.Clone();
@@ -184,7 +196,11 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
 
-        var rowsToMove = toProcess.AsEnumerable().Where(row => row["_isValidHoldout"] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
+        var rowsToMove = toProcess.AsEnumerable().Where(row => row[holdoutColumnName] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
+        if(rowsToMove.Count() <1) {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No valid holdout rows were found. Please check your settings."));
+
+        }
         foreach (DataRow row in rowsToMove)
         {
             holdoutData.ImportRow(row);
@@ -194,16 +210,30 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         toProcess.EndLoadData();
         if (holdoutStorageLocation is not null && holdoutStorageLocation.Length > 0)
         {
-            holdoutData.Columns.Remove("_isValidHoldout");
+            holdoutData.Columns.Remove(holdoutColumnName);
             writeDataTabletoCSV(holdoutData);
         }
-        toProcess.Columns.Remove("_isValidHoldout");
+        if (toProcessDTModified)
+        {
+            toProcess.Columns.Remove(holdoutColumnName);
+        }
         return toProcess;
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        //todo
+        if(Request is null)
+        {
+            return;
+        }
+        if (string.IsNullOrWhiteSpace(holdoutStorageLocation))
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"No holdout file location set.", CheckResult.Fail));
+        }
+        if (holdoutCount is  0)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"No data holdout count set. This will result in no holdout data being generated.", CheckResult.Warning));
+        }
     }
     public void Abort(IDataLoadEventListener listener)
     {
