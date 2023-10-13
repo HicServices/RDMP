@@ -26,12 +26,6 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
 internal class ExtractionHoldoutTests: TestsRequiringAnExtractionConfiguration
 {
-    private SimpleFileExtractor _extractor;
-    private DirectoryInfo _inDir;
-    private DirectoryInfo _outDir;
-    private DirectoryInfo _inDirSub1;
-    private DirectoryInfo _inDirSub2;
-
     private ExtractionHoldout _holdout;
     private DirectoryInfo _holdoutDir;
     private DataTable _toProcess;
