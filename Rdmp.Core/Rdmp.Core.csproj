@@ -319,9 +319,9 @@
     <DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Curation\KeywordHelp.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Curation\KeywordHelp.txt">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ReusableLibraryCode\" />

@@ -834,7 +834,7 @@ RDMP also supports creating the audit logging database in other [DBMS] types (e.
 ### System Logs
 
 System logs can be enabled for RDMP.  These are low level logs designed to be read by a software developer or IT specialist.  To enable
-this feature, locate the `NLog.template.config` file in your RDMP install directory.  Rename the file `NLog.config` (i.e. remove the word template).
+this feature, download [NLog.config](https://raw.githubusercontent.com/HicServices/RDMP/main/Tools/rdmp/NLog.config) to your RDMP install.
 This template generates file logs to a `./logs/` sub-directory.  You can adjust it to log anywhere including to databases/central server etc
 by [following the NLog targets guide](https://nlog-project.org/config/).  **Logs may contain identifiable or sensitive information so should
 be secured appropriately if enabled**. 
