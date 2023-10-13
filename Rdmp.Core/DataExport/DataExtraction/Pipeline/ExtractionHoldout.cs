@@ -52,7 +52,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     //Currently only support writting holdback data to a CSV
 
 
-    private string holdoutColumnName = "_isValidHoldout";
+    private readonly string holdoutColumnName = "_isValidHoldout";
 
 
     public IExtractDatasetCommand Request { get; private set; }
@@ -73,21 +73,15 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
                 dateCell = DateTime.Parse(row.Field<string>(dateColumn), CultureInfo.InvariantCulture);
             }
 
-            if (afterDate != DateTime.MinValue)
+            if (afterDate != DateTime.MinValue && dateCell <= afterDate)
             {
                 //has date
-                if (dateCell <= afterDate)
-                {
-                    return false;
-                }
+                return false;
             }
-            if (beforeDate != DateTime.MinValue)
+            if (beforeDate != DateTime.MinValue && dateCell >= beforeDate)
             {
                 //has date
-                if (dateCell >= beforeDate)
-                {
-                    return false;
-                }
+                return false;
             }
         }
         if (!string.IsNullOrWhiteSpace(whereCondition))
@@ -97,6 +91,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             DataView dv = new DataView(dt);
             dv.RowFilter = whereCondition;
             DataTable dt2 = dv.ToTable();
+            dv.Dispose();
             if (dt2.Rows.Count < 1)
             {
                 return false;
@@ -161,17 +156,16 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         }
         holdoutStorageLocation.TrimEnd('/');
         holdoutStorageLocation.TrimEnd('\\');
-        
-        if (File.Exists(path))
+
+        if (File.Exists(path) && !overrideFile)
         {
-            if (!overrideFile)
+
+            using (StreamWriter sw = File.AppendText(path))
             {
-                using (StreamWriter sw = File.AppendText(path))
-                {
-                    sw.WriteLine(sb.ToString());
-                }
-                return;
+                sw.WriteLine(sb.ToString());
             }
+            return;
+
         }
 
         File.WriteAllText(path, sb.ToString());
@@ -192,12 +186,12 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         }
 
         DataTable holdoutData = toProcess.Clone();
-        int holdoutCount = getHoldoutRowCount(toProcess, listener);
+        int foundHoldoutCount = getHoldoutRowCount(toProcess, listener);
         var rand = new Random();
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
 
-        var rowsToMove = toProcess.AsEnumerable().Where(row => !toProcessDTModified || row[holdoutColumnName] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
+        var rowsToMove = toProcess.AsEnumerable().Where(row => !toProcessDTModified || row[holdoutColumnName] is true).OrderBy(r => rand.Next()).Take(foundHoldoutCount);
         if (rowsToMove.Count() < 1)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No valid holdout rows were found. Please check your settings."));
