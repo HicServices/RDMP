@@ -20,6 +20,11 @@ using System.Text;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 
+/// <summary>
+/// <para>
+/// Component for extracting a subset of the extraction data into a holdoput dataset
+/// </para>
+/// </summary>
 public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>
 {
     [DemandsInitialization("The % of the data you want to be kelp as holdout data")]
