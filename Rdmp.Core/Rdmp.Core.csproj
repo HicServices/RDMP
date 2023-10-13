@@ -295,6 +295,7 @@
     <PackageReference Include="CsvHelper" Version="30.0.1" />
     <PackageReference Include="Equ" Version="2.3.0" />
     <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
+    <PackageReference Include="FluentFTP" Version="48.0.1" />
     <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="HIC.FAnsiSql" Version="3.1.1" />
     <PackageReference Include="LibArchive.Net" Version="0.1.4" />
@@ -306,7 +307,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.22.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="NLog" Version="5.2.4" />
-    <PackageReference Include="NPOI" Version="2.6.0" />
+    <PackageReference Include="NPOI" Version="2.6.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.2" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.0.0" />
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
