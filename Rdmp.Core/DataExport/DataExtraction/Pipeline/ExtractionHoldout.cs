@@ -58,7 +58,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     public IExtractDatasetCommand Request { get; private set; }
 
 
-    private bool validateIfRowShouldBeFiltered(DataRow row,DataTable toProcess)
+    private bool validateIfRowShouldBeFiltered(DataRow row, DataTable toProcess)
     {
         if (!string.IsNullOrWhiteSpace(dateColumn))
         {
@@ -146,9 +146,10 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
     private void writeDataTabletoCSV(DataTable dt)
     {
         StringBuilder sb = new();
-
+        string filename = Request.ToString();
+        string path = $"{holdoutStorageLocation}/holdout_{filename}.csv";
         IEnumerable<string> columnNames = dt.Columns.Cast<DataColumn>().Select(column => column.ColumnName);
-        if (overrideFile)
+        if (overrideFile || !File.Exists(path))
         {
             sb.AppendLine(string.Join(",", columnNames));
         }
@@ -158,15 +159,14 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
             IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
             sb.AppendLine(string.Join(",", fields));
         }
-        string filename = Request.ToString();
         holdoutStorageLocation.TrimEnd('/');
         holdoutStorageLocation.TrimEnd('\\');
-        string path = $"{holdoutStorageLocation}/holdout_{filename}.csv";
+        
         if (File.Exists(path))
         {
-            if(!overrideFile)
+            if (!overrideFile)
             {
-                using(StreamWriter sw = File.AppendText(path))
+                using (StreamWriter sw = File.AppendText(path))
                 {
                     sw.WriteLine(sb.ToString());
                 }
@@ -186,6 +186,7 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         bool toProcessDTModified = false;
         if (dateColumn is not null && (afterDate != DateTime.MinValue || beforeDate != DateTime.MinValue))
         {
+            //we only want to check for valid rows if dates are set, otherwise all rows are valid
             filterRowsBasedOnHoldoutDates(toProcess);
             toProcessDTModified = true;
         }
@@ -196,8 +197,9 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         holdoutData.BeginLoadData();
         toProcess.BeginLoadData();
 
-        var rowsToMove = toProcess.AsEnumerable().Where(row => row[holdoutColumnName] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
-        if(rowsToMove.Count() <1) {
+        var rowsToMove = toProcess.AsEnumerable().Where(row => !toProcessDTModified || row[holdoutColumnName] is true).OrderBy(r => rand.Next()).Take(holdoutCount);
+        if (rowsToMove.Count() < 1)
+        {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No valid holdout rows were found. Please check your settings."));
 
         }
@@ -208,31 +210,33 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         }
         holdoutData.EndLoadData();
         toProcess.EndLoadData();
+
         if (holdoutStorageLocation is not null && holdoutStorageLocation.Length > 0)
         {
-            holdoutData.Columns.Remove(holdoutColumnName);
+            if (toProcessDTModified)
+            {
+                holdoutData.Columns.Remove(holdoutColumnName);
+            }
             writeDataTabletoCSV(holdoutData);
         }
         if (toProcessDTModified)
         {
             toProcess.Columns.Remove(holdoutColumnName);
+
         }
+
         return toProcess;
     }
 
     public void Check(ICheckNotifier notifier)
     {
-        if(Request is null)
-        {
-            return;
-        }
         if (string.IsNullOrWhiteSpace(holdoutStorageLocation))
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"No holdout file location set.", CheckResult.Fail));
         }
-        if (holdoutCount is  0)
+        if (holdoutCount is 0)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"No data holdout count set. This will result in no holdout data being generated.", CheckResult.Warning));
+            notifier.OnCheckPerformed(new CheckEventArgs($"No data holdout count set.", CheckResult.Fail));
         }
     }
     public void Abort(IDataLoadEventListener listener)
