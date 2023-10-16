@@ -108,8 +108,8 @@ jobs:
 
       - name: Package
         run: |
-          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
       - name: BundleSource
         shell: bash
@@ -130,11 +130,11 @@ jobs:
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe | cmd)
 
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.1
@@ -178,6 +178,7 @@ jobs:
           rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
 
       - name: Build Nuget packages
+        if: contains(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           for i in Rdmp.Core/Rdmp.Core.csproj Rdmp.UI/Rdmp.UI.csproj Tests.Common/Tests.Common.csproj
