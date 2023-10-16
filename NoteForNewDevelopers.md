@@ -40,7 +40,7 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 
 ** Performance **
 - [Database Change Tracking (A Performance Enhancement)](./Documentation/CodeTutorials/ChangeTracking.md)
-- [Reducing database calls with 'injection'](./Reusable/MapsDirectlyToDatabaseTable/Injection/README.md)
+- [Reducing database calls with 'injection'](./Rdmp.Core/MapsDirectlyToDatabaseTable/Injection/Injection.md)
 
 **Deep Dives**
 - [How untyped CSV data is parsed by RDMP](./Documentation/CodeTutorials/CSVHandling.md)

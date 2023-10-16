@@ -891,7 +891,7 @@ var catalogues = repository.GetAllObjects<Catalogue>();
 var catalogueItems = repository.GetAllObjects<CatalogueItem>();
 ```
 
-If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Reusable/MapsDirectlyToDatabaseTable/Injection/README.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
+If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Rdmp.Core/MapsDirectlyToDatabaseTable/Injection/Injection.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
 
 
 
