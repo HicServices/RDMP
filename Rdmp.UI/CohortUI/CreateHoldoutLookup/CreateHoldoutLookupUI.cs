@@ -87,7 +87,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
     {
         string name;
         name = tbName.Text;
-        //Result = new CohortHoldoutCreationRequest(_cic, tbName.Text, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "");
+        Result = new CohortHoldoutLookupRequest(_cic, tbName.Text, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "");
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         //Result.Check(notifier);

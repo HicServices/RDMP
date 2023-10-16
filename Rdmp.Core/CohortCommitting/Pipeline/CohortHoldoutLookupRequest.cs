@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -18,9 +19,25 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// </summary>
 public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummarised, ICohortHoldoutLookupRequest
 {
-    //cic, "empty", 1,false,project,""
-    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string descriptionForAuditLog) { }
-    public string GetSummary(bool includeName, bool includeId)
+    public CohortIdentificationConfiguration CIC { get; set; }
+    public int Count { get; set; }
+    public bool IsPercent { get; set; }
+
+    public string DescriptionForAuditLog { get; set; }
+
+    public string Name { get; set; }
+    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string descriptionForAuditLog)
+    {
+        CIC = cic;
+        Name = name;
+        Count = count;
+        IsPercent = isPercent;
+        DescriptionForAuditLog = descriptionForAuditLog;
+
+        //AddInitializationObject(Project);
+        AddInitializationObject(this);
+    }
+        public string GetSummary(bool includeName, bool includeId)
     {
         throw new NotImplementedException();
     }

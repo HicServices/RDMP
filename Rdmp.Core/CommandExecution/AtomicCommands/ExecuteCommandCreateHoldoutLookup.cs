@@ -35,20 +35,34 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
-    //IBasicActivateItems _activator;
-    //private DiscoveredServer _server;
+    IBasicActivateItems _activator;
+    private DiscoveredServer _server;
     private DbCommand _cmd;
-    //private DataTable _dataTable;
+    private DataTable _dataTable;
 
 
     public ExecuteCommandCreateHoldoutLookup(IBasicActivateItems activator,
         CohortIdentificationConfiguration cic, AggregateConfiguration ec) : base(activator)
     {
         _cic = cic;
-        //_activator = activator;
+        _activator = activator;
     }
 
     public override string GetCommandName() => "Create Holdout";
+
+    /// <summary>
+    /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
+    /// </summary>
+    /// <returns></returns>
+    private static DialogArgs GetChooseCohortDialogArgs() =>
+        new()
+        {
+            WindowTitle = "Choose where to save cohort",
+            TaskDescription =
+                "Select the Cohort Database in which to store the identifiers.  If you have multiple methods of anonymising cohorts or manage different types of identifiers (e.g. CHI lists, ECHI lists and/or BarcodeIDs) then you must pick the Cohort Database that matches your cohort identifier type/anonymisation protocol.",
+            EntryLabel = "Select Cohort Database",
+            AllowAutoSelect = true
+        };
 
     private DataTable LoadDataTable(DiscoveredServer server, string sql)
     {
@@ -89,36 +103,43 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(null,null,_cic);
-        //var x = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
-        //    string sql = x.GetSql();
-        //    _server = DataAccessPortal
-        //           .ExpectServer(x.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
-        //    _server.TestConnection();
-        //    _dataTable = LoadDataTable(_server, sql);
-        //    StringBuilder sb = new StringBuilder();
+        ExternalCohortTable ect = null;
 
-        //    IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
-        //                                      Select(column => column.ColumnName);
-        //    sb.AppendLine(string.Join(",", columnNames));
+        SelectOne(GetChooseCohortDialogArgs(),
+                    BasicActivator.RepositoryLocator.DataExportRepository,
+                    out ect);
+        CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect,null,_cic);
+        if (holdoutRequest != null)
+        {
+            var x = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
+            string sql = x.GetSql();
+            _server = DataAccessPortal
+                   .ExpectServer(x.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing,false);
+            _server.TestConnection();
+            _dataTable = LoadDataTable(_server, sql);
+            StringBuilder sb = new StringBuilder();
 
-        //    foreach (DataRow row in _dataTable.Rows)
-        //    {
-        //        IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-        //        sb.AppendLine(string.Join(",", fields));
-        //    }
+            IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
+                                              Select(column => column.ColumnName);
+            sb.AppendLine(string.Join(",", columnNames));
 
-        //    File.WriteAllText("test.csv", sb.ToString());
-        //    FileInfo fi = new FileInfo("test.csv");
-        //    FileInfo[] fil =
-        //    {
-        //    fi
-        //};
-        //    FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
+            foreach (DataRow row in _dataTable.Rows)
+            {
+                IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
+                sb.AppendLine(string.Join(",", fields));
+            }
 
-        //    var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fcc);
-        //    z.Execute();
-        
+            File.WriteAllText("test.csv", sb.ToString());
+            FileInfo fi = new FileInfo("test.csv");
+            FileInfo[] fil =
+            {
+                fi
+            };
+            FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
+
+            var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fcc);
+            z.Execute();
+        }
 
 
         //todo
