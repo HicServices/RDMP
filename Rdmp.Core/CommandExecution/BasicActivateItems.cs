@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
@@ -662,6 +663,31 @@ public abstract class BasicActivateItems : IBasicActivateItems
         return new CohortCreationRequest(project,
             new CohortDefinition(null, name, version, projectNumber.Value, externalCohortTable),
             RepositoryLocator.DataExportRepository, cohortInitialDescription);
+    }
+
+    /// <inheritdoc/>
+    public virtual CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
+    {
+        int version;
+        var projectNumber = project?.ProjectNumber;
+
+        if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
+            throw new Exception("User chose not to enter a name for the cohort and none was provided");
+
+
+        if (projectNumber == null)
+            if (SelectValueType("enter project number", typeof(int), 0, out var chosen))
+                projectNumber = (int)chosen;
+            else
+                throw new Exception("User chose not to enter a Project number and none was provided");
+
+
+        if (SelectValueType("enter version number for cohort", typeof(int), 0, out var chosenVersion))
+            version = (int)chosenVersion;
+        else
+            throw new Exception("User chose not to enter a version number and none was provided");
+
+        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"");
     }
 
     /// <inheritdoc/>
