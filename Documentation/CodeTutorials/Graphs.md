@@ -41,7 +41,7 @@ This will take you to the 'Edit' page where you can specify which dimensions to 
 The RDMP graphing engine supports Bar and Plot graphs.  Not all [DBMS] implement all graph types.  The following
 table shows what is implemented:
 
-|  Graph Type  | [Sql Server](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MicrosoftSQL/README.md) | [MySql](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.MySql/README.md) | [Postgres](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.PostgreSql/README.md) | [Oracle](https://github.com/HicServices/FAnsiSql/blob/main/Implementations/FAnsi.Implementations.Oracle/README.md) |
+|  Graph Type  | [Sql Server](https://github.com/HicServices/FAnsiSql/blob/main/FAnsiSql/Implementations/MicrosoftSQL/README.md) | [MySql](https://github.com/HicServices/FAnsiSql/blob/main/FAnsiSql/Implementations/MySql/README.md) | [Postgres](https://github.com/HicServices/FAnsiSql/blob/main/FAnsiSql/Implementations/PostgreSql/README.md) | [Oracle](https://github.com/HicServices/FAnsiSql/blob/main/FAnsiSql/Implementations/Oracle/README.md) |
 |----|---|----|---|---|
 | [Bar 1 Dimension](#bar-1-dimension) | yes | yes | yes | yes  |
 | [Bar 2 Dimensions](#bar-2-dimensions) | yes | yes | no | yes  |
