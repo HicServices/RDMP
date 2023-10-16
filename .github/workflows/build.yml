@@ -109,8 +109,6 @@ jobs:
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
-          del PublishWinForms\rdmp.ui.xml
-          rd /s/q PublishWinForms/runtimes
           dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
       - name: BundleSource
