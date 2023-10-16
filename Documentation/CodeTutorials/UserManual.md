@@ -120,7 +120,7 @@ There are a couple of other database types which can be created as and when you 
 
 |Database|Role|
 |---|---|
-| [Query Caching](./../../Rdmp.Core/CohortCreation/Readme.md)| Improves the performance of complex cohort identification configurations and anonymisation.  Also allows cross server and plugin Cohort Builder elements (e.g. to [REST APIs](./FAQ.md#apis))|
+| [Query Caching](./../../Rdmp.Core/CohortCreation/CohortCreation.md)| Improves the performance of complex cohort identification configurations and anonymisation.  Also allows cross server and plugin Cohort Builder elements (e.g. to [REST APIs](./FAQ.md#apis))|
 |Anonymisation|Provides a way of performing identifier dropping / substitution on data load for when you want an entirely anonymous data repository|
 |[Plugin Databases](./FAQ.md#plugins)| RDMP supports plugins which can in some cases have their own database(s)|
 
@@ -585,7 +585,7 @@ New [CohortIdentificationConfigurations] are created with 3 containers:
   - Inclusion Criteria
   - Exclusion Criteria
 
-The first container is an [EXCEPT] while the other two are [UNION].  For more information on how these work see the [Cohort Builder FAQ](./FAQ.md#cohort-builder-overview) or [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
+The first container is an [EXCEPT] while the other two are [UNION].  For more information on how these work see the [Cohort Builder FAQ](./FAQ.md#cohort-builder-overview) or [Cohort Creation](../../Rdmp.Core/CohortCreation/CohortCreation.md).
 
 ## Commit Cohort
 

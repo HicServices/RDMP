@@ -119,7 +119,7 @@ _Applying a TOP to PIVOT graphs limits the number of series in the PIVOT_
 
 One of the core strengths of the RDMP graphing system is the ability to run graphs on Filters, Cohorts and/or [ExtractionConfiguration] datasets.  This lets you rapidly confirm that the cohort you are building does not have data holes or missing trends.
 
-To graph a cohort right click it and go to Graph.  Make sure you have set up a [cohort caching database](../../Rdmp.Core/CohortCreation/Readme.md).
+To graph a cohort right click it and go to Graph.  Make sure you have set up a [cohort caching database](../../Rdmp.Core/CohortCreation/CohortCreation.md).
 
 ![Right clicking a cohort set in a CohortIdentificationConfiguration and graphing it](Images/Graphs/GraphCohort.png)
 
