@@ -472,6 +472,8 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
             { Weight = -50.5f };
+            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic, ac)
+            { Weight = -50.5f };
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
