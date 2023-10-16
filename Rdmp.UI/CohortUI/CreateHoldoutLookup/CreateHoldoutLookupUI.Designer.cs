@@ -35,25 +35,31 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
         /// </summary>
         private void InitializeComponent()
         {
-            gbNewCohort = new System.Windows.Forms.GroupBox();
-            label7 = new System.Windows.Forms.Label();
-            tbName = new System.Windows.Forms.TextBox();
-            gbChooseCohortType = new System.Windows.Forms.GroupBox();
-            label1 = new System.Windows.Forms.Label();
-            comboBox1 = new System.Windows.Forms.ComboBox();
-            numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            groupBox3 = new System.Windows.Forms.GroupBox();
-            label9 = new System.Windows.Forms.Label();
-            tbDescription = new System.Windows.Forms.TextBox();
-            btnClearProject = new System.Windows.Forms.Button();
-            btnOk = new System.Windows.Forms.Button();
+            gbNewCohort = new GroupBox();
+            label7 = new Label();
+            tbName = new TextBox();
+            gbChooseCohortType = new GroupBox();
+            label4 = new Label();
+            textBox4 = new TextBox();
+            label3 = new Label();
+            textBox3 = new TextBox();
+            label2 = new Label();
+            textBox2 = new TextBox();
+            label1 = new Label();
+            comboBox1 = new ComboBox();
+            numericUpDown1 = new NumericUpDown();
+            groupBox3 = new GroupBox();
+            label9 = new Label();
+            tbDescription = new TextBox();
+            btnClearProject = new Button();
+            btnOk = new Button();
             ragSmiley1 = new RAGSmiley();
-            gbDescription = new System.Windows.Forms.GroupBox();
+            gbDescription = new GroupBox();
             taskDescriptionLabel1 = new SimpleDialogs.TaskDescriptionLabel();
-            panel1 = new System.Windows.Forms.Panel();
-            panel2 = new System.Windows.Forms.Panel();
-            groupBox1 = new System.Windows.Forms.GroupBox();
-            scintilla1 = new ScintillaNET.Scintilla();
+            panel1 = new Panel();
+            panel2 = new Panel();
+            groupBox1 = new GroupBox();
+            textBox1 = new TextBox();
             gbNewCohort.SuspendLayout();
             gbChooseCohortType.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
@@ -66,13 +72,13 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             // gbNewCohort
             // 
-            gbNewCohort.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            gbNewCohort.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             gbNewCohort.Controls.Add(label7);
             gbNewCohort.Controls.Add(tbName);
             gbNewCohort.Location = new System.Drawing.Point(13, 24);
-            gbNewCohort.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbNewCohort.Margin = new Padding(4, 3, 4, 3);
             gbNewCohort.Name = "gbNewCohort";
-            gbNewCohort.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbNewCohort.Padding = new Padding(4, 3, 4, 3);
             gbNewCohort.Size = new System.Drawing.Size(1005, 54);
             gbNewCohort.TabIndex = 0;
             gbNewCohort.TabStop = false;
@@ -82,7 +88,7 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             label7.AutoSize = true;
             label7.Location = new System.Drawing.Point(7, 25);
-            label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label7.Margin = new Padding(4, 0, 4, 0);
             label7.Name = "label7";
             label7.Size = new System.Drawing.Size(42, 15);
             label7.TabIndex = 0;
@@ -90,9 +96,9 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             // tbName
             // 
-            tbName.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tbName.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             tbName.Location = new System.Drawing.Point(58, 22);
-            tbName.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbName.Margin = new Padding(4, 3, 4, 3);
             tbName.Name = "tbName";
             tbName.Size = new System.Drawing.Size(939, 23);
             tbName.TabIndex = 1;
@@ -100,19 +106,79 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             // gbChooseCohortType
             // 
+            gbChooseCohortType.Controls.Add(label4);
+            gbChooseCohortType.Controls.Add(textBox4);
+            gbChooseCohortType.Controls.Add(label3);
+            gbChooseCohortType.Controls.Add(textBox3);
+            gbChooseCohortType.Controls.Add(label2);
+            gbChooseCohortType.Controls.Add(textBox2);
             gbChooseCohortType.Controls.Add(label1);
             gbChooseCohortType.Controls.Add(comboBox1);
             gbChooseCohortType.Controls.Add(numericUpDown1);
-            gbChooseCohortType.Dock = System.Windows.Forms.DockStyle.Top;
+            gbChooseCohortType.Dock = DockStyle.Top;
             gbChooseCohortType.Location = new System.Drawing.Point(0, 0);
-            gbChooseCohortType.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbChooseCohortType.Margin = new Padding(4, 3, 4, 3);
             gbChooseCohortType.Name = "gbChooseCohortType";
-            gbChooseCohortType.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gbChooseCohortType.Size = new System.Drawing.Size(1048, 217);
+            gbChooseCohortType.Padding = new Padding(4, 3, 4, 3);
+            gbChooseCohortType.Size = new System.Drawing.Size(1048, 135);
             gbChooseCohortType.TabIndex = 9;
             gbChooseCohortType.TabStop = false;
             gbChooseCohortType.Text = "1. Define Holdout settings";
             gbChooseCohortType.Enter += gbChooseCohortType_Enter;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(725, 26);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(77, 15);
+            label4.TabIndex = 11;
+            label4.Text = "Date Column";
+            label4.Click += label4_Click;
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new System.Drawing.Point(808, 23);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new System.Drawing.Size(100, 23);
+            textBox4.TabIndex = 10;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(518, 17);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(91, 30);
+            label3.TabIndex = 9;
+            label3.Text = "Max Date\r\n(DD/MM/YYYY)";
+            label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label3.Click += label3_Click;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new System.Drawing.Point(615, 22);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new System.Drawing.Size(100, 23);
+            textBox3.TabIndex = 8;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(298, 22);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(91, 30);
+            label2.TabIndex = 7;
+            label2.Text = "Min Date\r\n(DD/MM/YYYY)";
+            label2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            label2.Click += label2_Click;
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new System.Drawing.Point(395, 24);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new System.Drawing.Size(100, 23);
+            textBox2.TabIndex = 6;
+            textBox2.TextChanged += textBox2_TextChanged;
             // 
             // label1
             // 
@@ -144,12 +210,12 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // groupBox3
             // 
             groupBox3.Controls.Add(gbNewCohort);
-            groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
-            groupBox3.Location = new System.Drawing.Point(0, 217);
-            groupBox3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            groupBox3.Dock = DockStyle.Top;
+            groupBox3.Location = new System.Drawing.Point(0, 135);
+            groupBox3.Margin = new Padding(4, 3, 4, 3);
             groupBox3.Name = "groupBox3";
-            groupBox3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox3.Size = new System.Drawing.Size(1048, 95);
+            groupBox3.Padding = new Padding(4, 3, 4, 3);
+            groupBox3.Size = new System.Drawing.Size(1048, 90);
             groupBox3.TabIndex = 10;
             groupBox3.TabStop = false;
             groupBox3.Text = "3. Configure Cohort (doesn't exist yet, next screen will actually create it)";
@@ -158,7 +224,7 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             label9.AutoSize = true;
             label9.Location = new System.Drawing.Point(7, 24);
-            label9.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label9.Margin = new Padding(4, 0, 4, 0);
             label9.Name = "label9";
             label9.Size = new System.Drawing.Size(64, 15);
             label9.TabIndex = 2;
@@ -166,19 +232,20 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             // tbDescription
             // 
-            tbDescription.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            tbDescription.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             tbDescription.Location = new System.Drawing.Point(71, 24);
-            tbDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbDescription.Margin = new Padding(4, 3, 4, 3);
             tbDescription.Multiline = true;
             tbDescription.Name = "tbDescription";
             tbDescription.Size = new System.Drawing.Size(969, 67);
             tbDescription.TabIndex = 3;
+            tbDescription.TextChanged += tbDescription_TextChanged;
             // 
             // btnClearProject
             // 
-            btnClearProject.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            btnClearProject.Anchor = AnchorStyles.Top;
             btnClearProject.Location = new System.Drawing.Point(528, 7);
-            btnClearProject.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnClearProject.Margin = new Padding(4, 3, 4, 3);
             btnClearProject.Name = "btnClearProject";
             btnClearProject.Size = new System.Drawing.Size(141, 27);
             btnClearProject.TabIndex = 14;
@@ -188,9 +255,9 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             // btnOk
             // 
-            btnOk.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            btnOk.Anchor = AnchorStyles.Top;
             btnOk.Location = new System.Drawing.Point(372, 7);
-            btnOk.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnOk.Margin = new Padding(4, 3, 4, 3);
             btnOk.Name = "btnOk";
             btnOk.Size = new System.Drawing.Size(149, 27);
             btnOk.TabIndex = 13;
@@ -201,10 +268,10 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // ragSmiley1
             // 
             ragSmiley1.AlwaysShowHandCursor = false;
-            ragSmiley1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            ragSmiley1.Anchor = AnchorStyles.Top;
             ragSmiley1.BackColor = System.Drawing.Color.Transparent;
             ragSmiley1.Location = new System.Drawing.Point(335, 4);
-            ragSmiley1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            ragSmiley1.Margin = new Padding(5, 3, 5, 3);
             ragSmiley1.Name = "ragSmiley1";
             ragSmiley1.Size = new System.Drawing.Size(30, 30);
             ragSmiley1.TabIndex = 12;
@@ -213,11 +280,11 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // 
             gbDescription.Controls.Add(label9);
             gbDescription.Controls.Add(tbDescription);
-            gbDescription.Dock = System.Windows.Forms.DockStyle.Top;
-            gbDescription.Location = new System.Drawing.Point(0, 312);
-            gbDescription.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbDescription.Dock = DockStyle.Top;
+            gbDescription.Location = new System.Drawing.Point(0, 225);
+            gbDescription.Margin = new Padding(4, 3, 4, 3);
             gbDescription.Name = "gbDescription";
-            gbDescription.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbDescription.Padding = new Padding(4, 3, 4, 3);
             gbDescription.Size = new System.Drawing.Size(1048, 99);
             gbDescription.TabIndex = 11;
             gbDescription.TabStop = false;
@@ -226,8 +293,8 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             // taskDescriptionLabel1
             // 
             taskDescriptionLabel1.AutoSize = true;
-            taskDescriptionLabel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            taskDescriptionLabel1.Dock = System.Windows.Forms.DockStyle.Top;
+            taskDescriptionLabel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            taskDescriptionLabel1.Dock = DockStyle.Top;
             taskDescriptionLabel1.Location = new System.Drawing.Point(0, 0);
             taskDescriptionLabel1.Name = "taskDescriptionLabel1";
             taskDescriptionLabel1.Size = new System.Drawing.Size(1048, 42);
@@ -240,7 +307,7 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             panel1.Controls.Add(groupBox1);
             panel1.Controls.Add(groupBox3);
             panel1.Controls.Add(gbChooseCohortType);
-            panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel1.Dock = DockStyle.Fill;
             panel1.Location = new System.Drawing.Point(0, 42);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(1048, 509);
@@ -251,48 +318,39 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             panel2.Controls.Add(btnOk);
             panel2.Controls.Add(ragSmiley1);
             panel2.Controls.Add(btnClearProject);
-            panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            panel2.Location = new System.Drawing.Point(0, 411);
+            panel2.Dock = DockStyle.Top;
+            panel2.Location = new System.Drawing.Point(0, 324);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(1048, 55);
             panel2.TabIndex = 20;
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(scintilla1);
+            groupBox1.Controls.Add(textBox1);
             groupBox1.Location = new System.Drawing.Point(13, 66);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(997, 139);
+            groupBox1.Size = new System.Drawing.Size(997, 63);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "2. Define Holdout Criteria";
             // 
-            // scintilla1
+            // textBox1
             // 
-            scintilla1.AutoCMaxHeight = 9;
-            scintilla1.BiDirectionality = ScintillaNET.BiDirectionalDisplayType.Disabled;
-            scintilla1.CaretLineBackColor = System.Drawing.Color.Black;
-            scintilla1.LexerName = null;
-            scintilla1.Location = new System.Drawing.Point(19, 22);
-            scintilla1.Name = "scintilla1";
-            scintilla1.ScrollWidth = 49;
-            scintilla1.Size = new System.Drawing.Size(958, 100);
-            scintilla1.TabIndents = true;
-            scintilla1.TabIndex = 0;
-            scintilla1.Text = "scintilla1";
-            scintilla1.UseRightToLeftReadingLayout = false;
-            scintilla1.WrapMode = ScintillaNET.WrapMode.None;
+            textBox1.Location = new System.Drawing.Point(12, 22);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(979, 23);
+            textBox1.TabIndex = 0;
             // 
-            // CohortHoldoutCreationRequestUI
+            // CreateHoldoutLookupUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1048, 551);
             Controls.Add(panel1);
             Controls.Add(taskDescriptionLabel1);
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            Name = "CohortHoldoutCreationRequestUI";
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "CreateHoldoutLookupUI";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Create Cohort";
             Load += CohortHoldoutCreationRequestUI_Load;
             gbNewCohort.ResumeLayout(false);
@@ -306,6 +364,7 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
             panel1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -313,20 +372,20 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
         #endregion
         //private System.Windows.Forms.Label label3;
         //private System.Windows.Forms.Label lblExternalCohortTable;
-        private System.Windows.Forms.GroupBox gbNewCohort;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox tbName;
+        private GroupBox gbNewCohort;
+        private Label label7;
+        private TextBox tbName;
         //private System.Windows.Forms.Button btnNewProject;
-        private System.Windows.Forms.GroupBox gbChooseCohortType;
-        private System.Windows.Forms.GroupBox groupBox3;
-        private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox tbDescription;
+        private GroupBox gbChooseCohortType;
+        private GroupBox groupBox3;
+        private Label label9;
+        private TextBox tbDescription;
         //private System.Windows.Forms.Label lblProject;
         //private System.Windows.Forms.Label label11;
-        private System.Windows.Forms.Button btnClearProject;
-        private System.Windows.Forms.Button btnOk;
+        private Button btnClearProject;
+        private Button btnOk;
         private RAGSmiley ragSmiley1;
-        private System.Windows.Forms.GroupBox gbDescription;
+        private GroupBox gbDescription;
         //private System.Windows.Forms.PictureBox pbProject;
         //private System.Windows.Forms.PictureBox pbCohortSource;
         //private System.Windows.Forms.Button btnExisting;
@@ -334,13 +393,19 @@ namespace Rdmp.UI.CohortUI.CohortHoldoutLookup
         //private System.Windows.Forms.TextBox tbSetProjectNumber;
         //private System.Windows.Forms.Button btnClear;
         private SimpleDialogs.TaskDescriptionLabel taskDescriptionLabel1;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private Panel panel1;
+        private Panel panel2;
+        private GroupBox groupBox1;
         //private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private ScintillaNET.Scintilla scintilla1;
+        private Label label1;
+        private ComboBox comboBox1;
+        private NumericUpDown numericUpDown1;
+        private TextBox textBox1;
+        private Label label2;
+        private TextBox textBox2;
+        private Label label3;
+        private TextBox textBox3;
+        private Label label4;
+        private TextBox textBox4;
     }
 }

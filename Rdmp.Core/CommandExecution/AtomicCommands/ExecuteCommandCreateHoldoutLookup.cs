@@ -149,9 +149,30 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             }
             //todo
             string whereCondition = "";
-            //DateTime beforeDate;
-            //DateTime afterDate;
-            //string dateColumn = "";
+            DateTime beforeDate = holdoutRequest.MaxDate;
+            DateTime afterDate = holdoutRequest.MinDate;
+            string dateColumn = holdoutRequest.DateColumnName;
+            bool hasMinDate = false;
+            bool hasMaxDate = false;
+
+
+            if (!columnNames.Contains(dateColumn))
+            {
+                //todo throw an error
+            }
+            else
+            {
+                if (beforeDate.Date != DateTime.MinValue)
+                {
+                    //has max date
+                    hasMaxDate = true;
+                }
+                if (afterDate.Date != DateTime.MinValue)
+                {
+                    //has min date
+                    hasMinDate = true;
+                }
+            }
 
 
             if (!string.IsNullOrWhiteSpace(whereCondition))
@@ -164,6 +185,19 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
                 if (dt2.Rows.Count < 1)
                 {
                     //todo warn about filtering out all data
+                }
+            }
+            if (hasMinDate || hasMaxDate)
+            {
+                foreach(DataRow row in _dataTable.Rows)
+                {
+                    if (hasMaxDate && DateTime.Parse(row[dateColumn].ToString()) > beforeDate) {
+                        row.Delete();
+                    }
+                    else if (hasMinDate && DateTime.Parse(row[dateColumn].ToString()) < afterDate)
+                    {
+                        row.Delete();
+                    }
                 }
             }
             _dataTable.DefaultView.Sort = "_Holdoutsuffle";
@@ -181,6 +215,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
                 rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * holdoutRequest.Count));
                 rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
             }
+            //todo fail is rows are empty
             foreach (DataRow row in rows)
             {
                 IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());

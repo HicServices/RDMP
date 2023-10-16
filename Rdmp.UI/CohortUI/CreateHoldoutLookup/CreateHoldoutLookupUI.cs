@@ -85,9 +85,11 @@ public partial class CreateHoldoutLookupUI : RDMPForm
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        string name;
-        name = tbName.Text;
-        Result = new CohortHoldoutLookupRequest(_cic, tbName.Text, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "");
+        string name = tbName.Text;
+        string minDate = textBox2.Text;
+        string maxDate = textBox3.Text;
+        string dateColumnName = textBox4.Text;
+        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "", minDate, maxDate, dateColumnName);
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         //Result.Check(notifier);
@@ -242,6 +244,36 @@ public partial class CreateHoldoutLookupUI : RDMPForm
     private void label1_Click(object sender, EventArgs e)
     {
 
+
+    }
+
+    private void checkBox1_CheckedChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void textBox2_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label4_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tbDescription_TextChanged(object sender, EventArgs e)
+    {
 
     }
 }

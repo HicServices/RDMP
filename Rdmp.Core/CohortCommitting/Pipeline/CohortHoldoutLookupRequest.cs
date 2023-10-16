@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Globalization;
+using System.Security.Permissions;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -26,15 +28,24 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
     public string DescriptionForAuditLog { get; set; }
 
     public string Name { get; set; }
-    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string descriptionForAuditLog)
+
+    public DateTime MinDate { get; set; }
+    public DateTime MaxDate { get; set; }
+    public string DateColumnName { get; set; }
+    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string descriptionForAuditLog,string minDate=null,string maxDate=null,string dateColumnName=null)
     {
         CIC = cic;
         Name = name;
         Count = count;
         IsPercent = isPercent;
         DescriptionForAuditLog = descriptionForAuditLog;
-
-        //AddInitializationObject(Project);
+        DateTime _MinDate;
+        DateTime.TryParseExact(minDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None,out _MinDate);
+        MinDate = _MinDate;
+         DateTime _MaxDate;
+        DateTime.TryParseExact(maxDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MaxDate);
+        MinDate = _MinDate;
+        DateColumnName = dateColumnName;
         AddInitializationObject(this);
     }
         public string GetSummary(bool includeName, bool includeId)
