@@ -59,6 +59,14 @@ jobs:
         shell: bash
         run: |
             find ./Tools/rdmp/Databases.yaml -type f -exec sed -i 's/RDMP_/TEST_/g' {} \;
+      - name: BundleSource
+        shell: bash
+        run: |
+          mkdir -p Tools/BundleUpSourceIntoZip/output
+          rm -f Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip
+          echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
+          perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
+          echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
@@ -111,13 +119,6 @@ jobs:
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
-      - name: BundleSource
-        shell: bash
-        run: |
-          mkdir -p Tools/BundleUpSourceIntoZip/output
-          echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
-          perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
-          echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
 
       - name: Sign
         shell: bash
