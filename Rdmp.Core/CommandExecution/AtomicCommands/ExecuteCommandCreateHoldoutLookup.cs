@@ -6,17 +6,21 @@
 
 using FAnsi.Discovery;
 using MongoDB.Driver.Core.Servers;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.PixelFormats;
@@ -24,11 +28,15 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TB.ComponentModel;
+using static MongoDB.Driver.WriteConcern;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -63,6 +71,17 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             EntryLabel = "Select Cohort Database",
             AllowAutoSelect = true
         };
+
+
+    private static DialogArgs GetChooseExtractionIdentifier() =>
+    new()
+    {
+        WindowTitle = "Choose Extraction Identifier",
+        TaskDescription =
+            "TODO",
+        EntryLabel = "Choose Extraction Identifier",
+        AllowAutoSelect = true
+    };
 
     private DataTable LoadDataTable(DiscoveredServer server, string sql)
     {
@@ -108,13 +127,13 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         SelectOne(GetChooseCohortDialogArgs(),
                     BasicActivator.RepositoryLocator.DataExportRepository,
                     out ect);
-        CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect,null,_cic);
+        CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect, null, _cic);
         if (holdoutRequest != null)
         {
             var x = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
             string sql = x.GetSql();
             _server = DataAccessPortal
-                   .ExpectServer(x.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing,false);
+                   .ExpectServer(x.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing, false);
             _server.TestConnection();
             _dataTable = LoadDataTable(_server, sql);
             StringBuilder sb = new StringBuilder();
@@ -122,22 +141,83 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
                                               Select(column => column.ColumnName);
             sb.AppendLine(string.Join(",", columnNames));
-
+            _dataTable.Columns.Add("_Holdoutsuffle");
+            Random rnd = new Random();
             foreach (DataRow row in _dataTable.Rows)
+            {
+                row["_Holdoutsuffle"] = rnd.Next();
+            }
+            //todo
+            string whereCondition = "";
+            //DateTime beforeDate;
+            //DateTime afterDate;
+            //string dateColumn = "";
+
+
+            if (!string.IsNullOrWhiteSpace(whereCondition))
+            {
+                DataView dv = new DataView(_dataTable);
+                dv.RowFilter = whereCondition;
+                DataTable dt2 = dv.ToTable();
+                dv.Dispose();
+                _dataTable = dt2;
+                if (dt2.Rows.Count < 1)
+                {
+                    //todo warn about filtering out all data
+                }
+            }
+            _dataTable.DefaultView.Sort = "_Holdoutsuffle";
+            _dataTable = _dataTable.DefaultView.ToTable();
+            _dataTable.Columns.Remove("_Holdoutsuffle");
+            var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(holdoutRequest.Count);
+            if (holdoutRequest.IsPercent)
+            {
+                var rowCount = holdoutRequest.Count;
+                if (holdoutRequest.Count > 100)
+                {
+                    //listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Holdout percentage was >100%. Will use 100%"));
+                    holdoutRequest.Count = 100;
+                }
+                rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * holdoutRequest.Count));
+                rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
+            }
+            foreach (DataRow row in rows)
             {
                 IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
                 sb.AppendLine(string.Join(",", fields));
             }
 
-            File.WriteAllText("test.csv", sb.ToString());
-            FileInfo fi = new FileInfo("test.csv");
+            File.WriteAllText($"{holdoutRequest.Name}.csv", sb.ToString());
+            FileInfo fi = new FileInfo($"{holdoutRequest.Name}.csv");
             FileInfo[] fil =
             {
                 fi
             };
             FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
+            //File = file;
+            //_targetDatabase = targetDatabase;
+            //_pipeline = pipeline;
+            //UseTripleDotSuffix = true;
+            //CheckFile();
+            //extraction identifier
+            List<string> columns = new List<string>();
+            foreach (DataColumn column in _dataTable.Columns)
+            {
+                columns.Add(column.ColumnName.ToString());
+            }
 
-            var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fcc);
+
+            var extractionIdentifier = "";
+            BasicActivator.SelectObject("Select", columns.ToArray(), out extractionIdentifier);
+            //target db
+            DiscoveredDatabase db = SelectDatabase(true, "todo");
+            //pipeline
+            var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+            //project specific
+            //todo
+
+            var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null);
             z.Execute();
         }
 
