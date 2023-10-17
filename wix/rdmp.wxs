@@ -24,39 +24,6 @@
 <Directory Id="DesktopFolder" />
 <Directory Id="ProgramFiles64Folder">
             <Directory Id="pub" Name="RDMP" FileSource="..\PublishWinForms">
-                <Component Id="D3DCompiler_47_cor3.dll" Guid="AB93A932-5DCE-4396-ADD6-874F5477CBF6">
-                    <File Id="D3DCompiler_47_cor3.dll" KeyPath="yes" Name="D3DCompiler_47_cor3.dll" />
-                </Component>
-                <Component Id="en_US.aff" Guid="5D1F7C08-7F81-4DA9-B5FB-86CFFE2A9EB4">
-                    <File Id="en_US.aff" KeyPath="yes" Name="en_US.aff" />
-                </Component>
-                <Component Id="en_US.dic" Guid="DCC6D548-8C06-44DD-9271-0E23D4E65CE3">
-                    <File Id="en_US.dic" KeyPath="yes" Name="en_US.dic" />
-                </Component>
-                <Component Id="Hunspellx64.dll" Guid="9B97C2D4-3D72-430C-A335-DCD74D67BEF7">
-                    <File Id="Hunspellx64.dll" KeyPath="yes" Name="Hunspellx64.dll" />
-                </Component>
-                <Component Id="Hunspellx86.dll" Guid="1DCD16D0-A74E-421D-931B-418F30F1584E">
-                    <File Id="Hunspellx86.dll" KeyPath="yes" Name="Hunspellx86.dll" />
-                </Component>
-                <Component Id="hyph_en_US.dic" Guid="8D2F3538-2AB9-4328-8B37-667F474487D1">
-                    <File Id="hyph_en_US.dic" KeyPath="yes" Name="hyph_en_US.dic" />
-                </Component>
-                <Component Id="Microsoft.Data.SqlClient.SNI.dll" Guid="D102D57B-6A8B-4DBB-979E-257DEDA493E7">
-                    <File Id="Microsoft.Data.SqlClient.SNI.dll" KeyPath="yes" Name="Microsoft.Data.SqlClient.SNI.dll" />
-                </Component>
-                <Component Id="NLog.template.config" Guid="CAB176B1-0BC8-4BA9-A723-CB0F6C525EAA">
-                    <File Id="NLog.template.config" KeyPath="yes" Name="NLog.template.config" />
-                </Component>
-                <Component Id="Pencil.cur" Guid="00E12D9B-8A46-4E19-9BFA-E3334AE03420">
-                    <File Id="Pencil.cur" KeyPath="yes" Name="Pencil.cur" />
-                </Component>
-                <Component Id="PenImc_cor3.dll" Guid="5B70CC2F-4EDB-4AFB-9E3F-74985584BC6D">
-                    <File Id="PenImc_cor3.dll" KeyPath="yes" Name="PenImc_cor3.dll" />
-                </Component>
-                <Component Id="PresentationNative_cor3.dll" Guid="B9B25C0E-BFAA-4F2C-9A0F-3739AFB8E1F1">
-                    <File Id="PresentationNative_cor3.dll" KeyPath="yes" Name="PresentationNative_cor3.dll" />
-                </Component>
                 <Component Id="ResearchDataManagementPlatform.exe" Guid="C16CA8A9-FEEC-4095-8453-FC595B31B3B2">
                     <File Id="ResearchDataManagementPlatform.exe" KeyPath="yes" Name="ResearchDataManagementPlatform.exe" />
 					        <Shortcut Id="ApplicationStartMenuShortcut"
@@ -71,37 +38,7 @@
                   WorkingDirectory="pub"
 				  Advertise="yes"
                     Icon="rdmp.ico"/>
-
                 </Component>
-                <Component Id="SourceCodeForSelfAwareness.zip" Guid="B115CA1E-BB1B-49C3-B017-9551CEF9F53A">
-                    <File Id="SourceCodeForSelfAwareness.zip" KeyPath="yes" Name="SourceCodeForSelfAwareness.zip" />
-                </Component>
-                <Component Id="vcruntime140_cor3.dll" Guid="1747032B-707D-4824-AE37-2EE7320A7C39">
-                    <File Id="vcruntime140_cor3.dll" KeyPath="yes" Name="vcruntime140_cor3.dll" />
-                </Component>
-                <Component Id="WebView2Loader.dll" Guid="16868C7C-7EB2-4567-9AF5-CDE99B634640">
-                    <File Id="WebView2Loader.dll" KeyPath="yes" Name="WebView2Loader.dll" />
-                </Component>
-                <Component Id="wpfgfx_cor3.dll" Guid="1486CDE3-33A7-4850-A5CC-96DA509F08EC">
-                    <File Id="wpfgfx_cor3.dll" KeyPath="yes" Name="wpfgfx_cor3.dll" />
-                </Component>
-                <Directory Id="Curation" Name="Curation">
-                    <Component Id="KeywordHelp.txt" Guid="8D283AA4-8813-47A2-9F5D-26C7FAF92C18">
-                        <File Id="KeywordHelp.txt" KeyPath="yes" Name="KeywordHelp.txt" />
-                    </Component>
-                </Directory>
-                <Directory Id="Icon" Name="Icon">
-                    <Component Id="main.png" Guid="E0384048-21C2-4869-8CE4-5469E61761FD">
-                        <File Id="main.png" KeyPath="yes" Name="main.png" />
-                    </Component>
-                </Directory>
-                <Directory Id="WindowManagement" Name="WindowManagement">
-                    <Directory Id="Licenses" Name="Licenses">
-                        <Component Id="LICENSE" Guid="C9062287-6492-42BB-AFDC-A3933A667D87">
-                            <File Id="LICENSE" KeyPath="yes" Name="LICENSE" />
-                        </Component>
-                    </Directory>
-                </Directory>
             </Directory>
 </Directory>
 </Directory>
@@ -121,30 +58,9 @@
 
 <Feature Id="MainApplication" Title="Main Application" Level="1">
 <ComponentRef Id="ApplicationShortcuts"/>
-            <ComponentRef Id="D3DCompiler_47_cor3.dll" />
-            <ComponentRef Id="en_US.aff" />
-            <ComponentRef Id="en_US.dic" />
-            <ComponentRef Id="Hunspellx64.dll" />
-            <ComponentRef Id="Hunspellx86.dll" />
-            <ComponentRef Id="hyph_en_US.dic" />
-            <ComponentRef Id="Microsoft.Data.SqlClient.SNI.dll" />
-            <ComponentRef Id="NLog.template.config" />
-            <ComponentRef Id="Pencil.cur" />
-            <ComponentRef Id="PenImc_cor3.dll" />
-            <ComponentRef Id="PresentationNative_cor3.dll" />
             <ComponentRef Id="ResearchDataManagementPlatform.exe" />
-            <ComponentRef Id="SourceCodeForSelfAwareness.zip" />
-            <ComponentRef Id="vcruntime140_cor3.dll" />
-            <ComponentRef Id="WebView2Loader.dll" />
-            <ComponentRef Id="wpfgfx_cor3.dll" />
-            <ComponentRef Id="KeywordHelp.txt" />
-            <ComponentRef Id="main.png" />
-            <ComponentRef Id="LICENSE" />
 </Feature>
 
-<!--<WixVariable Id="WixUILicenseRtf" Value="LICENSE.rtf" />-->
-<!--WixVariable Id="WixUIBannerBmp" Value="bmp" /--> <!-- 493 X 58 -->
-<!--WixVariable Id="WixUIDialogBmp" Value="bmp" /--> <!-- 493 X 312 -->
 <Property Id="ARPPRODUCTICON" Value="rdmp.ico" />
 <Property Id="WixAppFolder" Value="WixPerUserFolder" />
 
