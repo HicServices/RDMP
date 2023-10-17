@@ -24,7 +24,7 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Point = System.Drawing.Point;
 
-namespace Rdmp.UI.CohortUI.CohortHoldoutLookup;
+namespace Rdmp.UI.CohortUI.CreateHoldoutLookup;
 
 
 /// <summary>
