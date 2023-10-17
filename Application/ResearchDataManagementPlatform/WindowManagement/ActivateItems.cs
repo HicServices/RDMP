@@ -832,6 +832,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
     {
+
+        if(useCase is not null && pipeline is not null)
+        {
+            return new PipelineRunner(useCase, pipeline);
+        }
         var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
         {
             Dock = DockStyle.Fill
@@ -874,6 +879,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
         ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
     {
+        if(extractionIdentifierColumns is not null)
+        {
+            return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription, projectSpecific, folder);
+        }
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns,

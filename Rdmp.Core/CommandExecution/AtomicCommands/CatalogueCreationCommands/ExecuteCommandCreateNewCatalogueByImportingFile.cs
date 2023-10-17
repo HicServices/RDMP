@@ -31,6 +31,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 {
     private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
+    private string _extractionIdentifier;
 
     public FileInfo File { get; private set; }
 
@@ -63,10 +64,12 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         Project projectSpecific) : base(activator, projectSpecific, null)
+
     {
         File = file;
         _targetDatabase = targetDatabase;
         _pipeline = pipeline;
+        _extractionIdentifier = extractionIdentifier;
         UseTripleDotSuffix = true;
         CheckFile();
     }
@@ -150,11 +153,20 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
         importer.DoImport(out var ti, out _);
-
-        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
+        ICatalogue cata;
+        if (_extractionIdentifier is not null)
+        {
+            ColumnInfo[] extractionIdentifiers = ti.ColumnInfos.Where(ti => ti.Name == _extractionIdentifier).ToArray();
+            cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
             $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
             TargetFolder);
-
+        }
+        else
+        {
+            cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
+            $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
+            TargetFolder);
+        }
         if (cata != null)
         {
             Publish(cata);

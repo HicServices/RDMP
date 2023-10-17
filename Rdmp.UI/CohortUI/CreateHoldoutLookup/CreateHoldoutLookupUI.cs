@@ -72,7 +72,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
             TaskDescription =
-                "todo. maybe remove?"
+                "Holdouts...do stuff todo"
         });
     }
 

@@ -72,17 +72,6 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             AllowAutoSelect = true
         };
 
-
-    private static DialogArgs GetChooseExtractionIdentifier() =>
-    new()
-    {
-        WindowTitle = "Choose Extraction Identifier",
-        TaskDescription =
-            "TODO",
-        EntryLabel = "Choose Extraction Identifier",
-        AllowAutoSelect = true
-    };
-
     private DataTable LoadDataTable(DiscoveredServer server, string sql)
     {
 
@@ -95,15 +84,12 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             con.Open();
 
             _cmd = server.GetCommand(sql, con);
-            _cmd.CommandTimeout = 10000;// _timeoutControls.Timeout;
+            _cmd.CommandTimeout = 10000;
 
             var a = server.GetDataAdapter(_cmd);
 
             a.Fill(dt);
 
-            //MorphBinaryColumns(dt);
-
-            //Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
             con.Close();
         }
         catch (Exception)
@@ -229,12 +215,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
                 fi
             };
             FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
-            //File = file;
-            //_targetDatabase = targetDatabase;
-            //_pipeline = pipeline;
-            //UseTripleDotSuffix = true;
-            //CheckFile();
-            //extraction identifier
+            
             List<string> columns = new List<string>();
             foreach (DataColumn column in _dataTable.Columns)
             {
@@ -243,14 +224,10 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
 
             var extractionIdentifier = "";
-            BasicActivator.SelectObject("Select", columns.ToArray(), out extractionIdentifier);
-            //target db
-            DiscoveredDatabase db = SelectDatabase(true, "todo");
-            //pipeline
+            BasicActivator.SelectObject("Select an Extraction Identifier", columns.ToArray(), out extractionIdentifier);
+            DiscoveredDatabase db = SelectDatabase(true, "Select a Database to store the new Holdout.");
             var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
-            //project specific
-            //todo
 
             var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null);
             z.Execute();
@@ -262,6 +239,5 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregate,OverlayKind.Link);
 }
