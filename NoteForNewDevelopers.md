@@ -40,16 +40,16 @@ All technical and repo specific documentation are stored in markdown (`.md` form
 
 ** Performance **
 - [Database Change Tracking (A Performance Enhancement)](./Documentation/CodeTutorials/ChangeTracking.md)
-- [Reducing database calls with 'injection'](./Reusable/MapsDirectlyToDatabaseTable/Injection/README.md)
+- [Reducing database calls with 'injection'](./Rdmp.Core/MapsDirectlyToDatabaseTable/Injection/Injection.md)
 
 **Deep Dives**
 - [How untyped CSV data is parsed by RDMP](./Documentation/CodeTutorials/CSVHandling.md)
 - [How 'Bulk Insert' function works](./Documentation/CodeTutorials/DataTableUpload.md)
 - [How xls / xlsx files are read by RDMP](./Documentation/CodeTutorials/ExcelHandling.md)
 - [Multiple Linkage Columns (e.g. NHS Number or CHI)](./Documentation/CodeTutorials/MultipleExtractionIdentifiers.md)
-- [Storing cohort lists](./Rdmp.Core/CohortCommitting/Readme.md)
-- [Cohort Builder docs including info on list caching](./Rdmp.Core/CohortCreation/Readme.md)
-- [Tree layout documentation](./Rdmp.Core/Providers/Readme.md)
+- [Storing cohort lists](./Rdmp.Core/CohortCommitting/CohortCommitting.md)
+- [Cohort Builder docs including info on list caching](./Rdmp.Core/CohortCreation/CohortCreation.md)
+- [Tree layout documentation](./Rdmp.Core/Providers/Providers.md)
 - [Aggregate Graphs](./Documentation/CodeTutorials/Graphs.md)
 - [YamlRepository](./Documentation/CodeTutorials/YamlRepository.md)
 - [Custom Metadata Reports](./Documentation/CodeTutorials/CustomMetadataSubstitutions.md)

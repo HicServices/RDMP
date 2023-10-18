@@ -2,7 +2,7 @@
 
 A Cohort is a collection of unique person identifiers which can be linked against datasets during an extraction.  This namespace covers saving a list of identifiers into a cohort database.
 
-See [Cohort Creation](../CohortCreation/Readme.md) for building queries that identify cohorts from your database based on inclusion/exclusion criteria.
+See [Cohort Creation](../CohortCreation/CohortCreation.md) for building queries that identify cohorts from your database based on inclusion/exclusion criteria.
 
 ## Cohort Storage
 

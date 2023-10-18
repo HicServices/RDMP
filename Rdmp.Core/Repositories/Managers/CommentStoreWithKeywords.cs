@@ -13,16 +13,16 @@ namespace Rdmp.Core.Repositories.Managers;
 /// <summary>
 /// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
 /// </summary>
-public class CommentStoreWithKeywords : CommentStore
+public sealed class CommentStoreWithKeywords : CommentStore
 {
     public override void ReadComments(params string[] directoriesToLookInForComments)
     {
         base.ReadComments(directoriesToLookInForComments);
 
-        var keywords = new FileInfo("./Curation/KeywordHelp.txt");
-
-        if (keywords.Exists)
-            AddToHelp(File.ReadAllText(keywords.FullName));
+        var assembly=typeof(CommentStoreWithKeywords).Assembly;
+        using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Curation.KeywordHelp.txt");
+        using var reader = new StreamReader(stream ?? throw new ApplicationException("Unable to read KeywordHelp.txt resource"));
+        AddToHelp(reader.ReadToEnd());
     }
 
     private void AddToHelp(string keywordHelpFileContents)
