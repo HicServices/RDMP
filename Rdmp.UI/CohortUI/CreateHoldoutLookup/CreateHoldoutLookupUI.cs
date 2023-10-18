@@ -89,7 +89,8 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         string minDate = textBox2.Text;
         string maxDate = textBox3.Text;
         string dateColumnName = textBox4.Text;
-        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "", minDate, maxDate, dateColumnName);
+        string whereQuery = textBox1.Text;
+        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "", whereQuery, minDate, maxDate, dateColumnName);
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         //Result.Check(notifier);

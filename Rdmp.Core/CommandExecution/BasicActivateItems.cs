@@ -687,7 +687,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
         else
             throw new Exception("User chose not to enter a version number and none was provided");
 
-        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"");
+        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"","");
     }
 
     /// <inheritdoc/>
