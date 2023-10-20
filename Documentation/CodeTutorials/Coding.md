@@ -94,7 +94,7 @@ Each area of the RDMP codebase has its own documentation.  These include:
   - [Creating Right Click Context Menus](./CreatingANewRightClickMenu.md)
   - [Double Click / Drag and drop](./DoubleClickAndDragDrop.md)
 - [Writing Plugins](./PluginWriting.md)
-- [Cohort Creation](./../../Rdmp.Core/CohortCreation/Readme.md)
+- [Cohort Creation](./../../Rdmp.Core/CohortCreation/CohortCreation.md)
 - [Command Line Interface (CLI)](./../../Rdmp.Core/CommandLine/Runners/ExecuteCommandRunner.md)
 
 RDMP has over 20 class diagrams which you can open if you have visual studio.  These files end in the extension `.cd`
