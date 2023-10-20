@@ -6,7 +6,7 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-Prefix:	TEST_
+Prefix:	RDMP_
 ServerName:	(localdb)\MSSQLLocalDB
 #Uncomment to run tests with a YamlRepository
 #UseFileSystemRepo: true
