@@ -32,6 +32,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
     private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
     private string _extractionIdentifier;
+    private string _initialDescription;
 
     public FileInfo File { get; private set; }
 
@@ -63,7 +64,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
             "Pipeline for reading the source file, applying any transforms and writing to the database")]
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
-        Project projectSpecific) : base(activator, projectSpecific, null)
+        Project projectSpecific,
+        string initialDescription=null) : base(activator, projectSpecific, null)
 
     {
         File = file;
@@ -72,6 +74,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         _extractionIdentifier = extractionIdentifier;
         UseTripleDotSuffix = true;
         CheckFile();
+        _initialDescription = initialDescription;
     }
 
 
@@ -164,11 +167,17 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         else
         {
             cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
-            $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
+              $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
             TargetFolder);
         }
         if (cata != null)
         {
+            if(_initialDescription is not null)
+            {
+                cata.Description = _initialDescription;
+                cata.SaveToDatabase();
+            }
+                
             Publish(cata);
             Emphasise(cata);
         }

@@ -58,8 +58,6 @@ partial class CreateHoldoutLookupUI
         taskDescriptionLabel1 = new SimpleDialogs.TaskDescriptionLabel();
         panel1 = new Panel();
         panel2 = new Panel();
-        groupBox1 = new GroupBox();
-        textBox1 = new TextBox();
         gbNewCohort.SuspendLayout();
         gbChooseCohortType.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
@@ -67,7 +65,6 @@ partial class CreateHoldoutLookupUI
         gbDescription.SuspendLayout();
         panel1.SuspendLayout();
         panel2.SuspendLayout();
-        groupBox1.SuspendLayout();
         SuspendLayout();
         // 
         // gbNewCohort
@@ -120,7 +117,7 @@ partial class CreateHoldoutLookupUI
         gbChooseCohortType.Margin = new Padding(4, 3, 4, 3);
         gbChooseCohortType.Name = "gbChooseCohortType";
         gbChooseCohortType.Padding = new Padding(4, 3, 4, 3);
-        gbChooseCohortType.Size = new System.Drawing.Size(1048, 135);
+        gbChooseCohortType.Size = new System.Drawing.Size(1048, 107);
         gbChooseCohortType.TabIndex = 9;
         gbChooseCohortType.TabStop = false;
         gbChooseCohortType.Text = "1. Define Holdout settings";
@@ -129,7 +126,7 @@ partial class CreateHoldoutLookupUI
         // label4
         // 
         label4.AutoSize = true;
-        label4.Location = new System.Drawing.Point(725, 26);
+        label4.Location = new System.Drawing.Point(444, 69);
         label4.Name = "label4";
         label4.Size = new System.Drawing.Size(77, 15);
         label4.TabIndex = 11;
@@ -138,7 +135,7 @@ partial class CreateHoldoutLookupUI
         // 
         // textBox4
         // 
-        textBox4.Location = new System.Drawing.Point(808, 23);
+        textBox4.Location = new System.Drawing.Point(527, 66);
         textBox4.Name = "textBox4";
         textBox4.Size = new System.Drawing.Size(100, 23);
         textBox4.TabIndex = 10;
@@ -146,7 +143,7 @@ partial class CreateHoldoutLookupUI
         // label3
         // 
         label3.AutoSize = true;
-        label3.Location = new System.Drawing.Point(518, 17);
+        label3.Location = new System.Drawing.Point(229, 61);
         label3.Name = "label3";
         label3.Size = new System.Drawing.Size(91, 30);
         label3.TabIndex = 9;
@@ -156,7 +153,7 @@ partial class CreateHoldoutLookupUI
         // 
         // textBox3
         // 
-        textBox3.Location = new System.Drawing.Point(615, 22);
+        textBox3.Location = new System.Drawing.Point(326, 66);
         textBox3.Name = "textBox3";
         textBox3.Size = new System.Drawing.Size(100, 23);
         textBox3.TabIndex = 8;
@@ -164,7 +161,7 @@ partial class CreateHoldoutLookupUI
         // label2
         // 
         label2.AutoSize = true;
-        label2.Location = new System.Drawing.Point(298, 22);
+        label2.Location = new System.Drawing.Point(16, 61);
         label2.Name = "label2";
         label2.Size = new System.Drawing.Size(91, 30);
         label2.TabIndex = 7;
@@ -174,7 +171,7 @@ partial class CreateHoldoutLookupUI
         // 
         // textBox2
         // 
-        textBox2.Location = new System.Drawing.Point(395, 24);
+        textBox2.Location = new System.Drawing.Point(113, 66);
         textBox2.Name = "textBox2";
         textBox2.Size = new System.Drawing.Size(100, 23);
         textBox2.TabIndex = 6;
@@ -211,14 +208,14 @@ partial class CreateHoldoutLookupUI
         // 
         groupBox3.Controls.Add(gbNewCohort);
         groupBox3.Dock = DockStyle.Top;
-        groupBox3.Location = new System.Drawing.Point(0, 135);
+        groupBox3.Location = new System.Drawing.Point(0, 107);
         groupBox3.Margin = new Padding(4, 3, 4, 3);
         groupBox3.Name = "groupBox3";
         groupBox3.Padding = new Padding(4, 3, 4, 3);
         groupBox3.Size = new System.Drawing.Size(1048, 90);
         groupBox3.TabIndex = 10;
         groupBox3.TabStop = false;
-        groupBox3.Text = "3. Configure Cohort (doesn't exist yet, next screen will actually create it)";
+        groupBox3.Text = "2. Configure Cohort (doesn't exist yet, next screen will actually create it)";
         // 
         // label9
         // 
@@ -281,14 +278,14 @@ partial class CreateHoldoutLookupUI
         gbDescription.Controls.Add(label9);
         gbDescription.Controls.Add(tbDescription);
         gbDescription.Dock = DockStyle.Top;
-        gbDescription.Location = new System.Drawing.Point(0, 225);
+        gbDescription.Location = new System.Drawing.Point(0, 197);
         gbDescription.Margin = new Padding(4, 3, 4, 3);
         gbDescription.Name = "gbDescription";
         gbDescription.Padding = new Padding(4, 3, 4, 3);
         gbDescription.Size = new System.Drawing.Size(1048, 99);
         gbDescription.TabIndex = 11;
         gbDescription.TabStop = false;
-        gbDescription.Text = "4. Enter Description Of Holdout";
+        gbDescription.Text = "3. Enter Description Of Holdout";
         // 
         // taskDescriptionLabel1
         // 
@@ -304,7 +301,6 @@ partial class CreateHoldoutLookupUI
         // 
         panel1.Controls.Add(panel2);
         panel1.Controls.Add(gbDescription);
-        panel1.Controls.Add(groupBox1);
         panel1.Controls.Add(groupBox3);
         panel1.Controls.Add(gbChooseCohortType);
         panel1.Dock = DockStyle.Fill;
@@ -319,27 +315,10 @@ partial class CreateHoldoutLookupUI
         panel2.Controls.Add(ragSmiley1);
         panel2.Controls.Add(btnClearProject);
         panel2.Dock = DockStyle.Top;
-        panel2.Location = new System.Drawing.Point(0, 324);
+        panel2.Location = new System.Drawing.Point(0, 296);
         panel2.Name = "panel2";
         panel2.Size = new System.Drawing.Size(1048, 55);
         panel2.TabIndex = 20;
-        // 
-        // groupBox1
-        // 
-        groupBox1.Controls.Add(textBox1);
-        groupBox1.Location = new System.Drawing.Point(13, 66);
-        groupBox1.Name = "groupBox1";
-        groupBox1.Size = new System.Drawing.Size(997, 63);
-        groupBox1.TabIndex = 6;
-        groupBox1.TabStop = false;
-        groupBox1.Text = "2. Define Holdout Criteria";
-        // 
-        // textBox1
-        // 
-        textBox1.Location = new System.Drawing.Point(12, 22);
-        textBox1.Name = "textBox1";
-        textBox1.Size = new System.Drawing.Size(979, 23);
-        textBox1.TabIndex = 0;
         // 
         // CreateHoldoutLookupUI
         // 
@@ -363,8 +342,6 @@ partial class CreateHoldoutLookupUI
         gbDescription.PerformLayout();
         panel1.ResumeLayout(false);
         panel2.ResumeLayout(false);
-        groupBox1.ResumeLayout(false);
-        groupBox1.PerformLayout();
         ResumeLayout(false);
         PerformLayout();
     }
@@ -395,12 +372,10 @@ partial class CreateHoldoutLookupUI
     private SimpleDialogs.TaskDescriptionLabel taskDescriptionLabel1;
     private Panel panel1;
     private Panel panel2;
-    private GroupBox groupBox1;
     //private System.Windows.Forms.CheckBox checkBox1;
     private Label label1;
     private ComboBox comboBox1;
     private NumericUpDown numericUpDown1;
-    private TextBox textBox1;
     private Label label2;
     private TextBox textBox2;
     private Label label3;

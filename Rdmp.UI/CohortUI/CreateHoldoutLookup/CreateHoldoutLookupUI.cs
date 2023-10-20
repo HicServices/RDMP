@@ -66,7 +66,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         _repository = (IDataExportRepository)_target.Repository;
         _cic = cic;
         SetProject(project);
-        tbName.Text = $"holdout_{cic.Name}"; //todo this should be the existing  cohorts name
+        tbName.Text = $"holdout_{cic.Name}";
 
 
         taskDescriptionLabel1.SetupFor(new DialogArgs
@@ -89,8 +89,8 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         string minDate = textBox2.Text;
         string maxDate = textBox3.Text;
         string dateColumnName = textBox4.Text;
-        string whereQuery = textBox1.Text;
-        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", "", whereQuery, minDate, maxDate, dateColumnName);
+        string description = tbDescription.Text;
+        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", description, minDate, maxDate, dateColumnName);
         //see if it is passing checks
         var notifier = new ToMemoryCheckNotifier();
         //Result.Check(notifier);

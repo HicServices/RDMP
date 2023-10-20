@@ -50,7 +50,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
 
     public ExecuteCommandCreateHoldoutLookup(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, AggregateConfiguration ec) : base(activator)
+        CohortIdentificationConfiguration cic, AggregateConfiguration ac) : base(activator)
     {
         _cic = cic;
         _activator = activator;
@@ -79,31 +79,23 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
         try
         {
-            //then execute the command
             using var con = server.GetConnection();
             con.Open();
-
             _cmd = server.GetCommand(sql, con);
             _cmd.CommandTimeout = 10000;
-
             var a = server.GetDataAdapter(_cmd);
-
             a.Fill(dt);
-
             con.Close();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            //todo something sensible
-            //ShowFatal(e);
-        }
-        finally
-        {
-
+            GlobalError("Unable to access datatable",e);
         }
         return dt;
 
     }
+
+    private string HoldoutShuffle = "_Holdoutsuffle";
 
     public override void Execute()
     {
@@ -113,130 +105,121 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         SelectOne(GetChooseCohortDialogArgs(),
                     BasicActivator.RepositoryLocator.DataExportRepository,
                     out ect);
+        if (ect is null)
+            return;
         CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect, null, _cic);
-        if (holdoutRequest != null)
+        if(holdoutRequest is null)
+            return;
+        var cohortConfiguration = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
+        string sql = cohortConfiguration.GetSql();
+        _server = DataAccessPortal
+                .ExpectServer(cohortConfiguration.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing, false);
+        _server.TestConnection();
+        _dataTable = LoadDataTable(_server, sql);
+        if(_dataTable.Rows.Count == 0)
         {
-            var x = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
-            string sql = x.GetSql();
-            _server = DataAccessPortal
-                   .ExpectServer(x.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing, false);
-            _server.TestConnection();
-            _dataTable = LoadDataTable(_server, sql);
-            StringBuilder sb = new StringBuilder();
+            Show("Unable to Access Cohort");
+            return;
+        }
+        StringBuilder sb = new();
 
-            IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
-                                              Select(column => column.ColumnName);
-            sb.AppendLine(string.Join(",", columnNames));
-            _dataTable.Columns.Add("_Holdoutsuffle");
-            Random rnd = new Random();
-            foreach (DataRow row in _dataTable.Rows)
+        IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
+                                            Select(column => column.ColumnName);
+        sb.AppendLine(string.Join(",", columnNames));
+        _dataTable.Columns.Add(HoldoutShuffle);
+        Random rnd = new();
+        foreach (DataRow row in _dataTable.Rows)
+        {
+            row[HoldoutShuffle] = rnd.Next();
+        }
+        DateTime beforeDate = holdoutRequest.MaxDate;
+        DateTime afterDate = holdoutRequest.MinDate;
+        string dateColumn = holdoutRequest.DateColumnName;
+        bool hasMinDate = false;
+        bool hasMaxDate = false;
+
+
+        if (columnNames.Contains(dateColumn))
+        {
+            if (beforeDate.Date != DateTime.MinValue)
             {
-                row["_Holdoutsuffle"] = rnd.Next();
+                //has max date
+                hasMaxDate = true;
             }
-            //todo
-            string whereCondition = "";
-            DateTime beforeDate = holdoutRequest.MaxDate;
-            DateTime afterDate = holdoutRequest.MinDate;
-            string dateColumn = holdoutRequest.DateColumnName;
-            bool hasMinDate = false;
-            bool hasMaxDate = false;
-
-
-            if (!columnNames.Contains(dateColumn))
+            if (afterDate.Date != DateTime.MinValue)
             {
-                //todo throw an error
+                //has min date
+                hasMinDate = true;
             }
-            else
+        }
+
+        if (hasMinDate || hasMaxDate)
+        {
+            foreach(DataRow row in _dataTable.Rows)
             {
-                if (beforeDate.Date != DateTime.MinValue)
-                {
-                    //has max date
-                    hasMaxDate = true;
+                if (hasMaxDate && DateTime.Parse(row[dateColumn].ToString()) > beforeDate) {
+                    row.Delete();
                 }
-                if (afterDate.Date != DateTime.MinValue)
+                else if (hasMinDate && DateTime.Parse(row[dateColumn].ToString()) < afterDate)
                 {
-                    //has min date
-                    hasMinDate = true;
-                }
-            }
-
-
-            if (!string.IsNullOrWhiteSpace(whereCondition))
-            {
-                DataView dv = new DataView(_dataTable);
-                dv.RowFilter = whereCondition;
-                DataTable dt2 = dv.ToTable();
-                dv.Dispose();
-                _dataTable = dt2;
-                if (dt2.Rows.Count < 1)
-                {
-                    //todo warn about filtering out all data
+                    row.Delete();
                 }
             }
-            if (hasMinDate || hasMaxDate)
+        }
+        _dataTable.DefaultView.Sort = HoldoutShuffle;
+        _dataTable = _dataTable.DefaultView.ToTable();
+        _dataTable.Columns.Remove(HoldoutShuffle);
+        var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(holdoutRequest.Count);
+        if (holdoutRequest.IsPercent)
+        {
+            var rowCount = holdoutRequest.Count;
+            if (holdoutRequest.Count > 100)
             {
-                foreach(DataRow row in _dataTable.Rows)
-                {
-                    if (hasMaxDate && DateTime.Parse(row[dateColumn].ToString()) > beforeDate) {
-                        row.Delete();
-                    }
-                    else if (hasMinDate && DateTime.Parse(row[dateColumn].ToString()) < afterDate)
-                    {
-                        row.Delete();
-                    }
-                }
+                holdoutRequest.Count = 100;
             }
-            _dataTable.DefaultView.Sort = "_Holdoutsuffle";
-            _dataTable = _dataTable.DefaultView.ToTable();
-            _dataTable.Columns.Remove("_Holdoutsuffle");
-            var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(holdoutRequest.Count);
-            if (holdoutRequest.IsPercent)
-            {
-                var rowCount = holdoutRequest.Count;
-                if (holdoutRequest.Count > 100)
-                {
-                    //listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Holdout percentage was >100%. Will use 100%"));
-                    holdoutRequest.Count = 100;
-                }
-                rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * holdoutRequest.Count));
-                rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
-            }
-            //todo fail is rows are empty
-            foreach (DataRow row in rows)
-            {
-                IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-                sb.AppendLine(string.Join(",", fields));
-            }
+            rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * holdoutRequest.Count));
+            rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
+        }
+        if (rows.ToArray().Length < 1)
+        {
+            Show("Holdout would be empty with current configuration. Will not create holdout.");
+            return;
+        }
 
-            File.WriteAllText($"{holdoutRequest.Name}.csv", sb.ToString());
-            FileInfo fi = new FileInfo($"{holdoutRequest.Name}.csv");
-            FileInfo[] fil =
-            {
-                fi
-            };
-            FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
+        foreach (DataRow row in rows)
+        {
+            IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
+            sb.AppendLine(string.Join(",", fields));
+        }
+
+        File.WriteAllText($"{holdoutRequest.Name}.csv", sb.ToString());
+        FileInfo fi = new FileInfo($"{holdoutRequest.Name}.csv");
+        FileInfo[] fil =
+        {
+            fi
+        };
+        FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
             
-            List<string> columns = new List<string>();
-            foreach (DataColumn column in _dataTable.Columns)
-            {
-                columns.Add(column.ColumnName.ToString());
-            }
-
-
-            var extractionIdentifier = "";
-            BasicActivator.SelectObject("Select an Extraction Identifier", columns.ToArray(), out extractionIdentifier);
-            DiscoveredDatabase db = SelectDatabase(true, "Select a Database to store the new Holdout.");
-            var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
-
-            var z = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null);
-            z.Execute();
+        List<string> columns = new List<string>();
+        foreach (DataColumn column in _dataTable.Columns)
+        {
+            columns.Add(column.ColumnName.ToString());
         }
 
 
-        //todo
-        // this flow largely works, but obviously needs tidied up and finessed
+        var extractionIdentifier = "";
+        BasicActivator.SelectObject("Select an Extraction Identifier", columns.ToArray(), out extractionIdentifier);
+        if (extractionIdentifier == null) 
+            return;
+         
+        DiscoveredDatabase db = SelectDatabase(true, "Select a Database to store the new Holdout.");
+        if(db == null) return;
+        var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+        .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
+        var importCommand = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null,holdoutRequest.Description);
+        importCommand.Execute();
+        
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregate,OverlayKind.Link);

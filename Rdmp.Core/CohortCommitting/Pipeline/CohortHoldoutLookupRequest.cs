@@ -25,7 +25,7 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
     public int Count { get; set; }
     public bool IsPercent { get; set; }
 
-    public string DescriptionForAuditLog { get; set; }
+    public string Description { get; set; }
 
     public string WhereQuery { get; set; }
 
@@ -34,13 +34,13 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
     public DateTime MinDate { get; set; }
     public DateTime MaxDate { get; set; }
     public string DateColumnName { get; set; }
-    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string descriptionForAuditLog,string whereQuery,string minDate=null,string maxDate=null,string dateColumnName=null)
+    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string description="",string minDate=null,string maxDate=null,string dateColumnName=null)
     {
         CIC = cic;
         Name = name;
         Count = count;
         IsPercent = isPercent;
-        DescriptionForAuditLog = descriptionForAuditLog;
+        Description = description;
         DateTime _MinDate;
         DateTime.TryParseExact(minDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None,out _MinDate);
         MinDate = _MinDate;
@@ -48,7 +48,6 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
         DateTime.TryParseExact(maxDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MaxDate);
         MinDate = _MinDate;
         DateColumnName = dateColumnName;
-        WhereQuery = whereQuery;
         AddInitializationObject(this);
     }
         public string GetSummary(bool includeName, bool includeId)
