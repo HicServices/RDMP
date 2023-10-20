@@ -5,38 +5,26 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using MongoDB.Driver.Core.Servers;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.CommandExecution.Combining;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.ReusableLibraryCode.Progress;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection.Metadata;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using TB.ComponentModel;
-using static MongoDB.Driver.WriteConcern;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -50,7 +38,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
 
     public ExecuteCommandCreateHoldoutLookup(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, AggregateConfiguration ac) : base(activator)
+        CohortIdentificationConfiguration cic) : base(activator)
     {
         _cic = cic;
         _activator = activator;
@@ -83,8 +71,8 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             con.Open();
             _cmd = server.GetCommand(sql, con);
             _cmd.CommandTimeout = 10000;
-            var a = server.GetDataAdapter(_cmd);
-            a.Fill(dt);
+            var adapter = server.GetDataAdapter(_cmd);
+            adapter.Fill(dt);
             con.Close();
         }
         catch (Exception e)

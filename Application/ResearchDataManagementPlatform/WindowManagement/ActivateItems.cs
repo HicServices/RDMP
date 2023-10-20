@@ -868,11 +868,10 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() =>
                 GetCohortHoldoutLookupRequest(externalCohortTable, project, cic));
 
-        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable, project, cic);
+        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable,  cic);
 
         if (!string.IsNullOrWhiteSpace(cic.Description))
             ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
-        //todo the ui portion does not work currently 
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : ui.Result;
     }
 

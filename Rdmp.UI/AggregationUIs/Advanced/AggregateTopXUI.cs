@@ -28,7 +28,6 @@ public partial class AggregateTopXUI : RDMPUserControl
     private AggregateConfiguration _aggregate;
 
     private const string CountColumn = "Count Column";
-    private const string Random = "Random";
 
     public AggregateTopXUI()
     {
@@ -64,8 +63,6 @@ public partial class AggregateTopXUI : RDMPUserControl
         bLoading = true;
         ddOrderByDimension.Items.Clear();
         ddOrderByDimension.Items.Add(CountColumn);
-        var x = new AggregateDimension();
-        //ddOrderByDimension.Items.Add(Random);
         ddOrderByDimension.Items.AddRange(_aggregate.AggregateDimensions);
 
         if (_topX != null)

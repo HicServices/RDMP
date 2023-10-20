@@ -5,19 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data;
 using System.Globalization;
 using System.Security.Permissions;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
-/// Also functions as the use case for cohort creation (to which it passes itself as an input object).
+/// All details required to create a holdout set from a cohort
 /// </summary>
 public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummarised, ICohortHoldoutLookupRequest
 {
@@ -34,7 +36,7 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
     public DateTime MinDate { get; set; }
     public DateTime MaxDate { get; set; }
     public string DateColumnName { get; set; }
-    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string description="",string minDate=null,string maxDate=null,string dateColumnName=null)
+    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string description = "", string minDate = null, string maxDate = null, string dateColumnName = null)
     {
         CIC = cic;
         Name = name;
@@ -42,20 +44,25 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
         IsPercent = isPercent;
         Description = description;
         DateTime _MinDate;
-        DateTime.TryParseExact(minDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None,out _MinDate);
+        DateTime.TryParseExact(minDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MinDate);
         MinDate = _MinDate;
-         DateTime _MaxDate;
+        DateTime _MaxDate;
         DateTime.TryParseExact(maxDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MaxDate);
         MinDate = _MinDate;
         DateColumnName = dateColumnName;
         AddInitializationObject(this);
     }
-        public string GetSummary(bool includeName, bool includeId)
-    {
-        throw new NotImplementedException();
-    }
+    public string GetSummary(bool includeName, bool includeId) => $"Cohort Holdout: {Name}";
 
-    protected override IDataFlowPipelineContext GenerateContextImpl()
+
+    protected override IDataFlowPipelineContext GenerateContextImpl() =>
+            new DataFlowPipelineContext<CohortIdentificationConfiguration>
+            {
+                MustHaveDestination = typeof(ICohortPipelineDestination),
+                MustHaveSource = typeof(IDataFlowSource<CohortIdentificationConfiguration>)
+            };
+
+    public void Check(ICheckNotifier notifier)
     {
         throw new NotImplementedException();
     }

@@ -472,7 +472,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
             { Weight = -50.5f };
-            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic, ac)
+            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
             { Weight = -50.5f };
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)

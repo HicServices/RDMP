@@ -26,15 +26,8 @@ using Point = System.Drawing.Point;
 
 namespace Rdmp.UI.CohortUI.CreateHoldoutLookup;
 
-
 /// <summary>
-/// this is incorrect
-/// Once you have created a cohort database, this dialog lets you upload a new cohort into it.  You will already have selected a file which contains the private patient identifiers of
-/// those you wish to be in the cohort.  Next you must create or choose an existing Project for which the cohort belongs.
-/// 
-/// <para>Once you have chosen the project you can choose to either create a new cohort for use with the project (use this if you have multiple cohorts in the project e.g. 'Cases' and
-/// 'Controls').  Or 'Revised version of existing cohort' for if you made a mistake with your first version of a cohort or if you are doing a refresh of the cohort (e.g. after 5 years
-/// it is likely there will be different patients that match the research study criteria so a new version of the cohort is appropriate).</para>
+/// Once you have created a cohort for your holdout, this dialog allows you to configure how many and from when to store a a catalogue for use as excclusion fields in other cohorts
 /// </summary>
 public partial class CreateHoldoutLookupUI : RDMPForm
 {
@@ -50,7 +43,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
     }
 
 
-    public CreateHoldoutLookupUI(IActivateItems activator, IExternalCohortTable target, IProject project = null, CohortIdentificationConfiguration cic = null) :
+    public CreateHoldoutLookupUI(IActivateItems activator, IExternalCohortTable target,  CohortIdentificationConfiguration cic = null) :
         base(activator)
     {
         _target = target;
@@ -65,7 +58,6 @@ public partial class CreateHoldoutLookupUI : RDMPForm
 
         _repository = (IDataExportRepository)_target.Repository;
         _cic = cic;
-        SetProject(project);
         tbName.Text = $"holdout_{cic.Name}";
 
 
@@ -80,7 +72,6 @@ public partial class CreateHoldoutLookupUI : RDMPForm
 
 
     public CohortHoldoutLookupRequest Result { get; set; }
-    public IProject Project { get; set; }
 
 
     private void btnOk_Click(object sender, EventArgs e)
@@ -91,28 +82,8 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         string dateColumnName = textBox4.Text;
         string description = tbDescription.Text;
         Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", description, minDate, maxDate, dateColumnName);
-        //see if it is passing checks
-        var notifier = new ToMemoryCheckNotifier();
-        //Result.Check(notifier);
-        //if (notifier.GetWorst() <= CheckResult.Warning)
-        //{
         DialogResult = DialogResult.OK;
         Close();
-        //        }
-        //        else
-        //        {
-        //            var bads = notifier.Messages.Where(c => c.Result == CheckResult.Fail);
-
-
-        //            WideMessageBox.Show("Checks Failed",
-        //                $@"Checks must pass before continuing:
-        //- {string.Join($"{Environment.NewLine}- ", bads.Select(b => b.Message))}");
-
-
-        //            //if it is not passing checks display the results of the failing checking
-        //            ragSmiley1.Reset();
-        //            Result.Check(ragSmiley1);
-        //        }
     }
 
 
@@ -131,107 +102,12 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         _target.Check(ragSmiley1);
     }
 
-
-
-
-    private void btnNewProject_Click(object sender, EventArgs e)
-    {
-        try
-        {
-            var p = new ProjectUI.ProjectUI();
-            var dialog = new RDMPForm(Activator);
-
-
-            p.SwitchToCutDownUIMode();
-
-
-            var ok = new Button();
-            ok.Click += (s, ev) =>
-            {
-                dialog.Close();
-                dialog.DialogResult = DialogResult.OK;
-            };
-            ok.Location = new Point(0, p.Height + 10);
-            ok.Width = p.Width / 2;
-            ok.Height = 30;
-            ok.Text = "Ok";
-
-
-            var cancel = new Button();
-            cancel.Click += (s, ev) =>
-            {
-                dialog.Close();
-                dialog.DialogResult = DialogResult.Cancel;
-            };
-            cancel.Location = new Point(p.Width / 2, p.Height + 10);
-            cancel.Width = p.Width / 2;
-            cancel.Height = 30;
-            cancel.Text = "Cancel";
-
-
-            dialog.Controls.Add(ok);
-            dialog.Controls.Add(cancel);
-
-
-            dialog.Height = p.Height + 80;
-            dialog.Width = p.Width + 10;
-            dialog.Controls.Add(p);
-
-
-            ok.Anchor = AnchorStyles.Bottom;
-            cancel.Anchor = AnchorStyles.Bottom;
-
-
-            var project = new Project(_repository, "New Project");
-            p.SetDatabaseObject(Activator, project);
-            var result = dialog.ShowDialog();
-            result = DialogResult.OK; //temp
-            if (result == DialogResult.OK)
-            {
-                //project.SaveToDatabase();
-                //SetProject(project);
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(project));
-            }
-            else
-            {
-                //project.DeleteInDatabase();
-            }
-        }
-        catch (Exception exception)
-        {
-            ExceptionViewer.Show(exception);
-        }
-    }
-
-
-    private void SetProject(IProject project)
-    {
-        Project = project;
-
-
-        gbChooseCohortType.Enabled = true;
-    }
-
-
     private void tbName_TextChanged(object sender, EventArgs e)
     {
     }
 
-
-    private void btnExisting_Click(object sender, EventArgs e)
-    {
-        if (Activator.SelectObject(new DialogArgs
-        {
-            TaskDescription =
-                    "Choose a Project which this cohort will be associated with.  This will set the cohorts ProjectNumber.  A cohort can only be extracted from a Project whose ProjectNumber matches the cohort (multiple Projects are allowed to have the same ProjectNumber)"
-        }, Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), out var proj))
-            SetProject(proj);
-    }
-
-
     private void btnClear_Click(object sender, EventArgs e)
     {
-        SetProject(null);
     }
 
 
