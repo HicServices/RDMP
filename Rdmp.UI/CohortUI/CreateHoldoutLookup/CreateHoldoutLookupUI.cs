@@ -64,7 +64,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
             TaskDescription =
-                "Holdouts...do stuff todo"
+                "For Details, see: <<TODO add url link here>>"
         });
     }
 
