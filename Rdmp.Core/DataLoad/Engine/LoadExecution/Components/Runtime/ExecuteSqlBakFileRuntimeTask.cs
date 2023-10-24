@@ -5,11 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data;
 using System.IO;
+using System.Linq;
+using Microsoft.Data.SqlClient;
+using MongoDB.Driver.Core.Servers;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -39,38 +44,52 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         if (!Exists())
             throw new Exception($"The sql bak file {Filepath} does not exist");
 
-        string name = RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name;
-        string restoreCommand = @$"RESTORE DATABASE {name}
-        FROM DISK = 'C:\temp\backups\backup.bak'
-        WITH MOVE 'images_1' TO 'C:\Users\jfriel001\images_1.mdf',
-        MOVE 'images_1_log' TO 'C:\Users\jfriel001\images_1.ldf' ,  NOUNLOAD,  REPLACE,  STATS = 5";
-        try
+        string fileOnlyCommand = $"RESTORE FILELISTONLY FROM DISK = '{Filepath}'";
+        DataTable fileInfo = new DataTable();
+        using var con = (SqlConnection)db.Server.GetConnection();
+        SqlCommand cmd = new SqlCommand(fileOnlyCommand, con);
+        SqlDataAdapter da = new SqlDataAdapter(cmd);
+        da.Fill(fileInfo);
+
+        DataRow[] primaryFiles = fileInfo.Select("Type = 'D'");
+        DataRow[] logFiles = fileInfo.Select("Type = 'L'");
+        if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
-            //    commandText = File.ReadAllText(Filepath);
-
-            //    // Any string arguments refer to tokens that are to be replaced in the SQL file
-            //    foreach (var kvp in RuntimeArguments.GetAllArgumentsOfType<string>())
-            //    {
-            //        var value = kvp.Value;
-
-            //        if (value.Contains("<DatabaseServer>"))
-            //            value = value.Replace("<DatabaseServer>",
-            //                RuntimeArguments.StageSpecificArguments.DbInfo.Server.Name);
-
-            //        if (value.Contains("<DatabaseName>"))
-            //            value = value.Replace("<DatabaseName>",
-            //                RuntimeArguments.StageSpecificArguments.DbInfo.GetRuntimeName());
-
-            //        commandText = commandText.Replace($"##{kvp.Key}##", value);
-            //    }
+            //Something has gone wrong
         }
-        catch (Exception e)
+
+
+        DataRow primaryFile = primaryFiles[0];
+        DataRow logFile = logFiles[0];
+        string primaryFilePhysicalName = primaryFile["PhysicalName"].ToString();
+        string logFilePhysicalName = logFile["PhysicalName"].ToString();
+
+        if (File.Exists(primaryFilePhysicalName) || File.Exists(logFilePhysicalName))
         {
-            throw new Exception($"Could not read the sql file at {Filepath}: {e}");
+            string timestamp = DateTime.Now.Millisecond.ToString();
+            string primaryFileName = primaryFilePhysicalName.Substring(0, primaryFilePhysicalName.Length - 4);
+            string primaryFileExtention = primaryFilePhysicalName.Substring(primaryFilePhysicalName.Length - 4);
+            primaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtention}";
+            string logFileName = logFilePhysicalName.Substring(0, logFilePhysicalName.Length - 4);
+            string logFileExtention = logFilePhysicalName.Substring(logFilePhysicalName.Length - 4);
+            logFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtention}";
         }
+
+        string name = db.ToString();
+
+        string restoreCommand = @$"
+        use master;
+        ALTER DATABASE {name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+        RESTORE DATABASE {name}
+        FROM DISK = '{Filepath}'
+        WITH MOVE '{primaryFile["LogicalName"]}' TO '{primaryFilePhysicalName}',
+        MOVE '{logFile["LogicalName"]}' TO '{logFilePhysicalName}' ,  NOUNLOAD,  REPLACE,  STATS = 5;
+        ALTER DATABASE {name} SET MULTI_USER;
+        ";
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Executing script {Filepath} ( against {db})"));
+
         var executer = new ExecuteSqlInDleStage(job, _loadStage);
         return executer.Execute(restoreCommand, db);
     }

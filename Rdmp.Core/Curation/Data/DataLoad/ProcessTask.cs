@@ -198,7 +198,10 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             case ProcessTaskType.SQLFile:
                 CheckFileExistenceAndUniqueness(notifier);
                 CheckForProblemsInSQLFile(notifier);
-
+                break;
+            case ProcessTaskType.SQLBakFile:
+                //CheckFileExistenceAndUniqueness(notifier);
+                //CheckForProblemsInSQLFile(notifier);
                 break;
             case ProcessTaskType.Attacher:
                 break;
