@@ -58,7 +58,6 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         if (_file == null)
         {
-            //todo make this a switch
             if (_taskType == ProcessTaskType.SQLBakFile)
             {
                 if (BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
@@ -68,8 +67,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
                     if (!File.Exists(target))
                     {
-                        //todo this file doesn't exist
-                        return;
+                        return; //File doesn't exist
                     }
 
                     _file = new FileInfo(target);
@@ -140,7 +138,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             ProcessTaskType.Executable => "Add Run .exe File Task",
             ProcessTaskType.SQLFile => "Add Run SQL Script Task",
-            ProcessTaskType.SQLBakFile => "Add SQL Bak File Task",
+            ProcessTaskType.SQLBakFile => "Add SQL backup File Task",
             _ => throw new ArgumentOutOfRangeException()
         };
     }

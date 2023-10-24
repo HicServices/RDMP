@@ -21,12 +21,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
+/// RuntimeTask that executes a single .bak file specified by the user in a ProcessTask with ProcessTaskType SQLBakFile.
 /// </summary>
 public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
 {
     public string Filepath;
-    private IProcessTask _task;
+    private readonly IProcessTask _task;
 
     private LoadStage _loadStage;
 
@@ -56,6 +56,7 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
             //Something has gone wrong
+            return ExitCodeType.Error;
         }
 
 

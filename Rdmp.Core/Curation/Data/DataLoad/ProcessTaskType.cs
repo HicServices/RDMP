@@ -23,7 +23,7 @@ public enum ProcessTaskType
     SQLFile,
 
     /// <summary>
-    /// ProcessTask is to import a SQL BAK file directly to the server
+    /// ProcessTask is to import a SQL backup file directly to the server
     /// </summary>
     SQLBakFile,
 
