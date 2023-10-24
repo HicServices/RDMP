@@ -374,6 +374,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         {
             ProcessTaskType.Executable => true,
             ProcessTaskType.SQLFile => stage != LoadStage.GetFiles,
+            ProcessTaskType.SQLBakFile => stage != LoadStage.GetFiles,
             ProcessTaskType.Attacher => stage == LoadStage.Mounting,
             ProcessTaskType.DataProvider => true,
             ProcessTaskType.MutilateDataTable => stage != LoadStage.GetFiles,

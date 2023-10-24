@@ -32,6 +32,7 @@ public class RuntimeTaskFactory
         {
             ProcessTaskType.Executable => new ExecutableRuntimeTask(task, args),
             ProcessTaskType.SQLFile => new ExecuteSqlFileRuntimeTask(task, args),
+            ProcessTaskType.SQLBakFile => new ExecuteSqlBakFileRuntimeTask(task, args),
             ProcessTaskType.Attacher => new AttacherRuntimeTask(task, args),
             ProcessTaskType.DataProvider => new DataProviderRuntimeTask(task, args),
             ProcessTaskType.MutilateDataTable => new MutilateDataTablesRuntimeTask(task, args),
