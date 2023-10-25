@@ -42,7 +42,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             SetImpossible("Could not construct LoadDirectory");
         }
 
-        ProcessTaskType[] AcceptedProcessTaskTypes= { ProcessTaskType.SQLFile, ProcessTaskType.Executable, ProcessTaskType.SQLBakFile };
+        ProcessTaskType[] AcceptedProcessTaskTypes = { ProcessTaskType.SQLFile, ProcessTaskType.Executable, ProcessTaskType.SQLBakFile };
         if (!AcceptedProcessTaskTypes.Contains(taskType))
             SetImpossible("Only SQLFile, SqlBakFile and Executable task types are supported by this command");
 
@@ -60,29 +60,29 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             if (_taskType == ProcessTaskType.SQLBakFile)
             {
-                if (BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
+                if (!BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
                        out var selected, false))
-                {
-                    var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
-
-                    if (!File.Exists(target))
-                    {
-                        return; //File doesn't exist
-                    }
-
-                    _file = new FileInfo(target);
-                }
-                else
                 {
                     return; //user cancelled
                 }
+                var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
+
+                if (!File.Exists(target))
+                {
+                    return; //File doesn't exist
+                }
+
+                _file = new FileInfo(target);
+
             }
             else if (_taskType == ProcessTaskType.SQLFile)
             {
-                if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
+                if (!BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
                         out var selected, false))
                 {
-                    var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
+                    return; //user cancelled
+                }
+                var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
 
                     if (!target.EndsWith(".sql"))
                         target += ".sql";
@@ -92,11 +92,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                         File.WriteAllText(target, "/*todo Type some SQL*/");
 
                     _file = new FileInfo(target);
-                }
-                else
-                {
-                    return; //user cancelled
-                }
+                   
             }
             else if (_taskType == ProcessTaskType.Executable)
             {
