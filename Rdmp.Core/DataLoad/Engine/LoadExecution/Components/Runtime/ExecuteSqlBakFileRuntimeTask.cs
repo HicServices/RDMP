@@ -49,13 +49,12 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         using var con = (SqlConnection)db.Server.GetConnection();
         SqlCommand cmd = new SqlCommand(fileOnlyCommand, con);
         SqlDataAdapter da = new SqlDataAdapter(cmd);
+        cmd.Dispose();
         da.Fill(fileInfo);
-
+        da.Dispose();
         DataRow[] primaryFiles = fileInfo.Select("Type = 'D'");
         DataRow[] logFiles = fileInfo.Select("Type = 'L'");
         fileInfo.Dispose();
-        cmd.Dispose();
-        da.Dispose();
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
             //Something has gone wrong
