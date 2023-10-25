@@ -61,10 +61,8 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             if (_taskType == ProcessTaskType.SQLBakFile)
             {
                 if (!BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
-                       out var selected, false))
-                {
-                    return; //user cancelled
-                }
+                       out var selected, false)) return;
+
                 var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
 
                 if (!File.Exists(target))
@@ -78,21 +76,19 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             else if (_taskType == ProcessTaskType.SQLFile)
             {
                 if (!BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
-                        out var selected, false))
-                {
-                    return; //user cancelled
-                }
+                        out var selected, false)) return;
+
                 var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
 
-                    if (!target.EndsWith(".sql"))
-                        target += ".sql";
+                if (!target.EndsWith(".sql"))
+                    target += ".sql";
 
-                    //create it if it doesn't exist
-                    if (!File.Exists(target))
-                        File.WriteAllText(target, "/*todo Type some SQL*/");
+                //create it if it doesn't exist
+                if (!File.Exists(target))
+                    File.WriteAllText(target, "/*todo Type some SQL*/");
 
-                    _file = new FileInfo(target);
-                   
+                _file = new FileInfo(target);
+
             }
             else if (_taskType == ProcessTaskType.Executable)
             {
