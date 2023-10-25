@@ -53,6 +53,9 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
 
         DataRow[] primaryFiles = fileInfo.Select("Type = 'D'");
         DataRow[] logFiles = fileInfo.Select("Type = 'L'");
+        fileInfo.Dispose();
+        cmd.Dispose();
+        da.Dispose();
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
             //Something has gone wrong
