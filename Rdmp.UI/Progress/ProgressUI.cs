@@ -251,14 +251,13 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             if (_notificationQueue.Any())
             {
+                olvProgressEvents.BeginUpdate();
                 olvProgressEvents.AddObjects(_notificationQueue);
+                olvProgressEvents.EndUpdate();
                 _notificationQueue.Clear();
 
-                AutoResizeColumns();
             }
         }
-
-        olvProgressEvents.Sort();
     }
 
     private void AutoResizeColumns()
