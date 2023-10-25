@@ -257,11 +257,11 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 _notificationQueue.Clear();
 
 
-                //AutoResizeColumns();
+                AutoResizeColumns();
             }
         }
 
-        //olvProgressEvents.Sort();
+        olvProgressEvents.Sort();
     }
 
     private void AutoResizeColumns()
