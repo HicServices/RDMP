@@ -41,6 +41,7 @@ public class ProcessTaskStateBasedIconProvider : IObjectStateBasedIconProvider
             {
                 ProcessTaskType.Executable => _exe,
                 ProcessTaskType.SQLFile => _sql,
+                ProcessTaskType.SQLBakFile => _sql,
                 ProcessTaskType.Attacher => _attacher,
                 ProcessTaskType.DataProvider => _dataProvider,
                 ProcessTaskType.MutilateDataTable => _mutilateDataTables,

@@ -198,7 +198,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             case ProcessTaskType.SQLFile:
                 CheckFileExistenceAndUniqueness(notifier);
                 CheckForProblemsInSQLFile(notifier);
-
+                break;
+            case ProcessTaskType.SQLBakFile:
+                CheckFileExistenceAndUniqueness(notifier);
                 break;
             case ProcessTaskType.Attacher:
                 break;
@@ -374,6 +376,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         {
             ProcessTaskType.Executable => true,
             ProcessTaskType.SQLFile => stage != LoadStage.GetFiles,
+            ProcessTaskType.SQLBakFile => stage != LoadStage.GetFiles,
             ProcessTaskType.Attacher => stage == LoadStage.Mounting,
             ProcessTaskType.DataProvider => true,
             ProcessTaskType.MutilateDataTable => stage != LoadStage.GetFiles,

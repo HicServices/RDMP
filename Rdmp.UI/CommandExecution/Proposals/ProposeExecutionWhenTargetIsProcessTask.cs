@@ -32,6 +32,9 @@ internal class ProposeExecutionWhenTargetIsProcessTask : RDMPCommandExecutionPro
             case ProcessTaskType.SQLFile:
                 ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
                 break;
+            case ProcessTaskType.SQLBakFile:
+                ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
+                break;
         }
     }
 
