@@ -77,7 +77,7 @@ public class FixedWidthFormatFile
     public DataTable GetDataTableFromFlatFile(FileInfo f)
     {
         //setup the table
-        DataTable toReturn = new DataTable();
+        var toReturn = new DataTable();
 
         toReturn.BeginLoadData();
         foreach (var fixedWidthColumn in FormatColumns)
