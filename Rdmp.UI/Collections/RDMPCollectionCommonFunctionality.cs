@@ -40,7 +40,7 @@ namespace Rdmp.UI.Collections;
 /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row
 /// height, child nodes etc.
 /// </summary>
-public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
+public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 {
     /// <summary>
     /// The collection if any that this <see cref="Tree"/> represents in the UI
