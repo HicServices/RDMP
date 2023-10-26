@@ -26,8 +26,9 @@ public abstract class SingletonNode : Node, IEquatable<SingletonNode>
 
     public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
 
-    public override bool Equals(object obj) => obj is SingletonNode s &&
-                                               MemberwiseEqualityComparer<SingletonNode>.ByProperties.Equals(this, s);
+    public override bool Equals(object obj) => obj?.GetType() == typeof(SingletonNode) &&
+                                               typeof(SingletonNode) == GetType() &&
+                                               MemberwiseEqualityComparer<SingletonNode>.ByProperties.Equals(this, obj as SingletonNode);
 
     public override int GetHashCode() => _caption.GetHashCode();
 }
