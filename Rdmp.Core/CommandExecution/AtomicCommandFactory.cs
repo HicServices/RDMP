@@ -547,6 +547,8 @@ public class AtomicCommandFactory : CommandFactoryBase
                 lsn.LoadMetadata, lsn.LoadStage);
             yield return new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.Executable,
                 lsn.LoadMetadata, lsn.LoadStage);
+            yield return new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.SQLBakFile,
+                lsn.LoadMetadata, lsn.LoadStage);
         }
 
         if (Is(o, out LoadDirectoryNode ldn))
