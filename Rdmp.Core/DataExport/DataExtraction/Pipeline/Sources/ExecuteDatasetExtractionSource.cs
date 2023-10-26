@@ -207,6 +207,14 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         try
         {
             chunk = _hostedSource.GetChunk(listener, cancellationToken);
+            try
+            {
+                chunk.TableName = Request.DatasetBundle.DataSet.Catalogue.Name;
+            }
+            catch (Exception)
+            {
+                //failed to grab the catalogue name
+            }
 
             chunk = _peeker.AddPeekedRowsIfAny(chunk);
 
