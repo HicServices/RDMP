@@ -563,7 +563,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         toReturn.EndLoadData();
 
         con.Close();
-        toReturn.EndLoadData();
 
         return toReturn;
     }
