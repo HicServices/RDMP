@@ -45,16 +45,13 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
             throw new Exception($"The sql bak file {Filepath} does not exist");
 
         string fileOnlyCommand = $"RESTORE FILELISTONLY FROM DISK = '{Filepath}'";
-        DataTable fileInfo = new DataTable();
+        using var fileInfo = new DataTable();
         using var con = (SqlConnection)db.Server.GetConnection();
-        SqlCommand cmd = new SqlCommand(fileOnlyCommand, con);
-        SqlDataAdapter da = new SqlDataAdapter(cmd);
-        cmd.Dispose();
-        da.Fill(fileInfo);
-        da.Dispose();
+        using (var cmd = new SqlCommand(fileOnlyCommand, con))
+          using (var da = new SqlDataAdapter(cmd))
+            da.Fill(fileInfo);
         DataRow[] primaryFiles = fileInfo.Select("Type = 'D'");
         DataRow[] logFiles = fileInfo.Select("Type = 'L'");
-        fileInfo.Dispose();
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
             //Something has gone wrong
