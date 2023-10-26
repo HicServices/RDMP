@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconOverlays;
@@ -41,8 +42,9 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             SetImpossible("Could not construct LoadDirectory");
         }
 
-        if (taskType is not (ProcessTaskType.SQLFile or ProcessTaskType.Executable))
-            SetImpossible("Only SQLFile and Executable task types are supported by this command");
+        ProcessTaskType[] AcceptedProcessTaskTypes = { ProcessTaskType.SQLFile, ProcessTaskType.Executable, ProcessTaskType.SQLBakFile };
+        if (!AcceptedProcessTaskTypes.Contains(taskType))
+            SetImpossible("Only SQLFile, SqlBakFile and Executable task types are supported by this command");
 
         if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
             SetImpossible($"You cannot run {taskType} in {loadStage}");
@@ -56,26 +58,37 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         if (_file == null)
         {
-            if (_taskType == ProcessTaskType.SQLFile)
+            if (_taskType == ProcessTaskType.SQLBakFile)
             {
-                if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
-                        out var selected, false))
+                if (!BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
+                       out var selected, false)) return;
+
+                var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
+
+                if (!File.Exists(target))
                 {
-                    var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
-
-                    if (!target.EndsWith(".sql"))
-                        target += ".sql";
-
-                    //create it if it doesn't exist
-                    if (!File.Exists(target))
-                        File.WriteAllText(target, "/*todo Type some SQL*/");
-
-                    _file = new FileInfo(target);
+                    return; //File doesn't exist
                 }
-                else
-                {
-                    return; //user cancelled
-                }
+
+                _file = new FileInfo(target);
+
+            }
+            else if (_taskType == ProcessTaskType.SQLFile)
+            {
+                if (!BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",
+                        out var selected, false)) return;
+
+                var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
+
+                if (!target.EndsWith(".sql"))
+                    target += ".sql";
+
+                //create it if it doesn't exist
+                if (!File.Exists(target))
+                    File.WriteAllText(target, "/*todo Type some SQL*/");
+
+                _file = new FileInfo(target);
+
             }
             else if (_taskType == ProcessTaskType.Executable)
             {
@@ -117,6 +130,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             ProcessTaskType.Executable => "Add Run .exe File Task",
             ProcessTaskType.SQLFile => "Add Run SQL Script Task",
+            ProcessTaskType.SQLBakFile => "Add SQL backup File Task",
             _ => throw new ArgumentOutOfRangeException()
         };
     }
@@ -126,6 +140,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         return _taskType switch
         {
             ProcessTaskType.SQLFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add),
+            ProcessTaskType.SQLBakFile => iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add), //todo maybe better
             ProcessTaskType.Executable => IconOverlayProvider.GetOverlayNoCache(
                 Image.Load<Rgba32>(CatalogueIcons.Exe), OverlayKind.Add),
             _ => null
