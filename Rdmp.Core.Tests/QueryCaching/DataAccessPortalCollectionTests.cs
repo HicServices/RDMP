@@ -47,14 +47,14 @@ internal class DataAccessPortalCollectionTests
         var collection = new DataAccessPointCollection(true);
 
         var _dap = Substitute.For<IDataAccessPoint>();
-        _dap.Server = ("loco");
-        _dap.Database = ("B");
-        _dap.DatabaseType = (DatabaseType.Oracle);
+        _dap.Server = "loco";
+        _dap.Database = "B";
+        _dap.DatabaseType = DatabaseType.Oracle;
 
         var _dap0 = Substitute.For<IDataAccessPoint>();
-        _dap0.Server = ("loco");
-        _dap0.Database = ("A");
-        _dap0.DatabaseType = (DatabaseType.Oracle);
+        _dap0.Server = "loco";
+        _dap0.Database = "A";
+        _dap0.DatabaseType = DatabaseType.Oracle;
 
         collection.Add(_dap0);
         collection.Add(_dap);
