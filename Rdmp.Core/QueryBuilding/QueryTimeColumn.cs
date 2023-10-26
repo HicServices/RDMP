@@ -146,7 +146,7 @@ public class QueryTimeColumn : IComparable
             {
                 var lookupDescriptionIsIsolated = false;
 
-                //we have not found any foreign keys yet thats a problem
+                //we have not found any foreign keys yet: that's a problem
                 if (lastForeignKeyFound == null)
                 {
                     var potentialWinners =
@@ -158,7 +158,7 @@ public class QueryTimeColumn : IComparable
                     {
                         lastForeignKeyFound =
                             potentialWinners[0]
-                                .ForeignKey; //use it there aren't multiple foreign keys to pick from (which would result in uncertainty)
+                                .ForeignKey; //use if there aren't multiple foreign keys to pick from (which would result in uncertainty)
                         lookupDescriptionIsIsolated = true;
                     }
                     else

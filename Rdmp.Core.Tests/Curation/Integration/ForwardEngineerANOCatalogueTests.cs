@@ -271,7 +271,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //not part of serialization
         planManager.TargetDatabase = dbTo;
         planManager.SkippedTables
-            .Add(fromNeckTableInfo); //skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+            .Add(fromNeckTableInfo); //skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definitely does)
 
         var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
 
@@ -410,7 +410,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var qb = new QueryBuilder(null, null);
         qb.AddColumnRange(bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-        //The query builder should be able to succesfully create SQL
+        //The query builder should be able to successfully create SQL
         Console.WriteLine(qb.SQL);
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
@@ -470,7 +470,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var qbdestination = new QueryBuilder(null, null);
         qbdestination.AddColumnRange(anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-        //The query builder should be able to succesfully create SQL
+        //The query builder should be able to successfully create SQL
         Console.WriteLine(qbdestination.SQL);
 
         var anoEiPostcode = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
