@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
-    IBasicActivateItems _activator;
+    readonly IBasicActivateItems _activator;
     private DiscoveredServer _server;
     private DbCommand _cmd;
     private DataTable _dataTable;
@@ -83,7 +83,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
     }
 
-    private string HoldoutShuffle = "_Holdoutsuffle";
+    private readonly string HoldoutShuffle = "_Holdoutsuffle";
 
     public override void Execute()
     {
@@ -157,15 +157,15 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         _dataTable.DefaultView.Sort = HoldoutShuffle;
         _dataTable = _dataTable.DefaultView.ToTable();
         _dataTable.Columns.Remove(HoldoutShuffle);
-        var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(holdoutRequest.Count);
+        var rowCount = holdoutRequest.Count;
+        var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
         if (holdoutRequest.IsPercent)
         {
-            var rowCount = holdoutRequest.Count;
-            if (holdoutRequest.Count > 100)
+            if (rowCount > 100)
             {
-                holdoutRequest.Count = 100;
+                rowCount = 100;
             }
-            rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * holdoutRequest.Count));
+            rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * rowCount));
             rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
         }
         if (rows.ToArray().Length < 1)
@@ -182,11 +182,6 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
         File.WriteAllText($"{holdoutRequest.Name}.csv", sb.ToString());
         FileInfo fi = new FileInfo($"{holdoutRequest.Name}.csv");
-        FileInfo[] fil =
-        {
-            fi
-        };
-        FileCollectionCombineable fcc = new FileCollectionCombineable(fil);
             
         List<string> columns = new List<string>();
         foreach (DataColumn column in _dataTable.Columns)

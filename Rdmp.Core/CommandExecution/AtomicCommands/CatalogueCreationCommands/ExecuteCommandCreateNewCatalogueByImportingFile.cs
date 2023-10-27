@@ -31,8 +31,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 {
     private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
-    private string _extractionIdentifier;
-    private string _initialDescription;
+    private readonly string _extractionIdentifier;
+    private readonly string _initialDescription;
 
     public FileInfo File { get; private set; }
 

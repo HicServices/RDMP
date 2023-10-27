@@ -32,7 +32,6 @@ namespace Rdmp.UI.CohortUI.CreateHoldoutLookup;
 public partial class CreateHoldoutLookupUI : RDMPForm
 {
     private readonly IExternalCohortTable _target;
-    private IDataExportRepository _repository;
     private readonly CohortIdentificationConfiguration _cic;
 
 
@@ -56,9 +55,8 @@ public partial class CreateHoldoutLookupUI : RDMPForm
             return;
 
 
-        _repository = (IDataExportRepository)_target.Repository;
         _cic = cic;
-        tbName.Text = $"holdout_{cic.Name}";
+        tbName.Text = $"holdout_{cic.Name ?? ""}";
 
 
         taskDescriptionLabel1.SetupFor(new DialogArgs
