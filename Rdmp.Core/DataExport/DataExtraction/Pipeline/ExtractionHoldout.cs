@@ -93,11 +93,15 @@ public class ExtractionHoldout : IPluginDataFlowComponent<DataTable>, IPipelineR
         if (!string.IsNullOrWhiteSpace(whereCondition))
         {
             DataTable dt = toProcess.Clone();
+            DataTable dt2 = new();
             dt.ImportRow(row);
-            DataView dv = new DataView(dt);
-            dv.RowFilter = whereCondition;
-            DataTable dt2 = dv.ToTable();
-            dv.Dispose();
+            using (DataView dv = new DataView(dt))
+            { 
+                dv.RowFilter = whereCondition;
+                dt2 = dv.ToTable();
+                dv.Dispose();
+                
+            }
             if (dt2.Rows.Count < 1)
             {
                 return false;
