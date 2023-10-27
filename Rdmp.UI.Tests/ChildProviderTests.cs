@@ -145,7 +145,7 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.AreEqual(p1,p2);
     }
 
     [Test]
@@ -181,7 +181,7 @@ internal class ChildProviderTests : UITests
     }
 
     /// <summary>
-    /// If two TableInfo differ by DatabaseType then they should have seperate hierarchies.
+    /// If two TableInfo differ by DatabaseType then they should have separate hierarchies.
     /// </summary>
     [Test]
     public void TestDuplicateTableInfos_DifferentServers_DatabaseTypeOnly()
@@ -270,7 +270,7 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.AreEqual(p1, p2);
     }
 
     /// <summary>
@@ -296,6 +296,6 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.AreEqual(p1, p2);
     }
 }
