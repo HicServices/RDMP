@@ -56,7 +56,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
 
 
         _cic = cic;
-        tbName.Text = $"holdout_{cic.Name ?? ""}";
+        tbName.Text = $"holdout_{cic?.Name ?? ""}";
 
 
         taskDescriptionLabel1.SetupFor(new DialogArgs
