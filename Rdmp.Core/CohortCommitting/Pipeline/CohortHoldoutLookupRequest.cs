@@ -43,12 +43,10 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
         Count = count;
         IsPercent = isPercent;
         Description = description;
-        DateTime _MinDate;
-        DateTime.TryParseExact(minDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MinDate);
-        MinDate = _MinDate;
-        DateTime _MaxDate;
-        DateTime.TryParseExact(maxDate, "DD/MM/YYYY", new CultureInfo("en-GB"), DateTimeStyles.None, out _MaxDate);
-        MinDate = _MinDate;
+        if (DateTime.TryParseExact(minDate, "DD/MM/YYYY", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedMinDate))
+            MinDate = parsedMinDate;
+        if (DateTime.TryParseExact(maxDate, "DD/MM/YYYY",  CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedMaxDate))
+            MaxDate = parsedMaxDate;
         DateColumnName = dateColumnName;
         AddInitializationObject(this);
     }

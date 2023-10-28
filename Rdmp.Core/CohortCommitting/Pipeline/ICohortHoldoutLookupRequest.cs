@@ -12,7 +12,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// <summary>
 /// See CohortHoldoutLookupRequest
 ///  </summary>
-public interface ICohortHoldoutLookupRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
+public interface ICohortHoldoutLookupRequest : ICheckable, IPipelineUseCase
 {
 
 }
