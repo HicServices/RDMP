@@ -207,7 +207,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-            
+
         var tbl = Database.CreateTable(testTableName,
             dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });

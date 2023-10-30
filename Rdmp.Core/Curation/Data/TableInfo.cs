@@ -260,7 +260,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public string GetDatabaseRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
-            
+
         namer ??= new FixedStagingDatabaseNamer(baseName);
 
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());

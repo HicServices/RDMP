@@ -16,7 +16,7 @@ using Rdmp.UI.SimpleDialogs;
 namespace Rdmp.UI.ChecksUI;
 
 /// <inheritdoc cref="IRAGSmiley" />
-public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
+public sealed class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
 {
     private CheckResult _worst;
     private Exception _exception;
@@ -147,7 +147,7 @@ public partial class RAGSmileyToolStrip : ToolStripButton, IRAGSmiley
         return false;
     }
 
-    public void ElevateState(CheckResult result)
+    private void ElevateState(CheckResult result)
     {
         switch (result)
         {

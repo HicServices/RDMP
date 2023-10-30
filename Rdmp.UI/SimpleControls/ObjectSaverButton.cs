@@ -25,13 +25,13 @@ namespace Rdmp.UI.SimpleControls;
 /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
 /// are correctly routed to this control.
 /// </summary>
-public partial class ObjectSaverButton
+public class ObjectSaverButton
 {
-    private Bitmap _undoImage;
-    private Bitmap _redoImage;
+    private static readonly Bitmap UndoImage = FamFamFamIcons.Undo.ImageToBitmap();
+    private static readonly Bitmap RedoImage = FamFamFamIcons.Redo.ImageToBitmap();
 
-    private ToolStripButton btnSave = new("Save", FamFamFamIcons.disk.ImageToBitmap());
-    private ToolStripButton btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
+    private readonly ToolStripButton _btnSave = new("Save", FamFamFamIcons.disk.ImageToBitmap());
+    private readonly ToolStripButton _btnUndoRedo = new("Undo", FamFamFamIcons.Undo.ImageToBitmap());
 
     private RevertableObjectReport _undoneChanges;
     private IRDMPControl _parent;
@@ -39,13 +39,8 @@ public partial class ObjectSaverButton
 
     public ObjectSaverButton()
     {
-        btnSave.Click += btnSave_Click;
-        btnUndoRedo.Click += btnUndoRedo_Click;
-
-        _undoImage = FamFamFamIcons.Undo.ImageToBitmap();
-        _redoImage = FamFamFamIcons.Redo.ImageToBitmap();
-
-        btnUndoRedo.Image = _undoImage;
+        _btnSave.Click += btnSave_Click;
+        _btnUndoRedo.Click += btnUndoRedo_Click;
     }
 
     private DatabaseEntity _o;
@@ -53,7 +48,7 @@ public partial class ObjectSaverButton
     public event Action AfterSave;
 
     /// <summary>
-    /// Function to carry out some kind of proceedure before the object is saved.  Return true if you want the save to carry on and be applied or false to abandon the save attempt.
+    /// Function to carry out some kind of procedure before the object is saved.  Return true if you want the save to carry on and be applied or false to abandon the save attempt.
     /// </summary>
     public event Func<DatabaseEntity, bool> BeforeSave;
 
@@ -62,8 +57,8 @@ public partial class ObjectSaverButton
 
     public void SetupFor(IRDMPControl control, DatabaseEntity o, IActivateItems activator)
     {
-        control.CommonFunctionality.Add(btnSave);
-        control.CommonFunctionality.Add(btnUndoRedo);
+        control.CommonFunctionality.Add(_btnSave);
+        control.CommonFunctionality.Add(_btnUndoRedo);
 
         var f = (control as Form ?? ((Control)control).FindForm()) ??
                 throw new NotSupportedException(
@@ -116,8 +111,8 @@ public partial class ObjectSaverButton
 
         _parent.SetUnSavedChanges(b);
 
-        btnSave.Enabled = b;
-        btnUndoRedo.Enabled = b;
+        _btnSave.Enabled = b;
+        _btnUndoRedo.Enabled = b;
 
         _isEnabled = b;
     }
@@ -158,20 +153,19 @@ public partial class ObjectSaverButton
 
     public void Redo()
     {
-        if (_undoneChanges is { Evaluation: ChangeDescription.DatabaseCopyDifferent })
-        {
-            foreach (var difference in _undoneChanges.Differences)
-                difference.Property.SetValue(_o, difference.LocalValue);
+        if (_undoneChanges is not { Evaluation: ChangeDescription.DatabaseCopyDifferent }) return;
 
-            SetReadyToUndo();
-        }
+        foreach (var difference in _undoneChanges.Differences)
+            difference.Property.SetValue(_o, difference.LocalValue);
+
+        SetReadyToUndo();
     }
 
     public void Undo()
     {
         var changes = _o.HasLocalChanges();
 
-        //no changes anyway user must have made a change and then unapplyed it
+        //no changes anyway user must have made a change and then reverted it
         if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
             return;
 
@@ -194,59 +188,53 @@ public partial class ObjectSaverButton
         _undoneChanges = changes;
 
         _undo = false;
-        btnUndoRedo.Image = _redoImage;
-        btnUndoRedo.Text = "Redo";
+        _btnUndoRedo.Image = RedoImage;
+        _btnUndoRedo.Text = "Redo";
     }
 
     private void SetReadyToUndo()
     {
         _undo = true;
-        btnUndoRedo.Image = _undoImage;
+        _btnUndoRedo.Image = UndoImage;
         _undoneChanges = null;
-        btnUndoRedo.Text = "Undo";
+        _btnUndoRedo.Text = "Undo";
     }
 
     public void CheckForOutOfDateObjectAndOfferToFix()
     {
-        if (IsDifferent())
-            if (
-                //if we didn't think there were changes
-                !_isEnabled &&
+        if (!IsDifferent()) return;
 
-                //but there are!
-                _activator.ShouldReloadFreshCopy(_o))
-            {
-                _o.RevertToDatabaseState();
+        if (
+            //if we didn't think there were changes
+            !_isEnabled &&
 
-                //if we are not in the middle of a publish already
-                if (!_activator.RefreshBus.PublishInProgress)
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-            }
+            //but there are!
+            _activator.ShouldReloadFreshCopy(_o))
+        {
+            _o.RevertToDatabaseState();
+
+            //if we are not in the middle of publishing already
+            if (!_activator.RefreshBus.PublishInProgress)
+                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+        }
     }
 
     private bool IsDifferent()
     {
-        if (_o == null)
-            return false;
-
-        var changes = _o.HasLocalChanges();
+        var changes = _o?.HasLocalChanges();
         //are there changes
-        if (changes.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-            return changes.Differences.Any(); //are the changes to properties
-
-        return false;
+        return changes?.Evaluation == ChangeDescription.DatabaseCopyDifferent && changes.Differences.Any(); //are there changes to properties
     }
 
     public void CheckForUnsavedChangesAnOfferToSave()
     {
-        // If there is no object or it does not exist don't try to save it
-        if (_o == null || !_o.Exists())
+        // If there is no object, or it does not exist don't try to save it
+        if (_o == null || !_o.Exists() || !_isEnabled)
             return;
 
-        if (_isEnabled)
-            if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
-                Save();
-            else
-                _o.RevertToDatabaseState();
+        if (_activator.YesNo($"Save Changes To '{_o}'?", "Save Changes"))
+            Save();
+        else
+            _o.RevertToDatabaseState();
     }
 }
