@@ -44,14 +44,14 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         if (!Exists())
             throw new Exception($"The sql bak file {Filepath} does not exist");
 
-        string fileOnlyCommand = $"RESTORE FILELISTONLY FROM DISK = '{Filepath}'";
+        var fileOnlyCommand = $"RESTORE FILELISTONLY FROM DISK = '{Filepath}'";
         using var fileInfo = new DataTable();
         using var con = (SqlConnection)db.Server.GetConnection();
         using (var cmd = new SqlCommand(fileOnlyCommand, con))
           using (var da = new SqlDataAdapter(cmd))
             da.Fill(fileInfo);
-        DataRow[] primaryFiles = fileInfo.Select("Type = 'D'");
-        DataRow[] logFiles = fileInfo.Select("Type = 'L'");
+        var primaryFiles = fileInfo.Select("Type = 'D'");
+        var logFiles = fileInfo.Select("Type = 'L'");
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
         {
             //Something has gone wrong
@@ -59,25 +59,25 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         }
 
 
-        DataRow primaryFile = primaryFiles[0];
-        DataRow logFile = logFiles[0];
-        string primaryFilePhysicalName = primaryFile["PhysicalName"].ToString();
-        string logFilePhysicalName = logFile["PhysicalName"].ToString();
+        var primaryFile = primaryFiles[0];
+        var logFile = logFiles[0];
+        var primaryFilePhysicalName = primaryFile["PhysicalName"].ToString();
+        var logFilePhysicalName = logFile["PhysicalName"].ToString();
 
         if (File.Exists(primaryFilePhysicalName) || File.Exists(logFilePhysicalName))
         {
-            string timestamp = DateTime.Now.Millisecond.ToString();
-            string primaryFileName = primaryFilePhysicalName.Substring(0, primaryFilePhysicalName.Length - 4);
-            string primaryFileExtention = primaryFilePhysicalName.Substring(primaryFilePhysicalName.Length - 4);
+            var timestamp = DateTime.Now.Millisecond.ToString();
+            var primaryFileName = primaryFilePhysicalName.Substring(0, primaryFilePhysicalName.Length - 4);
+            var primaryFileExtention = primaryFilePhysicalName.Substring(primaryFilePhysicalName.Length - 4);
             primaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtention}";
-            string logFileName = logFilePhysicalName.Substring(0, logFilePhysicalName.Length - 4);
-            string logFileExtention = logFilePhysicalName.Substring(logFilePhysicalName.Length - 4);
+            var logFileName = logFilePhysicalName.Substring(0, logFilePhysicalName.Length - 4);
+            var logFileExtention = logFilePhysicalName.Substring(logFilePhysicalName.Length - 4);
             logFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtention}";
         }
 
-        string name = db.ToString();
+        var name = db.ToString();
 
-        string restoreCommand = @$"
+        var restoreCommand = @$"
         use master;
         ALTER DATABASE {name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
         RESTORE DATABASE {name}

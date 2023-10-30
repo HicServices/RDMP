@@ -4,30 +4,31 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using Equ;
+
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
 /// <see cref="Node"/> of which there can only ever be one in the RDMP object hierarchy e.g. <see cref="AllCohortsNode"/>.  By convention
 /// these classes should normally start with the prefix "All"
 /// </summary>
-public abstract class SingletonNode : Node
+public abstract class SingletonNode : Node, IEquatable<SingletonNode>
 {
-    protected readonly string Caption;
+    private readonly string _caption;
 
     protected SingletonNode(string caption)
     {
-        Caption = caption;
+        _caption = caption;
     }
 
-    public override string ToString() => Caption;
+    public override string ToString() => _caption;
 
-    protected bool Equals(SingletonNode other) => string.Equals(Caption, other.Caption);
+    public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
 
-    public override bool Equals(object obj)
-    {
-        if (obj is null) return false;
-        return ReferenceEquals(this, obj) || obj is SingletonNode other && Equals(other);
-    }
+    public override bool Equals(object obj) => obj?.GetType() == typeof(SingletonNode) &&
+                                               typeof(SingletonNode) == GetType() &&
+                                               MemberwiseEqualityComparer<SingletonNode>.ByProperties.Equals(this, obj as SingletonNode);
 
-    public override int GetHashCode() => Caption.GetHashCode();
+    public override int GetHashCode() => _caption.GetHashCode();
 }
