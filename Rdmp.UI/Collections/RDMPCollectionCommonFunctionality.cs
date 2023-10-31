@@ -40,7 +40,7 @@ namespace Rdmp.UI.Collections;
 /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row
 /// height, child nodes etc.
 /// </summary>
-public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
+public partial class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 {
     /// <summary>
     /// The collection if any that this <see cref="Tree"/> represents in the UI
@@ -153,7 +153,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
 
         //and track changes to the sort order
-        tree.AfterSorting += (_, e) => TreeOnAfterSorting(e, collectionGuid);
+        tree.AfterSorting += (s, e) => TreeOnAfterSorting(s, e, collectionGuid);
     }
 
     /// <summary>
@@ -348,16 +348,18 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private static string GetToolTipTitle(object model) =>
         model is IMapsDirectlyToDatabaseTable d ? $"{model} (ID: {d.ID})" : model?.ToString();
 
-    private static DateTime nextInvalidateCache = DateTime.Now.AddSeconds(10);
-    private static readonly Dictionary<object, string> cache = new();
+    private static DateTime lastInvalidatedCache = DateTime.Now;
+    private static Dictionary<object, string> cache = new();
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
-        if (DateTime.Now.CompareTo(nextInvalidateCache)>0)
+        if (DateTime.Now.Subtract(lastInvalidatedCache).TotalSeconds > 10)
         {
             cache.Clear();
-            nextInvalidateCache = DateTime.Now.AddSeconds(10);
-        } else if (cache.TryGetValue(sum, out var body))
+            lastInvalidatedCache = DateTime.Now;
+        }
+
+        if (cache.TryGetValue(sum, out var body))
             return body;
 
         var sb = new StringBuilder();
@@ -367,26 +369,23 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         try
         {
             var associatedObjects = gotoF.GetCommands(sum).OfType<ExecuteCommandShow>()
-                .ToDictionary(static cmd => cmd.GetCommandName(), static cmd => cmd.GetObjects().Where(static o => o != null));
+                .ToDictionary(cmd => cmd.GetCommandName(), cmd => cmd.GetObjects().Where(o => o != null));
 
-            foreach (var (key, value) in associatedObjects)
+            foreach (var kvp in associatedObjects)
             {
-                var val = string.Join(", ", value.Select(static o => o.ToString()));
-                switch (val.Length)
-                {
-                    case 0:
-                        continue;
-                    case > 100:
-                        val = $"{val[..100]}...";
-                        break;
-                }
+                if (!kvp.Value.Any())
+                    continue;
 
-                sb.AppendLine($"{key}: {val}");
+                var val = string.Join(", ", kvp.Value.Select(o => o.ToString()).ToArray());
+
+                if (val.Length > 100) val = $"{val[..100]}...";
+
+                sb.AppendLine($"{kvp.Key}: {val}");
             }
         }
         catch (Exception)
         {
-            // couldn't get all the things you can go to, never mind
+            // couldn't get all the things you can go to, nevermind
             return sb.ToString();
         }
         finally
@@ -404,14 +403,14 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
             e.SuppressKeyPress = true;
     }
 
-    private static void Tree_KeyPress(object sender, KeyPressEventArgs e)
+    private void Tree_KeyPress(object sender, KeyPressEventArgs e)
     {
         //Prevents keyboard 'bong' sound occuring when using Enter to activate an object
         if (e.KeyChar == (char)Keys.Enter)
             e.Handled = true;
     }
 
-    private static void TreeOnAfterSorting(AfterSortingEventArgs e, Guid collectionGuid)
+    private static void TreeOnAfterSorting(object sender, AfterSortingEventArgs e, Guid collectionGuid)
     {
         UserSettings.SetLastColumnSortForCollection(collectionGuid, e.ColumnToSort?.Text,
             e.SortOrder == SortOrder.Ascending);
@@ -444,7 +443,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     {
         var hasProblems = _activator.HasProblem(e.Model);
 
-        if (e.Model is IDisableable { IsDisabled: true })
+        if (e.Model is IDisableable { IsDisabled: true } disableable)
         {
             e.Item.ForeColor = Color.FromArgb(152, 152, 152);
 

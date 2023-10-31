@@ -152,7 +152,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     }
 
     private bool _isDisposed = false;
-
+        
 
     private void CloseConnection(IDataLoadEventListener listener)
     {
