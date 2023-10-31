@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Threading;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -91,6 +93,19 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         initialized = true;
     }
 
+    private void UIAlert(string alert, IBasicActivateItems activator)
+    {
+        new Thread(() =>
+        {
+            Thread.CurrentThread.IsBackground = true;
+            // run as a seperate thread to not hault the UI
+            //Source.Show(alert);
+            if(activator.IsInteractive)
+                activator.Show(alert);
+
+        }).Start();
+    }
+
     /// <inheritdoc/>
     public void ExecutePipeline(GracefulCancellationToken cancellationToken)
     {
@@ -104,8 +119,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                     "Engine has not been initialized, call Initialize(DataFlowPipelineContext context, params object[] initializationObjects");
 
             var hasMoreData = true;
+            List<Tuple<string, IBasicActivateItems>> uiAlerts = new();
             while (!cancellationToken.IsCancellationRequested && hasMoreData)
-                hasMoreData = ExecuteSinglePass(cancellationToken);
+                hasMoreData = ExecuteSinglePass(cancellationToken,uiAlerts);
 
             if (cancellationToken.IsAbortRequested)
             {
@@ -119,6 +135,13 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 _listener.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Information, "Pipeline engine aborted"));
                 return;
+            }
+            if(uiAlerts.Count > 0)
+            {
+                foreach(var alert in uiAlerts.Distinct().ToList())
+                {
+                    UIAlert(alert.Item1,alert.Item2);
+                }
             }
         }
         catch (Exception e)
@@ -187,7 +210,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     }
 
     /// <inheritdoc/>
-    public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken)
+    public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken, List<Tuple<string, IBasicActivateItems>> completionUIAlerts = null)
     {
         if (!initialized)
             throw new Exception(
@@ -220,6 +243,13 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             if (cancellationToken.IsAbortRequested) break;
             currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+            if(completionUIAlerts is not null && currentChunk.GetType() == typeof(DataTable))
+            {
+                var dt = currentChunk as DataTable;
+                Tuple<string, IBasicActivateItems> uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                completionUIAlerts.Add(uiAlert);
+                dt.Dispose();
+            }
         }
 
         if (cancellationToken.IsAbortRequested) return true;
