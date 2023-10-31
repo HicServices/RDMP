@@ -99,7 +99,6 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             Thread.CurrentThread.IsBackground = true;
             // run as a seperate thread to not hault the UI
-            //Source.Show(alert);
             if(activator.IsInteractive)
                 activator.Show(alert);
 
@@ -245,10 +244,11 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
             if(completionUIAlerts is not null && currentChunk.GetType() == typeof(DataTable))
             {
-                var dt = currentChunk as DataTable;
-                Tuple<string, IBasicActivateItems> uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                completionUIAlerts.Add(uiAlert);
-                dt.Dispose();
+                using (var dt = currentChunk as DataTable)
+                {
+                    Tuple<string, IBasicActivateItems> uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                    completionUIAlerts.Add(uiAlert);
+                }
             }
         }
 
