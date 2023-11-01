@@ -138,7 +138,7 @@ jobs:
           (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe | cmd)
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.24.1
+        uses: shogo82148/actions-setup-perl@v1.24.2
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
