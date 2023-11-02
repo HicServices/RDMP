@@ -62,7 +62,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
             TaskDescription =
-                "For Details, see: <<TODO add url link here>>"
+                "For Details, see: https://github.com/HicServices/RDMP/blob/0b4eea78a99e58d75ae5189ec491f5ef54b52e1e/Rdmp.UI/CohortUI/CreateHoldoutLookup/Holdouts.md"
         });
     }
 
