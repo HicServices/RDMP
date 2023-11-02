@@ -99,7 +99,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             Thread.CurrentThread.IsBackground = true;
             // run as a seperate thread to not hault the UI
-            if(activator.IsInteractive)
+            if (activator.IsInteractive)
                 activator.Show(alert);
 
         }).Start();
@@ -120,7 +120,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             var hasMoreData = true;
             List<Tuple<string, IBasicActivateItems>> uiAlerts = new();
             while (!cancellationToken.IsCancellationRequested && hasMoreData)
-                hasMoreData = ExecuteSinglePass(cancellationToken,uiAlerts);
+                hasMoreData = ExecuteSinglePass(cancellationToken, uiAlerts);
 
             if (cancellationToken.IsAbortRequested)
             {
@@ -135,11 +135,11 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                     new NotifyEventArgs(ProgressEventType.Information, "Pipeline engine aborted"));
                 return;
             }
-            if(uiAlerts.Count > 0)
+            if (uiAlerts.Count > 0)
             {
-                foreach(var alert in uiAlerts.Distinct().ToList())
+                foreach (var alert in uiAlerts.Distinct().ToList())
                 {
-                    UIAlert(alert.Item1,alert.Item2);
+                    UIAlert(alert.Item1, alert.Item2);
                 }
             }
         }
@@ -218,54 +218,62 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         T currentChunk;
         try
         {
-            currentChunk = Source.GetChunk(_listener, cancellationToken);
-        }
-        catch (OperationCanceledException)
-        {
-            throw;
-        }
-        catch (Exception e)
-        {
-            throw new InvalidOperationException(
-                $"Error when attempting to get a chunk from the source component: {Source}", e);
-        }
-
-        if (currentChunk == null)
-        {
-            _listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Debug,
-                    "Received null chunk from the Source component, stopping engine"));
-            return false;
-        }
-
-        foreach (var component in Components)
-        {
-            if (cancellationToken.IsAbortRequested) break;
-            currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-            if(completionUIAlerts is not null && currentChunk.GetType() == typeof(DataTable))
+            try
             {
-                using (var dt = currentChunk as DataTable)
+                currentChunk = Source.GetChunk(_listener, cancellationToken);
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception e)
+            {
+                throw new InvalidOperationException(
+                    $"Error when attempting to get a chunk from the source component: {Source}", e);
+            }
+
+            if (currentChunk == null)
+            {
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Debug,
+                        "Received null chunk from the Source component, stopping engine"));
+                return false;
+            }
+
+            foreach (var component in Components)
+            {
+                if (cancellationToken.IsAbortRequested) break;
+                currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+                if (completionUIAlerts is not null && currentChunk.GetType() == typeof(DataTable))
                 {
-                    Tuple<string, IBasicActivateItems> uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                    completionUIAlerts.Add(uiAlert);
+                    using (var dt = currentChunk as DataTable)
+                    {
+                        if (dt is not null)
+                        {
+                            Tuple<string, IBasicActivateItems> uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                            completionUIAlerts.Add(uiAlert);
+                        }
+                    }
+
                 }
             }
+
+            if (cancellationToken.IsAbortRequested) return true;
+            Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+
+            if (cancellationToken.IsAbortRequested) return true;
+
+            //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
+            if (typeof(DataTable).IsAssignableFrom(typeof(T)))
+                ((DataTable)(object)currentChunk).Clear();
         }
+        finally
+        {
 
-        if (cancellationToken.IsAbortRequested) return true;
-        Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-
-        if (cancellationToken.IsAbortRequested) return true;
-
-        //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
-        if (typeof(DataTable).IsAssignableFrom(typeof(T)))
-            ((DataTable)(object)currentChunk).Clear();
-
-
-        //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-        if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
-            ((IDisposable)currentChunk).Dispose();
-
+            //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
+            if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
+                ((IDisposable)currentChunk).Dispose();
+        }
         return true;
     }
 
