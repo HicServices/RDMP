@@ -69,7 +69,7 @@ internal class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabas
             Y = Pos.Top(btnCancel)
         };
         win.Add(lbl);
-
+            
         txtId = new TextField
         {
             X = Pos.Right(lbl),

@@ -31,7 +31,7 @@ internal class CommitCohortExample : DatabaseTests
 
         //find the test server (where we will create the store schema)
         var db = GetCleanedServer(dbType);
-
+            
         //create the cohort store table
         var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
         var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);

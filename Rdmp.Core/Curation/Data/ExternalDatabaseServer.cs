@@ -271,7 +271,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
 
     public override void DeleteInDatabase()
     {
-
+        
          if (WasCreatedBy(new LoggingDatabasePatcher())){
             //If you're trying to delete a logging server, remove all references to it first
             var catalogues = Repository.GetAllObjectsWhere<Catalogue>("LiveLoggingServer_ID",base.ID);

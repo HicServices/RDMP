@@ -89,7 +89,7 @@ public class ParameterManagerTests
         var parameters = pm.GetFinalResolvedParametersList().ToArray();
 
         Assert.AreEqual(1, parameters.Length);
-
+            
         var final = parameters.Single();
         Assert.AreEqual("@Fish", final.ParameterName);
         Assert.AreEqual("3", final.Value);
