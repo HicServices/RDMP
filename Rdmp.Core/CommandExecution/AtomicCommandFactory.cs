@@ -421,6 +421,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             }
 
             yield return new ExecuteCommandQueryPlatformDatabase(_activator, eds) { OverrideCommandName = View };
+            yield return new ExecuteCommandExportPlatformDatabasesToYaml(_activator) { OverrideCommandName = "Test 1234"};
         }
 
         if (Is(o, out QueryCacheUsedByCohortIdentificationNode cicQueryCache))
