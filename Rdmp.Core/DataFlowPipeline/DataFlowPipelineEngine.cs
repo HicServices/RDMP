@@ -270,12 +270,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         }
         finally
         {
-            if (currentChunk is null)
+            if (!currentChunk.Equals(null))
             {
 
-            }
-            else
-            {
                 //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
                 if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
                     ((IDisposable)currentChunk).Dispose();
