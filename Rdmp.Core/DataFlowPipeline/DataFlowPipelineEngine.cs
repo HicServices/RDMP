@@ -218,19 +218,20 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         T currentChunk;
         try
         {
-            try
-            {
-                currentChunk = Source.GetChunk(_listener, cancellationToken);
-            }
-            catch (OperationCanceledException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                throw new InvalidOperationException(
-                    $"Error when attempting to get a chunk from the source component: {Source}", e);
-            }
+            currentChunk = Source.GetChunk(_listener, cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception e)
+        {
+            throw new InvalidOperationException(
+                $"Error when attempting to get a chunk from the source component: {Source}", e);
+        }
+        try
+        {
+
 
             if (currentChunk == null)
             {
@@ -271,7 +272,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
 
             //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-            if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
+            if (currentChunk is not null && typeof(IDisposable).IsAssignableFrom(typeof(T)))
                 ((IDisposable)currentChunk).Dispose();
         }
         return true;
