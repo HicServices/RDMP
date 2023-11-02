@@ -139,7 +139,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             {
                 foreach (var alert in uiAlerts.Distinct().ToList())
                 {
-                    UIAlert(alert.Item1, alert.Item2);
+                    if (alert is not null)
+                    {
+                        UIAlert(alert.Item1, alert.Item2);
+                    }
                 }
             }
         }
