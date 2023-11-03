@@ -137,12 +137,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             }
             if (uiAlerts.Count > 0)
             {
-                foreach (var alert in uiAlerts.Distinct().ToList())
+                foreach (var alert in uiAlerts.Distinct().ToList().Where(alert => alert is not null))
                 {
-                    if (alert is not null)
-                    {
-                        UIAlert(alert.Item1, alert.Item2);
-                    }
+                    UIAlert(alert.Item1, alert.Item2);
                 }
             }
         }
@@ -270,7 +267,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
 
         //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
         if (typeof(IDisposable).IsAssignableFrom(typeof(T)))
-            #pragma warning disable
+#pragma warning disable
             ((IDisposable)currentChunk).Dispose();
 
 
