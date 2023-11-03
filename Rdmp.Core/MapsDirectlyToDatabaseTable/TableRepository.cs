@@ -18,6 +18,8 @@ using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using NLog;
+using NPOI.OpenXmlFormats.Dml;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -50,6 +52,20 @@ public abstract class TableRepository : ITableRepository
     /// </summary>
     protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
+
+
+    public Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> GetConstuctorList()
+    {
+        //List<Type> typeList = new List<Type>();
+        //foreach(KeyValuePair<Type, Func < IRepository, DbDataReader, IMapsDirectlyToDatabaseTable >> constructor in Constructors)
+        //{
+        //    Type t =constructor.Key;
+        //    typeList.Add(t);
+        //}
+
+        //return typeList;
+        return Constructors;
+    }
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     private Lazy<DiscoveredTable[]> _tables;
