@@ -313,7 +313,7 @@
     <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
     <PackageReference Include="SSH.NET" Version="2023.0.0" />
-    <PackageReference Include="Terminal.Gui" Version="1.14.0" />
+    <PackageReference Include="Terminal.Gui" Version="1.14.1" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
   </ItemGroup>
   <ItemGroup>
