@@ -28,10 +28,11 @@ public class ExecuteCommandExportDatabaseToDir : BasicCommandExecution
     {
         base.Execute();
         var repo = new YamlRepository(_target);
-        var types = repo.GetCompatibleTypes();
-        foreach (var o in repo.GetCompatibleTypes().SelectMany(t=>_activator.GetRepositoryFor(t).GetAllObjects(t)))
+        foreach (var t in repo.GetCompatibleTypes())
         {
-            repo.SaveToDatabase(o);
+            Console.WriteLine(t.FullName);
+            foreach (var o in t.SelectMany(t=>_activator.GetRepositoryFor(t).GetAllObjects(t)))
+              repo.SaveToDatabase(o);
         }
     }
 }
