@@ -25,9 +25,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     internal class Args : RDMPCommandLineOptions { }
     internal class ExecuteCommandExportPlatformDatabasesToYaml : BasicCommandExecution, IAtomicCommand
     {
-        private TableRepository _catalogueRepository;
-        private TableRepository _dataExportRepository;
-        private string _outputFile;
+        private readonly TableRepository _catalogueRepository;
+        private readonly TableRepository _dataExportRepository;
+        private readonly string _outputFile;
 
         public ExecuteCommandExportPlatformDatabasesToYaml(IBasicActivateItems activator, [DemandsInitialization("Where the yaml file should be created")] string outputfile)
         {
@@ -35,7 +35,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             _catalogueRepository = activator.RepositoryLocator.CatalogueRepository as TableRepository;
             _dataExportRepository = activator.RepositoryLocator.DataExportRepository as TableRepository;
             _outputFile = outputfile;
-            Execute();
+
         }
 
         public override void Execute()
