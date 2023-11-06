@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers.Nodes;
 /// <see cref="Node"/> of which there can only ever be one in the RDMP object hierarchy e.g. <see cref="AllCohortsNode"/>.  By convention
 /// these classes should normally start with the prefix "All"
 /// </summary>
-public abstract class SingletonNode : Node, IEquatable<SingletonNode>
+public abstract class SingletonNode : Node
 {
     private readonly string _caption;
 
@@ -26,9 +26,8 @@ public abstract class SingletonNode : Node, IEquatable<SingletonNode>
 
     public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
 
-    public override bool Equals(object obj) => obj?.GetType() == typeof(SingletonNode) &&
-                                               typeof(SingletonNode) == GetType() &&
-                                               MemberwiseEqualityComparer<SingletonNode>.ByProperties.Equals(this, obj as SingletonNode);
+    public override bool Equals(object obj) => obj is SingletonNode sn &&
+                                               Equals(sn);
 
     public override int GetHashCode() => _caption.GetHashCode();
 }
