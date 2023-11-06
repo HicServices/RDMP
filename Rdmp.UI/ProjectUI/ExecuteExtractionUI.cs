@@ -149,7 +149,7 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
 
     private void CheckAndExecuteUI1OnStateChanged(object sender, EventArgs eventArgs)
     {
-        tlvDatasets.RefreshObjects(tlvDatasets.Objects.Cast<object>().ToArray());
+        tlvDatasets.RefreshHotItem();
     }
 
     private bool CanExpandGetter(object model)
