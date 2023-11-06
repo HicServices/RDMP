@@ -53,7 +53,7 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
         }
         r.Close();
     }
-        
+
     public override IContainer[] GetSubContainers(IContainer container)
     {
         return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :

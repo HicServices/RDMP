@@ -33,13 +33,10 @@ public class MySqlQueryBuilderTests : DatabaseTests
         var qb = new QueryBuilder(null, null);
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(CollapseWhitespace(
-                """
-                SELECT
-                `db`.`tbl`.`col`
-                FROM
-                `db`.`tbl`
-                LIMIT 35
-                """
+            @"SELECT 
+`db`.`tbl`.`col`
+FROM 
+`db`.`tbl`"
         ), CollapseWhitespace(qb.SQL));
     }
 
@@ -67,13 +64,13 @@ public class MySqlQueryBuilderTests : DatabaseTests
         Assert.AreEqual(
             CollapseWhitespace(
                 """
-                SELECT 
+                SELECT
                 `db`.`tbl`.`col`
-                FROM 
+                FROM
                 `db`.`tbl`
                 LIMIT 35
-                """
-            ), CollapseWhitespace(qb.SQL));
+                """)
+            , CollapseWhitespace(qb.SQL));
 
 
         //editing the topX should invalidate the SQL automatically
@@ -86,7 +83,7 @@ public class MySqlQueryBuilderTests : DatabaseTests
                 FROM
                 `db`.`tbl`
                 LIMIT 50
-                """
-            ), CollapseWhitespace(qb.SQL));
+                """)
+            , CollapseWhitespace(qb.SQL));
     }
 }
