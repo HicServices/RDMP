@@ -83,6 +83,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
 
         //Shortcuts to improve performance of ConstructEntity (avoids reflection)
+        //If you add new item here, also add them as export targets in ExecuteCommandExportPlatformDatabasesToYaml
         Constructors.Add(typeof(Catalogue), (rep, r) => new Catalogue((ICatalogueRepository)rep, r));
         Constructors.Add(typeof(CohortAggregateContainer),
             (rep, r) => new CohortAggregateContainer((ICatalogueRepository)rep, r));

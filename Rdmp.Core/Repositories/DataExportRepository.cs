@@ -55,6 +55,7 @@ public class DataExportRepository : TableRepository, IDataExportRepository
 
         DataExportPropertyManager = new DataExportPropertyManager(false, this);
 
+        //If you add new item here, also add them as export targets in ExecuteCommandExportPlatformDatabasesToYaml
         Constructors.Add(typeof(SupplementalExtractionResults),
             (rep, r) => new SupplementalExtractionResults((IDataExportRepository)rep, r));
         Constructors.Add(typeof(CumulativeExtractionResults),
