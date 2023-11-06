@@ -83,7 +83,7 @@ public class DescendancyList
     public DescendancyList Add(object anotherKnownParent)
     {
         if (Parents.Contains(anotherKnownParent))
-            throw new ArgumentException($"DecendancyList already contains '{anotherKnownParent}'");
+            throw new ArgumentException($"DescendancyList already contains '{anotherKnownParent}'");
 
         var list = new List<object>(Parents) { anotherKnownParent };
         var toReturn = new DescendancyList(list.ToArray())

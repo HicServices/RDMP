@@ -29,14 +29,17 @@ public class MySqlQueryBuilderTests : DatabaseTests
         var cata = new Catalogue(CatalogueRepository, "cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
         var extractionInfo = new ExtractionInformation(CatalogueRepository, catalogueItem, col, col.Name);
-            
+
         var qb = new QueryBuilder(null, null);
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(CollapseWhitespace(
-            @"SELECT 
-`db`.`tbl`.`col`
-FROM 
-`db`.`tbl`"
+                """
+                SELECT
+                `db`.`tbl`.`col`
+                FROM
+                `db`.`tbl`
+                LIMIT 35
+                """
         ), CollapseWhitespace(qb.SQL));
     }
 
@@ -63,23 +66,27 @@ FROM
         qb.AddColumn(extractionInfo);
         Assert.AreEqual(
             CollapseWhitespace(
-                @"SELECT 
-`db`.`tbl`.`col`
-FROM 
-`db`.`tbl`
-LIMIT 35")
-            , CollapseWhitespace(qb.SQL));
+                """
+                SELECT 
+                `db`.`tbl`.`col`
+                FROM 
+                `db`.`tbl`
+                LIMIT 35
+                """
+            ), CollapseWhitespace(qb.SQL));
 
 
-        //editting the topX should invalidate the SQL automatically
+        //editing the topX should invalidate the SQL automatically
         qb.TopX = 50;
         Assert.AreEqual(
             CollapseWhitespace(
-                @"SELECT 
-`db`.`tbl`.`col`
-FROM 
-`db`.`tbl`
-LIMIT 50")
-            , CollapseWhitespace(qb.SQL));
+                """
+                SELECT
+                `db`.`tbl`.`col`
+                FROM
+                `db`.`tbl`
+                LIMIT 50
+                """
+            ), CollapseWhitespace(qb.SQL));
     }
 }
