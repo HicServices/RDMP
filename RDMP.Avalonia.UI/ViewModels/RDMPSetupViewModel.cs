@@ -19,12 +19,18 @@ namespace RDMP.Avalonia.UI.ViewModels
 
         public string Greeting => "This is a setup page - todo";
 
+        private string _CatalogueConnectionString ="Server=(localdb)\\MSSQLLocalDB;Database=RDMP_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;";
+        private string _DataExportConnectionString = "Server=(localdb)\\MSSQLLocalDB;Database=RDMP_DataExport;Trusted_Connection=True;TrustServerCertificate=true";
+
+        public string CatalogueConnectionString { get => _CatalogueConnectionString; set => _CatalogueConnectionString = value; }
+        public string DataExportConnectionString { get => _DataExportConnectionString; set => _DataExportConnectionString = value; }
+
         public void SubmitSetup()
         {
             RepositoryLocatorService repositoryLocatorService = new RepositoryLocatorService();
             try
             {
-                repositoryLocatorService.StartScan("Server=(localdb)\\MSSQLLocalDB;Database=RDMP_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;", "Server=(localdb)\\MSSQLLocalDB;Database=RDMP_DataExport;Trusted_Connection=True;TrustServerCertificate=true");
+                repositoryLocatorService.StartScan(_CatalogueConnectionString, _DataExportConnectionString);
             }
             catch (Exception ex)
             {
