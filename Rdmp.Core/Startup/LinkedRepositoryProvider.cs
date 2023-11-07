@@ -33,6 +33,8 @@ public class LinkedRepositoryProvider : RepositoryProvider
     {
         try
         {
+            CatalogueRepository = new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
+
             CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString)
                 ? null
                 : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));

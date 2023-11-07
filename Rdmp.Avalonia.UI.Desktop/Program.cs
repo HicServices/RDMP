@@ -3,6 +3,11 @@
 using Avalonia;
 using Avalonia.ReactiveUI;
 using CommandLine;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using Rdmp.Core.ReusableLibraryCode;
 using RDMP.Avalonia.UI.Services.BootstrapService;
 
@@ -24,6 +29,10 @@ class Program
 
     private static object Setup(RDMPBootstrapOptions args)
     {
+        ImplementationManager.Load<MicrosoftSQLImplementation>();
+        ImplementationManager.Load<MySqlImplementation>();
+        ImplementationManager.Load<OracleImplementation>();
+        ImplementationManager.Load<PostgreSqlImplementation>();
         BootstrapService.Init(args);
         return 0;
     }

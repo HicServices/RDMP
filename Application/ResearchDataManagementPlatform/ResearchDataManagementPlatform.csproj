@@ -20,6 +20,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <ApplicationIcon>Icon\main.ico</ApplicationIcon>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Updates\UpdaterUI.cs" />

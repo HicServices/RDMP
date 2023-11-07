@@ -8,7 +8,7 @@ using System.Windows.Input;
 using Microsoft.Data.SqlClient;
 namespace RDMP.Avalonia.UI.ViewModels
 {
-    public class RDMPSetupViewModel : ViewModelBase
+    public class RDMPSetupViewModel : ReactiveObject
     {
 
         public string Greeting => "This is a setup page - todo";

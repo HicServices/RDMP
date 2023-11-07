@@ -29,6 +29,7 @@
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <None Remove="en_GB.aff" />
