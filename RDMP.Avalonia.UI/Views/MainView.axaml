@@ -14,6 +14,7 @@
 	</Design.DataContext>
 	<StackPanel>
 		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<views:RDMPSetupView  IsVisible="{Binding ShowSetup}" />
+		<views:RDMPSetupView  IsVisible="{Binding $parent.DataContext.ShowSetup}" />
+		<views:SampleView  IsVisible="{Binding !$parent.DataContext.ShowSetup}" />
 	</StackPanel>
 </UserControl>
