@@ -5,16 +5,12 @@
              xmlns:vm="clr-namespace:RDMP.Avalonia.UI.ViewModels"
              xmlns:views="clr-namespace:RDMP.Avalonia.UI.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="RDMP.Avalonia.UI.Views.MainView"
-             x:DataType="vm:MainViewModel">
+             x:Class="RDMP.Avalonia.UI.Views.SimpleDataTestView"
+             x:DataType="vm:SimpleDataTestViewModel">
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
 		<vm:MainViewModel />
 	</Design.DataContext>
-	<StackPanel>
-		<TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-		<views:RDMPSetupView  IsVisible="{Binding $parent.DataContext.ShowSetup}" />
-		<views:SimpleDataTestView  IsVisible="{Binding !$parent.DataContext.ShowSetup}" />
-	</StackPanel>
+	<TextBlock>Hello world! Let's look at some catalogues</TextBlock>
 </UserControl>

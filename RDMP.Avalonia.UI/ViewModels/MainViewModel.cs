@@ -9,7 +9,7 @@ namespace RDMP.Avalonia.UI.ViewModels;
 
 public class MainViewModel : ReactiveObject
 {
-    public string Greeting => "Welcome to Avalonia123!";
+    public string Greeting => "Welcome to RDMP";
 
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs) {
         Console.WriteLine('a');
