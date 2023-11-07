@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.ReusableLibraryCode.Checks;
+﻿using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
 using System;
@@ -25,6 +26,15 @@ public class RepositoryLocatorService : ICheckNotifier
         var finder = new UserSettingsRepositoryFinder();
         BootstrapService.BootstrapService._startup.RepositoryLocator = finder;
         BootstrapService.BootstrapService._startup.DoStartup(this);
+    }
+
+
+    public void StartScan(string catalogueConnectionString,string dataExportconnectionString)
+    {
+
+        BootstrapService.BootstrapService._startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnectionString, dataExportconnectionString);//todo this is causing problems
+        BootstrapService.BootstrapService._startup.RepositoryLocator.CatalogueRepository.TestConnection();
+        BootstrapService.BootstrapService._startup.RepositoryLocator.DataExportRepository.TestConnection();
     }
 
 }

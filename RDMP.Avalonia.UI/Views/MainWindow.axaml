@@ -8,5 +8,5 @@
         x:Class="RDMP.Avalonia.UI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="RDMP.Avalonia.UI">
-        <views:MainView />
+        <views:MainView/>
 </Window>

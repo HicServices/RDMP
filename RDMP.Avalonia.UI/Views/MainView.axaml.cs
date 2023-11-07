@@ -10,13 +10,13 @@ public partial class MainView : UserControl
     public MainView()
     {
         InitializeComponent();
-        if(BootstrapService._startup.RepositoryLocator is null)
-        {
-            Console.WriteLine("We've not got any info!");
-        }
-        else
-        {
-            Console.WriteLine("We have info!");
-        }
+        //if (BootstrapService._startup.RepositoryLocator is null)
+        //{
+        //    Console.WriteLine("We've not got any info!");
+        //}
+        //else
+        //{
+        //    Console.WriteLine("We have info!");
+        //}
     }
 }
