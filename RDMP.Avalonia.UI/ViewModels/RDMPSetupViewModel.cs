@@ -19,7 +19,7 @@ namespace RDMP.Avalonia.UI.ViewModels
 
         public string Greeting => "This is a setup page - todo";
 
-        public ICommand SubmitSetup = ReactiveCommand.Create(() =>
+        public void SubmitSetup()
         {
             RepositoryLocatorService repositoryLocatorService = new RepositoryLocatorService();
             try
@@ -30,10 +30,11 @@ namespace RDMP.Avalonia.UI.ViewModels
             {
                 Console.WriteLine(ex.ToString());
             }
-        });
+        }
 
         public RDMPSetupViewModel()
         {
+
         }
 
     }

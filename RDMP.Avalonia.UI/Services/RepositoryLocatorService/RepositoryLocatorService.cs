@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Repositories;
+﻿using Rdmp.Core.Databases;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
@@ -35,6 +36,7 @@ public class RepositoryLocatorService : ICheckNotifier
         BootstrapService.BootstrapService._startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnectionString, dataExportconnectionString);//todo this is causing problems
         BootstrapService.BootstrapService._startup.RepositoryLocator.CatalogueRepository.TestConnection();
         BootstrapService.BootstrapService._startup.RepositoryLocator.DataExportRepository.TestConnection();
+        BootstrapService.BootstrapService._startup.DoStartup(this);
     }
 
 }
