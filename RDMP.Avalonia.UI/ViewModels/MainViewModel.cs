@@ -1,4 +1,5 @@
 ﻿using Avalonia.Data;
+using Avalonia.Markup.Xaml.Templates;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
 using RDMP.Avalonia.UI.Services.BootstrapService;
@@ -11,9 +12,12 @@ public class MainViewModel : ReactiveObject
 {
     public string Greeting => "Welcome to RDMP";
 
+    private ReactiveObject _currentViewModel;
+
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs) {
         Console.WriteLine('a');
         ShowSetup = false;
+        CurrentViewModel = new SimpleDataTestViewModel();
     }
     private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs) {
         Console.WriteLine('b');
@@ -24,8 +28,15 @@ public class MainViewModel : ReactiveObject
     public MainViewModel()
     {
         ShowSetup = ShouldShowSetup();
+        _currentViewModel = new RDMPSetupViewModel();
         BootstrapService._startup.DatabaseFound += StartupDatabaseFound;
         BootstrapService._startup.PluginPatcherFound += StartupPluginPatcherFound;
+    }
+
+    public ReactiveObject CurrentViewModel
+    {
+        get => _currentViewModel;
+        private set => this.RaiseAndSetIfChanged(ref _currentViewModel, value);
     }
 
     private bool _showSetup = false;

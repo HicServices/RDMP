@@ -1,10 +1,22 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="RDMP.Avalonia.UI.App"
+			 xmlns:vm="using:RDMP.Avalonia.UI.ViewModels"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
         <FluentTheme />
     </Application.Styles>
+	<Application.DataTemplates>
+		<DataTemplate DataType="{x:Type vm:RDMPSetupViewModel}">
+			<StackPanel Margin="20">
+				<TextBlock Margin="0 5" >Catalogue Connection String:</TextBlock>
+				<TextBox  Watermark="Enter your Catalogue Connection String" Text="{Binding CatalogueConnectionString}"/>
+				<TextBlock Margin="0 5" >Data Export Connection String:</TextBlock>
+				<TextBox  Watermark="Enter your Data Export Connection String" Text="{Binding DataExportConnectionString}"/>
+				<Button Command="{Binding SubmitSetup}" Width="200">Setup!</Button>
+			</StackPanel>
+		</DataTemplate>
+	</Application.DataTemplates>
 </Application>
