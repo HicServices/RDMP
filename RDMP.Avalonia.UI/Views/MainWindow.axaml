@@ -7,6 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="RDMP.Avalonia.UI.Views.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="RDMP.Avalonia.UI">
-        <views:MainView/>
+        Title="RDMP.Avalonia.UI"
+		>
+	<views:MainView/>
 </Window>

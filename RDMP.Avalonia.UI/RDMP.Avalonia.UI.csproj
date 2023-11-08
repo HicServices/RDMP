@@ -25,9 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Views\RDMPSetupView.axaml.cs">
-      <DependentUpon>RDMPSetupView.axaml</DependentUpon>
-    </Compile>
     <Compile Update="Views\SimpleDataTestView.axaml.cs">
       <DependentUpon>SimpleDataTestView.axaml</DependentUpon>
     </Compile>
