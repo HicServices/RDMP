@@ -18,5 +18,15 @@
 				<Button Command="{Binding SubmitSetup}" Width="200">Setup!</Button>
 			</StackPanel>
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:MainAppViewModel}">
+			<Grid ColumnDefinitions="100,1*" RowDefinitions="100,Auto" Margin="4">
+			<StackPanel Grid.Column="0" Grid.Row="0"  Orientation="Horizontal" Grid.ColumnSpan="2" Background="AliceBlue">
+				<Image Source="avares://RDMP.Avalonia.UI/Assets/avalonia-logo.ico" Height="50" Width="50"/>
+				<Button>Catalogues</Button>
+				<Button>Cohort Builder</Button>
+				<Button>Projects</Button>
+			</StackPanel>
+			</Grid>
+		</DataTemplate>
 	</Application.DataTemplates>
 </Application>

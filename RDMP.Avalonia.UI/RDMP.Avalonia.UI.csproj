@@ -10,6 +10,24 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
+  
+  <ItemGroup>
+    <AvaloniaResource Remove="Assets\main.png" />
+    <AvaloniaResource Remove="Assets\rdmp.ico" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <None Remove="Assets\main.png" />
+    <None Remove="Assets\rdmp.ico" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <Content Include="Assets\rdmp.ico" />
+    <Content Include="Assets\main.png" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />

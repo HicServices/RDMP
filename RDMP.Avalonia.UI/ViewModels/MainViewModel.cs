@@ -14,7 +14,7 @@ public class MainViewModel : ReactiveObject
     private ReactiveObject _currentViewModel;
 
     private void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs) {
-        CurrentViewModel = new SimpleDataTestViewModel();
+        CurrentViewModel = new MainAppViewModel();
     }
     private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs) {
     }
@@ -23,7 +23,7 @@ public class MainViewModel : ReactiveObject
 
     public MainViewModel()
     {
-        _currentViewModel = ShouldShowSetup() ? new RDMPSetupViewModel(): new SimpleDataTestViewModel();
+        _currentViewModel = ShouldShowSetup() ? new RDMPSetupViewModel(): new MainAppViewModel();
         BootstrapService._startup.DatabaseFound += StartupDatabaseFound;
         BootstrapService._startup.PluginPatcherFound += StartupPluginPatcherFound;
     }
