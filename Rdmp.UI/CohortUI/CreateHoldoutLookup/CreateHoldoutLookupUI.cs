@@ -6,28 +6,19 @@
 
 
 using System;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
-using NPOI.OpenXmlFormats.Dml.Diagram;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Point = System.Drawing.Point;
 
 namespace Rdmp.UI.CohortUI.CreateHoldoutLookup;
 
 /// <summary>
-/// Once you have created a cohort for your holdout, this dialog allows you to configure how many and from when to store a a catalogue for use as excclusion fields in other cohorts
+/// Once you have created a cohort for your holdout, this dialog allows you to configure how many and from when to store
+/// a catalogue for use as exclusion fields in other cohorts
 /// </summary>
 public partial class CreateHoldoutLookupUI : RDMPForm
 {
@@ -47,17 +38,13 @@ public partial class CreateHoldoutLookupUI : RDMPForm
     {
         _target = target;
 
-
         InitializeComponent();
-
 
         if (_target == null)
             return;
 
-
         _cic = cic;
         tbName.Text = $"holdout_{cic?.Name ?? ""}";
-
 
         taskDescriptionLabel1.SetupFor(new DialogArgs
         {
@@ -66,35 +53,27 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         });
     }
 
-
-
-
     public CohortHoldoutLookupRequest Result { get; set; }
-
 
     private void btnOk_Click(object sender, EventArgs e)
     {
-        string name = tbName.Text;
-        string minDate = textBox2.Text;
-        string maxDate = textBox3.Text;
-        string dateColumnName = textBox4.Text;
-        string description = tbDescription.Text;
-        Result = new CohortHoldoutLookupRequest(_cic, name, Decimal.ToInt32(numericUpDown1.Value), comboBox1.Text == "%", description, minDate, maxDate, dateColumnName);
+        var name = tbName.Text;
+        var minDate = textBox2.Text;
+        var maxDate = textBox3.Text;
+        var dateColumnName = textBox4.Text;
+        var description = tbDescription.Text;
+        Result = new CohortHoldoutLookupRequest(_cic, name, decimal.ToInt32(numericUpDown1.Value),
+            comboBox1.Text == "%", description, minDate, maxDate, dateColumnName);
         DialogResult = DialogResult.OK;
         Close();
     }
-
-
     private void btnCancel_Click(object sender, EventArgs e)
     {
         Result = null;
         DialogResult = DialogResult.Cancel;
         Close();
     }
-
-
-
-
+    
     private void CohortHoldoutCreationRequestUI_Load(object sender, EventArgs e)
     {
         _target.Check(ragSmiley1);

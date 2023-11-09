@@ -7,8 +7,6 @@
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
-using Rdmp.Core.CommandExecution.Combining;
-using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
@@ -63,16 +61,18 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
     private DataTable LoadDataTable(DiscoveredServer server, string sql)
     {
 
-        DataTable dt = new DataTable();
+        var dt = new DataTable();
 
         try
         {
             using var con = server.GetConnection();
             con.Open();
-            _cmd = server.GetCommand(sql, con);
-            _cmd.CommandTimeout = 10000;
-            var adapter = server.GetDataAdapter(_cmd);
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = 10000;
+            var adapter = server.GetDataAdapter(cmd);
+            dt.BeginLoadData();
             adapter.Fill(dt);
+            dt.EndLoadData();
             con.Close();
         }
         catch (Exception e)
@@ -83,23 +83,24 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
 
     }
 
-    private readonly string HoldoutShuffle = "_Holdoutsuffle";
+    private const string HoldoutShuffle = "_HoldoutShuffle";
 
     public override void Execute()
     {
         base.Execute();
-        ExternalCohortTable ect = null;
 
         SelectOne(GetChooseCohortDialogArgs(),
                     BasicActivator.RepositoryLocator.DataExportRepository,
-                    out ect);
+                    out ExternalCohortTable ect);
         if (ect is null)
             return;
-        CohortHoldoutLookupRequest holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect, null, _cic);
+
+        var holdoutRequest = BasicActivator.GetCohortHoldoutLookupRequest(ect, null, _cic);
         if(holdoutRequest is null)
             return;
+
         var cohortConfiguration = new ViewCohortIdentificationConfigurationSqlCollection(_cic);
-        string sql = cohortConfiguration.GetSql();
+        var sql = cohortConfiguration.GetSql();
         _server = DataAccessPortal
                 .ExpectServer(cohortConfiguration.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing, false);
         _server.TestConnection();
@@ -111,8 +112,8 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         }
         StringBuilder sb = new();
 
-        IEnumerable<string> columnNames = _dataTable.Columns.Cast<DataColumn>().
-                                            Select(column => column.ColumnName);
+        var columnNames = _dataTable.Columns.Cast<DataColumn>().
+                                            Select(static column => column.ColumnName);
         sb.AppendLine(string.Join(",", columnNames));
         _dataTable.Columns.Add(HoldoutShuffle);
         Random rnd = new();
@@ -120,11 +121,11 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         {
             row[HoldoutShuffle] = rnd.Next();
         }
-        DateTime beforeDate = holdoutRequest.MaxDate;
-        DateTime afterDate = holdoutRequest.MinDate;
-        string dateColumn = holdoutRequest.DateColumnName;
-        bool hasMinDate = false;
-        bool hasMaxDate = false;
+        var beforeDate = holdoutRequest.MaxDate;
+        var afterDate = holdoutRequest.MinDate;
+        var dateColumn = holdoutRequest.DateColumnName;
+        var hasMinDate = false;
+        var hasMaxDate = false;
 
 
         if (columnNames.Contains(dateColumn))
@@ -165,44 +166,40 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
             {
                 rowCount = 100;
             }
-            rowCount = (int)Math.Ceiling(((float)_dataTable.Rows.Count / 100 * rowCount));
-            rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
+            rowCount = (int)Math.Ceiling((float)_dataTable.Rows.Count / 100 * rowCount);
+            rows = _dataTable.Rows.Cast<DataRow>().Take(rowCount);
         }
-        if (rows.ToArray().Length < 1)
+
+        var dataRows = rows as DataRow[] ?? rows.ToArray();
+        if (!dataRows.Any())
         {
             Show("Holdout would be empty with current configuration. Will not create holdout.");
             return;
         }
 
-        foreach (DataRow row in rows)
+        foreach (var row in dataRows)
         {
-            IEnumerable<string> fields = row.ItemArray.Select(field => field.ToString());
-            sb.AppendLine(string.Join(",", fields));
+            sb.AppendLine(string.Join(",", row.ItemArray.Select(static field => field?.ToString())));
         }
 
         File.WriteAllText($"{holdoutRequest.Name}.csv", sb.ToString());
-        FileInfo fi = new FileInfo($"{holdoutRequest.Name}.csv");
-            
-        List<string> columns = new List<string>();
-        foreach (DataColumn column in _dataTable.Columns)
-        {
-            columns.Add(column.ColumnName.ToString());
-        }
+        var fi = new FileInfo($"{holdoutRequest.Name}.csv");
 
+        var columns = _dataTable.Columns.Cast<DataColumn>().Select(c=>c.ColumnName).ToList();
 
-        var extractionIdentifier = "";
-        BasicActivator.SelectObject("Select an Extraction Identifier", columns.ToArray(), out extractionIdentifier);
-        if (extractionIdentifier == null) 
+        BasicActivator.SelectObject("Select an Extraction Identifier", columns.ToArray(), out var extractionIdentifier);
+        if (extractionIdentifier == null)
             return;
-         
-        DiscoveredDatabase db = SelectDatabase(true, "Select a Database to store the new Holdout.");
+
+        var db = SelectDatabase(true, "Select a Database to store the new Holdout.");
         if(db == null) return;
-        var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
-        .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+
+        var pipe = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(static p => p.ID)
+        .FirstOrDefault(static p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
 
         var importCommand = new ExecuteCommandCreateNewCatalogueByImportingFile(_activator, fi, extractionIdentifier, db, pipe, null,holdoutRequest.Description);
         importCommand.Execute();
-        
+
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.CohortAggregate,OverlayKind.Link);

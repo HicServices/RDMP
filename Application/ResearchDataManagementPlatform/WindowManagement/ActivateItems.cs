@@ -872,7 +872,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         if (!string.IsNullOrWhiteSpace(cic.Description))
             ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
-        return ui.ShowDialog() == DialogResult.OK ? ui.Result : ui.Result;
+        return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
     public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,

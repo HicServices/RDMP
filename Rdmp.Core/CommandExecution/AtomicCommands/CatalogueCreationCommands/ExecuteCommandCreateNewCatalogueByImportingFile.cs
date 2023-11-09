@@ -156,31 +156,21 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
         importer.DoImport(out var ti, out _);
-        ICatalogue cata;
-        if (_extractionIdentifier is not null)
-        {
-            ColumnInfo[] extractionIdentifiers = ti.ColumnInfos.Where(ti => ti.Name == _extractionIdentifier).ToArray();
-            cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
+        var extractionIdentifiers = _extractionIdentifier is null ? null : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
+        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
             $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
             TargetFolder);
-        }
-        else
+
+        if (cata == null) return;
+
+        if(_initialDescription is not null)
         {
-            cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
-              $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
-            TargetFolder);
+            cata.Description = _initialDescription;
+            cata.SaveToDatabase();
         }
-        if (cata != null)
-        {
-            if(_initialDescription is not null)
-            {
-                cata.Description = _initialDescription;
-                cata.SaveToDatabase();
-            }
-                
-            Publish(cata);
-            Emphasise(cata);
-        }
+
+        Publish(cata);
+        Emphasise(cata);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

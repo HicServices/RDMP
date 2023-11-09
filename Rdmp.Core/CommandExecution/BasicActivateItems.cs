@@ -13,7 +13,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
