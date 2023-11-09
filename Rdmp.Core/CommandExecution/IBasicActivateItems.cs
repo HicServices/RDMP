@@ -173,6 +173,10 @@ public interface IBasicActivateItems
     CohortCreationRequest GetCohortCreationRequest(ExternalCohortTable externalCohortTable, IProject project,
         string cohortInitialDescription);
 
+
+
+    CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic);
+
     /// <summary>
     /// Show all objects in RDMP (with search).  If a single selection is made then invoke the callback
     /// </summary>

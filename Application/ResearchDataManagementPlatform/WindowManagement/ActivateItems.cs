@@ -832,6 +832,11 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
     {
+
+        if(useCase is not null && pipeline is not null)
+        {
+            return new PipelineRunner(useCase, pipeline);
+        }
         var configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(args, useCase, this)
         {
             Dock = DockStyle.Fill
@@ -856,9 +861,27 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
     }
 
+    public override CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
+    {
+        // if on wrong Thread
+        if (_mainDockPanel?.InvokeRequired ?? false)
+            return _mainDockPanel.Invoke(() =>
+                GetCohortHoldoutLookupRequest(externalCohortTable, project, cic));
+
+        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable,  cic);
+
+        if (!string.IsNullOrWhiteSpace(cic.Description))
+            ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
+        return ui.ShowDialog() == DialogResult.OK ? ui.Result : null;
+    }
+
     public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
         ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
     {
+        if(extractionIdentifierColumns is not null)
+        {
+            return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription, projectSpecific, folder);
+        }
         // if on wrong Thread
         if (_mainDockPanel?.InvokeRequired ?? false)
             return _mainDockPanel.Invoke(() => CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns,
