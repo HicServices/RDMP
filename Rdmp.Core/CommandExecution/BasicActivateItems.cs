@@ -665,6 +665,16 @@ public abstract class BasicActivateItems : IBasicActivateItems
     }
 
     /// <inheritdoc/>
+    public virtual CohortHoldoutLookupRequest GetCohortHoldoutLookupRequest(ExternalCohortTable externalCohortTable, IProject project, CohortIdentificationConfiguration cic)
+    {
+
+        if (!TypeText("Name", "Enter name for cohort", 255, null, out var name, false))
+            throw new Exception("User chose not to enter a name for the cohort and none was provided");
+
+        return new CohortHoldoutLookupRequest(cic, "empty", 1,false,"","");
+    }
+
+    /// <inheritdoc/>
     public virtual ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
         ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific,
         string catalogueFolder)

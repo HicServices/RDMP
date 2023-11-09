@@ -31,6 +31,8 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 {
     private readonly DiscoveredDatabase _targetDatabase;
     private IPipeline _pipeline;
+    private readonly string _extractionIdentifier;
+    private readonly string _initialDescription;
 
     public FileInfo File { get; private set; }
 
@@ -62,13 +64,17 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
             "Pipeline for reading the source file, applying any transforms and writing to the database")]
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
-        Project projectSpecific) : base(activator, projectSpecific, null)
+        Project projectSpecific,
+        string initialDescription=null) : base(activator, projectSpecific, null)
+
     {
         File = file;
         _targetDatabase = targetDatabase;
         _pipeline = pipeline;
+        _extractionIdentifier = extractionIdentifier;
         UseTripleDotSuffix = true;
         CheckFile();
+        _initialDescription = initialDescription;
     }
 
 
@@ -150,16 +156,21 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
         importer.DoImport(out var ti, out _);
-
-        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, null,
+        var extractionIdentifiers = _extractionIdentifier is null ? null : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
+        var cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
             $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
             TargetFolder);
 
-        if (cata != null)
+        if (cata == null) return;
+
+        if(_initialDescription is not null)
         {
-            Publish(cata);
-            Emphasise(cata);
+            cata.Description = _initialDescription;
+            cata.SaveToDatabase();
         }
+
+        Publish(cata);
+        Emphasise(cata);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
