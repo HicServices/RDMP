@@ -234,32 +234,35 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             return false;
         }
 
-        foreach (var component in Components)
-        {
-            if (cancellationToken.IsAbortRequested) break;
+        try {
+          foreach (var component in Components)
+          {
+              if (cancellationToken.IsAbortRequested) break;
 
-            currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-            if (completionUIAlerts is not null && currentChunk is DataTable dt)
-            {
-                var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                completionUIAlerts.Add(uiAlert);
-            }
+              currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+              if (completionUIAlerts is not null && currentChunk is DataTable dt)
+              {
+                  var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                  completionUIAlerts.Add(uiAlert);
+              }
+          }
+
+          if (cancellationToken.IsAbortRequested) return true;
+
+          Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+
+          if (cancellationToken.IsAbortRequested) return true;
         }
+        finally {
+          //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
+          if (currentChunk is DataTable dt2)
+              dt2.Clear();
 
-        if (cancellationToken.IsAbortRequested) return true;
-
-        Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-
-        if (cancellationToken.IsAbortRequested) return true;
-
-        //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
-        if (currentChunk is DataTable dt2)
-            dt2.Clear();
-
-        //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-        if (currentChunk is IDisposable junk)
-#pragma warning disable
-            junk.Dispose();
+          //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
+          if (currentChunk is IDisposable junk)
+  #pragma warning disable
+              junk.Dispose();
+        }
 
         return true;
     }
