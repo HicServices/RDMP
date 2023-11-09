@@ -4,11 +4,11 @@
 			 xmlns:vm="using:RDMP.Avalonia.UI.ViewModels"
 	         xmlns:views="clr-namespace:RDMP.Avalonia.UI.Views"
              RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+	<!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
-    <Application.Styles>
-        <FluentTheme />
-    </Application.Styles>
+	<Application.Styles>
+		<FluentTheme />
+	</Application.Styles>
 	<Application.DataTemplates>
 		<DataTemplate DataType="{x:Type vm:RDMPSetupViewModel}">
 			<StackPanel Margin="20">
@@ -21,14 +21,19 @@
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:MainAppViewModel}">
 			<Grid ColumnDefinitions="1000,1*" RowDefinitions="50,1000" Margin="4">
-			<StackPanel Grid.Column="0" Grid.Row="0"  Orientation="Horizontal" Grid.ColumnSpan="2" Background="AliceBlue">
-				<Image Source="avares://RDMP.Avalonia.UI/Assets/avalonia-logo.ico" Height="50" Width="50"/>
-				<Button Command="{Binding SelectCatalogueTab}">Catalogues</Button>
-				<Button Command="{Binding SelectCohortBuilderTab}">Cohort Builder</Button>
-				<Button>Projects</Button>
-			</StackPanel>
+				<StackPanel Grid.Column="0" Grid.Row="0"  Orientation="Horizontal" Grid.ColumnSpan="2" Background="AliceBlue">
+					<Image Source="avares://RDMP.Avalonia.UI/Assets/avalonia-logo.ico" Height="50" Width="50"/>
+					<Button Command="{Binding SelectCatalogueTab}">Catalogues</Button>
+					<Button Command="{Binding SelectCohortBuilderTab}">Cohort Builder</Button>
+					<Button>Projects</Button>
+				</StackPanel>
 				<views:LeftHandPanelView Grid.Row="1" Grid.Column="0"/>
 			</Grid>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type vm:CatalogueTreeViewModel}">
+			<StackPanel>
+				<TextBlock>Catalogues, todo!</TextBlock>
+			</StackPanel>
 		</DataTemplate>
 	</Application.DataTemplates>
 </Application>

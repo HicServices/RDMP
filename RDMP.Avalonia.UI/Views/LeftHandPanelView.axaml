@@ -9,8 +9,7 @@
 			 >
 	<StackPanel>
 		<TextBlock>Left Hand Panel!</TextBlock>
-		<TextBlock Text="{Binding SelectedTab}"/>
-		<TextBlock Text="TODO!"/>
+		<ContentControl  Content="{Binding CurrentViewModel}"/>
 	</StackPanel>
 
 </UserControl>
