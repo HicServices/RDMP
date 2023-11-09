@@ -31,7 +31,6 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
     private readonly CohortIdentificationConfiguration _cic;
     readonly IBasicActivateItems _activator;
     private DiscoveredServer _server;
-    private DbCommand _cmd;
     private DataTable _dataTable;
 
 
