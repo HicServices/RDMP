@@ -17,7 +17,6 @@ namespace RDMP.Avalonia.UI.ViewModels
 
         private ObservableCollection<Catalogue> _catalogues = new();
 
-
         public ObservableCollection<Catalogue> Catalogues { get => _catalogues; set => this.RaiseAndSetIfChanged(ref _catalogues, value); }
 
         public CatalogueTreeViewModel()

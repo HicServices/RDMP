@@ -31,8 +31,14 @@
 			</Grid>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type vm:CatalogueTreeViewModel}">
-			<StackPanel>
-				<TextBlock>Catalogues, todo!</TextBlock>
+				<StackPanel >
+				<TreeView ItemsSource="{Binding Catalogues}" >
+					<TreeView.ItemTemplate  >
+						<DataTemplate >
+							<TextBlock Text="{Binding Name}" />
+						</DataTemplate>
+					</TreeView.ItemTemplate>
+				</TreeView>
 			</StackPanel>
 		</DataTemplate>
 	</Application.DataTemplates>

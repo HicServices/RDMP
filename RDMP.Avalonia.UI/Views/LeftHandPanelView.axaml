@@ -7,8 +7,11 @@
 			 xmlns:vm="using:RDMP.Avalonia.UI.ViewModels"
              x:DataType="vm:LeftHandPanelViewModel"
 			 >
-	<StackPanel>
-		<TextBlock>Left Hand Panel!</TextBlock>
+	<StackPanel >
+		<StackPanel Orientation="Horizontal" >
+			<TextBlock Text="{Binding SelectedTab}"/>
+			<Button>Click!</Button>
+		</StackPanel>
 		<ContentControl  Content="{Binding CurrentViewModel}"/>
 	</StackPanel>
 

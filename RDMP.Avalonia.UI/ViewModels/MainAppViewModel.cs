@@ -15,6 +15,7 @@ namespace RDMP.Avalonia.UI.ViewModels
         //public string test = "test";
         public enum Tabs
         {
+            None,
             Catalogue,
             CohortBuilder,
             Projects
