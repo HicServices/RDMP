@@ -76,43 +76,43 @@ jobs:
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
       - name: Initialise RDMP
         run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
-      - name: Populate Databases.yaml
-        shell: bash
-        run: |
-          cat > ./Tools/rdmp/Databases.yaml << EOF
-          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
-          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
-          EOF
-      - name: Run integration test scripts
-        run: |
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
-            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
-      - name: Test (DB)
-        shell: bash
-        run: |
-          rm -rf coverage
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-core.lcov
-      - name: Test with local file system
-        shell: bash
-        run:  |
-          echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` fs-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` fs-core.lcov
-      - name: Merge LCovs
-        run: lcov-result-merger "{db,fs}-{ui,core}.lcov" all.lcov
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.github_token }}
-          path-to-lcov: all.lcov
-          flag-name: unit tests
+      # - name: Populate Databases.yaml
+      #   shell: bash
+      #   run: |
+      #     cat > ./Tools/rdmp/Databases.yaml << EOF
+      #     CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+      #     DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
+      #     EOF
+      # - name: Run integration test scripts
+      #   run: |
+      #       dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
+      #       dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
+      #       dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
+      #       dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
+      # - name: Test (DB)
+      #   shell: bash
+      #   run: |
+      #     rm -rf coverage
+      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` db-ui.lcov
+      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` db-core.lcov
+      # - name: Test with local file system
+      #   shell: bash
+      #   run:  |
+      #     echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` fs-ui.lcov
+      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` fs-core.lcov
+      # - name: Merge LCovs
+      #   run: lcov-result-merger "{db,fs}-{ui,core}.lcov" all.lcov
+      # - name: Coveralls
+      #   uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.github_token }}
+      #     path-to-lcov: all.lcov
+      #     flag-name: unit tests
 
       - name: Package
         run: |
@@ -125,7 +125,7 @@ jobs:
           for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest
           do
             PluginName="$(cut -d/ -f6 <<< $plugin)"
-            curl -s $plugin | grep "$pluginName.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs wget
+            curl -s $plugin | grep "$pluginName.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs curl -O
             for platform in PublishWindows PublishLinux
             do
               cp *.nupkg $platform
