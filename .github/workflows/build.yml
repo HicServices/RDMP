@@ -119,6 +119,12 @@ jobs:
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+      - name: Install Plugins
+        shell: bash
+        run: |
+          cd PublishWindows
+          curl -s https://api.github.com/repos/SMI/RdmpDicom/releases/latest | grep "Rdmp.Dicom.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs wget
+          cd ..
 
       - name: Sign
         shell: bash
