@@ -122,9 +122,16 @@ jobs:
       - name: Install Plugins
         shell: bash
         run: |
-          cd PublishWindows
-          curl -s https://api.github.com/repos/SMI/RdmpDicom/releases/latest | grep "Rdmp.Dicom.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs wget
-          cd ..
+          for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest
+          do
+            PluginName="$(cut -d/ -f6 <<< $plugin)"
+            curl -s $plugin | grep "$pluginName.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs wget
+            for platform in PublishWindows PublishLinux
+            do
+              cp *.nupkg $platform
+            done
+            rm *.nupkg
+          done
 
       - name: Sign
         shell: bash
