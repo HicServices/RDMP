@@ -126,7 +126,7 @@ jobs:
           do
             PluginName="$(cut -d/ -f6 <<< $plugin)"
             curl -s $plugin | grep "$pluginName.*nupkg"  | cut -d : -f 2,3 | tr -d \" | sed -n '2 p' | xargs curl -O
-            for platform in PublishWindows PublishLinux
+            for platform in PublishWindows PublishLinux PublishWinForms
             do
               cp *.nupkg $platform
             done
@@ -144,11 +144,11 @@ jobs:
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe | cmd)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
 
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.2
