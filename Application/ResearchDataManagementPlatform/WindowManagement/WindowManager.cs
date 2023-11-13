@@ -149,7 +149,7 @@ public class WindowManager
                 break;
 
             case RDMPCollection.Datasets:
-                collection = new FavouritesCollectionUI();
+                collection = new DatasetsCollectionUI();
                 toReturn = Show(RDMPCollection.Datasets, collection, "Datasets",
                     Image.Load<Rgba32>(CatalogueIcons.Favourite));
                 break;
