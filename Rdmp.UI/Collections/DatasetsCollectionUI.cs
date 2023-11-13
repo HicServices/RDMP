@@ -62,18 +62,6 @@ namespace Rdmp.UI.Collections
         {
             var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
 
-            //no change in root favouratism
-            if (_datasets.SequenceEqual(actualRootFavourites))
-                return;
-
-            //remove old objects
-            foreach (var unfavourited in _datasets.Except(actualRootFavourites))
-                tlvDatasets.RemoveObject(unfavourited);
-
-            //add new objects
-            foreach (var newFavourite in actualRootFavourites.Except(_datasets))
-                tlvDatasets.AddObject(newFavourite);
-
             //update to the new list
             _datasets = actualRootFavourites;
             tlvDatasets.RebuildAll(true);
@@ -91,23 +79,6 @@ namespace Rdmp.UI.Collections
         {
             var datasets =
                 activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
-
-            //var hierarchyCollisions = new List<IMapsDirectlyToDatabaseTable>();
-
-            ////find hierarchy collisions (shared hierarchy in which one Favourite object includes a tree of objects some of which are Favourited).  For this only display the parent
-            //foreach (var currentFavourite in potentialRootFavourites)
-            //{
-            //    //current favourite is an absolute root object Type (no parents)
-            //    if (currentFavourite.Value == null)
-            //        continue;
-
-            //    //if any of the current favourites parents
-            //    foreach (var parent in currentFavourite.Value.Parents)
-            //        //are favourites
-            //        if (potentialRootFavourites.Any(kvp => kvp.Key.Equals(parent)))
-            //            //then this is not a favourite it's a collision (already favourited under another node)
-            //            hierarchyCollisions.Add(currentFavourite.Key);
-            //}
 
             var actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
 
