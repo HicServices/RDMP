@@ -27,6 +27,9 @@ public class Dataset : DatabaseEntity, IDataset
         set => SetField(ref _digitalObjectIdentifier, value);
     }
 
+    public override string ToString() => Name;
+
+
     public Dataset(ICatalogueRepository catalogueRepository, string name)
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
