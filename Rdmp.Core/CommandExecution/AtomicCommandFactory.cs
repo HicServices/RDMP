@@ -104,7 +104,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                     OverrideCommandName = "Catalogue SQL/Data",
                     SuggestedCategory = View
                 };
-
                 yield return new ExecuteCommandAddNewCatalogueItem(_activator, c)
                 { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
                 yield return new ExecuteCommandAddNewAggregateGraph(_activator, c)
@@ -475,6 +474,8 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
             { Weight = -50.5f };
 
+            yield return new ExecuteCommandCreateDataset(_activator, "test1");//this is in the wrong place
+
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
             if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
@@ -566,6 +567,7 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out AllPluginsNode _))
         {
+            yield return new ExecuteCommandAddPlugins(_activator);
             yield return new ExecuteCommandAddPlugins(_activator);
             yield return new ExecuteCommandPrunePlugin(_activator);
             yield return new ExecuteCommandExportPlugins(_activator);
