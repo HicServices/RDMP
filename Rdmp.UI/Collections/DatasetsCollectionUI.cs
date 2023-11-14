@@ -64,6 +64,9 @@ namespace Rdmp.UI.Collections
 
             //update to the new list
             _datasets = actualRootFavourites;
+            //tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
+            //.ToArray());
+            tlvDatasets.AddObjects(_datasets.ToArray());
             tlvDatasets.RebuildAll(true);
         }
 
