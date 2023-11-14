@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ public class Dataset : DatabaseEntity, IDataset
 {
     string _name;
     string _digitalObjectIdentifier;
+    string _source;
 
     [Unique]
     public string Name
@@ -25,6 +27,12 @@ public class Dataset : DatabaseEntity, IDataset
     {
         get => _digitalObjectIdentifier;
         set => SetField(ref _digitalObjectIdentifier, value);
+    }
+
+    public string Source
+    {
+        get => _source;
+        set => SetField(ref _source, value);
     }
 
     public override string ToString() => Name;
@@ -43,5 +51,7 @@ public class Dataset : DatabaseEntity, IDataset
         Name = r["Name"].ToString();
         if (r["DigitalObjectIdentifier"] != DBNull.Value)
             DigitalObjectIdentifier = r["DigitalObjectIdentifier"].ToString();
+        if (r["Source"] != DBNull.Value)
+            Source = r["Source"].ToString();
     }
 }

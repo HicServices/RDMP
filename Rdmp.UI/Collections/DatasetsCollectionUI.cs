@@ -36,12 +36,12 @@ namespace Rdmp.UI.Collections
             CommonTreeFunctionality.SetUp(RDMPCollection.Datasets, tlvDatasets, Activator, olvName, olvName,
                 new RDMPCollectionCommonFunctionalitySettings());
             //CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
-            //CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
-            //    a => new IAtomicCommand[]
-            //    {
-            //    new ExecuteCommandAddFavourite(a),
-            //    new ExecuteCommandClearFavourites(a)
-            //    };
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
+                a => new IAtomicCommand[]
+                {
+                       new ExecuteCommandCreateNewDatasetUI(Activator)
+                { OverrideCommandName = "Add New Dataset", Weight = -50.9f },
+                };
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
             RefreshFavourites();
@@ -86,7 +86,7 @@ namespace Rdmp.UI.Collections
             var actualRootFavourites = new List<IMapsDirectlyToDatabaseTable>();
 
             foreach (var currentFavourite in datasets)
-                    actualRootFavourites.Add(currentFavourite);
+                actualRootFavourites.Add(currentFavourite);
 
             return actualRootFavourites;
         }

@@ -17,17 +17,24 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
 
     private string _doi;
     private string _name;
-    public ExecuteCommandCreateDataset(IBasicActivateItems activator, string name, string doi = null) : base(activator)
+    private string _source;
+
+    public ExecuteCommandCreateDataset(IBasicActivateItems basicActivator) : base(basicActivator)
+    {
+    }
+
+    public ExecuteCommandCreateDataset(IBasicActivateItems activator, string name, string doi = null,string source = null) : base(activator)
     {
         _name = name;
         _doi = doi;
+        _source = source;
     }
 
 
     public override void Execute()
     {
         base.Execute();
-        var dataset = new Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi };
+        var dataset = new Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
     }
 }
