@@ -72,6 +72,23 @@ public class WordDataWriter : DocXHelper
 
             var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
+            List<int> foundDatasets = new();
+            foreach( var col in Executer.Source.Request.ColumnsToExtract)
+            {
+                var colInfo = col.ColumnInfo;
+                if(colInfo.Dataset_ID > 0)
+                {
+                    foundDatasets.Add(colInfo.Dataset_ID);
+                }
+            }
+            string datasetString = "";
+            if(foundDatasets.Count > 0)
+            {
+                rowCount++;
+                datasetString = $"This data was generated in part from proexisting datasets...TODO";
+            }
+
+
             var t = InsertTable(document, rowCount, 2);
 
             var rownum = 0;
@@ -142,6 +159,13 @@ public class WordDataWriter : DocXHelper
                 InsertSectionPageBreak(document);
 
                 CreateValidationResultsTable(document);
+            }
+
+            if(foundDatasets.Count >0)
+            {
+                SetTableCell(t, rownum, 0, "Datasets USed");
+                SetTableCell(t, rownum, 1, datasetString);
+                rownum++;
             }
 
             //if a count of date times seen exists for this extraction create a graph of the counts seen

@@ -16,7 +16,7 @@ CREATE TABLE [dbo].Dataset(
 
 if not exists (select 1 from sys.columns where name = 'Dataset' AND object_id = OBJECT_ID('ColumnInfo'))
 begin
-ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
+ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULLRes
 end
 begin
 ALTER TABLE [dbo].[ColumnInfo]  WITH CHECK ADD  CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID])
