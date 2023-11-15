@@ -85,7 +85,7 @@ public class WordDataWriter : DocXHelper
             if(foundDatasets.Count > 0)
             {
                 rowCount++;
-                datasetString = $"This data was generated in part from proexisting datasets...TODO";
+                datasetString = $"This data was generated in part from existing datasets...TODO";
             }
 
 
