@@ -11,9 +11,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecution
 {
     private ColumnInfo _columnInfo;
-    private Dataset _dataset;
+    private Curation.Data.Dataset _dataset;
     private bool _linkAll;
-    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator, ColumnInfo columnInfo, Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator, ColumnInfo columnInfo, Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
     {
         _columnInfo = columnInfo;
         _dataset = dataset;

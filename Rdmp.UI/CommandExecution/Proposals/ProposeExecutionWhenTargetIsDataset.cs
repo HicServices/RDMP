@@ -26,9 +26,7 @@ internal class
 
     public override void Activate(Dataset target)
     {
-        var x = 1 + 1;
-        Console.WriteLine(x);
-        //ItemActivator.Activate<CohortIdentificationConfigurationUI, Dataset>(target);
+        ItemActivator.Activate<DatsetConfigurationUI, Dataset>(target);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
