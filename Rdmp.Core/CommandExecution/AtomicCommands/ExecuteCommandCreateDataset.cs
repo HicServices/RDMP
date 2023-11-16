@@ -18,9 +18,10 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
     private string _doi;
     private string _name;
     private string _source;
-
+    IBasicActivateItems _activator;
     public ExecuteCommandCreateDataset(IBasicActivateItems basicActivator) : base(basicActivator)
     {
+        _activator = basicActivator;
     }
 
     public ExecuteCommandCreateDataset(IBasicActivateItems activator, string name, string doi = null,string source = null) : base(activator)
@@ -28,6 +29,7 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
         _name = name;
         _doi = doi;
         _source = source;
+        _activator = activator;
     }
 
 
@@ -36,5 +38,7 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
         base.Execute();
         var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
+        _activator.Publish(dataset);
+
     }
 }

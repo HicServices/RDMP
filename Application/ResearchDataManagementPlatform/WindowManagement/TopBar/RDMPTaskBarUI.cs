@@ -51,8 +51,8 @@ public partial class RDMPTaskBarUI : UserControl
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
-        btnDataSets.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-        btnDataSets.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.DataLoad);
+        btnDataSets.Image = CatalogueIcons.Dataset.ImageToBitmap();
+        btnDataSets.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.Datasets);
 
         btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
         btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.DataLoad);

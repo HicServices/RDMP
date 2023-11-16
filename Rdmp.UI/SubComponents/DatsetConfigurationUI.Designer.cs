@@ -43,7 +43,7 @@ partial class DatsetConfigurationUI
         label1.Name = "label1";
         label1.Size = new System.Drawing.Size(81, 15);
         label1.TabIndex = 0;
-        label1.Text = "Dataset Name";
+        label1.Text = "Dataset Name*";
         label1.Click += label1_Click;
         // 
         // tbName

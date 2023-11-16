@@ -1,12 +1,17 @@
 ﻿using Amazon.Auth.AccessControlPolicy;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data;
 public class Dataset : DatabaseEntity, IDataset
@@ -14,6 +19,16 @@ public class Dataset : DatabaseEntity, IDataset
     string _name;
     string _digitalObjectIdentifier;
     string _source;
+    private string _folder = FolderHelper.Root;
+
+    /// <inheritdoc/>
+    [DoNotImportDescriptions]
+    [UsefulProperty]
+    public string Folder
+    {
+        get => _folder;
+        set => SetField(ref _folder, FolderHelper.Adjust(value));
+    }
 
     [Unique]
     public string Name
@@ -42,13 +57,15 @@ public class Dataset : DatabaseEntity, IDataset
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name }
+            {"Name", name },
+            {"Folder", _folder }
         });
     }
     internal Dataset(ICatalogueRepository repository, DbDataReader r)
        : base(repository, r)
     {
         Name = r["Name"].ToString();
+        Folder = r["Folder"].ToString();
         if (r["DigitalObjectIdentifier"] != DBNull.Value)
             DigitalObjectIdentifier = r["DigitalObjectIdentifier"].ToString();
         if (r["Source"] != DBNull.Value)

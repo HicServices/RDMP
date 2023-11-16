@@ -35,7 +35,6 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.SetUp(RDMPCollection.Datasets, tlvDatasets, Activator, olvName, olvName,
                 new RDMPCollectionCommonFunctionalitySettings());
-            //CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
                 a => new IAtomicCommand[]
                 {
@@ -66,7 +65,7 @@ namespace Rdmp.UI.Collections
             _datasets = actualRootFavourites;
             //tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
             //.ToArray());
-            tlvDatasets.AddObjects(_datasets.ToArray());
+            tlvDatasets.SetObjects(_datasets.ToArray());
             tlvDatasets.RebuildAll(true);
         }
 

@@ -6,6 +6,7 @@ if not exists(select 1 from sys.columns where object_id = OBJECT_ID('Dataset'))
 CREATE TABLE [dbo].Dataset(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [varchar](256) NOT NULL,
+	[Folder] [nvarchar](1000) NOT NULL,
 	[DigitalObjectIdentifier] [varchar](256) NULL,
 	[Source] [varchar](256) NULL,
 	CONSTRAINT [PK_Dataset] PRIMARY KEY CLUSTERED 
@@ -16,13 +17,9 @@ CREATE TABLE [dbo].Dataset(
 
 if not exists (select 1 from sys.columns where name = 'Dataset' AND object_id = OBJECT_ID('ColumnInfo'))
 begin
-ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULLRes
+ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
 end
 begin
 ALTER TABLE [dbo].[ColumnInfo]  WITH CHECK ADD  CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID])
 REFERENCES [dbo].[Dataset] ([ID])
 end
-
-
---ALTER TABLE [dbo].[ANOTable]  WITH CHECK ADD  CONSTRAINT [FK_ANOTable_ExternalDatabaseServer] FOREIGN KEY([Server_ID])
---REFERENCES [dbo].[ExternalDatabaseServer] ([ID])
