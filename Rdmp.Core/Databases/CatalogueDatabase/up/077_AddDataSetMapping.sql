@@ -14,12 +14,7 @@ CREATE TABLE [dbo].Dataset(
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-
-if not exists (select 1 from sys.columns where name = 'Dataset' AND object_id = OBJECT_ID('ColumnInfo'))
-begin
 ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
-end
-begin
-ALTER TABLE [dbo].[ColumnInfo]  WITH CHECK ADD  CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID])
-REFERENCES [dbo].[Dataset] ([ID])
-end
+-- todo this was causing issues
+--ALTER TABLE [dbo].[ColumnInfo] WITH NOCHECK ADD  CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID])
+--REFERENCES [dbo].[Dataset] ([ID])
