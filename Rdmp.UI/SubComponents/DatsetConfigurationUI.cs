@@ -49,10 +49,11 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
         Bind(tbName, "Text", "Name", c => c.Name);
         Bind(tbDOI, "Text", "DigitalObjectIdentifier", c => c.DigitalObjectIdentifier);
         Bind(tbName, "Text", "Source", c => c.Source);
+        Bind(tbFolder, "Text", "Folder", c => c.Folder);
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
         GetObjectSaverButton()?.Enable(false);
-        
+
     }
 
 
@@ -62,6 +63,11 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
     }
 
     private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label4_Click(object sender, EventArgs e)
     {
 
     }
