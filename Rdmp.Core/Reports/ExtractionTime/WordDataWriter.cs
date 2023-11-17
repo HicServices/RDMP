@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NPOI.XWPF.UserModel;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -18,6 +19,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Validation.Constraints;
+using static Rdmp.Core.ReusableLibraryCode.Diff;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Reports.ExtractionTime;
@@ -53,6 +55,17 @@ public class WordDataWriter : DocXHelper
     private static readonly object OLockOnWordUsage = new();
     private readonly IExecuteDatasetExtractionDestination _destination;
 
+
+
+    private string getDOI(Curation.Data.Dataset ds)
+    {
+        if (!string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier))
+        {
+            return $" (DOI: {ds.DigitalObjectIdentifier})";
+        }
+        return "";
+    }
+
     /// <summary>
     /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
     /// It returns the open document as an object so that you can supplement it e.g. with catalogue information
@@ -73,19 +86,20 @@ public class WordDataWriter : DocXHelper
             var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
             List<int> foundDatasets = new();
-            foreach( var col in Executer.Source.Request.ColumnsToExtract)
+            foreach (var col in Executer.Source.Request.ColumnsToExtract)
             {
                 var colInfo = col.ColumnInfo;
-                if(colInfo.Dataset_ID > 0)
+                if (colInfo.Dataset_ID > 0)
                 {
-                    foundDatasets.Add(colInfo.Dataset_ID);
+                    if (!foundDatasets.Contains(colInfo.Dataset_ID))
+                    {
+                        foundDatasets.Add(colInfo.Dataset_ID);
+                    }
                 }
             }
-            string datasetString = "";
-            if(foundDatasets.Count > 0)
+            if (foundDatasets.Count > 0)
             {
                 rowCount++;
-                datasetString = $"This data was generated in part from existing datasets...TODO";
             }
 
 
@@ -161,9 +175,27 @@ public class WordDataWriter : DocXHelper
                 CreateValidationResultsTable(document);
             }
 
-            if(foundDatasets.Count >0)
+            if (foundDatasets.Count > 0)
             {
-                SetTableCell(t, rownum, 0, "Datasets USed");
+                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>();
+
+                string datasetString = "";
+                int last = foundDatasets.Last();
+                foreach (var ds in foundDatasets)
+                {
+                    var fullDataset = datasets.FirstOrDefault(d => d.ID == ds);
+                    if (fullDataset != null)
+                    {
+                        datasetString += $"{fullDataset.Name}{getDOI(fullDataset)}";
+                        if(last != ds)
+                        {
+                            datasetString += ", ";
+                        }
+                    }
+                }
+
+
+                SetTableCell(t, rownum, 0, "Datasets Used");
                 SetTableCell(t, rownum, 1, datasetString);
                 rownum++;
             }
