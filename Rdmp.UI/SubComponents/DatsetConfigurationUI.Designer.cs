@@ -36,6 +36,7 @@ partial class DatsetConfigurationUI
         label3 = new System.Windows.Forms.Label();
         label4 = new System.Windows.Forms.Label();
         tbFolder = new System.Windows.Forms.TextBox();
+        lblDatasetUsage = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
         // label1
@@ -104,10 +105,20 @@ partial class DatsetConfigurationUI
         tbFolder.Size = new System.Drawing.Size(273, 23);
         tbFolder.TabIndex = 7;
         // 
+        // lblDatasetUsage
+        // 
+        lblDatasetUsage.AutoSize = true;
+        lblDatasetUsage.Location = new System.Drawing.Point(369, 65);
+        lblDatasetUsage.Name = "lblDatasetUsage";
+        lblDatasetUsage.Size = new System.Drawing.Size(38, 15);
+        lblDatasetUsage.TabIndex = 8;
+        lblDatasetUsage.Text = "label5";
+        // 
         // DatsetConfigurationUI
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+        Controls.Add(lblDatasetUsage);
         Controls.Add(tbFolder);
         Controls.Add(label4);
         Controls.Add(label3);
@@ -132,4 +143,5 @@ partial class DatsetConfigurationUI
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.TextBox tbFolder;
+    private System.Windows.Forms.Label lblDatasetUsage;
 }

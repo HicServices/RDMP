@@ -40,11 +40,17 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
     {
         base.SetDatabaseObject(activator, databaseObject);
         Common.Dataset = databaseObject;
-        //tbName.Text = databaseObject.Name;
-        //if(databaseObject.DigitalObjectIdentifier is not null)
-        //    tbDOI.Text = databaseObject.DigitalObjectIdentifier.ToString();
-        //if(databaseObject.Source is not null)
-        //    tbSource.Text = databaseObject.Source;
+
+        var catalogues = databaseObject.CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("Dataset_ID", databaseObject.ID).SelectMany(ci => ci.CatalogueItems).ToList().Select(ci => ci.CatalogueName).Distinct();
+        if(catalogues.Count() < 1)
+        {
+            lblDatasetUsage.Text = "This dataset is not linked to data yet.";
+        }
+        else
+        {
+            var catalogueString = string.Join(Environment.NewLine, catalogues);
+            lblDatasetUsage.Text = $"This dataset is used in the following catalogues:{Environment.NewLine}{catalogueString}";
+        }
 
         Bind(tbName, "Text", "Name", c => c.Name);
         Bind(tbDOI, "Text", "DigitalObjectIdentifier", c => c.DigitalObjectIdentifier);
