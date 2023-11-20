@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -122,6 +123,32 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
+        var associatedDatasets = new List<string>();
+        foreach (var catalogueItem in _catalogue.CatalogueItems)
+        {
+            var datasetId = catalogueItem.ColumnInfo.Dataset_ID;
+            if (datasetId != null)
+            {
+                var foundDataset = _catalogue.CatalogueRepository.GetAllObjectsWhere<Dataset>("ID", datasetId).First();
+                if (!associatedDatasets.Contains(foundDataset.Name))
+                {
+                    associatedDatasets.Add(foundDataset.Name);
+                }
+
+            }
+        }
+        if (associatedDatasets.Count > 0)
+        {
+            lbDatasets.Visible = true;
+            lbDatasetslbl.Visible = true;
+            string finalString = associatedDatasets.Count == 1 ? associatedDatasets[0] : String.Join(", ", associatedDatasets.ToArray(), 0, associatedDatasets.Count - 1) + " and " + associatedDatasets.LastOrDefault();
+            lbDatasets.Text = $"This catalogues contains data from the datasets:{finalString}";
+        }
+        else
+        {
+            lbDatasets.Visible = false;
+            lbDatasetslbl.Visible = false;
+        }
 
         RefreshUIFromDatabase();
     }
