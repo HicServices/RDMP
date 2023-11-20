@@ -21,7 +21,8 @@ namespace Rdmp.UI.Collections
     public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
 
-        private List<IMapsDirectlyToDatabaseTable> _datasets = new();
+        //private List<IMapsDirectlyToDatabaseTable> _datasets = new();
+        private Dataset[] _datasets;
         private bool _firstTime = true;
 
         public DatasetsCollectionUI()
@@ -42,8 +43,9 @@ namespace Rdmp.UI.Collections
                 { OverrideCommandName = "Add New Dataset", Weight = -50.9f },
                 };
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
+            tlvDatasets.AddObject(activator.CoreChildProvider.DatasetRootFolder);
 
-            RefreshFavourites();
+            RefreshDatasets(Activator.CoreChildProvider.DatasetRootFolder);
 
             if (_firstTime)
             {
@@ -54,19 +56,33 @@ namespace Rdmp.UI.Collections
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            RefreshFavourites();
+            RefreshDatasets(Activator.CoreChildProvider.DatasetRootFolder);
         }
 
-        private void RefreshFavourites()
+        private void RefreshDatasets(object oRefreshFrom)
         {
-            var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
+            var rootFolder = Activator.CoreChildProvider.DatasetRootFolder;
+            if (_datasets != null)
+            {
+                var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllDatasets.Except(_datasets);
+                if (newCatalogues.Any())
+                {
+                    oRefreshFrom = rootFolder; //refresh from the root instead
+                    tlvDatasets.RefreshObject(oRefreshFrom);
+                }
+            }
+            _datasets = CommonTreeFunctionality.CoreChildProvider.AllDatasets;
+            if (_firstTime || Equals(oRefreshFrom, rootFolder))
+            {
+                tlvDatasets.RefreshObject(rootFolder);
+                tlvDatasets.Expand(rootFolder);
+                _firstTime = false;
+            }
 
-            //update to the new list
-            _datasets = actualRootFavourites;
-            //tlvCohortUsage.AddObjects(dx.ExtractionConfigurations.Where(e => e.Cohort_ID == _extractableCohort.ID)
-            //.ToArray());
-            tlvDatasets.SetObjects(_datasets.ToArray());
-            tlvDatasets.RebuildAll(true);
+            //var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
+            //_datasets = actualRootFavourites;
+            //tlvDatasets.SetObjects(_datasets.ToArray());
+            //tlvDatasets.RebuildAll(true);
         }
 
 

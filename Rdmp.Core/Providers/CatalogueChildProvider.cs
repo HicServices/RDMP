@@ -63,6 +63,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     //Catalogue side of things
     public Catalogue[] AllCatalogues { get; set; }
+    public Curation.Data.Dataset[] AllDatasets { get; set; }
     public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
     public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -197,6 +198,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
+    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; private set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -240,6 +242,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllCatalogues = GetAllObjects<Catalogue>(repository);
         AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+
+        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
@@ -375,6 +379,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
         AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+
+
+        DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
+        AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
         ReportProgress("Build Catalogue Folder Root");
 
@@ -602,7 +610,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-
     private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
     {
         var descendancy = new DescendancyList(allPermissionWindowsNode);
@@ -824,6 +831,22 @@ public class CatalogueChildProvider : ICoreChildProvider
         );
     }
 
+    private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
+    {
+        foreach (var child in folder.ChildFolders)
+            //add subfolder children
+            AddChildren(child, descendancy.Add(child));
+
+        //add loads in folder
+        foreach (var ds in folder.ChildObjects) AddChildren(ds, descendancy.Add(ds));
+
+        // Children are the folders + objects
+        AddToDictionaries(new HashSet<object>(
+                folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+        );
+    }
+
     private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
     {
         foreach (var child in folder.ChildFolders)
@@ -839,6 +862,35 @@ public class CatalogueChildProvider : ICoreChildProvider
                     .Union(folder.ChildObjects)), descendancy
         );
     }
+
+    private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
+    {
+        var childObjects = new List<object>();
+
+        //if (lmd.OverrideRAWServer_ID.HasValue)
+        //{
+        //    var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
+        //    var usage = new OverrideRawServerNode(lmd, server);
+        //    childObjects.Add(usage);
+        //}
+
+        //var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
+        //AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
+        //childObjects.Add(allSchedulesNode);
+
+        //var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
+        //AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
+        //childObjects.Add(allCataloguesNode);
+
+        //var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
+        //AddChildren(processTasksNode, descendancy.Add(processTasksNode));
+        //childObjects.Add(processTasksNode);
+
+        //childObjects.Add(new LoadDirectoryNode(lmd));
+
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+    }
+
 
     #region Load Metadata
 
