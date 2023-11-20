@@ -35,6 +35,7 @@ public class ExecuteCommandDeleteDataset : BasicUICommandExecution, IAtomicComma
         {
             var cmd = new Core.CommandExecution.AtomicCommands.ExecuteCommandDeleteDataset(_activateItems, _dataset);
             cmd.Execute();
+            _activateItems.RefreshBus.Publish(this, new Refreshing.RefreshObjectEventArgs(_dataset));
         }
     }
 

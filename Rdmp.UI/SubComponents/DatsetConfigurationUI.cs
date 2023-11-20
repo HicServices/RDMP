@@ -54,7 +54,7 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
 
         Bind(tbName, "Text", "Name", c => c.Name);
         Bind(tbDOI, "Text", "DigitalObjectIdentifier", c => c.DigitalObjectIdentifier);
-        Bind(tbName, "Text", "Source", c => c.Source);
+        Bind(tbSource, "Text", "Source", c => c.Source);
         Bind(tbFolder, "Text", "Folder", c => c.Folder);
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
