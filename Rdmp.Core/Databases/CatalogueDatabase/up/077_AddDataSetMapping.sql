@@ -25,4 +25,3 @@ BEGIN
 ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
 --ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID]) REFERENCES [dbo].[Dataset] ([ID]) ON DELETE CASCADE ON UPDATE CASCADE
 END
-GO

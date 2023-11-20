@@ -91,9 +91,9 @@ public class WordDataWriter : DocXHelper
                 var colInfo = col.ColumnInfo;
                 if (colInfo.Dataset_ID > 0)
                 {
-                    if (!foundDatasets.Contains(colInfo.Dataset_ID))
+                    if (!foundDatasets.Contains((int)colInfo.Dataset_ID))
                     {
-                        foundDatasets.Add(colInfo.Dataset_ID);
+                        foundDatasets.Add((int)colInfo.Dataset_ID);
                     }
                 }
             }

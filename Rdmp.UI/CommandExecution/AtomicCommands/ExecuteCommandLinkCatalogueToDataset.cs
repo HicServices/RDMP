@@ -34,7 +34,7 @@ public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAt
     }
 
     public override string GetCommandHelp() =>
-        "TODO";
+        "Link all colu,n of this catalogue to a dataset";
 
     public override void Execute()
     {
@@ -52,6 +52,6 @@ public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAt
         cmd.Execute();
     }
 
-    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-    //    iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
 }

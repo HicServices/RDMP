@@ -297,12 +297,12 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         ClearAllInjections();
     }
 
-    private int _datasetID;
+    private int? _datasetID;
     /// <summary>
     /// The ID of the dataset this column information came from
     /// </summary>
     [DoNotExtractProperty]
-    public int Dataset_ID
+    public int? Dataset_ID
     {
         get => _datasetID;
         set => SetField(ref _datasetID, value);
