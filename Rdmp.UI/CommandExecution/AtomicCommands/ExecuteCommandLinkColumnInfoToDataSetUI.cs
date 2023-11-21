@@ -21,13 +21,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkColumnInfoToDataSet : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, IAtomicCommand
 {
     private readonly ColumnInfo _columnInfo;
     private Dataset _selectedDataset;
     private IActivateItems _activateItems;
 
-    public ExecuteCommandLinkColumnInfoToDataSet(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
+    public ExecuteCommandLinkColumnInfoToDataSetUI(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
     {
         _columnInfo = columnInfo;
         _activateItems = activator;
