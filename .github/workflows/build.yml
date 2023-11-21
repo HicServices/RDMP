@@ -99,7 +99,7 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.github_token }}
-          files: db-ui.lcov db-core.lcov fs-ui.lcov fs-core.lcov
+          files: ./db-ui.lcov ./db-core.lcov ./fs-ui.lcov ./fs-core.lcov
           flag-name: unit tests
 
       - name: Package
