@@ -139,6 +139,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
     public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+
+    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
@@ -198,7 +200,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
-    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; private set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
