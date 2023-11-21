@@ -64,7 +64,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         _catalogueItem = databaseObject;
         if (_catalogueItem != null)
         {
-            var columnInfoDatasetValue  = _catalogueItem.ColumnInfo.Dataset_ID;
+            var columnInfoDatasetValue  = _catalogueItem?.ColumnInfo?.Dataset_ID;
             if (columnInfoDatasetValue != null)
             {
                 lbDatasetValue.Visible = true;
