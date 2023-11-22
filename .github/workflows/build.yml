@@ -18,16 +18,6 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Stub Node dependencies
-        shell: bash
-        run: touch package-lock.json
-      - name: Install Node for coverage reporting
-        uses: actions/setup-node@v4.0.0
-        with:
-          node-version: '16.x'
-          cache: 'npm'
-      - name: LCov merger tool
-        run: npm install -g lcov-result-merger
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Determine RDMP build version
@@ -105,13 +95,11 @@ jobs:
           mv `find coverage -type f` fs-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
-      - name: Merge LCovs
-        run: lcov-result-merger "{db,fs}-{ui,core}.lcov" all.lcov
       - name: Coveralls
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.github_token }}
-          path-to-lcov: all.lcov
+          files: ./db-ui.lcov ./db-core.lcov ./fs-ui.lcov ./fs-core.lcov
           flag-name: unit tests
 
       - name: Package
