@@ -113,7 +113,9 @@ jobs:
           for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest https://api.github.com/repos/HICServices/HicPlugin/releases/latest https://api.github.com/repos/HICServices/RdmpExtensions/releases/latest
           do
             PluginName="$(cut -d/ -f6 <<< $plugin)"
-            curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg"  | cut -d : -f 2,3 | xargs curl -vLO
+            NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
+            echo $NAME
+            curl -OL  $NAME
             for platform in PublishWindows PublishLinux PublishWinForms
             do
               cp *.nupkg $platform
