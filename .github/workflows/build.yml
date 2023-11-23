@@ -107,6 +107,21 @@ jobs:
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+      - name: Install Plugins
+        shell: bash
+        run: |
+          for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest https://api.github.com/repos/HICServices/HicPlugin/releases/latest https://api.github.com/repos/HICServices/RdmpExtensions/releases/latest
+          do
+            PluginName="$(cut -d/ -f6 <<< $plugin)"
+            NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
+            echo $NAME
+            curl -OL  $NAME
+            for platform in PublishWindows PublishLinux PublishWinForms
+            do
+              cp *.nupkg $platform
+            done
+            rm *.nupkg
+          done
 
       - name: Sign
         shell: bash
@@ -119,11 +134,11 @@ jobs:
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe | cmd)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
 
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.2
