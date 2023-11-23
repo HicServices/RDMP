@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.PieCharts
 {
-    partial class CatalogueToDatasetLinkagePiechart
+    partial class CatalogueToDatasetLinkagePieChartUI
     {
         /// <summary> 
         /// Required designer variable.

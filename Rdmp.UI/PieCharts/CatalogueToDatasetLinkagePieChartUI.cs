@@ -30,7 +30,7 @@ namespace Rdmp.UI.PieCharts;
 /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
 /// 
 /// </summary>
-public partial class CatalogueToDatasetLinkagePiechart : RDMPUserControl, IDashboardableControl
+public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDashboardableControl
 {
     private ToolStripButton btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
     { Name = "btnSingleCatalogue" };
@@ -48,7 +48,7 @@ public partial class CatalogueToDatasetLinkagePiechart : RDMPUserControl, IDashb
 
     private List<ToolStripMenuItem> _flagOptions = new();
 
-    public CatalogueToDatasetLinkagePiechart()
+    public CatalogueToDatasetLinkagePieChartUI()
     {
         InitializeComponent();
 
