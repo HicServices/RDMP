@@ -1,0 +1,45 @@
+import { useState, useEffect }from 'react';
+
+function CatalogueLeftHandComponent() {
+    const [catalogues, setCatalogues] = useState();
+    useEffect(() => {
+        populateCatalogues();
+    }, []);
+    const contents = catalogues === undefined
+        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
+        : <table className="table table-striped" aria-labelledby="tabelLabel" style={{width:'250px'} }>
+            <thead>
+                <tr>
+                    <th style={{ width: '100px' }}>Name</th>
+                    {/*<th style={{ width: '100px' }}>Description</th>*/}
+                    <th style={{ width: '50' }}>ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {catalogues.map(catalogue =>
+                    <tr key={catalogue.ID}>
+                        <td style={{width:'100px'} }>{catalogue.name}</td>
+                        {/*<td style={{ width: '100px' }} >{catalogue.description || 'no description set'}</td>*/}
+                        <td style={{ width: '50px' }} >{catalogue.id}</td>
+                    </tr>
+                )}
+            </tbody>
+        </table>;
+    return (
+
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+           
+            <h4 id="tabelLabel">Catalogues</h4>
+            <p>This component demonstrates fetching data from the server.</p>
+            {contents}
+        </div>)
+
+
+    async function populateCatalogues() {
+        const response = await fetch('catalogues');
+        const data = await response.json();
+        setCatalogues(data);
+    }
+}
+
+export default CatalogueLeftHandComponent;
