@@ -13,6 +13,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data;
 
+/// <summary>
+/// todo
+/// </summary>
 public interface IDataset: IMapsDirectlyToDatabaseTable
 {
     /// <summary>

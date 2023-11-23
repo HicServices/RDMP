@@ -12,6 +12,9 @@ using System.Threading.Tasks;
 
 namespace Rdmp.UI.PieCharts;
 
+/// <summary>
+/// todo
+/// </summary>
 public class CatalogueToDatasetLinkageObjectCollection : PersistableObjectCollection
 {
 }

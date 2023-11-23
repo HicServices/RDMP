@@ -18,6 +18,10 @@ using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.Data;
+
+/// <summary>
+/// todo
+/// </summary>
 public class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
     string _name;
