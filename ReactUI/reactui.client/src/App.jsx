@@ -7,7 +7,7 @@ function App() {
     useEffect(() => {
         populateCatalogues();
     }, []);
-
+    console.log(catalogues);
     const contents = catalogues === undefined
         ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
         : <table className="table table-striped" aria-labelledby="tabelLabel">
@@ -37,7 +37,7 @@ function App() {
     );
     
     async function populateCatalogues() {
-        const response = await fetch('catalogue');
+        const response = await fetch('catalogues');
         const data = await response.json();
         setCatalogues(data);
     }
