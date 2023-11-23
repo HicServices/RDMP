@@ -1,15 +1,13 @@
-﻿using System.Windows.Forms.DataVisualization.Charting;
-
-namespace Rdmp.UI.PieCharts
+﻿namespace Rdmp.UI.PieCharts
 {
-    partial class CatalogueToDatasetLinkagePieChart
+    partial class CatalogueToDatasetLinkagePiechart
     {
-        /// <summary>
+        /// <summary> 
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
+        /// <summary> 
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
@@ -22,10 +20,10 @@ namespace Rdmp.UI.PieCharts
             base.Dispose(disposing);
         }
 
-        #region Windows Form Designer generated code
+        #region Component Designer generated code
 
-        /// <summary>
-        /// Required method for Designer support - do not modify
+        /// <summary> 
+        /// Required method for Designer support - do not modify 
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent()
@@ -34,34 +32,13 @@ namespace Rdmp.UI.PieCharts
             System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             System.Windows.Forms.DataVisualization.Charting.Series series1 = new System.Windows.Forms.DataVisualization.Charting.Series();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GoodBadCataloguePieChart));
-            btnViewDataTable = new System.Windows.Forms.Button();
-            lblNoIssues = new System.Windows.Forms.Label();
-            gbWhatThisIs = new System.Windows.Forms.GroupBox();
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
-            gbWhatThisIs.SuspendLayout();
-            SuspendLayout();
-            // 
-            // btnViewDataTable
-            // 
-            btnViewDataTable.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            btnViewDataTable.Location = new System.Drawing.Point(677, 379);
-            btnViewDataTable.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            btnViewDataTable.Name = "btnViewDataTable";
-            btnViewDataTable.Size = new System.Drawing.Size(31, 27);
-            btnViewDataTable.TabIndex = 4;
-            btnViewDataTable.UseVisualStyleBackColor = true;
-            // 
-            // lblNoIssues
-            // 
-            lblNoIssues.Anchor = System.Windows.Forms.AnchorStyles.None;
-            lblNoIssues.AutoSize = true;
-            lblNoIssues.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point);
-            lblNoIssues.Location = new System.Drawing.Point(246, 206);
-            lblNoIssues.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            lblNoIssues.Name = "lblNoIssues";
-            lblNoIssues.Size = new System.Drawing.Size(153, 13);
-            lblNoIssues.TabIndex = 1;
-            lblNoIssues.Text = "No Issues Reported In Dataset";
+            this.gbWhatThisIs = new System.Windows.Forms.GroupBox();
+            this.btnViewDataTable = new System.Windows.Forms.Button();
+            this.lblNoIssues = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
+            this.gbWhatThisIs.SuspendLayout();
+            this.SuspendLayout();
             // 
             // chart1
             // 
@@ -99,35 +76,61 @@ namespace Rdmp.UI.PieCharts
             // 
             // gbWhatThisIs
             // 
-            gbWhatThisIs.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            gbWhatThisIs.Controls.Add(btnViewDataTable);
-            gbWhatThisIs.Controls.Add(lblNoIssues);
-            gbWhatThisIs.Location = new System.Drawing.Point(171, 97);
-            gbWhatThisIs.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gbWhatThisIs.Name = "gbWhatThisIs";
-            gbWhatThisIs.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gbWhatThisIs.Size = new System.Drawing.Size(458, 256);
-            gbWhatThisIs.TabIndex = 2;
-            gbWhatThisIs.TabStop = false;
-            gbWhatThisIs.Text = "What This Is";
+            this.gbWhatThisIs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.gbWhatThisIs.Controls.Add(this.btnViewDataTable);
+            this.gbWhatThisIs.Controls.Add(this.lblNoIssues);
+            this.gbWhatThisIs.Controls.Add(this.chart1);
+            this.gbWhatThisIs.Location = new System.Drawing.Point(0, 28);
+            this.gbWhatThisIs.Name = "gbWhatThisIs";
+            this.gbWhatThisIs.Size = new System.Drawing.Size(393, 222);
+            this.gbWhatThisIs.TabIndex = 1;
+            this.gbWhatThisIs.TabStop = false;
+            this.gbWhatThisIs.Text = "What This Is";
             // 
-            // CatalogueToDatasetLinkagePieChart
+            // btnViewDataTable
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            Controls.Add(gbWhatThisIs);
-            Name = "CatalogueToDatasetLinkagePieChart";
-            Size = new System.Drawing.Size(800, 450);
-            gbWhatThisIs.ResumeLayout(false);
-            gbWhatThisIs.PerformLayout();
-            ResumeLayout(false);
+            this.btnViewDataTable.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewDataTable.Image = ((System.Drawing.Image)(resources.GetObject("btnViewDataTable.Image")));
+            this.btnViewDataTable.Location = new System.Drawing.Point(360, 193);
+            this.btnViewDataTable.Name = "btnViewDataTable";
+            this.btnViewDataTable.Size = new System.Drawing.Size(27, 23);
+            this.btnViewDataTable.TabIndex = 4;
+            this.btnViewDataTable.UseVisualStyleBackColor = true;
+            this.btnViewDataTable.Click += new System.EventHandler(this.btnViewDataTable_Click);
+            // 
+            // lblNoIssues
+            // 
+            this.lblNoIssues.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblNoIssues.AutoSize = true;
+            this.lblNoIssues.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblNoIssues.Location = new System.Drawing.Point(100, 111);
+            this.lblNoIssues.Name = "lblNoIssues";
+            this.lblNoIssues.Size = new System.Drawing.Size(153, 13);
+            this.lblNoIssues.TabIndex = 1;
+            this.lblNoIssues.Text = "No Issues Reported In Dataset";
+            // 
+            // GoodBadCataloguePieChart
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.gbWhatThisIs);
+            this.Name = "GoodBadCataloguePieChart";
+            this.Size = new System.Drawing.Size(393, 250);
+            ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
+            this.gbWhatThisIs.ResumeLayout(false);
+            this.gbWhatThisIs.PerformLayout();
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
-        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
 
-        private System.Windows.Forms.Button btnViewDataTable;
-        private System.Windows.Forms.Label lblNoIssues;
+        private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.GroupBox gbWhatThisIs;
+        private System.Windows.Forms.Label lblNoIssues;
+        private System.Windows.Forms.Button btnViewDataTable;
     }
 }
