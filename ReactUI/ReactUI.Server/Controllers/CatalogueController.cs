@@ -20,7 +20,7 @@ namespace ReactUI.Server.Controllers
         public IEnumerable<object> Get()
         {
             var catalogues = RDMPInitialiser._startup.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
-            return catalogues.Select(x => new {x.Name, x.Description,x.ID});
+            return catalogues.Select(x => new { x.Name, x.Description, x.ID });
         }
     }
 }
