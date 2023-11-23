@@ -69,6 +69,8 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
             {"Folder", _folder }
         });
     }
+
+    public Dataset() { }
     internal Dataset(ICatalogueRepository repository, DbDataReader r)
        : base(repository, r)
     {
