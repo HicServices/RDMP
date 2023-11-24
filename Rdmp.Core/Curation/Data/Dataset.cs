@@ -20,9 +20,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <summary>
-/// todo
-/// </summary>
+/// <inheritdoc cref="IDataset"/>
+
 public class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
     string _name;

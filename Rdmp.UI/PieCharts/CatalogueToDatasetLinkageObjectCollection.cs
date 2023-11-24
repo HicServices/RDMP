@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace Rdmp.UI.PieCharts;
 
 /// <summary>
-/// todo
+/// Input object for <see cref="CatalogueToDatasetLinkagePieChartUI"/>.
 /// </summary>
 public class CatalogueToDatasetLinkageObjectCollection : PersistableObjectCollection
 {

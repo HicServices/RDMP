@@ -14,7 +14,8 @@ using System.Threading.Tasks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// todo
+/// The core of datasets within RDMP.
+/// Simple objects to link up catalogue data to DOI and datasets
 /// </summary>
 public interface IDataset: IMapsDirectlyToDatabaseTable
 {
