@@ -142,9 +142,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         RefreshProblemProviders();
 
         RefreshBus.Subscribe(this);
-
-        // We can run subprocesses
-        IsAbleToLaunchSubprocesses = true;
     }
 
     protected override ICoreChildProvider GetChildProvider()
@@ -992,20 +989,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var graph = Activate<AggregateGraphUI, AggregateConfiguration>(aggregate);
         graph.LoadGraphAsync();
-    }
-
-    public override void LaunchSubprocess(ProcessStartInfo startInfo)
-    {
-        // if on wrong Thread
-        if (_mainDockPanel?.InvokeRequired ?? false)
-        {
-            _mainDockPanel.Invoke(() => LaunchSubprocess(startInfo));
-            return;
-        }
-
-        var ctrl = new ConsoleControl.ConsoleControl();
-        ShowWindow(ctrl, true);
-        ctrl.StartProcess(startInfo);
     }
 
     public override void ShowData(System.Data.DataTable table)

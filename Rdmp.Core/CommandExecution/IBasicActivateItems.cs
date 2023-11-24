@@ -537,14 +537,9 @@ public interface IBasicActivateItems
     bool HardRefresh { get; set; }
 
     /// <summary>
-    /// True if this is the winforms client otherwise false
+    /// True if this is the WinForms client otherwise false
     /// </summary>
     bool IsWinForms { get; }
-
-    /// <summary>
-    /// True if <see cref="LaunchSubprocess"/> is supported.
-    /// </summary>
-    bool IsAbleToLaunchSubprocesses { get; }
 
     /// <summary>
     /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
@@ -552,12 +547,6 @@ public interface IBasicActivateItems
     /// </summary>
     /// <param name="databaseEntity"></param>
     void Publish(IMapsDirectlyToDatabaseTable databaseEntity);
-
-    /// <summary>
-    /// Launches a new process running <paramref name="startInfo"/>
-    /// </summary>
-    /// <param name="startInfo"></param>
-    public void LaunchSubprocess(ProcessStartInfo startInfo);
 
 
     /// <summary>

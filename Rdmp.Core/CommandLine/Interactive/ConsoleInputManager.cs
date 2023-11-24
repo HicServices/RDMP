@@ -454,11 +454,6 @@ public class ConsoleInputManager : BasicActivateItems
         return true;
     }
 
-    public override void LaunchSubprocess(ProcessStartInfo startInfo)
-    {
-        throw new NotSupportedException();
-    }
-
     public override void Wait(string title, Task task, CancellationTokenSource cts)
     {
         AnsiConsole.Status()

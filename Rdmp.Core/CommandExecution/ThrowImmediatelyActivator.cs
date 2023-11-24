@@ -70,8 +70,6 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     {
     }
 
-    public override void LaunchSubprocess(ProcessStartInfo startInfo) => throw new NotImplementedException();
-
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
     }

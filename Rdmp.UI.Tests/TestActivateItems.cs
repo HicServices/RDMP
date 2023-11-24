@@ -304,11 +304,6 @@ public class TestActivateItems : BasicActivateItems, IActivateItems, ITheme
     public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) =>
         throw new NotImplementedException();
 
-    public override void LaunchSubprocess(ProcessStartInfo startInfo)
-    {
-        throw new NotSupportedException();
-    }
-
     public override void ShowData(System.Data.DataTable collection)
     {
         throw new NotImplementedException();

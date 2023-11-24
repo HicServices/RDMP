@@ -10,13 +10,14 @@ using System.IO;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
-public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
+public class ExecuteCommandRunDetached : AutomationCommandExecution
 {
     private readonly string _rdmpBinaryPath;
 
@@ -27,18 +28,17 @@ public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicComm
 
         if (!File.Exists(_rdmpBinaryPath))
             SetImpossible($"{_rdmpBinaryPath} did not exist");
-
-        if (!BasicActivator.IsAbleToLaunchSubprocesses)
-            SetImpossible($"Client does not support launching subprocesses");
     }
 
+    [NotNull]
     public override string GetCommandHelp() => "Generates the execute command line invocation (including arguments)";
 
+    [NotNull]
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Exe);
 
     public override void Execute()
     {
         base.Execute();
-        BasicActivator.LaunchSubprocess(new ProcessStartInfo(_rdmpBinaryPath, GetCommandText(true)));
+        Process.Start(new ProcessStartInfo(_rdmpBinaryPath, GetCommandText(true)));
     }
 }

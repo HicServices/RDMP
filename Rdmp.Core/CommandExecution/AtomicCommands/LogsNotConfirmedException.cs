@@ -26,8 +26,4 @@ public class LogsNotConfirmedException : Exception
     public LogsNotConfirmedException(string message, Exception innerException) : base(message, innerException)
     {
     }
-
-    protected LogsNotConfirmedException(SerializationInfo info, StreamingContext context) : base(info, context)
-    {
-    }
 }

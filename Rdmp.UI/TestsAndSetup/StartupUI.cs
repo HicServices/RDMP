@@ -82,7 +82,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
+            Invoke(new System.Windows.Forms.MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
             return;
         }
 
@@ -94,7 +94,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
+            Invoke(new System.Windows.Forms.MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
             return;
         }
 
@@ -108,7 +108,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(StartupComplete));
+            Invoke(new System.Windows.Forms.MethodInvoker(StartupComplete));
             return;
         }
 
@@ -197,7 +197,7 @@ public partial class StartupUI : Form, ICheckNotifier
                     if (IsDisposed || !IsHandleCreated)
                         ExceptionViewer.Show(ex);
                     else
-                        Invoke(new MethodInvoker(() => ragSmiley1.Fatal(ex)));
+                        Invoke(new System.Windows.Forms.MethodInvoker(() => ragSmiley1.Fatal(ex)));
                 }
             }
         );
@@ -297,7 +297,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
+            Invoke(new System.Windows.Forms.MethodInvoker(() => OnCheckPerformed(args)));
             return false;
         }
 

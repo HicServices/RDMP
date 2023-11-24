@@ -28,9 +28,4 @@ public class CorruptRepositoryConnectionDetailsException : Exception
         innerException)
     {
     }
-
-    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info,
-        context)
-    {
-    }
 }

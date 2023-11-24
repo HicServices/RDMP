@@ -383,9 +383,4 @@ internal class ConsoleGuiActivator : BasicActivateItems
 
     public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline) =>
         new ConsoleGuiRunPipeline(this, useCase, pipeline);
-
-    public override void LaunchSubprocess(ProcessStartInfo startInfo)
-    {
-        throw new NotSupportedException();
-    }
 }

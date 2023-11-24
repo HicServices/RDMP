@@ -50,7 +50,7 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
 
     /// <inheritdoc/>
-    public bool IsWinForms { get; protected set; }
+    public bool IsWinForms { get; protected init; }
 
     /// <inheritdoc/>
     public virtual bool IsInteractive => true;
@@ -118,8 +118,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
     /// <inheritdoc/>
     public bool HardRefresh { get; set; }
-
-    public bool IsAbleToLaunchSubprocesses { get; protected set; }
 
     public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ICheckNotifier globalErrorCheckNotifier)
@@ -803,8 +801,6 @@ public abstract class BasicActivateItems : IBasicActivateItems
 
         throw new ArgumentException($"Did not know what repository to use to fetch objects of Type '{type}'");
     }
-
-    public abstract void LaunchSubprocess(ProcessStartInfo startInfo);
 
 
     /// <inheritdoc/>
