@@ -25,7 +25,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.PieCharts;
 
 /// <summary>
-/// Part of OverviewScreen, shows a pie chart showing ow many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemUI)
+/// Part of OverviewScreen, shows a pie chart showing how many columns there are which do not yet have associated datasets in the Data Catalogue Database (See CatalogueItemUI)
 /// 
 /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
 /// 
