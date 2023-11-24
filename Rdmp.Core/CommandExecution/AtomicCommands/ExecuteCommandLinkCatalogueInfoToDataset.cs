@@ -2,6 +2,7 @@
 
 
 using Rdmp.Core.Curation.Data;
+using System;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -24,10 +25,13 @@ public class ExecuteCommandLinkCatalogueInfoToDataset : BasicCommandExecution, I
     public override void Execute()
     {
         base.Execute();
+        if (_catalogue is null) throw new Exception("No Catalogue Selected");
+        if (_dataset is null) throw new Exception("No Dataset Selected");
         var items = _catalogue.CatalogueItems.ToList();
         foreach (var item in items)
         {
             var ci = item.ColumnInfo;
+            if (ci is null) continue;
             if (ci.Dataset_ID == _dataset.ID)
             {
                 continue;

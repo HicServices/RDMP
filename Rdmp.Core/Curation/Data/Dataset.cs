@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -39,6 +40,7 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
     }
 
     [Unique]
+    [NotNull]
     public string Name
     {
         get => _name;

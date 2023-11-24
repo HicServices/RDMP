@@ -6,13 +6,13 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-Prefix:	TEST_
+Prefix:	RDMP_
 ServerName:	(localdb)\MSSQLLocalDB
 #Uncomment to run tests with a YamlRepository
 #UseFileSystemRepo: true
-MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;AllowPublicKeyRetrieval=True
-PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
-Oracle: 
+#MySql:	server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;AllowPublicKeyRetrieval=True
+#PostgreSql:	User ID=postgres;Password=;Host=127.0.0.1;Port=5432
+#Oracle: 
 #User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests
 #The account will be granted limited read/write access to databases on a per test basis (See DatabaseTests.SetupLowPrivilegeUserRightsFor)
 #If you leave these commented out the associated tests will be Inconclusive

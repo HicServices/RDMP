@@ -1,17 +1,8 @@
-﻿using NPOI.OpenXmlFormats.Spreadsheet;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Repositories.Construction;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateDataset : BasicCommandExecution
+public class ExecuteCommandCreateDataset : BasicCommandExecution, IAtomicCommand
 {
 
 
@@ -35,6 +26,10 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
 
     public override void Execute()
     {
+        if (string.IsNullOrWhiteSpace(_name))
+        {
+            throw new Exception("Datasets requires a name");
+        }
         base.Execute();
         var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
