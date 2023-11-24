@@ -7,11 +7,11 @@ const defaultState = {
 export default function catalogueReducer(state = defaultState, action) {
     switch (action.type) {
         case 'SET_CATALOGUES':
-            state = { ...state, catalogues:action.value }
-            return state
+            var s = structuredClone(state)
+            s.catalogues = action.value
+            return s
         case 'SET_SELECTED_CATALOGUE':
             state = { ...state, selectedCatalogue: action.value }
-            console.log(action)
             return state
         default:
             return state

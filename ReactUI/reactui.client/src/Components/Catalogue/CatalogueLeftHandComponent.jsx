@@ -18,7 +18,8 @@ function CatalogueLeftHandComponent(props) {
             </thead>
             <tbody>
                 {catalogues.map(catalogue =>
-                    <tr key={catalogue.ID} onClick={() => props.setSelectedCatalogue(catalogue.id)} style={{ cursor: 'pointer'} }>
+                    //<tr key={catalogue.ID} onClick={() => props.setSelectedCatalogue(catalogue.id)} style={{ cursor: 'pointer' }}>
+                        <tr key={catalogue.ID} onClick={() => props.openTab(catalogue.id)} style={{ cursor: 'pointer' }}>
                         <td style={{ width: '100px' }}>{catalogue.name}</td>
                         {/*<td style={{ width: '100px' }} >{catalogue.description || 'no description set'}</td>*/}
                         <td style={{ width: '50px' }} >{catalogue.id}</td>
@@ -60,10 +61,22 @@ function setSelectedCatalogue(id) {
     }
 }
 
+function openTab(id) {
+    return {
+        type: 'OPEN_TAB',
+        tab: {
+            id: id,
+            type:'CATALOGUE'
+        }
+    }
+}
+
+
 const catalogueActions = (dispatch) => {
     return {
         setGlobalCatalogues: (catalogues) => dispatch(setStoreCatalogues(catalogues)),
-        setSelectedCatalogue: id => dispatch(setSelectedCatalogue(id))
+        setSelectedCatalogue: id => dispatch(setSelectedCatalogue(id)),
+        openTab: id => dispatch(openTab(id))
     }
 }
 

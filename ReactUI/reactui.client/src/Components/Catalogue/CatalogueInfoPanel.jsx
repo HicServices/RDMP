@@ -3,12 +3,13 @@ import  { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 
 function CatalogueInfoPanel(props) {
-    const [catalogue,setCatalogue] = useState(props.catalogues.find(c => c.id === props.selectedCatalogue))
-    useEffect(() => {
-        setCatalogue(props.catalogues.find(c => c.id == props.selectedCatalogue))
-    }, [props.selectedCatalogue])
-    if (!props.selectedCatalogue) return null;
-    if (!catalogue) return null;
+    //const [catalogue,setCatalogue] = useState(props.catalogues.find(c => c.id === props.selectedCatalogue))
+    //useEffect(() => {
+    //    setCatalogue(props.catalogues.find(c => c.id == props.selectedCatalogue))
+    //}, [props.selectedCatalogue])
+
+    //if (!props.selectedCatalogue) return null;
+    //if (!catalogue) return null;
 
 
   return (
@@ -22,10 +23,10 @@ function CatalogueInfoPanel(props) {
               </tr>
           </thead>
           <tbody>
-                  <tr key={catalogue.ID}>
-                      <td style={{ width: '100px' }}>{catalogue.name}</td>
-                      <td style={{ width: '100px' }} >{catalogue.description || 'no description set'}</td>
-                      <td style={{ width: '50px' }} >{catalogue.id}</td>
+                  <tr key={props.catalogue.ID}>
+                      <td style={{ width: '100px' }}>{props.catalogue.name}</td>
+                      <td style={{ width: '100px' }} >{props.catalogue.description || 'no description set'}</td>
+                      <td style={{ width: '50px' }} >{props.catalogue.id}</td>
                   </tr>
               
           </tbody>
@@ -36,7 +37,7 @@ function CatalogueInfoPanel(props) {
 const catalogueState = state => {
     return {
         catalogues: state.catalogue.catalogues,
-        selectedCatalogue: state.catalogue.selectedCatalogue,
+        //selectedCatalogue: state.catalogue.selectedCatalogue,
         isLoading: state.catalogue.isLoading
     }
 }
