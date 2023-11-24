@@ -867,28 +867,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
     {
         var childObjects = new List<object>();
-
-        //if (lmd.OverrideRAWServer_ID.HasValue)
-        //{
-        //    var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
-        //    var usage = new OverrideRawServerNode(lmd, server);
-        //    childObjects.Add(usage);
-        //}
-
-        //var allSchedulesNode = new LoadMetadataScheduleNode(lmd);
-        //AddChildren(allSchedulesNode, descendancy.Add(allSchedulesNode));
-        //childObjects.Add(allSchedulesNode);
-
-        //var allCataloguesNode = new AllCataloguesUsedByLoadMetadataNode(lmd);
-        //AddChildren(allCataloguesNode, descendancy.Add(allCataloguesNode));
-        //childObjects.Add(allCataloguesNode);
-
-        //var processTasksNode = new AllProcessTasksUsedByLoadMetadataNode(lmd);
-        //AddChildren(processTasksNode, descendancy.Add(processTasksNode));
-        //childObjects.Add(processTasksNode);
-
-        //childObjects.Add(new LoadDirectoryNode(lmd));
-
         AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 

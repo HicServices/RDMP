@@ -19,7 +19,6 @@ namespace Rdmp.Core.Tests.CommandExecution
     internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
     {
 
-        //all ok
         [Test]
         public void TestLinkCatalogueToDataset()
         {

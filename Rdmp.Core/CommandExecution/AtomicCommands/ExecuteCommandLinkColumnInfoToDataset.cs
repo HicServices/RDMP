@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-
-//There is not currently any way to run this via the CLI
 public class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecution
 {
     private ColumnInfo _columnInfo;

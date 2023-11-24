@@ -52,7 +52,6 @@ public class DataExportChildProvider : CatalogueChildProvider
     public ExtractableDataSetPackage[] AllPackages { get; set; }
 
     public FolderNode<Project> ProjectRootFolder { get; private set; }
-    //public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; private set; }
     public Project[] Projects { get; set; }
 
     private Dictionary<int, HashSet<ExtractableCohort>> _cohortsByOriginId;

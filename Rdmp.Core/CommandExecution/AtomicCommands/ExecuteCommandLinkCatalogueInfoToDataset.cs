@@ -7,8 +7,6 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-
-//There is not currently any way to run this via the CLI
 public class ExecuteCommandLinkCatalogueInfoToDataset : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;

@@ -65,7 +65,6 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
-        //Common.Activator = Activator;
     }
 
     private void label1_Click(object sender, EventArgs e)

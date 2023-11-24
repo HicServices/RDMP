@@ -151,7 +151,7 @@ public class WindowManager
             case RDMPCollection.Datasets:
                 collection = new DatasetsCollectionUI();
                 toReturn = Show(RDMPCollection.Datasets, collection, "Datasets",
-                    Image.Load<Rgba32>(CatalogueIcons.Favourite));
+                    Image.Load<Rgba32>(CatalogueIcons.Dataset));
                 break;
 
             default: throw new ArgumentOutOfRangeException(nameof(collectionToCreate));

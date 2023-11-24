@@ -21,7 +21,6 @@ namespace Rdmp.UI.Collections
     public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
 
-        //private List<IMapsDirectlyToDatabaseTable> _datasets = new();
         private Dataset[] _datasets;
         private bool _firstTime = true;
 
@@ -79,10 +78,6 @@ namespace Rdmp.UI.Collections
                 _firstTime = false;
             }
 
-            //var actualRootFavourites = FindRootObjects(Activator, IncludeObject);
-            //_datasets = actualRootFavourites;
-            //tlvDatasets.SetObjects(_datasets.ToArray());
-            //tlvDatasets.RebuildAll(true);
         }
 
 

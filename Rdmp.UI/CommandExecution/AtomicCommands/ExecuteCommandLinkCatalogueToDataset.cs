@@ -1,4 +1,4 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2023
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -34,7 +34,7 @@ public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAt
     }
 
     public override string GetCommandHelp() =>
-        "Link all colu,n of this catalogue to a dataset";
+        "Link all columns of this catalogue to a dataset";
 
     public override void Execute()
     {
@@ -47,9 +47,12 @@ public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAt
              "Select the Dataset that this catalogue information came from"
         };
         _selectedDataset = SelectOne(da, datasets);
-        var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
-        var cmd = new ExecuteCommandLinkCatalogueInfoToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
-        cmd.Execute();
+        if (_selectedDataset is not null)
+        {
+            var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
+            var cmd = new ExecuteCommandLinkCatalogueInfoToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
+            cmd.Execute();
+        }
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

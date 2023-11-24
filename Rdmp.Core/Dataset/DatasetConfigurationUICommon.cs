@@ -27,29 +27,7 @@ namespace Rdmp.Core.Dataset;
 /// </summary>
 public class DatasetConfigurationUICommon
 {
-    //public CohortIdentificationConfiguration Configuration;
-
-    //public ExternalDatabaseServer QueryCachingServer;
-    //private CohortAggregateContainer _root;
-    //private CancellationTokenSource _cancelGlobalOperations;
-    //private ISqlParameter[] _globals;
-    //public CohortCompilerRunner Runner;
-
-    ///// <summary>
-    ///// User interface layer for modal dialogs, showing Exceptions etc
-    ///// </summary>
-    //public IBasicActivateItems Activator;
-
-    ///// <summary>
-    ///// Duration in seconds to allow tasks to run for before cancelling
-    ///// </summary>
-    //public int Timeout = 3000;
-
-    //public CohortCompiler Compiler { get; }
-
-
-
-    /// <summary>
+     /// <summary>
     /// User interface layer for modal dialogs, showing Exceptions etc
     /// </summary>
     public IBasicActivateItems Activator;
@@ -59,7 +37,6 @@ public class DatasetConfigurationUICommon
 
     public DatasetConfigurationUICommon()
     {
-        //Compiler = new CohortCompiler(null);
     }
 
    

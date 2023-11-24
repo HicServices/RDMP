@@ -1,4 +1,4 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2023
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -34,7 +34,7 @@ public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, 
     }
 
     public override string GetCommandHelp() =>
-        "TODO";
+        "Link this column to an existing dataset";
 
     public override void Execute()
     {
@@ -51,39 +51,8 @@ public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, 
         var cmd = new ExecuteCommandLinkColumnInfoToDataset(_activateItems,_columnInfo, _selectedDataset,backfill);
         cmd.Execute();
 
-
-        //var cic = _cic ?? (CohortIdentificationConfiguration)BasicActivator.SelectOne("Select Cohort Builder Query",
-        //    BasicActivator.GetAll<CohortIdentificationConfiguration>().ToArray());
-
-        //var cata = _catalogueIfKnown;
-        //if (cata == null)
-        //    try
-        //    {
-        //        //make sure they really wanted to do this?
-        //        if (YesNo(GetLookupConfirmationText(), "Create Lookup"))
-        //        {
-        //            //get them to pick a Catalogue the table provides descriptions for
-        //            if (!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
-        //                return;
-        //        }
-        //        else
-        //        {
-        //            return;
-        //        }
-        //    }
-        //    catch (Exception exception)
-        //    {
-        //        ExceptionViewer.Show("Error creating Lookup", exception);
-        //        return;
-        //    }
-
-        ////they now deifnetly have a Catalogue!
-        //var t = Activator.Activate<LookupConfigurationUI, Catalogue>(cata);
-
-        //if (_lookupTableInfoIfKnown != null)
-        //    t.SetLookupTableInfo(_lookupTableInfoIfKnown);
     }
 
-    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-    //    iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
 }
