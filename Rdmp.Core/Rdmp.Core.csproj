@@ -20,6 +20,7 @@
     <DebugType>embedded</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <NoWarn>$(NoWarn);NU5104</NoWarn>
+		<TargetFramework>$(NetVersion)</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <SGenTypes>Rdmp.Core.DataLoad.Modules.DataProvider.WebServiceConfiguration</SGenTypes>

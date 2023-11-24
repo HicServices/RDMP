@@ -13,6 +13,7 @@
     <DebugSymbols>true</DebugSymbols>
     <PublishSingleFile>true</PublishSingleFile>
     <ServerGarbageCollection>true</ServerGarbageCollection>
+		<TargetFramework>$(NetVersion)</TargetFramework>
   </PropertyGroup>
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
