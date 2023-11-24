@@ -10,7 +10,7 @@ public class ExecuteCommandCreateDatasetTests : CommandCliTests
 {
     [Test]
     public void TestDatasetCreationOKParameters() {
-        var cmd = new ExecuteCommandCreateDataset(GetMockActivator(),"TEST_dataset");
+        var cmd = new ExecuteCommandCreateDataset(GetMockActivator(),"dataset");
         Assert.DoesNotThrow(()=>cmd.Execute());
     }
 

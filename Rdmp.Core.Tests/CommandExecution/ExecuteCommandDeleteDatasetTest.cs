@@ -14,7 +14,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void TestDeleteExistingDataset()
         {
-            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "TEST_dataset");
+            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
             Assert.DoesNotThrow(() => cmd.Execute());
             Assert.AreEqual(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>().Length, 1);
             var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>().Where(ds => ds.Name == "TEST_dataset").First();

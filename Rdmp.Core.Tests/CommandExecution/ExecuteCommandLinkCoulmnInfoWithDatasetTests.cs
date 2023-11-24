@@ -40,7 +40,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             _ci2.SaveToDatabase();
 
 
-            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "TEST_dataset");
+            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
             Assert.DoesNotThrow(() => cmd.Execute());
             var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
             var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
