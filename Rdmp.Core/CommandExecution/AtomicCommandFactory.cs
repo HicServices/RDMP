@@ -473,7 +473,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
             { Weight = -50.5f };
 
-            yield return new ExecuteCommandCreateDataset(_activator, "test1");//this is in the wrong place
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
