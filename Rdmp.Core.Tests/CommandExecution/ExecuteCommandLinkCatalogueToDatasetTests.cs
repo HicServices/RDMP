@@ -110,7 +110,7 @@ namespace Rdmp.Core.Tests.CommandExecution
         [Test]
         public void TestLinkCatalogueToDatasetBadDataset()
         {
-            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "TEST_dataset");
+            var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
             Assert.DoesNotThrow(() => cmd.Execute());
             var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
             var linkCmd = new ExecuteCommandLinkCatalogueInfoToDataset(GetMockActivator(), new Catalogue(GetMockActivator().RepositoryLocator.CatalogueRepository,"catalogue"), null, false);
