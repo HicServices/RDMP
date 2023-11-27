@@ -8,7 +8,7 @@ public class ExecuteCommandDeleteDataset: BasicCommandExecution, IAtomicCommand
 {
     private Curation.Data.Dataset _dataset;
     private IBasicActivateItems _activator;
-public ExecuteCommandDeleteDataset(IBasicActivateItems activator, Curation.Data.Dataset dataset)
+public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")]Curation.Data.Dataset dataset)
     {
         _dataset = dataset;
         _activator = activator;

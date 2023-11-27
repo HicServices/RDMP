@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkCatalogueInfoToDataset : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution, IAtomicCommand
 {
     private Catalogue _catalogue;
     private Curation.Data.Dataset _dataset;
     private bool _linkAll;
-    public ExecuteCommandLinkCatalogueInfoToDataset(IBasicActivateItems activator, Catalogue catalogue, Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+    public ExecuteCommandLinkCatalogueToDataset(IBasicActivateItems activator, [DemandsInitialization("The catalogue To link")]Catalogue catalogue, [DemandsInitialization("The dataset to link to")]Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
     {
         _catalogue = catalogue;
         _dataset = dataset;

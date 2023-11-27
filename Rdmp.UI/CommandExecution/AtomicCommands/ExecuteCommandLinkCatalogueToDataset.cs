@@ -50,7 +50,7 @@ public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAt
         if (_selectedDataset is not null)
         {
             var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
-            var cmd = new ExecuteCommandLinkCatalogueInfoToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
+            var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
             cmd.Execute();
         }
     }
