@@ -24,9 +24,9 @@ namespace Rdmp.Core.Curation.Data;
 
 public class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
-    string _name;
-    string _digitalObjectIdentifier;
-    string _source;
+    private string _name;
+    private string _digitalObjectIdentifier;
+    private string _source;
     private string _folder = FolderHelper.Root;
 
     /// <inheritdoc/>
