@@ -21,13 +21,13 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkCatalogueToDataSet : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
     private Dataset _selectedDataset;
     private IActivateItems _activateItems;
 
-    public ExecuteCommandLinkCatalogueToDataSet(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandLinkCatalogueToDatasetUI(IActivateItems activator, Catalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;
         _activateItems = activator;
