@@ -53,6 +53,8 @@ namespace Rdmp.Core.Tests.CommandExecution
             {
                 Assert.AreEqual(ci.Dataset_ID, founddataset.ID);
             }
+            founddataset.DeleteInDatabase();
+            foundCatalogue.DeleteInDatabase();
 
         }
         [Test]
