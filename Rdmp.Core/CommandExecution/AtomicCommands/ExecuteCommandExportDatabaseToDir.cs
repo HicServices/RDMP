@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
@@ -25,15 +27,26 @@ public class ExecuteCommandExportDatabaseToDir : BasicCommandExecution
         _activator = activator;
     }
 
+    private readonly List<string> ignoreList = new() { "Rdmp.Core.DataQualityEngine.Data.DQEGraphAnnotation", "Rdmp.Core.DataQualityEngine.Data.Evaluation" };
+
     public override void Execute()
     {
         base.Execute();
         var repo = new YamlRepository(_target);
         foreach (var t in repo.GetCompatibleTypes())
         {
-            Console.WriteLine(t.FullName);
-            foreach (var o in _activator.GetRepositoryFor(t).GetAllObjects(t))
-              repo.SaveToDatabase(o);
+            if (ignoreList.Contains(t.FullName)) continue;
+            try
+            {
+                Console.WriteLine(t.FullName);
+                foreach (var o in _activator.GetRepositoryFor(t).GetAllObjects(t))
+                    repo.SaveToDatabase(o);
+            }
+            catch(Exception)
+            {
+                Console.WriteLine($"Unable to find repo for {t.FullName}");
+            }
+
         }
     }
 }
