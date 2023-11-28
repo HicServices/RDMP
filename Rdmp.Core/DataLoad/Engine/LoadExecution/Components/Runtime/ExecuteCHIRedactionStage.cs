@@ -1,10 +1,15 @@
 ﻿using FAnsi.Discovery;
+using HICPlugin.Curation.Data;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,13 +29,13 @@ internal class ExecuteCHIRedactionStage
         _loadStage = loadStage;
     }
 
-    public ExitCodeType Execute(bool redact, Dictionary<string, List<string>> _allowLists=null)
+    public ExitCodeType Execute(bool redact, Dictionary<string, List<string>> _allowLists = null)
     {
         if (_loadStage != LoadStage.AdjustRaw && _loadStage != LoadStage.AdjustStaging)
             throw new NotSupportedException("This mutilator can only run in AdjustRaw or AdjustStaging");
 
 
-        foreach(var tableInfo in _job.RegularTablesToLoad)
+        foreach (var tableInfo in _job.RegularTablesToLoad)
         {
             RedactCHIs(tableInfo);
         }
@@ -49,12 +54,26 @@ internal class ExecuteCHIRedactionStage
         _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
              $"About to run {GetType()} mutilation on table {tbl}"));
         var dt = tbl.GetDataTable();
-        //todo I have no if below does what I think ti does
-        //attempting to copy from tbl to a dt then back to itself so that we can medify it
-        var tempTbl = tbl.Database.ExpectTable(tbl.GetFullyQualifiedName());
-        using var insert = tempTbl.BeginBulkInsert();
+        foreach (DataColumn col in dt.Columns)
+        {
+            if (col.ColumnName == "chi") continue;//todo
+            foreach (DataRow row in dt.Rows)
+            {
+                var foundChi = CHIColumnFinder.GetPotentialCHI(row[col].ToString());
+                if (!string.IsNullOrWhiteSpace(foundChi))
+                {
+                    var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi, row[col].ToString(), 20), $"{tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(),"")}.[{col.ColumnName}]"); //todo make sure this matches
+                    rc.SaveToDatabase();
+                    row[col] = row[col].ToString().Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
+                }
+            }
+        }
+
+        var conn = _db.Server.GetConnection();
+        conn.Open();
+        tbl.GetCommand($"DELETE FROM {tbl.GetRuntimeName()}", conn).ExecuteNonQuery();
+        conn.Close();
+        var insert = tbl.BeginBulkInsert();
         insert.Upload(dt);
-        tbl.BeginBulkInsert();
-        tbl = tempTbl;
     }
 }
