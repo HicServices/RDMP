@@ -29,6 +29,6 @@ public class ExecuteCommandViewRedactedCHIsInCatalogue : BasicUICommandExecution
     {
         base.Execute();
         var dialog = new ViewRedactedCHIsInCatalogueDialog(_activator,_catalogue);
-            dialog.Show();
+        dialog.Show();
     }
 }

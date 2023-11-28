@@ -24,7 +24,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue) : base(args, catalogue)
     {
         var isApiCall = catalogue.IsApiCall();
-
+        Add(new ExecuteCommandRedactCHIsInCatalogue(_activator, catalogue));
         Add(new ExecuteCommandViewRedactedCHIsInCatalogue(_activator,catalogue));
 
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)

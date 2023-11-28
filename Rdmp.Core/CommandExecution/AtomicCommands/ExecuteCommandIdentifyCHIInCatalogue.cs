@@ -19,13 +19,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtomicCommand
 {
 
-    private Catalogue _catalouge;
+    private ICatalogue _catalouge;
     private IBasicActivateItems _activator;
     private bool _bailOutEarly;
     private readonly Dictionary<string, List<string>> _allowLists = new();
 
-
-    public ExecuteCommandIdentifyCHIInCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] Catalogue catalogue, bool bailOutEarly = false, string allowListLocation = null) : base(activator)
+    public ExecuteCommandIdentifyCHIInCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] ICatalogue catalogue, bool bailOutEarly = false, string allowListLocation = null) : base(activator)
     {
         _catalouge = catalogue;
         _activator = activator;
@@ -63,7 +62,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         var shrunkContext = WrapCHIInContext(foundChi,contextValue);
         foundChis.Rows.Add(foundChi, shrunkContext, columnName);
     }
-    private DataTable foundChis = new();
+    public DataTable foundChis = new();
 
     public override void Execute()
     {

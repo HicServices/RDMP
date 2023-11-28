@@ -53,6 +53,8 @@ namespace Rdmp.UI.SimpleDialogs
 
         }
 
+        //TODO allowlist
+
         private void RevertAll(object sender, EventArgs e) {
             if (_activator.YesNo("Do you want to revert all these redactions?","Revert All"))
             {
