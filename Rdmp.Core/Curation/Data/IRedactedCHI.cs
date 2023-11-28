@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HICPlugin.Curation.Data;
+namespace Rdmp.Core.Curation.Data;
 
 public interface IRedactedCHI :IMapsDirectlyToDatabaseTable
 {

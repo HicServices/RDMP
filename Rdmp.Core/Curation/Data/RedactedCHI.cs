@@ -21,7 +21,7 @@ using Rdmp.Core.Curation.Data;
 
 
 
-namespace HICPlugin.Curation.Data;
+namespace Rdmp.Core.Curation.Data;
 
 public class RedactedCHI : DatabaseEntity, IRedactedCHI
 {
