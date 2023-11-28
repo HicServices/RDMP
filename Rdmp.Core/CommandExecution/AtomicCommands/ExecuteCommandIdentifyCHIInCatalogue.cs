@@ -29,7 +29,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         _catalouge = catalogue;
         _activator = activator;
         _bailOutEarly = bailOutEarly;
-        if(allowListLocation != null)
+        if(!string.IsNullOrWhiteSpace(allowListLocation))
         {
             var allowListFileContent = File.ReadAllText(allowListLocation);
             var deserializer = new DeserializerBuilder().Build();

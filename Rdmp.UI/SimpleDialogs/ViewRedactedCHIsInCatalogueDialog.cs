@@ -1,5 +1,6 @@
 ﻿using HICPlugin.Curation.Data;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace Rdmp.UI.SimpleDialogs
         private bool _isLoading = true;
         private IBasicActivateItems _activator;
         private ICatalogue _catalogue;
+        private DataTable _results;
 
 
         public ViewRedactedCHIsInCatalogueDialog(IBasicActivateItems activator, ICatalogue catalogue)
@@ -32,12 +34,40 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void RevertButtonClick(int itemIndex)
         {
-            //todo ExecuteCommandRevertRedactedCHI
+            var result = _results.Rows[itemIndex];
+            var potentialCHI = result.ItemArray[0].ToString();
+            var context = result.ItemArray[1].ToString();
+            var column = result.ItemArray[3].ToString();
+            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
+            if (redactedChi is not null)
+            {
+                var cmd = new ExecuteCommandRevertRedactedCHI(_activator, redactedChi);
+                cmd.Execute();
+                result.Delete();
+                _results.AcceptChanges();
+                dtResults.DataSource = _results;
+                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+
+            }
         }
 
         private void ConfirmButtonClick(int itemIndex)
         {
-            //todo ExecuteCommandConfirmRedactedCHI
+            var result = _results.Rows[itemIndex];
+            var potentialCHI = result.ItemArray[0].ToString();
+            var context = result.ItemArray[1].ToString();
+            var column = result.ItemArray[3].ToString();
+            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
+            if (redactedChi is not null)
+            {
+                var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
+                cmd.Execute();
+                result.Delete();
+                _results.AcceptChanges();
+                dtResults.DataSource = _results;
+                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+
+            }
         }
 
         private void handleClick(object sender, DataGridViewCellEventArgs e)
@@ -53,24 +83,31 @@ namespace Rdmp.UI.SimpleDialogs
 
         }
 
-        //TODO allowlist
-
-        private void RevertAll(object sender, EventArgs e) {
-            if (_activator.YesNo("Do you want to revert all these redactions?","Revert All"))
+        private void RevertAll(object sender, EventArgs e)
+        {
+            if (_activator.YesNo("Do you want to revert all these redactions?", "Revert All"))
             {
-                //todo ExecuteCommandRevertCHIRedactionsForCatalogue
+                foreach (var rIndex in Enumerable.Range(0,_results.Rows.Count))
+                {
+                    RevertButtonClick(rIndex);
+                }
             }
         }
-        private void ConfirmAll(object sender, EventArgs e) {
-            if (_activator.YesNo("Do you want to confirm all these redactions?", "Confirm All")){ 
-                //todo ExecuteCommandConfirmtCHIRedactionsForCatalogue
+        private void ConfirmAll(object sender, EventArgs e)
+        {
+            if (_activator.YesNo("Do you want to confirm all these redactions?", "Confirm All"))
+            {
+                foreach (var rIndex in Enumerable.Range(0, _results.Rows.Count))
+                {
+                    ConfirmButtonClick(rIndex);
+                }
             }
         }
 
         private string locationToColumn(string location)
         {
             var lastIdx = location.LastIndexOf('.');
-            return location[(lastIdx+1)..];
+            return location[(lastIdx + 1)..];
         }
 
         private void FindChis()
@@ -87,11 +124,14 @@ namespace Rdmp.UI.SimpleDialogs
             dt.Columns.Add(new DataColumn("Potental CHI", typeof(string)));
             dt.Columns.Add(new DataColumn("Context", typeof(string)));
             dt.Columns.Add(new DataColumn("Column", typeof(string)));
+            dt.Columns.Add(new DataColumn("_hiddenFullLocation", typeof(string)));
             foreach (var rc in redactedChis)
             {
-                dt.Rows.Add(new object[] {rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation) });
+                dt.Rows.Add(new object[] { rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation), rc.CHILocation });
             }
             dtResults.DataSource = dt;
+            dtResults.Columns[3].Visible = false;
+            _results = dt;
             DataGridViewButtonColumn revertColumn = new DataGridViewButtonColumn();
             revertColumn.Text = "Revert";
             revertColumn.Name = "Revert";

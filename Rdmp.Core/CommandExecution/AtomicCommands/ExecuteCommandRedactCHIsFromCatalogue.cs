@@ -22,16 +22,16 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAtomicCommand
 {
 
-    private Catalogue _catalouge;
+    private ICatalogue _catalouge;
     private IBasicActivateItems _activator;
     private readonly Dictionary<string, List<string>> _allowLists = new();
+    public int redactionCount = 0;
 
-
-    public ExecuteCommandRedactCHIsFromCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] Catalogue catalogue, string allowListLocation = null) : base(activator)
+    public ExecuteCommandRedactCHIsFromCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] ICatalogue catalogue, string allowListLocation = null) : base(activator)
     {
         _catalouge = catalogue;
         _activator = activator;
-        if (allowListLocation != null)
+        if (!string.IsNullOrWhiteSpace(allowListLocation))
         {
             var allowListFileContent = File.ReadAllText(allowListLocation);
             var deserializer = new DeserializerBuilder().Build();
@@ -45,6 +45,7 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
     private void handleFoundCHI(string foundChi, string table, string column, string columnValue)
     {
         Console.WriteLine("Found CHI!");
+        redactionCount++;
         var rc = new RedactedCHI(_activator.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi,columnValue,20),$"{table}.{column}");
         rc.SaveToDatabase();
         var redactedValue = columnValue.Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
