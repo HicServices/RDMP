@@ -90,6 +90,7 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     {
         PotentialCHI = r["PotentialChi"].ToString();
         CHIContext = r["CHIContext"].ToString();
+        CHILocation = r["CHILocation"].ToString();
         //    Name = r["Name"].ToString();
         //    Folder = r["Folder"].ToString();
         //    if (r["DigitalObjectIdentifier"] != DBNull.Value)

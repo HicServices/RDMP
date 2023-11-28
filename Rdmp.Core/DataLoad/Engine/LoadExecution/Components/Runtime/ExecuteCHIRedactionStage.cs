@@ -21,6 +21,8 @@ internal class ExecuteCHIRedactionStage
     private readonly IDataLoadJob _job;
     private readonly DiscoveredDatabase _db;
     private readonly LoadStage _loadStage;
+    private Dictionary<string, List<string>> _allowList;
+    private bool _redact;
 
     public ExecuteCHIRedactionStage(IDataLoadJob job, DiscoveredDatabase db, LoadStage loadStage)
     {
@@ -29,12 +31,13 @@ internal class ExecuteCHIRedactionStage
         _loadStage = loadStage;
     }
 
-    public ExitCodeType Execute(bool redact, Dictionary<string, List<string>> _allowLists = null)
+    public ExitCodeType Execute(bool redact, Dictionary<string, List<string>> allowLists = null)
     {
         if (_loadStage != LoadStage.AdjustRaw && _loadStage != LoadStage.AdjustStaging)
             throw new NotSupportedException("This mutilator can only run in AdjustRaw or AdjustStaging");
 
-
+        _allowList = allowLists;
+        _redact = redact;
         foreach (var tableInfo in _job.RegularTablesToLoad)
         {
             RedactCHIs(tableInfo);
@@ -56,15 +59,22 @@ internal class ExecuteCHIRedactionStage
         var dt = tbl.GetDataTable();
         foreach (DataColumn col in dt.Columns)
         {
-            if (col.ColumnName == "chi") continue;//todo
+            if (_allowList.ContainsKey(col.ColumnName)) continue;
             foreach (DataRow row in dt.Rows)
             {
                 var foundChi = CHIColumnFinder.GetPotentialCHI(row[col].ToString());
                 if (!string.IsNullOrWhiteSpace(foundChi))
                 {
-                    var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi, row[col].ToString(), 20), $"{tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(),"")}.[{col.ColumnName}]"); //todo make sure this matches
-                    rc.SaveToDatabase();
-                    row[col] = row[col].ToString().Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
+                    if (_redact)
+                    {
+                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi, row[col].ToString(), 20), $"{tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "")}.[{col.ColumnName}]"); //todo make sure this matches
+                        rc.SaveToDatabase();
+                        row[col] = row[col].ToString().Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
+                    }
+                    else
+                    {
+                        _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found the CHI {foundChi} during the dataload"));
+                    }
                 }
             }
         }

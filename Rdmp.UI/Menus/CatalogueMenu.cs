@@ -25,6 +25,8 @@ internal class CatalogueMenu : RDMPContextMenuStrip
     {
         var isApiCall = catalogue.IsApiCall();
 
+        Add(new ExecuteCommandViewRedactedCHIsInCatalogue(_activator,catalogue));
+
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {
             Weight = -99.059f
