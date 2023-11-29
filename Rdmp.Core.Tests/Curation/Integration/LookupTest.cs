@@ -350,7 +350,7 @@ public class LookupTest : DatabaseTests
     {
         //this only works for MSSQL Servers
         if (CatalogueTableRepository.DiscoveredServer.DatabaseType != DatabaseType.MicrosoftSQLServer)
-            Assert.Ignore("This test only targets Microsft SQL Servers");
+            Assert.Ignore("This test only targets Microsoft SQL Servers");
 
         TableInfo fkTable = null;
         TableInfo pkTable = null;
@@ -396,7 +396,7 @@ public class LookupTest : DatabaseTests
 
             var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.That(joinSQL_AfterAddingCompositeKey, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR      (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )"));
+            Assert.That(joinSQL_AfterAddingCompositeKey, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR     (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )"));
         }
         catch (Exception ex)
         {
