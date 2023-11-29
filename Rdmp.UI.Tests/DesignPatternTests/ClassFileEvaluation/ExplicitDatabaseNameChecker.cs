@@ -29,9 +29,9 @@ public class ExplicitDatabaseNameChecker
             "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
             "DocumentationCrossExaminationTest.cs", //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
             "ResearchDataManagementPlatformOptions.cs", //allowed because it's an Example,
-            "ExecuteCommandIdentifyCHIInCatalogue", //uses the RDMP_ALL allow list
-            "ExecuteCommandRedactCHIsFromCatalogue", //uses the RDMP_ALL allow list
-            "CHIColumnFinder" //uses the RDMP_ALL allow list
+            "ExecuteCommandIdentifyCHIInCatalogue.cs", //uses the RDMP_ALL allow list
+            "ExecuteCommandRedactCHIsFromCatalogue.cs", //uses the RDMP_ALL allow list
+            "CHIColumnFinder.cs" //uses the RDMP_ALL allow list
         };
 
 
