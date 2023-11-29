@@ -41,7 +41,7 @@ function CatalogueLeftHandComponent(props) {
 
 
     async function populateCatalogues() {
-        const response = await fetch('catalogues');
+        const response = await fetch('/catalogues');
         const data = await response.json();
         props.setGlobalCatalogues(data)
     }

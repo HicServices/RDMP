@@ -50,10 +50,14 @@ export default defineConfig({
                 target: 'https://localhost:7272/',
                 secure: false
             },
-            '^/catalogue': {
-                target: 'https://localhost:7272/',
+            '^/catalogues': {
+                target: 'http://localhost:5067/',
                 secure: false
             },
+            '^/catalogue': {
+                target: 'http://localhost:5067/',
+                secure: false
+            }
         },
         port: 5173,
         https: {
