@@ -59,7 +59,8 @@ public class UnitTests
         "ExtractableCohort",
         "DQEGraphAnnotation",
         "Evaluation",
-        "WindowLayout"
+        "WindowLayout",
+        "RedactedCHI"
     });
 
 
@@ -121,11 +122,6 @@ public class UnitTests
     {
         if (typeof(T) == typeof(Catalogue))
             return (T)(object)Save(new Catalogue(repository, "Mycata"));
-
-
-        if (typeof(T) == typeof(RedactedCHI))
-            return (T)(object)Save(new RedactedCHI());//repository,"123456789","123456789","[test].[db]"
-
 
         if (typeof(T) == typeof(ExtendedProperty))
             return (T)(object)new ExtendedProperty(repository, Save(new Catalogue(repository, "Mycata")), "TestProp",
