@@ -8,7 +8,7 @@ import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import HomeContainer from '../home/HomeContainer'
-import CatalogueInfoPanel from '../catalogue/CatalogueInfoPanel'
+import CatalogueInfoPanel from '../Catalogue/CatalogueInfoPanel'
 function WorkspaceContainer(props) {
 
     const tabs= useSelector(state => state.workspace.openTabs)
