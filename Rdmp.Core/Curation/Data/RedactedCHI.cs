@@ -87,17 +87,11 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     }
 
     public RedactedCHI() { }
-    internal RedactedCHI(ICatalogueRepository repository, DbDataReader r)
+    public RedactedCHI(ICatalogueRepository repository, DbDataReader r)
        : base(repository, r)
     {
         PotentialCHI = r["PotentialChi"].ToString();
         CHIContext = r["CHIContext"].ToString();
         CHILocation = r["CHILocation"].ToString();
-        //    Name = r["Name"].ToString();
-        //    Folder = r["Folder"].ToString();
-        //    if (r["DigitalObjectIdentifier"] != DBNull.Value)
-        //        DigitalObjectIdentifier = r["DigitalObjectIdentifier"].ToString();
-        //    if (r["Source"] != DBNull.Value)
-        //        Source = r["Source"].ToString();
     }
 }
