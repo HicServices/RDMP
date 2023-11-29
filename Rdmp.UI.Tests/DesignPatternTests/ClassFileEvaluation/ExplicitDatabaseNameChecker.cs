@@ -28,7 +28,10 @@ public class ExplicitDatabaseNameChecker
             "ChoosePlatformDatabasesUI.Designer.cs", //allowed because it is a suggestion to user about what prefix to use
             "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
             "DocumentationCrossExaminationTest.cs", //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
-            "ResearchDataManagementPlatformOptions.cs" //allowed because it's an Example
+            "ResearchDataManagementPlatformOptions.cs", //allowed because it's an Example,
+            "ExecuteCommandIdentifyCHIInCatalogue", //uses the RDMP_ALL allow list
+            "ExecuteCommandRedactCHIsFromCatalogue", //uses the RDMP_ALL allow list
+            "CHIColumnFinder" //uses the RDMP_ALL allow list
         };
 
 
@@ -43,9 +46,7 @@ public class ExplicitDatabaseNameChecker
                 "PackOptions.cs",
                 "PasswordEncryptionKeyLocation.cs",
                 "ToLoggingDatabaseDataLoadEventListener.cs",
-                "ExecuteCommandIdentifyCHIInCatalogue",
-                "ExecuteCommandRedactCHIsFromCatalogue",
-                "CHIColumnFinder"
+
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
