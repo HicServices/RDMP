@@ -23,6 +23,8 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Curation.Data;
 
+/// <inheritdoc cref="IRedactedCHI"/>
+
 public class RedactedCHI : DatabaseEntity, IRedactedCHI
 {
     private string _potentialCHI;
