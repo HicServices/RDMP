@@ -65,19 +65,6 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
         set => SetField(ref _chiLocation, value);
     }
 
-    //[Unique]
-    //public string DigitalObjectIdentifier
-    //{
-    //    get => _digitalObjectIdentifier;
-    //    set => SetField(ref _digitalObjectIdentifier, value);
-    //}
-
-    //public string Source
-    //{
-    //    get => _source;
-    //    set => SetField(ref _source, value);
-    //}
-
     public RedactedCHI(ICatalogueRepository catalogueRepository, string potentialCHI, string chiContext,string chiLocation)
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
