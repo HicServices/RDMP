@@ -42,7 +42,10 @@ public class ExplicitDatabaseNameChecker
                 "PlatformDatabaseCreationOptions.cs",
                 "PackOptions.cs",
                 "PasswordEncryptionKeyLocation.cs",
-                "ToLoggingDatabaseDataLoadEventListener.cs"
+                "ToLoggingDatabaseDataLoadEventListener.cs",
+                "ExecuteCommandIdentifyCHIInCatalogue",
+                "ExecuteCommandRedactCHIsFromCatalogue",
+                "CHIColumnFinder"
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
