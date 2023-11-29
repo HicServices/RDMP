@@ -124,7 +124,7 @@ public class UnitTests
 
 
         if (typeof(T) == typeof(RedactedCHI))
-            return (T)(object)Save(new RedactedCHI(repository,"123456789","123456789","[test].[db]"));
+            return (T)(object)Save(new RedactedCHI());//repository,"123456789","123456789","[test].[db]"
 
 
         if (typeof(T) == typeof(ExtendedProperty))
