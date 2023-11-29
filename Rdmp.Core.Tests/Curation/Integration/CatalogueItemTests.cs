@@ -20,10 +20,10 @@ internal class CatalogueItemTests : DatabaseTests
         var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
         var child2 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM2");
 
-        Assert.That(child1.Catalogue_ID == parent.ID);
-        Assert.That(child2.Catalogue_ID == parent.ID);
+        Assert.That(child1.Catalogue_ID, Is.EqualTo(parent.ID));
+        Assert.That(child2.Catalogue_ID, Is.EqualTo(parent.ID));
 
-        Assert.That(child1.ID != child2.ID);
+        Assert.That(child1.ID, Is.Not.EqualTo(child2.ID));
 
         child1.DeleteInDatabase();
         child2.DeleteInDatabase();
@@ -57,7 +57,7 @@ internal class CatalogueItemTests : DatabaseTests
         Assert.That(children, Has.Length.EqualTo(2));
         Assert.That(children[0].ID == child1.ID || children[1].ID == child1.ID);
         Assert.That(children[0].ID == child2.ID || children[1].ID == child2.ID);
-        Assert.That(children[0].ID != children[1].ID);
+        Assert.That(children[0].ID, Is.Not.EqualTo(children[1].ID));
 
         children[0].DeleteInDatabase();
         children[1].DeleteInDatabase();

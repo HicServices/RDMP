@@ -113,7 +113,7 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         var clone = cohortIdentificationConfiguration.ImportAggregateConfigurationAsIdentifierList(aggregate1, null);
 
         //since it's a cohort aggregate it should be identical to the origin Aggregate except it has a different ID and no count SQL
-        Assert.That(clone.CountSQL, Is.Not.Null);
+        Assert.That(clone.CountSQL, Is.Null);
 
         //get the original sql
         var aggregateSql = aggregate1.GetQueryBuilder().SQL;
