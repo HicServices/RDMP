@@ -8,11 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.1.1] - WIP
 
-...
-
 ### Changed
 
 - Improved file transfer (FTP/SFTP/FTPS) support
+- Improved Plugin Bundling
+- Add ability to bundle UI notifications from plugin pipeline components
+- Add ability to use .bak files as data load
 
 ## [8.1.0] - 2023-09-19
 
