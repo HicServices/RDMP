@@ -24,8 +24,8 @@ public class EncryptionTests : DatabaseTests
         const string toEncrypt = "Amagad";
         var encryptedBinaryString = encrypter.Encrypt(toEncrypt);
 
-        Assert.AreNotEqual(toEncrypt, encryptedBinaryString);
-        Assert.AreEqual(toEncrypt, encrypter.Decrypt(encryptedBinaryString));
+        Assert.That(encryptedBinaryString, Is.Not.EqualTo(toEncrypt));
+        Assert.That(encrypter.Decrypt(encryptedBinaryString), Is.EqualTo(toEncrypt));
     }
 
     [Test]
@@ -38,8 +38,8 @@ public class EncryptionTests : DatabaseTests
 
         Console.WriteLine($"Encrypted password was:{encryptedBinaryString}");
 
-        Assert.True(encrypter.IsStringEncrypted(encryptedBinaryString));
-        Assert.False(encrypter.IsStringEncrypted(toEncrypt));
+        Assert.That(encrypter.IsStringEncrypted(encryptedBinaryString));
+        Assert.That(encrypter.IsStringEncrypted(toEncrypt), Is.False);
     }
 
 
@@ -57,15 +57,15 @@ public class EncryptionTests : DatabaseTests
             //as soon as you set a password it should be encrypted by the credentials class in memory
             creds.Password = "fish";
 
-            Assert.AreNotEqual("fish", creds.Password);
-            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
+            Assert.That(creds.Password, Is.Not.EqualTo("fish"));
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo("fish")); //but we should still be able to decrypt it
 
             //set the password to the encrypted password
             creds.Password = creds.Password;
 
             //should still work
-            Assert.AreNotEqual("fish", creds.Password);
-            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
+            Assert.That(creds.Password, Is.Not.EqualTo("fish"));
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo("fish")); //but we should still be able to decrypt it
         }
         finally
         {
@@ -87,8 +87,8 @@ public class EncryptionTests : DatabaseTests
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
             creds.Password = "fish";
-            Assert.AreNotEqual("fish", creds.Password);
-            Assert.AreEqual("fish", creds.GetDecryptedPassword()); //but we should still be able to decrypt it
+            Assert.That(creds.Password, Is.Not.EqualTo("fish"));
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo("fish")); //but we should still be able to decrypt it
 
             //save it
             creds.SaveToDatabase();
@@ -103,19 +103,19 @@ public class EncryptionTests : DatabaseTests
                 }
 
                 //ensure password in database is encrypted
-                Assert.AreNotEqual("fish", value);
-                Assert.AreEqual(creds.Password, value); //does value in database match value in memory (encrypted)
+                Assert.That(value, Is.Not.EqualTo("fish"));
+                Assert.That(value, Is.EqualTo(creds.Password)); //does value in database match value in memory (encrypted)
             }
 
             //get a new copy out of the database
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-            Assert.AreEqual(creds.Password, newCopy.Password); //passwords should match
-            Assert.AreNotEqual("fish", creds.Password); //neither should be fish
-            Assert.AreNotEqual("fish", newCopy.Password);
+            Assert.That(newCopy.Password, Is.EqualTo(creds.Password)); //passwords should match
+            Assert.That(creds.Password, Is.Not.EqualTo("fish")); //neither should be fish
+            Assert.That(newCopy.Password, Is.Not.EqualTo("fish"));
 
             //both should decrypt to the same value (fish
-            Assert.AreEqual("fish", creds.GetDecryptedPassword());
-            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo("fish"));
+            Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo("fish"));
         }
         finally
         {
@@ -139,8 +139,8 @@ public class EncryptionTests : DatabaseTests
         {
             //as soon as you set a password it should be encrypted by the credentials class in memory
             creds.Password = freakyPassword;
-            Assert.AreNotEqual(freakyPassword, creds.Password);
-            Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword()); //but we should still be able to decrypt it
+            Assert.That(creds.Password, Is.Not.EqualTo(freakyPassword));
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo(freakyPassword)); //but we should still be able to decrypt it
 
             //save it
             creds.SaveToDatabase();
@@ -155,19 +155,19 @@ public class EncryptionTests : DatabaseTests
                 }
 
                 //ensure password in database is encrypted
-                Assert.AreNotEqual(freakyPassword, value);
-                Assert.AreEqual(creds.Password, value); //does value in database match value in memory (encrypted)
+                Assert.That(value, Is.Not.EqualTo(freakyPassword));
+                Assert.That(value, Is.EqualTo(creds.Password)); //does value in database match value in memory (encrypted)
             }
 
             //get a new copy out of the database
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
-            Assert.AreEqual(creds.Password, newCopy.Password); //passwords should match
-            Assert.AreNotEqual(freakyPassword, creds.Password); //neither should be fish
-            Assert.AreNotEqual(freakyPassword, newCopy.Password);
+            Assert.That(newCopy.Password, Is.EqualTo(creds.Password)); //passwords should match
+            Assert.That(creds.Password, Is.Not.EqualTo(freakyPassword)); //neither should be fish
+            Assert.That(newCopy.Password, Is.Not.EqualTo(freakyPassword));
 
             //both should decrypt to the same value (fish
-            Assert.AreEqual(freakyPassword, creds.GetDecryptedPassword());
-            Assert.AreEqual(freakyPassword, newCopy.GetDecryptedPassword());
+            Assert.That(creds.GetDecryptedPassword(), Is.EqualTo(freakyPassword));
+            Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo(freakyPassword));
         }
         finally
         {
@@ -194,13 +194,13 @@ public class EncryptionTests : DatabaseTests
                 using var cmd = DatabaseCommandHelper.GetCommand(
                     "UPDATE DataAccessCredentials set Password = 'fish' where Name='frankieFran'", con.Connection,
                     con.Transaction);
-                Assert.AreEqual(1, cmd.ExecuteNonQuery());
+                Assert.That(cmd.ExecuteNonQuery(), Is.EqualTo(1));
             }
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(creds.ID);
 
-            Assert.AreEqual("fish", newCopy.GetDecryptedPassword());
-            Assert.AreNotEqual("fish", newCopy.Password);
+            Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo("fish"));
+            Assert.That(newCopy.Password, Is.Not.EqualTo("fish"));
         }
         finally
         {
@@ -221,8 +221,7 @@ public class EncryptionTests : DatabaseTests
             password += "a";
 
         var ex = Assert.Throws<InvalidOperationException>(() => TestFreakyPasswordValues(password));
-        Assert.AreEqual(
-            "The free text Value supplied to this class was too long to be encrypted (Length of string was 201)",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("The free text Value supplied to this class was too long to be encrypted (Length of string was 201)"));
     }
 }

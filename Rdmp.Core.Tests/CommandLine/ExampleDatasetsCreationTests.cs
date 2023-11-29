@@ -24,8 +24,8 @@ internal class ExampleDatasetsCreationTests : DatabaseTests
     public void Test_ExampleDatasetsCreation()
     {
         //Should be empty RDMP metadata database
-        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<Catalogue>().Length);
-        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
+        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty);
+        Assert.That(CatalogueRepository.GetAllObjects<AggregateConfiguration>(), Is.Empty);
 
         //create the pipelines
         var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);

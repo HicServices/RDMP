@@ -35,8 +35,8 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual("Child order is ambiguous, show the Order column and reorder contents", problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(problem, Is.EqualTo("Child order is ambiguous, show the Order column and reorder contents"));
     }
 
     [Test]
@@ -50,8 +50,8 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual("You must have at least one element in the root container", problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(problem, Is.EqualTo("You must have at least one element in the root container"));
     }
 
     [Test]
@@ -65,10 +65,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -82,10 +81,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -101,7 +99,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     [Test]
@@ -119,7 +117,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     [Test]
@@ -135,10 +133,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -156,7 +153,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     [Test]
@@ -172,10 +169,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("EXCEPT/INTERSECT containers must have at least two elements within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -193,7 +189,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(container);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     #endregion
@@ -212,10 +208,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -232,10 +227,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -254,7 +248,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     [Test]
@@ -269,10 +263,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -289,10 +282,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -311,7 +303,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     [Test]
@@ -326,10 +318,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers cannot be empty. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -346,10 +337,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNotNull(problem);
-        Assert.AreEqual(
-            "SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required",
-            problem);
+        Assert.That(problem, Is.Not.Null);
+        Assert.That(
+            problem, Is.EqualTo("SET containers have no effect if there is only one child within. Either Add a Catalogue or Disable/Delete this container if not required"));
     }
 
     [Test]
@@ -368,7 +358,7 @@ internal class CatalogueProblemProviderTests : UnitTests
         pp.RefreshProblems(new CatalogueChildProvider(Repository, null, ThrowImmediatelyCheckNotifier.Quiet, null));
         var problem = pp.DescribeProblem(childContainer);
 
-        Assert.IsNull(problem);
+        Assert.That(problem, Is.Null);
     }
 
     #endregion
@@ -391,25 +381,24 @@ internal class CatalogueProblemProviderTests : UnitTests
         var pp = new CatalogueProblemProvider();
         var childProvider = GetActivator().CoreChildProvider;
 
-        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because no collations are declared");
+        Assert.That(pp.HasProblem(ci1), Is.False, "Should not be problem because no collations are declared");
         pp.RefreshProblems(childProvider);
 
-        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because no collations are declared");
+        Assert.That(pp.HasProblem(ci1), Is.False, "Should not be problem because no collations are declared");
         pp.RefreshProblems(childProvider);
 
         ci1.ColumnInfo.Collation = "fishy";
         ci2.ColumnInfo.Collation = "fishy";
         pp.RefreshProblems(childProvider);
 
-        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because collations are the same");
+        Assert.That(pp.HasProblem(ci1), Is.False, "Should not be problem because collations are the same");
 
         ci1.ColumnInfo.Collation = "fishy";
         ci2.ColumnInfo.Collation = "splishy";
         pp.RefreshProblems(childProvider);
 
-        Assert.IsTrue(pp.HasProblem(ci1));
-        Assert.AreEqual("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)",
-            pp.DescribeProblem(ci1));
+        Assert.That(pp.HasProblem(ci1));
+        Assert.That(pp.DescribeProblem(ci1), Is.EqualTo("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)"));
     }
 
     [Test]
@@ -431,13 +420,13 @@ internal class CatalogueProblemProviderTests : UnitTests
         var childProvider = GetActivator().CoreChildProvider;
 
 
-        Assert.IsFalse(pp.HasProblem(ci1), "Should not be problem because collations are the same");
+        Assert.That(pp.HasProblem(ci1), Is.False, "Should not be problem because collations are the same");
 
         ci1.ColumnInfo.Collation = "fishy";
         ci2.ColumnInfo.Collation = "splishy";
         pp.RefreshProblems(childProvider);
 
-        Assert.IsFalse(pp.HasProblem(ci1),
+        Assert.That(pp.HasProblem(ci1), Is.False,
             "Should not be problem because JoinInfo explicitly states a resolution collation");
     }
 
@@ -459,9 +448,9 @@ internal class CatalogueProblemProviderTests : UnitTests
         var problem = pp.DescribeProblem(param);
 
         if (expectProblem)
-            Assert.AreEqual("Parameter value looks like a date but is not surrounded by quotes", problem);
+            Assert.That(problem, Is.EqualTo("Parameter value looks like a date but is not surrounded by quotes"));
         else
-            Assert.IsNull(problem);
+            Assert.That(problem, Is.Null);
     }
 
     #endregion

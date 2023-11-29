@@ -33,7 +33,7 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         var myCol = tbl.DiscoverColumn("myCol");
 
         //should have started out as 10
-        Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
+        Assert.That(myCol.DataType.GetLengthIfString(), Is.EqualTo(10));
 
         //we want the new type to be 50 long
         var newType = myCol.DataType.SQLType.Replace("10", "50");
@@ -45,8 +45,8 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         //rediscover the col to get the expected new datatype
         myCol = tbl.DiscoverColumn("myCol");
 
-        Assert.AreEqual(newType, myCol.DataType.SQLType);
-        Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
+        Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
+        Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
 
         tbl.Drop();
     }
@@ -72,7 +72,7 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         var myCol = tbl.DiscoverColumn("myCol");
 
         //should have started out as 10
-        Assert.AreEqual(10, myCol.DataType.GetLengthIfString());
+        Assert.That(myCol.DataType.GetLengthIfString(), Is.EqualTo(10));
 
         var oldType = myCol.DataType.SQLType;
         //we want the new type to be 50 long
@@ -86,11 +86,11 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         myCol = tbl.DiscoverColumn("myCol");
         var myColArchive = tblArchive.DiscoverColumn("myCol");
 
-        Assert.AreEqual(newType, myCol.DataType.SQLType);
-        Assert.AreEqual(newType, ti.ColumnInfos[0].Data_type);
+        Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
+        Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
 
         //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
-        Assert.AreEqual(newType, myColArchive.DataType.SQLType);
+        Assert.That(myColArchive.DataType.SQLType, Is.EqualTo(newType));
 
         tbl.Drop();
         tblArchive.Drop();

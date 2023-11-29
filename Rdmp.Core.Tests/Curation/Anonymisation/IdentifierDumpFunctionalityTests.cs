@@ -46,12 +46,12 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         Console.WriteLine(
             $"Imported ColumnInfos {string.Join(",", columnInfosCreated.Select(c => c.GetRuntimeName()))}");
 
-        Assert.NotNull(tableInfoCreated);
+        Assert.That(tableInfoCreated, Is.Not.Null);
 
         var chi = columnInfosCreated.Single(c => c.GetRuntimeName().Equals("chi"));
 
         Console.WriteLine($"CHI is primary key? (expecting true):{chi.IsPrimaryKey}");
-        Assert.IsTrue(chi.IsPrimaryKey);
+        Assert.That(chi.IsPrimaryKey);
 
 
         tableInfoCreated.ColumnInfos.Single(c => c.GetRuntimeName().Equals("surname")).DeleteInDatabase();
@@ -85,8 +85,8 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
             var dt = _bulkData.GetDataTable(1000);
 
-            Assert.AreEqual(1000, dt.Rows.Count);
-            Assert.IsTrue(dt.Columns.Contains("surname"));
+            Assert.That(dt.Rows, Has.Count.EqualTo(1000));
+            Assert.That(dt.Columns.Contains("surname"));
 
             //for checking the final ID table has the correct values in
             foreach (DataRow row in dt.Rows)
@@ -104,7 +104,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             dumper.DropStaging();
 
             //confirm that the surname column is no longer in the pipeline
-            Assert.IsFalse(dt.Columns.Contains("surname"));
+            Assert.That(dt.Columns.Contains("surname"), Is.False);
 
             //now look at the ids in the identifier dump and make sure they match what was in the pipeline before we sent it
             var server = IdentifierDump_Database.Server;
@@ -117,9 +117,9 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             //make sure the values in the ID table match the ones we originally had in the pipeline
             while (r.Read())
                 if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
-                    Assert.IsTrue(r["surname"] == DBNull.Value);
+                    Assert.That(r["surname"] == DBNull.Value);
                 else
-                    Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),
+                    Assert.That(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),
                         "Dictionary did not contain expected surname:" + r["surname"]);
             r.Close();
 
@@ -172,15 +172,15 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         dumper.Check(new AcceptAllCheckNotifier());
 
         var tableInDump = IdentifierDump_Database.ExpectTable($"ID_{BulkTestsData.BulkDataTable}");
-        Assert.IsTrue(tableInDump.Exists(), "ID table did not exist");
+        Assert.That(tableInDump.Exists(), "ID table did not exist");
 
 
         var columnsInDump = tableInDump.DiscoverColumns().Select(c => c.GetRuntimeName()).ToArray();
         //works and creates table on server
-        Assert.Contains("hic_validFrom", columnsInDump);
-        Assert.Contains("forename", columnsInDump);
-        Assert.Contains("chi", columnsInDump);
-        Assert.Contains("surname", columnsInDump);
+        Assert.That(columnsInDump, Does.Contain("hic_validFrom"));
+        Assert.That(columnsInDump, Does.Contain("forename"));
+        Assert.That(columnsInDump, Does.Contain("chi"));
+        Assert.That(columnsInDump, Does.Contain("surname"));
 
         //now delete it!
         preDiscardedColumn2.DeleteInDatabase();
@@ -191,9 +191,8 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         try
         {
             var ex = Assert.Throws<Exception>(() => dumper2.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-            Assert.AreEqual(
-                "Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn",
-                ex?.Message);
+            Assert.That(
+                ex?.Message, Is.EqualTo("Column forename was found in the IdentifierDump table ID_BulkData but was not one of the primary keys or a PreLoadDiscardedColumn"));
         }
         finally
         {
@@ -236,9 +235,8 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         {
             dumper.Check(new AcceptAllCheckNotifier());
             var ex = Assert.Throws<Exception>(() => dumper.DumpAllIdentifiersInTable(_bulkData.GetDataTable(10)));
-            Assert.AreEqual(
-                "IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)",
-                ex?.Message);
+            Assert.That(
+                ex?.Message, Is.EqualTo("IdentifierDumper STAGING insert (ID_BulkData_STAGING) failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStaging() when you are done)"));
         }
         finally
         {
@@ -276,7 +274,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             var notifier = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());
             dumper.Check(notifier);
 
-            Assert.IsTrue(notifier.Messages.Any(m =>
+            Assert.That(notifier.Messages.Any(m =>
                 m.Result == CheckResult.Warning
                 &&
                 m.Message.Contains("Table ID_BulkData was not found")));
@@ -312,12 +310,11 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         }
         catch (Exception ex)
         {
-            Assert.IsTrue(
-                ex.Message.StartsWith(
-                    "Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
-            Assert.IsTrue(ex.InnerException?.Message.StartsWith("Connected successfully to server"));
-            Assert.IsTrue(ex.InnerException?.Message.EndsWith(
-                " but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)"));
+            Assert.That(
+                ex.Message, Does.StartWith("Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
+            Assert.That(ex.InnerException?.Message.StartsWith("Connected successfully to server",StringComparison.Ordinal)==true);
+            Assert.That(ex.InnerException?.Message.EndsWith(
+                " but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)",StringComparison.Ordinal)==true);
         }
         finally
         {
@@ -339,7 +336,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             preDiscardedColumn1.SaveToDatabase();
 
             var ex = Assert.Throws<ArgumentException>(() => new IdentifierDumper(tableInfoCreated));
-            StringAssert.Contains("does not have a listed IdentifierDump ExternalDatabaseServer", ex.Message);
+            Assert.That(ex.Message, Does.Contain("does not have a listed IdentifierDump ExternalDatabaseServer"));
         }
         finally
         {
@@ -364,7 +361,7 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
             var dumper = new IdentifierDumper(tableInfoCreated);
 
-            //table doesnt exist yet it should work
+            //table doesn't exist yet it should work
             dumper.Check(new AcceptAllCheckNotifier());
 
             //now it is varbinary
@@ -373,11 +370,10 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
             //get a new dumper because we have changed the pre load discarded column
             dumper = new IdentifierDumper(tableInfoCreated);
-            //table doesnt exist yet it should work
+            //table doesn't exist yet it should work
             var ex = Assert.Throws<Exception>(() => dumper.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-            Assert.IsTrue(ex?.Message.Contains(
-                "has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
+            Assert.That(ex?.Message, Does.Contain("has data type varbinary(200) in the Catalogue but appears as varchar(50) in the actual IdentifierDump"));
         }
         finally
         {

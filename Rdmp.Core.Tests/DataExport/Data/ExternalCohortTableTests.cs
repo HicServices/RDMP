@@ -38,7 +38,7 @@ internal class ExternalCohortTableTests : UnitTests
         table.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() => table.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Could not connect to Cohort database called 'My Cohort Database'", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Could not connect to Cohort database called 'My Cohort Database'"));
     }
 
     /// <summary>
@@ -49,9 +49,9 @@ internal class ExternalCohortTableTests : UnitTests
     {
         var tbl = WhenIHaveA<ExternalCohortTable>();
 
-        Assert.IsNotNull(tbl);
-        Assert.IsNotNull(tbl.PrivateIdentifierField);
-        Assert.IsNotNull(tbl.ReleaseIdentifierField);
+        Assert.That(tbl, Is.Not.Null);
+        Assert.That(tbl.PrivateIdentifierField, Is.Not.Null);
+        Assert.That(tbl.ReleaseIdentifierField, Is.Not.Null);
     }
 
     [Test]
@@ -60,12 +60,12 @@ internal class ExternalCohortTableTests : UnitTests
         var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository, "ffff",
             DatabaseType.MicrosoftSQLServer);
 
-        Assert.IsNull(table.Database);
-        Assert.IsNull(table.Server);
-        Assert.IsNull(table.TableName);
-        Assert.IsNull(table.PrivateIdentifierField);
-        Assert.IsNull(table.ReleaseIdentifierField);
-        Assert.IsNull(table.DefinitionTableForeignKeyField);
+        Assert.That(table.Database, Is.Null);
+        Assert.That(table.Server, Is.Null);
+        Assert.That(table.TableName, Is.Null);
+        Assert.That(table.PrivateIdentifierField, Is.Null);
+        Assert.That(table.ReleaseIdentifierField, Is.Null);
+        Assert.That(table.DefinitionTableForeignKeyField, Is.Null);
 
         table.Database = "mydb";
         table.Server = "myserver";
@@ -74,14 +74,14 @@ internal class ExternalCohortTableTests : UnitTests
         table.ReleaseIdentifierField = "rel";
         table.DefinitionTableForeignKeyField = "fk";
 
-        Assert.AreEqual("mydb", table.Database);
-        Assert.AreEqual("myserver", table.Server);
-        Assert.AreEqual("[mydb]..[mytbl]", table.TableName);
-        Assert.IsNull(table.DefinitionTableName);
+        Assert.That(table.Database, Is.EqualTo("mydb"));
+        Assert.That(table.Server, Is.EqualTo("myserver"));
+        Assert.That(table.TableName, Is.EqualTo("[mydb]..[mytbl]"));
+        Assert.That(table.DefinitionTableName, Is.Null);
 
-        Assert.AreEqual("[mydb]..[mytbl].[priv]", table.PrivateIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[rel]", table.ReleaseIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[fk]", table.DefinitionTableForeignKeyField);
+        Assert.That(table.PrivateIdentifierField, Is.EqualTo("[mydb]..[mytbl].[priv]"));
+        Assert.That(table.ReleaseIdentifierField, Is.EqualTo("[mydb]..[mytbl].[rel]"));
+        Assert.That(table.DefinitionTableForeignKeyField, Is.EqualTo("[mydb]..[mytbl].[fk]"));
     }
 
     [Test]
@@ -90,12 +90,12 @@ internal class ExternalCohortTableTests : UnitTests
         var table = new ExternalCohortTable(RepositoryLocator.DataExportRepository, "ffff",
             DatabaseType.MicrosoftSQLServer);
 
-        Assert.IsNull(table.Database);
-        Assert.IsNull(table.Server);
-        Assert.IsNull(table.TableName);
-        Assert.IsNull(table.PrivateIdentifierField);
-        Assert.IsNull(table.ReleaseIdentifierField);
-        Assert.IsNull(table.DefinitionTableForeignKeyField);
+        Assert.That(table.Database, Is.Null);
+        Assert.That(table.Server, Is.Null);
+        Assert.That(table.TableName, Is.Null);
+        Assert.That(table.PrivateIdentifierField, Is.Null);
+        Assert.That(table.ReleaseIdentifierField, Is.Null);
+        Assert.That(table.DefinitionTableForeignKeyField, Is.Null);
 
         table.PrivateIdentifierField = "[mydb]..[mytbl].[priv]";
         table.ReleaseIdentifierField = "[mydb]..[mytbl].[rel]";
@@ -104,13 +104,13 @@ internal class ExternalCohortTableTests : UnitTests
         table.Server = "myserver";
         table.TableName = "[mydb]..[mytbl]";
 
-        Assert.AreEqual("mydb", table.Database);
-        Assert.AreEqual("myserver", table.Server);
-        Assert.AreEqual("[mydb]..[mytbl]", table.TableName);
-        Assert.IsNull(table.DefinitionTableName);
+        Assert.That(table.Database, Is.EqualTo("mydb"));
+        Assert.That(table.Server, Is.EqualTo("myserver"));
+        Assert.That(table.TableName, Is.EqualTo("[mydb]..[mytbl]"));
+        Assert.That(table.DefinitionTableName, Is.Null);
 
-        Assert.AreEqual("[mydb]..[mytbl].[priv]", table.PrivateIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[rel]", table.ReleaseIdentifierField);
-        Assert.AreEqual("[mydb]..[mytbl].[fk]", table.DefinitionTableForeignKeyField);
+        Assert.That(table.PrivateIdentifierField, Is.EqualTo("[mydb]..[mytbl].[priv]"));
+        Assert.That(table.ReleaseIdentifierField, Is.EqualTo("[mydb]..[mytbl].[rel]"));
+        Assert.That(table.DefinitionTableForeignKeyField, Is.EqualTo("[mydb]..[mytbl].[fk]"));
     }
 }

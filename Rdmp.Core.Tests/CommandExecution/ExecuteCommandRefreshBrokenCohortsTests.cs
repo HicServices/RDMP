@@ -45,7 +45,7 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
             DisallowInput = true
         };
 
-        Assert.AreEqual(1, ((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources.Count);
+        Assert.That(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources, Has.Count.EqualTo(1));
 
         var cmd = new ExecuteCommandRefreshBrokenCohorts(activator)
         {
@@ -54,19 +54,19 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
             NoPublish = true
         };
 
-        Assert.IsFalse(cmd.IsImpossible);
+        Assert.That(cmd.IsImpossible, Is.False);
         cmd.Execute();
 
         //now no forbidden cohorts
-        Assert.IsEmpty(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources);
+        Assert.That(((DataExportChildProvider)activator.CoreChildProvider).ForbidListedSources, Is.Empty);
 
 
         cmd = new ExecuteCommandRefreshBrokenCohorts(activator);
-        Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual("There are no broken ExternalCohortTable to clear status on", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There are no broken ExternalCohortTable to clear status on"));
 
         cmd = new ExecuteCommandRefreshBrokenCohorts(activator, ect);
-        Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual("'yarg' is not broken", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("'yarg' is not broken"));
     }
 }

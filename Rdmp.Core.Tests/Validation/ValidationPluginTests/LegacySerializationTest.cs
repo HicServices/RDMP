@@ -17,7 +17,7 @@ public class LegacySerializationTest : DatabaseTests
     {
         Validator.LocatorForXMLDeserialization = RepositoryLocator;
         var v = Validator.LoadFromXml(LegacyXML);
-        Assert.IsNotNull(v);
+        Assert.That(v, Is.Not.Null);
     }
 
     private const string LegacyXML = @"<?xml version=""1.0"" encoding=""utf-16""?>

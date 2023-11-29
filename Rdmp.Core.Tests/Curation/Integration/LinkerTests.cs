@@ -29,7 +29,7 @@ internal class LinkerTests : DatabaseTests
 
             //now you can add as many links as you want, it just skips them
             lazor.SetColumnInfo(velocityColumn);
-            Assert.AreEqual(lazor.ColumnInfo, velocityColumn);
+            Assert.That(velocityColumn, Is.EqualTo(lazor.ColumnInfo));
         }
         finally
         {
@@ -51,17 +51,17 @@ internal class LinkerTests : DatabaseTests
         var velocityColumn = new ColumnInfo(CatalogueRepository, "Velocity Of Matter", "int", highEnergyTable);
 
         ////////////Check the creation worked ok
-        Assert.IsNotNull(predator); //catalogue
-        Assert.IsNotNull(lazor);
+        Assert.That(predator, Is.Not.Null); //catalogue
+        Assert.That(lazor, Is.Not.Null);
 
-        Assert.IsNotNull(highEnergyTable); //underlying table stuff
-        Assert.IsNotNull(velocityColumn);
+        Assert.That(highEnergyTable, Is.Not.Null); //underlying table stuff
+        Assert.That(velocityColumn, Is.Not.Null);
 
         ////////////// Create links between stuff and check they were created successfully //////////////
 
         //create a link between catalogue item lazor and velocity column
         lazor.SetColumnInfo(velocityColumn);
-        Assert.IsTrue(lazor.ColumnInfo.ID == velocityColumn.ID);
+        Assert.That(lazor.ColumnInfo.ID == velocityColumn.ID);
 
         ////////////////cleanup ---- Delete everything that we created -------- //////////////
         velocityColumn
@@ -69,7 +69,7 @@ internal class LinkerTests : DatabaseTests
 
         lazor.RevertToDatabaseState();
 
-        Assert.IsNull(lazor.ColumnInfo); //involves a database query so won't actually invalidate the below
+        Assert.That(lazor.ColumnInfo, Is.Null); //involves a database query so won't actually invalidate the below
 
         predator.DeleteInDatabase();
 

@@ -89,7 +89,7 @@ public class ExcelConversionTest
 
         var ex = Assert.Throws<Exception>(() => TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
-        Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
+        Assert.That(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
 
     private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets,
@@ -99,8 +99,8 @@ public class ExcelConversionTest
 
         try
         {
-            Assert.IsTrue(f.Exists);
-            Assert.IsTrue(f.Length > 100);
+            Assert.That(f.Exists);
+            Assert.That(f.Length, Is.GreaterThan(100));
 
             var converter = new ExcelToCSVFilesConverter();
 
@@ -114,11 +114,11 @@ public class ExcelConversionTest
 
             var filesCreated = directory.ForLoading.GetFiles("*.csv");
 
-            Assert.AreEqual(expectedNumberOfSheets, filesCreated.Length);
+            Assert.That(filesCreated, Has.Length.EqualTo(expectedNumberOfSheets));
 
             foreach (var fileCreated in filesCreated)
             {
-                Assert.IsTrue(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
+                Assert.That(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
                 Assert.GreaterOrEqual(fileCreated.Length, 100);
                 fileCreated.Delete();
             }

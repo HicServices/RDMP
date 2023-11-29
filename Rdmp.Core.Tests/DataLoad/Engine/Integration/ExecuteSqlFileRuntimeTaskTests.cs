@@ -60,7 +60,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         task.Run(job, new GracefulCancellationToken());
 
-        Assert.AreEqual(1, tbl.GetDataTable().Rows[0][0]);
+        Assert.That(tbl.GetDataTable().Rows[0][0], Is.EqualTo(1));
 
         tbl.Drop();
     }
@@ -103,7 +103,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(() =>
             task.Run(job, new GracefulCancellationToken()));
-        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.Message);
+        Assert.That(ex.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
 
         task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
@@ -126,8 +126,6 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
             "ExecuteSqlFileRuntimeTaskTests", true);
-
-#pragma warning disable CS0252, CS0253 // Spurious warning 'Possible unintended reference comparison; left hand side needs cast' since VS doesn't grok Moq fully
         var _arg = Substitute.For<IArgument>();
         _arg.Name.Returns("Sql");
         _arg.Value.Returns(sql);
@@ -136,8 +134,6 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         {
           _arg
         };
-#pragma warning restore CS0252, CS0253
-
         var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
 
         var pt = Substitute.For<IProcessTask>();
@@ -158,8 +154,8 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() => task.Run(job, new GracefulCancellationToken()));
 
-        StringAssert.Contains("Mutilate failed", ex.Message);
-        StringAssert.Contains("Failed to find a TableInfo in the load with ID 0", ex.InnerException.Message);
+        Assert.That(ex.Message, Does.Contain("Mutilate failed"));
+        Assert.That(ex.InnerException.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
 
         task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
@@ -187,7 +183,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
         tbl.Rename(tableName);
 
         //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
-        Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
+        Assert.That(ti.Discover(DataAccessContext.InternalDataProcessing).Exists(), Is.False);
 
         var pt = Substitute.For<IProcessTask>();
         pt.Path.Returns(f.FullName);
@@ -211,7 +207,7 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         task.Run(job, new GracefulCancellationToken());
 
-        Assert.AreEqual(1, tbl.GetDataTable().Rows[0][0]);
+        Assert.That(tbl.GetDataTable().Rows[0][0], Is.EqualTo(1));
 
         tbl.Drop();
     }

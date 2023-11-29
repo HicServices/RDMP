@@ -55,7 +55,7 @@ public class TriggerTests : DatabaseTests
         //most likely doesn't exist but may do
         implementer.DropTrigger(out _, out _);
 
-        Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
+        Assert.That(implementer.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Missing));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -65,7 +65,7 @@ public class TriggerTests : DatabaseTests
 
         var ex = Assert.Throws<TriggerException>(() =>
             GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("There must be at least 1 primary key", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There must be at least 1 primary key"));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -76,8 +76,8 @@ public class TriggerTests : DatabaseTests
         _table.CreatePrimaryKey(new[] { _table.DiscoverColumn("name") });
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
-        Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+        Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -95,8 +95,8 @@ public class TriggerTests : DatabaseTests
 
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
-        Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+        Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -110,15 +110,15 @@ public class TriggerTests : DatabaseTests
         //still not valid because trigger SQL is missing it in the column list
         var ex = Assert.Throws<ExpectedIdenticalStringsException>(() =>
             GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
-        Assert.IsNotNull(ex.Message);
+        Assert.That(ex.Message, Is.Not.Null);
 
         var implementer = GetImplementer();
         implementer.DropTrigger(out var problemsDroppingTrigger, out _);
-        Assert.IsEmpty(problemsDroppingTrigger);
+        Assert.That(problemsDroppingTrigger, Is.Empty);
 
         implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.That(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -135,41 +135,36 @@ public class TriggerTests : DatabaseTests
         });
 
         var liveOldRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 3);
-        Assert.AreEqual(new DateTime(2001, 1, 2), (DateTime)liveOldRow[SpecialFieldNames.ValidFrom]);
+        Assert.That((DateTime)liveOldRow[SpecialFieldNames.ValidFrom], Is.EqualTo(new DateTime(2001, 1, 2)));
 
         RunSQL("UPDATE {0} set bubbles =99", _table.GetFullyQualifiedName());
 
         //new value is 99
-        Assert.AreEqual(99,
-            ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()));
+        Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()), Is.EqualTo(99));
         //archived value is 3
-        Assert.AreEqual(3,
-            ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()));
+        Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()), Is.EqualTo(3));
 
         //Legacy table valued function only works for MicrosoftSQLServer
         if (dbType == DatabaseType.MicrosoftSQLServer)
         {
             //legacy in 2001-01-01 it didn't exist
-            Assert.IsNull(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"));
+            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"), Is.Null);
             //legacy in 2001-01-03 it did exist and was 3
-            Assert.AreEqual(3,
-                ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"));
+            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"), Is.EqualTo(3));
             //legacy boundary case?
-            Assert.AreEqual(3,
-                ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"));
+            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"), Is.EqualTo(3));
 
             //legacy today it is 99
-            Assert.AreEqual(99,
-                ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"));
+            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"), Is.EqualTo(99));
         }
 
         // Live row should now reflect that it is validFrom today
         var liveNewRow = _table.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 99);
-        Assert.AreEqual(DateTime.Now.Date, ((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date);
+        Assert.That(((DateTime)liveNewRow[SpecialFieldNames.ValidFrom]).Date, Is.EqualTo(DateTime.Now.Date));
 
         // Archived row should not have had its validFrom field broken
         var archivedRow = _archiveTable.GetDataTable().Rows.Cast<DataRow>().Single(r => r["bubbles"] as int? == 3);
-        Assert.AreEqual(new DateTime(2001, 1, 2), (DateTime)archivedRow[SpecialFieldNames.ValidFrom]);
+        Assert.That((DateTime)archivedRow[SpecialFieldNames.ValidFrom], Is.EqualTo(new DateTime(2001, 1, 2)));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -203,18 +198,18 @@ public class TriggerTests : DatabaseTests
 
         Thread.Sleep(1000);
 
-        Assert.AreEqual(1, _table.GetRowCount());
-        Assert.AreEqual(4, _archiveTable.GetRowCount());
+        Assert.That(_table.GetRowCount(), Is.EqualTo(1));
+        Assert.That(_archiveTable.GetRowCount(), Is.EqualTo(4));
 
         Import(_table, out var ti, out var cols);
         var fetcher = new DiffDatabaseDataFetcher(1, ti, 7, 100);
 
         fetcher.FetchData(new AcceptAllCheckNotifier());
-        Assert.AreEqual(4, fetcher.Updates_New.Rows[0]["bubbles"]);
-        Assert.AreEqual(3, fetcher.Updates_Replaced.Rows[0]["bubbles"]);
+        Assert.That(fetcher.Updates_New.Rows[0]["bubbles"], Is.EqualTo(4));
+        Assert.That(fetcher.Updates_Replaced.Rows[0]["bubbles"], Is.EqualTo(3));
 
-        Assert.AreEqual(1, fetcher.Updates_New.Rows.Count);
-        Assert.AreEqual(1, fetcher.Updates_Replaced.Rows.Count);
+        Assert.That(fetcher.Updates_New.Rows, Has.Count.EqualTo(1));
+        Assert.That(fetcher.Updates_Replaced.Rows, Has.Count.EqualTo(1));
     }
 
 

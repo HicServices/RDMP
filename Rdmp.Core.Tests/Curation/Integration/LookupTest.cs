@@ -138,17 +138,17 @@ public class LookupTest : DatabaseTests
             child2 = new ColumnInfo(repo, "unit_test_CreateLookup", "int", parent2); //fk in data table
             child3 = new ColumnInfo(repo, "unit_test_CreateLookup", "int", parent); //pk in lookup
 
-            new Lookup(repo, child, child2, child3, ExtractionJoinType.Left, null);
+            _=new Lookup(repo, child, child2, child3, ExtractionJoinType.Left, null);
 
-            Assert.AreEqual(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).Length, 1);
-            Assert.AreEqual(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).Length, 0);
-            Assert.AreEqual(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).Length, 0);
-            Assert.AreEqual(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).Length, 1);
-            Assert.AreEqual(child3.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey).Length, 1);
+            Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Has.Length.EqualTo(1));
+            Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Is.Empty);
+            Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Is.Empty);
+            Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
+            Assert.That(child3.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
 
 
-            Assert.IsTrue(parent.IsLookupTable());
-            Assert.IsFalse(parent2.IsLookupTable());
+            Assert.That(parent.IsLookupTable());
+            Assert.That(parent2.IsLookupTable(), Is.False);
         }
         finally
         {
@@ -224,36 +224,36 @@ public class LookupTest : DatabaseTests
             desc = new ColumnInfo(CatalogueRepository, "UnitTest_TestDescription", "int", pkTable);
             lookup = new Lookup(CatalogueRepository, desc, fk, pk, ExtractionJoinType.Left, null);
 
-            Assert.AreEqual(lookup.PrimaryKey.Name, pk.Name);
-            Assert.AreEqual(lookup.PrimaryKey.ID, pk.ID);
+            Assert.That(pk.Name, Is.EqualTo(lookup.PrimaryKey.Name));
+            Assert.That(pk.ID, Is.EqualTo(lookup.PrimaryKey.ID));
 
-            Assert.AreEqual(lookup.ForeignKey.Name, fk.Name);
-            Assert.AreEqual(lookup.ForeignKey.ID, fk.ID);
+            Assert.That(fk.Name, Is.EqualTo(lookup.ForeignKey.Name));
+            Assert.That(fk.ID, Is.EqualTo(lookup.ForeignKey.ID));
 
-            Assert.AreEqual(lookup.Description.Name, desc.Name);
-            Assert.AreEqual(lookup.Description.ID, desc.ID);
+            Assert.That(desc.Name, Is.EqualTo(lookup.Description.Name));
+            Assert.That(desc.ID, Is.EqualTo(lookup.Description.ID));
 
             //Create the composite lookup
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
-            Assert.AreEqual(composite.OriginalLookup_ID, lookup.ID);
+            Assert.That(lookup.ID, Is.EqualTo(composite.OriginalLookup_ID));
 
-            Assert.AreEqual(composite.PrimaryKey.ID, pk2.ID);
-            Assert.AreEqual(composite.PrimaryKey_ID, pk2.ID);
-            Assert.AreEqual(composite.PrimaryKey.Name, pk2.Name);
+            Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey.ID));
+            Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey_ID));
+            Assert.That(pk2.Name, Is.EqualTo(composite.PrimaryKey.Name));
 
-            Assert.AreEqual(composite.ForeignKey.ID, fk2.ID);
-            Assert.AreEqual(composite.ForeignKey_ID, fk2.ID);
-            Assert.AreEqual(composite.ForeignKey.Name, fk2.Name);
+            Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey.ID));
+            Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey_ID));
+            Assert.That(fk2.Name, Is.EqualTo(composite.ForeignKey.Name));
 
             //get a fresh copy out of memory now that we have created the Lookup composite key, confirm the integrity of that relationship
-            Assert.AreEqual(lookup.GetSupplementalJoins().Count(), 1);
-            Assert.AreEqual(lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>().First().ID, composite.ID);
+            Assert.That(lookup.GetSupplementalJoins().Count(), Is.EqualTo(1));
+            Assert.That(composite.ID, Is.EqualTo(lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>().First().ID));
 
             composite.DeleteInDatabase();
             composite = null;
 
-            Assert.AreEqual(lookup.GetSupplementalJoins().Count(), 0);
+            Assert.That(lookup.GetSupplementalJoins().Count(), Is.EqualTo(0));
         }
         catch (Exception ex)
         {
@@ -313,16 +313,14 @@ public class LookupTest : DatabaseTests
 
             var joinSQL = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL,
-                "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode");
+            Assert.That(joinSQL, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode"));
 
             //Create the composite lookup
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
             var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL_AfterAddingCompositeKey,
-                "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode AND UnitTest_BCHealthBoard = UnitTest_Healthboard");
+            Assert.That(joinSQL_AfterAddingCompositeKey, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_BCTestCode = UnitTest_TestCode AND UnitTest_BCHealthBoard = UnitTest_Healthboard"));
         }
         catch (Exception ex)
         {
@@ -381,23 +379,24 @@ public class LookupTest : DatabaseTests
 
             var joinSQL = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL, "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON One = One");
+            Assert.That(joinSQL, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON One = One"));
 
             //Create the custom lookup
             var cmd = new ExecuteCommandSetExtendedProperty(new ThrowImmediatelyActivator(RepositoryLocator),
                 new[] { lookup },
                 ExtendedProperty.CustomJoinSql,
-                @"{0}.One={1}.One AND
-({0}.Two = {0}.Two OR 
-    ({0}.{Two} is null AND {1}.Two is null)
-)");
+                """
+                {0}.One={1}.One AND
+                ({0}.Two = {0}.Two OR
+                    ({0}.{Two} is null AND {1}.Two is null)
+                )
+                """);
             cmd.Execute();
 
 
             var joinSQL_AfterAddingCompositeKey = JoinHelper.GetJoinSQL(lookup);
 
-            Assert.AreEqual(joinSQL_AfterAddingCompositeKey,
-                "UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR      (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )");
+            Assert.That(joinSQL_AfterAddingCompositeKey, Is.EqualTo("UnitTest_Biochemistry Left JOIN UnitTest_BiochemistryLookup ON UnitTest_Biochemistry.One=UnitTest_BiochemistryLookup.One AND (UnitTest_Biochemistry.Two = UnitTest_Biochemistry.Two OR      (UnitTest_Biochemistry.{Two} is null AND UnitTest_BiochemistryLookup.Two is null) )"));
         }
         catch (Exception ex)
         {
@@ -468,7 +467,7 @@ public class LookupTest : DatabaseTests
                 cmd.Execute();
 
                 //sql should not have changed because we didn't create an new ExtractionInformation virtual column
-                Assert.AreEqual(sqlBefore, GetSql(mainCata));
+                Assert.That(GetSql(mainCata), Is.EqualTo(sqlBefore));
                 break;
             case LookupTestCase.SingleKeySingleDescription:
                 cmd = new ExecuteCommandCreateLookup(CatalogueRepository, fkEi, descLine1, pk, null, true);
@@ -476,8 +475,8 @@ public class LookupTest : DatabaseTests
 
                 //should have the lookup join and the virtual column _Desc
                 var sqlAfter = GetSql(mainCata);
-                Assert.IsTrue(sqlAfter.Contains("JOIN"));
-                Assert.IsTrue(sqlAfter.Contains("SendingLocation_Desc"));
+                Assert.That(sqlAfter.Contains("JOIN"));
+                Assert.That(sqlAfter.Contains("SendingLocation_Desc"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(testCase));

@@ -41,14 +41,14 @@ internal class ExecutableProcessTaskTests : DatabaseTests
                 new RuntimeArgumentCollection(processTask.ProcessTaskArguments.Cast<IArgument>().ToArray(), null);
 
             var runtimeTask = new ExecutableRuntimeTask(processTask, args);
-            Assert.AreEqual(expectedPath, runtimeTask.ExeFilepath);
+            Assert.That(runtimeTask.ExeFilepath, Is.EqualTo(expectedPath));
 
-            Assert.AreEqual(1, runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().Count());
+            Assert.That(runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().Count(), Is.EqualTo(1));
 
             var dictionaryOfStringArguments = runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>()
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            Assert.IsNotNull(dictionaryOfStringArguments["DatabaseName"]);
-            Assert.AreEqual("Foo_STAGING", dictionaryOfStringArguments["DatabaseName"]);
+            Assert.That(dictionaryOfStringArguments["DatabaseName"], Is.Not.Null);
+            Assert.That(dictionaryOfStringArguments["DatabaseName"], Is.EqualTo("Foo_STAGING"));
         }
         finally
         {

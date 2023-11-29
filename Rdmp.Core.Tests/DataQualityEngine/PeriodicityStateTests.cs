@@ -26,7 +26,7 @@ internal class PeriodicityStateTests : DatabaseTests
 
         var dt = PeriodicityState.GetPeriodicityForDataTableForEvaluation(eval, "ALL", pivot);
 
-        Assert.IsNull(dt);
+        Assert.That(dt, Is.Null);
     }
 
     [Test]
@@ -40,7 +40,7 @@ internal class PeriodicityStateTests : DatabaseTests
 
         var dict = PeriodicityState.GetPeriodicityCountsForEvaluation(eval, true);
 
-        Assert.IsNotNull(dict);
-        Assert.IsEmpty(dict);
+        Assert.That(dict, Is.Not.Null);
+        Assert.That(dict, Is.Empty);
     }
 }

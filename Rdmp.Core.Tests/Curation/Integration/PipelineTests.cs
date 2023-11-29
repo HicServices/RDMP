@@ -25,14 +25,14 @@ public class PipelineTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual(pipeline.Name, "Bob");
+            Assert.That(pipeline.Name, Is.EqualTo("Bob"));
 
             var pipelineComponent =
                 new PipelineComponent(CatalogueRepository, pipeline, typeof(BasicAnonymisationEngine), 0);
 
             try
             {
-                Assert.AreEqual(pipelineComponent.Class, typeof(BasicAnonymisationEngine).FullName);
+                Assert.That(typeof(BasicAnonymisationEngine).FullName, Is.EqualTo(pipelineComponent.Class));
 
                 var argument1 = (PipelineComponentArgument)pipelineComponent.CreateNewArgument();
                 var argument2 = new PipelineComponentArgument(CatalogueRepository, pipelineComponent);
@@ -52,7 +52,7 @@ public class PipelineTests : DatabaseTests
                     argument2.SaveToDatabase();
 
                     var argument2Copy = CatalogueRepository.GetObjectByID<PipelineComponentArgument>(argument2.ID);
-                    Assert.AreEqual(dt, argument2Copy.GetValueAsSystemType());
+                    Assert.That(argument2Copy.GetValueAsSystemType(), Is.EqualTo(dt));
                 }
                 finally
                 {
@@ -84,15 +84,15 @@ public class PipelineTests : DatabaseTests
         var clone2 = p.Clone();
         var clone3 = p.Clone();
 
-        Assert.AreEqual("My Pipe (Clone)", clone1.Name);
-        Assert.AreEqual("My Pipe (Clone2)", clone2.Name);
-        Assert.AreEqual("My Pipe (Clone3)", clone3.Name);
+        Assert.That(clone1.Name, Is.EqualTo("My Pipe (Clone)"));
+        Assert.That(clone2.Name, Is.EqualTo("My Pipe (Clone2)"));
+        Assert.That(clone3.Name, Is.EqualTo("My Pipe (Clone3)"));
 
         var cloneOfClone1 = clone3.Clone();
         var cloneOfClone2 = clone3.Clone();
 
-        Assert.AreEqual("My Pipe (Clone3) (Clone)", cloneOfClone1.Name);
-        Assert.AreEqual("My Pipe (Clone3) (Clone2)", cloneOfClone2.Name);
+        Assert.That(cloneOfClone1.Name, Is.EqualTo("My Pipe (Clone3) (Clone)"));
+        Assert.That(cloneOfClone2.Name, Is.EqualTo("My Pipe (Clone3) (Clone2)"));
     }
 
 
@@ -133,37 +133,33 @@ public class PipelineTests : DatabaseTests
         //Execute the cloning process
         var p2 = p.Clone();
 
-        Assert.AreNotEqual(p2, p);
-        Assert.AreNotEqual(p2.ID, p.ID);
+        Assert.That(p, Is.Not.EqualTo(p2));
+        Assert.That(p.ID, Is.Not.EqualTo(p2.ID));
 
-        Assert.AreEqual(p2.Name, $"{p.Name} (Clone)");
+        Assert.That($"{p.Name} (Clone)", Is.EqualTo(p2.Name));
 
-        Assert.AreEqual(componentsBefore * 2,
-            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Length);
-        Assert.AreEqual(argumentsBefore * 2,
-            RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Length);
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>(), Has.Length.EqualTo(componentsBefore * 2));
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>(), Has.Length.EqualTo(argumentsBefore * 2));
 
         //p the original should have a pipeline component that has the value we set earlier
-        Assert.AreEqual(
-            p.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
-                .Single(a => a.Name == "ColumnNameToFind").Value,
-            "MyMostCoolestColumnEver"
-        );
+        Assert.That(
+p.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
+                .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo(            "MyMostCoolestColumnEver"
+));
 
         //p2 the clone should have a pipeline component too since it's a clone
-        Assert.AreEqual(
-            p2.PipelineComponents.Single(c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
-                .Single(a => a.Name == "ColumnNameToFind").Value,
-            "MyMostCoolestColumnEver"
-        );
+        Assert.That(
+p2.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
+                .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo(            "MyMostCoolestColumnEver"
+));
 
         //both should have source and destination components
-        Assert.NotNull(p2.DestinationPipelineComponent_ID);
-        Assert.NotNull(p2.SourcePipelineComponent_ID);
+        Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.Null);
+        Assert.That(p2.SourcePipelineComponent_ID, Is.Not.Null);
 
         //but with different IDs because they are clones
-        Assert.AreNotEqual(p.DestinationPipelineComponent_ID, p2.DestinationPipelineComponent_ID);
-        Assert.AreNotEqual(p.SourcePipelineComponent_ID, p2.SourcePipelineComponent_ID);
+        Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.EqualTo(p.DestinationPipelineComponent_ID));
+        Assert.That(p2.SourcePipelineComponent_ID, Is.Not.EqualTo(p.SourcePipelineComponent_ID));
 
         p.DeleteInDatabase();
         p2.DeleteInDatabase();
@@ -190,12 +186,12 @@ public class PipelineTests : DatabaseTests
         p.SourcePipelineComponent_ID = source.ID;
         p.SaveToDatabase();
 
-        Assert.AreEqual("fffffzololz", p.Source.GetAllArguments().Single().Type);
+        Assert.That(p.Source.GetAllArguments().Single().Type, Is.EqualTo("fffffzololz"));
 
         var clone = p.Clone();
 
-        Assert.AreEqual(clone.Source.Class, p.Source.Class);
-        Assert.AreEqual("fffffzololz", clone.Source.GetAllArguments().Single().Type);
+        Assert.That(p.Source.Class, Is.EqualTo(clone.Source.Class));
+        Assert.That(clone.Source.GetAllArguments().Single().Type, Is.EqualTo("fffffzololz"));
 
         p.DeleteInDatabase();
         clone.DeleteInDatabase();
@@ -219,7 +215,7 @@ public class PipelineTests : DatabaseTests
         p.RevertToDatabaseState();
 
         // should also clear the reference
-        Assert.IsNull(p.SourcePipelineComponent_ID);
+        Assert.That(p.SourcePipelineComponent_ID, Is.Null);
     }
 
     [Test]
@@ -240,6 +236,6 @@ public class PipelineTests : DatabaseTests
         p.RevertToDatabaseState();
 
         // should also clear the reference
-        Assert.IsNull(p.DestinationPipelineComponent_ID);
+        Assert.That(p.DestinationPipelineComponent_ID, Is.Null);
     }
 }

@@ -132,14 +132,14 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
                 ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
             new GracefulCancellationToken());
 
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         //frank should be updated to his new departement and role
-        Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
         var result = tbl.GetDataTable();
         var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
-        Assert.AreEqual("Department of F'Tang", frank["Department"]);
-        Assert.AreEqual("Boss", frank["Position"]);
+        Assert.That(frank["Department"], Is.EqualTo("Department of F'Tang"));
+        Assert.That(frank["Position"], Is.EqualTo("Boss"));
 
         //post test cleanup
         foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())

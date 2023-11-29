@@ -45,7 +45,7 @@ internal class DatabaseOperationTests : DatabaseTests
             }
 
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(testLiveDatabaseName);
-        Assert.IsTrue(testDb.Exists());
+        Assert.That(testDb.Exists());
 
         testDb.CreateTable("Table_1", new[] { new DatabaseColumnRequest("Id", "int") });
 
@@ -66,7 +66,7 @@ internal class DatabaseOperationTests : DatabaseTests
             var cloneDb = cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
             //confirm database appeared
-            Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
+            Assert.That(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(
                 $"{testLiveDatabaseName}_RAW").Exists());
 
             //now create a catalogue and wire it SetUp to the table TEST on the test database server
@@ -77,8 +77,8 @@ internal class DatabaseOperationTests : DatabaseTests
                 cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
                     LoadBubble.Raw);
 
-            Assert.IsTrue(raw.Exists());
-            Assert.IsTrue(raw.ExpectTable("Table_1").Exists());
+            Assert.That(raw.Exists());
+            Assert.That(raw.ExpectTable("Table_1").Exists());
         }
         finally
         {

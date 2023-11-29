@@ -51,7 +51,7 @@ public class DilutionOperationFactoryTests : DatabaseTests
                 col.Repository.Returns(CatalogueRepository);
                 var factory = new DilutionOperationFactory(col);
                 var i = factory.Create(typeof(ExcludeRight3OfUKPostcodes));
-                Assert.IsNotNull(i);
-                Assert.IsInstanceOf<IDilutionOperation>(i);
+        Assert.That(i, Is.Not.Null);
+        Assert.That(i, Is.InstanceOf<IDilutionOperation>());
         }
 }

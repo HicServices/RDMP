@@ -943,7 +943,7 @@ GO
             case DatabaseType.Oracle:
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(type));
         }
 
         throw new NotImplementedException();

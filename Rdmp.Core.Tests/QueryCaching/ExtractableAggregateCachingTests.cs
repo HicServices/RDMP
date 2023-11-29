@@ -59,7 +59,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
                 new DataTable(), 30)));
 
 
-        Assert.IsTrue(ex.Message.StartsWith(
+        Assert.That(ex.Message.StartsWith(
             "The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
 
         var dt = new DataTable();
@@ -70,7 +70,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
             _manager.CommitResults(
                 new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
-        Assert.IsTrue(
+        Assert.That(
             ex2.Message.StartsWith(
                 "Aggregate ExtractableAggregateCachingTests is not marked as IsExtractable therefore cannot be cached"));
 
@@ -90,7 +90,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
             _manager.CommitResults(
                 new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
-        Assert.IsTrue(
+        Assert.That(
             ex3.Message.StartsWith(
                 "Aggregate ExtractableAggregateCachingTests contains dimensions marked as IsExtractionIdentifier or HashOnDataRelease (Col1)"));
 
@@ -112,7 +112,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
         con.Open();
         using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con);
         using var r = cmd.ExecuteReader();
-        Assert.IsTrue(r.Read());
-        Assert.AreEqual("fishy!", r["Col1"]);
+        Assert.That(r.Read());
+        Assert.That(r["Col1"], Is.EqualTo("fishy!"));
     }
 }

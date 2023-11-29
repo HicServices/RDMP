@@ -19,7 +19,7 @@ internal class TableNamingConventionTests : DatabaseTests
     public void GetAllTableInfos_moreThan1_pass()
     {
         var ti = new TableInfo(CatalogueRepository, "AMAGAD!!!");
-        Assert.IsTrue(CatalogueRepository.GetAllObjects<TableInfo>().Any());
+        Assert.That(CatalogueRepository.GetAllObjects<TableInfo>().Any());
         ti.DeleteInDatabase();
     }
 
@@ -39,10 +39,10 @@ internal class TableNamingConventionTests : DatabaseTests
 
         var tableInfoAfter = CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID);
 
-        Assert.IsTrue(tableInfoAfter.Database == "CHI_AMALG");
-        Assert.IsTrue(tableInfoAfter.Server == "Highly restricted");
-        Assert.IsTrue(tableInfoAfter.Name == "Fishmongery!");
-        Assert.IsTrue(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
+        Assert.That(tableInfoAfter.Database == "CHI_AMALG");
+        Assert.That(tableInfoAfter.Server == "Highly restricted");
+        Assert.That(tableInfoAfter.Name == "Fishmongery!");
+        Assert.That(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
 
         tableInfoAfter.DeleteInDatabase();
     }
@@ -54,9 +54,9 @@ internal class TableNamingConventionTests : DatabaseTests
         var namingScheme = new SuffixBasedNamer();
 
         var stagingTable = namingScheme.GetName(baseTableName, LoadBubble.Staging);
-        Assert.AreEqual("MyTable_STAGING", stagingTable);
+        Assert.That(stagingTable, Is.EqualTo("MyTable_STAGING"));
 
         var newLookupTable = namingScheme.GetName(baseTableName, LoadBubble.Live);
-        Assert.AreEqual("MyTable", newLookupTable);
+        Assert.That(newLookupTable, Is.EqualTo("MyTable"));
     }
 }

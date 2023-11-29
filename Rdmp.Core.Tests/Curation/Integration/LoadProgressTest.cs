@@ -21,7 +21,7 @@ public class LoadProgressTest : DatabaseTests
         var loadMetadata = new LoadMetadata(CatalogueRepository);
         var loadProgress = new LoadProgress(CatalogueRepository, loadMetadata);
 
-        Assert.AreEqual(loadProgress.LoadMetadata_ID, loadMetadata.ID);
+        Assert.That(loadMetadata.ID, Is.EqualTo(loadProgress.LoadMetadata_ID));
 
         loadProgress.DeleteInDatabase();
         loadMetadata.DeleteInDatabase();
@@ -49,14 +49,14 @@ public class LoadProgressTest : DatabaseTests
         try
         {
             //values are different
-            Assert.AreNotEqual(progressCopy.OriginDate, progress.OriginDate);
-            Assert.AreNotEqual(progressCopy.Name, progress.Name);
+            Assert.That(progress.OriginDate, Is.Not.EqualTo(progressCopy.OriginDate));
+            Assert.That(progress.Name, Is.Not.EqualTo(progressCopy.Name));
 
             //IDs are the same
-            Assert.AreEqual(progressCopy.ID, progress.ID);
+            Assert.That(progress.ID, Is.EqualTo(progressCopy.ID));
 
             //therefore objects are the same
-            Assert.IsTrue(progressCopy.Equals(progress));
+            Assert.That(progressCopy.Equals(progress));
         }
         finally
         {

@@ -20,8 +20,8 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
         var cata1 = new Catalogue(RepositoryLocator.CatalogueRepository, "fff");
         var cata2 = new Catalogue(RepositoryLocator.CatalogueRepository, "bbb");
 
-        Assert.IsNull(cata1.LoadMetadata);
-        Assert.IsNull(cata2.LoadMetadata);
+        Assert.That(cata1.LoadMetadata, Is.Null);
+        Assert.That(cata2.LoadMetadata, Is.Null);
 
         var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository, "mylmd");
 
@@ -31,7 +31,7 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
         cata1.RevertToDatabaseState();
         cata2.RevertToDatabaseState();
 
-        Assert.AreEqual(lmd.ID, cata1.LoadMetadata_ID);
-        Assert.IsNull(cata2.LoadMetadata);
+        Assert.That(cata1.LoadMetadata_ID, Is.EqualTo(lmd.ID));
+        Assert.That(cata2.LoadMetadata, Is.Null);
     }
 }

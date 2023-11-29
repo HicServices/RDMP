@@ -48,7 +48,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
             new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         // run the cic
@@ -57,7 +57,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // 5 random chi numbers
-        Assert.AreEqual(5, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(5));
 
         // test stale
         cmd.AggregateCreatedIfAny.Description = "2";
@@ -69,7 +69,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // because the rules changed to generate 2 chis only there should be a new result
-        Assert.AreEqual(2, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
 
         var results = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
 
@@ -79,11 +79,11 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(2, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
         var results2 = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
 
-        Assert.AreEqual(results[0], results2[0]);
-        Assert.AreEqual(results[1], results2[1]);
+        Assert.That(results2[0], Is.EqualTo(results[0]));
+        Assert.That(results2[1], Is.EqualTo(results[1]));
     }
 
     [Test]
@@ -108,18 +108,18 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // create a use of the API as an AggregateConfiguration
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
             new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
         cmd.AggregateCreatedIfAny.Description = "33";
         cmd.AggregateCreatedIfAny.SaveToDatabase();
 
         // clone the cic
         var cmd2 = new ExecuteCommandCloneCohortIdentificationConfiguration(activator, cic);
-        Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+        Assert.That(cmd2.IsImpossible, Is.False, cmd2.ReasonCommandImpossible);
         cmd2.Execute();
 
         var cloneAc = cmd2.CloneCreatedIfAny.RootCohortAggregateContainer.GetAggregateConfigurations()[0];
-        Assert.AreEqual("33", cloneAc.Description);
+        Assert.That(cloneAc.Description, Is.EqualTo("33"));
     }
 
     [Test]
@@ -144,7 +144,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // We need something in the root container otherwise the cic won't build
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
             new CatalogueCombineable(myApi), cic.RootCohortAggregateContainer);
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
         var regularAggregate = cmd.AggregateCreatedIfAny;
 
@@ -152,7 +152,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
             activator, new CatalogueCombineable(myApi), cic);
 
-        Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+        Assert.That(cmd2.IsImpossible, Is.False, cmd2.ReasonCommandImpossible);
         cmd2.Execute();
 
         var joinables = cic.GetAllJoinables();
@@ -161,8 +161,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var ex = Assert.Throws<NotSupportedException>(() =>
             new JoinableCohortAggregateConfigurationUse(CatalogueRepository, regularAggregate, joinables[0]));
 
-        Assert.AreEqual("API calls cannot join with PatientIndexTables (The API call must be self contained)",
-            ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("API calls cannot join with PatientIndexTables (The API call must be self contained)"));
     }
 
 
@@ -201,7 +200,7 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         // Add the regular table
         var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(activator,
             new CatalogueCombineable(cata), cic.RootCohortAggregateContainer);
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
         var regularAggregate = cmd.AggregateCreatedIfAny;
 
@@ -209,12 +208,12 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(
             activator, new CatalogueCombineable(myApi), cic);
 
-        Assert.IsFalse(cmd2.IsImpossible, cmd2.ReasonCommandImpossible);
+        Assert.That(cmd2.IsImpossible, Is.False, cmd2.ReasonCommandImpossible);
         cmd2.Execute();
 
         var joinables = cic.GetAllJoinables();
 
-        Assert.AreEqual(1, joinables.Length);
+        Assert.That(joinables, Has.Length.EqualTo(1));
 
         // make them join one another
         new JoinableCohortAggregateConfigurationUse(CatalogueRepository, regularAggregate, joinables[0]);
@@ -223,6 +222,6 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         var source = new CohortIdentificationConfigurationSource();
         source.PreInitialize(cic, ThrowImmediatelyDataLoadEventListener.Quiet);
         var result = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(1, result.Rows.Count);
+        Assert.That(result.Rows, Has.Count.EqualTo(1));
     }
 }

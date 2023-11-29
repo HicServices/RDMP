@@ -74,15 +74,15 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         var wizard = new CreateNewCohortDatabaseWizard(null, CatalogueRepository, DataExportRepository, false);
 
         //it finds it!
-        Assert.IsTrue(wizard.GetPrivateIdentifierCandidates()
+        Assert.That(wizard.GetPrivateIdentifierCandidates()
             .Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
 
         //delete the column info to make it a missing reference
         _c1.DeleteInDatabase();
 
         //now it should gracefully skip over it
-        Assert.IsFalse(wizard.GetPrivateIdentifierCandidates()
-            .Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")));
+        Assert.That(wizard.GetPrivateIdentifierCandidates()
+            .Any(prototype => prototype.RuntimeName.Equals("PrivateIdentifierA")), Is.False);
     }
 
     [Test]
@@ -92,16 +92,16 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
 
         var candidates = wizard.GetPrivateIdentifierCandidates();
 
-        Assert.IsFalse(candidates.Any(c =>
-            c.RuntimeName.Equals("PrivateIdentifierA") || c.RuntimeName.Equals("PrivateIdentifierB")));
+        Assert.That(candidates.Any(c =>
+            c.RuntimeName.Equals("PrivateIdentifierA") || c.RuntimeName.Equals("PrivateIdentifierB")), Is.False);
 
         _extractionInfo1.IsExtractionIdentifier = true;
         _extractionInfo1.SaveToDatabase();
         candidates = wizard.GetPrivateIdentifierCandidates();
 
         var candidate = candidates.Single(c => c.RuntimeName.Equals("PrivateIdentifierA"));
-        Assert.AreEqual("varchar(10)", candidate.DataType);
-        Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID == _extractionInfo1.ID);
+        Assert.That(candidate.DataType, Is.EqualTo("varchar(10)"));
+        Assert.That(candidate.MatchingExtractionInformations.Single().ID == _extractionInfo1.ID);
     }
 
     [TestCase("text")]
@@ -124,9 +124,8 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() => wizard.CreateDatabase(
             candidate,
             ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Private identifier datatype cannot be varchar(max) style as this prevents Primary Key creation on the table"));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -144,14 +143,14 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
             candidate,
             ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(type, ect.DatabaseType);
+        Assert.That(ect.DatabaseType, Is.EqualTo(type));
 
         //database should exist
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
-        Assert.IsTrue(db.Exists());
+        Assert.That(db.Exists());
 
         //did it create the correct type?
-        Assert.AreEqual(type, ect.DatabaseType);
+        Assert.That(ect.DatabaseType, Is.EqualTo(type));
 
         //the ExternalCohortTable should pass tests
         ect.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -185,34 +184,34 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         var cohort = request.CohortCreatedIfAny;
-        Assert.IsNotNull(cohort);
+        Assert.That(cohort, Is.Not.Null);
 
         var externalData = cohort.GetExternalData();
-        Assert.AreEqual(10, externalData.ExternalProjectNumber);
-        Assert.IsFalse(string.IsNullOrEmpty(externalData.ExternalDescription));
+        Assert.That(externalData.ExternalProjectNumber, Is.EqualTo(10));
+        Assert.That(string.IsNullOrEmpty(externalData.ExternalDescription), Is.False);
 
 
-        Assert.AreEqual(DateTime.Now.Year, externalData.ExternalCohortCreationDate.Value.Year);
-        Assert.AreEqual(DateTime.Now.Month, externalData.ExternalCohortCreationDate.Value.Month);
-        Assert.AreEqual(DateTime.Now.Day, externalData.ExternalCohortCreationDate.Value.Day);
-        Assert.AreEqual(DateTime.Now.Hour, externalData.ExternalCohortCreationDate.Value.Hour);
+        Assert.That(externalData.ExternalCohortCreationDate.Value.Year, Is.EqualTo(DateTime.Now.Year));
+        Assert.That(externalData.ExternalCohortCreationDate.Value.Month, Is.EqualTo(DateTime.Now.Month));
+        Assert.That(externalData.ExternalCohortCreationDate.Value.Day, Is.EqualTo(DateTime.Now.Day));
+        Assert.That(externalData.ExternalCohortCreationDate.Value.Hour, Is.EqualTo(DateTime.Now.Hour));
 
         cohort.AppendToAuditLog("Test");
 
-        Assert.IsTrue(cohort.AuditLog.Contains("Test"));
+        Assert.That(cohort.AuditLog.Contains("Test"));
 
-        Assert.AreEqual(1, cohort.Count);
-        Assert.AreEqual(1, cohort.CountDistinct);
+        Assert.That(cohort.Count, Is.EqualTo(1));
+        Assert.That(cohort.CountDistinct, Is.EqualTo(1));
 
         var cohortTable = cohort.FetchEntireCohort();
 
-        Assert.AreEqual(1, cohortTable.Rows.Count);
+        Assert.That(cohortTable.Rows, Has.Count.EqualTo(1));
 
         var helper = ect.GetQuerySyntaxHelper();
 
-        Assert.AreEqual(101243, cohortTable.Rows[0][helper.GetRuntimeName(ect.PrivateIdentifierField)]);
+        Assert.That(cohortTable.Rows[0][helper.GetRuntimeName(ect.PrivateIdentifierField)], Is.EqualTo(101243));
         var aguid = cohortTable.Rows[0][helper.GetRuntimeName(ect.ReleaseIdentifierField)].ToString();
-        Assert.IsFalse(string.IsNullOrWhiteSpace(aguid)); //should be a guid
+        Assert.That(string.IsNullOrWhiteSpace(aguid), Is.False); //should be a guid
 
         //test reversing the anonymisation of something
         var dtAno = new DataTable();
@@ -223,16 +222,16 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
 
         cohort.ReverseAnonymiseDataTable(dtAno, ThrowImmediatelyDataLoadEventListener.Quiet, true);
 
-        Assert.AreEqual(2, dtAno.Columns.Count);
-        Assert.IsTrue(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
+        Assert.That(dtAno.Columns, Has.Count.EqualTo(2));
+        Assert.That(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
 
-        Assert.AreEqual("101243", dtAno.Rows[0][cohort.GetPrivateIdentifier(true)]);
-        Assert.AreEqual("101243", dtAno.Rows[1][cohort.GetPrivateIdentifier(true)]);
+        Assert.That(dtAno.Rows[0][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
+        Assert.That(dtAno.Rows[1][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
 
         //make sure that it shows up in the child provider (provides fast object access in CLI and builds tree model for UI)
         var repo = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);
         var descendancy = repo.GetDescendancyListIfAnyFor(cohort);
-        Assert.IsNotNull(descendancy);
+        Assert.That(descendancy, Is.Not.Null);
     }
 
     [Test]
@@ -258,9 +257,8 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Fail);
 
         var ex = Assert.Throws<Exception>(() => ect.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("R004 PrivateIdentifierField and ReleaseIdentifierField are the same, this means your cohort will extract identifiable data (no cohort identifier substitution takes place)"));
 
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExtractionIsIdentifiable, CheckResult.Warning);
 

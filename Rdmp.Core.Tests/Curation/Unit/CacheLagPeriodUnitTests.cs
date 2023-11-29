@@ -16,16 +16,16 @@ public class CacheLagPeriodUnitTests
     [Test]
     public void TestOperator()
     {
-        Assert.IsTrue(new TimeSpan(32, 0, 0, 0) > new CacheLagPeriod("1m"));
-        Assert.IsTrue(new TimeSpan(24, 0, 0, 0) < new CacheLagPeriod("1m"));
+        Assert.That(new TimeSpan(32, 0, 0, 0) > new CacheLagPeriod("1m"));
+        Assert.That(new TimeSpan(24, 0, 0, 0) < new CacheLagPeriod("1m"));
 
-        Assert.IsTrue(new TimeSpan(3, 0, 0, 0) > new CacheLagPeriod("2d"));
-        Assert.IsFalse(new TimeSpan(3, 0, 0, 0) > new CacheLagPeriod("3d"));
-        Assert.IsFalse(new TimeSpan(2, 0, 0, 0) < new CacheLagPeriod("2d"));
-        Assert.IsTrue(new TimeSpan(1, 0, 0, 0) < new CacheLagPeriod("2d"));
+        Assert.That(new TimeSpan(3, 0, 0, 0) > new CacheLagPeriod("2d"));
+        Assert.That(new TimeSpan(3, 0, 0, 0) > new CacheLagPeriod("3d"), Is.False);
+        Assert.That(new TimeSpan(2, 0, 0, 0) < new CacheLagPeriod("2d"), Is.False);
+        Assert.That(new TimeSpan(1, 0, 0, 0) < new CacheLagPeriod("2d"));
 
-        Assert.IsFalse(new TimeSpan(2, 0, 0, 1) < new CacheLagPeriod("2d"));
-        Assert.IsFalse(new TimeSpan(2, 0, 0, 0) < new CacheLagPeriod("2d"));
-        Assert.IsTrue(new TimeSpan(2, 0, 0, 1) > new CacheLagPeriod("2d"));
+        Assert.That(new TimeSpan(2, 0, 0, 1) < new CacheLagPeriod("2d"), Is.False);
+        Assert.That(new TimeSpan(2, 0, 0, 0) < new CacheLagPeriod("2d"), Is.False);
+        Assert.That(new TimeSpan(2, 0, 0, 1) > new CacheLagPeriod("2d"));
     }
 }

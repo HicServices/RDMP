@@ -25,7 +25,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
         var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
         //Must have a root container
-        Assert.IsNull(importedAggregateFilterContainer);
+        Assert.That(importedAggregateFilterContainer, Is.Null);
 
         importedAggregate.DeleteInDatabase();
     }
@@ -42,8 +42,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         //ensure that it is picked SetUp
         var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
-        Assert.AreEqual(1, mandatoryFilters.Length);
-        Assert.AreEqual(filter, mandatoryFilters[0]);
+        Assert.That(mandatoryFilters, Has.Length.EqualTo(1));
+        Assert.That(mandatoryFilters[0], Is.EqualTo(filter));
 
         AggregateConfiguration importedAggregate = null;
 
@@ -52,25 +52,25 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             importedAggregate =
                 cohortIdentificationConfiguration.CreateNewEmptyConfigurationForCatalogue(testData.catalogue, null);
 
-            Assert.AreEqual(ChangeDescription.NoChanges, importedAggregate.HasLocalChanges().Evaluation);
+            Assert.That(importedAggregate.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
 
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
             //Must have a root container
-            Assert.IsNotNull(importedAggregateFilterContainer);
+            Assert.That(importedAggregateFilterContainer, Is.Not.Null);
 
             //With an AND operation
-            Assert.AreEqual(FilterContainerOperation.AND, importedAggregateFilterContainer.Operation);
+            Assert.That(importedAggregateFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.AND));
 
             var importedFilters = importedAggregateFilterContainer.GetFilters();
-            Assert.AreEqual(1, importedFilters.Length);
+            Assert.That(importedFilters, Has.Length.EqualTo(1));
 
             //they are not the same object
-            Assert.AreNotEqual(filter, importedFilters[0]);
+            Assert.That(importedFilters[0], Is.Not.EqualTo(filter));
             //the deployed filter knows its parent it was cloned from
-            Assert.AreEqual(filter.ID, importedFilters[0].ClonedFromExtractionFilter_ID);
+            Assert.That(importedFilters[0].ClonedFromExtractionFilter_ID, Is.EqualTo(filter.ID));
             //the WHERE SQL of the filters should be the same
-            Assert.AreEqual(filter.WhereSQL, importedFilters[0].WhereSQL);
+            Assert.That(importedFilters[0].WhereSQL, Is.EqualTo(filter.WhereSQL));
         }
         finally
         {
@@ -103,7 +103,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             .CreateAll(filter, null);
 
         var filterParameters = filter.ExtractionFilterParameters.ToArray();
-        Assert.AreEqual(1, filterParameters.Length);
+        Assert.That(filterParameters, Has.Length.EqualTo(1));
 
         filterParameters[0].ParameterSQL = parameterSQL;
         filterParameters[0].Value = "'No More than 300 Dragons Please'";
@@ -122,8 +122,8 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         //ensure that it is picked SetUp
         var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
-        Assert.AreEqual(1, mandatoryFilters.Length);
-        Assert.AreEqual(filter, mandatoryFilters[0]);
+        Assert.That(mandatoryFilters, Has.Length.EqualTo(1));
+        Assert.That(mandatoryFilters[0], Is.EqualTo(filter));
 
 
         AggregateConfiguration importedAggregate = null;
@@ -135,32 +135,32 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
             //Must have a root container
-            Assert.IsNotNull(importedAggregateFilterContainer);
+            Assert.That(importedAggregateFilterContainer, Is.Not.Null);
 
             //With an AND operation
-            Assert.AreEqual(FilterContainerOperation.AND, importedAggregateFilterContainer.Operation);
+            Assert.That(importedAggregateFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.AND));
 
             var importedFilters = importedAggregateFilterContainer.GetFilters();
-            Assert.AreEqual(1, importedFilters.Length);
+            Assert.That(importedFilters, Has.Length.EqualTo(1));
 
             //Because the configuration already has a parameter with the same declaration it should not bother to import the parameter from the underlying filter
             if (createAGlobalOverrideBeforeHand)
             {
-                Assert.AreEqual(0, importedFilters[0].GetAllParameters().Length);
+                Assert.That(importedFilters[0].GetAllParameters(), Is.Empty);
             }
             else
             {
                 //Because there is no global we should be creating a clone of the parameter too
                 var paramClones = importedFilters[0].GetAllParameters();
-                Assert.AreEqual(1, paramClones.Length);
+                Assert.That(paramClones, Has.Length.EqualTo(1));
 
                 //clone should have same SQL and Value
-                Assert.AreEqual(parameterSQL, paramClones[0].ParameterSQL);
-                Assert.AreEqual(filterParameters[0].ParameterSQL, paramClones[0].ParameterSQL);
-                Assert.AreEqual(filterParameters[0].Value, paramClones[0].Value);
+                Assert.That(paramClones[0].ParameterSQL, Is.EqualTo(parameterSQL));
+                Assert.That(paramClones[0].ParameterSQL, Is.EqualTo(filterParameters[0].ParameterSQL));
+                Assert.That(paramClones[0].Value, Is.EqualTo(filterParameters[0].Value));
 
                 //but not be the same object in database
-                Assert.AreNotEqual(filterParameters[0], paramClones[0]);
+                Assert.That(paramClones[0], Is.Not.EqualTo(filterParameters[0]));
             }
         }
         finally
@@ -206,7 +206,7 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
         //ensure that both are picked SetUp as mandatory filters by catalogue
         var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
-        Assert.AreEqual(2, mandatoryFilters.Length);
+        Assert.That(mandatoryFilters, Has.Length.EqualTo(2));
 
         AggregateConfiguration importedAggregate = null;
 
@@ -218,14 +218,14 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
             var importedAggregateFilterContainer = importedAggregate.RootFilterContainer;
 
             //Must have a root container
-            Assert.IsNotNull(importedAggregateFilterContainer);
+            Assert.That(importedAggregateFilterContainer, Is.Not.Null);
 
             //the AND container should be there
-            Assert.AreEqual(FilterContainerOperation.AND, importedAggregateFilterContainer.Operation);
+            Assert.That(importedAggregateFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.AND));
 
             //the filters should both be there (See above test for WHERE SQL, ID etc checking)
             var importedFilters = importedAggregateFilterContainer.GetFilters();
-            Assert.AreEqual(2, importedFilters.Length);
+            Assert.That(importedFilters, Has.Length.EqualTo(2));
         }
         finally
         {

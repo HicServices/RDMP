@@ -21,8 +21,8 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 
         var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { c1 }, "blarg", "fff");
 
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.StartsWith("blarg is not a known property.  Known properties are:", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("blarg is not a known property.  Known properties are:"));
     }
 
     [Test]
@@ -32,15 +32,15 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         var ac2 = WhenIHaveA<AggregateConfiguration>();
 
 
-        Assert.IsEmpty(
-            Repository.CatalogueRepository.GetExtendedProperties(ac1));
-        Assert.IsEmpty(
-            Repository.CatalogueRepository.GetExtendedProperties(ac2));
+        Assert.That(
+            Repository.CatalogueRepository.GetExtendedProperties(ac1), Is.Empty);
+        Assert.That(
+            Repository.CatalogueRepository.GetExtendedProperties(ac2), Is.Empty);
 
         var cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { ac1, ac2 },
             ExtendedProperty.IsTemplate, "true");
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 
@@ -49,8 +49,8 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
 
         foreach (var dec in new[] { declaration1, declaration2 })
         {
-            Assert.AreEqual("IsTemplate", dec.Name);
-            Assert.AreEqual("true", dec.Value);
+            Assert.That(dec.Name, Is.EqualTo("IsTemplate"));
+            Assert.That(dec.Value, Is.EqualTo("true"));
         }
 
         // now clear that status
@@ -58,14 +58,14 @@ internal class ExecuteCommandSetExtendedPropertyTests : CommandCliTests
         cmd = new ExecuteCommandSetExtendedProperty(GetMockActivator(), new[] { ac1, ac2 },
             ExtendedProperty.IsTemplate, null);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 
         // should now be back where we started
-        Assert.IsEmpty(
-            Repository.CatalogueRepository.GetExtendedProperties(ac1));
-        Assert.IsEmpty(
-            Repository.CatalogueRepository.GetExtendedProperties(ac2));
+        Assert.That(
+            Repository.CatalogueRepository.GetExtendedProperties(ac1), Is.Empty);
+        Assert.That(
+            Repository.CatalogueRepository.GetExtendedProperties(ac2), Is.Empty);
     }
 }

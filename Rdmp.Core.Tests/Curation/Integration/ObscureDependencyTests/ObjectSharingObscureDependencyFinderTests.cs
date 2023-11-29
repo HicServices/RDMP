@@ -34,19 +34,18 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         var c2 = new Catalogue(CatalogueRepository, "Catapault (Import)");
         var ci2 = new CatalogueItem(CatalogueRepository, c2, "string (Import)");
 
-        Assert.AreEqual(CatalogueRepository.GetAllObjects<ObjectExport>().Length, 0);
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Is.Empty);
         var ec = _share.GetNewOrExistingExportFor(c);
         var eci = _share.GetNewOrExistingExportFor(ci);
 
         _share.GetImportAs(ec.SharingUID, c2);
         _share.GetImportAs(eci.SharingUID, ci2);
 
-        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectExport>().Length);
-        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
-        Assert.AreEqual(2,
-            CatalogueRepository.GetAllObjects<ObjectImport>()
-                .Length); //successive calls shouldhn't generate extra entries since they are same obj
-        Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Has.Length.EqualTo(2));
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>()
+, Has.Length.EqualTo(2)); //successive calls shouldn't generate extra entries since they are same obj
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
 
         //cannot delete the shared object
         Assert.Throws<Exception>(c.DeleteInDatabase);
@@ -55,7 +54,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         Assert.DoesNotThrow(c2.DeleteInDatabase);
 
         //now that we deleted the import it should have deleted everything else including the CatalogueItem import which magically disapeared when we deleted the Catalogue via database level cascade events
-        Assert.AreEqual(0, CatalogueRepository.GetAllObjects<ObjectImport>().Length);
+        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Is.Empty);
 
         _share.GetImportAs(eci.SharingUID, ci2);
     }
@@ -66,12 +65,12 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         //create a test catalogue
         var c = new Catalogue(CatalogueRepository, "blah");
 
-        Assert.IsFalse(_share.IsExportedObject(c));
+        Assert.That(_share.IsExportedObject(c), Is.False);
 
         //make it exportable
         var exportDefinition = _share.GetNewOrExistingExportFor(c);
 
-        Assert.IsTrue(_share.IsExportedObject(c));
+        Assert.That(_share.IsExportedObject(c));
 
         //cannot delete because object is shared externally
         Assert.Throws<Exception>(c.DeleteInDatabase);
@@ -80,7 +79,7 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         exportDefinition.DeleteInDatabase();
 
         //no longer shared
-        Assert.IsFalse(_share.IsExportedObject(c));
+        Assert.That(_share.IsExportedObject(c), Is.False);
 
         //now we can delete it
         c.DeleteInDatabase();
@@ -98,13 +97,13 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         var importDefinition = _share.GetImportAs(exportDefinition.SharingUID, p2);
 
         //import definition exists
-        Assert.IsTrue(importDefinition.Exists());
+        Assert.That(importDefinition.Exists());
 
         //delete local import
         p2.DeleteInDatabase();
 
         //cascade should have deleted the import definition since the imported object version is gone
-        Assert.IsFalse(importDefinition.Exists());
+        Assert.That(importDefinition.Exists(), Is.False);
 
         //clear SetUp the exported version too
         exportDefinition.DeleteInDatabase();

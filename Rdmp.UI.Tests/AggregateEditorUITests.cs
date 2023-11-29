@@ -27,17 +27,16 @@ internal class AggregateEditorUITests : UITests
 
         //should show two available columns
         var available = colsUi.AvailableColumns;
-        Assert.AreEqual(2, available.Count);
+        Assert.That(available, Has.Count.EqualTo(2));
 
         //the count(*) column
         var included = colsUi.IncludedColumns;
-        Assert.AreEqual(1, included.Count);
+        Assert.That(included, Has.Count.EqualTo(1));
 
         //before we have added any columns it should not be possible to launch the graph
         var cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
-        Assert.IsTrue(cmdExecuteGraph.IsImpossible);
-        StringAssert.Contains("No tables could be identified for the query.  Try adding a column or a force join",
-            cmdExecuteGraph.ReasonCommandImpossible);
+        Assert.That(cmdExecuteGraph.IsImpossible);
+        Assert.That(cmdExecuteGraph.ReasonCommandImpossible, Does.Contain("No tables could be identified for the query.  Try adding a column or a force join"));
 
         var ei = config.Catalogue.CatalogueItems[0].ExtractionInformation;
 
@@ -49,15 +48,15 @@ internal class AggregateEditorUITests : UITests
 
         //should show one available columns
         available = colsUi.AvailableColumns;
-        Assert.AreEqual(1, available.Count);
+        Assert.That(available, Has.Count.EqualTo(1));
 
         //the count(*) column and the added dimension
         included = colsUi.IncludedColumns;
-        Assert.AreEqual(2, included.Count);
+        Assert.That(included, Has.Count.EqualTo(2));
 
         //should now be possible to launch the graph
         cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
-        Assert.IsFalse(cmdExecuteGraph.IsImpossible);
+        Assert.That(cmdExecuteGraph.IsImpossible, Is.False);
 
         AssertNoErrors(ExpectedErrorType.Any);
     }
@@ -75,12 +74,12 @@ internal class AggregateEditorUITests : UITests
         var ui = AndLaunch<AggregateEditorUI>(config);
 
         //only date should be an option for axis dimension
-        Assert.AreEqual(1, ui.ddAxisDimension.Items.Count);
-        Assert.AreEqual(dimDate, ui.ddAxisDimension.Items[0]);
+        Assert.That(ui.ddAxisDimension.Items, Has.Count.EqualTo(1));
+        Assert.That(ui.ddAxisDimension.Items[0], Is.EqualTo(dimDate));
 
         //dates are not valid for pivots
-        Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
-        Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
+        Assert.That(ui.ddPivotDimension.Items, Has.Count.EqualTo(1));
+        Assert.That(ui.ddPivotDimension.Items[0], Is.EqualTo(dimOther));
 
         //it wants us to pick either a pivot or an axis
         AssertErrorWasShown(ExpectedErrorType.FailedCheck,
@@ -103,16 +102,16 @@ internal class AggregateEditorUITests : UITests
 
         //these commands should be impossible
         var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains("no extractable columns", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Does.Contain("no extractable columns"));
 
         //and if the broken config is activated
         var ui = AndLaunch<AggregateEditorUI>(config);
 
         //it should not launch and instead show the following message
         var killed = ItemActivator.Results.KilledForms.Single();
-        Assert.AreEqual(ui.ParentForm, killed.Key);
-        StringAssert.Contains("no extractable columns", killed.Value.Message);
+        Assert.That(killed.Key, Is.EqualTo(ui.ParentForm));
+        Assert.That(killed.Value.Message, Does.Contain("no extractable columns"));
     }
 
 

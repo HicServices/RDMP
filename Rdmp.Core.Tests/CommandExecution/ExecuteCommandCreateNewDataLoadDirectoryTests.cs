@@ -21,7 +21,7 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
 
         Run("CreateNewDataLoadDirectory", "null", toCreate);
 
-        Assert.IsTrue(Directory.Exists(root));
+        Assert.That(Directory.Exists(root));
     }
 
     [Test]
@@ -31,11 +31,11 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
         if (Directory.Exists(root)) Directory.Delete(root, true);
         var lmd = WhenIHaveA<LoadMetadata>();
 
-        Assert.IsNull(lmd.LocationOfFlatFiles);
+        Assert.That(lmd.LocationOfFlatFiles, Is.Null);
 
         Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
 
-        Assert.IsTrue(Directory.Exists(root));
-        Assert.AreEqual(root, lmd.LocationOfFlatFiles);
+        Assert.That(Directory.Exists(root));
+        Assert.That(lmd.LocationOfFlatFiles, Is.EqualTo(root));
     }
 }

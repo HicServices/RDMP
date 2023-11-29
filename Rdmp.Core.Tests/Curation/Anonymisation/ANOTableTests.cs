@@ -34,7 +34,7 @@ public class ANOTableTests : TestsRequiringANOStore
     public void CreateAnANOTable_PushAs(string datatypeForPush)
     {
         var anoTable = GetANOTable();
-        Assert.AreEqual("ANOMyTable", anoTable.TableName);
+        Assert.That(anoTable.TableName, Is.EqualTo("ANOMyTable"));
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 20;
         anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 20;
         anoTable.PushToANOServerAsNewTable(datatypeForPush, ThrowImmediatelyCheckNotifier.Quiet);
@@ -43,14 +43,14 @@ public class ANOTableTests : TestsRequiringANOStore
             .SingleOrDefault(t => t.GetRuntimeName().Equals("ANOMyTable"));
 
         //server should have
-        Assert.NotNull(discoveredTable);
-        Assert.IsTrue(discoveredTable.Exists());
+        Assert.That(discoveredTable, Is.Not.Null);
+        Assert.That(discoveredTable.Exists());
 
         //yes that's right hte table name and column name are the same here \|/
-        Assert.AreEqual(datatypeForPush, discoveredTable.DiscoverColumn("MyTable").DataType.SQLType);
+        Assert.That(discoveredTable.DiscoverColumn("MyTable").DataType.SQLType, Is.EqualTo(datatypeForPush));
 
         //20 + 20 + _ + A
-        Assert.AreEqual("varchar(42)", discoveredTable.DiscoverColumn("ANOMyTable").DataType.SQLType);
+        Assert.That(discoveredTable.DiscoverColumn("ANOMyTable").DataType.SQLType, Is.EqualTo("varchar(42)"));
 
         anoTable.DeleteInDatabase();
     }
@@ -62,7 +62,7 @@ public class ANOTableTests : TestsRequiringANOStore
 
         anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 63;
         anoTable.RevertToDatabaseState();
-        Assert.AreEqual(1, anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
+        Assert.That(anoTable.NumberOfCharactersToUseInAnonymousRepresentation, Is.EqualTo(1));
         anoTable.DeleteInDatabase();
     }
 
@@ -70,7 +70,7 @@ public class ANOTableTests : TestsRequiringANOStore
     public void CreateAnANOTable_Check()
     {
         var anoTable = GetANOTable();
-        Assert.AreEqual("ANOMyTable", anoTable.TableName);
+        Assert.That(anoTable.TableName, Is.EqualTo("ANOMyTable"));
         anoTable.Check(new AcceptAllCheckNotifier());
         anoTable.DeleteInDatabase();
     }
@@ -83,7 +83,7 @@ public class ANOTableTests : TestsRequiringANOStore
         {
             var ex = Assert.Throws<Exception>(() =>
                 new ANOTable(CatalogueRepository, anoTable.Server, "DuplicateSuffix", anoTable.Suffix));
-            Assert.AreEqual("There is already another ANOTable with the suffix 'A'", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("There is already another ANOTable with the suffix 'A'"));
         }
         finally
         {
@@ -99,7 +99,7 @@ public class ANOTableTests : TestsRequiringANOStore
         {
             anoTable.NumberOfCharactersToUseInAnonymousRepresentation = -500;
             var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
-            Assert.AreEqual("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("NumberOfCharactersToUseInAnonymousRepresentation cannot be negative"));
         }
         finally
         {
@@ -116,7 +116,7 @@ public class ANOTableTests : TestsRequiringANOStore
         {
             anoTable.NumberOfIntegersToUseInAnonymousRepresentation = -500;
             var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
-            Assert.AreEqual("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("NumberOfIntegersToUseInAnonymousRepresentation cannot be negative"));
         }
         finally
         {
@@ -133,7 +133,7 @@ public class ANOTableTests : TestsRequiringANOStore
             anoTable.NumberOfIntegersToUseInAnonymousRepresentation = 0;
             anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 0;
             var ex = Assert.Throws<Exception>(anoTable.SaveToDatabase);
-            Assert.AreEqual("Anonymous representations must have at least 1 integer or character", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Anonymous representations must have at least 1 integer or character"));
         }
         finally
         {
@@ -163,9 +163,9 @@ public class ANOTableTests : TestsRequiringANOStore
         var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
 
-        Assert.IsTrue((string)dt.Rows[0][0] == "0101010101");
-        Assert.IsTrue(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
-        Assert.AreEqual(dt.Rows[0][1], dt.Rows[2][1]); //because of duplication these should both be the same
+        Assert.That((string)dt.Rows[0][0] == "0101010101");
+        Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
+        Assert.That(dt.Rows[2][1], Is.EqualTo(dt.Rows[0][1])); //because of duplication these should both be the same
 
         Console.WriteLine($"ANO identifiers created were:{dt.Rows[0][1]},{dt.Rows[1][1]}");
 
@@ -182,8 +182,8 @@ public class ANOTableTests : TestsRequiringANOStore
         var val3 = dt.Rows[0][1];
 
         //should always be different
-        Assert.AreNotEqual(val1, val2);
-        Assert.AreNotEqual(val1, val3);
+        Assert.That(val2, Is.Not.EqualTo(val1));
+        Assert.That(val3, Is.Not.EqualTo(val1));
 
         //now test repeatability
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], false);
@@ -194,8 +194,8 @@ public class ANOTableTests : TestsRequiringANOStore
 
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], false);
         var val6 = dt.Rows[0][1];
-        Assert.AreEqual(val4, val5);
-        Assert.AreEqual(val4, val6);
+        Assert.That(val5, Is.EqualTo(val4));
+        Assert.That(val6, Is.EqualTo(val4));
 
         TruncateANOTable(anoTable);
 
@@ -212,7 +212,7 @@ public class ANOTableTests : TestsRequiringANOStore
         var ANOtable = ANOStore_Database.ExpectTable(anoTable.TableName);
 
         //should not exist yet
-        Assert.False(ANOtable.Exists());
+        Assert.That(ANOtable.Exists(), Is.False);
 
         using var dt = new DataTable();
         dt.Columns.Add("CHI");
@@ -221,10 +221,10 @@ public class ANOTableTests : TestsRequiringANOStore
         var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
 
-        Assert.IsTrue(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
+        Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
 
         //still not exist yet
-        Assert.False(ANOtable.Exists());
+        Assert.That(ANOtable.Exists(), Is.False);
 
         anoTable.DeleteInDatabase();
     }
@@ -287,7 +287,7 @@ public class ANOTableTests : TestsRequiringANOStore
             var ANOid = row["ANOCHI"].ToString();
             uniqueSet.Add(ANOid);
 
-            Assert.IsTrue(_anochiPattern.IsMatch(ANOid));
+            Assert.That(_anochiPattern.IsMatch(ANOid));
         }
 
         Console.WriteLine($"Allocated {uniqueSet.Count} anonymous identifiers");
@@ -302,12 +302,12 @@ public class ANOTableTests : TestsRequiringANOStore
             var numberOfRows = Convert.ToInt32(cmd.ExecuteScalar());
 
             //should be the same number of unique identifiers in memory as in the database
-            Assert.AreEqual(uniqueSet.Count, numberOfRows);
+            Assert.That(numberOfRows, Is.EqualTo(uniqueSet.Count));
             Console.WriteLine($"Found {numberOfRows} unique ones");
 
             var cmdNulls = server.GetCommand("select count(*) from ANOMyTable where ANOMyTable is null", con);
             var nulls = Convert.ToInt32(cmdNulls.ExecuteScalar());
-            Assert.AreEqual(0, nulls);
+            Assert.That(nulls, Is.EqualTo(0));
             Console.WriteLine($"Found {nulls} null ANO identifiers");
 
             con.Close();

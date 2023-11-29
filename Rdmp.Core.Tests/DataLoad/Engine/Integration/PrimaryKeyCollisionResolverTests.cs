@@ -64,11 +64,9 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             }
             catch (Exception e)
             {
-                Assert.AreEqual("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests",
-                    e.Message);
-                Assert.AreEqual(
-                    "TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions",
-                    e.InnerException.Message);
+                Assert.That(e.Message, Is.EqualTo("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests"));
+                Assert.That(
+                    e.InnerException.Message, Is.EqualTo("TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions"));
             }
         }
         finally
@@ -83,9 +81,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
         var mutilation = new PrimaryKeyCollisionResolverMutilation();
 
         var ex = Assert.Throws<Exception>(() => mutilation.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains(
-            "Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Contain("Target table is null, a table must be specified upon which to resolve primary key duplication (that TableInfo must have a primary key collision resolution order)"));
     }
 
     [Test]
@@ -110,14 +107,14 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
 
             Console.WriteLine(sql);
 
-            Assert.IsTrue(sql.Contains(c2.Name));
-            Assert.IsTrue(sql.Contains(c3.Name));
+            Assert.That(sql.Contains(c2.Name));
+            Assert.That(sql.Contains(c3.Name));
 
             //column 2 has the following null substitute, is Ascending order and is the first of two
-            Assert.IsTrue(sql.Contains("ISNULL([col2],-9223372036854775808) ASC,"));
+            Assert.That(sql.Contains("ISNULL([col2],-9223372036854775808) ASC,"));
 
             //column 3 has the following null substitute and is descending and is not followed by another column
-            Assert.IsTrue(sql.Contains("ISNULL([col3],-2147483648) DESC"));
+            Assert.That(sql.Contains("ISNULL([col3],-2147483648) DESC"));
         }
         finally
         {
@@ -136,9 +133,8 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
 
             var resolver = new PrimaryKeyCollisionResolver(t);
             var ex = Assert.Throws<Exception>(() => Console.WriteLine(resolver.GenerateSQL()));
-            StringAssert.Contains(
-                "The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'.",
-                ex.Message);
+            Assert.That(
+                ex.Message, Does.Contain("The ColumnInfos of TableInfo PrimaryKeyCollisionResolverTests do not have primary key resolution orders configured (do not know which order to use non primary key column values in to resolve collisions).  Fix this by right clicking a TableInfo in CatalogueManager and selecting 'Configure Primary Key Collision Resolution'."));
         }
         finally
         {
@@ -155,8 +151,7 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
         {
             var resolver = new PrimaryKeyCollisionResolver(t);
             var ex = Assert.Throws<Exception>(() => Console.WriteLine(resolver.GenerateSQL()));
-            StringAssert.Contains("does not have any primary keys defined so cannot resolve primary key collisions",
-                ex.Message);
+            Assert.That(ex.Message, Does.Contain("does not have any primary keys defined so cannot resolve primary key collisions"));
         }
         finally
         {

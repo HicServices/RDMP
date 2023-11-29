@@ -39,8 +39,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
             joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                 aggregate1);
 
-            Assert.AreEqual(joinable.CohortIdentificationConfiguration_ID, cohortIdentificationConfiguration.ID);
-            Assert.AreEqual(joinable.AggregateConfiguration_ID, aggregate1.ID);
+            Assert.That(cohortIdentificationConfiguration.ID, Is.EqualTo(joinable.CohortIdentificationConfiguration_ID));
+            Assert.That(aggregate1.ID, Is.EqualTo(joinable.AggregateConfiguration_ID));
         }
         finally
         {
@@ -56,9 +56,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         var ex = Assert.Throws<NotSupportedException>(() =>
             new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                 aggregate1));
-        Assert.AreEqual(
-            "Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it is already in a CohortAggregateContainer"));
         cohortIdentificationConfiguration.RootCohortAggregateContainer.RemoveChild(aggregate1);
     }
 
@@ -72,9 +71,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         var ex = Assert.Throws<NotSupportedException>(() =>
             new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                 aggregate1));
-        Assert.AreEqual(
-            "Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it has 0 columns marked IsExtractionIdentifier",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it has 0 columns marked IsExtractionIdentifier"));
     }
 
     [Test]
@@ -90,7 +88,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 var ex = Assert.Throws<SqlException>(() =>
                     new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                         aggregate1));
-                Assert.IsTrue(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
+                Assert.That(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
             }
         }
         finally
@@ -109,8 +107,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 aggregate1);
             joinable.AddUser(aggregate2);
 
-            Assert.IsTrue(joinable.Users.Length == 1);
-            Assert.AreEqual(aggregate2, joinable.Users[0].AggregateConfiguration);
+            Assert.That(joinable.Users.Length == 1);
+            Assert.That(joinable.Users[0].AggregateConfiguration, Is.EqualTo(aggregate2));
         }
         finally
         {
@@ -128,9 +126,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         {
             joinable.AddUser(aggregate2);
             var ex = Assert.Throws<Exception>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                $"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted.",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo($"AggregateConfiguration 'UnitTestAggregate2' already uses 'Patient Index Table:cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1'. Only one patient index table join is permitted."));
         }
         finally
         {
@@ -147,8 +144,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         try
         {
             var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate1));
-            Assert.AreEqual("Cannot configure AggregateConfiguration UnitTestAggregate1 as a Join user to itself!",
-                ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Cannot configure AggregateConfiguration UnitTestAggregate1 as a Join user to itself!"));
         }
         finally
         {
@@ -168,9 +164,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         try
         {
             var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                "Cannot add user UnitTestAggregate2 because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo("Cannot add user UnitTestAggregate2 because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration"));
         }
         finally
         {
@@ -192,9 +187,8 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
         try
         {
             var ex = Assert.Throws<NotSupportedException>(() => joinable.AddUser(aggregate2));
-            Assert.AreEqual(
-                "Cannot configure AggregateConfiguration UnitTestAggregate2 as join user because it does not contain exactly 1 IsExtractionIdentifier dimension",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo("Cannot configure AggregateConfiguration UnitTestAggregate2 as join user because it does not contain exactly 1 IsExtractionIdentifier dimension"));
         }
         finally
         {
@@ -222,14 +216,14 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
 
                 //can read at least one row
-                Assert.IsTrue(dbReader.Read());
+                Assert.That(dbReader.Read());
             }
 
             var expectedTableAlias = $"ix{joinable2.ID}";
 
             //after joinables
-            Assert.AreEqual(
-                string.Format(
+            Assert.That(
+builder.SQL, Is.EqualTo(string.Format(
                     @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
 distinct
@@ -245,7 +239,7 @@ LEFT Join (
 	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 ){0}
 on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.chi", expectedTableAlias,
-                    cohortIdentificationConfiguration.ID), builder.SQL);
+                    cohortIdentificationConfiguration.ID)));
         }
         finally
         {
@@ -305,13 +299,13 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                 using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
 
                 //can read at least one row
-                Assert.IsTrue(dbReader.Read());
+                Assert.That(dbReader.Read());
             }
 
 
             //after joinables
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"/*cic_{1}_UnitTestAggregate1*/
 SELECT
@@ -338,7 +332,7 @@ WHERE
 (
 /*Within 1 year of event*/
 ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].dtCreated)) <= 1
-)", expectedTableAlias, cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.SQL));
+)", expectedTableAlias, cohortIdentificationConfiguration.ID))));
         }
         finally
         {
@@ -430,7 +424,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
             Console.WriteLine(
                 "//////////////////////////////////////////////END COMPARISON//////////////////////////////////////////////");
 
-            Assert.AreEqual(builderSql, cloneBuilderSql);
+            Assert.That(cloneBuilderSql, Is.EqualTo(builderSql));
 
 
             ////////////////Cleanup Database//////////////////////////////
@@ -525,14 +519,14 @@ ABS(DATEDIFF(year, {0}.dtCreated, [" + TestDatabaseNames.Prefix + @"ScratchArea]
                     using var dbReader = new SqlCommand(builder.SQL, con).ExecuteReader();
 
                     //can read at least one row
-                    Assert.IsTrue(dbReader.Read());
+                    Assert.That(dbReader.Read());
                 }
 
                 var expectedTableAlias = $"ix{joinable2.ID}";
 
                 //after joinables
-                Assert.AreEqual(
-                    CollapseWhitespace(
+                Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                         string.Format(
                             @"/*cic_{2}_UnitTestAggregate1*/
 SELECT
@@ -550,7 +544,7 @@ on [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi] = {0}.c
                             aggregate2.ID, //{1}
                             cohortIdentificationConfiguration.ID, //{2}
                             queryCachingDatabaseName) //{3}
-                    ), CollapseWhitespace(builder.SQL));
+                    )));
             }
             finally
             {

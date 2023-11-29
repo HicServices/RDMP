@@ -16,12 +16,12 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
     public void TestDeletingACatalogue_NoneInDbIsFine()
     {
         var prev = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
-        Assert.IsEmpty(prev);
+        Assert.That(prev, Is.Empty);
 
-        Assert.AreEqual(0, Run("delete", "Catalogue:bob"));
+        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
 
         var now = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
-        Assert.IsEmpty(now);
+        Assert.That(now, Is.Empty);
     }
 
     [Test]
@@ -30,8 +30,8 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var cata = WhenIHaveA<Catalogue>();
         cata.Name = "bob";
 
-        Assert.AreEqual(0, Run("delete", "Catalogue:bob"));
-        Assert.IsFalse(cata.Exists());
+        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
+        Assert.That(cata.Exists(), Is.False);
     }
 
     [Test]
@@ -40,10 +40,10 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var cata = WhenIHaveA<Catalogue>();
         cata.Name = "ffff";
 
-        Assert.AreEqual(0, Run("delete", "Catalogue:bob"));
+        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
 
         // should not have been deleted because name does not match what is sought to be deleted
-        Assert.IsTrue(cata.Exists());
+        Assert.That(cata.Exists());
 
         //cleanup
         cata.DeleteInDatabase();
@@ -59,8 +59,7 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         // delete all catalogues
         var ex = Assert.Throws<Exception>(() => Run("delete", "Catalogue"));
 
-        Assert.AreEqual(ex.Message,
-            "Allow delete many is false but multiple objects were matched for deletion (Mycata,Mycata)");
+        Assert.That(ex?.Message, Is.EqualTo("Allow delete many is false but multiple objects were matched for deletion (Mycata,Mycata)"));
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
@@ -74,10 +73,10 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var c2 = WhenIHaveA<Catalogue>();
 
         // delete all catalogues
-        Assert.AreEqual(0, Run("delete", "Catalogue", "true"));
+        Assert.That(Run("delete", "Catalogue", "true"), Is.EqualTo(0));
 
-        Assert.IsFalse(c1.Exists());
-        Assert.IsFalse(c2.Exists());
+        Assert.That(c1.Exists(), Is.False);
+        Assert.That(c2.Exists(), Is.False);
     }
 
     [Test]
@@ -88,9 +87,8 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         // delete all catalogues
         var ex = Assert.Throws<Exception>(() => Run("delete", "Catalogue", "FLIBBLE!"));
 
-        Assert.AreEqual(
-            "Expected parameter at index 1 to be a System.Boolean (for parameter 'deleteMany') but it was FLIBBLE!",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Expected parameter at index 1 to be a System.Boolean (for parameter 'deleteMany') but it was FLIBBLE!"));
 
         c1.DeleteInDatabase();
     }

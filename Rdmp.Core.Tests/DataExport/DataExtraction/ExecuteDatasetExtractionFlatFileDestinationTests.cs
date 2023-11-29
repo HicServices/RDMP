@@ -46,13 +46,13 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
-        Assert.IsNotNull(dest.OutputFile);
+        Assert.That(dest.OutputFile, Is.Not.Null);
         FileAssert.Exists(dest.OutputFile);
 
-        Assert.AreEqual(
-            lotsOfDecimalPlaces
+        Assert.That(
+File.ReadAllText(dest.OutputFile), Is.EqualTo(lotsOfDecimalPlaces
                 ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
-                : $"Floats{Environment.NewLine}3.14{Environment.NewLine}", File.ReadAllText(dest.OutputFile));
+                : $"Floats{Environment.NewLine}3.14{Environment.NewLine}"));
 
         dt.Dispose();
     }

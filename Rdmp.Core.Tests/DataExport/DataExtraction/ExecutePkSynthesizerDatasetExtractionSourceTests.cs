@@ -88,7 +88,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
     }
 
     [Test]
@@ -108,7 +108,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
 
         Database.ExpectTable("SimpleLookup").Drop();
         Database.ExpectTable("SimpleJoin").Drop();
@@ -132,7 +132,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
 
         Database.ExpectTable("SimpleLookup").Drop();
     }

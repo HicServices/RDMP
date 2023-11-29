@@ -49,10 +49,10 @@ public class TableInfoSynchronizerTests : DatabaseTests
     [Test]
     public void SynchronizationTests_NoChanges()
     {
-        Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
+        Assert.That(tableInfoCreated.GetRuntimeName(), Is.EqualTo(TABLE_NAME));
 
         var synchronizer = new TableInfoSynchronizer(tableInfoCreated);
-        Assert.AreEqual(true, synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
+        Assert.That(synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet), Is.EqualTo(true));
     }
 
     [Test]
@@ -60,7 +60,7 @@ public class TableInfoSynchronizerTests : DatabaseTests
     [TestCase(false)]
     public void SynchronizationTests_ColumnDropped(bool acceptChanges)
     {
-        Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
+        Assert.That(tableInfoCreated.GetRuntimeName(), Is.EqualTo(TABLE_NAME));
 
         var table = _database.ExpectTable(TABLE_NAME);
         var colToDrop = table.DiscoverColumn("Address");
@@ -71,13 +71,13 @@ public class TableInfoSynchronizerTests : DatabaseTests
         if (acceptChanges)
         {
             //accept changes should result in a synchronized table
-            Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(1, tableInfoCreated.ColumnInfos.Length); //should only be 1 remaining
+            Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+            Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(1)); //should only be 1 remaining
         }
         else
         {
             var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("The ColumnInfo Address no longer appears in the live table.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("The ColumnInfo Address no longer appears in the live table."));
         }
     }
 
@@ -98,13 +98,13 @@ public class TableInfoSynchronizerTests : DatabaseTests
         if (acceptChanges)
         {
             //accept changes should result in a synchronized table
-            Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-            Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length); //should 3 now
+            Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+            Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
         }
         else
         {
             var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("The following columns are missing from the TableInfo:Birthday", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("The following columns are missing from the TableInfo:Birthday"));
         }
     }
 
@@ -118,9 +118,9 @@ public class TableInfoSynchronizerTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual(TABLE_NAME, cata.Name);
-            Assert.AreEqual(2, cataItems.Length);
-            Assert.AreEqual(2, extractionInformations.Length);
+            Assert.That(cata.Name, Is.EqualTo(TABLE_NAME));
+            Assert.That(cataItems, Has.Length.EqualTo(2));
+            Assert.That(extractionInformations, Has.Length.EqualTo(2));
 
             using (var con = _server.GetConnection())
             {
@@ -133,20 +133,19 @@ public class TableInfoSynchronizerTests : DatabaseTests
             if (acceptChanges)
             {
                 //accept changes should result in a synchronized table
-                Assert.AreEqual(true, synchronizer.Synchronize(new AcceptAllCheckNotifier()));
-                Assert.AreEqual(3, tableInfoCreated.ColumnInfos.Length); //should 3 now
-                Assert.AreEqual(3, cata.CatalogueItems.Length); //should 3 now
-                Assert.AreEqual(3, cata.GetAllExtractionInformation(ExtractionCategory.Any).Length); //should 3 now
+                Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+                Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
+                Assert.That(cata.CatalogueItems, Has.Length.EqualTo(3)); //should 3 now
+                Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any), Has.Length.EqualTo(3)); //should 3 now
 
-                Assert.AreEqual(1,
-                    cata.GetAllExtractionInformation(ExtractionCategory.Any)
-                        .Count(e => e.SelectSQL.Contains("Birthday")));
-                Assert.AreEqual(1, cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")));
+                Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any)
+                        .Count(e => e.SelectSQL.Contains("Birthday")), Is.EqualTo(1));
+                Assert.That(cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")), Is.EqualTo(1));
             }
             else
             {
                 var ex = Assert.Throws<Exception>(() => synchronizer.Synchronize(ThrowImmediatelyCheckNotifier.Quiet));
-                Assert.AreEqual("The following columns are missing from the TableInfo:Birthday", ex.Message);
+                Assert.That(ex.Message, Is.EqualTo("The following columns are missing from the TableInfo:Birthday"));
             }
         }
         finally

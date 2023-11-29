@@ -64,18 +64,17 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
             _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.IndexedExtractionIdentifierList);
 
 
-        Assert.AreEqual($"IndexedExtractionIdentifierList_AggregateConfiguration{_config.ID}",
-            resultsTableName.GetRuntimeName());
+        Assert.That(resultsTableName.GetRuntimeName(), Is.EqualTo($"IndexedExtractionIdentifierList_AggregateConfiguration{_config.ID}"));
 
         var table = DataAccessPortal
             .ExpectDatabase(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing)
             .ExpectTable(resultsTableName.GetRuntimeName());
 
-        Assert.IsTrue(table.Exists());
+        Assert.That(table.Exists());
         var col = table.DiscoverColumn("MyCol");
 
-        Assert.IsNotNull(col);
-        Assert.AreEqual("varchar(10)", col.DataType.SQLType);
+        Assert.That(col, Is.Not.Null);
+        Assert.That(col.DataType.SQLType, Is.EqualTo("varchar(10)"));
 
         using (var con = DataAccessPortal
                    .ExpectServer(QueryCachingDatabaseServer, DataAccessContext.InternalDataProcessing).GetConnection())
@@ -87,15 +86,15 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
                 (SqlConnection)con);
             da.Fill(dt2);
 
-            Assert.AreEqual(dt.Rows.Count, dt2.Rows.Count);
+            Assert.That(dt2.Rows, Has.Count.EqualTo(dt.Rows.Count));
 
             con.Close();
         }
 
-        Assert.IsNotNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
-            SomeComplexBitOfSqlCode));
-        Assert.IsNull(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
-            "select name,height,scalecount from fish"));
+        Assert.That(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
+            SomeComplexBitOfSqlCode), Is.Not.Null);
+        Assert.That(_manager.GetLatestResultsTable(_config, AggregateOperation.IndexedExtractionIdentifierList,
+            "select name,height,scalecount from fish"), Is.Null);
     }
 
 
@@ -110,7 +109,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
         var ex = Assert.Throws<Exception>(() =>
             _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification,
                 30)));
-        Assert.IsTrue(ex.Message.Contains("primary key"));
+        Assert.That(ex.Message.Contains("primary key"));
     }
 
     [Test]
@@ -129,7 +128,7 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
 
         var ex = Assert.Throws<NotSupportedException>(() =>
             _manager.CommitResults(new CacheCommitIdentifierList(_config, sql, dt, _myColSpecification, 30)));
-        Assert.IsTrue(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
+        Assert.That(ex.Message.Contains("This is referred to as Inception Caching and isn't allowed"));
     }
 
     [Test]
@@ -159,9 +158,9 @@ public class CachedAggregateConfigurationResultsManagerTests : QueryCachingDatab
             da.Fill(dt2);
         }
 
-        Assert.AreEqual(2, dt2.Rows.Count);
-        Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010101"));
-        Assert.IsTrue(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010102"));
+        Assert.That(dt2.Rows, Has.Count.EqualTo(2));
+        Assert.That(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010101"));
+        Assert.That(dt2.Rows.Cast<DataRow>().Any(r => (string)r[0] == "0101010102"));
     }
 
     private const string SomeComplexBitOfSqlCode =

@@ -56,8 +56,8 @@ public class CredentialsTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual("bob", newCredentials.Name);
-            Assert.AreNotEqual(0, newCredentials.ID);
+            Assert.That(newCredentials.Name, Is.EqualTo("bob"));
+            Assert.That(newCredentials.ID, Is.Not.EqualTo(0));
         }
         finally
         {
@@ -79,15 +79,15 @@ public class CredentialsTests : DatabaseTests
 
         var newCopy = CatalogueRepository.GetAllObjects<DataAccessCredentials>()
             .SingleOrDefault(c => c.Username == "myusername");
-        Assert.IsNotNull(newCopy);
+        Assert.That(newCopy, Is.Not.Null);
 
         try
         {
-            Assert.NotNull(newCopy);
-            Assert.AreEqual(newCredentials.ID, newCopy.ID);
-            Assert.AreEqual(newCredentials.Username, newCopy.Username);
-            Assert.AreEqual(newCredentials.GetDecryptedPassword(), newCopy.GetDecryptedPassword());
-            Assert.AreEqual(newCredentials.Password, newCopy.Password);
+            Assert.That(newCopy, Is.Not.Null);
+            Assert.That(newCopy.ID, Is.EqualTo(newCredentials.ID));
+            Assert.That(newCopy.Username, Is.EqualTo(newCredentials.Username));
+            Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo(newCredentials.GetDecryptedPassword()));
+            Assert.That(newCopy.Password, Is.EqualTo(newCredentials.Password));
         }
         finally
         {
@@ -114,7 +114,7 @@ public class CredentialsTests : DatabaseTests
 
             //attempt to request ANY credentials
             var ex = Assert.Throws<Exception>(() => tableInfo.GetCredentialsIfExists(DataAccessContext.Any));
-            Assert.AreEqual("You cannot ask for any credentials, you must supply a usage context.", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("You cannot ask for any credentials, you must supply a usage context."));
         }
         finally
         {
@@ -143,11 +143,11 @@ public class CredentialsTests : DatabaseTests
 
             //because the credential is liscenced to be used under ANY context, you can make requests under any of the specific contexts and be served the Any result
             var creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            Assert.NotNull(creds2);
+            Assert.That(creds2, Is.Not.Null);
             creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataExport);
-            Assert.NotNull(creds2);
+            Assert.That(creds2, Is.Not.Null);
             creds2 = tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad);
-            Assert.NotNull(creds2);
+            Assert.That(creds2, Is.Not.Null);
         }
         finally
         {
@@ -178,7 +178,7 @@ public class CredentialsTests : DatabaseTests
             tableInfo.SetCredentials(creds2, DataAccessContext.Any);
 
 
-            Assert.AreEqual(creds, tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad));
+            Assert.That(tableInfo.GetCredentialsIfExists(DataAccessContext.DataLoad), Is.EqualTo(creds));
         }
         finally
         {
@@ -201,14 +201,14 @@ public class CredentialsTests : DatabaseTests
             originalCredentials.SaveToDatabase();
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
-            Assert.AreEqual(originalCredentials.Name, newCopy.Name);
-            Assert.AreEqual(originalCredentials.Username, newCopy.Username);
-            Assert.AreEqual(originalCredentials.Password, newCopy.Password);
+            Assert.That(newCopy.Name, Is.EqualTo(originalCredentials.Name));
+            Assert.That(newCopy.Username, Is.EqualTo(originalCredentials.Username));
+            Assert.That(newCopy.Password, Is.EqualTo(originalCredentials.Password));
 
             //test overridden Equals
-            Assert.AreEqual(originalCredentials, newCopy);
+            Assert.That(newCopy, Is.EqualTo(originalCredentials));
             originalCredentials.Password = "fish";
-            Assert.AreEqual(originalCredentials, newCopy); //they are still equal because IDs are the same
+            Assert.That(newCopy, Is.EqualTo(originalCredentials)); //they are still equal because IDs are the same
         }
         finally
         {
@@ -236,7 +236,7 @@ public class CredentialsTests : DatabaseTests
             //Go via TableInfo and get credentials
             var creds2 =
                 (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            Assert.AreEqual(creds2.Name, creds.Name);
+            Assert.That(creds.Name, Is.EqualTo(creds2.Name));
         }
         finally
         {
@@ -262,9 +262,8 @@ public class CredentialsTests : DatabaseTests
 
             var ex = Assert.Throws<CredentialsInUseException>(creds
                 .DeleteInDatabase); //the bit that fails (because tables are there)
-            Assert.AreEqual(
-                "Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo("Cannot delete credentials bob because it is in use by one or more TableInfo objects(Dependency1,Dependency2)"));
         }
         finally
         {
@@ -293,8 +292,8 @@ public class CredentialsTests : DatabaseTests
         var TablesThatUseCredential =
             creds.GetAllTableInfosThatUseThis()[DataAccessContext.InternalDataProcessing].ToArray();
 
-        Assert.Contains(tableInfo1, TablesThatUseCredential);
-        Assert.Contains(tableInfo2, TablesThatUseCredential);
+        Assert.That(TablesThatUseCredential, Does.Contain(tableInfo1));
+        Assert.That(TablesThatUseCredential, Does.Contain(tableInfo2));
 
         tableInfo1.DeleteInDatabase();
         tableInfo2.DeleteInDatabase();
@@ -325,8 +324,8 @@ public class CredentialsTests : DatabaseTests
                 Password = "pass"
             };
 
-            Assert.AreNotEqual("pass", cred.Password);
-            Assert.AreEqual("pass", cred.GetDecryptedPassword());
+            Assert.That(cred.Password, Is.Not.EqualTo("pass"));
+            Assert.That(cred.GetDecryptedPassword(), Is.EqualTo("pass"));
 
 
             cred.SaveToDatabase();
@@ -336,10 +335,10 @@ public class CredentialsTests : DatabaseTests
             var constr =
                 (SqlConnectionStringBuilder)c
                     .GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).Builder;
-            Assert.AreEqual("myserver", constr.DataSource);
-            Assert.False(constr.IntegratedSecurity);
-            Assert.AreEqual("bob", constr.UserID);
-            Assert.AreEqual("pass", constr.Password);
+            Assert.That(constr.DataSource, Is.EqualTo("myserver"));
+            Assert.That(constr.IntegratedSecurity, Is.False);
+            Assert.That(constr.UserID, Is.EqualTo("bob"));
+            Assert.That(constr.Password, Is.EqualTo("pass"));
         }
         finally
         {
@@ -362,8 +361,8 @@ public class CredentialsTests : DatabaseTests
 
 
         var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
-        Assert.AreEqual(creds, manager.GetCredentialByUsernameAndPasswordIfExists("Root", null));
-        Assert.AreEqual(creds, manager.GetCredentialByUsernameAndPasswordIfExists("Root", ""));
+        Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", null), Is.EqualTo(creds));
+        Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", ""), Is.EqualTo(creds));
     }
 
     [Test]
@@ -379,9 +378,9 @@ public class CredentialsTests : DatabaseTests
         var cred = credentialsFactory.Create(t1, "blarg", "flarg", DataAccessContext.Any);
         var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
 
-        Assert.AreEqual(credCount + 1, CatalogueRepository.GetAllObjects<DataAccessCredentials>().Length);
+        Assert.That(CatalogueRepository.GetAllObjects<DataAccessCredentials>(), Has.Length.EqualTo(credCount + 1));
 
-        Assert.AreEqual(cred, cred2,
+        Assert.That(cred2, Is.EqualTo(cred),
             $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
     }
 }

@@ -19,24 +19,24 @@ public class CohortTests : TestsRequiringACohort
     public void TestOverridingReleaseIdentifier()
     {
         //get cohort without override
-        Assert.IsNull(_extractableCohort.OverrideReleaseIdentifierSQL);
+        Assert.That(_extractableCohort.OverrideReleaseIdentifierSQL, Is.Null);
 
         //should match global release identifier (from its source because there is no override)
-        Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
+        Assert.That(_extractableCohort.GetReleaseIdentifier(true), Is.EqualTo("ReleaseID"));
 
         //appy override
         _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
         _extractableCohort.SaveToDatabase();
 
         //should now match override
-        Assert.AreEqual("Fish", _extractableCohort.GetReleaseIdentifier());
+        Assert.That(_extractableCohort.GetReleaseIdentifier(), Is.EqualTo("Fish"));
 
         //now set it back to null (not overriding)
         _extractableCohort.OverrideReleaseIdentifierSQL = null;
         _extractableCohort.SaveToDatabase();
 
         //now check that we are back to the original release identifier
-        Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
+        Assert.That(_extractableCohort.GetReleaseIdentifier(true), Is.EqualTo("ReleaseID"));
     }
 
     [Test]
@@ -45,15 +45,15 @@ public class CohortTests : TestsRequiringACohort
         var failures = new RecordAllFailures();
         failures.FailureMessages.Add("Hi there Thomas, How's it going?");
 
-        Assert.IsFalse(failures.AnyFailMessageLike("Carmageddon"));
+        Assert.That(failures.AnyFailMessageLike("Carmageddon"), Is.False);
 
-        Assert.IsTrue(failures.AnyFailMessageLike("Thomas"));
+        Assert.That(failures.AnyFailMessageLike("Thomas"));
 
-        Assert.IsTrue(failures.AnyFailMessageLike("Thomas", "going"));
-        Assert.IsTrue(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
-        Assert.IsTrue(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
+        Assert.That(failures.AnyFailMessageLike("Thomas", "going"));
+        Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
+        Assert.That(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
 
-        Assert.IsFalse(failures.AnyFailMessageLike("Thomas", "going", "Hi", "Fear the babadook"));
+        Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi", "Fear the babadook"), Is.False);
     }
 
     private class RecordAllFailures : ICheckNotifier

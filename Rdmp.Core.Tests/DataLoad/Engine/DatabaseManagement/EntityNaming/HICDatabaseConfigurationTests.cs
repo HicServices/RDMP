@@ -46,25 +46,25 @@ internal class HICDatabaseConfigurationTests : UnitTests
 
         var result = conf.ExpectTables(job, LoadBubble.Raw, testLookup).ToArray();
 
-        Assert.AreEqual(testLookup ? 2 : 1, result.Length);
-        StringAssert.AreEqualIgnoringCase("mydb_RAW", result[0].Database.GetRuntimeName());
-        StringAssert.AreEqualIgnoringCase("My_Table", result[0].GetRuntimeName());
+        Assert.That(result, Has.Length.EqualTo(testLookup ? 2 : 1));
+        Assert.That(result[0].Database.GetRuntimeName(), Is.EqualTo("mydb_RAW").IgnoreCase);
+        Assert.That(result[0].GetRuntimeName(), Is.EqualTo("My_Table").IgnoreCase);
 
         if (testLookup)
         {
-            StringAssert.AreEqualIgnoringCase("mydb_RAW", result[1].Database.GetRuntimeName());
-            StringAssert.AreEqualIgnoringCase("MyHeartyLookup", result[1].GetRuntimeName());
+            Assert.That(result[1].Database.GetRuntimeName(), Is.EqualTo("mydb_RAW").IgnoreCase);
+            Assert.That(result[1].GetRuntimeName(), Is.EqualTo("MyHeartyLookup").IgnoreCase);
         }
 
         result = conf.ExpectTables(job, LoadBubble.Staging, testLookup).ToArray();
-        Assert.AreEqual(testLookup ? 2 : 1, result.Length);
-        StringAssert.AreEqualIgnoringCase("DLE_STAGING", result[0].Database.GetRuntimeName());
-        StringAssert.AreEqualIgnoringCase("mydb_My_Table_STAGING", result[0].GetRuntimeName());
+        Assert.That(result, Has.Length.EqualTo(testLookup ? 2 : 1));
+        Assert.That(result[0].Database.GetRuntimeName(), Is.EqualTo("DLE_STAGING").IgnoreCase);
+        Assert.That(result[0].GetRuntimeName(), Is.EqualTo("mydb_My_Table_STAGING").IgnoreCase);
 
         if (testLookup)
         {
-            StringAssert.AreEqualIgnoringCase("DLE_STAGING", result[1].Database.GetRuntimeName());
-            StringAssert.AreEqualIgnoringCase("mydb_MyHeartyLookup_STAGING", result[1].GetRuntimeName());
+            Assert.That(result[1].Database.GetRuntimeName(), Is.EqualTo("DLE_STAGING").IgnoreCase);
+            Assert.That(result[1].GetRuntimeName(), Is.EqualTo("mydb_MyHeartyLookup_STAGING").IgnoreCase);
         }
     }
 }

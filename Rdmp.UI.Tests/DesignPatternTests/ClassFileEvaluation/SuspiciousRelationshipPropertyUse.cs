@@ -198,68 +198,7 @@ public class SuspiciousRelationshipPropertyUse
         foreach (var fail in _fails)
             Console.WriteLine(fail);
 
-        Assert.AreEqual(0, _fails.Count);
-    }
-
-    private static void AnalyseRelationshipPropertyUsages()
-    {
-        foreach (var t in MEF.GetAllTypes())
-        {
-            if (!t.IsClass)
-                continue;
-
-            //don't worry about the ToString method on classes that are IInjectKnown
-            var toStringMethod = t.GetMethod("ToString", Type.EmptyTypes);
-
-            //it doesn't have any ToString methods!
-            if (toStringMethod == null)
-                continue;
-
-            if (toStringMethod.DeclaringType == typeof(object))
-                continue;
-
-            if (toStringMethod.DeclaringType == typeof(MarshalByRefObject))
-                continue;
-            /*
-            IList<Instruction> instructions = null;
-            try
-            {
-                instructions = toStringMethod.GetInstructions();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
-
-            if (instructions != null)
-                foreach (Instruction instruction in instructions)
-                {
-                    MethodInfo methodInfo = instruction.Operand as MethodInfo;
-
-                    if (methodInfo != null)
-                    {
-                        //is it a call to property
-                        PropertyInfo prop;
-
-                        if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
-                        {
-
-                            //It doesn't look injected but it is
-                            if(t == typeof(JoinInfo))
-                                continue;
-
-                            //if we are injectable for it
-                    if( t.GetInterfaces().Any(x =>
-                          x.IsGenericType &&
-                          x.GetGenericTypeDefinition() == typeof(IInjectKnown<>) &&
-                          x.GetGenericArguments()[0] == prop.PropertyType))
-                        continue;
-
-                            _fails.Add("FAIL: ToString method in Type " + t.FullName + " uses Relationship PropertyInfo " + prop.Name);
-                        }
-                    }
-                }*/
-        }
+        Assert.That(_fails, Is.Empty);
     }
 
 

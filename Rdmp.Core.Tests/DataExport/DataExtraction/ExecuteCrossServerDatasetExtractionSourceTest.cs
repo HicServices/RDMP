@@ -29,8 +29,8 @@ public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExt
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
         //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
-{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
+        Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01"));
 
         File.Delete(r.OutputFile);
     }
@@ -122,7 +122,7 @@ WHERE
             var hacked = s.HackExtractionSQL(_request.QueryBuilder.SQL,
                 ThrowImmediatelyDataLoadEventListener.QuietPicky);
 
-            Assert.AreEqual(expectedOutput.Trim(), hacked.Trim());
+            Assert.That(hacked.Trim(), Is.EqualTo(expectedOutput.Trim()));
         }
         finally
         {

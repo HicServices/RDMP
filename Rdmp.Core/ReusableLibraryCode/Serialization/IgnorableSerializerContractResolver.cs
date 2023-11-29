@@ -43,12 +43,11 @@ public class IgnorableSerializerContractResolver : DefaultContractResolver
     /// <param name="type"></param>
     /// <param name="propertyName"></param>
     /// <returns></returns>
-    public bool IsIgnored(Type type, string propertyName)
+    private bool IsIgnored(Type type, string propertyName)
     {
-        if (!Ignores.ContainsKey(type)) return false;
-
-        // if no properties provided, ignore the type entirely
-        return Ignores[type].Count == 0 || Ignores[type].Contains(propertyName);
+        return Ignores.TryGetValue(type, out var ignore) && (
+            // if no properties provided, ignore the type entirely
+            ignore.Count == 0 || ignore.Contains(propertyName));
     }
 
     /// <summary>

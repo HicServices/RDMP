@@ -18,7 +18,11 @@
         </PackageReference>
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
         <PackageReference Include="NSubstitute" Version="5.1.0" />
-        <PackageReference Include="NUnit" Version="4.0.0" />
+        <PackageReference Include="NUnit" Version="3.14.0" />
+        <PackageReference Include="NUnit.Analyzers" Version="3.10.0">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="NUnit3TestAdapter" Version="4.5.0">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -26,8 +30,7 @@
         <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference
-            Include="..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
+        <ProjectReference Include="..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
         <ProjectReference Include="..\Rdmp.UI\Rdmp.UI.csproj" />
         <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
     </ItemGroup>

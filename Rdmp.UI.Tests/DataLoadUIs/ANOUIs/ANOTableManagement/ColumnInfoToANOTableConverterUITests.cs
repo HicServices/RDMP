@@ -18,7 +18,7 @@ public class ColumnInfoToANOTableConverterUITests : UITests
     {
         var o = WhenIHaveA<ColumnInfo>();
         var ui = AndLaunch<ColumnInfoToANOTableConverterUI>(o);
-        Assert.IsNotNull(ui);
+        Assert.That(ui, Is.Not.Null);
         AssertErrorWasShown(ExpectedErrorType.KilledForm,
             "Could not get connection string because Server was null on dataAccessPoint 'My_Table'");
         //AssertNoErrors(ExpectedErrorType.Fatal);

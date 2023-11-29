@@ -22,8 +22,8 @@ internal class ForEachUITests : UITests
     {
         ForEachUI(ui =>
         {
-            Assert.NotNull(ui);
-            Assert.IsFalse(string.IsNullOrWhiteSpace(ui.GetTabName()));
+            Assert.That(ui, Is.Not.Null);
+            Assert.That(string.IsNullOrWhiteSpace(ui.GetTabName()), Is.False);
         });
     }
 }

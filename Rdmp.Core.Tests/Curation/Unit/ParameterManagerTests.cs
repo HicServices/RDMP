@@ -36,13 +36,13 @@ public class ParameterManagerTests
         var final = pm3.GetFinalResolvedParametersList().ToArray();
 
         //the final composite parameters should have a rename in them
-        Assert.AreEqual("@fish", final[0].ParameterName);
-        Assert.AreEqual("@fish_2", final[1].ParameterName);
+        Assert.That(final[0].ParameterName, Is.EqualTo("@fish"));
+        Assert.That(final[1].ParameterName, Is.EqualTo("@fish_2"));
 
-        Assert.IsEmpty(renames1);
+        Assert.That(renames1, Is.Empty);
 
-        Assert.AreEqual("@fish", renames2.Single().Key);
-        Assert.AreEqual("@fish_2", renames2.Single().Value);
+        Assert.That(renames2.Single().Key, Is.EqualTo("@fish"));
+        Assert.That(renames2.Single().Value, Is.EqualTo("@fish_2"));
     }
 
     [Test]
@@ -63,15 +63,15 @@ public class ParameterManagerTests
 
         var overrides = pm.GetOverridenParameters().ToArray();
 
-        Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
-        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter), overridingParameter);
+        Assert.That(pm.GetOverrideIfAnyFor(overridingParameter), Is.Null);
+        Assert.That(overridingParameter, Is.EqualTo(pm.GetOverrideIfAnyFor(myParameter)));
 
-        Assert.AreEqual(1, overrides.Length);
-        Assert.AreEqual(myParameter, overrides[0]);
+        Assert.That(overrides, Has.Length.EqualTo(1));
+        Assert.That(overrides[0], Is.EqualTo(myParameter));
         var final = pm.GetFinalResolvedParametersList().ToArray();
 
-        Assert.AreEqual(1, final.Length);
-        Assert.AreEqual(overridingParameter, final[0]);
+        Assert.That(final, Has.Length.EqualTo(1));
+        Assert.That(final[0], Is.EqualTo(overridingParameter));
     }
 
     [Test]
@@ -88,11 +88,11 @@ public class ParameterManagerTests
 
         var parameters = pm.GetFinalResolvedParametersList().ToArray();
 
-        Assert.AreEqual(1, parameters.Length);
+        Assert.That(parameters, Has.Length.EqualTo(1));
 
         var final = parameters.Single();
-        Assert.AreEqual("@Fish", final.ParameterName);
-        Assert.AreEqual("3", final.Value);
+        Assert.That(final.ParameterName, Is.EqualTo("@Fish"));
+        Assert.That(final.Value, Is.EqualTo("3"));
     }
 
     [Test]
@@ -113,17 +113,17 @@ public class ParameterManagerTests
 
         var overrides = pm.GetOverridenParameters().ToArray();
 
-        Assert.IsNull(pm.GetOverrideIfAnyFor(overridingParameter));
-        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter1), overridingParameter);
-        Assert.AreEqual(pm.GetOverrideIfAnyFor(myParameter2), overridingParameter);
+        Assert.That(pm.GetOverrideIfAnyFor(overridingParameter), Is.Null);
+        Assert.That(overridingParameter, Is.EqualTo(pm.GetOverrideIfAnyFor(myParameter1)));
+        Assert.That(overridingParameter, Is.EqualTo(pm.GetOverrideIfAnyFor(myParameter2)));
 
-        Assert.AreEqual(2, overrides.Length);
-        Assert.AreEqual(myParameter1, overrides[0]);
-        Assert.AreEqual(myParameter2, overrides[1]);
+        Assert.That(overrides, Has.Length.EqualTo(2));
+        Assert.That(overrides[0], Is.EqualTo(myParameter1));
+        Assert.That(overrides[1], Is.EqualTo(myParameter2));
 
         var final = pm.GetFinalResolvedParametersList().ToArray();
-        Assert.AreEqual(1, final.Length);
-        Assert.AreEqual(overridingParameter, final[0]);
+        Assert.That(final, Has.Length.EqualTo(1));
+        Assert.That(final[0], Is.EqualTo(overridingParameter));
     }
 
     [Test]
@@ -133,15 +133,15 @@ public class ParameterManagerTests
             MicrosoftQuerySyntaxHelper.Instance);
         var sql = QueryBuilder.GetParameterDeclarationSQL(param);
 
-        Assert.AreEqual(@"/*I've got a lovely bunch of coconuts*/
+        Assert.That(sql, Is.EqualTo(@"/*I've got a lovely bunch of coconuts*/
 DECLARE @Fish as int;
 SET @Fish=3;
-", sql);
+"));
 
         var after = ConstantParameter.Parse(sql, MicrosoftQuerySyntaxHelper.Instance);
 
-        Assert.AreEqual(param.ParameterSQL, after.ParameterSQL);
-        Assert.AreEqual(param.Value, after.Value);
-        Assert.AreEqual(param.Comment, after.Comment);
+        Assert.That(after.ParameterSQL, Is.EqualTo(param.ParameterSQL));
+        Assert.That(after.Value, Is.EqualTo(param.Value));
+        Assert.That(after.Comment, Is.EqualTo(param.Comment));
     }
 }

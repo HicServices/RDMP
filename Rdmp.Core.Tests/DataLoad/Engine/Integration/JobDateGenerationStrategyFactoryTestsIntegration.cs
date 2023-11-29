@@ -61,7 +61,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
     {
         var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
             _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.IsTrue(ex.Message.StartsWith(
+        Assert.That(ex.Message.StartsWith(
             "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
     }
 
@@ -79,7 +79,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
             _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.IsTrue(ex.Message.StartsWith(
+        Assert.That(ex.Message.StartsWith(
             "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
     }
 
@@ -105,9 +105,8 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
             _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.AreEqual(
-            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has multiple cache DataProviders tasks (Cache1,Cache2), you are only allowed 1",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has multiple cache DataProviders tasks (Cache1,Cache2), you are only allowed 1"));
     }
 
     [Test]
@@ -135,7 +134,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         try
         {
             var ex = Assert.Throws<Exception>(() => _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-            Assert.AreEqual("CacheProgress MyTestCp does not have a Pipeline configured on it", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("CacheProgress MyTestCp does not have a Pipeline configured on it"));
         }
         finally
         {
@@ -167,9 +166,8 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         {
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-            Assert.AreEqual(
-                $"Caching has not begun for this CacheProgress ({_cp.ID}), so there is nothing to load and this strategy should not be used.",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo($"Caching has not begun for this CacheProgress ({_cp.ID}), so there is nothing to load and this strategy should not be used."));
         }
         finally
         {
@@ -205,10 +203,10 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         try
         {
             var strategy = _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet);
-            Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
+            Assert.That(strategy.GetType(), Is.EqualTo(typeof(SingleScheduleCacheDateTrackingStrategy)));
 
             var dates = strategy.GetDates(10, false);
-            Assert.AreEqual(0, dates.Count); //zero dates to load because no files in cache
+            Assert.That(dates, Is.Empty); //zero dates to load because no files in cache
 
             File.WriteAllText(Path.Combine(projDir.Cache.FullName, "2001-01-02.zip"),
                 "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
@@ -218,9 +216,9 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
                 "bobbobbobyobyobyobbzzztproprietarybitztreamzippy");
 
             strategy = _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet);
-            Assert.AreEqual(typeof(SingleScheduleCacheDateTrackingStrategy), strategy.GetType());
+            Assert.That(strategy.GetType(), Is.EqualTo(typeof(SingleScheduleCacheDateTrackingStrategy)));
             dates = strategy.GetDates(10, false);
-            Assert.AreEqual(3, dates.Count); //zero dates to load because no files in cache
+            Assert.That(dates, Has.Count.EqualTo(3)); //zero dates to load because no files in cache
         }
         finally
         {

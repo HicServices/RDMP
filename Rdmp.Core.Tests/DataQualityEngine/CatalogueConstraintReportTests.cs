@@ -51,7 +51,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var dqeRepository = GetDqeRepository(dbType);
 
         //there shouldn't be any lingering results in the database
-        Assert.IsNull(dqeRepository.GetMostRecentEvaluationFor(_catalogue));
+        Assert.That(dqeRepository.GetMostRecentEvaluationFor(_catalogue), Is.Null);
 
         //set some validation rules
         testData.catalogue.ValidatorXML = bulkTestDataValidation;
@@ -79,13 +79,13 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         if (testCancellingValidationEarly)
         {
-            Assert.IsTrue(
+            Assert.That(
                 listener.EventsReceivedBySender[report].Count(m => m.Exception is OperationCanceledException) == 1);
             testData.DeleteCatalogue();
             return;
         }
 
-        Assert.IsTrue(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
+        Assert.That(listener.EventsReceivedBySender[report].All(m => m.Exception == null),
             string.Join(Environment.NewLine,
                 listener.EventsReceivedBySender[report].Where(m => m.Exception != null)
                     .Select(m => m.Exception))); //all messages must have null exceptions
@@ -94,10 +94,10 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //get the results now
         var results = dqeRepository.GetMostRecentEvaluationFor(testData.catalogue);
 
-        Assert.IsNotNull(results);
+        Assert.That(results, Is.Not.Null);
 
         //the sum of all consequences across all data load run ids should be the record count
-        Assert.AreEqual(10000, results.RowStates.Sum(r => r.Missing + r.Invalid + r.Wrong + r.Correct));
+        Assert.That(results.RowStates.Sum(r => r.Missing + r.Invalid + r.Wrong + r.Correct), Is.EqualTo(10000));
 
         //there should be at least 5 data load run ids (should be around 12 actually - see BulkTestData but theoretically everyone could magically - all 10,000 into 5 decades - or even less but those statistics must be astronomical)
         Assert.GreaterOrEqual(results.RowStates.Length, 5);
@@ -108,10 +108,10 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         //Did it log?
         var logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
-        Assert.IsNotNull(log);
+        Assert.That(log, Is.Not.Null);
         Assert.GreaterOrEqual(log.StartTime, startTime);
-        Assert.AreEqual(0, log.Errors.Count);
-        Assert.AreEqual(numberOfRecordsToGenerate, log.TableLoadInfos.Single().Inserts);
+        Assert.That(log.Errors, Is.Empty);
+        Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(numberOfRecordsToGenerate));
 
         testData.DeleteCatalogue();
     }
@@ -126,7 +126,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var before = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
         //cannot run test because it didn't have a value to clear!
-        Assert.IsNotNull(before);
+        Assert.That(before, Is.Not.Null);
 
         //clear the default value
         defaults.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
@@ -136,10 +136,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
             var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             var e = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.IsTrue(
-                e?.Message.StartsWith(
-                    "Failed to setup logging of DQE runs")
-            );
+            Assert.That(
+                e?.Message, Does.StartWith("Failed to setup logging of DQE runs"));
         }
         finally
         {
@@ -154,7 +152,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var before = defaults.GetDefaultFor(PermissableDefaults.DQE);
 
         //cannot run test because it didn't have a value to clear!
-        Assert.IsNotNull(before);
+        Assert.That(before, Is.Not.Null);
 
         //clear the default value
         defaults.ClearDefault(PermissableDefaults.DQE);
@@ -164,10 +162,8 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
             var report = new CatalogueConstraintReport(_catalogue, SpecialFieldNames.DataLoadRunID);
 
             var e = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.IsTrue(
-                e?.Message.StartsWith(
-                    "Failed to create DQE Repository, possibly there is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager")
-            );
+            Assert.That(
+                e?.Message, Does.StartWith("Failed to create DQE Repository, possibly there is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager"));
         }
         finally
         {
@@ -183,10 +179,10 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         _catalogue.ValidatorXML = null;
 
         //it has no validator XML currently
-        Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
+        Assert.That(report.CatalogueSupportsReport(_catalogue), Is.False);
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("There is no ValidatorXML specified for the Catalogue TestTable", ex.Message);
+        Assert.That(ex.Message, Does.Contain("There is no ValidatorXML specified for the Catalogue TestTable"));
     }
 
     [Test]
@@ -196,11 +192,10 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         _catalogue.ValidatorXML = "fish";
         //it has no validator XML currently
-        Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
+        Assert.That(report.CatalogueSupportsReport(_catalogue), Is.False);
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator",
-            ex.Message);
+        Assert.That(ex.Message, Does.Contain("ValidatorXML for Catalogue TestTable could not be deserialized into a Validator"));
     }
 
     [Test]
@@ -210,11 +205,10 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         _catalogue.ValidatorXML = dodgyColumnXML;
         //it has no validator XML currently
-        Assert.IsFalse(report.CatalogueSupportsReport(_catalogue));
+        Assert.That(report.CatalogueSupportsReport(_catalogue), Is.False);
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Could not find a column in the extraction SQL that would match TargetProperty chi",
-            ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Could not find a column in the extraction SQL that would match TargetProperty chi"));
     }
 
     [Test]
@@ -232,14 +226,13 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var notifier = new ToMemoryCheckNotifier();
         report.Check(notifier);
 
-        Assert.AreEqual(CheckResult.Warning, notifier.GetWorst());
-        Assert.Contains("Found column in query builder columns which matches TargetProperty Name",
-            notifier.Messages.Select(m => m.Message).ToArray());
+        Assert.That(notifier.GetWorst(), Is.EqualTo(CheckResult.Warning));
+        Assert.That(notifier.Messages.Select(m => m.Message).ToArray(), Does.Contain("Found column in query builder columns which matches TargetProperty Name"));
 
-        Assert.IsTrue(report.CatalogueSupportsReport(_catalogue));
+        Assert.That(report.CatalogueSupportsReport(_catalogue));
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.IsTrue(ex.Message ==
+        Assert.That(ex.Message ==
                       "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
     }
 

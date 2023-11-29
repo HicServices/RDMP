@@ -24,9 +24,9 @@ internal class RowVerTest : DatabaseTests
         var cata = new Catalogue(CatalogueRepository, "FFFF");
 
         //When we get all the Catalogues we should include cata
-        Assert.Contains(cata, CatalogueRepository.GetAllObjects<Catalogue>());
-        Assert.AreEqual(cata, CatalogueRepository.GetAllObjects<Catalogue>()[0]);
-        Assert.AreNotSame(cata, CatalogueRepository.GetAllObjects<Catalogue>()[0]);
+        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>(), Does.Contain(cata));
+        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>()[0], Is.EqualTo(cata));
+        Assert.That(CatalogueRepository.GetAllObjects<Catalogue>()[0], Is.Not.SameAs(cata));
 
         //create a cache
         var rowVerCache = new RowVerCache<Catalogue>(CatalogueTableRepository);
@@ -35,10 +35,10 @@ internal class RowVerTest : DatabaseTests
         cata = rowVerCache.GetAllObjects()[0];
 
         //should return the same instance
-        Assert.AreSame(cata, rowVerCache.GetAllObjects()[0]);
+        Assert.That(rowVerCache.GetAllObjects()[0], Is.SameAs(cata));
 
         cata.DeleteInDatabase();
-        Assert.IsEmpty(rowVerCache.GetAllObjects());
+        Assert.That(rowVerCache.GetAllObjects(), Is.Empty);
 
         //create some catalogues
         new Catalogue(CatalogueRepository, "1");
@@ -52,25 +52,25 @@ internal class RowVerTest : DatabaseTests
         var cata2 = new Catalogue(CatalogueRepository, "dddd");
 
         //fresh fetch for this
-        Assert.Contains(cata2, rowVerCache.GetAllObjects());
-        Assert.IsFalse(rowVerCache.GetAllObjects().Contains(cata));
+        Assert.That(rowVerCache.GetAllObjects(), Does.Contain(cata2));
+        Assert.That(rowVerCache.GetAllObjects().Contains(cata), Is.False);
 
         //change a value in the background but first make sure that what the cache has is a Equal but not reference to cata2
-        Assert.IsFalse(rowVerCache.GetAllObjects().Any(o => ReferenceEquals(o, cata2)));
-        Assert.IsTrue(rowVerCache.GetAllObjects().Any(o => Equals(o, cata2)));
+        Assert.That(rowVerCache.GetAllObjects().Any(o => ReferenceEquals(o, cata2)), Is.False);
+        Assert.That(rowVerCache.GetAllObjects().Any(o => Equals(o, cata2)));
 
         cata2.Name = "boom";
         cata2.SaveToDatabase();
 
-        Assert.AreEqual(1, rowVerCache.GetAllObjects().Count(c => c.Name.Equals("boom")));
+        Assert.That(rowVerCache.GetAllObjects().Count(static c => c.Name.Equals("boom")), Is.EqualTo(1));
 
         cata2.Name = "vroom";
         cata2.SaveToDatabase();
 
-        Assert.AreEqual(1, rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")));
+        Assert.That(rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")), Is.EqualTo(1));
 
-        Assert.AreEqual(1, rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")));
+        Assert.That(rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")), Is.EqualTo(1));
 
-        Assert.IsFalse(rowVerCache.Broken);
+        Assert.That(rowVerCache.Broken, Is.False);
     }
 }

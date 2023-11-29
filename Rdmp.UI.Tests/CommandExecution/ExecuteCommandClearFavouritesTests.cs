@@ -19,15 +19,15 @@ internal class ExecuteCommandClearFavouritesTests : UITests
     {
         var cmd = new ExecuteCommandClearFavourites(ItemActivator);
 
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.AreEqualIgnoringCase("You do not have any Favourites", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("You do not have any Favourites").IgnoreCase);
 
         var myFavCatalogue = WhenIHaveA<Catalogue>();
 
         ItemActivator.FavouritesProvider.AddFavourite(this, myFavCatalogue);
 
         cmd = new ExecuteCommandClearFavourites(ItemActivator);
-        Assert.IsFalse(cmd.IsImpossible);
+        Assert.That(cmd.IsImpossible, Is.False);
     }
 
 
@@ -41,7 +41,7 @@ internal class ExecuteCommandClearFavouritesTests : UITests
         ItemActivator.FavouritesProvider.AddFavourite(this, myFavCatalogue);
         ItemActivator.FavouritesProvider.AddFavourite(this, mProject);
 
-        Assert.AreEqual(2, ItemActivator.FavouritesProvider.CurrentFavourites.Count);
+        Assert.That(ItemActivator.FavouritesProvider.CurrentFavourites, Has.Count.EqualTo(2));
 
         //when we say no to deleting them
         ItemActivator.YesNoResponse = false;
@@ -50,13 +50,13 @@ internal class ExecuteCommandClearFavouritesTests : UITests
         cmd.Execute();
 
         //they should not be deleted!
-        Assert.AreEqual(2, ItemActivator.FavouritesProvider.CurrentFavourites.Count);
+        Assert.That(ItemActivator.FavouritesProvider.CurrentFavourites, Has.Count.EqualTo(2));
 
         //when we say yes to deleting them
         ItemActivator.YesNoResponse = true;
         cmd.Execute();
 
         //they should not be deleted
-        Assert.IsEmpty(ItemActivator.FavouritesProvider.CurrentFavourites);
+        Assert.That(ItemActivator.FavouritesProvider.CurrentFavourites, Is.Empty);
     }
 }

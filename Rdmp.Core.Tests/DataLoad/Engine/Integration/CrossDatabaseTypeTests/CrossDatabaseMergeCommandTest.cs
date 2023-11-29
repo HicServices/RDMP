@@ -54,9 +54,9 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
 
         var toTbl = To.CreateTable("ToTable", dt);
 
-        Assert.IsTrue(toTbl.DiscoverColumn("Name").IsPrimaryKey);
-        Assert.IsTrue(toTbl.DiscoverColumn("Age").IsPrimaryKey);
-        Assert.IsFalse(toTbl.DiscoverColumn("Postcode").IsPrimaryKey);
+        Assert.That(toTbl.DiscoverColumn("Name").IsPrimaryKey);
+        Assert.That(toTbl.DiscoverColumn("Age").IsPrimaryKey);
+        Assert.That(toTbl.DiscoverColumn("Postcode").IsPrimaryKey, Is.False);
 
         dt.Rows.Clear();
 
@@ -102,7 +102,7 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         migrationHost.Migrate(job, new GracefulCancellationToken());
 
         var resultantDt = toTbl.GetDataTable();
-        Assert.AreEqual(7, resultantDt.Rows.Count);
+        Assert.That(resultantDt.Rows, Has.Count.EqualTo(7));
 
         AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");
         AssertRowEquals(resultantDt, "Chutney", 32, DBNull.Value);
@@ -119,17 +119,16 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         var log = archival.First();
 
 
-        Assert.AreEqual(dli.ID, log.ID);
-        Assert.AreEqual(2, log.TableLoadInfos.Single().Inserts);
-        Assert.AreEqual(3, log.TableLoadInfos.Single().Updates);
+        Assert.That(log.ID, Is.EqualTo(dli.ID));
+        Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(2));
+        Assert.That(log.TableLoadInfos.Single().Updates, Is.EqualTo(3));
     }
 
     private static void AssertRowEquals(DataTable resultantDt, string name, int age, object postcode)
     {
-        Assert.AreEqual(
-            1,
+        Assert.That(
             resultantDt.Rows.Cast<DataRow>().Count(r =>
-                Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)),
+                Equals(r["Name"], name) && Equals(r["Age"], age) && Equals(r["Postcode"], postcode)), Is.EqualTo(1),
             "Did not find expected record:" + string.Join(",", name, age, postcode));
     }
 }

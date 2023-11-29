@@ -24,8 +24,8 @@ public class StandardRegexTests : DatabaseTests
         var regex = new StandardRegex(CatalogueRepository);
         try
         {
-            Assert.IsNotNull(regex.ConceptName);
-            Assert.IsTrue(string.IsNullOrEmpty(regex.Description));
+            Assert.That(regex.ConceptName, Is.Not.Null);
+            Assert.That(string.IsNullOrEmpty(regex.Description));
 
             regex.ConceptName = "Fish";
             regex.Regex = "^(Fish)$";
@@ -36,9 +36,9 @@ public class StandardRegexTests : DatabaseTests
                 CatalogueStandardRegex = regex
             };
 
-            Assert.IsNull(constraint.Validate("Fish", null, null));
+            Assert.That(constraint.Validate("Fish", null, null), Is.Null);
             var failure = constraint.Validate("FishFingers", null, null);
-            Assert.IsNotNull(failure);
+            Assert.That(failure, Is.Not.Null);
         }
         finally
         {

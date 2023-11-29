@@ -22,7 +22,7 @@ internal class TestExecuteCommandNewObject : CommandCliTests
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
             new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 
-        StringAssert.StartsWith("First parameter must be a Type", ex.Message);
+        Assert.That(ex.Message, Does.StartWith("First parameter must be a Type"));
     }
 
     [Test]
@@ -31,41 +31,40 @@ internal class TestExecuteCommandNewObject : CommandCliTests
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject),
             new CommandLineObjectPicker(new[] { "Fissdlkfldfj" }, GetActivator())));
 
-        StringAssert.StartsWith("First parameter must be a Type", ex.Message);
+        Assert.That(ex.Message, Does.StartWith("First parameter must be a Type"));
     }
 
     [Test]
     public void Test_NewObjectCommand_WrongTypeArgument()
     {
         var picker = new CommandLineObjectPicker(new[] { "UnitTests" }, GetActivator());
-        Assert.AreEqual(typeof(UnitTests), picker[0].Type);
+        Assert.That(picker[0].Type, Is.EqualTo(typeof(UnitTests)));
 
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject), picker));
 
-        StringAssert.StartsWith("Type must be derived from DatabaseEntity", ex.Message);
+        Assert.That(ex.Message, Does.StartWith("Type must be derived from DatabaseEntity"));
     }
 
     [Test]
     public void Test_NewObjectCommand_MissingNameArgument()
     {
         var picker = new CommandLineObjectPicker(new[] { "Catalogue" }, GetActivator());
-        Assert.AreEqual(typeof(Catalogue), picker[0].Type);
+        Assert.That(picker[0].Type, Is.EqualTo(typeof(Catalogue)));
 
         var ex = Assert.Throws<ArgumentException>(() =>
             GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject), picker));
 
-        StringAssert.StartsWith("Value needed for parameter 'name' (of type 'System.String')", ex.Message);
+        Assert.That(ex.Message, Does.StartWith("Value needed for parameter 'name' (of type 'System.String')"));
     }
 
     [Test]
     public void Test_NewObjectCommand_Success()
     {
         var picker = new CommandLineObjectPicker(new[] { "Catalogue", "lolzeeeyeahyeah" }, GetActivator());
-        Assert.AreEqual(typeof(Catalogue), picker[0].Type);
+        Assert.That(picker[0].Type, Is.EqualTo(typeof(Catalogue)));
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandNewObject), picker));
 
-        Assert.Contains("lolzeeeyeahyeah",
-            RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Select(c => c.Name).ToArray());
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Select(c => c.Name).ToArray(), Does.Contain("lolzeeeyeahyeah"));
     }
 }

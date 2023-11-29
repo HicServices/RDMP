@@ -103,19 +103,13 @@ public class LogManagerTest : DatabaseTests
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).ToArray();
 
-        Assert.Greater(loadHistoryForTask.Length, 0); //some records
+        Assert.That(loadHistoryForTask, Is.Not.Empty); //some records
 
-        Assert.Greater(loadHistoryForTask.Count(load => load.Errors.Count > 0), 0); //some with some errors
-        Assert.Greater(loadHistoryForTask.Count(load => load.Progress.Count > 0), 0); //some with some progress
-
-
-        Assert.Greater(loadHistoryForTask.Count(load => load.TableLoadInfos.Count == 1),
-            0); //some with some table loads
+        Assert.That(loadHistoryForTask.Count(static load => load.Errors.Count > 0), Is.GreaterThan(0)); //some with some errors
+        Assert.That(loadHistoryForTask.Count(static load => load.Progress.Count > 0), Is.GreaterThan(0)); //some with some progress
 
 
-        Console.WriteLine($"Records fetched:{loadHistoryForTask.Length}");
-        Console.WriteLine($"Errors fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Errors.Count)}");
-        Console.WriteLine($"Progress fetched:{loadHistoryForTask.Aggregate(0, (p, c) => p + c.Progress.Count)}");
+        Assert.That(loadHistoryForTask.Count(static load => load.TableLoadInfos.Count == 1), Is.GreaterThan(0)); //some with some table loads
     }
 
     [Test]
@@ -123,12 +117,12 @@ public class LogManagerTest : DatabaseTests
     {
         CleanupTruncateCommand();
 
-        Assert.AreEqual(0, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
+        Assert.That(_logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")), Is.EqualTo(0));
         _logManager.CreateNewLoggingTaskIfNotExists("','') Truncate Table Fishes");
-        Assert.AreEqual(1, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
+        Assert.That(_logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")), Is.EqualTo(1));
 
         CleanupTruncateCommand();
-        Assert.AreEqual(0, _logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")));
+        Assert.That(_logManager.ListDataTasks().Count(t => t.Equals("','') Truncate Table Fishes")), Is.EqualTo(0));
     }
 
     private void CleanupTruncateCommand()
@@ -148,7 +142,7 @@ public class LogManagerTest : DatabaseTests
 
         var loadHistoryForTask = lm.GetArchivalDataLoadInfos(_dataLoadTaskName).First();
 
-        Assert.Greater(loadHistoryForTask.Progress.Count, 0); //some with some progress
+        Assert.That(loadHistoryForTask.Progress, Is.Not.Empty); //some with some progress
 
         Console.WriteLine($"Errors fetched:{loadHistoryForTask.Errors.Count}");
         Console.WriteLine($"Progress fetched:{loadHistoryForTask.Progress.Count}");
@@ -170,7 +164,7 @@ public class LogManagerTest : DatabaseTests
 
         all = all.OrderByDescending(d => d.StartTime).ToArray();
 
-        Assert.AreEqual(mostRecent.StartTime, all[0].StartTime);
+        Assert.That(all[0].StartTime, Is.EqualTo(mostRecent.StartTime));
     }
 
     /// <summary>
@@ -186,17 +180,17 @@ public class LogManagerTest : DatabaseTests
 
         lm.CreateNewLoggingTaskIfNotExists("ff");
 
-        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
 
         //don't create another one just because it's changed case
         lm.CreateNewLoggingTaskIfNotExists("FF");
 
-        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
 
         var dli1 = lm.CreateDataLoadInfo("ff", "tests", "hi there", null, true);
         var dli2 = lm.CreateDataLoadInfo("FF", "tests", "hi there", null, true);
 
-        Assert.AreEqual(1, lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)));
+        Assert.That(lm.ListDataSets().Count(s => s.Equals("ff", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -224,15 +218,15 @@ public class LogManagerTest : DatabaseTests
 
         var id = dli.ID;
         var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
-        Assert.AreEqual(500, archival.TableLoadInfos.Single().Inserts);
-        Assert.AreEqual(0, archival.TableLoadInfos.Single().Updates);
-        Assert.AreEqual(0, archival.TableLoadInfos.Single().Deletes);
-        Assert.AreEqual(DateTime.Now.Date, archival.StartTime.Date);
-        Assert.AreEqual(DateTime.Now.Date, archival.EndTime.Value.Date);
+        Assert.That(archival.TableLoadInfos.Single().Inserts, Is.EqualTo(500));
+        Assert.That(archival.TableLoadInfos.Single().Updates, Is.EqualTo(0));
+        Assert.That(archival.TableLoadInfos.Single().Deletes, Is.EqualTo(0));
+        Assert.That(archival.StartTime.Date, Is.EqualTo(DateTime.Now.Date));
+        Assert.That(archival.EndTime.Value.Date, Is.EqualTo(DateTime.Now.Date));
 
-        Assert.AreEqual("it went bad", archival.Errors.Single().Description);
-        Assert.AreEqual("bad.cs", archival.Errors.Single().Source);
-        Assert.AreEqual("Wrote some records", archival.Progress.Single().Description);
+        Assert.That(archival.Errors.Single().Description, Is.EqualTo("it went bad"));
+        Assert.That(archival.Errors.Single().Source, Is.EqualTo("bad.cs"));
+        Assert.That(archival.Progress.Single().Description, Is.EqualTo("Wrote some records"));
 
         var fatal = archival.Errors.Single();
         lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,

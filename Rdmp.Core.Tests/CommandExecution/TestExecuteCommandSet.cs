@@ -25,7 +25,7 @@ internal class TestExecuteCommandSet : CommandCliTests
         }, GetActivator()));
 
         cata.RevertToDatabaseState();
-        Assert.AreEqual("Some long description", cata.Description);
+        Assert.That(cata.Description, Is.EqualTo("Some long description"));
     }
 
     [Test]
@@ -43,7 +43,7 @@ internal class TestExecuteCommandSet : CommandCliTests
         }, GetActivator()));
 
         cata.RevertToDatabaseState();
-        Assert.IsNull(cata.Description);
+        Assert.That(cata.Description, Is.Null);
     }
 
     [Test]
@@ -61,17 +61,17 @@ internal class TestExecuteCommandSet : CommandCliTests
 
         var ids = $"{t1.ID},{t2.ID},{t3.ID},{t4.ID}";
 
-        Assert.IsNull(pta.Value);
-        Assert.IsNull(pta.GetValueAsSystemType());
+        Assert.That(pta.Value, Is.Null);
+        Assert.That(pta.GetValueAsSystemType(), Is.Null);
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandSet),
             new CommandLineObjectPicker(new[] { "ProcessTaskArgument:TablesToIsolate", "Value", ids }, GetActivator()));
 
-        Assert.AreEqual(ids, pta.Value);
+        Assert.That(pta.Value, Is.EqualTo(ids));
 
-        Assert.Contains(t1, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t2, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t3, (TableInfo[])pta.GetValueAsSystemType());
-        Assert.Contains(t4, (TableInfo[])pta.GetValueAsSystemType());
+        Assert.That((TableInfo[])pta.GetValueAsSystemType(), Does.Contain(t1));
+        Assert.That((TableInfo[])pta.GetValueAsSystemType(), Does.Contain(t2));
+        Assert.That((TableInfo[])pta.GetValueAsSystemType(), Does.Contain(t3));
+        Assert.That((TableInfo[])pta.GetValueAsSystemType(), Does.Contain(t4));
     }
 }

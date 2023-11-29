@@ -32,10 +32,10 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
         var cicAssoc = memory.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Single();
 
         //relationship from p should resolve to the association link
-        Assert.AreEqual(cicAssoc, p.ProjectCohortIdentificationConfigurationAssociations[0]);
+        Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0], Is.EqualTo(cicAssoc));
 
         //relationship from p should resolve to the cic
-        Assert.AreEqual(cic, p.GetAssociatedCohortIdentificationConfigurations()[0]);
+        Assert.That(p.GetAssociatedCohortIdentificationConfigurations()[0], Is.EqualTo(cic));
 
         //in order to make it an orphan we have to suppress the system default behaviour of cascading across the deletion
         var obscure = memory.ObscureDependencyFinder as CatalogueObscureDependencyFinder;
@@ -46,19 +46,18 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
         cicAssoc.ClearAllInjections();
 
         //assoc should still exist
-        Assert.AreEqual(cicAssoc, p.ProjectCohortIdentificationConfigurationAssociations[0]);
-        Assert.IsNull(p.ProjectCohortIdentificationConfigurationAssociations[0].CohortIdentificationConfiguration);
+        Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0], Is.EqualTo(cicAssoc));
+        Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0].CohortIdentificationConfiguration, Is.Null);
 
         //relationship from p should resolve to the cic
-        Assert.IsEmpty(p.GetAssociatedCohortIdentificationConfigurations());
+        Assert.That(p.GetAssociatedCohortIdentificationConfigurations(), Is.Empty);
 
         //error should be reported in top right of program
         var ex = Assert.Throws<Exception>(() =>
             new DataExportChildProvider(new RepositoryProvider(memory), null, ThrowImmediatelyCheckNotifier.Quiet,
                 null));
-        StringAssert.IsMatch(
-            @"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Match(@"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj"));
 
         //but UI should still respond
         var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null,
@@ -69,6 +68,6 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
         var cics = childProvider.GetChildren(cohorts).OfType<ProjectCohortIdentificationConfigurationAssociationsNode>()
             .First();
 
-        Assert.IsEmpty(childProvider.GetChildren(cics));
+        Assert.That(childProvider.GetChildren(cics), Is.Empty);
     }
 }

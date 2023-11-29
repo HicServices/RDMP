@@ -31,11 +31,11 @@ internal class ExtractionFilterParameterSetTests : DatabaseTests
         var paramSet = new ExtractionFilterParameterSet(CatalogueRepository, filter, "Old");
         var vals = paramSet.CreateNewValueEntries();
 
-        Assert.AreEqual(1, vals.Length);
-        Assert.IsTrue(vals[0].Exists());
+        Assert.That(vals, Has.Length.EqualTo(1));
+        Assert.That(vals[0].Exists());
 
         paramSet.DeleteInDatabase();
-        Assert.IsFalse(paramSet.Exists());
-        Assert.IsFalse(vals[0].Exists());
+        Assert.That(paramSet.Exists(), Is.False);
+        Assert.That(vals[0].Exists(), Is.False);
     }
 }

@@ -39,14 +39,14 @@ public class JsonSerializationTests : DatabaseTests
         var mySerializeableAfter = (MySerializeableTestClass)JsonConvert.DeserializeObject(asString,
             typeof(MySerializeableTestClass), new JsonConverter[] { dbConverter, lazyConverter });
 
-        Assert.AreNotEqual(mySerializeable, mySerializeableAfter);
-        Assert.AreEqual(mySerializeable.SelectedCatalogue, mySerializeableAfter.SelectedCatalogue);
-        Assert.AreEqual(mySerializeable.SelectedCatalogue.Name, mySerializeableAfter.SelectedCatalogue.Name);
-        Assert.AreEqual("War and Pieces", mySerializeableAfter.Title);
+        Assert.That(mySerializeableAfter, Is.Not.EqualTo(mySerializeable));
+        Assert.That(mySerializeableAfter.SelectedCatalogue, Is.EqualTo(mySerializeable.SelectedCatalogue));
+        Assert.That(mySerializeableAfter.SelectedCatalogue.Name, Is.EqualTo(mySerializeable.SelectedCatalogue.Name));
+        Assert.That(mySerializeableAfter.Title, Is.EqualTo("War and Pieces"));
         mySerializeableAfter.SelectedCatalogue.Name = "Cannon balls";
         mySerializeableAfter.SelectedCatalogue.SaveToDatabase();
 
-        Assert.AreNotEqual(mySerializeable.SelectedCatalogue.Name, mySerializeableAfter.SelectedCatalogue.Name);
+        Assert.That(mySerializeableAfter.SelectedCatalogue.Name, Is.Not.EqualTo(mySerializeable.SelectedCatalogue.Name));
     }
 
     //todo null Catalogue test case

@@ -46,14 +46,14 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
     {
         var updateInfo = new DataLoadProgressUpdateInfo();
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, null));
-        Assert.IsTrue(ex.Message.StartsWith("Job does not have any DatesToRetrieve"));
+        Assert.That(ex.Message.StartsWith("Job does not have any DatesToRetrieve"));
     }
 
     [Test]
     public void AddBasicNormalStrategy_MaxDate()
     {
         var updateInfo = new DataLoadProgressUpdateInfo();
-        Assert.AreEqual(DataLoadProgressUpdateStrategy.UseMaxRequestedDay, updateInfo.Strategy);
+        Assert.That(updateInfo.Strategy, Is.EqualTo(DataLoadProgressUpdateStrategy.UseMaxRequestedDay));
 
         _job.DatesToRetrieve = new List<DateTime>
         {
@@ -66,7 +66,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
             var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, null);
 
 
-            Assert.AreEqual(new DateTime(2001, 1, 3), added.DateToSetProgressTo);
+            Assert.That(added.DateToSetProgressTo, Is.EqualTo(new DateTime(2001, 1, 3)));
         }
         finally
         {
@@ -85,7 +85,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.IsTrue(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
+        Assert.That(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
     }
 
     [Test]
@@ -100,8 +100,8 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.IsTrue(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
-        Assert.IsInstanceOf<SqlException>(ex.InnerException);
+        Assert.That(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
+        Assert.That(ex.InnerException, Is.InstanceOf<SqlException>());
     }
 
     [Test]
@@ -116,8 +116,8 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.IsTrue(ex.Message.Contains("ExecuteScalarSQL"));
-        Assert.IsTrue(ex.Message.Contains("returned null"));
+        Assert.That(ex.Message.Contains("ExecuteScalarSQL"));
+        Assert.That(ex.Message.Contains("returned null"));
     }
 
     [Test]
@@ -132,10 +132,9 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.AreEqual(
-            "ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish",
-            ex.Message);
-        Assert.IsInstanceOf<FormatException>(ex.InnerException);
+        Assert.That(
+            ex.Message, Is.EqualTo("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish"));
+        Assert.That(ex.InnerException, Is.InstanceOf<FormatException>());
     }
 
     [Test]
@@ -157,7 +156,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job,
             GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
-        Assert.AreEqual(new DateTime(2001, 1, 7), added.DateToSetProgressTo);
+        Assert.That(added.DateToSetProgressTo, Is.EqualTo(new DateTime(2001, 1, 7)));
 
         _job.DatesToRetrieve.Clear();
     }

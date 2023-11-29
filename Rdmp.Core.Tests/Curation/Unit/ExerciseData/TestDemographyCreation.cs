@@ -43,8 +43,8 @@ public class TestDemographyCreation
 
         //one progress task only, should have reported craeting 10,000 rows
         //one progress task only, should have reported creating the correct number of rows
-        Assert.IsTrue(finished);
-        Assert.AreEqual(numberOfRecords, finishedWithRecords);
+        Assert.That(finished);
+        Assert.That(finishedWithRecords, Is.EqualTo(numberOfRecords));
 
         Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length,
             numberOfRecords); //can be newlines in middle of file

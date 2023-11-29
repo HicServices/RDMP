@@ -31,12 +31,12 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         //and suddenly we cannot delete the catalogue
         var ex = Assert.Throws<Exception>(() => obscura.ThrowIfDeleteDisallowed(cata));
-        Assert.IsTrue(ex.Message.Contains(
+        Assert.That(ex.Message.Contains(
             "Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
 
         //also if we try to force through a delete it should behave in identical manner
         var ex2 = Assert.Throws<Exception>(cata.DeleteInDatabase);
-        Assert.IsTrue(ex2.Message.Contains(
+        Assert.That(ex2.Message.Contains(
             "Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
 
         //now we delete the linked dataset
@@ -49,8 +49,8 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
         cata.DeleteInDatabase();
 
         //both objects still exist in memory of course but we should be able to see they have disapeared
-        Assert.IsTrue(dataset.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
-        Assert.IsTrue(cata.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
+        Assert.That(dataset.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
+        Assert.That(cata.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyWasDeleted);
     }
 
     [Test]
@@ -66,7 +66,7 @@ public class BetweenCatalogueAndDataExportObscureDependencyFinderTests : Databas
 
         //we cannot delete it because there is a dependency
         var ex = Assert.Throws<Exception>(() => obscura1.ThrowIfDeleteDisallowed(cata));
-        Assert.IsTrue(ex.Message.Contains(
+        Assert.That(ex.Message.Contains(
             "Cannot delete Catalogue MyCata because there are ExtractableDataSets which depend on them "));
 
         //the second finder simulates when the repository locator doesn't have a record of the data export repository so it is unable to check it so it will let you delete it just fine

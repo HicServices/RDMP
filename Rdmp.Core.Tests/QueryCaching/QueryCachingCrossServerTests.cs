@@ -91,7 +91,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(
+        Assert.That(
             compiler.Tasks.Where(t => t.Key is AggregationContainerTask)
                 .Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
     }
@@ -304,16 +304,14 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         AssertNoErrors(compiler);
 
 
-        Assert.AreEqual(
-            compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, 0);
-        Assert.Greater(
-            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount,
-            0); //both ac should have the same total
-        Assert.Greater(
-            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount,
-            0); // that is not 0
+        Assert.That(
+compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, Is.EqualTo(0));
+        Assert.That(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, Is.GreaterThan(0)); //both ac should have the same total
+        Assert.That(
+            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, Is.GreaterThan(0)); // that is not 0
 
-        Assert.IsTrue(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+        Assert.That(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
             "Expected EXCEPT container to use the cache");
     }
 
@@ -375,10 +373,10 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         AssertNoErrors(compiler);
 
         if (createQueryCache)
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+            Assert.That(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
                 "Expected cache to be used for the joinable");
         else
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/1")),
+            Assert.That(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/1")),
                 "Did not create cache so expected cache usage to be 0");
     }
 
@@ -434,7 +432,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+        Assert.That(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
             "Expected cache to be used only for the final UNION");
     }
 
@@ -486,7 +484,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
+        Assert.That(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),
             "Expected cache to be used only for the final UNION");
     }
 
@@ -543,10 +541,9 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>()
             .Single(t => t.Aggregate.Equals(hospitalAdmissions));
 
-        Assert.AreEqual(CompilationState.Crashed, hospitalAdmissionsTask.State);
+        Assert.That(hospitalAdmissionsTask.State, Is.EqualTo(CompilationState.Crashed));
 
-        StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",
-            hospitalAdmissionsTask.CrashMessage.ToString());
+        Assert.That(hospitalAdmissionsTask.CrashMessage.ToString(), Does.Contain("is not fully cached and CacheUsageDecision is MustUse"));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -607,7 +604,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         AssertNoErrors(compiler);
 
-        Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+        Assert.That(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
             "Expected cache to be used for both top level operations in the EXCEPT");
     }
 
@@ -824,7 +821,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
             TestContext.WriteLine(
                 $"{i++} - {kvp.ToString()} | {kvp.GetType()} | {kvp.State} | {kvp.CrashMessage} | {kvp.FinalRowCount} | {kvp.GetCachedQueryUseCount()}");
 
-        Assert.IsTrue(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished),
+        Assert.That(compiler.Tasks.All(static t => t.Key.State == CompilationState.Finished),
             "Expected all tasks to finish without error");
     }
 
@@ -836,8 +833,8 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         string expectedErrorMessageToContain)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
-        Assert.AreEqual(CompilationState.Crashed, acResult.Key.State);
-        StringAssert.Contains(expectedErrorMessageToContain, acResult.Key.CrashMessage.Message);
+        Assert.That(acResult.Key.State, Is.EqualTo(CompilationState.Crashed));
+        Assert.That(acResult.Key.CrashMessage.Message, Does.Contain(expectedErrorMessageToContain));
     }
 
     /// <summary>
@@ -855,10 +852,10 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         Console.WriteLine($"Build Log For '{task}':");
         Console.WriteLine(acResult.Key.Log);
 
-        Assert.AreEqual(CompilationState.Finished, acResult.Key.State);
+        Assert.That(acResult.Key.State, Is.EqualTo(CompilationState.Finished));
 
         foreach (var s in expectedSqlBits)
-            StringAssert.IsMatch(s, acResult.Value.CountSQL);
+            Assert.That(acResult.Value.CountSQL, Does.Match(s));
     }
 
     /// <summary>
@@ -872,10 +869,10 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         params string[] expectedSqlBits)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask a && a.Container.Equals(task));
-        Assert.AreEqual(CompilationState.Finished, acResult.Key.State);
+        Assert.That(acResult.Key.State, Is.EqualTo(CompilationState.Finished));
 
         foreach (var s in expectedSqlBits)
-            StringAssert.Contains(s, acResult.Value.CountSQL);
+            Assert.That(acResult.Value.CountSQL, Does.Contain(s));
     }
 
     /// <summary>
@@ -892,8 +889,8 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
         var containerResult =
             compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
 
-        Assert.AreEqual(CompilationState.Finished, containerResult.Key.State);
-        Assert.AreEqual(expectedCacheUsageCount, containerResult.Key.GetCachedQueryUseCount());
+        Assert.That(containerResult.Key.State, Is.EqualTo(CompilationState.Finished));
+        Assert.That(containerResult.Key.GetCachedQueryUseCount(), Is.EqualTo(expectedCacheUsageCount));
     }
 
     #endregion

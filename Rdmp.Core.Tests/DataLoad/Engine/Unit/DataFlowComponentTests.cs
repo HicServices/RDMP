@@ -33,7 +33,7 @@ internal class DataFlowComponentTests
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
             renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
-        Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
+        Assert.That(ex.Message.Contains("does not exist in the supplied data table"));
     }
 
     [Test]
@@ -51,8 +51,8 @@ internal class DataFlowComponentTests
 
         var processed = renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
 
-        Assert.AreEqual(1, processed.Columns.Count);
-        Assert.AreEqual("ReplacementName", processed.Columns[0].ColumnName);
+        Assert.That(processed.Columns, Has.Count.EqualTo(1));
+        Assert.That(processed.Columns[0].ColumnName, Is.EqualTo("ReplacementName"));
     }
 
     [Test]
@@ -69,7 +69,7 @@ internal class DataFlowComponentTests
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
             dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
-        Assert.IsTrue(ex.Message.Contains("does not exist in the supplied data table"));
+        Assert.That(ex.Message.Contains("does not exist in the supplied data table"));
     }
 
     [Test]
@@ -86,8 +86,8 @@ internal class DataFlowComponentTests
 
         var processed = dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token);
 
-        Assert.AreEqual(0, processed.Columns.Count);
-        Assert.AreEqual(false, processed.Columns.Contains("ToDrop"));
+        Assert.That(processed.Columns, Is.Empty);
+        Assert.That(processed.Columns.Contains("ToDrop"), Is.EqualTo(false));
     }
 }
 
@@ -114,6 +114,6 @@ internal class ColumnforbidlistTests
         forbidlister.Rationale = "kaleidoscope engage";
         var ex = Assert.Throws<Exception>(() =>
             forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
-        Assert.IsTrue(ex.Message.Contains("kaleidoscope engage"));
+        Assert.That(ex.Message.Contains("kaleidoscope engage"));
     }
 }

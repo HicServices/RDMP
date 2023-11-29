@@ -55,9 +55,8 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
             new CohortDefinition(511, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
             "fish");
         var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Expected the cohort definition CommittingNewCohorts(Version 1, ID=511) to have a null ID - we are trying to create this, why would it already exist?"));
     }
 
     [Test]
@@ -69,9 +68,8 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
             new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
             "fish");
         var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Project MyProj does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest (999)"));
     }
 
     [Test]
@@ -84,8 +82,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
             new CohortDefinition(null, "CommittingNewCohorts", 1, 999, _externalCohortTable), DataExportRepository,
             "fish");
         var ex = Assert.Throws<Exception>(() => request.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999",
-            ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Project MyProj has ProjectNumber=321 but the CohortCreationRequest.ProjectNumber is 999"));
     }
 
     [Test]
@@ -116,13 +113,13 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         pipeline.ExecutePipeline(new GracefulCancellationToken());
 
         //there should be a new ExtractableCohort now
-        Assert.NotNull(request.NewCohortDefinition.ID);
+        Assert.That(request.NewCohortDefinition.ID, Is.Not.Null);
 
         var ec = DataExportRepository.GetAllObjects<ExtractableCohort>()
             .Single(c => c.OriginID == request.NewCohortDefinition.ID);
 
         //with the data in it from the test file
-        Assert.AreEqual(ec.Count, 3);
+        Assert.That(ec.Count, Is.EqualTo(3));
     }
 
     [TestCase(true)]
@@ -150,8 +147,8 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // the definition was imported and should now be a saved ExtractableCohort
         var cohort998 = request1.CohortCreatedIfAny;
-        Assert.IsNotNull(cohort998);
-        Assert.IsFalse(cohort998.IsDeprecated);
+        Assert.That(cohort998, Is.Not.Null);
+        Assert.That(cohort998.IsDeprecated, Is.False);
 
         // define that the new definition attempts to replace the old one
         definition999.CohortReplacedIfAny = cohort998;
@@ -163,7 +160,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // after committing the new cohort the old one should be deprecated?
         cohort998.RevertToDatabaseState();
-        Assert.AreEqual(deprecate, cohort998.IsDeprecated);
+        Assert.That(cohort998.IsDeprecated, Is.EqualTo(deprecate));
     }
 
 
@@ -192,8 +189,8 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // the definition was imported and should now be a saved ExtractableCohort
         var cohort998 = request1.CohortCreatedIfAny;
-        Assert.IsNotNull(cohort998);
-        Assert.IsFalse(cohort998.IsDeprecated);
+        Assert.That(cohort998, Is.Not.Null);
+        Assert.That(cohort998.IsDeprecated, Is.False);
 
         // legit user 1
         var ec1 = new ExtractionConfiguration(DataExportRepository, proj)
@@ -232,7 +229,7 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // the definition was imported and should now be a saved ExtractableCohort
         var cohort999 = request2.CohortCreatedIfAny;
-        Assert.IsNotNull(cohort999);
+        Assert.That(cohort999, Is.Not.Null);
 
         // after committing the new cohort who should be migrated?
         ec1.RevertToDatabaseState();
@@ -241,13 +238,13 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
         ec4.RevertToDatabaseState();
 
         // should have been updated to use the new cohort
-        Assert.AreEqual(ec1.Cohort_ID, migrate ? cohort999.ID : cohort998.ID);
-        Assert.AreEqual(ec2.Cohort_ID, migrate ? cohort999.ID : cohort998.ID);
+        Assert.That(migrate ? cohort999.ID : cohort998.ID, Is.EqualTo(ec1.Cohort_ID));
+        Assert.That(migrate ? cohort999.ID : cohort998.ID, Is.EqualTo(ec2.Cohort_ID));
 
         // should not have magically gotten a cohort
-        Assert.IsNull(ec3.Cohort_ID);
+        Assert.That(ec3.Cohort_ID, Is.Null);
 
         // is frozen so should not have been changed to the new cohort (and therefore still use cohort998)
-        Assert.AreEqual(ec4.Cohort_ID, cohort998.ID);
+        Assert.That(cohort998.ID, Is.EqualTo(ec4.Cohort_ID));
     }
 }

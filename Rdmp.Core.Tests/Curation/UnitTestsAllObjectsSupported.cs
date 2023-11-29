@@ -63,9 +63,9 @@ internal class UnitTestsAllObjectsSupported : UnitTests
                 try
                 {
                     //and that it returns an instance
-                    Assert.IsNotNull(instance);
-                    Assert.IsTrue(instance.Exists());
-                    Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,
+                    Assert.That(instance, Is.Not.Null);
+                    Assert.That(instance.Exists());
+                    Assert.That(instance.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
                         "Type was '" + t.Name + "'");
                 }
                 catch (Exception e)
@@ -74,7 +74,7 @@ internal class UnitTestsAllObjectsSupported : UnitTests
                 }
         }
 
-        Assert.IsEmpty(notSupported,
+        Assert.That(notSupported, Is.Empty,
             $"The following Types were not supported by WhenIHaveA<T>:{Environment.NewLine}{string.Join(Environment.NewLine, notSupported.Select(t => t.Name))}");
     }
 }

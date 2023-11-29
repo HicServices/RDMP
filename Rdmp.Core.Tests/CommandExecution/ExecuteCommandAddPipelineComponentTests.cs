@@ -21,9 +21,9 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
     {
         var p = WhenIHaveA<Pipeline>();
 
-        Assert.IsNull(p.Source);
-        Assert.IsNull(p.Destination);
-        Assert.IsEmpty(p.PipelineComponents);
+        Assert.That(p.Source, Is.Null);
+        Assert.That(p.Destination, Is.Null);
+        Assert.That(p.PipelineComponents, Is.Empty);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
 
@@ -34,20 +34,20 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
 
         p.ClearAllInjections();
 
-        Assert.IsNotNull(p.Source);
-        Assert.AreEqual(typeof(DelimitedFlatFileDataFlowSource), p.Source.GetClassAsSystemType());
+        Assert.That(p.Source, Is.Not.Null);
+        Assert.That(p.Source.GetClassAsSystemType(), Is.EqualTo(typeof(DelimitedFlatFileDataFlowSource)));
         Assert.IsNotEmpty(p.Source.GetAllArguments());
 
-        Assert.AreEqual(4, p.PipelineComponents.Count);
+        Assert.That(p.PipelineComponents, Has.Count.EqualTo(4));
 
-        Assert.AreEqual(1, p.PipelineComponents[1].Order);
-        Assert.AreEqual(typeof(ColumnSwapper), p.PipelineComponents[1].GetClassAsSystemType());
+        Assert.That(p.PipelineComponents[1].Order, Is.EqualTo(1));
+        Assert.That(p.PipelineComponents[1].GetClassAsSystemType(), Is.EqualTo(typeof(ColumnSwapper)));
 
-        Assert.AreEqual(2, p.PipelineComponents[2].Order);
-        Assert.AreEqual(typeof(CleanStrings), p.PipelineComponents[2].GetClassAsSystemType());
+        Assert.That(p.PipelineComponents[2].Order, Is.EqualTo(2));
+        Assert.That(p.PipelineComponents[2].GetClassAsSystemType(), Is.EqualTo(typeof(CleanStrings)));
 
-        Assert.IsNotNull(p.Destination);
-        Assert.AreEqual(typeof(ExecuteFullExtractionToDatabaseMSSql), p.Destination.GetClassAsSystemType());
+        Assert.That(p.Destination, Is.Not.Null);
+        Assert.That(p.Destination.GetClassAsSystemType(), Is.EqualTo(typeof(ExecuteFullExtractionToDatabaseMSSql)));
         Assert.IsNotEmpty(p.Destination.GetAllArguments());
     }
 
@@ -56,13 +56,13 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
     {
         var p = WhenIHaveA<Pipeline>();
 
-        Assert.IsNull(p.Source);
+        Assert.That(p.Source, Is.Null);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
         var ex = Assert.Throws<Exception>(() =>
             Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource)));
 
-        Assert.AreEqual("Pipeline 'My Pipeline' already has a source", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Pipeline 'My Pipeline' already has a source"));
     }
 
     [Test]
@@ -70,12 +70,12 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
     {
         var p = WhenIHaveA<Pipeline>();
 
-        Assert.IsNull(p.Source);
+        Assert.That(p.Source, Is.Null);
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql));
         var ex = Assert.Throws<Exception>(() =>
             Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(ExecuteFullExtractionToDatabaseMSSql)));
 
-        Assert.AreEqual("Pipeline 'My Pipeline' already has a destination", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Pipeline 'My Pipeline' already has a destination"));
     }
 }

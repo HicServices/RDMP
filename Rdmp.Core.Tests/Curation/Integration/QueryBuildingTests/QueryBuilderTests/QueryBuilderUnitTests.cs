@@ -35,7 +35,7 @@ internal class QueryBuilderUnitTests : UnitTests
             var s = builder.SQL;
         });
 
-        StringAssert.Contains("There are multiple tables marked as IsPrimaryExtractionTable", ex.Message);
+        Assert.That(ex.Message, Does.Contain("There are multiple tables marked as IsPrimaryExtractionTable"));
     }
 
     [Test]
@@ -55,11 +55,11 @@ internal class QueryBuilderUnitTests : UnitTests
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        StringAssert.Contains("JOIN", builder.SQL);
+        Assert.That(builder.SQL, Does.Contain("JOIN"));
 
         //we have 1 legit join go go team!
-        Assert.AreEqual(1, builder.JoinsUsedInQuery.Count);
-        Assert.AreEqual(j1, builder.JoinsUsedInQuery[0]);
+        Assert.That(builder.JoinsUsedInQuery, Has.Count.EqualTo(1));
+        Assert.That(builder.JoinsUsedInQuery[0], Is.EqualTo(j1));
     }
 
     [Test]
@@ -115,9 +115,9 @@ internal class QueryBuilderUnitTests : UnitTests
         Console.WriteLine(builder.SQL);
 
         //should be using only 3 of the 4 joins because we already have a route to c4 without a fourth join
-        Assert.AreEqual(3, builder.JoinsUsedInQuery.Count);
-        Assert.Contains(j1, builder.JoinsUsedInQuery);
-        Assert.Contains(j2, builder.JoinsUsedInQuery);
-        Assert.Contains(j3, builder.JoinsUsedInQuery);
+        Assert.That(builder.JoinsUsedInQuery, Has.Count.EqualTo(3));
+        Assert.That(builder.JoinsUsedInQuery, Does.Contain(j1));
+        Assert.That(builder.JoinsUsedInQuery, Does.Contain(j2));
+        Assert.That(builder.JoinsUsedInQuery, Does.Contain(j3));
     }
 }

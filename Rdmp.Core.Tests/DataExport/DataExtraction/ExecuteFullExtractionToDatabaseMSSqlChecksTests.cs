@@ -49,8 +49,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
         var tomemory = new ToMemoryCheckNotifier();
         destination.Check(tomemory);
 
-        Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
-        Assert.IsTrue(tomemory.Messages[0].Message.StartsWith("Target database server property has not been set"));
+        Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
+        Assert.That(tomemory.Messages[0].Message.StartsWith("Target database server property has not been set"));
     }
 
     [Test]
@@ -67,8 +67,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
             var tomemory = new ToMemoryCheckNotifier();
             destination.Check(tomemory);
 
-            Assert.AreEqual(CheckResult.Fail, tomemory.Messages[0].Result);
-            Assert.IsTrue(tomemory.Messages[0].Message
+            Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
+            Assert.That(tomemory.Messages[0].Message
                 .StartsWith("TargetDatabaseServer does not have a .Server specified"));
         }
         finally
@@ -107,7 +107,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
             var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             destination.Check(tomemory);
 
-            Assert.AreEqual(alreadyExists ? CheckResult.Warning : CheckResult.Success, tomemory.GetWorst());
+            Assert.That(tomemory.GetWorst(), Is.EqualTo(alreadyExists ? CheckResult.Warning : CheckResult.Success));
         }
         finally
         {
@@ -145,7 +145,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
             var tomemory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             destination.Check(tomemory);
 
-            Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
+            Assert.That(tomemory.GetWorst(), Is.EqualTo(CheckResult.Warning));
 
             Database.ExpectTable("Bob").Drop();
         }

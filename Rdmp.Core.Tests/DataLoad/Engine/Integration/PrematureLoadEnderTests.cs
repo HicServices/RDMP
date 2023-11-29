@@ -23,7 +23,7 @@ internal class PrematureLoadEnderTests : DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        Assert.AreEqual(0, database.DiscoverTables(false).Length);
+        Assert.That(database.DiscoverTables(false), Is.Empty);
 
         var ender = new PrematureLoadEnder
         {
@@ -33,7 +33,7 @@ internal class PrematureLoadEnderTests : DatabaseTests
 
         ender.Initialize(database, LoadStage.AdjustRaw);
 
-        Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+        Assert.That(ender.Mutilate(new ThrowImmediatelyDataLoadJob()), Is.EqualTo(ExitCodeType.OperationNotRequired));
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -54,7 +54,7 @@ internal class PrematureLoadEnderTests : DatabaseTests
 
         ender.Initialize(database, LoadStage.AdjustRaw);
 
-        Assert.AreEqual(ExitCodeType.OperationNotRequired, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+        Assert.That(ender.Mutilate(new ThrowImmediatelyDataLoadJob()), Is.EqualTo(ExitCodeType.OperationNotRequired));
     }
 
     [TestCase(DatabaseType.MySql)]
@@ -76,6 +76,6 @@ internal class PrematureLoadEnderTests : DatabaseTests
 
         ender.Initialize(database, LoadStage.AdjustRaw);
 
-        Assert.AreEqual(ExitCodeType.Success, ender.Mutilate(new ThrowImmediatelyDataLoadJob()));
+        Assert.That(ender.Mutilate(new ThrowImmediatelyDataLoadJob()), Is.EqualTo(ExitCodeType.Success));
     }
 }

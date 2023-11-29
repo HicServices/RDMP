@@ -34,7 +34,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
         _catalogue.SaveToDatabase();
         _request.DatasetBundle.DataSet.RevertToDatabaseState();
 
-        Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
+        Assert.That(_request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier), Is.EqualTo(1));
         var listener = new ToMemoryDataLoadEventListener(true);
 
         Execute(out _, out var result, listener);
@@ -45,17 +45,17 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
                             m.Message.Contains("/*Decided on extraction SQL:*/"))
                 .ToArray();
 
-        Assert.AreEqual(1, messages.Length, "Expected a message about what the final extraction SQL was");
-        Assert.IsTrue(messages[0].Message.Contains(" HASH JOIN "),
+        Assert.That(messages, Has.Length.EqualTo(1), "Expected a message about what the final extraction SQL was");
+        Assert.That(messages[0].Message.Contains(" HASH JOIN "),
             "expected use of hash matching was not reported by ExecuteDatasetExtractionSource in the SQL actually executed");
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
         //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
-{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
+        Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01"));
 
-        Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
+        Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
         File.Delete(r.OutputFile);
     }
 }

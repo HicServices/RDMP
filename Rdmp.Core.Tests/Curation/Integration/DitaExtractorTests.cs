@@ -95,15 +95,15 @@ internal class DitaExtractorTests : DatabaseTests
             extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet);
 
             //make sure the root mapping files exist for navigating around
-            Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
-            Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "introduction.dita")));
-            Assert.IsTrue(File.Exists(Path.Combine(testDir.FullName, "dataset.dita")));
+            Assert.That(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
+            Assert.That(File.Exists(Path.Combine(testDir.FullName, "introduction.dita")));
+            Assert.That(File.Exists(Path.Combine(testDir.FullName, "dataset.dita")));
 
             //make sure the catalogue we created is there
             var ditaCatalogueAsDotDitaFile = new FileInfo(Path.Combine(testDir.FullName,
                 "ditaextractorconstructor_extracttestcatalogue_filesexist.dita")); //name of Dita file (for the Catalogue we just created)
-            Assert.IsTrue(ditaCatalogueAsDotDitaFile.Exists);
-            Assert.IsTrue(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName)
+            Assert.That(ditaCatalogueAsDotDitaFile.Exists);
+            Assert.That(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName)
                 .Contains(ditaTestCatalogue.Description));
         }
         finally
@@ -132,9 +132,8 @@ internal class DitaExtractorTests : DatabaseTests
             {
                 var extractor = new DitaCatalogueExtractor(CatalogueRepository, testDir);
                 var ex = Assert.Throws<Exception>(() => extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet));
-                Assert.AreEqual(
-                    "Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym",
-                    ex.Message);
+                Assert.That(
+                    ex.Message, Is.EqualTo("Dita Extraction requires that each catalogue have a unique Acronym, the catalogue UnitTestCatalogue is missing an Acronym"));
             }
             finally
             {

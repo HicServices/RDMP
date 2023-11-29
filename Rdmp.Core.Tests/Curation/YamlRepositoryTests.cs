@@ -53,7 +53,7 @@ internal class YamlRepositoryTests
         repo1.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
         var repo2 = new YamlRepository(dir);
-        Assert.AreEqual(eds, repo2.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        Assert.That(repo2.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.EqualTo(eds));
     }
 
     [Test]
@@ -67,7 +67,7 @@ internal class YamlRepositoryTests
 
         var package = UnitTests.WhenIHaveA<ExtractableDataSetPackage>(repo1);
 
-        Assert.IsEmpty(repo1.GetPackageContentsDictionary());
+        Assert.That(repo1.GetPackageContentsDictionary(), Is.Empty);
         repo1.PackageManager.AddDataSetToPackage(package, ds);
         Assert.IsNotEmpty(repo1.GetPackageContentsDictionary());
 
@@ -86,7 +86,7 @@ internal class YamlRepositoryTests
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
-        Assert.AreEqual("yarg", repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern));
+        Assert.That(repo2.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), Is.EqualTo("yarg"));
     }
 
     [Test]
@@ -99,7 +99,7 @@ internal class YamlRepositoryTests
         var period = UnitTests.WhenIHaveA<GovernancePeriod>(repo1);
         var cata = UnitTests.WhenIHaveA<Catalogue>(repo1);
 
-        Assert.IsEmpty(repo1.GetAllGovernedCatalogues(period));
+        Assert.That(repo1.GetAllGovernedCatalogues(period), Is.Empty);
         repo1.Link(period, cata);
         Assert.IsNotEmpty(repo1.GetAllGovernedCatalogues(period));
 
@@ -119,8 +119,8 @@ internal class YamlRepositoryTests
         var ac = UnitTests.WhenIHaveA<AggregateConfiguration>(repo1);
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
-        Assert.IsEmpty(ac.ForcedJoins);
-        Assert.IsEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
+        Assert.That(ac.ForcedJoins, Is.Empty);
+        Assert.That(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac), Is.Empty);
         repo1.AggregateForcedJoinManager.CreateLinkBetween(ac, t);
         Assert.IsNotEmpty(ac.ForcedJoins);
         Assert.IsNotEmpty(repo1.AggregateForcedJoinManager.GetAllForcedJoinsFor(ac));
@@ -150,16 +150,16 @@ internal class YamlRepositoryTests
         root.AddChild(ac, 0);
 
         Assert.IsNotEmpty(root.GetOrderedContents());
-        Assert.AreEqual(ac, root.GetOrderedContents().ToArray()[0]);
-        Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
+        Assert.That(root.GetOrderedContents().ToArray()[0], Is.EqualTo(ac));
+        Assert.That(root.GetOrderedContents().ToArray()[1], Is.EqualTo(sub1));
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         root = repo2.GetObjectByID<CohortAggregateContainer>(root.ID);
 
         Assert.IsNotEmpty(root.GetOrderedContents());
-        Assert.AreEqual(ac, root.GetOrderedContents().ToArray()[0]);
-        Assert.AreEqual(sub1, root.GetOrderedContents().ToArray()[1]);
+        Assert.That(root.GetOrderedContents().ToArray()[0], Is.EqualTo(ac));
+        Assert.That(root.GetOrderedContents().ToArray()[1], Is.EqualTo(sub1));
     }
 
     [Test]
@@ -177,15 +177,15 @@ internal class YamlRepositoryTests
         var sub = new AggregateFilterContainer(repo1, FilterContainerOperation.AND);
         ac.RootFilterContainer.AddChild(sub);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
-        Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+        Assert.That(ac.RootFilterContainer.GetSubContainers().Single(), Is.EqualTo(sub));
+        Assert.That(ac.RootFilterContainer.GetFilters().Single(), Is.EqualTo(f));
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         ac = repo2.GetObjectByID<AggregateConfiguration>(ac.ID);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
-        Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+        Assert.That(ac.RootFilterContainer.GetSubContainers().Single(), Is.EqualTo(sub));
+        Assert.That(ac.RootFilterContainer.GetFilters().Single(), Is.EqualTo(f));
     }
 
     [Test]
@@ -204,15 +204,15 @@ internal class YamlRepositoryTests
         var sub = new AggregateFilterContainer(repo1, FilterContainerOperation.AND);
         ac.RootFilterContainer.AddChild(sub);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
-        Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+        Assert.That(ac.RootFilterContainer.GetSubContainers().Single(), Is.EqualTo(sub));
+        Assert.That(ac.RootFilterContainer.GetFilters().Single(), Is.EqualTo(f));
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         ac = repo2.GetObjectByID<AggregateConfiguration>(ac.ID);
 
-        Assert.AreEqual(sub, ac.RootFilterContainer.GetSubContainers().Single());
-        Assert.AreEqual(f, ac.RootFilterContainer.GetFilters().Single());
+        Assert.That(ac.RootFilterContainer.GetSubContainers().Single(), Is.EqualTo(sub));
+        Assert.That(ac.RootFilterContainer.GetFilters().Single(), Is.EqualTo(f));
 
         // Make an orphan container by deleting the root
 
@@ -227,9 +227,9 @@ internal class YamlRepositoryTests
         var repo3 = new YamlRepository(dir);
 
         // all these things should be gone
-        Assert.IsFalse(repo3.StillExists(sub));
-        Assert.IsFalse(repo3.StillExists(root));
-        Assert.IsFalse(repo3.StillExists(f));
+        Assert.That(repo3.StillExists(sub), Is.False);
+        Assert.That(repo3.StillExists(root), Is.False);
+        Assert.That(repo3.StillExists(f), Is.False);
     }
 
     [Test]
@@ -242,28 +242,28 @@ internal class YamlRepositoryTests
         var creds = UnitTests.WhenIHaveA<DataAccessCredentials>(repo1);
         var t = UnitTests.WhenIHaveA<TableInfo>(repo1);
 
-        Assert.IsEmpty(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value));
-        Assert.IsNull(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(
-            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.That(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value), Is.Empty);
+        Assert.That(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad), Is.Null);
+        Assert.That(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing), Is.Null);
 
         repo1.TableInfoCredentialsManager.CreateLinkBetween(creds, t,
             ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad);
 
-        Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(
-            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.That(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single(), Is.EqualTo(t));
+        Assert.That(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad), Is.EqualTo(creds));
+        Assert.That(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing), Is.Null);
 
 
         // A fresh repo loaded from the same directory should have persisted object relationships
         var repo2 = new YamlRepository(dir);
         t = repo2.GetObjectByID<TableInfo>(t.ID);
 
-        Assert.AreEqual(t, creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single());
-        Assert.AreEqual(creds, t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad));
-        Assert.IsNull(
-            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing));
+        Assert.That(creds.GetAllTableInfosThatUseThis().SelectMany(v => v.Value).Single(), Is.EqualTo(t));
+        Assert.That(t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad), Is.EqualTo(creds));
+        Assert.That(
+            t.GetCredentialsIfExists(ReusableLibraryCode.DataAccess.DataAccessContext.InternalDataProcessing), Is.Null);
     }
 
 
@@ -275,11 +275,11 @@ internal class YamlRepositoryTests
 
         var c = new Catalogue(repo, "yar");
 
-        Assert.Contains(c, repo.AllObjects.ToArray());
+        Assert.That(repo.AllObjects.ToArray(), Does.Contain(c));
 
         // creating a new repo should load the same object back
         var repo2 = new YamlRepository(dir);
-        Assert.Contains(c, repo2.AllObjects.ToArray());
+        Assert.That(repo2.AllObjects.ToArray(), Does.Contain(c));
     }
 
     [Test]
@@ -296,8 +296,8 @@ internal class YamlRepositoryTests
 
         // creating a new repo should load the same object back
         var repo2 = new YamlRepository(dir);
-        Assert.Contains(c, repo2.AllObjects.ToArray());
-        Assert.AreEqual("ffff", repo2.AllObjects.OfType<Catalogue>().Single().Name);
+        Assert.That(repo2.AllObjects.ToArray(), Does.Contain(c));
+        Assert.That(repo2.AllObjects.OfType<Catalogue>().Single().Name, Is.EqualTo("ffff"));
     }
 
     private static string GetUniqueDirectoryName() => Path.Combine(TestContext.CurrentContext.WorkDirectory,

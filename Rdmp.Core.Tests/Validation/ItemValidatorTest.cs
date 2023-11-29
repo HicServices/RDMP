@@ -40,7 +40,7 @@ public class ItemValidatorTest
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
         _v.ExpectedType = typeof(int);
 
-        Assert.NotNull(_v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>()));
+        Assert.That(_v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>()), Is.Not.Null);
     }
 
     [Test]
@@ -51,9 +51,9 @@ public class ItemValidatorTest
 
         var result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
 
-        Assert.IsNotNull(result);
-        Assert.IsTrue(result.Message.StartsWith("Incompatible type"));
-        Assert.IsTrue(result.Message.Contains(nameof(DateTime)));
+        Assert.That(result, Is.Not.Null);
+        Assert.That(result.Message.StartsWith("Incompatible type"));
+        Assert.That(result.Message.Contains(nameof(DateTime)));
     }
 
     [Test]
@@ -61,7 +61,7 @@ public class ItemValidatorTest
     {
         _v.PrimaryConstraint = new Chi();
 
-        Assert.IsNull(_v.ValidateAll(TestConstants._VALID_CHI, Array.Empty<object>(), Array.Empty<string>()));
+        Assert.That(_v.ValidateAll(TestConstants._VALID_CHI, Array.Empty<object>(), Array.Empty<string>()), Is.Null);
     }
 
     [Test]
@@ -69,8 +69,8 @@ public class ItemValidatorTest
     {
         _v.PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong);
 
-        Assert.NotNull(
-            _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>()));
+        Assert.That(
+            _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>()), Is.Not.Null);
     }
 
     [Test]
@@ -80,6 +80,6 @@ public class ItemValidatorTest
 
         var result = _v.ValidateAll(TestConstants._INVALID_CHI_CHECKSUM, Array.Empty<object>(), Array.Empty<string>());
 
-        Assert.AreEqual("CHI check digit did not match", result.Message);
+        Assert.That(result.Message, Is.EqualTo("CHI check digit did not match"));
     }
 }

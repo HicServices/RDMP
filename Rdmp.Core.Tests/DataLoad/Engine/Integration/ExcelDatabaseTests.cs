@@ -43,13 +43,13 @@ public class ExcelDatabaseTests : DatabaseTests
         cmd.Execute();
 
         var tbl = db.ExpectTable("TrailingDots");
-        Assert.IsTrue(tbl.Exists());
+        Assert.That(tbl.Exists());
 
         var cols = tbl.DiscoverColumns();
-        Assert.AreEqual(2, cols.Length);
-        Assert.AreEqual("Field1", cols[0].GetRuntimeName());
-        Assert.AreEqual("Field2", cols[1].GetRuntimeName());
+        Assert.That(cols, Has.Length.EqualTo(2));
+        Assert.That(cols[0].GetRuntimeName(), Is.EqualTo("Field1"));
+        Assert.That(cols[1].GetRuntimeName(), Is.EqualTo("Field2"));
 
-        Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
     }
 }

@@ -36,7 +36,7 @@ public class RuntimeTaskFactoryTests : DatabaseTests
             var ex = Assert.Throws<Exception>(() => RuntimeTaskFactory.Create(task,
                 new StageArgs(LoadStage.AdjustRaw, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),
                     Substitute.For<ILoadDirectory>())));
-            Assert.IsTrue(ex.InnerException.Message.Contains(
+            Assert.That(ex.InnerException.Message.Contains(
                 "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
         finally

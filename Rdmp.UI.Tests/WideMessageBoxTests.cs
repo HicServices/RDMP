@@ -23,8 +23,8 @@ internal class WideMessageBoxTests : UITests
         var args = new WideMessageBoxArgs("1", "2", "3", "4", WideMessageBoxTheme.Help);
 
         //it is important that the args retain the original length e.g. so user can copy to clipboard the text
-        Assert.AreEqual(1, args.Title.Length);
-        Assert.AreEqual(1, args.Message.Length);
+        Assert.That(args.Title, Has.Length.EqualTo(1));
+        Assert.That(args.Message, Has.Length.EqualTo(1));
 
         var wmb = new WideMessageBox(args);
 
@@ -36,11 +36,11 @@ internal class WideMessageBoxTests : UITests
         LastUserInterfaceLaunched = wmb;
 
         //the title and body should be a reasonable length
-        Assert.AreEqual(1, GetControl<Label>().Single().Text.Length);
-        Assert.AreEqual(1, GetControl<RichTextBox>().Single().Text.Length);
+        Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(1));
+        Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(1));
 
         //dialog shouldn't go thinner than 600 pixels
-        Assert.AreEqual(600, wmb.Width);
+        Assert.That(wmb.Width, Is.EqualTo(600));
     }
 
     [Test]
@@ -56,8 +56,8 @@ internal class WideMessageBoxTests : UITests
         var args = new WideMessageBoxArgs(s, s, s, s, WideMessageBoxTheme.Help);
 
         //it is important that the args retain the original length e.g. so user can copy to clipboard the text
-        Assert.AreEqual(1_000_000, args.Title.Length);
-        Assert.AreEqual(1_000_000, args.Message.Length);
+        Assert.That(args.Title, Has.Length.EqualTo(1_000_000));
+        Assert.That(args.Message, Has.Length.EqualTo(1_000_000));
 
         var wmb = new WideMessageBox(args);
 
@@ -69,13 +69,13 @@ internal class WideMessageBoxTests : UITests
         LastUserInterfaceLaunched = wmb;
 
         //the title and body should be a reasonable length
-        Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, GetControl<Label>().Single().Text.Length);
-        Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<RichTextBox>().Single().Text.Length);
+        Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_TITLE));
+        Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_BODY));
 
         //when shown on screen it should not go off the edge of the screen
 
         //find the widest screen
-        var availableWidth = Screen.AllScreens.Select(sc => sc.Bounds.Width).Max();
-        Assert.LessOrEqual(wmb.Width, availableWidth);
+        var availableWidth = Screen.AllScreens.Select(static sc => sc.Bounds.Width).Max();
+        Assert.That(wmb.Width, Is.LessThanOrEqualTo(availableWidth));
     }
 }

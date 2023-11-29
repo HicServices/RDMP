@@ -20,20 +20,20 @@ public class SimpleCohortIdentificationTests : DatabaseTests
 
         try
         {
-            Assert.IsTrue(config.Exists());
-            Assert.AreEqual("franky", config.Name);
+            Assert.That(config.Exists());
+            Assert.That(config.Name, Is.EqualTo("franky"));
 
             config.Description = "Hi there";
             config.SaveToDatabase();
 
 
             var config2 = CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(config.ID);
-            Assert.AreEqual("Hi there", config2.Description);
+            Assert.That(config2.Description, Is.EqualTo("Hi there"));
         }
         finally
         {
             config.DeleteInDatabase();
-            Assert.IsFalse(config.Exists());
+            Assert.That(config.Exists(), Is.False);
         }
     }
 
@@ -44,13 +44,13 @@ public class SimpleCohortIdentificationTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual(SetOperation.UNION, container.Operation);
+            Assert.That(container.Operation, Is.EqualTo(SetOperation.UNION));
 
             container.Operation = SetOperation.INTERSECT;
             container.SaveToDatabase();
 
             var container2 = CatalogueRepository.GetObjectByID<CohortAggregateContainer>(container.ID);
-            Assert.AreEqual(SetOperation.INTERSECT, container2.Operation);
+            Assert.That(container2.Operation, Is.EqualTo(SetOperation.INTERSECT));
         }
         finally
         {
@@ -67,20 +67,20 @@ public class SimpleCohortIdentificationTests : DatabaseTests
         var container2 = new CohortAggregateContainer(CatalogueRepository, SetOperation.INTERSECT);
         try
         {
-            Assert.AreEqual(0, container.GetSubContainers().Length);
+            Assert.That(container.GetSubContainers(), Is.Empty);
 
 
-            Assert.AreEqual(0, container.GetSubContainers().Length);
+            Assert.That(container.GetSubContainers(), Is.Empty);
 
             //set container to parent
             container.AddChild(container2);
 
             //container 1 should now contain container 2
-            Assert.AreEqual(1, container.GetSubContainers().Length);
-            Assert.Contains(container2, container.GetSubContainers());
+            Assert.That(container.GetSubContainers(), Has.Length.EqualTo(1));
+            Assert.That(container.GetSubContainers(), Does.Contain(container2));
 
             //container 2 should not have any children
-            Assert.AreEqual(0, container2.GetSubContainers().Length);
+            Assert.That(container2.GetSubContainers(), Is.Empty);
         }
         finally
         {

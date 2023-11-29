@@ -37,19 +37,19 @@ internal class RowDeleterTests
 
         var result = operation.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(2, result.Rows.Count);
+        Assert.That(result.Rows, Has.Count.EqualTo(2));
 
-        Assert.AreEqual("dog", result.Rows[0]["a"]);
-        Assert.AreEqual("dog", result.Rows[0]["b"]);
+        Assert.That(result.Rows[0]["a"], Is.EqualTo("dog"));
+        Assert.That(result.Rows[0]["b"], Is.EqualTo("dog"));
 
-        Assert.AreEqual("cat", result.Rows[1]["a"]);
-        Assert.AreEqual("dog", result.Rows[1]["b"]);
+        Assert.That(result.Rows[1]["a"], Is.EqualTo("cat"));
+        Assert.That(result.Rows[1]["b"], Is.EqualTo("dog"));
 
         operation.Dispose(listener, null);
 
         var msg = listener.EventsReceivedBySender[operation].Single();
 
-        Assert.AreEqual(ProgressEventType.Warning, msg.ProgressEventType);
-        Assert.AreEqual("Total RowDeleted operations for ColumnNameToFind 'b' was 1", msg.Message);
+        Assert.That(msg.ProgressEventType, Is.EqualTo(ProgressEventType.Warning));
+        Assert.That(msg.Message, Is.EqualTo("Total RowDeleted operations for ColumnNameToFind 'b' was 1"));
     }
 }

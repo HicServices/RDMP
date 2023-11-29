@@ -45,8 +45,8 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
 
         var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
 
-        Assert.AreEqual(1, tablesUsed.Count);
-        Assert.AreEqual(head, tablesUsed[0]);
+        Assert.That(tablesUsed, Has.Count.EqualTo(1));
+        Assert.That(tablesUsed[0], Is.EqualTo(head));
 
         //CASE 2 : 2 columns used one from each table so join is needed
         queryBuilder = new QueryBuilder(null, null);
@@ -60,15 +60,15 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
 
         tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
 
-        Assert.AreEqual(2, tablesUsed.Count);
-        Assert.AreEqual(head, tablesUsed[0]);
-        Assert.AreEqual(result, tablesUsed[1]);
+        Assert.That(tablesUsed, Has.Count.EqualTo(2));
+        Assert.That(tablesUsed[0], Is.EqualTo(head));
+        Assert.That(tablesUsed[1], Is.EqualTo(result));
 
-        Assert.AreEqual(CollapseWhitespace(@"SELECT 
+        Assert.That(CollapseWhitespace(queryBuilder.SQL), Is.EqualTo(CollapseWhitespace(@"SELECT 
 TestResultSetNumber,
 Code
 FROM 
-[biochemistry]..[Result] Right JOIN Head ON FK = PK"), CollapseWhitespace(queryBuilder.SQL));
+[biochemistry]..[Result] Right JOIN Head ON FK = PK")));
 
         var memoryRepository = new MemoryCatalogueRepository();
 
@@ -87,7 +87,7 @@ FROM
 
         //without the filter
         tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
-        Assert.AreEqual(1, tablesUsed.Count);
+        Assert.That(tablesUsed, Has.Count.EqualTo(1));
 
         //set the filter
         queryBuilder.RootFilterContainer = spontContainer;
@@ -98,6 +98,6 @@ FROM
 
         //with the filter
         tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
-        Assert.AreEqual(2, tablesUsed.Count);
+        Assert.That(tablesUsed, Has.Count.EqualTo(2));
     }
 }

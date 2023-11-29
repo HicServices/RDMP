@@ -27,7 +27,7 @@ public class SelectSQLRefactorerTests : UnitTests
 
         SelectSQLRefactorer.RefactorTableName(columnInfo, tableInfo, "[database]..[table2]");
 
-        Assert.AreEqual("[database]..[table2].[column]", columnInfo.Name);
+        Assert.That(columnInfo.Name, Is.EqualTo("[database]..[table2].[column]"));
     }
 
     [Test]
@@ -49,7 +49,7 @@ public class SelectSQLRefactorerTests : UnitTests
 
         SelectSQLRefactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
 
-        Assert.AreEqual("UPPER([database]..[table2].[column])", ei.SelectSQL);
+        Assert.That(ei.SelectSQL, Is.EqualTo("UPPER([database]..[table2].[column])"));
     }
 
     [Test]
@@ -81,7 +81,7 @@ public class SelectSQLRefactorerTests : UnitTests
 
         var refactorer = new SelectSQLRefactorer();
 
-        Assert.AreEqual(expectedToBeRefactorable, SelectSQLRefactorer.IsRefactorable(ei));
+        Assert.That(SelectSQLRefactorer.IsRefactorable(ei), Is.EqualTo(expectedToBeRefactorable));
 
         if (expectedToBeRefactorable)
             SelectSQLRefactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
@@ -101,10 +101,10 @@ public class SelectSQLRefactorerTests : UnitTests
         foreach (IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
 
-        Assert.IsTrue(SelectSQLRefactorer.IsRefactorable(ti));
+        Assert.That(SelectSQLRefactorer.IsRefactorable(ti));
 
-        Assert.AreEqual(1, SelectSQLRefactorer.RefactorTableName(ti, newName));
-        Assert.AreEqual(newName, ti.Name);
+        Assert.That(SelectSQLRefactorer.RefactorTableName(ti, newName), Is.EqualTo(1));
+        Assert.That(ti.Name, Is.EqualTo(newName));
     }
 
     [TestCase("[Donkey]..[MyTbl]", "[Fish]..[MyTbl2]", "'[Donkey]..[MyTbl]' has incorrect database property 'Fish'")]
@@ -120,10 +120,10 @@ public class SelectSQLRefactorerTests : UnitTests
             d.DeleteInDatabase();
 
         var refactorer = new SelectSQLRefactorer();
-        Assert.IsFalse(SelectSQLRefactorer.IsRefactorable(ti));
+        Assert.That(SelectSQLRefactorer.IsRefactorable(ti), Is.False);
 
         var ex = Assert.Throws<RefactoringException>(() => SelectSQLRefactorer.RefactorTableName(ti, newName));
-        StringAssert.Contains(expectedReason, ex.Message);
+        Assert.That(ex.Message, Does.Contain(expectedReason));
     }
 
 
@@ -153,8 +153,8 @@ public class SelectSQLRefactorerTests : UnitTests
         var oldName = findTableName;
         var newName = oldName.Replace("MyTbl", "MyNewTbl");
 
-        Assert.AreEqual(1, SelectSQLRefactorer.RefactorTableName(col, oldName, newName));
+        Assert.That(SelectSQLRefactorer.RefactorTableName(col, oldName, newName), Is.EqualTo(1));
 
-        Assert.AreEqual($"{newName}.[A]", col.Name);
+        Assert.That(col.Name, Is.EqualTo($"{newName}.[A]"));
     }
 }

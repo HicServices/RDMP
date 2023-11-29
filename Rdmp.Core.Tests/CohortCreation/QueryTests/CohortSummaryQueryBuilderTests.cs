@@ -85,18 +85,16 @@ public class CohortSummaryQueryBuilderTests : DatabaseTests
     public void ConstructorArguments_SameAggregateTwice()
     {
         var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acCohort, acCohort, null));
-        Assert.AreEqual(
-            "Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Summary and Cohort should be different aggregates.  Summary should be a graphable useful aggregate while cohort should return a list of private identifiers"));
     }
 
     [Test]
     public void ConstructorArguments_Param1AccidentallyACohort()
     {
         var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acCohort, acDataset, null));
-        Assert.AreEqual(
-            "The first argument to constructor CohortSummaryQueryBuilder should be a basic AggregateConfiguration (i.e. not a cohort) but the argument you passed ('cic_Agg1_Cohort') was a cohort identification configuration aggregate",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("The first argument to constructor CohortSummaryQueryBuilder should be a basic AggregateConfiguration (i.e. not a cohort) but the argument you passed ('cic_Agg1_Cohort') was a cohort identification configuration aggregate"));
     }
 
     [Test]
@@ -105,9 +103,8 @@ public class CohortSummaryQueryBuilderTests : DatabaseTests
         //change it in memory so it doesn't look like a cohort aggregate anymore
         acCohort.Name = "RegularAggregate";
         var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
-        Assert.AreEqual(
-            "The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with cic_) but the argument you passed ('RegularAggregate') was NOT a cohort identification configuration aggregate",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("The second argument to constructor CohortSummaryQueryBuilder should be a cohort identification aggregate (i.e. have a single AggregateDimension marked IsExtractionIdentifier and have a name starting with cic_) but the argument you passed ('RegularAggregate') was NOT a cohort identification configuration aggregate"));
         acCohort.RevertToDatabaseState();
     }
 
@@ -117,7 +114,7 @@ public class CohortSummaryQueryBuilderTests : DatabaseTests
         acCohort.Catalogue_ID = -999999;
         var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
 
-        Assert.IsTrue(
+        Assert.That(
             ex.Message.StartsWith(
                 "Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset"));
         acCohort.RevertToDatabaseState();
@@ -137,7 +134,7 @@ public class CohortSummaryQueryBuilderTests : DatabaseTests
     {
         var sql = acDataset.GetQueryBuilder().SQL;
 
-        Assert.AreEqual(@"/*Agg2_Dataset*/
+        Assert.That(sql, Is.EqualTo(@"/*Agg2_Dataset*/
 SELECT
 Year,
 count(*) AS MyCount
@@ -146,7 +143,7 @@ MyTable
 group by
 Year
 order by
-Year", sql);
+Year"));
     }
 
     [Test]
@@ -157,7 +154,7 @@ Year", sql);
         var ex = Assert.Throws<NotSupportedException>(() =>
             csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
 
-        Assert.AreEqual("No Query Caching Server configured", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("No Query Caching Server configured"));
     }
 
     [Test]
@@ -172,7 +169,7 @@ Year", sql);
             var ex = Assert.Throws<NotSupportedException>(() =>
                 csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereExtractionIdentifiersIn));
 
-            Assert.AreEqual("No Query Caching Server configured", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("No Query Caching Server configured"));
         }
         finally
         {
@@ -188,7 +185,7 @@ Year", sql);
 
         var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
-        Assert.AreEqual(@"/*Agg2_Dataset*/
+        Assert.That(builder.SQL, Is.EqualTo(@"/*Agg2_Dataset*/
 SELECT
 Year,
 count(*) AS MyCount
@@ -197,7 +194,7 @@ MyTable
 group by
 Year
 order by
-Year", builder.SQL);
+Year"));
     }
 
     [Test]
@@ -218,7 +215,7 @@ Year", builder.SQL);
 
             var builder = csqb.GetAdjustedAggregateBuilder(CohortSummaryAdjustment.WhereRecordsIn);
 
-            Assert.AreEqual(CollapseWhitespace(@"DECLARE @bob AS varchar(50);
+            Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(@"DECLARE @bob AS varchar(50);
 SET @bob='zomber';
 /*Agg2_Dataset*/
 SELECT
@@ -242,7 +239,7 @@ AND
 group by 
 Year
 order by 
-Year"), CollapseWhitespace(builder.SQL));
+Year")));
         }
         finally
         {

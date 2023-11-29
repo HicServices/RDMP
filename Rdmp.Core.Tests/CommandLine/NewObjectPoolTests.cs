@@ -22,13 +22,13 @@ internal class NewObjectPoolTests : UnitTests
 
         // When there is only one object we can pick it by name
         var picker = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
-        Assert.IsTrue(picker.HasArgumentOfType(0, typeof(Catalogue)));
-        Assert.AreEqual(cata1, picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)));
+        Assert.That(picker.HasArgumentOfType(0, typeof(Catalogue)));
+        Assert.That(picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)), Is.EqualTo(cata1));
 
         // But when there are 2 objects we don't know which to pick so cannot pick a Catalogue
         new Catalogue(Repository, "Hey");
         var picker2 = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
-        Assert.IsFalse(picker2.HasArgumentOfType(0, typeof(Catalogue)));
+        Assert.That(picker2.HasArgumentOfType(0, typeof(Catalogue)), Is.False);
     }
 
     [Test]
@@ -40,15 +40,15 @@ internal class NewObjectPoolTests : UnitTests
 
             // When there is only one object we can pick it by name
             var picker = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
-            Assert.IsTrue(picker.HasArgumentOfType(0, typeof(Catalogue)));
-            Assert.AreEqual(cata1, picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)));
+            Assert.That(picker.HasArgumentOfType(0, typeof(Catalogue)));
+            Assert.That(picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)), Is.EqualTo(cata1));
 
             // There are now 2 objects with the same name but because we are in a session we can pick the latest
             var cata2 = new Catalogue(Repository, "Hey");
             var picker2 = new CommandLineObjectPicker(new string[] { "Catalogue:Hey" }, GetActivator());
 
-            Assert.IsTrue(picker2.HasArgumentOfType(0, typeof(Catalogue)));
-            Assert.AreEqual(cata2, picker2.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)));
+            Assert.That(picker2.HasArgumentOfType(0, typeof(Catalogue)));
+            Assert.That(picker2.Arguments.First().GetValueForParameterOfType(typeof(Catalogue)), Is.EqualTo(cata2));
         }
     }
 }

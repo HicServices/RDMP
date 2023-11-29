@@ -21,9 +21,8 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual("Wrong number of parameters supplied to command, expected 3 but got 1",
-            cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Wrong number of parameters supplied to command, expected 3 but got 1"));
     }
 
     [Test]
@@ -34,8 +33,8 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{c.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual("First parameter must be an IArgumentHost", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("First parameter must be an IArgumentHost"));
     }
 
     [Test]
@@ -47,8 +46,8 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.StartsWith("Could not find argument called 'fff' on ", cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Could not find argument called 'fff' on "));
     }
 
     [Test]
@@ -65,9 +64,8 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.StartsWith("Provided value 'yyy' does not match expected Type 'Int32' of ",
-            cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible);
+        Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Provided value 'yyy' does not match expected Type 'Int32' of "));
     }
 
 
@@ -80,13 +78,13 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pta.Name = "fff";
         pta.SetType(typeof(int));
 
-        Assert.IsNull(pta.Value);
+        Assert.That(pta.Value, Is.Null);
 
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "5" }, GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 
-        Assert.AreEqual(5, pta.GetValueAsSystemType());
+        Assert.That(pta.GetValueAsSystemType(), Is.EqualTo(5));
     }
 
     [Test]
@@ -102,14 +100,14 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pta.Name = "fff";
         pta.SetType(typeof(Catalogue));
 
-        Assert.IsNull(pta.Value);
+        Assert.That(pta.Value, Is.Null);
 
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", $"Catalogue:kapow splat" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 
-        Assert.AreEqual(cata, pta.GetValueAsSystemType());
+        Assert.That(pta.GetValueAsSystemType(), Is.EqualTo(cata));
     }
 
     [Test]
@@ -127,14 +125,14 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pca.Name = "ggg";
         pca.SetType(typeof(Catalogue[]));
 
-        Assert.IsNull(pca.Value);
+        Assert.That(pca.Value, Is.Null);
 
         var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Catalogue:lolzzzyy" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 
-        Assert.Contains(cata1, (System.Collections.ICollection)pca.GetValueAsSystemType());
+        Assert.That((System.Collections.ICollection)pca.GetValueAsSystemType(), Does.Contain(cata1));
     }
 
     [Test]
@@ -155,15 +153,15 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pca.Name = "ggg";
         pca.SetType(typeof(Catalogue[]));
 
-        Assert.IsNull(pca.Value);
+        Assert.That(pca.Value, Is.Null);
 
         var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Catalogue:kapow*" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 
-        Assert.Contains(cata1, (System.Collections.ICollection)pca.GetValueAsSystemType());
-        Assert.Contains(cata2, (System.Collections.ICollection)pca.GetValueAsSystemType());
+        Assert.That((System.Collections.ICollection)pca.GetValueAsSystemType(), Does.Contain(cata1));
+        Assert.That((System.Collections.ICollection)pca.GetValueAsSystemType(), Does.Contain(cata2));
     }
 
     [Test]
@@ -183,13 +181,13 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         pca.SetValue(new Catalogue[] { cata1 });
         pca.SaveToDatabase();
 
-        Assert.Contains(cata1, (System.Collections.ICollection)pca.GetValueAsSystemType());
+        Assert.That((System.Collections.ICollection)pca.GetValueAsSystemType(), Does.Contain(cata1));
 
         var picker =
             new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Null" }, GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 
-        Assert.IsNull(pca.GetValueAsSystemType());
+        Assert.That(pca.GetValueAsSystemType(), Is.Null);
     }
 }

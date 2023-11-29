@@ -59,17 +59,15 @@ public class DocXHelper
         r0.SetText(htext ?? "");
     }
 
-    private static int GetSize(int headSize)
-    {
-        return headSize switch
+    private static int GetSize(int headSize) =>
+        headSize switch
         {
             1 => H1Size,
             2 => H2Size,
             3 => H3Size,
             4 => H4Size,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new ArgumentOutOfRangeException(nameof(headSize))
         };
-    }
 
     protected static void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
     {

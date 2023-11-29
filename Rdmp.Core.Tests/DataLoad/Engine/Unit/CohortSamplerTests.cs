@@ -32,9 +32,8 @@ internal class CohortSamplerTests : UnitTests
         var ex = Assert.Throws<Exception>(() =>
             sampler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "CohortSampler was unable to find a column called 'priv' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("CohortSampler was unable to find a column called 'priv' in the data passed in.  This is the expected private identifier column name of the cohort you are committing."));
     }
 
     [Test]
@@ -50,9 +49,8 @@ internal class CohortSamplerTests : UnitTests
         var ex = Assert.Throws<Exception>(() =>
             sampler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "CohortSampler was unable to find a column called 'ddd' in the data passed in.  This is the expected private identifier column name of the cohort you are committing.",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("CohortSampler was unable to find a column called 'ddd' in the data passed in.  This is the expected private identifier column name of the cohort you are committing."));
     }
 
     [Test]
@@ -68,9 +66,8 @@ internal class CohortSamplerTests : UnitTests
         var ex = Assert.Throws<Exception>(() =>
             sampler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "Cohort only contains 1 unique identifiers.  This is less than the requested sample size of 100 and FailIfNotEnoughIdentifiers is true",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Cohort only contains 1 unique identifiers.  This is less than the requested sample size of 100 and FailIfNotEnoughIdentifiers is true"));
     }
 
     [Test]
@@ -87,7 +84,7 @@ internal class CohortSamplerTests : UnitTests
 
         var result = sampler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
-        Assert.AreEqual(1, result.Rows.Count);
+        Assert.That(result.Rows, Has.Count.EqualTo(1));
     }
 
     [Test]
@@ -125,11 +122,11 @@ internal class CohortSamplerTests : UnitTests
         var result2 = sampler2.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(5, result1.Rows.Count);
-        Assert.AreEqual(5, result2.Rows.Count);
+        Assert.That(result1.Rows, Has.Count.EqualTo(5));
+        Assert.That(result2.Rows, Has.Count.EqualTo(5));
 
 
-        Assert.IsTrue(result1.Rows.Cast<DataRow>().Select(r => r[0])
+        Assert.That(result1.Rows.Cast<DataRow>().Select(r => r[0])
                 .SequenceEqual(result2.Rows.Cast<DataRow>().Select(r => r[0])),
             "Expected both samplers to select the same random sample of input values because the project number is the seed");
     }
@@ -169,11 +166,11 @@ internal class CohortSamplerTests : UnitTests
         var result2 = sampler2.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(2, result1.Rows.Count);
-        Assert.AreEqual(2, result2.Rows.Count);
+        Assert.That(result1.Rows, Has.Count.EqualTo(2));
+        Assert.That(result2.Rows, Has.Count.EqualTo(2));
 
 
-        Assert.IsTrue(result1.Rows.Cast<DataRow>().Select(r => r[0])
+        Assert.That(result1.Rows.Cast<DataRow>().Select(r => r[0])
                 .SequenceEqual(result2.Rows.Cast<DataRow>().Select(r => r[0])),
             "Expected both samplers to select the same random sample of input values because the project number is the seed");
     }

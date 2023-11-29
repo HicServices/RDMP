@@ -35,7 +35,7 @@ public class PipelineReadPerformanceTest : DatabaseTests
         var manualCount = Convert.ToInt32(cmd.ExecuteScalar());
 
         //manual count matches expected
-        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData, manualCount);
+        Assert.That(manualCount, Is.EqualTo(_bulkTestData.ExpectedNumberOfRowsInTestData));
 
         //now get the fast approximate rowcount
         var fastRowcount = _bulkTestData.BulkDataDatabase
@@ -43,6 +43,6 @@ public class PipelineReadPerformanceTest : DatabaseTests
             .GetRowCount();
 
         //it should also match
-        Assert.AreEqual(_bulkTestData.ExpectedNumberOfRowsInTestData, fastRowcount);
+        Assert.That(fastRowcount, Is.EqualTo(_bulkTestData.ExpectedNumberOfRowsInTestData));
     }
 }

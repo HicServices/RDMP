@@ -22,6 +22,6 @@ internal class ArchivalDataLoadInfoTests
         };
 
         // This dle took 2 days, 1 hour, 20 mins and 23 seconds
-        StringAssert.Contains("(49:20:23)", adi.ToString());
+        Assert.That(adi.ToString(), Does.Contain("(49:20:23)"));
     }
 }

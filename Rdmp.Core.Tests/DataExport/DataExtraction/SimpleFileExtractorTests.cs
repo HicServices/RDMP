@@ -167,10 +167,9 @@ internal class SimpleFileExtractorTests
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
         FileAssert.Exists(Path.Combine(_outDir.FullName, "Rel1.txt"));
 
-        Assert.AreEqual(ProgressEventType.Warning, mem.GetWorst());
+        Assert.That(mem.GetWorst(), Is.EqualTo(ProgressEventType.Warning));
 
-        StringAssert.StartsWith("No Files were found matching Pattern Pat2.txt in ",
-            mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message);
+        Assert.That(mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message, Does.StartWith("No Files were found matching Pattern Pat2.txt in "));
     }
 
     [Test]
@@ -216,9 +215,8 @@ internal class SimpleFileExtractorTests
         // does not exist
         var ex = Assert.Throws<Exception>(() => _extractor.MovePatient("Sub3", "Rel3", _outDir,
             ThrowImmediatelyDataLoadEventListener.QuietPicky, new GracefulCancellationToken()));
-        Assert.AreEqual(
-            $"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo($"No Directories were found matching Pattern Sub3 in {_inDir.FullName}.  For private identifier 'Sub3'"));
 
         // if not throwing on warnings then a missing sub just passes through and is ignored
         _extractor.MovePatient("Sub3", "Rel3", _outDir, ThrowImmediatelyDataLoadEventListener.Quiet,

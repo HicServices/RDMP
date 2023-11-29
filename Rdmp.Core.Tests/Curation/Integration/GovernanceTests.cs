@@ -40,8 +40,8 @@ public class GovernanceTests : DatabaseTests
     {
         var gov = GetGov();
 
-        Assert.NotNull(gov);
-        Assert.AreEqual(gov.StartDate, DateTime.Now.Date);
+        Assert.That(gov, Is.Not.Null);
+        Assert.That(DateTime.Now.Date, Is.EqualTo(gov.StartDate));
     }
 
     [Test]
@@ -55,17 +55,17 @@ public class GovernanceTests : DatabaseTests
         var freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
 
         //local change not applied yet
-        Assert.AreNotEqual(gov.Name, freshCopy.Name);
+        Assert.That(freshCopy.Name, Is.Not.EqualTo(gov.Name));
 
         //comitted change to database
         gov.SaveToDatabase();
 
         //notice that this fresh copy is still desynced
-        Assert.AreNotEqual(gov.Name, freshCopy.Name);
+        Assert.That(freshCopy.Name, Is.Not.EqualTo(gov.Name));
 
         //sync it
         freshCopy = CatalogueRepository.GetObjectByID<GovernancePeriod>(gov.ID);
-        Assert.AreEqual(gov.Name, freshCopy.Name);
+        Assert.That(freshCopy.Name, Is.EqualTo(gov.Name));
     }
 
     [Test]
@@ -82,9 +82,8 @@ public class GovernanceTests : DatabaseTests
         if (CatalogueRepository is TableRepository)
         {
             var ex = Assert.Throws<SqlException>(gov2.SaveToDatabase);
-            StringAssert.StartsWith(
-                "Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)",
-                ex?.Message);
+            Assert.That(
+                ex?.Message, Does.StartWith("Cannot insert duplicate key row in object 'dbo.GovernancePeriod' with unique index 'idxGovernancePeriodNameMustBeUnique'. The duplicate key value is (HiDuplicate)"));
         }
     }
 
@@ -101,7 +100,7 @@ public class GovernanceTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             gov.Check(ThrowImmediatelyCheckNotifier
                 .Quiet)); //no longer valid - notice there is no SaveToDatabase because we can shouldn't be going back to db anyway
-        Assert.AreEqual("GovernancePeriod TestExpiryBeforeStarting expires before it begins!", ex?.Message);
+        Assert.That(ex?.Message, Is.EqualTo("GovernancePeriod TestExpiryBeforeStarting expires before it begins!"));
     }
 
     [Test]
@@ -112,7 +111,7 @@ public class GovernanceTests : DatabaseTests
 
         //valid to start with
         var ex = Assert.Throws<Exception>(() => gov.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("There is no end date for GovernancePeriod NeverExpires", ex?.Message);
+        Assert.That(ex?.Message, Is.EqualTo("There is no end date for GovernancePeriod NeverExpires"));
     }
 
     [TestCase(true)]
@@ -125,19 +124,19 @@ public class GovernanceTests : DatabaseTests
         var c = new Catalogue(repo, "GovernedCatalogue");
         try
         {
-            Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);
+            Assert.That(gov.GovernedCatalogues.Count(), Is.EqualTo(0));
 
             //should be no governanced catalogues for this governancer yet
             gov.CreateGovernanceRelationshipTo(c);
 
             var allCatalogues = gov.GovernedCatalogues.ToArray();
             var governedCatalogue = allCatalogues[0];
-            Assert.AreEqual(governedCatalogue, c); //we now govern C
+            Assert.That(c, Is.EqualTo(governedCatalogue)); //we now govern C
         }
         finally
         {
             gov.DeleteGovernanceRelationshipTo(c);
-            Assert.AreEqual(gov.GovernedCatalogues.Count(), 0); //we govern c nevermore!
+            Assert.That(gov.GovernedCatalogues.Count(), Is.EqualTo(0)); //we govern c nevermore!
 
             c.DeleteInDatabase();
         }
@@ -149,8 +148,7 @@ public class GovernanceTests : DatabaseTests
         var c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
 
         var gov = GetGov();
-        Assert.AreEqual(gov.GovernedCatalogues.Count(),
-            0); //should be no governanced catalogues for this governancer yet
+        Assert.That(gov.GovernedCatalogues.Count(), Is.EqualTo(0)); //should be no governanced catalogues for this governancer yet
 
         gov.CreateGovernanceRelationshipTo(c);
         gov.CreateGovernanceRelationshipTo(c);

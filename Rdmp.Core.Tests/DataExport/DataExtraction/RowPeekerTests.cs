@@ -39,9 +39,9 @@ internal class RowPeekerTests
                 //Reads fish and peeks dish
                 p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt2);
 
-                //read one row
-                Assert.AreEqual(1, dt2.Rows.Count);
-                Assert.AreEqual("fish", dt2.Rows[0]["MyCol"]);
+        //read one row
+        Assert.That(dt2.Rows, Has.Count.EqualTo(1));
+        Assert.That(dt2.Rows[0]["MyCol"], Is.EqualTo("fish"));
 
                 using var dt3 = new DataTable();
                 dt3.Columns.Add("MyCol");
@@ -52,8 +52,8 @@ internal class RowPeekerTests
                 //clear the peek
                 //unpeeks dish
                 p.AddPeekedRowsIfAny(dt3);
-                Assert.AreEqual(1, dt3.Rows.Count);
-                Assert.AreEqual("dish", dt3.Rows[0]["MyCol"]);
+        Assert.That(dt3.Rows, Has.Count.EqualTo(1));
+        Assert.That(dt3.Rows[0]["MyCol"], Is.EqualTo("dish"));
 
                 //now we can read into dt4 but the condition is false
                 //Reads nothing but peeks splish
@@ -61,18 +61,18 @@ internal class RowPeekerTests
                 dt4.Columns.Add("MyCol");
                 p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt4);
 
-                Assert.AreEqual(0, dt4.Rows.Count);
+        Assert.That(dt4.Rows, Is.Empty);
 
                 //we passed a null chunk and that pulls back the legit data table
                 var dt5 = p.AddPeekedRowsIfAny(null);
 
-                Assert.IsNotNull(dt5);
-                Assert.AreEqual("splish", dt5.Rows[0]["MyCol"]);
+        Assert.That(dt5, Is.Not.Null);
+        Assert.That(dt5.Rows[0]["MyCol"], Is.EqualTo("splish"));
 
                 using var dt6 = new DataTable();
                 dt6.Columns.Add("MyCol");
                 p.AddWhile(mock, r => (string)r["MyCol"] == "fish", dt6);
 
-                Assert.AreEqual(0, dt6.Rows.Count);
+        Assert.That(dt6.Rows, Is.Empty);
         }
 }

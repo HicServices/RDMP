@@ -26,14 +26,14 @@ internal class PredictionValidationTest
         var v = CreateInitialisedValidator(prediction);
 
         var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
-        Assert.IsInstanceOf<MissingFieldException>(ex?.InnerException);
+        Assert.That(ex?.InnerException, Is.InstanceOf<MissingFieldException>());
     }
 
     [Test]
     public void Validate_NullRule_GeneratesException()
     {
         var ex = Assert.Throws<ArgumentException>(() => _ = new Prediction(null, "gender"));
-        StringAssert.Contains("You must specify a PredictionRule to follow", ex?.Message);
+        Assert.That(ex?.Message, Does.Contain("You must specify a PredictionRule to follow"));
     }
 
     [Test]
@@ -54,7 +54,7 @@ internal class PredictionValidationTest
         };
         var v = CreateInitialisedValidator(prediction);
         var ex = Assert.Throws<InvalidOperationException>(() => v.Validate(TestConstants.ValidChiAndInconsistentSex));
-        Assert.IsInstanceOf<InvalidOperationException>(ex?.InnerException);
+        Assert.That(ex?.InnerException, Is.InstanceOf<InvalidOperationException>());
     }
 
     [Test]
@@ -78,7 +78,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidator(prediction);
 
-        Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
+        Assert.That(v.Validate(TestConstants.ValidChiAndConsistentSex), Is.Null);
     }
 
     [Test]
@@ -87,7 +87,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidator(prediction);
 
-        Assert.IsNull(v.Validate(TestConstants.NullChiAndValidSex));
+        Assert.That(v.Validate(TestConstants.NullChiAndValidSex), Is.Null);
     }
 
     [Test]
@@ -96,7 +96,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidator(prediction);
 
-        Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
+        Assert.That(v.Validate(TestConstants.NullChiAndNullSex), Is.Null);
     }
 
     [Test]
@@ -105,7 +105,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidator(prediction);
 
-        Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.That(v.Validate(TestConstants.ValidChiAndInconsistentSex), Is.Not.Null);
     }
 
     [Test]
@@ -114,7 +114,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidator(prediction);
 
-        Assert.NotNull(v.Validate(TestConstants.InvalidChiAndValidSex));
+        Assert.That(v.Validate(TestConstants.InvalidChiAndValidSex), Is.Not.Null);
     }
 
     #endregion
@@ -127,7 +127,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
 
-        Assert.IsNull(v.Validate(TestConstants.ValidChiAndConsistentSex));
+        Assert.That(v.Validate(TestConstants.ValidChiAndConsistentSex), Is.Null);
     }
 
     [Test]
@@ -136,7 +136,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
 
-        Assert.IsNull(v.Validate(TestConstants.NullChiAndNullSex));
+        Assert.That(v.Validate(TestConstants.NullChiAndNullSex), Is.Null);
     }
 
     [Test]
@@ -145,7 +145,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
 
-        Assert.NotNull(v.Validate(TestConstants.ValidChiAndInconsistentSex));
+        Assert.That(v.Validate(TestConstants.ValidChiAndInconsistentSex), Is.Not.Null);
     }
 
     [Test]

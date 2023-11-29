@@ -155,7 +155,7 @@ GO";
             engine1.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei1 = plan1ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
-        Assert.IsTrue(ei1.Exists());
+        Assert.That(ei1.Exists());
 
         //Now create a plan for the combo Catalogue which contains references to both tables (Tests and Results).  Remember Tests has already been migrated as part of plan1
         var plan2 = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, _comboCata);
@@ -174,7 +174,7 @@ GO";
             engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
         var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
-        Assert.IsTrue(ei2.Exists());
+        Assert.That(ei2.Exists());
 
         //and can the query be executed successfully
         var qb = new QueryBuilder(null, null);
@@ -191,8 +191,8 @@ GO";
 
         Console.WriteLine($"Final migrated combo dataset SQL was:{qb.SQL}");
 
-        Assert.IsTrue(_comboCata.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")));
-        Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),
+        Assert.That(_comboCata.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")));
+        Assert.That(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),
             "ANO Catalogue did not respect the original CatalogueItem Name");
     }
 }

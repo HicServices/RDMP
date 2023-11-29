@@ -119,15 +119,15 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         engine.Execute();
 
         var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
-        Assert.IsTrue(anoCatalogue.Exists());
+        Assert.That(anoCatalogue.Exists());
 
         db.Drop();
 
         var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
         var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
-        Assert.AreEqual(exports, imports);
-        Assert.IsTrue(exports > 0);
+        Assert.That(imports, Is.EqualTo(exports));
+        Assert.That(exports, Is.GreaterThan(0));
     }
 
     [Test]
@@ -166,20 +166,20 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         engine.Execute();
 
         var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
-        Assert.IsTrue(anoCatalogue.Exists());
+        Assert.That(anoCatalogue.Exists());
 
         //should only be one (the id column
-        Assert.AreEqual(1, anoCatalogue.CatalogueItems.Length);
+        Assert.That(anoCatalogue.CatalogueItems, Has.Length.EqualTo(1));
         var idColInAnoDatabase = anoCatalogue.CatalogueItems[0].ColumnInfo;
-        Assert.AreEqual("int", idColInAnoDatabase.Data_type);
+        Assert.That(idColInAnoDatabase.Data_type, Is.EqualTo("int"));
 
         db.Drop();
 
         var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
         var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
-        Assert.AreEqual(exports, imports);
-        Assert.IsTrue(exports > 0);
+        Assert.That(imports, Is.EqualTo(exports));
+        Assert.That(exports, Is.GreaterThan(0));
     }
 
 
@@ -228,7 +228,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         }
 
         //Create a JoinInfo so the query builder knows how to connect the tables
-        new JoinInfo(CatalogueRepository,
+        _=new JoinInfo(CatalogueRepository,
             fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
             fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
         );
@@ -240,7 +240,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         cataEngineer2.ExecuteForwardEngineering(cata);
 
         //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)
-        Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Length, 4);
+        Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any), Has.Length.EqualTo(4));
 
         //setup ANOTable on head
         var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C")
@@ -278,8 +278,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         if (!tableInfoAlreadyExistsForSkippedTable)
         {
             var ex = Assert.Throws<Exception>(engine.Execute);
-            Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
-            Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
+            Assert.That(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
+            Assert.That(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
 
             return;
         }
@@ -287,30 +287,30 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         engine.Execute();
 
         var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
-        Assert.IsTrue(newCata.Exists());
+        Assert.That(newCata.Exists());
 
         var newCataItems = newCata.CatalogueItems;
-        Assert.AreEqual(newCataItems.Length, 4);
+        Assert.That(newCataItems, Has.Length.EqualTo(4));
 
         //should be extraction informations
         //all extraction informations should point to the new table location
-        Assert.IsTrue(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
+        Assert.That(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
 
         //these columns should all exist
-        Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
-        Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
-        Assert.IsTrue(newCataItems.Any(ci =>
+        Assert.That(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
+        Assert.That(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
+        Assert.That(newCataItems.Any(ci =>
             ci.ExtractionInformation.SelectSQL
                 .Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
 
         //new ColumnInfo should have a reference to the anotable
-        Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
+        Assert.That(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
 
 
         var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo;
 
         //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
-        Assert.IsTrue(newCataItems.Select(ci => ci.ColumnInfo).Contains(newSpineColorColumnInfo));
+        Assert.That(newCataItems.Select(ci => ci.ColumnInfo).Contains(newSpineColorColumnInfo));
     }
 
     [Test]
@@ -414,10 +414,10 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         Console.WriteLine(qb.SQL);
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
-        Assert.AreEqual(2, qb.TablesUsedInQuery.Count);
+        Assert.That(qb.TablesUsedInQuery, Has.Count.EqualTo(2));
 
         //the query builder should have identified the lookup
-        Assert.AreEqual(lookup, qb.GetDistinctRequiredLookups().Single());
+        Assert.That(qb.GetDistinctRequiredLookups().Single(), Is.EqualTo(lookup));
 
         //////////////////////////////////////////////////////////////////////////////////////The Actual Bit Being Tested////////////////////////////////////////////////////
         var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator, bulk.catalogue)
@@ -436,7 +436,7 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 
         var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.StartsWith("\\ano"));
-        Assert.IsTrue(anoCatalogue.Exists());
+        Assert.That(anoCatalogue.Exists());
 
         //The new Catalogue should have the same number of ExtractionInformations
         var eiSource = bulk.catalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei => ei.Order)
@@ -444,25 +444,24 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var eiDestination = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).OrderBy(ei => ei.Order)
             .ToArray();
 
-        Assert.AreEqual(eiSource.Length, eiDestination.Length,
+        Assert.That(eiDestination, Has.Length.EqualTo(eiSource.Length),
             "Both the new and the ANO catalogue should have the same number of ExtractionInformations (extractable columns)");
 
         for (var i = 0; i < eiSource.Length; i++)
         {
-            Assert.AreEqual(eiSource[i].Order, eiDestination[i].Order,
+            Assert.That(eiDestination[i].Order, Is.EqualTo(eiSource[i].Order),
                 "ExtractionInformations in the source and destination Catalogue should have the same order");
 
-            Assert.AreEqual(eiSource[i].GetRuntimeName(),
-                eiDestination[i].GetRuntimeName().Replace("ANO", ""),
+            Assert.That(eiDestination[i].GetRuntimeName().Replace("ANO", ""), Is.EqualTo(eiSource[i].GetRuntimeName()),
                 "ExtractionInformations in the source and destination Catalogue should have the same names (excluding ANO prefix)");
 
-            Assert.AreEqual(eiSource[i].ExtractionCategory, eiDestination[i].ExtractionCategory,
+            Assert.That(eiDestination[i].ExtractionCategory, Is.EqualTo(eiSource[i].ExtractionCategory),
                 "Old / New ANO ExtractionInformations did not match on ExtractionCategory");
-            Assert.AreEqual(eiSource[i].IsExtractionIdentifier, eiDestination[i].IsExtractionIdentifier,
+            Assert.That(eiDestination[i].IsExtractionIdentifier, Is.EqualTo(eiSource[i].IsExtractionIdentifier),
                 "Old / New ANO ExtractionInformations did not match on IsExtractionIdentifier");
-            Assert.AreEqual(eiSource[i].HashOnDataRelease, eiDestination[i].HashOnDataRelease,
+            Assert.That(eiDestination[i].HashOnDataRelease, Is.EqualTo(eiSource[i].HashOnDataRelease),
                 "Old / New ANO ExtractionInformations did not match on HashOnDataRelease");
-            Assert.AreEqual(eiSource[i].IsPrimaryKey, eiDestination[i].IsPrimaryKey,
+            Assert.That(eiDestination[i].IsPrimaryKey, Is.EqualTo(eiSource[i].IsPrimaryKey),
                 "Old / New ANO ExtractionInformations did not match on IsPrimaryKey");
         }
 
@@ -477,29 +476,27 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
             .Single(ei => ei.GetRuntimeName().Equals("MyMutilatedColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])",
-            anoEiPostcode.SelectSQL);
+        Assert.That(anoEiPostcode.SelectSQL, Is.EqualTo($"LEFT(10,{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[current_postcode])"));
 
         var anoEiComboCol = anoCatalogue.GetAllExtractionInformation(ExtractionCategory.Any)
             .Single(ei => ei.GetRuntimeName().Equals("ComboColumn"));
 
         //The transform on postcode should have been refactored to the new table name and preserve the scalar function LEFT...
-        Assert.AreEqual(
-            $"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]",
-            anoEiComboCol.SelectSQL);
+        Assert.That(
+            anoEiComboCol.SelectSQL, Is.EqualTo($"{anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[forename] + ' ' + {anoEiPostcode.ColumnInfo.TableInfo.GetFullyQualifiedName()}.[surname]"));
 
         //there should be 2 tables involved in the query [z_sexLookup] and [BulkData]
-        Assert.AreEqual(2, qbdestination.TablesUsedInQuery.Count);
+        Assert.That(qbdestination.TablesUsedInQuery, Has.Count.EqualTo(2));
 
         //the query builder should have identified the lookup but it should be the new one not the old one
-        Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Count(),
+        Assert.That(qbdestination.GetDistinctRequiredLookups().Count(), Is.EqualTo(1),
             "New query builder for ano catalogue did not correctly identify that there was a Lookup");
-        Assert.AreNotEqual(lookup, qbdestination.GetDistinctRequiredLookups().Single(),
+        Assert.That(qbdestination.GetDistinctRequiredLookups().Single(), Is.Not.EqualTo(lookup),
             "New query builder for ano catalogue identified the OLD Lookup!");
 
-        Assert.AreEqual(1, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(),
+        Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins().Count(), Is.EqualTo(1),
             "The new Lookup did not have the composite join key (sex/hb_extract)");
-        Assert.AreNotEqual(compositeLookup, qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(),
+        Assert.That(qbdestination.GetDistinctRequiredLookups().Single().GetSupplementalJoins(), Is.Not.EqualTo(compositeLookup),
             "New query builder for ano catalogue identified the OLD LookupCompositeJoinInfo!");
 
         db.Drop();
@@ -507,8 +504,8 @@ public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationS
         var exports = CatalogueRepository.GetAllObjects<ObjectExport>().Length;
         var imports = CatalogueRepository.GetAllObjects<ObjectImport>().Length;
 
-        Assert.AreEqual(exports, imports);
-        Assert.IsTrue(exports > 0);
+        Assert.That(imports, Is.EqualTo(exports));
+        Assert.That(exports, Is.GreaterThan(0));
     }
 
 

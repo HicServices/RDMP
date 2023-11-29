@@ -80,7 +80,7 @@ public class AggregateDataBasedTests : DatabaseTests
         uploader.Dispose(listener, null);
         var tbl = db.ExpectTable(uploader.TargetTableName);
 
-        Assert.IsTrue(tbl.Exists());
+        Assert.That(tbl.Exists());
 
         catalogue = Import(tbl, out tableinfo, out _, out _, out extractionInformations);
 
@@ -132,8 +132,7 @@ public class AggregateDataBasedTests : DatabaseTests
         builder.RootFilterContainer = ORContainer;
     }
 
-    private AggregateConfiguration SetupAggregateWithAxis(DatabaseType type,
-        ExtractionInformation[] extractionInformations,
+    private AggregateConfiguration SetupAggregateWithAxis(ExtractionInformation[] extractionInformations,
         ICatalogue catalogue, out AggregateDimension axisDimension)
     {
         var dateDimension =
@@ -151,8 +150,7 @@ public class AggregateDataBasedTests : DatabaseTests
         return configuration;
     }
 
-    private AggregateConfiguration SetupAggregateWithPivot(DatabaseType type,
-        ExtractionInformation[] extractionInformations,
+    private AggregateConfiguration SetupAggregateWithPivot(ExtractionInformation[] extractionInformations,
         ICatalogue catalogue, out AggregateDimension axisDimension, out AggregateDimension pivotDimension)
     {
         var axisCol =
@@ -259,7 +257,7 @@ public class AggregateDataBasedTests : DatabaseTests
             VerifyRowExist(resultTable, "F", 60);
             VerifyRowExist(resultTable, "E&, %a' mp;E", 137);
             VerifyRowExist(resultTable, "G", 100);
-            Assert.AreEqual(4, resultTable.Rows.Count);
+            Assert.That(resultTable.Rows, Has.Count.EqualTo(4));
         }
         finally
         {
@@ -299,7 +297,7 @@ public class AggregateDataBasedTests : DatabaseTests
             //VerifyRowExist(resultTable, "F", 60); //F does not have any records over 42 and isn't T so shouldnt be matched
             VerifyRowExist(resultTable, "E&, %a' mp;E", 59); //E has 1 records over 42
             VerifyRowExist(resultTable, "G", 100); //47 + 53
-            Assert.AreEqual(3, resultTable.Rows.Count);
+            Assert.That(resultTable.Rows, Has.Count.EqualTo(3));
         }
         finally
         {
@@ -316,7 +314,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate with axis
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
+        var configuration = SetupAggregateWithAxis(extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
         configuration.SaveToDatabase();
@@ -330,7 +328,7 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
             VerifyRowExist(resultTable, "2000",
                 null); //because it is a SUM the ANSI return should be null not 0 since it is a sum of no records
@@ -357,7 +355,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate with axis
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
+        var configuration = SetupAggregateWithAxis(extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "count(*)";
         configuration.HavingSQL = "count(*)>3"; //matches only years with more than 3 records
@@ -372,7 +370,7 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
             VerifyRowExist(resultTable, "2000",
                 null); //records only showing where there are more than 3 records (HAVING refers to the year since there's no pivot)
@@ -400,7 +398,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate with axis
-        var configuration = SetupAggregateWithAxis(type, extractionInformations, catalogue, out var dimension);
+        var configuration = SetupAggregateWithAxis(extractionInformations, catalogue, out var dimension);
 
         configuration.CountSQL = "count(NumberInTrouble)";
         configuration.SaveToDatabase();
@@ -415,7 +413,7 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
             VerifyRowExist(resultTable, "2000", null);
             VerifyRowExist(resultTable, "2001", 4); //4 are T or > 42
@@ -437,7 +435,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+        var configuration = SetupAggregateWithPivot(extractionInformations, catalogue, out var axisDimension,
             out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
@@ -455,12 +453,12 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
-            Assert.AreEqual("F", resultTable.Columns[3].ColumnName);
-            Assert.AreEqual("G", resultTable.Columns[4].ColumnName);
+            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+            Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("F"));
+            Assert.That(resultTable.Columns[4].ColumnName, Is.EqualTo("G"));
 
             //T,E,F,G
             VerifyRowExist(resultTable, "2000", null, null, null,
@@ -489,7 +487,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+        var configuration = SetupAggregateWithPivot(extractionInformations, catalogue, out var axisDimension,
             out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
@@ -509,11 +507,11 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
-            Assert.AreEqual("G", resultTable.Columns[3].ColumnName);
+            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+            Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("G"));
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
             VerifyRowExist(resultTable, "2000", null, null,
@@ -547,7 +545,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+        var configuration = SetupAggregateWithPivot(extractionInformations, catalogue, out var axisDimension,
             out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
@@ -572,10 +570,10 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.AreEqual("T", resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[2].ColumnName);
+            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
             VerifyRowExist(resultTable, "2000", null,
@@ -608,7 +606,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+        var configuration = SetupAggregateWithPivot(extractionInformations, catalogue, out var axisDimension,
             out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
@@ -636,11 +634,11 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
             //sort in AggregateTopX is the pivot dimension asc (i.e. order alphabetically)
-            Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[1].ColumnName);
-            Assert.AreEqual("G", resultTable.Columns[2].ColumnName);
+            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("G"));
 
             //E,G (note that only 1 value appears for E because WHERE throws out rest).  Also note the two columns are E and G because that is Top 2 when alphabetically sorted of the pivot values (E,F,G,T) that match the filter (F doesn't)
             VerifyRowExist(resultTable, "2000", null,
@@ -672,7 +670,7 @@ public class AggregateDataBasedTests : DatabaseTests
             out var tableInfo);
 
         //setup the aggregate pivot (and axis)
-        var configuration = SetupAggregateWithPivot(type, extractionInformations, catalogue, out var axisDimension,
+        var configuration = SetupAggregateWithPivot(extractionInformations, catalogue, out var axisDimension,
             out var pivotDimension);
 
         configuration.CountSQL = "sum(NumberInTrouble)";
@@ -701,10 +699,10 @@ public class AggregateDataBasedTests : DatabaseTests
             var resultTable = GetResultForBuilder(builder, tbl);
 
             //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.IsTrue(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
             //where logic matches T in spades but HAVING statement throws it out for having more than 4 records total
-            Assert.AreEqual("E&, %a' mp;E", resultTable.Columns[1].ColumnName);
+            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
 
             //Only E appears because of Top 1 pivot statement
             VerifyRowExist(resultTable, "2000",

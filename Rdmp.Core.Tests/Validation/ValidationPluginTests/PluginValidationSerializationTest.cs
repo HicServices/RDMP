@@ -24,20 +24,20 @@ public class PluginValidationSerializationTest
         };
 
         //validation should be working
-        Assert.IsNull(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()));
-        Assert.IsNotNull(iv.ValidateAll("Potato", Array.Empty<object>(), Array.Empty<string>()));
+        Assert.That(iv.ValidateAll("Fish", Array.Empty<object>(), Array.Empty<string>()), Is.Null);
+        Assert.That(iv.ValidateAll("Potato", Array.Empty<object>(), Array.Empty<string>()), Is.Not.Null);
 
         v.ItemValidators.Add(iv);
 
-        Assert.AreEqual(1, v.ItemValidators.Count);
-        Assert.AreEqual(typeof(FishConstraint), v.ItemValidators[0].PrimaryConstraint.GetType());
+        Assert.That(v.ItemValidators, Has.Count.EqualTo(1));
+        Assert.That(v.ItemValidators[0].PrimaryConstraint.GetType(), Is.EqualTo(typeof(FishConstraint)));
 
         var xml = v.SaveToXml();
 
         var newV = Validator.LoadFromXml(xml);
 
-        Assert.AreEqual(1, newV.ItemValidators.Count);
-        Assert.AreEqual(typeof(FishConstraint), newV.ItemValidators[0].PrimaryConstraint.GetType());
+        Assert.That(newV.ItemValidators, Has.Count.EqualTo(1));
+        Assert.That(newV.ItemValidators[0].PrimaryConstraint.GetType(), Is.EqualTo(typeof(FishConstraint)));
     }
 }
 

@@ -220,7 +220,7 @@ end
         var engineer = new ForwardEngineerCatalogue(tbl, cols);
         engineer.ExecuteForwardEngineering(out var cata, out var cis, out var eis);
 
-        Assert.AreEqual("chi", eis[0].GetRuntimeName());
+        Assert.That(eis[0].GetRuntimeName(), Is.EqualTo("chi"));
         eis[0].IsExtractionIdentifier = true;
         eis[0].SaveToDatabase();
 
@@ -264,12 +264,12 @@ end
         var qb = new QueryBuilder("", "");
 
         //table valued function should have 2 fields (chi and definitionID)
-        Assert.AreEqual(2, _tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Length);
+        Assert.That(_tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any), Has.Length.EqualTo(2));
 
         qb.AddColumnRange(_tvfCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
         var ex = Assert.Throws<QueryBuildingException>(() => Console.WriteLine(qb.SQL));
-        Assert.AreEqual("No Value defined for Parameter @numberOfRecords", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("No Value defined for Parameter @numberOfRecords"));
     }
 
     private void TestWithParameterValueThatRowsAreReturned()
@@ -293,11 +293,11 @@ end
         while (r.Read())
         {
             rowsReturned++;
-            Assert.NotNull(r["chi"]);
-            Assert.NotNull(r["definitionID"]);
+            Assert.That(r["chi"], Is.Not.Null);
+            Assert.That(r["definitionID"], Is.Not.Null);
         }
 
-        Assert.AreEqual(rowsReturned, 5);
+        Assert.That(rowsReturned, Is.EqualTo(5));
     }
 
     private void TestUsingTvfForAggregates()
@@ -342,11 +342,11 @@ end
             con.Open();
             var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            Assert.IsTrue(r.Read());
+            Assert.That(r.Read());
 
-            Assert.AreEqual(r[1], 10);
+            Assert.That(r[1], Is.EqualTo(10));
 
-            Assert.IsFalse(r.Read());
+            Assert.That(r.Read(), Is.False);
         }
 
         //create a global overriding parameter on the aggregate
@@ -365,11 +365,11 @@ end
             con.Open();
             var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            Assert.IsTrue(r.Read());
+            Assert.That(r.Read());
 
-            Assert.AreEqual(r[1], 1); //should now only have 1 record being retrned and counted when executing
+            Assert.That(r[1], Is.EqualTo(1)); //should now only have 1 record being returned and counted when executing
 
-            Assert.IsFalse(r.Read());
+            Assert.That(r.Read(), Is.False);
         }
     }
 
@@ -383,7 +383,7 @@ end
         _cicAggregate = _cic.ImportAggregateConfigurationAsIdentifierList(_aggregate, (s, e) => null);
 
         //it should have imported the global parameter as part of the import right?
-        Assert.AreEqual(1, _cicAggregate.GetAllParameters().Length);
+        Assert.That(_cicAggregate.GetAllParameters(), Has.Length.EqualTo(1));
 
         //add the new cic to the container
         root.AddChild(_cicAggregate, 2);
@@ -404,10 +404,10 @@ end
         var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
         //2 chi numbers should be returned
-        Assert.IsTrue(r.Read());
-        Assert.IsTrue(r.Read());
+        Assert.That(r.Read());
+        Assert.That(r.Read());
 
-        Assert.IsFalse(r.Read());
+        Assert.That(r.Read(), Is.False);
     }
 
     private void TestDataExportOfTvf()
@@ -427,7 +427,7 @@ end
             config.AddColumnToExtraction(tvfExtractable, e);
 
         //the default value should be 10
-        Assert.AreEqual("10", _tvfTableInfo.GetAllParameters().Single().Value);
+        Assert.That(_tvfTableInfo.GetAllParameters().Single().Value, Is.EqualTo("10"));
 
         //configure an extraction specific global of 1 so that only 1 chi number is fetched (which will be in the cohort)
         var globalP =
@@ -445,13 +445,13 @@ end
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(1, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(1));
 
-        Assert.AreEqual("ReleaseId", dt.Columns[0].ColumnName);
+        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("ReleaseId"));
 
         //should be a guid
-        Assert.IsTrue(dt.Rows[0][0].ToString().Length > 10);
-        Assert.IsTrue(dt.Rows[0][0].ToString().Contains('-'));
+        Assert.That(dt.Rows[0][0].ToString(), Has.Length.GreaterThan(10));
+        Assert.That(dt.Rows[0][0].ToString(), Does.Contain('-'));
 
         selected.DeleteInDatabase();
         globalP.DeleteInDatabase();

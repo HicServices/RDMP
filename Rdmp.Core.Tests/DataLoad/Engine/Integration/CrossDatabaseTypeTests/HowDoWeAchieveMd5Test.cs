@@ -39,8 +39,8 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
 
         Console.WriteLine($"Value was:{value}");
 
-        Assert.IsNotNull(value);
-        Assert.AreNotEqual("Fish", value);
+        Assert.That(value, Is.Not.Null);
+        Assert.That(value, Is.Not.EqualTo("Fish"));
         Assert.GreaterOrEqual(value.ToString().Length, 32);
     }
 
@@ -58,8 +58,7 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
         var col = tbl.DiscoverColumn("F");
 
 
-        Assert.AreEqual(typeof(DateTime),
-            tbl.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.DataType.SQLType));
+        Assert.That(tbl.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.DataType.SQLType), Is.EqualTo(typeof(DateTime)));
 
 
         var sql =
@@ -74,7 +73,7 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
 
         Console.WriteLine($"Value was:{value}");
 
-        Assert.IsNotNull(value);
+        Assert.That(value, Is.Not.Null);
         Assert.GreaterOrEqual(value.ToString().Length, 32);
     }
 }

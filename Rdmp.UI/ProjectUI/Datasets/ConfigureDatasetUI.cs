@@ -488,7 +488,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
     private void HandleReorder(ExtractableColumn sourceColumn, IOrderable targetOrderable, DropTargetLocation location)
     {
-        targetOrderable ??= olvSelected.Objects.Cast<IOrderable>().MaxBy(o => o.Order);
+        targetOrderable ??= olvSelected.Objects.Cast<IOrderable>().MaxBy(static o => o.Order);
 
         if (targetOrderable == null)
             return;
@@ -500,12 +500,12 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             case DropTargetLocation.AboveItem:
 
                 //bump down the other columns
-                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
-                    if (c.Order >= destinationOrder && !Equals(c, sourceColumn))
-                    {
-                        c.Order++;
-                        c.SaveToDatabase();
-                    }
+                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray()
+                             .Where(c => c.Order >= destinationOrder && !Equals(c, sourceColumn)))
+                {
+                    c.Order++;
+                    c.SaveToDatabase();
+                }
 
                 //should now be space at the destination order position
                 sourceColumn.Order = destinationOrder;
@@ -514,17 +514,17 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             case DropTargetLocation.BelowItem:
 
                 //bump up other columns
-                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
-                    if (c.Order <= destinationOrder && !Equals(c, sourceColumn))
-                    {
-                        c.Order--;
-                        c.SaveToDatabase();
-                    }
+                foreach (var c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray()
+                             .Where(c => c.Order <= destinationOrder && !Equals(c, sourceColumn)))
+                {
+                    c.Order--;
+                    c.SaveToDatabase();
+                }
 
                 sourceColumn.Order = destinationOrder;
                 break;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(location));
         }
 
         sourceColumn.SaveToDatabase();

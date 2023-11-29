@@ -27,9 +27,9 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
                 moqCohort.AuditLog.Returns(desc);
                 var fi2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
-                Assert.IsNotNull(fi2);
-                Assert.IsInstanceOf<FileInfo>(fi2);
-                Assert.AreEqual(fi.FullName, ((FileInfo)fi2).FullName);
+        Assert.That(fi2, Is.Not.Null);
+        Assert.That(fi2, Is.InstanceOf<FileInfo>());
+        Assert.That(((FileInfo)fi2).FullName, Is.EqualTo(fi.FullName));
         }
 
 
@@ -43,9 +43,9 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
                 var moqCohort = Substitute.For<IExtractableCohort>();
                 moqCohort.AuditLog.Returns(desc);
                 var cic2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
-                Assert.IsNotNull(cic2);
-                Assert.IsInstanceOf<CohortIdentificationConfiguration>(cic2);
-                Assert.AreEqual(cic, cic2);
+        Assert.That(cic2, Is.Not.Null);
+        Assert.That(cic2, Is.InstanceOf<CohortIdentificationConfiguration>());
+        Assert.That(cic2, Is.EqualTo(cic));
         }
 
         [Test]
@@ -58,9 +58,9 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
                 var moqCohort = Substitute.For<IExtractableCohort>();
                 moqCohort.AuditLog.Returns(desc);
                 var ei2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
-                Assert.IsNotNull(ei2);
-                Assert.IsInstanceOf<ExtractionInformation>(ei2);
-                Assert.AreEqual(ei, ei2);
+        Assert.That(ei2, Is.Not.Null);
+        Assert.That(ei2, Is.InstanceOf<ExtractionInformation>());
+        Assert.That(ei2, Is.EqualTo(ei));
         }
 
         [Test]
@@ -68,7 +68,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         {
                 var moqCohort = Substitute.For<IExtractableCohort>();
                 moqCohort.AuditLog.Returns(x => null);
-                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        Assert.That(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator), Is.Null);
         }
 
         [Test]
@@ -76,7 +76,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
         {
                 var moqCohort = Substitute.For<IExtractableCohort>();
                 moqCohort.AuditLog.Returns("troll doll dur I invented this cohort myself");
-                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        Assert.That(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator), Is.Null);
         }
 
         [Test]
@@ -93,7 +93,7 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
                 // delete the source
                 ei.DeleteInDatabase();
 
-                // should now return null
-                Assert.IsNull(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator));
+        // should now return null
+        Assert.That(ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator), Is.Null);
         }
 }

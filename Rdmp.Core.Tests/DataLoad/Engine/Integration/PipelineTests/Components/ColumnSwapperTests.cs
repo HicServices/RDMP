@@ -69,22 +69,22 @@ internal class ColumnSwapperTests : DatabaseTests
             new GracefulCancellationToken());
 
         //in should be there or not depending on the setting KeepInputColumnToo
-        Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In"));
+        Assert.That(resultDt.Columns.Contains("In"), Is.EqualTo(keepInputColumnToo));
 
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(1, resultDt.Rows[1]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(2, resultDt.Rows[2]["Out"]);
-        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Frank"));
 
         if (keepInputColumnToo)
         {
-            Assert.AreEqual("A", resultDt.Rows[0]["In"]);
-            Assert.AreEqual("A", resultDt.Rows[1]["In"]);
-            Assert.AreEqual("B", resultDt.Rows[2]["In"]);
+            Assert.That(resultDt.Rows[0]["In"], Is.EqualTo("A"));
+            Assert.That(resultDt.Rows[1]["In"], Is.EqualTo("A"));
+            Assert.That(resultDt.Rows[2]["In"], Is.EqualTo("B"));
         }
     }
 
@@ -129,7 +129,7 @@ internal class ColumnSwapperTests : DatabaseTests
         // Our pipeline data does not have a column called In but instead it is called In2
         var ex = Assert.Throws<Exception>(() => swapper.ProcessPipelineData(dtToSwap,
             ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        Assert.AreEqual("DataTable did not contain a field called 'In'", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("DataTable did not contain a field called 'In'"));
 
         // Tell the swapper about the new name
         swapper.InputFromColumn = "In2";
@@ -139,22 +139,22 @@ internal class ColumnSwapperTests : DatabaseTests
             new GracefulCancellationToken());
 
         //in should be there or not depending on the setting KeepInputColumnToo
-        Assert.AreEqual(keepInputColumnToo, resultDt.Columns.Contains("In2"));
+        Assert.That(resultDt.Columns.Contains("In2"), Is.EqualTo(keepInputColumnToo));
 
         AreBasicallyEquals(1, resultDt.Rows[0]["Out2"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(1, resultDt.Rows[1]["Out2"]);
-        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(2, resultDt.Rows[2]["Out2"]);
-        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Frank"));
 
         if (keepInputColumnToo)
         {
-            Assert.AreEqual("A", resultDt.Rows[0]["In2"]);
-            Assert.AreEqual("A", resultDt.Rows[1]["In2"]);
-            Assert.AreEqual("B", resultDt.Rows[2]["In2"]);
+            Assert.That(resultDt.Rows[0]["In2"], Is.EqualTo("A"));
+            Assert.That(resultDt.Rows[1]["In2"], Is.EqualTo("A"));
+            Assert.That(resultDt.Rows[2]["In2"], Is.EqualTo("B"));
         }
     }
 
@@ -205,16 +205,16 @@ internal class ColumnSwapperTests : DatabaseTests
             new GracefulCancellationToken());
 
         // in ALWAYS be there, because it is an in place update - ignore KeepInputColumnToo
-        Assert.True(resultDt.Columns.Contains("In2"));
+        Assert.That(resultDt.Columns.Contains("In2"));
 
         AreBasicallyEquals(1, resultDt.Rows[0]["In2"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(1, resultDt.Rows[1]["In2"]);
-        Assert.AreEqual("Dave", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(2, resultDt.Rows[2]["In2"]);
-        Assert.AreEqual("Frank", resultDt.Rows[2]["Name"]);
+        Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Frank"));
     }
 
     [TestCase(AliasResolutionStrategy.CrashIfAliasesFound)]
@@ -266,16 +266,16 @@ internal class ColumnSwapperTests : DatabaseTests
                     new GracefulCancellationToken());
 
                 AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-                Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+                Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
                 //we get the first alias (4)
                 AreBasicallyEquals(4, resultDt.Rows[1]["Out"]);
-                Assert.AreEqual("Dandy", resultDt.Rows[1]["Name"]);
+                Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Dandy"));
                 AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
 
                 //and the second alias (5)
                 AreBasicallyEquals(5, resultDt.Rows[2]["Out"]);
-                Assert.AreEqual("Dandy", resultDt.Rows[2]["Name"]);
+                Assert.That(resultDt.Rows[2]["Name"], Is.EqualTo("Dandy"));
                 AreBasicallyEquals(60, resultDt.Rows[1]["Age"]);
                 break;
             default:
@@ -331,9 +331,9 @@ internal class ColumnSwapperTests : DatabaseTests
             var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken());
 
-            Assert.AreEqual(1, resultDt.Rows.Count);
+            Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
             AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-            Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+            Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
         }
     }
 
@@ -379,13 +379,13 @@ internal class ColumnSwapperTests : DatabaseTests
         using var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(2, resultDt.Rows.Count);
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
 
         // Should have project specific results for A of 1 and for B of 3 because the ProjectNumber is 1
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
         AreBasicallyEquals(3, resultDt.Rows[1]["Out"]);
-        Assert.AreEqual("Frank", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Frank"));
     }
 
     /// <summary>
@@ -425,12 +425,12 @@ internal class ColumnSwapperTests : DatabaseTests
         var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(2, resultDt.Rows.Count);
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
-        Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Bob"));
     }
 
     /// <summary>
@@ -473,15 +473,14 @@ internal class ColumnSwapperTests : DatabaseTests
         var resultDt = swapper.ProcessPipelineData(dtToSwap, toMem, new GracefulCancellationToken());
 
         //this is the primary thing we are testing here
-        Assert.Contains("Discarded 1 Null key values read from mapping table",
-            toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray());
+        Assert.That(toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray(), Does.Contain("Discarded 1 Null key values read from mapping table"));
 
-        Assert.AreEqual(2, resultDt.Rows.Count);
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 
         AreBasicallyEquals(DBNull.Value, resultDt.Rows[1]["Out"]);
-        Assert.AreEqual("Bob", resultDt.Rows[1]["Name"]);
+        Assert.That(resultDt.Rows[1]["Name"], Is.EqualTo("Bob"));
     }
 
     /// <summary>
@@ -505,7 +504,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        Assert.AreEqual(typeof(string), mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(),
+        Assert.That(mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), Is.EqualTo(typeof(string)),
             "Expected map to be of string datatype");
 
         var swapper = new ColumnSwapper
@@ -525,9 +524,9 @@ internal class ColumnSwapperTests : DatabaseTests
         var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(1, resultDt.Rows.Count);
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
         AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
     }
 
 
@@ -551,7 +550,7 @@ internal class ColumnSwapperTests : DatabaseTests
 
         Import(mapTbl = db.CreateTable("Map", dt), out var map, out var mapCols);
 
-        Assert.AreEqual(typeof(int), mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(),
+        Assert.That(mapTbl.DiscoverColumn("In").DataType.GetCSharpDataType(), Is.EqualTo(typeof(int)),
             "Expected map to be of int datatype");
 
         var swapper = new ColumnSwapper
@@ -571,9 +570,9 @@ internal class ColumnSwapperTests : DatabaseTests
         var resultDt = swapper.ProcessPipelineData(dtToSwap, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(1, resultDt.Rows.Count);
+        Assert.That(resultDt.Rows, Has.Count.EqualTo(1));
         AreBasicallyEquals(2, resultDt.Rows[0]["Out"]);
-        Assert.AreEqual("Dave", resultDt.Rows[0]["Name"]);
+        Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
     }
 
     private static IExtractDatasetCommand GetMockExtractDatasetCommand()

@@ -29,7 +29,7 @@ public class ObjectConstructorTests : UnitTests
 
         //basic case - identical Type parameter
         var instance = (TestClass2)ObjectConstructor.Construct(typeof(TestClass2), testarg);
-        Assert.AreEqual(instance.A.Text, "amagad");
+        Assert.That(instance.A.Text, Is.EqualTo("amagad"));
         //also allowed because testarg2 is a testarg derived class
         ObjectConstructor.Construct(typeof(TestClass2), testarg2);
 
@@ -48,7 +48,7 @@ public class ObjectConstructorTests : UnitTests
         //not valid because there are 2 constructors that are both base classes of TestArg3 so ObjectConstructor doesn't know which to invoke
         var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(() =>
             ObjectConstructor.Construct(typeof(TestClass4), testarg3));
-        Assert.IsTrue(ex?.Message.Contains("Could not pick the correct constructor between"));
+        Assert.That(ex?.Message, Does.Contain("Could not pick the correct constructor between"));
 
         //exactly the same as the above case but one constructor has been decorated with [UseWithObjectConstructor] attribute
         ObjectConstructor.Construct(typeof(TestClass5), testarg3);
@@ -58,10 +58,10 @@ public class ObjectConstructorTests : UnitTests
     public void ConstructIfPossibleTests_BlankConstructors()
     {
         //blank constructors are only used if no params are specified
-        Assert.IsNotNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)));
+        Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)), Is.Not.Null);
 
         //no constructor taking an int
-        Assert.IsNull(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor), 8));
+        Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor), 8), Is.Null);
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class ObjectConstructorTests : UnitTests
         foreach (var t in Core.Repositories.MEF.GetAllTypes().Where(typeof(DatabaseEntity).IsAssignableFrom))
             try
             {
-                Assert.IsNotNull(ObjectConstructor.GetRepositoryConstructor(typeof(Catalogue)));
+                Assert.That(ObjectConstructor.GetRepositoryConstructor(typeof(Catalogue)), Is.Not.Null);
                 countCompatible++;
             }
             catch (Exception e)
@@ -81,7 +81,7 @@ public class ObjectConstructorTests : UnitTests
                 badTypes.Add(t, e);
             }
 
-        Assert.IsEmpty(badTypes);
+        Assert.That(badTypes, Is.Empty);
         Assert.GreaterOrEqual(countCompatible, 10);
         Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }

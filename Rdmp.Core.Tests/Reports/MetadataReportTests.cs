@@ -37,11 +37,11 @@ internal class MetadataReportTests : UnitTests
 
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 
-        Assert.IsNotNull(file);
-        Assert.IsTrue(File.Exists(file.FullName));
+        Assert.That(file, Is.Not.Null);
+        Assert.That(File.Exists(file.FullName));
 
         //refreshes the file stream status
-        Assert.Greater(new FileInfo(file.FullName).Length, 0);
+        Assert.That(new FileInfo(file.FullName).Length, Is.GreaterThan(0));
     }
 
     [Test]
@@ -61,7 +61,7 @@ internal class MetadataReportTests : UnitTests
         );
         var file = reporter.GenerateWordFile(ThrowImmediatelyDataLoadEventListener.Quiet, false);
 
-        Assert.IsNotNull(file);
-        Assert.IsTrue(File.Exists(file.FullName));
+        Assert.That(file, Is.Not.Null);
+        Assert.That(File.Exists(file.FullName));
     }
 }

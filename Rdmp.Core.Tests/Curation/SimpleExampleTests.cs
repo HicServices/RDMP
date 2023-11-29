@@ -20,7 +20,7 @@ public class SimpleExampleTests : DatabaseTests
     public void Test1()
     {
         var cata = new Catalogue(CatalogueRepository, "My Test Cata");
-        Assert.IsTrue(cata.Exists());
+        Assert.That(cata.Exists());
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -28,9 +28,9 @@ public class SimpleExampleTests : DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        Assert.IsTrue(database.Exists());
-        Assert.IsEmpty(database.DiscoverTables(true));
-        Assert.IsNotNull(database.GetRuntimeName());
+        Assert.That(database.Exists());
+        Assert.That(database.DiscoverTables(true), Is.Empty);
+        Assert.That(database.GetRuntimeName(), Is.Not.Null);
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -47,9 +47,9 @@ public class SimpleExampleTests : DatabaseTests
         var tbl = database.CreateTable("MyTable", dt);
 
         //at this point we are reading it with the credentials setup by GetCleanedServer
-        Assert.AreEqual(1, tbl.GetRowCount());
-        Assert.AreEqual(1, tbl.DiscoverColumns().Length);
-        Assert.IsTrue(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+        Assert.That(tbl.DiscoverColumns(), Has.Length.EqualTo(1));
+        Assert.That(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
         //create a reference to the table in RMDP
         Import(tbl, out var tableInfo, out var columnInfos);
@@ -64,12 +64,12 @@ public class SimpleExampleTests : DatabaseTests
         var newTbl = newDatabase.ExpectTable(tableInfo.GetRuntimeName());
 
         //the credentials should be different
-        Assert.AreNotEqual(tbl.Database.Server.ExplicitUsernameIfAny, newTbl.Database.Server.ExplicitUsernameIfAny);
+        Assert.That(newTbl.Database.Server.ExplicitUsernameIfAny, Is.Not.EqualTo(tbl.Database.Server.ExplicitUsernameIfAny));
 
         //try re-reading the data
-        Assert.AreEqual(1, newTbl.GetRowCount());
-        Assert.AreEqual(1, newTbl.DiscoverColumns().Length);
-        Assert.IsTrue(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
+        Assert.That(newTbl.GetRowCount(), Is.EqualTo(1));
+        Assert.That(newTbl.DiscoverColumns(), Has.Length.EqualTo(1));
+        Assert.That(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
         //low priority user shouldn't be able to drop tables
         Assert.That(newTbl.Drop, Throws.Exception);

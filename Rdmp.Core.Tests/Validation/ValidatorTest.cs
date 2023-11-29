@@ -28,7 +28,7 @@ public class ValidatorTest
     {
         var validator = new Validator();
 
-        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));
+        Assert.That(validator.Validate(_domainObjectWithValidChi), Is.Null);
     }
 
     [Test]
@@ -54,7 +54,7 @@ public class ValidatorTest
         dr["chi"] = TestConstants._VALID_CHI;
 
         //validate the row
-        Assert.IsNull(v.Validate(dr));
+        Assert.That(v.Validate(dr), Is.Null);
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class ValidatorTest
     public void RemoveItemValidator_InitialisedState_BehavesAcceptably()
     {
         var validator = new Validator();
-        Assert.False(validator.RemoveItemValidator("non-existent"),
+        Assert.That(validator.RemoveItemValidator("non-existent"), Is.False,
             "Expected removal of a non-existent ItemValidator to return false.");
     }
 
@@ -80,7 +80,7 @@ public class ValidatorTest
         var validator = CreateValidatorForNonExistentProperty();
 
         var ex = Assert.Throws<MissingFieldException>(() => validator.Validate(_domainObjectWithValidChi));
-        Assert.AreEqual("Validation failed: Target field [non-existent] not found in domain object.", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Validation failed: Target field [non-existent] not found in domain object."));
     }
 
 
@@ -95,7 +95,7 @@ public class ValidatorTest
         }
         catch (MissingFieldException exception)
         {
-            Assert.True(exception.Message.StartsWith("Validation failed"));
+            Assert.That(exception.Message.StartsWith("Validation failed"));
         }
     }
 
@@ -104,7 +104,7 @@ public class ValidatorTest
     {
         var validator = CreateSimpleChiValidator();
 
-        Assert.IsNull(validator.Validate(_domainObjectWithValidChi));
+        Assert.That(validator.Validate(_domainObjectWithValidChi), Is.Null);
     }
 
     [Test]
@@ -112,7 +112,7 @@ public class ValidatorTest
     {
         var validator = CreateSimpleChiValidator();
 
-        Assert.NotNull(validator.Validate(_domainObjectWithInvalidChi));
+        Assert.That(validator.Validate(_domainObjectWithInvalidChi), Is.Not.Null);
     }
 
 
@@ -123,14 +123,14 @@ public class ValidatorTest
         //run once
         var results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, null, out _);
 
-        Assert.IsNotNull(results);
+        Assert.That(results, Is.Not.Null);
 
-        Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 1);
+        Assert.That(results.DictionaryOfFailure["chi"][Consequence.Wrong], Is.EqualTo(1));
 
         //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
         results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out _);
 
-        Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 2);
+        Assert.That(results.DictionaryOfFailure["chi"][Consequence.Wrong], Is.EqualTo(2));
     }
 
 
@@ -153,7 +153,7 @@ public class ValidatorTest
 
         var answer2 = v2.SaveToXml(false);
 
-        Assert.AreEqual(answer, answer2);
+        Assert.That(answer2, Is.EqualTo(answer));
     }
 
 
@@ -162,7 +162,7 @@ public class ValidatorTest
     {
         var validator = CreateChiAndAgeValidators();
 
-        Assert.IsNull(validator.Validate(_domainObjectWithValidChiAndAge));
+        Assert.That(validator.Validate(_domainObjectWithValidChiAndAge), Is.Null);
     }
 
     [TestCase("chi", typeof(Chi))]
@@ -171,8 +171,8 @@ public class ValidatorTest
     {
         var constraint = Validator.CreateConstraint(name, Consequence.Wrong);
 
-        Assert.IsInstanceOf(typeof(IPrimaryConstraint), constraint);
-        Assert.IsInstanceOf(expected, constraint);
+        Assert.That(constraint, Is.InstanceOf(typeof(IPrimaryConstraint)));
+        Assert.That(constraint, Is.InstanceOf(expected));
     }
 
     [TestCase("bounddouble", typeof(BoundDouble))]
@@ -183,8 +183,8 @@ public class ValidatorTest
     {
         var constraint = Validator.CreateConstraint(name, Consequence.Wrong);
 
-        Assert.IsInstanceOf(typeof(ISecondaryConstraint), constraint);
-        Assert.IsInstanceOf(expected, constraint);
+        Assert.That(constraint, Is.InstanceOf(typeof(ISecondaryConstraint)));
+        Assert.That(constraint, Is.InstanceOf(expected));
     }
 
     [Test]
@@ -206,26 +206,26 @@ public class ValidatorTest
         var dictionary  = new Dictionary<string, string> { { "OldCol2", "NewCol2" } };
 
         //before and after rename of col2
-        Assert.AreEqual(v.ItemValidators[0].TargetProperty, "OldCol2");
+        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("OldCol2"));
         v.RenameColumns(dictionary);
-        Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "OldCol1");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
+        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("OldCol1"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
 
         //now rename col 1
         dictionary.Add("OldCol1", "NewCol1");
         v.RenameColumns(dictionary);
-        Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "OldCol3");
+        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
 
         //finally rename col 3
         dictionary.Add("OldCol3", "NewCol3");
         v.RenameColumns(
             dictionary); //not strict because we will get not found otherwise since we already renamed the first one
-        Assert.AreEqual(v.ItemValidators[0].TargetProperty, "NewCol2");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, "NewCol1");
-        Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "NewCol3");
+        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
+        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("NewCol3"));
     }
 
     // This code is typically how a client of the API would set SetUp validation for a domain object:

@@ -91,7 +91,7 @@ public class MDFAttacherTests : DatabaseTests
                     , new GracefulCancellationToken())
             );
 
-            StringAssert.Contains("Overwriting", ex?.Message);
+            Assert.That(ex?.Message, Does.Contain("Overwriting"));
         }
         finally
         {
@@ -129,16 +129,13 @@ public class MDFAttacherTests : DatabaseTests
                 serverDatabasePath, null);
 
 
-            Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
-            Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
+            Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
+            Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf",
-                locations.CopyToLdf);
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
-                locations.CopyToMdf);
+            Assert.That(locations.CopyToLdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf"));
+            Assert.That(locations.CopyToMdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
-                locations.AttachMdfPath);
+            Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
         }
         finally
         {
@@ -190,7 +187,7 @@ public class MDFAttacherTests : DatabaseTests
                 "MDFAttacherTest", true);
 
         var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
-        Assert.IsFalse(db.Exists());
+        Assert.That(db.Exists(), Is.False);
 
         var mdf = new MDFAttacher();
         mdf.Initialize(hicProjDir, db);
@@ -198,7 +195,7 @@ public class MDFAttacherTests : DatabaseTests
         {
             var memory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             mdf.Check(memory);
-            Assert.IsTrue(memory.Messages.Any(m =>
+            Assert.That(memory.Messages.Any(m =>
                 m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
         }
         catch (Exception e)
@@ -211,7 +208,7 @@ public class MDFAttacherTests : DatabaseTests
         var memory2 = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
-        Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
+        Assert.That(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
                                                     $@"Found server DATA folder .*{Regex.Escape(TestContext.CurrentContext.WorkDirectory)}") &&
                                                 m.Result == CheckResult.Success));
 
@@ -240,14 +237,13 @@ public class MDFAttacherTests : DatabaseTests
                 serverDatabasePath, @"//MyDbServer1/Share/Database");
 
 
-            Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
-            Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
+            Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
+            Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
 
-            StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf", locations.CopyToLdf);
-            StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf", locations.CopyToMdf);
+            Assert.That(locations.CopyToLdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf"));
+            Assert.That(locations.CopyToMdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf"));
 
-            Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf",
-                locations.AttachMdfPath);
+            Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
         }
         finally
         {
@@ -323,8 +319,8 @@ public class MDFAttacherTests : DatabaseTests
         {
             attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
-            Assert.IsNotNull(attacher);
-            Assert.IsInstanceOf<MDFAttacher>(attacher);
+            Assert.That(attacher, Is.Not.Null);
+            Assert.That(attacher, Is.InstanceOf<MDFAttacher>());
         }
         finally
         {

@@ -55,11 +55,11 @@ public class EndToEndDLETest : TestsRequiringADle
         cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
 
-        Assert.AreEqual(0, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(0));
 
         RunDLE(lmd, 30000, true);
 
-        Assert.AreEqual(1, tbl.GetRowCount());
-        Assert.AreEqual("fishon", tbl.GetDataTable().Rows[0][",,,,"]);
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+        Assert.That(tbl.GetDataTable().Rows[0][",,,,"], Is.EqualTo("fishon"));
     }
 }

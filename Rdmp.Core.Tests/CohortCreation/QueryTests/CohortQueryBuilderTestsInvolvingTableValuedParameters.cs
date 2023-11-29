@@ -58,7 +58,7 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
             new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config1);
             new AggregateDimension(CatalogueRepository, _function.ExtractionInformations[1], config2);
 
-            Assert.IsNull(cic.RootCohortAggregateContainer_ID);
+            Assert.That(cic.RootCohortAggregateContainer_ID, Is.Null);
 
             //create a root container for it
             var container = new CohortAggregateContainer(CatalogueRepository, SetOperation.INTERSECT);
@@ -72,8 +72,8 @@ public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTes
             container.AddChild(config2, 1);
 
             var builder = new CohortQueryBuilder(cic, null);
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @startNumber AS int;
 SET @startNumber=5;
@@ -101,8 +101,7 @@ SET @name='fish';
 	[" + TestDatabaseNames.Prefix +
                         @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 )
-", cic.ID)),
-                CollapseWhitespace(builder.SQL));
+", cic.ID))));
 
             //now override JUST @name
             var param1 = new AnyTableSqlParameter(CatalogueRepository, config1, "DECLARE @name AS varchar(50);")
@@ -119,8 +118,8 @@ SET @name='fish';
 
             var builder2 = new CohortQueryBuilder(cic, null);
 
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder2.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @startNumber AS int;
 SET @startNumber=5;
@@ -150,8 +149,7 @@ SET @name_2='monkey';
 	[" + TestDatabaseNames.Prefix +
                         @"ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name_2) AS MyAwesomeFunction
 )
-", cic.ID)),
-                CollapseWhitespace(builder2.SQL));
+", cic.ID))));
         }
         finally
         {

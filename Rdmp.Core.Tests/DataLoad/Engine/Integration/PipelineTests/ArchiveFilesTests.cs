@@ -57,14 +57,14 @@ public class ArchiveFilesTests : DatabaseTests
 
             // first we expect a file in forArchiving called 1.zip
             var zipFilename = Path.Combine(forArchiving.FullName, "1.zip");
-            Assert.True(File.Exists(zipFilename));
+            Assert.That(File.Exists(zipFilename));
 
             // there should be two entries
             using var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read);
-            Assert.AreEqual(2, archive.Entries.Count,
+            Assert.That(archive.Entries, Has.Count.EqualTo(2),
                 "There should be two entries in this archive: one from the root and one from the subdirectory");
-            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"subdir/subdir.txt")));
-            Assert.IsTrue(archive.Entries.Any(entry => entry.FullName.Equals(@"test.txt")));
+            Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"subdir/subdir.txt")));
+            Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"test.txt")));
         }
         finally
         {
@@ -94,7 +94,7 @@ public class ArchiveFilesTests : DatabaseTests
             foreach (var fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
                 Console.WriteLine($"About to throw SetUp because of zip file:{fileInfo.FullName}");
 
-            Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),
+            Assert.That(loadDirectory.ForArchiving.GetFiles("*.zip").Any(), Is.False,
                 "There should not be any zip files in the archive directory!");
         }
         finally
