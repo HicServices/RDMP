@@ -1,5 +1,4 @@
-﻿using HICPlugin.Curation.Data;
-using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 

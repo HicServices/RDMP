@@ -1,5 +1,4 @@
-﻿using HICPlugin.Curation.Data;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
