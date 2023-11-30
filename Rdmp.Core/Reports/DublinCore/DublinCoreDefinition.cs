@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Security;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace Rdmp.Core.Reports.DublinCore;
@@ -105,7 +105,7 @@ public class DublinCoreDefinition
     public void LoadFrom(XElement element)
     {
         if (element.Name != "metadata")
-            throw new XmlSyntaxException($"Expected metadata element but got {element}");
+            throw new XmlException($"Expected metadata element but got {element}");
 
         var descendants = element.Descendants().ToArray();
         Title = GetElement(descendants, "title", true);
@@ -137,7 +137,7 @@ public class DublinCoreDefinition
             e.Name.LocalName.Equals(tagLocalName, StringComparison.CurrentCultureIgnoreCase));
 
         if (match == null)
-            return mandatory ? throw new XmlSyntaxException($"Failed to find mandatory tag {tagLocalName}") : null;
+            return mandatory ? throw new XmlException($"Failed to find mandatory tag {tagLocalName}") : null;
 
         return match.Value.Trim();
     }
