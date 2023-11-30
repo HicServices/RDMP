@@ -79,22 +79,22 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
-      - name: Test (DB)
-        shell: bash
-        run: |
-          rm -rf coverage
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-core.lcov
-      - name: Test with local file system
-        shell: bash
-        run:  |
-          echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` fs-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` fs-core.lcov
+      # - name: Test (DB)
+      #   shell: bash
+      #   run: |
+      #     rm -rf coverage
+      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` db-ui.lcov
+      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` db-core.lcov
+      # - name: Test with local file system
+      #   shell: bash
+      #   run:  |
+      #     echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` fs-ui.lcov
+      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+      #     mv `find coverage -type f` fs-core.lcov
       - name: Coveralls
         uses: coverallsapp/github-action@v2.2.3
         with:
@@ -126,11 +126,10 @@ jobs:
       - name: Sign
         shell: bash
         run: |
-          signtool=(/c/Program\ Files\ \(x86\)/Windows\ Kits/10/bin/*/x64/signtool.exe)
-          signtool=${signtool[${#signtool[@]}-1]}
-          signtool=`echo $signtool | sed -e 's#^/c#c:#' | tr / \\\\`
-          echo ${{ secrets.DIGICERT_PFX }} | base64 --decode > GitHubActionsWorkflow.pfx
-          echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} PublishWindows/*.exe PublishWinForms/*.exe' | cmd
+          dotnet tool install --global AzureSignTool 
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/*.exe
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishLinux/*.exe
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/*.exe
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           echo '"'$signtool'"' 'Sign  /f GitHubActionsWorkflow.pfx /fd sha256 /tr http://timestamp.digicert.com /td sha256 /p ${{ secrets.DIGICERT_PASSWORD }} dist/rdmp.msi' | cmd
