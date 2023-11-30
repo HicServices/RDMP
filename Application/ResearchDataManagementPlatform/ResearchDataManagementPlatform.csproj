@@ -35,8 +35,8 @@
     <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-    <Compile Update="RDMPMainForm.cs" />
+	  <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+	  <Compile Update="RDMPMainForm.cs" />
     <Compile Update="RDMPMainForm.Designer.cs">
       <DependentUpon>RDMPMainForm.cs</DependentUpon>
     </Compile>
@@ -97,6 +97,7 @@
       <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>
     </EmbeddedResource>
     <None Include="DockingInfrastructure.cd" />
+	  <None Remove="ReactUI" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

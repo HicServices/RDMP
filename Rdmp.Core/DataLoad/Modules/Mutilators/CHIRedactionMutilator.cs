@@ -26,7 +26,7 @@ internal class CHIRedactionMutilator : IPluginMutilateDataTables
 
     private DiscoveredDatabase _db;
     private LoadStage _loadStage;
-    private readonly Dictionary<string, List<string>> _allowLists = null;
+    private readonly Dictionary<string, List<string>> _allowLists = new();
 
 
 
@@ -40,7 +40,7 @@ internal class CHIRedactionMutilator : IPluginMutilateDataTables
     public bool Redact { get; set; } = true;
     public void Check(ICheckNotifier notifier)
     {
-        if (AllowListFileLocation != null)
+        if (!string.IsNullOrWhiteSpace(AllowListFileLocation))
         {
             var allowListFileContent = File.ReadAllText(AllowListFileLocation);
             var deserializer = new DeserializerBuilder().Build();

@@ -38,21 +38,21 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void RevertButtonClick(int itemIndex)
         {
-            var result = _results.Rows[itemIndex];
-            var potentialCHI = result.ItemArray[0].ToString();
-            var context = result.ItemArray[1].ToString();
-            var column = result.ItemArray[3].ToString();
-            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
-            if (redactedChi is not null)
-            {
-                var cmd = new ExecuteCommandRevertRedactedCHI(_activator, redactedChi);
-                cmd.Execute();
-                result.Delete();
-                _results.AcceptChanges();
-                dtResults.DataSource = _results;
-                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+            //var result = _results.Rows[itemIndex];
+            //var potentialCHI = result.ItemArray[0].ToString();
+            //var context = result.ItemArray[1].ToString();
+            //var column = result.ItemArray[3].ToString();
+            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
+            //if (redactedChi is not null)
+            //{
+            //    var cmd = new ExecuteCommandRevertRedactedCHI(_activator, redactedChi);
+            //    cmd.Execute();
+            //    result.Delete();
+            //    _results.AcceptChanges();
+            //    dtResults.DataSource = _results;
+            //    dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
-            }
+            //}
         }
 
         private void ConfirmButtonClick(int itemIndex)
@@ -61,17 +61,17 @@ namespace Rdmp.UI.SimpleDialogs
             var potentialCHI = result.ItemArray[0].ToString();
             var context = result.ItemArray[1].ToString();
             var column = result.ItemArray[3].ToString();
-            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
-            if (redactedChi is not null)
-            {
-                var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
-                cmd.Execute();
-                result.Delete();
-                _results.AcceptChanges();
-                dtResults.DataSource = _results;
-                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
+            //if (redactedChi is not null)
+            //{
+            //    var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
+            //    cmd.Execute();
+            //    result.Delete();
+            //    _results.AcceptChanges();
+            //    dtResults.DataSource = _results;
+            //    dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
-            }
+            //}
         }
 
         private void handleClick(object sender, DataGridViewCellEventArgs e)
@@ -120,7 +120,7 @@ namespace Rdmp.UI.SimpleDialogs
             lblLoading.Visible = _isLoading;
             dtResults.Visible = !_isLoading;
             List<string> columns = _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).Select(ci => ci.Name).ToList();
-            List<RedactedCHI> redactedChis = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => columns.Contains(rc.CHILocation)).ToList();//
+            List<RedactedCHI> redactedChis = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => columns.Contains($"{rc.TableName}.[{rc.ColumnName}]")).ToList();//
 
 
 
@@ -131,7 +131,7 @@ namespace Rdmp.UI.SimpleDialogs
             dt.Columns.Add(new DataColumn("_hiddenFullLocation", typeof(string)));
             foreach (var rc in redactedChis)
             {
-                dt.Rows.Add(new object[] { rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation), rc.CHILocation });
+                //dt.Rows.Add(new object[] { rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation), rc.CHILocation });
             }
             dtResults.DataSource = dt;
             dtResults.Columns[3].Visible = false;

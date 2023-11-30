@@ -72,7 +72,7 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"potentialCHI", potentialCHI },{"replacementIndex",replacementIndex},{"tableName",table},{"PKValue",pkValue},{"cColumnName",columnName}
+            {"potentialCHI", potentialCHI },{"replacementIndex",replacementIndex},{"tableName",table},{"PKValue",pkValue},{"columnName",columnName}
         });
     }
 

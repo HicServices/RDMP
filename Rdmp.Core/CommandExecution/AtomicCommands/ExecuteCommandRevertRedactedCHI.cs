@@ -29,27 +29,27 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
     public override void Execute()
     {
         base.Execute();
-        var splitidx = _redactedCHI.CHILocation.LastIndexOf('.');
-        var table = _redactedCHI.CHILocation[..splitidx];
-        var column = _redactedCHI.CHILocation[(splitidx + 1)..];
-        var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name == _redactedCHI.CHILocation).First();
-        var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
-        var findSlq = $"select {column} from {table} where {column} like '%REDACTED_CHI_{_redactedCHI.ID}%';";
-        var existingResultsDT = new DataTable();
-        using (var con = (SqlConnection)catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetConnection()) 
-        {
-            con.Open();
-            var da = new SqlDataAdapter(new SqlCommand(findSlq, con));
-            da.Fill(existingResultsDT);
-            if (existingResultsDT.Rows.Count > 0 && existingResultsDT.Rows[0].ItemArray.Length > 0)
-            {
-                var currentContext = existingResultsDT.Rows[0].ItemArray[0].ToString();
-                var newContext = currentContext.Replace($"REDACTED_CHI_{_redactedCHI.ID}", _redactedCHI.PotentialCHI);
-                var updateSQL = $"update {table} set {column}='{newContext}' where {column} = '{currentContext}'";
-                var updateCmd = new SqlCommand(updateSQL, con);
-                updateCmd.ExecuteNonQuery();
-            }
-            _redactedCHI.DeleteInDatabase();
-        }
+        //var splitidx = _redactedCHI.CHILocation.LastIndexOf('.');
+        //var table = _redactedCHI.CHILocation[..splitidx];
+        //var column = _redactedCHI.CHILocation[(splitidx + 1)..];
+        //var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name == _redactedCHI.CHILocation).First();
+        //var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
+        //var findSlq = $"select {column} from {table} where {column} like '%REDACTED_CHI_{_redactedCHI.ID}%';";
+        //var existingResultsDT = new DataTable();
+        //using (var con = (SqlConnection)catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetConnection()) 
+        //{
+        //    con.Open();
+        //    var da = new SqlDataAdapter(new SqlCommand(findSlq, con));
+        //    da.Fill(existingResultsDT);
+        //    if (existingResultsDT.Rows.Count > 0 && existingResultsDT.Rows[0].ItemArray.Length > 0)
+        //    {
+        //        var currentContext = existingResultsDT.Rows[0].ItemArray[0].ToString();
+        //        var newContext = currentContext.Replace($"REDACTED_CHI_{_redactedCHI.ID}", _redactedCHI.PotentialCHI);
+        //        var updateSQL = $"update {table} set {column}='{newContext}' where {column} = '{currentContext}'";
+        //        var updateCmd = new SqlCommand(updateSQL, con);
+        //        updateCmd.ExecuteNonQuery();
+        //    }
+        //    _redactedCHI.DeleteInDatabase();
+        //}
     }
 }
