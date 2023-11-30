@@ -48,9 +48,12 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
         Console.WriteLine($"Key file location is:{file.FullName}");
         Console.WriteLine($"Text put into file is:{Environment.NewLine}{File.ReadAllText(file.FullName)}");
 
-        Assert.That(file.FullName.EndsWith("my.key"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(file.FullName, Does.EndWith("my.key"));
 
-        Assert.That(keyLocation.GetKeyFileLocation(), Is.EqualTo(file.FullName));
+            Assert.That(keyLocation.GetKeyFileLocation(), Is.EqualTo(file.FullName));
+        });
         keyLocation.DeleteKey();
 
         Assert.That(keyLocation.GetKeyFileLocation(), Is.Null);
@@ -68,8 +71,11 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         //should do pass through encryption
         encrypter.Value = value;
-        Assert.That(encrypter.Value, Is.Not.EqualTo(value));
-        Assert.That(encrypter.GetDecryptedValue(), Is.EqualTo(value));
+        Assert.Multiple(() =>
+        {
+            Assert.That(encrypter.Value, Is.Not.EqualTo(value));
+            Assert.That(encrypter.GetDecryptedValue(), Is.EqualTo(value));
+        });
 
         Console.WriteLine($"Encrypted (stock) is:{encrypter.Value}");
         Console.WriteLine($"Decrypted (stock) is:{encrypter.GetDecryptedValue()}");
@@ -82,8 +88,7 @@ public class PasswordEncryptionKeyLocationTests : DatabaseTests
 
         var s = CatalogueRepository.EncryptionManager.GetEncrypter();
         var exception = Assert.Throws<CryptographicException>(() => s.Decrypt(encrypter.Value));
-        Assert.That(exception.Message.StartsWith(
-            "Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
+        Assert.That(exception.Message, Does.StartWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
         var encrypted = s.Encrypt(value);
         Console.WriteLine($"Encrypted (with key) is:{encrypted}");

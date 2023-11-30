@@ -139,13 +139,15 @@ CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
         try
         {
             var allConfigurations = rootcontainer.GetAllAggregateConfigurationsRecursively();
-            Assert.That(allConfigurations.Contains(aggregate1));
-            Assert.That(allConfigurations.Contains(aggregate2));
-            Assert.That(allConfigurations.Contains(aggregate3));
+            Assert.That(allConfigurations, Does.Contain(aggregate1));
+            Assert.That(allConfigurations, Does.Contain(aggregate2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(allConfigurations, Does.Contain(aggregate3));
 
-            Assert.That(
-                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
-                    @"(
+                Assert.That(
+                    CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
+                        @"(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
@@ -175,7 +177,8 @@ CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
 	)
 
 )", cohortIdentificationConfiguration.ID))
-));
+    ));
+            });
         }
         finally
         {

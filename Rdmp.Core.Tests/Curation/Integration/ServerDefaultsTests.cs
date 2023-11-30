@@ -34,9 +34,12 @@ public class ServerDefaultsTests : DatabaseTests
             Assert.That(databaseServer.Name, Is.EqualTo("Deleteme"));
             databaseServer.Password = "nothing"; //automatically encrypts password
 
-            Assert.That(databaseServer.Password, Is.Not.EqualTo("nothing")); //should not match what we just set it to
-            Assert.That(databaseServer
-                    .GetDecryptedPassword(), Is.EqualTo("nothing")); //should match what we set it to because of explicit call to decrypt
+            Assert.Multiple(() =>
+            {
+                Assert.That(databaseServer.Password, Is.Not.EqualTo("nothing")); //should not match what we just set it to
+                Assert.That(databaseServer
+                        .GetDecryptedPassword(), Is.EqualTo("nothing")); //should match what we set it to because of explicit call to decrypt
+            });
 
             databaseServer.Server = "Bob";
             databaseServer.Database = "TEST";

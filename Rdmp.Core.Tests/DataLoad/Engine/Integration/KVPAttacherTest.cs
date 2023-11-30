@@ -163,7 +163,7 @@ public class KVPAttacherTest : DatabaseTests
         };
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.That(ex.Message.StartsWith("Argument FilePattern has not been set"));
+        Assert.That(ex.Message, Does.StartWith("Argument FilePattern has not been set"));
     }
 
 
@@ -189,7 +189,7 @@ public class KVPAttacherTest : DatabaseTests
             kvp.TargetDataTableValueColumnName = "smith";
 
         var ex = Assert.Throws<Exception>(() => kvp.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.That(ex.Message.StartsWith($"Argument {missingField} has not been set"));
+        Assert.That(ex.Message, Does.StartWith($"Argument {missingField} has not been set"));
     }
 
     [Test]

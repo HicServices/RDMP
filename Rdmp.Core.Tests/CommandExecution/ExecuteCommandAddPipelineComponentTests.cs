@@ -21,9 +21,12 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
     {
         var p = WhenIHaveA<Pipeline>();
 
-        Assert.That(p.Source, Is.Null);
-        Assert.That(p.Destination, Is.Null);
-        Assert.That(p.PipelineComponents, Is.Empty);
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.Source, Is.Null);
+            Assert.That(p.Destination, Is.Null);
+            Assert.That(p.PipelineComponents, Is.Empty);
+        });
 
         Run("AddPipelineComponent", $"Pipeline:{p.ID}", nameof(DelimitedFlatFileDataFlowSource));
 
@@ -35,20 +38,29 @@ internal class ExecuteCommandAddPipelineComponentTests : CommandCliTests
         p.ClearAllInjections();
 
         Assert.That(p.Source, Is.Not.Null);
-        Assert.That(p.Source.GetClassAsSystemType(), Is.EqualTo(typeof(DelimitedFlatFileDataFlowSource)));
-        Assert.IsNotEmpty(p.Source.GetAllArguments());
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.Source.GetClassAsSystemType(), Is.EqualTo(typeof(DelimitedFlatFileDataFlowSource)));
+            Assert.That(p.Source.GetAllArguments(), Is.Not.Empty);
 
-        Assert.That(p.PipelineComponents, Has.Count.EqualTo(4));
+            Assert.That(p.PipelineComponents, Has.Count.EqualTo(4));
+        });
 
-        Assert.That(p.PipelineComponents[1].Order, Is.EqualTo(1));
-        Assert.That(p.PipelineComponents[1].GetClassAsSystemType(), Is.EqualTo(typeof(ColumnSwapper)));
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.PipelineComponents[1].Order, Is.EqualTo(1));
+            Assert.That(p.PipelineComponents[1].GetClassAsSystemType(), Is.EqualTo(typeof(ColumnSwapper)));
 
-        Assert.That(p.PipelineComponents[2].Order, Is.EqualTo(2));
-        Assert.That(p.PipelineComponents[2].GetClassAsSystemType(), Is.EqualTo(typeof(CleanStrings)));
+            Assert.That(p.PipelineComponents[2].Order, Is.EqualTo(2));
+            Assert.That(p.PipelineComponents[2].GetClassAsSystemType(), Is.EqualTo(typeof(CleanStrings)));
 
-        Assert.That(p.Destination, Is.Not.Null);
-        Assert.That(p.Destination.GetClassAsSystemType(), Is.EqualTo(typeof(ExecuteFullExtractionToDatabaseMSSql)));
-        Assert.IsNotEmpty(p.Destination.GetAllArguments());
+            Assert.That(p.Destination, Is.Not.Null);
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.Destination.GetClassAsSystemType(), Is.EqualTo(typeof(ExecuteFullExtractionToDatabaseMSSql)));
+            Assert.That(p.Destination.GetAllArguments(), Is.Not.Empty);
+        });
     }
 
     [Test]

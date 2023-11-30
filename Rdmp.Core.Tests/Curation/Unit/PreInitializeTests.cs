@@ -66,7 +66,7 @@ public class PreInitializeTests
         var fishUser = new SpecificFishUser();
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, Array.Empty<object>()));
-        Assert.That(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
+        Assert.That(ex.Message, Does.Contain("The following expected types were not passed to PreInitialize:Fish"));
     }
 
     [Test]
@@ -75,9 +75,9 @@ public class PreInitializeTests
         var fishUser = new SpecificFishUser();
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, fishUser, new Penguin()));
-        Assert.That(ex.Message.Contains("The following expected types were not passed to PreInitialize:Fish"));
-        Assert.That(ex.Message.Contains("The object types passed were:"));
-        Assert.That(ex.Message.Contains("Penguin"));
+        Assert.That(ex.Message, Does.Contain("The following expected types were not passed to PreInitialize:Fish"));
+        Assert.That(ex.Message, Does.Contain("The object types passed were:"));
+        Assert.That(ex.Message, Does.Contain("Penguin"));
     }
 
 

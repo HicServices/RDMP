@@ -18,11 +18,14 @@ public class CohortTests : TestsRequiringACohort
     [Test]
     public void TestOverridingReleaseIdentifier()
     {
-        //get cohort without override
-        Assert.That(_extractableCohort.OverrideReleaseIdentifierSQL, Is.Null);
+        Assert.Multiple(() =>
+        {
+            //get cohort without override
+            Assert.That(_extractableCohort.OverrideReleaseIdentifierSQL, Is.Null);
 
-        //should match global release identifier (from its source because there is no override)
-        Assert.That(_extractableCohort.GetReleaseIdentifier(true), Is.EqualTo("ReleaseID"));
+            //should match global release identifier (from its source because there is no override)
+            Assert.That(_extractableCohort.GetReleaseIdentifier(true), Is.EqualTo("ReleaseID"));
+        });
 
         //appy override
         _extractableCohort.OverrideReleaseIdentifierSQL = "Fish";
@@ -45,15 +48,18 @@ public class CohortTests : TestsRequiringACohort
         var failures = new RecordAllFailures();
         failures.FailureMessages.Add("Hi there Thomas, How's it going?");
 
-        Assert.That(failures.AnyFailMessageLike("Carmageddon"), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(failures.AnyFailMessageLike("Carmageddon"), Is.False);
 
-        Assert.That(failures.AnyFailMessageLike("Thomas"));
+            Assert.That(failures.AnyFailMessageLike("Thomas"));
 
-        Assert.That(failures.AnyFailMessageLike("Thomas", "going"));
-        Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
-        Assert.That(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
+            Assert.That(failures.AnyFailMessageLike("Thomas", "going"));
+            Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi"));
+            Assert.That(failures.AnyFailMessageLike("thomas", "gOIng", "hi"));
 
-        Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi", "Fear the babadook"), Is.False);
+            Assert.That(failures.AnyFailMessageLike("Thomas", "going", "Hi", "Fear the babadook"), Is.False);
+        });
     }
 
     private class RecordAllFailures : ICheckNotifier

@@ -37,7 +37,7 @@ public class ValidatorTest
         var validator = new Validator();
         var itemValidator = validator.GetItemValidator("non-existent");
 
-        Assert.Null(itemValidator);
+        Assert.That(itemValidator, Is.Null);
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class ValidatorTest
         }
         catch (MissingFieldException exception)
         {
-            Assert.That(exception.Message.StartsWith("Validation failed"));
+            Assert.That(exception.Message, Does.StartWith("Validation failed"));
         }
     }
 
@@ -208,24 +208,33 @@ public class ValidatorTest
         //before and after rename of col2
         Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("OldCol2"));
         v.RenameColumns(dictionary);
-        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("OldCol1"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("OldCol1"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
+        });
 
         //now rename col 1
         dictionary.Add("OldCol1", "NewCol1");
         v.RenameColumns(dictionary);
-        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("OldCol3"));
+        });
 
         //finally rename col 3
         dictionary.Add("OldCol3", "NewCol3");
         v.RenameColumns(
             dictionary); //not strict because we will get not found otherwise since we already renamed the first one
-        Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
-        Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("NewCol3"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(v.ItemValidators[0].TargetProperty, Is.EqualTo("NewCol2"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).LowerFieldName, Is.EqualTo("NewCol1"));
+            Assert.That(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, Is.EqualTo("NewCol3"));
+        });
     }
 
     // This code is typically how a client of the API would set SetUp validation for a domain object:

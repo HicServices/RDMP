@@ -35,7 +35,10 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
 
         Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
 
-        Assert.That(Directory.Exists(root));
-        Assert.That(lmd.LocationOfFlatFiles, Is.EqualTo(root));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Directory.Exists(root));
+            Assert.That(lmd.LocationOfFlatFiles, Is.EqualTo(root));
+        });
     }
 }

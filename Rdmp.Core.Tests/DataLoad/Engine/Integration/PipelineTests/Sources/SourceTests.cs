@@ -142,10 +142,13 @@ public class SourceTests : DatabaseTests
 
         Console.WriteLine(reason);
 
-        Assert.That(rejection, Is.False, reason);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rejection, Is.False, reason);
 
-        Assert.That(
-            reason, Is.EqualTo("Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context"));
+            Assert.That(
+                reason, Is.EqualTo("Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context"));
+        });
 
         pipeline.DeleteInDatabase();
     }

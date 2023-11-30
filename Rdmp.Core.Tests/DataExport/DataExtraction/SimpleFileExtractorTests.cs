@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using NUnit.Framework.Legacy;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction;
 
@@ -167,9 +168,12 @@ internal class SimpleFileExtractorTests
         FileAssert.DoesNotExist(Path.Combine(_outDir.FullName, "blah2.txt"));
         FileAssert.Exists(Path.Combine(_outDir.FullName, "Rel1.txt"));
 
-        Assert.That(mem.GetWorst(), Is.EqualTo(ProgressEventType.Warning));
+        Assert.Multiple(() =>
+        {
+            Assert.That(mem.GetWorst(), Is.EqualTo(ProgressEventType.Warning));
 
-        Assert.That(mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message, Does.StartWith("No Files were found matching Pattern Pat2.txt in "));
+            Assert.That(mem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Single().Message, Does.StartWith("No Files were found matching Pattern Pat2.txt in "));
+        });
     }
 
     [Test]

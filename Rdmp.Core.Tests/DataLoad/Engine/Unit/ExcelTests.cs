@@ -54,8 +54,11 @@ public class ExcelTests
     [Test]
     public void TestFilesExists()
     {
-        Assert.That(_fileLocations[TestFile].Exists);
-        Assert.That(_fileLocations[FreakyTestFile].Exists);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_fileLocations[TestFile].Exists);
+            Assert.That(_fileLocations[FreakyTestFile].Exists);
+        });
     }
 
     [Test]
@@ -82,17 +85,20 @@ public class ExcelTests
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(dt.Columns, Has.Count.EqualTo(6));
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
-        Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
 
-        Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
-        Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
-        Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
+            Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
 
-        Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
-        Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
-        Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
+        });
     }
 
 
@@ -111,20 +117,23 @@ public class ExcelTests
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         Assert.That(dt.Columns, Has.Count.EqualTo(7));
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
-        Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
 
-        Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
-        Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
-        Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
-        Assert.That(dt.Columns[6].ColumnName, Is.EqualTo("Path"));
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
+            Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
+            Assert.That(dt.Columns[6].ColumnName, Is.EqualTo("Path"));
 
-        Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
-        Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
-        Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
 
-        Assert.That(dt.Rows[0][6], Is.EqualTo(_fileLocations[versionOfTestFile].FullName));
+            Assert.That(dt.Rows[0][6], Is.EqualTo(_fileLocations[versionOfTestFile].FullName));
+        });
     }
 
 
@@ -148,25 +157,28 @@ public class ExcelTests
 
         Assert.That(dt.Rows, Has.Count.EqualTo(5));
 
-        Assert.That(dt.Rows[0][3], Is.EqualTo("2001-01-01"));
-        Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
-        Assert.That(dt.Rows[0][5], Is.EqualTo("10:30:00"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0][3], Is.EqualTo("2001-01-01"));
+            Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
+            Assert.That(dt.Rows[0][5], Is.EqualTo("10:30:00"));
 
-        Assert.That(dt.Rows[1][3], Is.EqualTo("2001-01-01 10:30:00"));
-        Assert.That(dt.Rows[1][4], Is.EqualTo("0.51"));
-        Assert.That(dt.Rows[1][5], Is.EqualTo("11:30:00"));
+            Assert.That(dt.Rows[1][3], Is.EqualTo("2001-01-01 10:30:00"));
+            Assert.That(dt.Rows[1][4], Is.EqualTo("0.51"));
+            Assert.That(dt.Rows[1][5], Is.EqualTo("11:30:00"));
 
-        Assert.That(dt.Rows[2][3], Is.EqualTo("2002-01-01 11:30:00"));
-        Assert.That(dt.Rows[2][4], Is.EqualTo("0.22"));
-        Assert.That(dt.Rows[2][5], Is.EqualTo("0.1"));
+            Assert.That(dt.Rows[2][3], Is.EqualTo("2002-01-01 11:30:00"));
+            Assert.That(dt.Rows[2][4], Is.EqualTo("0.22"));
+            Assert.That(dt.Rows[2][5], Is.EqualTo("0.1"));
 
-        Assert.That(dt.Rows[3][3], Is.EqualTo("2003-01-01 01:30:00"));
-        Assert.That(dt.Rows[3][4], Is.EqualTo("0.10"));
-        Assert.That(dt.Rows[3][5], Is.EqualTo("0.51"));
+            Assert.That(dt.Rows[3][3], Is.EqualTo("2003-01-01 01:30:00"));
+            Assert.That(dt.Rows[3][4], Is.EqualTo("0.10"));
+            Assert.That(dt.Rows[3][5], Is.EqualTo("0.51"));
 
-        Assert.That(dt.Rows[4][3], Is.EqualTo("2015-09-18"));
-        Assert.That(dt.Rows[4][4], Is.EqualTo("15:09:00"));
-        Assert.That(dt.Rows[4][5], Is.EqualTo("00:03:56"));
+            Assert.That(dt.Rows[4][3], Is.EqualTo("2015-09-18"));
+            Assert.That(dt.Rows[4][4], Is.EqualTo("15:09:00"));
+            Assert.That(dt.Rows[4][5], Is.EqualTo("00:03:56"));
+        });
     }
 
     [Test]
@@ -182,29 +194,35 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
-        Assert.That(dt.Columns, Has.Count.EqualTo(5));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Columns, Has.Count.EqualTo(5));
+        });
 
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Category"));
-        Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Age"));
-        Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("Wage"));
-        Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("Invisibre")); //this column is hidden in the spreadsheet but we still load it
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Category"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Age"));
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("Wage"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("Invisibre")); //this column is hidden in the spreadsheet but we still load it
 
-        Assert.That(dt.Rows[0][0], Is.EqualTo("Frank"));
-        Assert.That(dt.Rows[0][1], Is.EqualTo("Upper, Left"));
-        Assert.That(dt.Rows[0][2], Is.EqualTo("30"));
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Frank"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("Upper, Left"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("30"));
 
-        //its a pound symbol alright! but since there is 2 encodings for pound symbol let's just make everyones life easier
-        Assert.That(dt.Rows[0][3].ToString(), Does.Match(@"^\W11.00$"));
+            //its a pound symbol alright! but since there is 2 encodings for pound symbol let's just make everyones life easier
+            Assert.That(dt.Rows[0][3].ToString(), Does.Match(@"^\W11.00$"));
 
-        Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
+            Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
 
-        Assert.That(dt.Rows[1][0], Is.EqualTo("Castello"));
-        Assert.That(dt.Rows[1][1], Is.EqualTo("Lower, Back"));
-        Assert.That(dt.Rows[1][2], Is.EqualTo("31"));
-        Assert.That(dt.Rows[1][3], Is.EqualTo("50.00%"));
-        Assert.That(dt.Rows[1][4], Is.EqualTo("0.2"));
+            Assert.That(dt.Rows[1][0], Is.EqualTo("Castello"));
+            Assert.That(dt.Rows[1][1], Is.EqualTo("Lower, Back"));
+            Assert.That(dt.Rows[1][2], Is.EqualTo("31"));
+            Assert.That(dt.Rows[1][3], Is.EqualTo("50.00%"));
+            Assert.That(dt.Rows[1][4], Is.EqualTo("0.2"));
+        });
     }
 
 
@@ -255,11 +273,16 @@ public class ExcelTests
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-
-        Assert.That(dt.Rows, Has.Count.EqualTo(3));
-        Assert.That(dt.Columns, Has.Count.EqualTo(2));
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Age"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(3));
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Age"));
+        });
     }
 
 

@@ -12,6 +12,7 @@ using Rdmp.Core.Logging;
 using System;
 using System.Data;
 using System.IO;
+using NUnit.Framework.Legacy;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 

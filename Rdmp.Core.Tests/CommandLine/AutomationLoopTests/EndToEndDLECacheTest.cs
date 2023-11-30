@@ -68,11 +68,14 @@ public class EndToEndDLECacheTest : TestsRequiringADle
 
         RunDLE(timeoutInMilliseconds);
 
-        Assert.That(RowsNow - RowsBefore, Is.EqualTo(10));
+        Assert.Multiple(() =>
+        {
+            Assert.That(RowsNow - RowsBefore, Is.EqualTo(10));
 
-        Assert.That(LoadDirectory.Cache.GetFiles(), Is.Empty);
-        Assert.That(LoadDirectory.ForLoading.GetFiles(), Is.Empty);
-        Assert.That(LoadDirectory.ForArchiving.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(LoadDirectory.Cache.GetFiles(), Is.Empty);
+            Assert.That(LoadDirectory.ForLoading.GetFiles(), Is.Empty);
+            Assert.That(LoadDirectory.ForArchiving.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
         Assert.That(archiveFile.Extension, Is.EqualTo(".zip"));

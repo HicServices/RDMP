@@ -46,7 +46,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
     {
         var updateInfo = new DataLoadProgressUpdateInfo();
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, null));
-        Assert.That(ex.Message.StartsWith("Job does not have any DatesToRetrieve"));
+        Assert.That(ex.Message, Does.StartWith("Job does not have any DatesToRetrieve"));
     }
 
     [Test]
@@ -85,7 +85,7 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.That(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
+        Assert.That(ex.Message, Does.StartWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
     }
 
     [Test]
@@ -100,8 +100,11 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.That(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
-        Assert.That(ex.InnerException, Is.InstanceOf<SqlException>());
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Does.StartWith("Failed to execute the following SQL in the RAW database"));
+            Assert.That(ex.InnerException, Is.InstanceOf<SqlException>());
+        });
     }
 
     [Test]
@@ -116,8 +119,8 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.That(ex.Message.Contains("ExecuteScalarSQL"));
-        Assert.That(ex.Message.Contains("returned null"));
+        Assert.That(ex.Message, Does.Contain("ExecuteScalarSQL"));
+        Assert.That(ex.Message, Does.Contain("returned null"));
     }
 
     [Test]
@@ -132,9 +135,12 @@ public class DataLoadProgressUpdateInfoTests : DatabaseTests
         var ex = Assert.Throws<DataLoadProgressUpdateException>(() =>
             updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
-        Assert.That(
-            ex.Message, Is.EqualTo("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish"));
-        Assert.That(ex.InnerException, Is.InstanceOf<FormatException>());
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                    ex.Message, Is.EqualTo("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish"));
+            Assert.That(ex.InnerException, Is.InstanceOf<FormatException>());
+        });
     }
 
     [Test]

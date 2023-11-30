@@ -105,11 +105,14 @@ public class LogManagerTest : DatabaseTests
 
         Assert.That(loadHistoryForTask, Is.Not.Empty); //some records
 
-        Assert.That(loadHistoryForTask.Count(static load => load.Errors.Count > 0), Is.GreaterThan(0)); //some with some errors
-        Assert.That(loadHistoryForTask.Count(static load => load.Progress.Count > 0), Is.GreaterThan(0)); //some with some progress
+        Assert.Multiple(() =>
+        {
+            Assert.That(loadHistoryForTask.Count(static load => load.Errors.Count > 0), Is.GreaterThan(0)); //some with some errors
+            Assert.That(loadHistoryForTask.Count(static load => load.Progress.Count > 0), Is.GreaterThan(0)); //some with some progress
 
 
-        Assert.That(loadHistoryForTask.Count(static load => load.TableLoadInfos.Count == 1), Is.GreaterThan(0)); //some with some table loads
+            Assert.That(loadHistoryForTask.Count(static load => load.TableLoadInfos.Count == 1), Is.GreaterThan(0)); //some with some table loads
+        });
     }
 
     [Test]
@@ -218,15 +221,18 @@ public class LogManagerTest : DatabaseTests
 
         var id = dli.ID;
         var archival = lm.GetArchivalDataLoadInfos("blarg", null, id).Single();
-        Assert.That(archival.TableLoadInfos.Single().Inserts, Is.EqualTo(500));
-        Assert.That(archival.TableLoadInfos.Single().Updates, Is.EqualTo(0));
-        Assert.That(archival.TableLoadInfos.Single().Deletes, Is.EqualTo(0));
-        Assert.That(archival.StartTime.Date, Is.EqualTo(DateTime.Now.Date));
-        Assert.That(archival.EndTime.Value.Date, Is.EqualTo(DateTime.Now.Date));
+        Assert.Multiple(() =>
+        {
+            Assert.That(archival.TableLoadInfos.Single().Inserts, Is.EqualTo(500));
+            Assert.That(archival.TableLoadInfos.Single().Updates, Is.EqualTo(0));
+            Assert.That(archival.TableLoadInfos.Single().Deletes, Is.EqualTo(0));
+            Assert.That(archival.StartTime.Date, Is.EqualTo(DateTime.Now.Date));
+            Assert.That(archival.EndTime.Value.Date, Is.EqualTo(DateTime.Now.Date));
 
-        Assert.That(archival.Errors.Single().Description, Is.EqualTo("it went bad"));
-        Assert.That(archival.Errors.Single().Source, Is.EqualTo("bad.cs"));
-        Assert.That(archival.Progress.Single().Description, Is.EqualTo("Wrote some records"));
+            Assert.That(archival.Errors.Single().Description, Is.EqualTo("it went bad"));
+            Assert.That(archival.Errors.Single().Source, Is.EqualTo("bad.cs"));
+            Assert.That(archival.Progress.Single().Description, Is.EqualTo("Wrote some records"));
+        });
 
         var fatal = archival.Errors.Single();
         lm.ResolveFatalErrors(new[] { fatal.ID }, DataLoadInfo.FatalErrorStates.Resolved,

@@ -40,20 +40,26 @@ internal class SetNullTests
 
         Assert.That(result.Rows, Has.Count.EqualTo(3));
 
-        Assert.That(result.Rows[0]["a"], Is.EqualTo("cat"));
-        Assert.That(result.Rows[0]["b"], Is.EqualTo(DBNull.Value));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Rows[0]["a"], Is.EqualTo("cat"));
+            Assert.That(result.Rows[0]["b"], Is.EqualTo(DBNull.Value));
 
-        Assert.That(result.Rows[1]["a"], Is.EqualTo("dog"));
-        Assert.That(result.Rows[1]["b"], Is.EqualTo("dog"));
+            Assert.That(result.Rows[1]["a"], Is.EqualTo("dog"));
+            Assert.That(result.Rows[1]["b"], Is.EqualTo("dog"));
 
-        Assert.That(result.Rows[2]["a"], Is.EqualTo("cat"));
-        Assert.That(result.Rows[2]["b"], Is.EqualTo("dog"));
+            Assert.That(result.Rows[2]["a"], Is.EqualTo("cat"));
+            Assert.That(result.Rows[2]["b"], Is.EqualTo("dog"));
+        });
 
         operation.Dispose(listener, null);
 
         var msg = listener.EventsReceivedBySender[operation].Single();
 
-        Assert.That(msg.ProgressEventType, Is.EqualTo(ProgressEventType.Warning));
-        Assert.That(msg.Message, Is.EqualTo("Total SetNull operations for ColumnNameToFind 'b' was 1"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(msg.ProgressEventType, Is.EqualTo(ProgressEventType.Warning));
+            Assert.That(msg.Message, Is.EqualTo("Total SetNull operations for ColumnNameToFind 'b' was 1"));
+        });
     }
 }

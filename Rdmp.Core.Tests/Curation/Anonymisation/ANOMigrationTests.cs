@@ -116,9 +116,12 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
     [Order(1)]
     public void PKsAreCorrect()
     {
-        Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
-        Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
-        Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
+        });
     }
 
     [Test]

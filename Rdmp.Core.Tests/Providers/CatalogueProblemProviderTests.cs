@@ -397,8 +397,11 @@ internal class CatalogueProblemProviderTests : UnitTests
         ci2.ColumnInfo.Collation = "splishy";
         pp.RefreshProblems(childProvider);
 
-        Assert.That(pp.HasProblem(ci1));
-        Assert.That(pp.DescribeProblem(ci1), Is.EqualTo("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(pp.HasProblem(ci1));
+            Assert.That(pp.DescribeProblem(ci1), Is.EqualTo("Columns in joins declared on this column have mismatched collations ( My_Col = My_Col)"));
+        });
     }
 
     [Test]

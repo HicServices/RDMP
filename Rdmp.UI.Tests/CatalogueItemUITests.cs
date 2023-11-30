@@ -35,11 +35,14 @@ internal class CatalogueItemUITests : UITests
         var saver = ui.GetObjectSaverButton();
         saver.Save();
 
-        //the new description shuold be set in my class
-        Assert.That(catalogueItem.Description, Is.EqualTo("what is in the column"));
+        Assert.Multiple(() =>
+        {
+            //the new description shuold be set in my class
+            Assert.That(catalogueItem.Description, Is.EqualTo("what is in the column"));
 
-        //and the UI should have shown the Propagate changes dialog
-        Assert.That(ItemActivator.Results.WindowsShown, Has.Count.EqualTo(1));
+            //and the UI should have shown the Propagate changes dialog
+            Assert.That(ItemActivator.Results.WindowsShown, Has.Count.EqualTo(1));
+        });
         Assert.That(ItemActivator.Results.WindowsShown.Single(), Is.InstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI)));
 
         AssertNoErrors(ExpectedErrorType.Any);

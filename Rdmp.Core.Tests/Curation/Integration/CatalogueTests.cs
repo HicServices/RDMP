@@ -21,7 +21,7 @@ public class CatalogueTests : UnitTests
         var catalogueWithId = new Catalogue(Repository, "bob");
         var catas = Repository.GetAllObjects<Catalogue>();
 
-        Assert.That(catas.Length > 0);
+        Assert.That(catas, Is.Not.Empty);
 
         catalogueWithId.DeleteInDatabase();
     }
@@ -132,40 +132,43 @@ public class CatalogueTests : UnitTests
         foreach (var catalogue in catasAfter)
             if (catalogue.ID == expectedID)
             {
-                Assert.That(catalogue.Access_options, Is.EqualTo("backwards,frontwards"));
-                Assert.That(catalogue.API_access_URL, Is.EqualTo(new Uri("http://API.html")));
-                Assert.That(catalogue.Acronym, Is.EqualTo("abc"));
-                Assert.That(catalogue.Attribution_citation, Is.EqualTo("belongs to dave"));
-                Assert.That(catalogue.Browse_URL, Is.EqualTo(new Uri("http://browse.html")));
-                Assert.That(catalogue.Bulk_Download_URL, Is.EqualTo(new Uri("http://bulk.html")));
-                Assert.That(catalogue.Contact_details, Is.EqualTo("thomasnind"));
-                Assert.That(catalogue.Geographical_coverage, Is.EqualTo("fullspectrum"));
-                Assert.That(catalogue.Resource_owner, Is.EqualTo("blackhole"));
-                Assert.That(catalogue.Description, Is.EqualTo("exciting stuff of great excitement"));
-                Assert.That(catalogue.Detail_Page_URL, Is.EqualTo(new Uri("http://detail.html")));
-                Assert.That(catalogue.Last_revision_date, Is.EqualTo(DateTime.Parse("01/01/01")));
-                Assert.That(catalogue.Name, Is.EqualTo("kaptainshield"));
-                Assert.That(catalogue.Background_summary, Is.EqualTo("£50 preferred"));
-                Assert.That(catalogue.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.Monthly));
-                Assert.That(catalogue.Query_tool_URL, Is.EqualTo(new Uri("http://querier.html")));
-                Assert.That(catalogue.Source_URL, Is.EqualTo(new Uri("http://blackholeSun.html")));
-                Assert.That(catalogue.Time_coverage, Is.EqualTo("comprehensive"));
-                Assert.That(catalogue.Search_keywords, Is.EqualTo("excitement,fishmongery"));
-                Assert.That(catalogue.Type, Is.EqualTo(Catalogue.CatalogueType.ResearchStudy));
-                Assert.That(catalogue.Update_freq, Is.EqualTo("Every darmn second!"));
-                Assert.That(catalogue.Update_sched, Is.EqualTo("periodically on request"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(catalogue.Access_options, Is.EqualTo("backwards,frontwards"));
+                    Assert.That(catalogue.API_access_URL, Is.EqualTo(new Uri("http://API.html")));
+                    Assert.That(catalogue.Acronym, Is.EqualTo("abc"));
+                    Assert.That(catalogue.Attribution_citation, Is.EqualTo("belongs to dave"));
+                    Assert.That(catalogue.Browse_URL, Is.EqualTo(new Uri("http://browse.html")));
+                    Assert.That(catalogue.Bulk_Download_URL, Is.EqualTo(new Uri("http://bulk.html")));
+                    Assert.That(catalogue.Contact_details, Is.EqualTo("thomasnind"));
+                    Assert.That(catalogue.Geographical_coverage, Is.EqualTo("fullspectrum"));
+                    Assert.That(catalogue.Resource_owner, Is.EqualTo("blackhole"));
+                    Assert.That(catalogue.Description, Is.EqualTo("exciting stuff of great excitement"));
+                    Assert.That(catalogue.Detail_Page_URL, Is.EqualTo(new Uri("http://detail.html")));
+                    Assert.That(catalogue.Last_revision_date, Is.EqualTo(DateTime.Parse("01/01/01")));
+                    Assert.That(catalogue.Name, Is.EqualTo("kaptainshield"));
+                    Assert.That(catalogue.Background_summary, Is.EqualTo("£50 preferred"));
+                    Assert.That(catalogue.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.Monthly));
+                    Assert.That(catalogue.Query_tool_URL, Is.EqualTo(new Uri("http://querier.html")));
+                    Assert.That(catalogue.Source_URL, Is.EqualTo(new Uri("http://blackholeSun.html")));
+                    Assert.That(catalogue.Time_coverage, Is.EqualTo("comprehensive"));
+                    Assert.That(catalogue.Search_keywords, Is.EqualTo("excitement,fishmongery"));
+                    Assert.That(catalogue.Type, Is.EqualTo(Catalogue.CatalogueType.ResearchStudy));
+                    Assert.That(catalogue.Update_freq, Is.EqualTo("Every darmn second!"));
+                    Assert.That(catalogue.Update_sched, Is.EqualTo("periodically on request"));
 
 
-                Assert.That(catalogue.Country_of_origin, Is.EqualTo("United Kingdom"));
-                Assert.That(catalogue.Data_standards, Is.EqualTo("Highly Standardised"));
-                Assert.That(catalogue.Administrative_contact_address, Is.EqualTo("Candyland"));
-                Assert.That(catalogue.Administrative_contact_email, Is.EqualTo("big@brother.com"));
-                Assert.That(catalogue.Administrative_contact_name, Is.EqualTo("Uncle Sam"));
-                Assert.That(catalogue.Administrative_contact_telephone, Is.EqualTo("12345 67890"));
-                Assert.That(catalogue.Explicit_consent, Is.EqualTo(true));
-                Assert.That(catalogue.Ethics_approver, Is.EqualTo("Tayside Supernatural Department"));
-                Assert.That(catalogue.Source_of_data_collection, Is.EqualTo("Invented by Unit Test"));
-                Assert.That(catalogue.SubjectNumbers, Is.EqualTo("100,000,000"));
+                    Assert.That(catalogue.Country_of_origin, Is.EqualTo("United Kingdom"));
+                    Assert.That(catalogue.Data_standards, Is.EqualTo("Highly Standardised"));
+                    Assert.That(catalogue.Administrative_contact_address, Is.EqualTo("Candyland"));
+                    Assert.That(catalogue.Administrative_contact_email, Is.EqualTo("big@brother.com"));
+                    Assert.That(catalogue.Administrative_contact_name, Is.EqualTo("Uncle Sam"));
+                    Assert.That(catalogue.Administrative_contact_telephone, Is.EqualTo("12345 67890"));
+                    Assert.That(catalogue.Explicit_consent, Is.EqualTo(true));
+                    Assert.That(catalogue.Ethics_approver, Is.EqualTo("Tayside Supernatural Department"));
+                    Assert.That(catalogue.Source_of_data_collection, Is.EqualTo("Invented by Unit Test"));
+                    Assert.That(catalogue.SubjectNumbers, Is.EqualTo("100,000,000"));
+                });
 
 
                 catalogue.DeleteInDatabase();
@@ -180,7 +183,7 @@ public class CatalogueTests : UnitTests
         var newCatalogue = new Catalogue(Repository, "fishing");
         var expectedID = newCatalogue.ID;
 
-        Assert.That(expectedID > 1);
+        Assert.That(expectedID, Is.GreaterThan(1));
 
 
         var catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
@@ -211,7 +214,7 @@ public class CatalogueTests : UnitTests
         var c = new Catalogue(Repository, "TEST");
 
         Assert.That(c, Is.Not.Null);
-        Assert.That(c.Name == "TEST");
+        Assert.That(c.Name, Is.EqualTo("TEST"));
 
         c.DeleteInDatabase();
     }
@@ -273,12 +276,18 @@ public class CatalogueTests : UnitTests
             Assert.That(lookupTablesOnly, Does.Contain(t3));
 
             cata.GetTableInfos(out var normalTables, out var lookupTables);
-            Assert.That(normalTables, Has.Count.EqualTo(2));
-            Assert.That(lookupTables, Has.Count.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(normalTables, Has.Count.EqualTo(2));
+                Assert.That(lookupTables, Has.Count.EqualTo(1));
+            });
 
             Assert.That(normalTables, Does.Contain(t1));
-            Assert.That(normalTables, Does.Contain(t2));
-            Assert.That(lookupTables, Does.Contain(t3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(normalTables, Does.Contain(t2));
+                Assert.That(lookupTables, Does.Contain(t3));
+            });
         }
         finally
         {
@@ -453,8 +462,8 @@ public class CatalogueTests : UnitTests
 
             var catas = t.GetAllRelatedCatalogues();
             Assert.That(catas, Has.Length.EqualTo(2));
-            Assert.That(catas.Contains(cata1));
-            Assert.That(catas.Contains(cata2));
+            Assert.That(catas, Does.Contain(cata1));
+            Assert.That(catas, Does.Contain(cata2));
         }
         finally
         {
@@ -479,8 +488,11 @@ public class CatalogueTests : UnitTests
 
         while (bottomFolder.ChildFolders.Any()) bottomFolder = bottomFolder.ChildFolders.Single();
 
-        Assert.That(bottomFolder.Name, Is.EqualTo(expectedName));
-        Assert.That(bottomFolder.FullName, Is.EqualTo(fullName));
+        Assert.Multiple(() =>
+        {
+            Assert.That(bottomFolder.Name, Is.EqualTo(expectedName));
+            Assert.That(bottomFolder.FullName, Is.EqualTo(fullName));
+        });
     }
 
     [TestCase("\\admissions\\", "\\admissions")]
@@ -517,11 +529,14 @@ public class CatalogueTests : UnitTests
 
         var tree = FolderHelper.BuildFolderTree(objects);
         Assert.That(tree.ChildObjects, Does.Contain(r1));
-        Assert.That(tree.ChildObjects, Does.Contain(r2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tree.ChildObjects, Does.Contain(r2));
 
-        Assert.That(tree["dog"]["fish"]["cat"].ChildObjects, Does.Contain(cat));
+            Assert.That(tree["dog"]["fish"]["cat"].ChildObjects, Does.Contain(cat));
 
-        Assert.That(tree["fun"].ChildObjects, Does.Contain(fun));
+            Assert.That(tree["fun"].ChildObjects, Does.Contain(fun));
+        });
         Assert.That(tree["fun"].ChildObjects, Does.Contain(morefun));
     }
 
@@ -549,13 +564,16 @@ public class CatalogueTests : UnitTests
         };
 
         var tree = FolderHelper.BuildFolderTree(objects);
-        Assert.That(tree.ChildObjects, Is.Empty, "Should be no Catalogues on the root");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tree.ChildObjects, Is.Empty, "Should be no Catalogues on the root");
 
-        Assert.That(tree.ChildFolders, Has.Count.EqualTo(1));
-        Assert.That(tree["somefolder"].ChildFolders, Has.Count.EqualTo(1));
-        Assert.That(tree["somefolder"]["somesub"].ChildFolders, Is.Empty);
+            Assert.That(tree.ChildFolders, Has.Count.EqualTo(1));
+            Assert.That(tree["somefolder"].ChildFolders, Has.Count.EqualTo(1));
+            Assert.That(tree["somefolder"]["somesub"].ChildFolders, Is.Empty);
 
-        Assert.That(tree["somefolder"].ChildObjects, Does.Contain(cata1));
-        Assert.That(tree["somefolder"]["somesub"].ChildObjects, Does.Contain(cata2));
+            Assert.That(tree["somefolder"].ChildObjects, Does.Contain(cata1));
+            Assert.That(tree["somefolder"]["somesub"].ChildObjects, Does.Contain(cata2));
+        });
     }
 }

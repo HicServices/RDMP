@@ -286,8 +286,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.That(toMemory.EventsReceivedBySender[destination].Any(msg => msg.Message.Contains("Resizing column")));
 
         destination.Dispose(toConsole, null);
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        });
     }
 
     [Test]
@@ -314,9 +317,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(5));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("decimal(3,1)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(5));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("decimal(3,1)"));
+        });
     }
 
 
@@ -422,9 +428,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(1));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myText").DataType.SQLType, Is.EqualTo("varchar(max)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(1));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myText").DataType.SQLType, Is.EqualTo("varchar(max)"));
+        });
     }
 
     [Test]
@@ -463,9 +472,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             .Any(msg => msg.Message.Contains("Resizing column ")));
 
         destination.Dispose(toConsole, null);
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(7));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("decimal(5,2)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(7));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("decimal(5,2)"));
+        });
     }
 
     private static object[] _sourceLists =
@@ -515,8 +527,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.ProcessPipelineData(dt1, toConsole, token);
 
         destination.Dispose(toConsole, null);
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myCol").DataType.SQLType, Is.EqualTo(expectedDatatypeInDatabase));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("myCol").DataType.SQLType, Is.EqualTo(expectedDatatypeInDatabase));
+        });
 
         using var con = db.Server.GetConnection();
         con.Open();
@@ -524,8 +539,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         using var r = cmd.ExecuteReader();
         foreach (var e in expectedValuesReadFromDatabase)
         {
-            Assert.That(r.Read());
-            Assert.That(r["myCol"], Is.EqualTo(e));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["myCol"], Is.EqualTo(e));
+            });
         }
     }
 
@@ -555,15 +573,18 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
-        //table should exist
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+        Assert.Multiple(() =>
+        {
+            //table should exist
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
 
-        //should have 2 rows
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(sendTheZero ? 2 : 1));
+            //should have 2 rows
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(sendTheZero ? 2 : 1));
 
-        //should be decimal
+            //should be decimal
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo(sendTheZero ? "decimal(19,18)" : "decimal(18,18)"));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo(sendTheZero ? "decimal(19,18)" : "decimal(18,18)"));
+        });
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -594,11 +615,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
         AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
 
+        Assert.Multiple(() =>
+        {
+            Assert.That(table.DiscoverColumn("StringNotNull").AllowNulls, Is.EqualTo(false));
 
-        Assert.That(table.DiscoverColumn("StringNotNull").AllowNulls, Is.EqualTo(false));
-
-        //do the same with the one that allows nulls
-        Assert.That(table.DiscoverColumn("StringAllowNull").AllowNulls, Is.EqualTo(true));
+            //do the same with the one that allows nulls
+            Assert.That(table.DiscoverColumn("StringAllowNull").AllowNulls, Is.EqualTo(true));
+        });
         table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
         table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
         table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
@@ -608,16 +631,22 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         //we should have correct understanding prior to resize
         AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 50);
-        Assert.That(table.DiscoverColumn("StringPk").IsPrimaryKey, Is.EqualTo(true));
-        Assert.That(table.DiscoverColumn("StringPk").AllowNulls, Is.EqualTo(false));
+        Assert.Multiple(() =>
+        {
+            Assert.That(table.DiscoverColumn("StringPk").IsPrimaryKey, Is.EqualTo(true));
+            Assert.That(table.DiscoverColumn("StringPk").AllowNulls, Is.EqualTo(false));
+        });
 
         //now we execute the resize
         table.DiscoverColumn("StringPk").DataType.Resize(500);
 
         AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
 
-        Assert.That(table.DiscoverColumn("StringPk").IsPrimaryKey, Is.EqualTo(true));
-        Assert.That(table.DiscoverColumn("StringPk").AllowNulls, Is.EqualTo(false));
+        Assert.Multiple(() =>
+        {
+            Assert.That(table.DiscoverColumn("StringPk").IsPrimaryKey, Is.EqualTo(true));
+            Assert.That(table.DiscoverColumn("StringPk").AllowNulls, Is.EqualTo(false));
+        });
 
         con.Close();
     }
@@ -723,8 +752,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
         var tbl = db.ExpectTable("TestFreeText");
-        Assert.That(tbl.Exists());
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+        });
     }
 
     [Test]
@@ -753,19 +785,22 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.ProcessPipelineData(dt1, toConsole, token);
         destination.Dispose(toConsole, null);
 
-        //table should exist
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+        Assert.Multiple(() =>
+        {
+            //table should exist
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
 
-        //should have 2 rows
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(1));
+            //should have 2 rows
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(1));
 
-        //should be decimal
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col1").DataType.SQLType, Is.EqualTo("decimal(3,3)"));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType, Is.EqualTo("decimal(3,3)"));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType, Is.EqualTo("bit"));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType, Is.EqualTo("tinyint"));
+            //should be decimal
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col1").DataType.SQLType, Is.EqualTo("decimal(3,3)"));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType, Is.EqualTo("decimal(3,3)"));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType, Is.EqualTo("bit"));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType, Is.EqualTo("tinyint"));
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType, Is.EqualTo("varbinary(max)"));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col5").DataType.SQLType, Is.EqualTo("varbinary(max)"));
+        });
     }
 
 
@@ -798,9 +833,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             .Any(msg => msg.Message.Contains("Resizing column 'mynum' from 'bit' to 'int'")));
 
         destination.Dispose(toConsole, null);
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
     }
 
     [Test]
@@ -835,21 +873,27 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.Dispose(toConsole, null);
         var tbl = db.ExpectTable("DataTableUploadDestinationTests");
-        Assert.That(tbl.Exists());
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
-        Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
 
         using (var con = db.Server.GetConnection())
         {
             con.Open();
             var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
 
-            Assert.That(r.Read());
-            Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
-            Assert.That((int)r["mynum"], Is.EqualTo(999));
-            Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
-            Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
-            Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
         }
 
         db.Drop();
@@ -884,9 +928,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.Dispose(toConsole, null);
         var tbl = db.ExpectTable("DataTableUploadDestinationTests");
-        Assert.That(tbl.Exists());
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
-        Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
 
         using var con = db.Server.GetConnection();
         con.Open();
@@ -899,9 +946,12 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         Assert.That(r.Read());
         numbersRead.Add((int)r["mynum"]);
 
-        Assert.That(r.Read(), Is.False);
-        Assert.That(numbersRead.Contains(1));
-        Assert.That(numbersRead.Contains(999));
+        Assert.Multiple(() =>
+        {
+            Assert.That(r.Read(), Is.False);
+            Assert.That(numbersRead, Does.Contain(1));
+        });
+        Assert.That(numbersRead, Does.Contain(999));
     }
 
     [TestCase(false)]
@@ -998,8 +1048,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var tbl = db.ExpectTable("MyTable");
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
-        Assert.That(tbl.DiscoverColumns().Single().IsPrimaryKey);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl.DiscoverColumns().Single().IsPrimaryKey);
+        });
     }
 
     [Test]
@@ -1086,7 +1139,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         var dt2 = db.ExpectTable("ff").GetDataTable();
 
-        Assert.That((decimal)dt2.Rows[0][0] == (decimal)-0.0000410235746055587);
+        Assert.That((decimal)dt2.Rows[0][0], Is.EqualTo((decimal)-0.0000410235746055587));
     }
 
     private class AdjustColumnDelegater : IDatabaseColumnRequestAdjuster
@@ -1206,8 +1259,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             .Any(msg => msg.Message.Contains("Resizing column ")));
 
         destination.Dispose(toConsole, null);
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        });
 
         var tt = db.Server.GetQuerySyntaxHelper().TypeTranslater;
 
@@ -1283,14 +1339,20 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             throw;
         }
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        });
 
         var colAfter = tbl.DiscoverColumn("TestedCol");
 
-        Assert.That(colAfter.IsPrimaryKey, Is.EqualTo(v1 != null && v2 != null));
+        Assert.Multiple(() =>
+        {
+            Assert.That(colAfter.IsPrimaryKey, Is.EqualTo(v1 != null && v2 != null));
 
-        Assert.That(tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType), Is.EqualTo(expectedTypeForBatch2));
+            Assert.That(tt.GetCSharpTypeForSQLDBType(colAfter.DataType.SQLType), Is.EqualTo(expectedTypeForBatch2));
+        });
     }
 
 
@@ -1327,11 +1389,14 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.Dispose(toConsole, null);
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").Exists());
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").GetRowCount(), Is.EqualTo(2));
 
-        // should still be real
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType, Is.EqualTo("real"));
+            // should still be real
+            Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType, Is.EqualTo("real"));
+        });
     }
 
     #endregion

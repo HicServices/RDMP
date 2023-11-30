@@ -53,11 +53,14 @@ internal class RowVerTest : DatabaseTests
 
         //fresh fetch for this
         Assert.That(rowVerCache.GetAllObjects(), Does.Contain(cata2));
-        Assert.That(rowVerCache.GetAllObjects().Contains(cata), Is.False);
+        Assert.That(rowVerCache.GetAllObjects(), Does.Not.Contain(cata));
 
-        //change a value in the background but first make sure that what the cache has is a Equal but not reference to cata2
-        Assert.That(rowVerCache.GetAllObjects().Any(o => ReferenceEquals(o, cata2)), Is.False);
-        Assert.That(rowVerCache.GetAllObjects().Any(o => Equals(o, cata2)));
+        Assert.Multiple(() =>
+        {
+            //change a value in the background but first make sure that what the cache has is a Equal but not reference to cata2
+            Assert.That(rowVerCache.GetAllObjects().Any(o => ReferenceEquals(o, cata2)), Is.False);
+            Assert.That(rowVerCache.GetAllObjects().Any(o => Equals(o, cata2)));
+        });
 
         cata2.Name = "boom";
         cata2.SaveToDatabase();
@@ -69,8 +72,11 @@ internal class RowVerTest : DatabaseTests
 
         Assert.That(rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")), Is.EqualTo(1));
 
-        Assert.That(rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(rowVerCache.GetAllObjects().Count(c => c.Name.Equals("vroom")), Is.EqualTo(1));
 
-        Assert.That(rowVerCache.Broken, Is.False);
+            Assert.That(rowVerCache.Broken, Is.False);
+        });
     }
 }

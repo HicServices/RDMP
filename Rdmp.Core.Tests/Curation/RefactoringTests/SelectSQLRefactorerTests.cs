@@ -101,10 +101,13 @@ public class SelectSQLRefactorerTests : UnitTests
         foreach (IDeleteable d in ti.ColumnInfos)
             d.DeleteInDatabase();
 
-        Assert.That(SelectSQLRefactorer.IsRefactorable(ti));
+        Assert.Multiple(() =>
+        {
+            Assert.That(SelectSQLRefactorer.IsRefactorable(ti));
 
-        Assert.That(SelectSQLRefactorer.RefactorTableName(ti, newName), Is.EqualTo(1));
-        Assert.That(ti.Name, Is.EqualTo(newName));
+            Assert.That(SelectSQLRefactorer.RefactorTableName(ti, newName), Is.EqualTo(1));
+            Assert.That(ti.Name, Is.EqualTo(newName));
+        });
     }
 
     [TestCase("[Donkey]..[MyTbl]", "[Fish]..[MyTbl2]", "'[Donkey]..[MyTbl]' has incorrect database property 'Fish'")]
@@ -153,8 +156,11 @@ public class SelectSQLRefactorerTests : UnitTests
         var oldName = findTableName;
         var newName = oldName.Replace("MyTbl", "MyNewTbl");
 
-        Assert.That(SelectSQLRefactorer.RefactorTableName(col, oldName, newName), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(SelectSQLRefactorer.RefactorTableName(col, oldName, newName), Is.EqualTo(1));
 
-        Assert.That(col.Name, Is.EqualTo($"{newName}.[A]"));
+            Assert.That(col.Name, Is.EqualTo($"{newName}.[A]"));
+        });
     }
 }

@@ -31,12 +31,15 @@ public class MementoTests : DatabaseTests
 
         var mem2 = CatalogueRepository.GetObjectByID<Memento>(mem.ID);
 
-        Assert.That(new Guid(mem2.Commit.Transaction), Is.EqualTo(g));
-        Assert.That(mem2.AfterYaml, Is.EqualTo("blerg"));
-        Assert.That(mem2.BeforeYaml, Is.EqualTo("yar"));
-        Assert.That(mem2.Type, Is.EqualTo(MementoType.Modify));
-        Assert.That(mem2.Commit.Username, Is.EqualTo(Environment.UserName));
-        Assert.That(mem2.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+        Assert.Multiple(() =>
+        {
+            Assert.That(new Guid(mem2.Commit.Transaction), Is.EqualTo(g));
+            Assert.That(mem2.AfterYaml, Is.EqualTo("blerg"));
+            Assert.That(mem2.BeforeYaml, Is.EqualTo("yar"));
+            Assert.That(mem2.Type, Is.EqualTo(MementoType.Modify));
+            Assert.That(mem2.Commit.Username, Is.EqualTo(Environment.UserName));
+            Assert.That(mem2.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+        });
     }
 
 
@@ -53,12 +56,15 @@ public class MementoTests : DatabaseTests
 
         foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
         {
-            Assert.That(check.BeforeYaml, Is.Null);
-            Assert.That(new Guid(check.Commit.Transaction), Is.EqualTo(g));
-            Assert.That(check.AfterYaml, Is.EqualTo("blerg"));
-            Assert.That(check.Type, Is.EqualTo(MementoType.Add));
-            Assert.That(check.Commit.Username, Is.EqualTo(Environment.UserName));
-            Assert.That(check.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+            Assert.Multiple(() =>
+            {
+                Assert.That(check.BeforeYaml, Is.Null);
+                Assert.That(new Guid(check.Commit.Transaction), Is.EqualTo(g));
+                Assert.That(check.AfterYaml, Is.EqualTo("blerg"));
+                Assert.That(check.Type, Is.EqualTo(MementoType.Add));
+                Assert.That(check.Commit.Username, Is.EqualTo(Environment.UserName));
+                Assert.That(check.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+            });
         }
     }
 
@@ -75,12 +81,15 @@ public class MementoTests : DatabaseTests
 
         foreach (var check in new[] { mem, CatalogueRepository.GetObjectByID<Memento>(mem.ID) })
         {
-            Assert.That(check.AfterYaml, Is.Null);
-            Assert.That(new Guid(check.Commit.Transaction), Is.EqualTo(g));
-            Assert.That(check.BeforeYaml, Is.EqualTo("blah"));
-            Assert.That(check.Type, Is.EqualTo(MementoType.Delete));
-            Assert.That(check.Commit.Username, Is.EqualTo(Environment.UserName));
-            Assert.That(check.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+            Assert.Multiple(() =>
+            {
+                Assert.That(check.AfterYaml, Is.Null);
+                Assert.That(new Guid(check.Commit.Transaction), Is.EqualTo(g));
+                Assert.That(check.BeforeYaml, Is.EqualTo("blah"));
+                Assert.That(check.Type, Is.EqualTo(MementoType.Delete));
+                Assert.That(check.Commit.Username, Is.EqualTo(Environment.UserName));
+                Assert.That(check.GetReferencedObject(RepositoryLocator), Is.EqualTo(c));
+            });
         }
     }
 }

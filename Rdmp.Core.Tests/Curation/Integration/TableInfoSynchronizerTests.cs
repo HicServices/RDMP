@@ -70,9 +70,12 @@ public class TableInfoSynchronizerTests : DatabaseTests
 
         if (acceptChanges)
         {
-            //accept changes should result in a synchronized table
-            Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
-            Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(1)); //should only be 1 remaining
+            Assert.Multiple(() =>
+            {
+                //accept changes should result in a synchronized table
+                Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+                Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(1)); //should only be 1 remaining
+            });
         }
         else
         {
@@ -97,9 +100,12 @@ public class TableInfoSynchronizerTests : DatabaseTests
 
         if (acceptChanges)
         {
-            //accept changes should result in a synchronized table
-            Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
-            Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
+            Assert.Multiple(() =>
+            {
+                //accept changes should result in a synchronized table
+                Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+                Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
+            });
         }
         else
         {
@@ -118,9 +124,12 @@ public class TableInfoSynchronizerTests : DatabaseTests
 
         try
         {
-            Assert.That(cata.Name, Is.EqualTo(TABLE_NAME));
-            Assert.That(cataItems, Has.Length.EqualTo(2));
-            Assert.That(extractionInformations, Has.Length.EqualTo(2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(cata.Name, Is.EqualTo(TABLE_NAME));
+                Assert.That(cataItems, Has.Length.EqualTo(2));
+                Assert.That(extractionInformations, Has.Length.EqualTo(2));
+            });
 
             using (var con = _server.GetConnection())
             {
@@ -132,15 +141,21 @@ public class TableInfoSynchronizerTests : DatabaseTests
 
             if (acceptChanges)
             {
-                //accept changes should result in a synchronized table
-                Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
-                Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
-                Assert.That(cata.CatalogueItems, Has.Length.EqualTo(3)); //should 3 now
-                Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any), Has.Length.EqualTo(3)); //should 3 now
+                Assert.Multiple(() =>
+                {
+                    //accept changes should result in a synchronized table
+                    Assert.That(synchronizer.Synchronize(new AcceptAllCheckNotifier()), Is.EqualTo(true));
+                    Assert.That(tableInfoCreated.ColumnInfos, Has.Length.EqualTo(3)); //should 3 now
+                    Assert.That(cata.CatalogueItems, Has.Length.EqualTo(3)); //should 3 now
+                    Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any), Has.Length.EqualTo(3)); //should 3 now
+                });
 
-                Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any)
-                        .Count(e => e.SelectSQL.Contains("Birthday")), Is.EqualTo(1));
-                Assert.That(cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")), Is.EqualTo(1));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Any)
+                                        .Count(e => e.SelectSQL.Contains("Birthday")), Is.EqualTo(1));
+                    Assert.That(cata.CatalogueItems.Count(ci => ci.Name.Contains("Birthday")), Is.EqualTo(1));
+                });
             }
             else
             {

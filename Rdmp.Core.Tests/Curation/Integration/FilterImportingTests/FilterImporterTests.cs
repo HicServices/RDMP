@@ -148,12 +148,15 @@ public class FilterImporterTests : UnitTests
                 //factory should have been asked to create a new filter called "Space Odyssey" and a parameter with a declaration that matches the master filter SQL (i.e. 'AS int')
                 factory.Received(1).CreateNewFilter("Space Odyssey");
 
-        //The master filter parameters should have been copied to the child
-        Assert.That(masterParameter.Comment, Is.EqualTo(constructedParameter.Comment));
-        Assert.That(masterParameter
-                        .ParameterSQL, Is.EqualTo(constructedParameter.ParameterSQL)); //We actually manually set this above because that's the contract with "CreateNewParameter"
-        Assert.That(masterParameter.Value, Is.EqualTo(constructedParameter.Value));
-        }
+        Assert.Multiple(() =>
+        {
+            //The master filter parameters should have been copied to the child
+            Assert.That(masterParameter.Comment, Is.EqualTo(constructedParameter.Comment));
+            Assert.That(masterParameter
+                            .ParameterSQL, Is.EqualTo(constructedParameter.ParameterSQL)); //We actually manually set this above because that's the contract with "CreateNewParameter"
+            Assert.That(masterParameter.Value, Is.EqualTo(constructedParameter.Value));
+        });
+    }
 
         [Test]
         public void FilterCreated_ParametersRenamingDueToExistingParameterInScopeWithSameName()

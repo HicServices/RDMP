@@ -149,7 +149,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         return ti;
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+    private static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
         string columnDefinitions)
     {
         using var conn = db.Server.GetConnection();
@@ -157,7 +157,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+    private static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
         string columnDefinitions, DbConnection conn)
     {
         var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";

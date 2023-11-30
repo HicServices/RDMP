@@ -27,8 +27,11 @@ internal class SupplementalExtractionResultsTest : DatabaseTests
 
         var result = new SupplementalExtractionResults(DataExportRepository, ec, "select * from Globalsglba", tbl);
 
-        Assert.That(result.IsReferenceTo(typeof(SupportingSQLTable)));
-        Assert.That(result.IsReferenceTo(tbl));
-        Assert.That(result.IsReferenceTo(othertbl), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.IsReferenceTo(typeof(SupportingSQLTable)));
+            Assert.That(result.IsReferenceTo(tbl));
+            Assert.That(result.IsReferenceTo(othertbl), Is.False);
+        });
     }
 }

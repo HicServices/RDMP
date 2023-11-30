@@ -18,16 +18,19 @@ public class SqlSyntaxHelperTests
     [Test]
     public void GetNullSubstituteTests()
     {
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true), Is.EqualTo("-999"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true), Is.EqualTo("-9999999999"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true), Is.EqualTo("-99.9"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true), Is.EqualTo("-.9999"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true), Is.EqualTo("-999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true), Is.EqualTo("-9999999999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true), Is.EqualTo("-99.9"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true), Is.EqualTo("-.9999"));
 
 
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false), Is.EqualTo("999"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false), Is.EqualTo("9999999999"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false), Is.EqualTo("99.9"));
-        Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false), Is.EqualTo(".9999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false), Is.EqualTo("999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false), Is.EqualTo("9999999999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false), Is.EqualTo("99.9"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false), Is.EqualTo(".9999"));
+        });
     }
 
     [Test]
@@ -37,18 +40,27 @@ public class SqlSyntaxHelperTests
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)", out var method, out var contents);
 
-        Assert.That(method, Is.EqualTo("count"));
-        Assert.That(contents, Is.EqualTo("*"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("count"));
+            Assert.That(contents, Is.EqualTo("*"));
+        });
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count()", out method, out contents);
 
-        Assert.That(method, Is.EqualTo("count"));
-        Assert.That(contents, Is.EqualTo(""));
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("count"));
+            Assert.That(contents, Is.EqualTo(""));
+        });
 
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("LTRIM(RTRIM([Fish]))", out method, out contents);
 
-        Assert.That(method, Is.EqualTo("LTRIM"));
-        Assert.That(contents, Is.EqualTo("RTRIM([Fish])"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("LTRIM"));
+            Assert.That(contents, Is.EqualTo("RTRIM([Fish])"));
+        });
     }
 }

@@ -149,9 +149,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        Assert.That(ex.InnerException.Message, Does.Contain("ollection could not agree on a single Username"));
-        Assert.That(collection.Points, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("ollection could not agree on a single Username"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -186,9 +189,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        Assert.That(ex.InnerException.Message, Does.Contain("could not agree on a single Username to use to access the data under"));
-        Assert.That(collection.Points, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("could not agree on a single Username to use to access the data under"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -223,9 +229,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        Assert.That(ex.InnerException.Message, Does.Contain("collection could not agree on a single Password to use to access the data under"));
-        Assert.That(collection.Points, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("collection could not agree on a single Password to use to access the data under"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -247,9 +256,12 @@ internal class DataAccessPortalCollectionTests
         collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch in server names for data access points"));
-        Assert.That(collection.Points, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch in server names for data access points"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
 
@@ -272,8 +284,11 @@ internal class DataAccessPortalCollectionTests
         collection.Add(_dap)
         );
 
-        //should be relevant error and it shouldn't have been added
-        Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch on DatabaseType for data access points"));
-        Assert.That(collection.Points, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch on DatabaseType for data access points"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 }

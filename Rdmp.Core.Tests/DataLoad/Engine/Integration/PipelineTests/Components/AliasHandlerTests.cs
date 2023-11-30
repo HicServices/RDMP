@@ -99,7 +99,7 @@ public class AliasHandlerTests : DatabaseTests
         var ex = Assert.Throws<AliasTableFetchException>(() =>
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
-        Assert.That(ex.Message.StartsWith("Alias table SQL should only return aliases not exact matches"));
+        Assert.That(ex.Message, Does.StartWith("Alias table SQL should only return aliases not exact matches"));
     }
 
     [Test]
@@ -123,7 +123,7 @@ public class AliasHandlerTests : DatabaseTests
             _handler.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()));
 
-        Assert.That(ex.Message.Contains("Alias table SQL resulted in 3 fields being returned"));
+        Assert.That(ex.Message, Does.Contain("Alias table SQL resulted in 3 fields being returned"));
     }
 
     [Test]
@@ -175,13 +175,16 @@ public class AliasHandlerTests : DatabaseTests
 
         Assert.That(result.Rows, Has.Count.EqualTo(4));
 
-        Assert.That(result.Rows[2][0], Is.EqualTo(299));
-        Assert.That(result.Rows[2][1], Is.EqualTo("freddie")); //the original input row which had an alias on it
-        Assert.That(result.Rows[2][2], Is.EqualTo(300));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Rows[2][0], Is.EqualTo(299));
+            Assert.That(result.Rows[2][1], Is.EqualTo("freddie")); //the original input row which had an alias on it
+            Assert.That(result.Rows[2][2], Is.EqualTo(300));
 
-        Assert.That(result.Rows[3][0], Is.EqualTo(299));
-        Assert.That(result.Rows[3][1], Is.EqualTo("craig")); //The new row that should have appeared to resolve the freddie=craig alias
-        Assert.That(result.Rows[3][2], Is.EqualTo(300)); //value should match the input array
+            Assert.That(result.Rows[3][0], Is.EqualTo(299));
+            Assert.That(result.Rows[3][1], Is.EqualTo("craig")); //The new row that should have appeared to resolve the freddie=craig alias
+            Assert.That(result.Rows[3][2], Is.EqualTo(300)); //value should match the input array
+        });
     }
 
     [Test]
@@ -203,18 +206,21 @@ public class AliasHandlerTests : DatabaseTests
 
         Assert.That(result.Rows, Has.Count.EqualTo(5));
 
-        Assert.That(result.Rows[0][0], Is.EqualTo(99));
-        Assert.That(result.Rows[0][1], Is.EqualTo("pepey")); //the original input row which had an alias on it
-        Assert.That(result.Rows[0][2], Is.EqualTo(100));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Rows[0][0], Is.EqualTo(99));
+            Assert.That(result.Rows[0][1], Is.EqualTo("pepey")); //the original input row which had an alias on it
+            Assert.That(result.Rows[0][2], Is.EqualTo(100));
 
 
-        //new rows are added at the end of the DataTable
-        Assert.That(result.Rows[3][0], Is.EqualTo(99));
-        Assert.That(result.Rows[3][1], Is.EqualTo("paul")); //The new row that should have appeared to resolve the pepey=paul=peter alias
-        Assert.That(result.Rows[3][2], Is.EqualTo(100)); //value should match the input array
+            //new rows are added at the end of the DataTable
+            Assert.That(result.Rows[3][0], Is.EqualTo(99));
+            Assert.That(result.Rows[3][1], Is.EqualTo("paul")); //The new row that should have appeared to resolve the pepey=paul=peter alias
+            Assert.That(result.Rows[3][2], Is.EqualTo(100)); //value should match the input array
 
-        Assert.That(result.Rows[4][0], Is.EqualTo(99));
-        Assert.That(result.Rows[4][1], Is.EqualTo("peter")); //The new row that should have appeared to resolve the  pepey=paul=peter alias
-        Assert.That(result.Rows[4][2], Is.EqualTo(100)); //value should match the input array
+            Assert.That(result.Rows[4][0], Is.EqualTo(99));
+            Assert.That(result.Rows[4][1], Is.EqualTo("peter")); //The new row that should have appeared to resolve the  pepey=paul=peter alias
+            Assert.That(result.Rows[4][2], Is.EqualTo(100)); //value should match the input array
+        });
     }
 }

@@ -834,18 +834,27 @@ public class BackfillTests : FromToDatabaseTests
             using (var reader = cmd.ExecuteReader())
             {
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(11));
-                Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(11));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
+                });
 
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(14));
-                Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-15T12:00:00"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(14));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-15T12:00:00"));
+                });
 
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(17));
-                Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(17));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
 
-                Assert.That(reader.Read(), Is.False, "Should only be three samples");
+                    Assert.That(reader.Read(), Is.False, "Should only be three samples");
+                });
             }
 
             cmd = new SqlCommand(@"SELECT * FROM Headers ORDER BY ID", connection);
@@ -854,18 +863,27 @@ public class BackfillTests : FromToDatabaseTests
                 Assert.That(reader.HasRows);
 
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(1));
-                Assert.That(reader["Discipline"], Is.EqualTo("Haematology"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(1));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Haematology"));
+                });
 
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(2));
-                Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(2));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
+                });
 
                 reader.Read();
-                Assert.That(reader["ID"], Is.EqualTo(5));
-                Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(5));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
 
-                Assert.That(reader.Read(), Is.False, "Should only be three headers");
+                    Assert.That(reader.Read(), Is.False, "Should only be three headers");
+                });
             }
         }
     }

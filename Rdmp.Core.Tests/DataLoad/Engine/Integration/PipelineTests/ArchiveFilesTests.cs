@@ -63,8 +63,11 @@ public class ArchiveFilesTests : DatabaseTests
             using var archive = ZipFile.Open(zipFilename, ZipArchiveMode.Read);
             Assert.That(archive.Entries, Has.Count.EqualTo(2),
                 "There should be two entries in this archive: one from the root and one from the subdirectory");
-            Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"subdir/subdir.txt")));
-            Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"test.txt")));
+            Assert.Multiple(() =>
+            {
+                Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"subdir/subdir.txt")));
+                Assert.That(archive.Entries.Any(static entry => entry.FullName.Equals(@"test.txt")));
+            });
         }
         finally
         {

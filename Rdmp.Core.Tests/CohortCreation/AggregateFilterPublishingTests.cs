@@ -116,7 +116,7 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
         var sql = new CohortQueryBuilder(aggregate1, null, null).SQL;
 
         Console.WriteLine(sql);
-        Assert.That(sql.Contains("folk=1"));
+        Assert.That(sql, Does.Contain("folk=1"));
 
 
         var shortcutAggregate =
@@ -126,7 +126,7 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
             testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("sex")), shortcutAggregate);
 
         //before it is a shortcut it has no filters
-        Assert.That(shortcutAggregate.GetQueryBuilder().SQL.Contains("WHERE"), Is.False);
+        Assert.That(shortcutAggregate.GetQueryBuilder().SQL, Does.Not.Contain("WHERE"));
 
         //make it a shortcut
         shortcutAggregate.OverrideFiltersByUsingParentAggregateConfigurationInstead_ID = aggregate1.ID;
@@ -135,16 +135,16 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
         var sqlShortcut = shortcutAggregate.GetQueryBuilder().SQL;
 
         //shortcut should have its own dimensions
-        Assert.That(sqlShortcut.Contains("[sex]"));
-        Assert.That(sqlShortcut.Contains("[chi]"), Is.False);
+        Assert.That(sqlShortcut, Does.Contain("[sex]"));
+        Assert.That(sqlShortcut, Does.Not.Contain("[chi]"));
 
         //but should have a REFERENCE (not a clone!) to aggregate 1's filters
-        Assert.That(sqlShortcut.Contains("folk=1"));
+        Assert.That(sqlShortcut, Does.Contain("folk=1"));
 
         //make sure it is a reference by changing the original
         _filter.WhereSQL = "folk=2";
         _filter.SaveToDatabase();
-        Assert.That(shortcutAggregate.GetQueryBuilder().SQL.Contains("folk=2"));
+        Assert.That(shortcutAggregate.GetQueryBuilder().SQL, Does.Contain("folk=2"));
 
         //shouldn't work because of the dependency of the child - should give a foreign key error
         if (CatalogueRepository is TableRepository) Assert.Throws<SqlException>(aggregate1.DeleteInDatabase);
@@ -213,13 +213,16 @@ public class AggregateFilterPublishingTests : CohortIdentificationTests
             new FilterImporter(new ExtractionFilterFactory(_chiExtractionInformation), null).ImportFilter(null, _filter,
                 null);
 
-        //we should now be a clone of the master we just created
-        Assert.That(newMaster.ID, Is.EqualTo(_filter.ClonedFromExtractionFilter_ID));
-        Assert.That(newMaster.Description.StartsWith(_filter.Description)); //it adds some addendum stuff onto it
-        Assert.That(newMaster.WhereSQL, Is.EqualTo(_filter.WhereSQL));
+        Assert.Multiple(() =>
+        {
+            //we should now be a clone of the master we just created
+            Assert.That(newMaster.ID, Is.EqualTo(_filter.ClonedFromExtractionFilter_ID));
+            Assert.That(newMaster.Description, Does.StartWith(_filter.Description)); //it adds some addendum stuff onto it
+            Assert.That(newMaster.WhereSQL, Is.EqualTo(_filter.WhereSQL));
 
-        Assert.That(newMaster.GetAllParameters().Single().ParameterName, Is.EqualTo(_filter.GetAllParameters().Single().ParameterName));
-        Assert.That(newMaster.GetAllParameters().Single().ParameterSQL, Is.EqualTo(_filter.GetAllParameters().Single().ParameterSQL));
-        Assert.That(newMaster.GetAllParameters().Single().Value, Is.EqualTo(_filter.GetAllParameters().Single().Value));
+            Assert.That(newMaster.GetAllParameters().Single().ParameterName, Is.EqualTo(_filter.GetAllParameters().Single().ParameterName));
+            Assert.That(newMaster.GetAllParameters().Single().ParameterSQL, Is.EqualTo(_filter.GetAllParameters().Single().ParameterSQL));
+            Assert.That(newMaster.GetAllParameters().Single().Value, Is.EqualTo(_filter.GetAllParameters().Single().Value));
+        });
     }
 }

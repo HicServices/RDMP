@@ -67,10 +67,13 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
             //they are not the same object
             Assert.That(importedFilters[0], Is.Not.EqualTo(filter));
-            //the deployed filter knows its parent it was cloned from
-            Assert.That(importedFilters[0].ClonedFromExtractionFilter_ID, Is.EqualTo(filter.ID));
-            //the WHERE SQL of the filters should be the same
-            Assert.That(importedFilters[0].WhereSQL, Is.EqualTo(filter.WhereSQL));
+            Assert.Multiple(() =>
+            {
+                //the deployed filter knows its parent it was cloned from
+                Assert.That(importedFilters[0].ClonedFromExtractionFilter_ID, Is.EqualTo(filter.ID));
+                //the WHERE SQL of the filters should be the same
+                Assert.That(importedFilters[0].WhereSQL, Is.EqualTo(filter.WhereSQL));
+            });
         }
         finally
         {
@@ -156,11 +159,14 @@ public class CohortMandatoryFilterImportingTests : CohortIdentificationTests
 
                 //clone should have same SQL and Value
                 Assert.That(paramClones[0].ParameterSQL, Is.EqualTo(parameterSQL));
-                Assert.That(paramClones[0].ParameterSQL, Is.EqualTo(filterParameters[0].ParameterSQL));
-                Assert.That(paramClones[0].Value, Is.EqualTo(filterParameters[0].Value));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(paramClones[0].ParameterSQL, Is.EqualTo(filterParameters[0].ParameterSQL));
+                    Assert.That(paramClones[0].Value, Is.EqualTo(filterParameters[0].Value));
 
-                //but not be the same object in database
-                Assert.That(paramClones[0], Is.Not.EqualTo(filterParameters[0]));
+                    //but not be the same object in database
+                    Assert.That(paramClones[0], Is.Not.EqualTo(filterParameters[0]));
+                });
             }
         }
         finally

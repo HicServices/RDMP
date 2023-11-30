@@ -175,8 +175,8 @@ public partial class DatabaseTests
         {
             Console.WriteLine(
                 $"Expecting Unit Test Data Export To Be At Server={tblRepo.DiscoveredServer.Name} Database= {tblRepo.DiscoveredServer.GetCurrentDatabase()}");
-            Assert.IsTrue(tblRepo.DiscoveredServer.Exists(),
-                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
+            Assert.That(tblRepo.DiscoveredServer.Exists(),
+                "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that server name and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
         }
 
 
@@ -489,11 +489,10 @@ public partial class DatabaseTests
         }
     }
 
-    private void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
+    private static void StartupOnPluginPatcherFound(object sender, PluginPatcherFoundEventArgs args)
     {
-        Assert.IsTrue(args.Status == PluginPatcherStatus.Healthy, "PluginPatcherStatus is {0} for plugin {1}{2}{3}",
-            args.Status, args.Type.Name, Environment.NewLine,
-            args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception));
+        Assert.That(args.Status == PluginPatcherStatus.Healthy,
+            $"PluginPatcherStatus is {args.Status} for plugin {args.Type.Name}{Environment.NewLine}{(args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception))}");
     }
 
 
@@ -732,9 +731,9 @@ delete from {1}..Project
 
         server.ChangeDatabase(dbnName);
 
-        Assert.IsTrue(database.Exists());
+        Assert.That(database.Exists());
 
-        //if it had non standard naming mark it for deletion on clean-up
+        //if it had non-standard naming mark it for deletion on clean-up
         if (!isStandardDb)
             forCleanup.Add(database);
 

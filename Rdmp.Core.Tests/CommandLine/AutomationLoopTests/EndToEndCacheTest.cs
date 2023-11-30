@@ -98,7 +98,7 @@ public class EndToEndCacheTest : DatabaseTests
         for (var i = -NumDaysToCache; i < 0; i++)
         {
             var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv";
-            Assert.That(cacheFiles.Contains(filename), filename + " not found");
+            Assert.That(cacheFiles, Does.Contain(filename), filename + " not found");
         }
     }
 

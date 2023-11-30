@@ -45,8 +45,11 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         //rediscover the col to get the expected new datatype
         myCol = tbl.DiscoverColumn("myCol");
 
-        Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
-        Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
+        Assert.Multiple(() =>
+        {
+            Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
+            Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
+        });
 
         tbl.Drop();
     }
@@ -86,11 +89,14 @@ internal class ExecuteCommandAlterColumnTypeTests : DatabaseTests
         myCol = tbl.DiscoverColumn("myCol");
         var myColArchive = tblArchive.DiscoverColumn("myCol");
 
-        Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
-        Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
+        Assert.Multiple(() =>
+        {
+            Assert.That(myCol.DataType.SQLType, Is.EqualTo(newType));
+            Assert.That(ti.ColumnInfos[0].Data_type, Is.EqualTo(newType));
 
-        //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
-        Assert.That(myColArchive.DataType.SQLType, Is.EqualTo(newType));
+            //if they changed the archive then the archive column should also match on Type otherwise it should have stayed the old Type
+            Assert.That(myColArchive.DataType.SQLType, Is.EqualTo(newType));
+        });
 
         tbl.Drop();
         tblArchive.Drop();

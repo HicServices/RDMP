@@ -57,11 +57,14 @@ public class ObjectConstructorTests : UnitTests
     [Test]
     public void ConstructIfPossibleTests_BlankConstructors()
     {
-        //blank constructors are only used if no params are specified
-        Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //blank constructors are only used if no params are specified
+            Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor)), Is.Not.Null);
 
-        //no constructor taking an int
-        Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor), 8), Is.Null);
+            //no constructor taking an int
+            Assert.That(ObjectConstructor.ConstructIfPossible(typeof(TestClassDefaultConstructor), 8), Is.Null);
+        });
     }
 
     [Test]
@@ -81,8 +84,11 @@ public class ObjectConstructorTests : UnitTests
                 badTypes.Add(t, e);
             }
 
-        Assert.That(badTypes, Is.Empty);
-        Assert.GreaterOrEqual(countCompatible, 10);
+        Assert.Multiple(() =>
+        {
+            Assert.That(badTypes, Is.Empty);
+            Assert.That(countCompatible, Is.GreaterThanOrEqualTo(10));
+        });
         Console.WriteLine($"Found compatible constructors on {countCompatible} objects");
     }
 

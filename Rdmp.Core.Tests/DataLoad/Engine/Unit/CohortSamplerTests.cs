@@ -122,8 +122,11 @@ internal class CohortSamplerTests : UnitTests
         var result2 = sampler2.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.That(result1.Rows, Has.Count.EqualTo(5));
-        Assert.That(result2.Rows, Has.Count.EqualTo(5));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result1.Rows, Has.Count.EqualTo(5));
+            Assert.That(result2.Rows, Has.Count.EqualTo(5));
+        });
 
 
         Assert.That(result1.Rows.Cast<DataRow>().Select(r => r[0])
@@ -166,8 +169,11 @@ internal class CohortSamplerTests : UnitTests
         var result2 = sampler2.ProcessPipelineData(dt2, ThrowImmediatelyDataLoadEventListener.Quiet,
             new GracefulCancellationToken());
 
-        Assert.That(result1.Rows, Has.Count.EqualTo(2));
-        Assert.That(result2.Rows, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result1.Rows, Has.Count.EqualTo(2));
+            Assert.That(result2.Rows, Has.Count.EqualTo(2));
+        });
 
 
         Assert.That(result1.Rows.Cast<DataRow>().Select(r => r[0])

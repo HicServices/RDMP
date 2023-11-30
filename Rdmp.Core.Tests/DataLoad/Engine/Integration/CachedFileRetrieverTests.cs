@@ -74,8 +74,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 retriever.Fetch(job, new GracefulCancellationToken()));
             Assert.That(
-                ex.Message.StartsWith(
-                    "The files in ForLoading do not match what this job expects to be loading from the cache."),
+                ex.Message, Does.StartWith("The files in ForLoading do not match what this job expects to be loading from the cache."),
                 ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
         }
         finally

@@ -114,10 +114,13 @@ public class CoalescerTests : DatabaseTests
 
         foreach (DataRow row in dt2.Rows)
         {
-            Assert.That(row["f1"], Is.Not.EqualTo(DBNull.Value));
-            Assert.That(row["f2"], Is.Not.EqualTo(DBNull.Value));
-            Assert.That(row["f3"], Is.Not.EqualTo(DBNull.Value));
-            Assert.That(row["f4"], Is.Not.EqualTo(DBNull.Value));
+            Assert.Multiple(() =>
+            {
+                Assert.That(row["f1"], Is.Not.EqualTo(DBNull.Value));
+                Assert.That(row["f2"], Is.Not.EqualTo(DBNull.Value));
+                Assert.That(row["f3"], Is.Not.EqualTo(DBNull.Value));
+                Assert.That(row["f4"], Is.Not.EqualTo(DBNull.Value));
+            });
         }
 
         db.Drop();

@@ -61,14 +61,17 @@ public class TableInfoJoiningQueryBuilderTests : DatabaseTests
         tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out _, null);
 
         Assert.That(tablesUsed, Has.Count.EqualTo(2));
-        Assert.That(tablesUsed[0], Is.EqualTo(head));
-        Assert.That(tablesUsed[1], Is.EqualTo(result));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tablesUsed[0], Is.EqualTo(head));
+            Assert.That(tablesUsed[1], Is.EqualTo(result));
 
-        Assert.That(CollapseWhitespace(queryBuilder.SQL), Is.EqualTo(CollapseWhitespace(@"SELECT 
+            Assert.That(CollapseWhitespace(queryBuilder.SQL), Is.EqualTo(CollapseWhitespace(@"SELECT 
 TestResultSetNumber,
 Code
 FROM 
 [biochemistry]..[Result] Right JOIN Head ON FK = PK")));
+        });
 
         var memoryRepository = new MemoryCatalogueRepository();
 

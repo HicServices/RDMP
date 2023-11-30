@@ -26,13 +26,19 @@ public class JobDateGenerationStrategyTests
 
         var dates = strategy.GetDates(2, false);
         Assert.That(dates, Has.Count.EqualTo(2));
-        Assert.That(dates[0], Is.EqualTo(new DateTime(2015, 1, 2)));
-        Assert.That(dates[1], Is.EqualTo(new DateTime(2015, 1, 3)));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dates[0], Is.EqualTo(new DateTime(2015, 1, 2)));
+            Assert.That(dates[1], Is.EqualTo(new DateTime(2015, 1, 3)));
+        });
 
         dates = strategy.GetDates(2, false);
         Assert.That(dates, Has.Count.EqualTo(2));
-        Assert.That(dates[0], Is.EqualTo(new DateTime(2015, 1, 4)));
-        Assert.That(dates[1], Is.EqualTo(new DateTime(2015, 1, 5)));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dates[0], Is.EqualTo(new DateTime(2015, 1, 4)));
+            Assert.That(dates[1], Is.EqualTo(new DateTime(2015, 1, 5)));
+        });
     }
 
     [Test]
@@ -46,8 +52,11 @@ public class JobDateGenerationStrategyTests
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
         var dates = strategy.GetDates(100, false);
-        Assert.That(dates, Has.Count.EqualTo(1));
-        Assert.That(DateTime.Now.Date.AddDays(-1), Is.EqualTo(dates[0])); //it should try to load yesterday
+        Assert.Multiple(() =>
+        {
+            Assert.That(dates, Has.Count.EqualTo(1));
+            Assert.That(DateTime.Now.Date.AddDays(-1), Is.EqualTo(dates[0])); //it should try to load yesterday
+        });
     }
 
     [Test]
@@ -61,9 +70,12 @@ public class JobDateGenerationStrategyTests
         var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
         var dates = strategy.GetDates(100, true);
-        Assert.That(dates, Has.Count.EqualTo(100));
-        Assert.That(DateTime.Now.Date.AddDays(-1), Is.EqualTo(dates[0])); //it should try to load yesterday
-        Assert.That(DateTime.Now.Date.AddDays(98), Is.EqualTo(dates[99])); //it should try to load yesterday
+        Assert.Multiple(() =>
+        {
+            Assert.That(dates, Has.Count.EqualTo(100));
+            Assert.That(DateTime.Now.Date.AddDays(-1), Is.EqualTo(dates[0])); //it should try to load yesterday
+            Assert.That(DateTime.Now.Date.AddDays(98), Is.EqualTo(dates[99])); //it should try to load yesterday
+        });
     }
 
     [Test]

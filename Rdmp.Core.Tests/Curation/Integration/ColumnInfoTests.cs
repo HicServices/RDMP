@@ -36,11 +36,14 @@ internal class ColumnInfoTests : DatabaseTests
 
             var childAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(child.ID);
 
-            Assert.That(childAfter.Name, Is.EqualTo(child.Name));
-            Assert.That(childAfter.Description, Is.EqualTo(child.Description));
-            Assert.That(childAfter.Status, Is.EqualTo(child.Status));
-            Assert.That(childAfter.RegexPattern, Is.EqualTo(child.RegexPattern));
-            Assert.That(childAfter.ValidationRules, Is.EqualTo(child.ValidationRules));
+            Assert.Multiple(() =>
+            {
+                Assert.That(childAfter.Name, Is.EqualTo(child.Name));
+                Assert.That(childAfter.Description, Is.EqualTo(child.Description));
+                Assert.That(childAfter.Status, Is.EqualTo(child.Status));
+                Assert.That(childAfter.RegexPattern, Is.EqualTo(child.RegexPattern));
+                Assert.That(childAfter.ValidationRules, Is.EqualTo(child.ValidationRules));
+            });
         }
         finally
         {
@@ -60,7 +63,7 @@ internal class ColumnInfoTests : DatabaseTests
 
             try
             {
-                Assert.That(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent).Length == 1);
+                Assert.That(CatalogueRepository.GetAllObjectsWithParent<ColumnInfo>(parent), Has.Length.EqualTo(1));
             }
             finally
             {
@@ -85,7 +88,7 @@ internal class ColumnInfoTests : DatabaseTests
 
         var ex = Assert.Throws<KeyNotFoundException>(() =>
             CatalogueRepository.GetObjectByID<ColumnInfo>(columnInfo.ID));
-        Assert.That(ex.Message.StartsWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
+        Assert.That(ex.Message, Does.StartWith($"Could not find ColumnInfo with ID {columnInfo.ID}"), ex.Message);
 
         parent.DeleteInDatabase();
     }
@@ -107,11 +110,14 @@ internal class ColumnInfoTests : DatabaseTests
 
         var columnAfter = CatalogueRepository.GetObjectByID<ColumnInfo>(column.ID);
 
-        Assert.That(columnAfter.Digitisation_specs == "Highly digitizable");
-        Assert.That(columnAfter.Format == "Jpeg");
-        Assert.That(columnAfter.Name == "mycol");
-        Assert.That(columnAfter.Source == "Bazooka");
-        Assert.That(columnAfter.Data_type == "Whatever");
+        Assert.Multiple(() =>
+        {
+            Assert.That(columnAfter.Digitisation_specs, Is.EqualTo("Highly digitizable"));
+            Assert.That(columnAfter.Format, Is.EqualTo("Jpeg"));
+            Assert.That(columnAfter.Name, Is.EqualTo("mycol"));
+            Assert.That(columnAfter.Source, Is.EqualTo("Bazooka"));
+            Assert.That(columnAfter.Data_type, Is.EqualTo("Whatever"));
+        });
 
         columnAfter.DeleteInDatabase();
         parent.DeleteInDatabase();
@@ -130,9 +136,12 @@ internal class ColumnInfoTests : DatabaseTests
         };
         discard.SaveToDatabase();
 
-        Assert.That(column.GetRuntimeDataType(LoadStage.PostLoad), Is.EqualTo("varchar(4)"));
-        Assert.That(column.GetRuntimeDataType(LoadStage.AdjustStaging), Is.EqualTo("varchar(4)"));
-        Assert.That(column.GetRuntimeDataType(LoadStage.AdjustRaw), Is.EqualTo("varchar(10)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(column.GetRuntimeDataType(LoadStage.PostLoad), Is.EqualTo("varchar(4)"));
+            Assert.That(column.GetRuntimeDataType(LoadStage.AdjustStaging), Is.EqualTo("varchar(4)"));
+            Assert.That(column.GetRuntimeDataType(LoadStage.AdjustRaw), Is.EqualTo("varchar(10)"));
+        });
 
         discard.DeleteInDatabase();
         parent.DeleteInDatabase();

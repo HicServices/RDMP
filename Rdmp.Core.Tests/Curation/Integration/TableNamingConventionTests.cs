@@ -39,10 +39,13 @@ internal class TableNamingConventionTests : DatabaseTests
 
         var tableInfoAfter = CatalogueRepository.GetObjectByID<TableInfo>(tableInfo.ID);
 
-        Assert.That(tableInfoAfter.Database == "CHI_AMALG");
-        Assert.That(tableInfoAfter.Server == "Highly restricted");
-        Assert.That(tableInfoAfter.Name == "Fishmongery!");
-        Assert.That(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tableInfoAfter.Database, Is.EqualTo("CHI_AMALG"));
+            Assert.That(tableInfoAfter.Server, Is.EqualTo("Highly restricted"));
+            Assert.That(tableInfoAfter.Name, Is.EqualTo("Fishmongery!"));
+            Assert.That(tableInfoAfter.DatabaseType, Is.EqualTo(DatabaseType.Oracle));
+        });
 
         tableInfoAfter.DeleteInDatabase();
     }

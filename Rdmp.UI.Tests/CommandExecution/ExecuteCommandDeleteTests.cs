@@ -35,8 +35,11 @@ internal class ExecuteCommandDeleteTests : UITests
 
         ItemActivator.YesNoResponse = true;
 
-        Assert.That(ci.Exists());
-        Assert.That(ei.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(ci.Exists());
+            Assert.That(ei.Exists());
+        });
 
         //now because we don't actually have a CASCADE in memory we will have to fake it
         ei.DeleteInDatabase();
@@ -44,8 +47,11 @@ internal class ExecuteCommandDeleteTests : UITests
         var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[] { ci, ei });
         cmd.Execute();
 
-        Assert.That(ci.Exists(), Is.False);
-        Assert.That(ei.Exists(), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ci.Exists(), Is.False);
+            Assert.That(ei.Exists(), Is.False);
+        });
     }
 
     [Test]
@@ -58,8 +64,11 @@ internal class ExecuteCommandDeleteTests : UITests
 
         var cmd = new ExecuteCommandDelete(ItemActivator, container);
 
-        Assert.That(cmd.IsImpossible, "expected command to be impossible");
-        Assert.That(cmd.ReasonCommandImpossible, Does.Contain("root container"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible, "expected command to be impossible");
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("root container"));
+        });
     }
 
 
@@ -73,8 +82,11 @@ internal class ExecuteCommandDeleteTests : UITests
 
         var cmd = new ExecuteCommandDelete(ItemActivator, new IDeleteable[] { container1, container2 });
 
-        Assert.That(cmd.IsImpossible, "expected command to be impossible");
-        Assert.That(cmd.ReasonCommandImpossible, Does.Contain("root container"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible, "expected command to be impossible");
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("root container"));
+        });
     }
 
 

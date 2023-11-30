@@ -78,16 +78,22 @@ public class DelimitedFileSourceTests
         Console.WriteLine(
             $"Resulting columns were:{string.Join(",", chunk.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
-        Assert.That(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
-        Assert.That(
-            chunk.Columns
-                .Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
+            Assert.That(
+                chunk.Columns
+                    .Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
 
-        Assert.That(chunk.Columns, Has.Count.EqualTo(3));
-        Assert.That(chunk.Rows, Has.Count.EqualTo(1));
-        Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
-        Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
-        Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+            Assert.That(chunk.Columns, Has.Count.EqualTo(3));
+            Assert.That(chunk.Rows, Has.Count.EqualTo(1));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
+            Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
+            Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -103,11 +109,17 @@ public class DelimitedFileSourceTests
 
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.Columns, Has.Count.EqualTo(3));
-        Assert.That(chunk.Rows, Has.Count.EqualTo(1));
-        Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
-        Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
-        Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns, Has.Count.EqualTo(3));
+            Assert.That(chunk.Rows, Has.Count.EqualTo(1));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
+            Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
+            Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -126,13 +138,19 @@ public class DelimitedFileSourceTests
 
         //preview should be correct
         var preview = source.TryGetPreview();
-        Assert.That(preview.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
-        Assert.That(preview.Rows[0]["StudyID"], Is.EqualTo("5"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(preview.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
+            Assert.That(preview.Rows[0]["StudyID"], Is.EqualTo("5"));
+        });
 
         //as should live run
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.That(chunk.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
-        Assert.That(chunk.Rows[0]["StudyID"], Is.EqualTo("5"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
+            Assert.That(chunk.Rows[0]["StudyID"], Is.EqualTo("5"));
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -162,9 +180,12 @@ public class DelimitedFileSourceTests
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
         Assert.That(dt.Rows, Has.Count.EqualTo(3));
-        Assert.That(dt.Rows[0][1], Is.EqualTo("\"Sick\" headaches"));
-        Assert.That(dt.Rows[1][1], Is.EqualTo("2\" length of wood"));
-        Assert.That(dt.Rows[2][1], Is.EqualTo("\"\"The bends\"\""));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0][1], Is.EqualTo("\"Sick\" headaches"));
+            Assert.That(dt.Rows[1][1], Is.EqualTo("2\" length of wood"));
+            Assert.That(dt.Rows[2][1], Is.EqualTo("\"\"The bends\"\""));
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -309,9 +330,12 @@ public class DelimitedFileSourceTests
         {
             var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
             Assert.That(chunk.Rows, Has.Count.EqualTo(5));
-            Assert.That(chunk.Rows[1][2], Is.EqualTo("Dave is \"over\" 1000 years old"));
-            Assert.That(chunk.Rows[2][2], Is.EqualTo($"Dave is {Environment.NewLine}over 1000 years old"));
-            Assert.That(chunk.Rows[3][2], Is.EqualTo("Dave is over\" 1000 years old\"")); //notice this line drops some of the quotes, we just have to live with that
+            Assert.Multiple(() =>
+            {
+                Assert.That(chunk.Rows[1][2], Is.EqualTo("Dave is \"over\" 1000 years old"));
+                Assert.That(chunk.Rows[2][2], Is.EqualTo($"Dave is {Environment.NewLine}over 1000 years old"));
+                Assert.That(chunk.Rows[3][2], Is.EqualTo("Dave is over\" 1000 years old\"")); //notice this line drops some of the quotes, we just have to live with that
+            });
         }
         finally
         {
@@ -600,11 +624,14 @@ old"",2001-01-05");
 
         Assert.That(dt.Columns, Has.Count.EqualTo(3));
 
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("StudyID"));
-        Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Date"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("StudyID"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Date"));
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
         source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
@@ -638,10 +665,13 @@ old"",2001-01-05");
 
         //should only be one column (chi since we ignore study and date)
         Assert.That(dt.Columns, Has.Count.EqualTo(2));
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
-        Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("SomeText"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("SomeText"));
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
         source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
@@ -693,12 +723,18 @@ old"",2001-01-05");
         source.StronglyTypeInput = true;
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
-        Assert.That(dt.Rows, Has.Count.EqualTo(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
+            Assert.That(dt.Rows, Has.Count.EqualTo(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize));
+        });
 
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
 
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());

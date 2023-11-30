@@ -81,19 +81,25 @@ internal class CommitCohortExample : DatabaseTests
         //now there should be one
         var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
 
-        //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
-        Assert.That(cohort.ExternalCohortTable.DatabaseType, Is.EqualTo(dbType));
-        Assert.That(cohort.GetQuerySyntaxHelper().DatabaseType, Is.EqualTo(dbType));
+        Assert.Multiple(() =>
+        {
+            //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
+            Assert.That(cohort.ExternalCohortTable.DatabaseType, Is.EqualTo(dbType));
+            Assert.That(cohort.GetQuerySyntaxHelper().DatabaseType, Is.EqualTo(dbType));
 
-        Assert.That(cohort.ExternalProjectNumber, Is.EqualTo(500));
-        Assert.That(cohort.CountDistinct, Is.EqualTo(2));
+            Assert.That(cohort.ExternalProjectNumber, Is.EqualTo(500));
+            Assert.That(cohort.CountDistinct, Is.EqualTo(2));
+        });
 
         var tbl = externalCohortTable.DiscoverCohortTable();
         Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
         var dtInDatabase = tbl.GetDataTable();
 
-        //guid will be something like "6fb23de5-e8eb-46eb-84b5-dd368da21073"
-        Assert.That(dtInDatabase.Rows[0]["ReleaseId"].ToString(), Has.Length.EqualTo(36));
-        Assert.That(dtInDatabase.Rows[0]["chi"], Is.EqualTo("0101010101"));
+        Assert.Multiple(() =>
+        {
+            //guid will be something like "6fb23de5-e8eb-46eb-84b5-dd368da21073"
+            Assert.That(dtInDatabase.Rows[0]["ReleaseId"].ToString(), Has.Length.EqualTo(36));
+            Assert.That(dtInDatabase.Rows[0]["chi"], Is.EqualTo("0101010101"));
+        });
     }
 }

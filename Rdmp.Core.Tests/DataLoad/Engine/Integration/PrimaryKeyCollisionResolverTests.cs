@@ -64,9 +64,12 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
             }
             catch (Exception e)
             {
-                Assert.That(e.Message, Is.EqualTo("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests"));
-                Assert.That(
-                    e.InnerException.Message, Is.EqualTo("TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(e.Message, Is.EqualTo("Failed to check PrimaryKeyCollisionResolver on PrimaryKeyCollisionResolverTests"));
+                    Assert.That(
+                        e.InnerException.Message, Is.EqualTo("TableInfo PrimaryKeyCollisionResolverTests does not have any primary keys defined so cannot resolve primary key collisions"));
+                });
             }
         }
         finally
@@ -107,14 +110,14 @@ public class PrimaryKeyCollisionResolverTests : DatabaseTests
 
             Console.WriteLine(sql);
 
-            Assert.That(sql.Contains(c2.Name));
-            Assert.That(sql.Contains(c3.Name));
+            Assert.That(sql, Does.Contain(c2.Name));
+            Assert.That(sql, Does.Contain(c3.Name));
 
             //column 2 has the following null substitute, is Ascending order and is the first of two
-            Assert.That(sql.Contains("ISNULL([col2],-9223372036854775808) ASC,"));
+            Assert.That(sql, Does.Contain("ISNULL([col2],-9223372036854775808) ASC,"));
 
             //column 3 has the following null substitute and is descending and is not followed by another column
-            Assert.That(sql.Contains("ISNULL([col3],-2147483648) DESC"));
+            Assert.That(sql, Does.Contain("ISNULL([col3],-2147483648) DESC"));
         }
         finally
         {

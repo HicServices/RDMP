@@ -48,15 +48,18 @@ public class LoadProgressTest : DatabaseTests
 
         try
         {
-            //values are different
-            Assert.That(progress.OriginDate, Is.Not.EqualTo(progressCopy.OriginDate));
-            Assert.That(progress.Name, Is.Not.EqualTo(progressCopy.Name));
+            Assert.Multiple(() =>
+            {
+                //values are different
+                Assert.That(progress.OriginDate, Is.Not.EqualTo(progressCopy.OriginDate));
+                Assert.That(progress.Name, Is.Not.EqualTo(progressCopy.Name));
 
-            //IDs are the same
-            Assert.That(progress.ID, Is.EqualTo(progressCopy.ID));
+                //IDs are the same
+                Assert.That(progress.ID, Is.EqualTo(progressCopy.ID));
 
-            //therefore objects are the same
-            Assert.That(progressCopy.Equals(progress));
+                //therefore objects are the same
+                Assert.That(progressCopy, Is.EqualTo(progress));
+            });
         }
         finally
         {

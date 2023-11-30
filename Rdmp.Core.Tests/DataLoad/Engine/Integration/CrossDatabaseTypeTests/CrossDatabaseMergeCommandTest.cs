@@ -54,9 +54,12 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
 
         var toTbl = To.CreateTable("ToTable", dt);
 
-        Assert.That(toTbl.DiscoverColumn("Name").IsPrimaryKey);
-        Assert.That(toTbl.DiscoverColumn("Age").IsPrimaryKey);
-        Assert.That(toTbl.DiscoverColumn("Postcode").IsPrimaryKey, Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(toTbl.DiscoverColumn("Name").IsPrimaryKey);
+            Assert.That(toTbl.DiscoverColumn("Age").IsPrimaryKey);
+            Assert.That(toTbl.DiscoverColumn("Postcode").IsPrimaryKey, Is.False);
+        });
 
         dt.Rows.Clear();
 
@@ -118,10 +121,12 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
         var archival = logManager.GetArchivalDataLoadInfos("CrossDatabaseMergeCommandTest", new CancellationToken());
         var log = archival.First();
 
-
-        Assert.That(log.ID, Is.EqualTo(dli.ID));
-        Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(2));
-        Assert.That(log.TableLoadInfos.Single().Updates, Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(log.ID, Is.EqualTo(dli.ID));
+            Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(2));
+            Assert.That(log.TableLoadInfos.Single().Updates, Is.EqualTo(3));
+        });
     }
 
     private static void AssertRowEquals(DataTable resultantDt, string name, int age, object postcode)

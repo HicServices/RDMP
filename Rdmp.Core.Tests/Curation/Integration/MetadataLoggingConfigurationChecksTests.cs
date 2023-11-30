@@ -111,7 +111,10 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     {
         var msg = toMem.Messages.First(m => m.Result == CheckResult.Fail);
 
-        Assert.That(msg.Message, Is.EqualTo(expectedMessage), "Expected error message was wrong");
-        Assert.That(msg.ProposedFix, Is.EqualTo(expectedFix), "Expected proposed fix was wrong");
+        Assert.Multiple(() =>
+        {
+            Assert.That(msg.Message, Is.EqualTo(expectedMessage), "Expected error message was wrong");
+            Assert.That(msg.ProposedFix, Is.EqualTo(expectedFix), "Expected proposed fix was wrong");
+        });
     }
 }

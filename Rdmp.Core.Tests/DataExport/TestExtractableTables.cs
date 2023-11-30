@@ -25,7 +25,7 @@ public class TestExtractableTables : TestsRequiringACohort
     {
         var ex = Assert.Throws<Exception>(() =>
             new ExtractableCohort(DataExportRepository, _externalCohortTable, -899));
-        Assert.That(ex.Message.StartsWith("ID -899 does not exist in Cohort Definitions"));
+        Assert.That(ex.Message, Does.StartWith("ID -899 does not exist in Cohort Definitions"));
     }
 
 
@@ -91,7 +91,7 @@ public class TestExtractableTables : TestsRequiringACohort
 
     #region helper methods
 
-    public static void PropertyValuesAreEquals(object actual, object expected)
+    private static void PropertyValuesAreEquals(object actual, object expected)
     {
         var properties = expected.GetType().GetProperties()
             .Where(info => !Attribute.IsDefined(info, typeof(DoNotExtractProperty))).ToArray();

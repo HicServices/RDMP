@@ -55,10 +55,13 @@ internal class QueryBuilderUnitTests : UnitTests
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c1));
         builder.AddColumn(new ColumnInfoToIColumn(Repository, c2));
 
-        Assert.That(builder.SQL, Does.Contain("JOIN"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(builder.SQL, Does.Contain("JOIN"));
 
-        //we have 1 legit join go go team!
-        Assert.That(builder.JoinsUsedInQuery, Has.Count.EqualTo(1));
+            //we have 1 legit join go go team!
+            Assert.That(builder.JoinsUsedInQuery, Has.Count.EqualTo(1));
+        });
         Assert.That(builder.JoinsUsedInQuery[0], Is.EqualTo(j1));
     }
 

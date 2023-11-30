@@ -77,8 +77,11 @@ internal class DatabaseOperationTests : DatabaseTests
                 cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
                     LoadBubble.Raw);
 
-            Assert.That(raw.Exists());
-            Assert.That(raw.ExpectTable("Table_1").Exists());
+            Assert.Multiple(() =>
+            {
+                Assert.That(raw.Exists());
+                Assert.That(raw.ExpectTable("Table_1").Exists());
+            });
         }
         finally
         {

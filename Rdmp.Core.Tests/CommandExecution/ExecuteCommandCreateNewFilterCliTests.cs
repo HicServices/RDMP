@@ -27,8 +27,11 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Assert.That(ac.RootFilterContainer_ID, Is.Null);
         Run("CreateNewFilter", $"{nameof(AggregateConfiguration)}:{ac.ID}");
 
-        Assert.That(ac.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
-        Assert.That(ac.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
+            Assert.That(ac.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        });
     }
 
     [Test]
@@ -40,8 +43,11 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Assert.That(sds.RootFilterContainer_ID, Is.Null);
         Run("CreateNewFilter", $"{nameof(SelectedDataSets)}:{sds.ID}");
 
-        Assert.That(sds.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
-        Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
+            Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        });
     }
 
     [Test]
@@ -54,7 +60,10 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         Run("CreateNewFilter", $"{nameof(ExtractionInformation)}:{ei.ID}", "My cool filter", "hb='t'");
 
         var f = ei.ExtractionFilters.Single();
-        Assert.That(f.Name, Is.EqualTo("My cool filter"));
-        Assert.That(f.WhereSQL, Is.EqualTo("hb='t'"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(f.Name, Is.EqualTo("My cool filter"));
+            Assert.That(f.WhereSQL, Is.EqualTo("hb='t'"));
+        });
     }
 }

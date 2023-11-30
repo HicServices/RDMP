@@ -31,11 +31,14 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
         //fetch the instance
         var cicAssoc = memory.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>().Single();
 
-        //relationship from p should resolve to the association link
-        Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0], Is.EqualTo(cicAssoc));
+        Assert.Multiple(() =>
+        {
+            //relationship from p should resolve to the association link
+            Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0], Is.EqualTo(cicAssoc));
 
-        //relationship from p should resolve to the cic
-        Assert.That(p.GetAssociatedCohortIdentificationConfigurations()[0], Is.EqualTo(cic));
+            //relationship from p should resolve to the cic
+            Assert.That(p.GetAssociatedCohortIdentificationConfigurations()[0], Is.EqualTo(cic));
+        });
 
         //in order to make it an orphan we have to suppress the system default behaviour of cascading across the deletion
         var obscure = memory.ObscureDependencyFinder as CatalogueObscureDependencyFinder;
@@ -47,10 +50,13 @@ public class ProjectCohortIdentificationConfigurationAssociationTests
 
         //assoc should still exist
         Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0], Is.EqualTo(cicAssoc));
-        Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0].CohortIdentificationConfiguration, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.ProjectCohortIdentificationConfigurationAssociations[0].CohortIdentificationConfiguration, Is.Null);
 
-        //relationship from p should resolve to the cic
-        Assert.That(p.GetAssociatedCohortIdentificationConfigurations(), Is.Empty);
+            //relationship from p should resolve to the cic
+            Assert.That(p.GetAssociatedCohortIdentificationConfigurations(), Is.Empty);
+        });
 
         //error should be reported in top right of program
         var ex = Assert.Throws<Exception>(() =>

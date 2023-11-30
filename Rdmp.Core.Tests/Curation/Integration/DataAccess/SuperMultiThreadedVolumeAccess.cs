@@ -71,10 +71,10 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
                 var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
 
                 copy.Description = "fish";
-                Assert.That(copy.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
+                Assert.That(copy.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent));
 
                 copy.SaveToDatabase();
-                Assert.That(copy.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
+                Assert.That(copy.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
             }
 
             //now fetch them out of database lots of times

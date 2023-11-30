@@ -117,7 +117,7 @@ this is next para"
                 </member>");
 
         store.AddXmlDoc(doc.FirstChild);
-        Assert.IsNotEmpty(store);
+        Assert.That(store, Is.Not.Empty);
     }
 
 

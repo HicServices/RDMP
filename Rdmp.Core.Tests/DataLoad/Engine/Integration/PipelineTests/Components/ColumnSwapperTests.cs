@@ -82,9 +82,12 @@ internal class ColumnSwapperTests : DatabaseTests
 
         if (keepInputColumnToo)
         {
-            Assert.That(resultDt.Rows[0]["In"], Is.EqualTo("A"));
-            Assert.That(resultDt.Rows[1]["In"], Is.EqualTo("A"));
-            Assert.That(resultDt.Rows[2]["In"], Is.EqualTo("B"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultDt.Rows[0]["In"], Is.EqualTo("A"));
+                Assert.That(resultDt.Rows[1]["In"], Is.EqualTo("A"));
+                Assert.That(resultDt.Rows[2]["In"], Is.EqualTo("B"));
+            });
         }
     }
 
@@ -152,9 +155,12 @@ internal class ColumnSwapperTests : DatabaseTests
 
         if (keepInputColumnToo)
         {
-            Assert.That(resultDt.Rows[0]["In2"], Is.EqualTo("A"));
-            Assert.That(resultDt.Rows[1]["In2"], Is.EqualTo("A"));
-            Assert.That(resultDt.Rows[2]["In2"], Is.EqualTo("B"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(resultDt.Rows[0]["In2"], Is.EqualTo("A"));
+                Assert.That(resultDt.Rows[1]["In2"], Is.EqualTo("A"));
+                Assert.That(resultDt.Rows[2]["In2"], Is.EqualTo("B"));
+            });
         }
     }
 
@@ -472,10 +478,13 @@ internal class ColumnSwapperTests : DatabaseTests
 
         var resultDt = swapper.ProcessPipelineData(dtToSwap, toMem, new GracefulCancellationToken());
 
-        //this is the primary thing we are testing here
-        Assert.That(toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray(), Does.Contain("Discarded 1 Null key values read from mapping table"));
+        Assert.Multiple(() =>
+        {
+            //this is the primary thing we are testing here
+            Assert.That(toMem.GetAllMessagesByProgressEventType()[ProgressEventType.Warning].Select(m => m.Message).ToArray(), Does.Contain("Discarded 1 Null key values read from mapping table"));
 
-        Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
+            Assert.That(resultDt.Rows, Has.Count.EqualTo(2));
+        });
         AreBasicallyEquals(1, resultDt.Rows[0]["Out"]);
         Assert.That(resultDt.Rows[0]["Name"], Is.EqualTo("Dave"));
 

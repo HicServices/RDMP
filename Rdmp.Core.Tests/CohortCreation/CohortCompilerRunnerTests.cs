@@ -37,11 +37,14 @@ public class CohortCompilerRunnerTests : DatabaseTests
 
         var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
 
-        Assert.That(rootTask.Value.IsResultsForRootContainer);
-        Assert.That(rootTask.Key.CrashMessage, Is.Null);
-        Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
+        Assert.Multiple(() =>
+        {
+            Assert.That(rootTask.Value.IsResultsForRootContainer);
+            Assert.That(rootTask.Key.CrashMessage, Is.Null);
+            Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
 
-        Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+            Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+        });
     }
 
     [Test]
@@ -68,13 +71,16 @@ public class CohortCompilerRunnerTests : DatabaseTests
 
         var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
 
-        Assert.That(rootTask.Value.IsResultsForRootContainer);
-        Assert.That(rootTask.Key.CrashMessage, Is.Null);
-        Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
+        Assert.Multiple(() =>
+        {
+            Assert.That(rootTask.Value.IsResultsForRootContainer);
+            Assert.That(rootTask.Key.CrashMessage, Is.Null);
+            Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
 
-        Assert.That(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
+            Assert.That(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
 
-        Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+            Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+        });
     }
 
     private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)

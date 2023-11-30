@@ -84,16 +84,22 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         try
         {
-            //remnant exists
-            Assert.That(dir.Exists);
-            Assert.That(remnantDir.Exists);
+            Assert.Multiple(() =>
+            {
+                //remnant exists
+                Assert.That(dir.Exists);
+                Assert.That(remnantDir.Exists);
+            });
 
             //resolve accepting deletion
             new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(new AcceptAllCheckNotifier());
 
-            //boom remnant doesnt exist anymore (but parent does obviously)
-            Assert.That(dir.Exists);
-            Assert.That(Directory.Exists(remnantDir.FullName), Is.False); //cant use .Exists for some reason, c# caches answer?
+            Assert.Multiple(() =>
+            {
+                //boom remnant doesn't exist anymore (but parent does obviously)
+                Assert.That(dir.Exists);
+                Assert.That(Directory.Exists(remnantDir.FullName), Is.False); //cant use .Exists for some reason, c# caches answer?
+            });
         }
         finally
         {

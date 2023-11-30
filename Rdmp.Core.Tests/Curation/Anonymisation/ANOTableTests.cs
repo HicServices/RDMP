@@ -44,13 +44,16 @@ public class ANOTableTests : TestsRequiringANOStore
 
         //server should have
         Assert.That(discoveredTable, Is.Not.Null);
-        Assert.That(discoveredTable.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(discoveredTable.Exists());
 
-        //yes that's right hte table name and column name are the same here \|/
-        Assert.That(discoveredTable.DiscoverColumn("MyTable").DataType.SQLType, Is.EqualTo(datatypeForPush));
+            //yes that's right hte table name and column name are the same here \|/
+            Assert.That(discoveredTable.DiscoverColumn("MyTable").DataType.SQLType, Is.EqualTo(datatypeForPush));
 
-        //20 + 20 + _ + A
-        Assert.That(discoveredTable.DiscoverColumn("ANOMyTable").DataType.SQLType, Is.EqualTo("varchar(42)"));
+            //20 + 20 + _ + A
+            Assert.That(discoveredTable.DiscoverColumn("ANOMyTable").DataType.SQLType, Is.EqualTo("varchar(42)"));
+        });
 
         anoTable.DeleteInDatabase();
     }
@@ -163,9 +166,12 @@ public class ANOTableTests : TestsRequiringANOStore
         var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"]);
 
-        Assert.That((string)dt.Rows[0][0] == "0101010101");
-        Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
-        Assert.That(dt.Rows[2][1], Is.EqualTo(dt.Rows[0][1])); //because of duplication these should both be the same
+        Assert.Multiple(() =>
+        {
+            Assert.That((string)dt.Rows[0][0], Is.EqualTo("0101010101"));
+            Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
+            Assert.That(dt.Rows[2][1], Is.EqualTo(dt.Rows[0][1])); //because of duplication these should both be the same
+        });
 
         Console.WriteLine($"ANO identifiers created were:{dt.Rows[0][1]},{dt.Rows[1][1]}");
 
@@ -181,9 +187,12 @@ public class ANOTableTests : TestsRequiringANOStore
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
         var val3 = dt.Rows[0][1];
 
-        //should always be different
-        Assert.That(val2, Is.Not.EqualTo(val1));
-        Assert.That(val3, Is.Not.EqualTo(val1));
+        Assert.Multiple(() =>
+        {
+            //should always be different
+            Assert.That(val2, Is.Not.EqualTo(val1));
+            Assert.That(val3, Is.Not.EqualTo(val1));
+        });
 
         //now test repeatability
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], false);
@@ -194,8 +203,11 @@ public class ANOTableTests : TestsRequiringANOStore
 
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], false);
         var val6 = dt.Rows[0][1];
-        Assert.That(val5, Is.EqualTo(val4));
-        Assert.That(val6, Is.EqualTo(val4));
+        Assert.Multiple(() =>
+        {
+            Assert.That(val5, Is.EqualTo(val4));
+            Assert.That(val6, Is.EqualTo(val4));
+        });
 
         TruncateANOTable(anoTable);
 
@@ -221,10 +233,13 @@ public class ANOTableTests : TestsRequiringANOStore
         var transformer = new ANOTransformer(anoTable, ThrowImmediatelyDataLoadEventListener.Quiet);
         transformer.Transform(dt, dt.Columns["CHI"], dt.Columns["ANOCHI"], true);
 
-        Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
+        Assert.Multiple(() =>
+        {
+            Assert.That(_anochiPattern.IsMatch((string)dt.Rows[0][1])); //should be 10 digits and then _A
 
-        //still not exist yet
-        Assert.That(ANOtable.Exists(), Is.False);
+            //still not exist yet
+            Assert.That(ANOtable.Exists(), Is.False);
+        });
 
         anoTable.DeleteInDatabase();
     }

@@ -11,6 +11,7 @@ using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data.Pipelines;
 using System.IO;
 using System.Linq;
+using NUnit.Framework.Legacy;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
@@ -47,9 +48,12 @@ public class ExcelDatabaseTests : DatabaseTests
 
         var cols = tbl.DiscoverColumns();
         Assert.That(cols, Has.Length.EqualTo(2));
-        Assert.That(cols[0].GetRuntimeName(), Is.EqualTo("Field1"));
-        Assert.That(cols[1].GetRuntimeName(), Is.EqualTo("Field2"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cols[0].GetRuntimeName(), Is.EqualTo("Field1"));
+            Assert.That(cols[1].GetRuntimeName(), Is.EqualTo("Field2"));
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+        });
     }
 }

@@ -39,9 +39,12 @@ public class PermissionWindowTests : DatabaseTests
         Assert.That(periods, Has.Count.EqualTo(2));
 
         var newPeriod1 = periods[0];
-        Assert.That(newPeriod1.DayOfWeek, Is.EqualTo((int)DayOfWeek.Monday));
+        Assert.Multiple(() =>
+        {
+            Assert.That(newPeriod1.DayOfWeek, Is.EqualTo((int)DayOfWeek.Monday));
 
-        Assert.That(newPeriod1.End.Hours, Is.EqualTo(6));
+            Assert.That(newPeriod1.End.Hours, Is.EqualTo(6));
+        });
 
         var newPeriod2 = periods[1];
         Assert.That(newPeriod2.Start.Hours, Is.EqualTo(17));

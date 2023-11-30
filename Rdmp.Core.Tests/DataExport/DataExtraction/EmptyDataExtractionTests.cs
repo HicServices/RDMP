@@ -53,17 +53,20 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
         if (allowEmptyDatasetExtractions)
         {
             var dt = host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token);
-            Assert.That(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token), Is.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token), Is.Null);
 
-            Assert.That(dt.Rows, Is.Empty);
-            Assert.That(dt.Columns, Has.Count.EqualTo(3));
+                Assert.That(dt.Rows, Is.Empty);
+                Assert.That(dt.Columns, Has.Count.EqualTo(3));
+            });
         }
         else
         {
             var exception = Assert.Throws<Exception>(() =>
                 host.Source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, token));
 
-            Assert.That(exception.Message.StartsWith("There is no data to load, query returned no rows, query was"));
+            Assert.That(exception.Message, Does.StartWith("There is no data to load, query returned no rows, query was"));
         }
 
         p.DeleteInDatabase();
@@ -81,10 +84,13 @@ public class EmptyDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
-        //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo(@"ReleaseID,Name,DateOfBirth"));
+        Assert.Multiple(() =>
+        {
+            //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
+            Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo(@"ReleaseID,Name,DateOfBirth"));
 
-        Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+        });
         File.Delete(r.OutputFile);
     }
 }

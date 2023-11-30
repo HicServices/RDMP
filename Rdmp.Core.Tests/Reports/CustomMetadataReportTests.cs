@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -393,8 +394,11 @@ $foreach CatalogueItem
             outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
-        Assert.That(ex.LineNumber, Is.EqualTo(4));
-        Assert.That(ex.Message, Is.EqualTo("Expected $end to match $foreach which started on line 4"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.LineNumber, Is.EqualTo(4));
+            Assert.That(ex.Message, Is.EqualTo("Expected $end to match $foreach which started on line 4"));
+        });
     }
 
     [Test]
@@ -428,8 +432,11 @@ $end");
             outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
-        Assert.That(ex.LineNumber, Is.EqualTo(6));
-        Assert.That(ex.Message, Does.StartWith("Error, encountered '$foreach CatalogueItem' on line 6"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.LineNumber, Is.EqualTo(6));
+            Assert.That(ex.Message, Does.StartWith("Error, encountered '$foreach CatalogueItem' on line 6"));
+        });
     }
 
     [Test]
@@ -437,18 +444,24 @@ $end");
     {
         var report = new CustomMetadataReport(RepositoryLocator);
 
-        //default is no substitution
-        Assert.That(report.NewlineSubstitution, Is.Null);
+        Assert.Multiple(() =>
+        {
+            //default is no substitution
+            Assert.That(report.NewlineSubstitution, Is.Null);
 
-        Assert.That(report.ReplaceNewlines(null), Is.Null);
+            Assert.That(report.ReplaceNewlines(null), Is.Null);
 
-        Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa\r\nbb"));
-        Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa\nbb"));
+            Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa\r\nbb"));
+            Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa\nbb"));
+        });
 
         report.NewlineSubstitution = "<br/>";
 
-        Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa<br/>bb"));
-        Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa<br/>bb"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa<br/>bb"));
+            Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa<br/>bb"));
+        });
     }
 
     [Test]
@@ -1074,8 +1087,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.That(ex.Message, Is.EqualTo("Unexpected '$foreach Catalogue' before the end of the last one on line 4"));
-        Assert.That(ex.LineNumber, Is.EqualTo(4));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Unexpected '$foreach Catalogue' before the end of the last one on line 4"));
+            Assert.That(ex.LineNumber, Is.EqualTo(4));
+        });
     }
 
     [Test]
@@ -1104,8 +1120,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block"));
-        Assert.That(ex.LineNumber, Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block"));
+            Assert.That(ex.LineNumber, Is.EqualTo(3));
+        });
     }
 
 
@@ -1136,8 +1155,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block"));
-        Assert.That(ex.LineNumber, Is.EqualTo(5));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block"));
+            Assert.That(ex.LineNumber, Is.EqualTo(5));
+        });
     }
 
     [Test]
@@ -1168,9 +1190,12 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.That(
-            ex.Message, Is.EqualTo("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)"));
-        Assert.That(ex.LineNumber, Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                    ex.Message, Is.EqualTo("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)"));
+            Assert.That(ex.LineNumber, Is.EqualTo(3));
+        });
     }
 
     [Test]
@@ -1422,7 +1447,7 @@ $DQE_StartYear";
         // this appears in a Catalogue description
         resultText = resultText.Replace("$30", "");
 
-        Assert.That(resultText.Contains('$'), Is.False, $"Expected all template values to disappear but was {resultText}");
+        Assert.That(resultText, Does.Not.Contain('$'), $"Expected all template values to disappear but was {resultText}");
     }
 
 
@@ -1482,6 +1507,6 @@ $end";
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        Assert.That(resultText.Contains('$'), Is.False, $"Expected all template values to disappear but was {resultText}");
+        Assert.That(resultText, Does.Not.Contain('$'), $"Expected all template values to disappear but was {resultText}");
     }
 }

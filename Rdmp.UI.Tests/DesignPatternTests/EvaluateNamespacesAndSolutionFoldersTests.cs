@@ -287,8 +287,11 @@ public partial class AutoCommentsEvaluator
                             var whitespace = m.Groups[1].Value;
                             var member = m.Groups[3].Value;
 
-                            Assert.That(string.IsNullOrWhiteSpace(whitespace));
-                            Assert.That(t, Is.Not.Null);
+                            Assert.Multiple(() =>
+                            {
+                                Assert.That(string.IsNullOrWhiteSpace(whitespace));
+                                Assert.That(t, Is.Not.Null);
+                            });
 
                             if (t.GetProperty($"{member}_ID") != null)
                             {

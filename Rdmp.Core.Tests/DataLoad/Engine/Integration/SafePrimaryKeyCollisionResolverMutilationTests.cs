@@ -103,13 +103,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
         var result = tbl.GetDataTable();
 
-        //if you prefer nulls you shouldn't want this one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferNulls ? 0 : 1));
+        Assert.Multiple(() =>
+        {
+            //if you prefer nulls you shouldn't want this one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferNulls ? 0 : 1));
 
-        //if you prefer nulls you should have this one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(preferNulls ? 1 : 0));
+            //if you prefer nulls you should have this one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(preferNulls ? 1 : 0));
+        });
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -154,13 +157,16 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
         var result = tbl.GetDataTable();
 
-        //if you prefer nulls you shouldn't want this one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            //if you prefer nulls you shouldn't want this one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "fish" && r["AnotherCol"] as string == "flop"), Is.EqualTo(0));
 
-        //if you prefer nulls you should have this one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(1));
+            //if you prefer nulls you should have this one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(1));
+        });
     }
 
 
@@ -207,15 +213,18 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
         var result = tbl.GetDataTable();
 
-        //if you like larger values (alphabetically) then you want the 'b'
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+        Assert.Multiple(() =>
+        {
+            //if you like larger values (alphabetically) then you want the 'b'
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "b" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] as string == "a" && r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
 
-        //either way you shouldn't have the null one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+            //either way you shouldn't have the null one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+        });
     }
 
 
@@ -262,17 +271,20 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
         var result = tbl.GetDataTable();
 
-        //if you like larger values then you want 2002 thats larger than 2001
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+        Assert.Multiple(() =>
+        {
+            //if you like larger values then you want 2002 thats larger than 2001
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
+                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
+                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
 
-        //either way you shouldn't have the null one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+            //either way you shouldn't have the null one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK"] == 1 && r["ResolveOn"] == DBNull.Value && r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+        });
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer, false)]
@@ -329,17 +341,20 @@ public class SafePrimaryKeyCollisionResolverMutilationTests : DatabaseTests
         Assert.That(tbl.GetRowCount(), Is.EqualTo(7));
         var result = tbl.GetDataTable();
 
-        //if you like larger values then you want 2002 thats larger than 2001
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
-                r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
+        Assert.Multiple(() =>
+        {
+            //if you like larger values then you want 2002 thats larger than 2001
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2002, 01, 01)) &&
+                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 1 : 0));
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && Equals(r["ResolveOn"], new DateTime(2001, 01, 01)) &&
+                    r["AnotherCol"] as string == "flop"), Is.EqualTo(preferLarger ? 0 : 1));
 
-        //either way you shouldn't have the null one
-        Assert.That(result.Rows.Cast<DataRow>().Count(r =>
-                (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value &&
-                r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+            //either way you shouldn't have the null one
+            Assert.That(result.Rows.Cast<DataRow>().Count(r =>
+                    (int)r["PK1"] == 1 && (int)r["PK2"] == 1 && r["ResolveOn"] == DBNull.Value &&
+                    r["AnotherCol"] as string == "cat"), Is.EqualTo(0));
+        });
     }
 }

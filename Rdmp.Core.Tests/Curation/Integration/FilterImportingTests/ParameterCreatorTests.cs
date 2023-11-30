@@ -47,7 +47,7 @@ public class ParameterCreatorTests
 
                 var ex = Assert.Throws<NullReferenceException>(() => creator.CreateAll(f, null));
 
-        Assert.That(ex.Message.StartsWith("Parameter construction method returned null"));
+        Assert.That(ex.Message, Does.StartWith("Parameter construction method returned null"));
         }
 
         [Test]
@@ -157,10 +157,13 @@ public class ParameterCreatorTests
                 var creator = new ParameterCreator(factory, null, new[] { template });
                 creator.CreateAll(f, null);
 
-        Assert.That(pstub.Value, Is.EqualTo("5"));
-        Assert.That(pstub.Comment, Is.EqualTo("fish"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(pstub.Value, Is.EqualTo("5"));
+            Assert.That(pstub.Comment, Is.EqualTo("fish"));
+        });
 
-                factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS int");
+        factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS int");
         }
 
         [TestCase("[MyTable].[MyCol] = @name", "@name", "@name2", "[MyTable].[MyCol] = @name2")]

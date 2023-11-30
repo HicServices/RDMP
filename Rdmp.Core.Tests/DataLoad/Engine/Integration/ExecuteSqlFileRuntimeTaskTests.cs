@@ -154,8 +154,11 @@ internal class ExecuteSqlFileRuntimeTaskTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() => task.Run(job, new GracefulCancellationToken()));
 
-        Assert.That(ex.Message, Does.Contain("Mutilate failed"));
-        Assert.That(ex.InnerException.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Does.Contain("Mutilate failed"));
+            Assert.That(ex.InnerException.Message, Does.Contain("Failed to find a TableInfo in the load with ID 0"));
+        });
 
         task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
     }

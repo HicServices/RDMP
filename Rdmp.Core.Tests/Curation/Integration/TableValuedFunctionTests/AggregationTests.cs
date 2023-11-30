@@ -32,14 +32,14 @@ public class AggregationTests : DatabaseTests
         //do a count * on the query builder
         var queryBuilder = new AggregateBuilder("", "count(*)", null, new[] { _function.TableInfoCreated });
 
-        Assert.That(queryBuilder.SQL.Contains(@"SELECT"));
-        Assert.That(queryBuilder.SQL.Contains(@"count(*)"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"SELECT"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"count(*)"));
 
-        Assert.That(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-        Assert.That(queryBuilder.SQL.Contains(@"SET @name='fish';"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"DECLARE @name AS varchar(50);"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"SET @name='fish';"));
 
         Assert.That(
-            queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+            queryBuilder.SQL, Does.Contain("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
         Console.WriteLine(queryBuilder.SQL);
     }
@@ -105,18 +105,18 @@ count(*)>1"));
             //do a count * on the query builder
             var queryBuilder = agg.GetQueryBuilder();
 
-            Assert.That(queryBuilder.SQL.Contains(@"SELECT"));
-            Assert.That(queryBuilder.SQL.Contains(@"count(*)"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"SELECT"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"count(*)"));
 
             //should have this version of things
-            Assert.That(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-            Assert.That(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"DECLARE @name AS varchar(50);"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"SET @name='lobster';"));
 
             //isntead of this verison of things
-            Assert.That(queryBuilder.SQL.Contains(@"SET @name='fish';"), Is.False);
+            Assert.That(queryBuilder.SQL, Does.Not.Contain(@"SET @name='fish';"));
 
             Assert.That(
-                queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+                queryBuilder.SQL, Does.Contain("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
             Console.WriteLine(queryBuilder.SQL);
         }

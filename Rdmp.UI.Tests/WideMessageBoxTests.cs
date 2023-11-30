@@ -22,9 +22,12 @@ internal class WideMessageBoxTests : UITests
     {
         var args = new WideMessageBoxArgs("1", "2", "3", "4", WideMessageBoxTheme.Help);
 
-        //it is important that the args retain the original length e.g. so user can copy to clipboard the text
-        Assert.That(args.Title, Has.Length.EqualTo(1));
-        Assert.That(args.Message, Has.Length.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //it is important that the args retain the original length e.g. so user can copy to clipboard the text
+            Assert.That(args.Title, Has.Length.EqualTo(1));
+            Assert.That(args.Message, Has.Length.EqualTo(1));
+        });
 
         var wmb = new WideMessageBox(args);
 
@@ -35,12 +38,15 @@ internal class WideMessageBoxTests : UITests
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
 
-        //the title and body should be a reasonable length
-        Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(1));
-        Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            //the title and body should be a reasonable length
+            Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(1));
+            Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(1));
 
-        //dialog shouldn't go thinner than 600 pixels
-        Assert.That(wmb.Width, Is.EqualTo(600));
+            //dialog shouldn't go thinner than 600 pixels
+            Assert.That(wmb.Width, Is.EqualTo(600));
+        });
     }
 
     [Test]
@@ -55,9 +61,12 @@ internal class WideMessageBoxTests : UITests
         var s = sb.ToString();
         var args = new WideMessageBoxArgs(s, s, s, s, WideMessageBoxTheme.Help);
 
-        //it is important that the args retain the original length e.g. so user can copy to clipboard the text
-        Assert.That(args.Title, Has.Length.EqualTo(1_000_000));
-        Assert.That(args.Message, Has.Length.EqualTo(1_000_000));
+        Assert.Multiple(() =>
+        {
+            //it is important that the args retain the original length e.g. so user can copy to clipboard the text
+            Assert.That(args.Title, Has.Length.EqualTo(1_000_000));
+            Assert.That(args.Message, Has.Length.EqualTo(1_000_000));
+        });
 
         var wmb = new WideMessageBox(args);
 
@@ -68,9 +77,12 @@ internal class WideMessageBoxTests : UITests
         //pretend like we launched it
         LastUserInterfaceLaunched = wmb;
 
-        //the title and body should be a reasonable length
-        Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_TITLE));
-        Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_BODY));
+        Assert.Multiple(() =>
+        {
+            //the title and body should be a reasonable length
+            Assert.That(GetControl<Label>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_TITLE));
+            Assert.That(GetControl<RichTextBox>().Single().Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_BODY));
+        });
 
         //when shown on screen it should not go off the edge of the screen
 

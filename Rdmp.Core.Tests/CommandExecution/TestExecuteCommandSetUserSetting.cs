@@ -34,8 +34,11 @@ internal class TestExecuteCommandSetUserSetting : CommandCliTests
     public void TestSettingErrorCodeValue_InvalidValue()
     {
         var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail"));
+        });
     }
 
     [Test]

@@ -21,9 +21,12 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
 
                 var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, c2);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Does.Contain("is not marked IsDeprecated"));
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("is not marked IsDeprecated"));
+        });
+    }
 
         [Test]
         public void CommandImpossible_BecauseDifferentTypes()
@@ -36,9 +39,12 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
 
                 var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, ci1);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Does.Contain("because it is a different object Type"));
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("because it is a different object Type"));
+        });
+    }
 
         [Test]
         public void CommandImpossible_Allowed()
@@ -58,11 +64,14 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Single(r => r.IsReferenceTo(c1));
 
-        Assert.That(replacement.IsReferenceTo(c1));
-        Assert.That(replacement.Value, Is.EqualTo(c2.ID.ToString()));
+        Assert.Multiple(() =>
+        {
+            Assert.That(replacement.IsReferenceTo(c1));
+            Assert.That(replacement.Value, Is.EqualTo(c2.ID.ToString()));
+        });
 
-                // running command multiple times shouldn't result in duplicate objects
-                cmd.Execute();
+        // running command multiple times shouldn't result in duplicate objects
+        cmd.Execute();
                 cmd.Execute();
                 cmd.Execute();
                 cmd.Execute();

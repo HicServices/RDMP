@@ -25,7 +25,7 @@ internal class ConfigureDatasetUITests : UITests
 
         //should be at least 2 in the config for this test to be sensible
         var cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
-        Assert.GreaterOrEqual(cols.Length, 2);
+        Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
         ItemActivator.RefreshBus.BeforePublish += (s, e) => publishCount++;
 
@@ -47,7 +47,7 @@ internal class ConfigureDatasetUITests : UITests
 
         //and the columns should be back in the configuration
         cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
-        Assert.GreaterOrEqual(cols.Length, 2);
+        Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
         //multiple includes shouldnt change the number of columns
         ui.IncludeAll();

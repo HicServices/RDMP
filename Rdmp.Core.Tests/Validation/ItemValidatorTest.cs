@@ -52,8 +52,8 @@ public class ItemValidatorTest
         var result = _v.ValidateAll(DateTime.Now, Array.Empty<object>(), Array.Empty<string>());
 
         Assert.That(result, Is.Not.Null);
-        Assert.That(result.Message.StartsWith("Incompatible type"));
-        Assert.That(result.Message.Contains(nameof(DateTime)));
+        Assert.That(result.Message, Does.StartWith("Incompatible type"));
+        Assert.That(result.Message, Does.Contain(nameof(DateTime)));
     }
 
     [Test]

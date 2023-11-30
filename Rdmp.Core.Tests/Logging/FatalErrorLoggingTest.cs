@@ -23,8 +23,11 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
 
-        Assert.That(lm.ListDataTasks(), Does.Contain("Fish"));
-        Assert.That(lm.ListDataSets(), Does.Contain("Fish"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(lm.ListDataTasks(), Does.Contain("Fish"));
+            Assert.That(lm.ListDataSets(), Does.Contain("Fish"));
+        });
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
         lm.CreateNewLoggingTaskIfNotExists("Fish");

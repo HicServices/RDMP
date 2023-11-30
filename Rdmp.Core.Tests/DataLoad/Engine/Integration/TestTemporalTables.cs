@@ -132,14 +132,20 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
                 ThrowImmediatelyDataLoadEventListener.Quiet, dbConfig),
             new GracefulCancellationToken());
 
-        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
+        Assert.Multiple(() =>
+        {
+            Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
-        //frank should be updated to his new departement and role
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+            //frank should be updated to his new departement and role
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+        });
         var result = tbl.GetDataTable();
         var frank = result.Rows.Cast<DataRow>().Single(r => (string)r["Name"] == "Frank");
-        Assert.That(frank["Department"], Is.EqualTo("Department of F'Tang"));
-        Assert.That(frank["Position"], Is.EqualTo("Boss"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(frank["Department"], Is.EqualTo("Department of F'Tang"));
+            Assert.That(frank["Position"], Is.EqualTo("Boss"));
+        });
 
         //post test cleanup
         foreach (var regex in RepositoryLocator.CatalogueRepository.GetAllObjects<StandardRegex>())

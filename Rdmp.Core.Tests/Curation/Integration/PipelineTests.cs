@@ -84,15 +84,21 @@ public class PipelineTests : DatabaseTests
         var clone2 = p.Clone();
         var clone3 = p.Clone();
 
-        Assert.That(clone1.Name, Is.EqualTo("My Pipe (Clone)"));
-        Assert.That(clone2.Name, Is.EqualTo("My Pipe (Clone2)"));
-        Assert.That(clone3.Name, Is.EqualTo("My Pipe (Clone3)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(clone1.Name, Is.EqualTo("My Pipe (Clone)"));
+            Assert.That(clone2.Name, Is.EqualTo("My Pipe (Clone2)"));
+            Assert.That(clone3.Name, Is.EqualTo("My Pipe (Clone3)"));
+        });
 
         var cloneOfClone1 = clone3.Clone();
         var cloneOfClone2 = clone3.Clone();
 
-        Assert.That(cloneOfClone1.Name, Is.EqualTo("My Pipe (Clone3) (Clone)"));
-        Assert.That(cloneOfClone2.Name, Is.EqualTo("My Pipe (Clone3) (Clone2)"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cloneOfClone1.Name, Is.EqualTo("My Pipe (Clone3) (Clone)"));
+            Assert.That(cloneOfClone2.Name, Is.EqualTo("My Pipe (Clone3) (Clone2)"));
+        });
     }
 
 
@@ -134,32 +140,38 @@ public class PipelineTests : DatabaseTests
         var p2 = p.Clone();
 
         Assert.That(p, Is.Not.EqualTo(p2));
-        Assert.That(p.ID, Is.Not.EqualTo(p2.ID));
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.ID, Is.Not.EqualTo(p2.ID));
 
-        Assert.That($"{p.Name} (Clone)", Is.EqualTo(p2.Name));
+            Assert.That($"{p.Name} (Clone)", Is.EqualTo(p2.Name));
 
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>(), Has.Length.EqualTo(componentsBefore * 2));
-        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>(), Has.Length.EqualTo(argumentsBefore * 2));
+            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>(), Has.Length.EqualTo(componentsBefore * 2));
+            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>(), Has.Length.EqualTo(argumentsBefore * 2));
 
-        //p the original should have a pipeline component that has the value we set earlier
-        Assert.That(
-p.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
-                .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo(            "MyMostCoolestColumnEver"
-));
+            //p the original should have a pipeline component that has the value we set earlier
+            Assert.That(
+    p.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
+                    .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo("MyMostCoolestColumnEver"
+    ));
 
-        //p2 the clone should have a pipeline component too since it's a clone
-        Assert.That(
-p2.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
-                .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo(            "MyMostCoolestColumnEver"
-));
+            //p2 the clone should have a pipeline component too since it's a clone
+            Assert.That(
+    p2.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToString()).PipelineComponentArguments
+                    .Single(static a => a.Name == "ColumnNameToFind").Value, Is.EqualTo("MyMostCoolestColumnEver"
+    ));
 
-        //both should have source and destination components
-        Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.Null);
-        Assert.That(p2.SourcePipelineComponent_ID, Is.Not.Null);
+            //both should have source and destination components
+            Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.Null);
+            Assert.That(p2.SourcePipelineComponent_ID, Is.Not.Null);
+        });
 
-        //but with different IDs because they are clones
-        Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.EqualTo(p.DestinationPipelineComponent_ID));
-        Assert.That(p2.SourcePipelineComponent_ID, Is.Not.EqualTo(p.SourcePipelineComponent_ID));
+        Assert.Multiple(() =>
+        {
+            //but with different IDs because they are clones
+            Assert.That(p2.DestinationPipelineComponent_ID, Is.Not.EqualTo(p.DestinationPipelineComponent_ID));
+            Assert.That(p2.SourcePipelineComponent_ID, Is.Not.EqualTo(p.SourcePipelineComponent_ID));
+        });
 
         p.DeleteInDatabase();
         p2.DeleteInDatabase();
@@ -190,8 +202,11 @@ p2.PipelineComponents.Single(static c => c.Class == typeof(ColumnRenamer).ToStri
 
         var clone = p.Clone();
 
-        Assert.That(p.Source.Class, Is.EqualTo(clone.Source.Class));
-        Assert.That(clone.Source.GetAllArguments().Single().Type, Is.EqualTo("fffffzololz"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(p.Source.Class, Is.EqualTo(clone.Source.Class));
+            Assert.That(clone.Source.GetAllArguments().Single().Type, Is.EqualTo("fffffzololz"));
+        });
 
         p.DeleteInDatabase();
         clone.DeleteInDatabase();

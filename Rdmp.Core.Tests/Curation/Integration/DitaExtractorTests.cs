@@ -94,17 +94,23 @@ internal class DitaExtractorTests : DatabaseTests
 
             extractor.Extract(ThrowImmediatelyDataLoadEventListener.Quiet);
 
-            //make sure the root mapping files exist for navigating around
-            Assert.That(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
-            Assert.That(File.Exists(Path.Combine(testDir.FullName, "introduction.dita")));
-            Assert.That(File.Exists(Path.Combine(testDir.FullName, "dataset.dita")));
+            Assert.Multiple(() =>
+            {
+                //make sure the root mapping files exist for navigating around
+                Assert.That(File.Exists(Path.Combine(testDir.FullName, "hic_data_catalogue.ditamap")));
+                Assert.That(File.Exists(Path.Combine(testDir.FullName, "introduction.dita")));
+                Assert.That(File.Exists(Path.Combine(testDir.FullName, "dataset.dita")));
+            });
 
             //make sure the catalogue we created is there
             var ditaCatalogueAsDotDitaFile = new FileInfo(Path.Combine(testDir.FullName,
                 "ditaextractorconstructor_extracttestcatalogue_filesexist.dita")); //name of Dita file (for the Catalogue we just created)
-            Assert.That(ditaCatalogueAsDotDitaFile.Exists);
-            Assert.That(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName)
-                .Contains(ditaTestCatalogue.Description));
+            Assert.Multiple(() =>
+            {
+                Assert.That(ditaCatalogueAsDotDitaFile.Exists);
+                Assert.That(File.ReadAllText(ditaCatalogueAsDotDitaFile.FullName)
+    , Does.Contain(ditaTestCatalogue.Description));
+            });
         }
         finally
         {

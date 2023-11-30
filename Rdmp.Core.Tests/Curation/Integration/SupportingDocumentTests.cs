@@ -34,8 +34,11 @@ public class SupportingDocumentTests : DatabaseTests
         };
         doc.SaveToDatabase();
 
-        Assert.That(doc.Name, Is.EqualTo("davesFile"));
-        Assert.That(doc.Description, Is.EqualTo("some exciting file that dave loves"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(doc.Name, Is.EqualTo("davesFile"));
+            Assert.That(doc.Description, Is.EqualTo("some exciting file that dave loves"));
+        });
 
         var docAfterCommit = CatalogueRepository.GetObjectByID<SupportingDocument>(doc.ID);
 

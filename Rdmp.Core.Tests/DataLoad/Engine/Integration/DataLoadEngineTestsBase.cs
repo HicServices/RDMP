@@ -30,17 +30,23 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         var o = row[SpecialFieldNames.DataLoadRunID];
 
         Assert.That(o, Is.Not.Null, "A row which was expected to have a hic_dataLoadRunID had null instead");
-        Assert.That(o, Is.Not.EqualTo(DBNull.Value),
-            "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
-        Assert.GreaterOrEqual((int)o, 0);
+        Assert.Multiple(() =>
+        {
+            Assert.That(o, Is.Not.EqualTo(DBNull.Value),
+                    "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
+            Assert.That((int)o, Is.GreaterThanOrEqualTo(0));
+        });
 
         var d = row[SpecialFieldNames.ValidFrom];
         Assert.That(d, Is.Not.Null, "A row which was expected to have a hic_validFrom had null instead");
-        Assert.That(d, Is.Not.EqualTo(DBNull.Value),
-            "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+        Assert.Multiple(() =>
+        {
+            Assert.That(d, Is.Not.EqualTo(DBNull.Value),
+                    "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
-        //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
-        Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
+            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
+            Assert.That((DateTime)d, Is.GreaterThanOrEqualTo(DateTime.Now.Subtract(new TimeSpan(2, 0, 0))));
+        });
     }
 
     protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)

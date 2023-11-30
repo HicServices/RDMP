@@ -33,9 +33,12 @@ internal class IMightBeReadOnlyTests : UnitTests
         Assert.That(c.ShouldBeReadOnly(out _), Is.False);
 
         cic.Frozen = true;
-        Assert.That(c.ShouldBeReadOnly(out var reason));
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.ShouldBeReadOnly(out var reason));
 
-        Assert.That(reason, Is.EqualTo("fff is Frozen"));
+            Assert.That(reason, Is.EqualTo("fff is Frozen"));
+        });
     }
 
     [Test]
@@ -50,9 +53,12 @@ internal class IMightBeReadOnlyTests : UnitTests
 
         ec.Name = "lll";
         ec.IsReleased = true;
-        Assert.That(c.ShouldBeReadOnly(out var reason));
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.ShouldBeReadOnly(out var reason));
 
-        Assert.That(reason, Is.EqualTo("lll has already been released"));
+            Assert.That(reason, Is.EqualTo("lll has already been released"));
+        });
     }
 
     [Test]
@@ -81,9 +87,12 @@ internal class IMightBeReadOnlyTests : UnitTests
         Assert.That(f.ShouldBeReadOnly(out _), Is.False);
 
         cic.Frozen = true;
-        Assert.That(f.ShouldBeReadOnly(out var reason));
+        Assert.Multiple(() =>
+        {
+            Assert.That(f.ShouldBeReadOnly(out var reason));
 
-        Assert.That(reason, Is.EqualTo("fff is Frozen"));
+            Assert.That(reason, Is.EqualTo("fff is Frozen"));
+        });
     }
 
     [Test]
@@ -95,8 +104,11 @@ internal class IMightBeReadOnlyTests : UnitTests
         var ec = ((FilterContainer)f.FilterContainer).GetSelectedDataSetIfAny().ExtractionConfiguration;
         ec.Name = "lll";
         ec.IsReleased = true;
-        Assert.That(f.ShouldBeReadOnly(out var reason));
+        Assert.Multiple(() =>
+        {
+            Assert.That(f.ShouldBeReadOnly(out var reason));
 
-        Assert.That(reason, Is.EqualTo("lll has already been released"));
+            Assert.That(reason, Is.EqualTo("lll has already been released"));
+        });
     }
 }

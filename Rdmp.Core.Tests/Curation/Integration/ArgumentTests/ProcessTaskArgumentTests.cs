@@ -250,11 +250,14 @@ public class ProcessTaskArgumentTests : DatabaseTests
         {
             var arg = pt.ProcessTaskArguments.Single();
 
-            Assert.That(arg.Name, Is.EqualTo("MyBool"));
-            Assert.That(arg.Type, Is.EqualTo("System.Boolean"));
-            Assert.That(arg.Description, Is.EqualTo("Fishes"));
-            Assert.That(arg.Value, Is.EqualTo("True"));
-            Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(true));
+            Assert.Multiple(() =>
+            {
+                Assert.That(arg.Name, Is.EqualTo("MyBool"));
+                Assert.That(arg.Type, Is.EqualTo("System.Boolean"));
+                Assert.That(arg.Description, Is.EqualTo("Fishes"));
+                Assert.That(arg.Value, Is.EqualTo("True"));
+                Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(true));
+            });
         }
         finally
         {
@@ -274,12 +277,15 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
-        Assert.That(
-            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
-                .Any(r => r.ParentPropertyInfo != null));
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                    ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
+                        .Any(r => r.ParentPropertyInfo != null));
 
-        //new pc should have no arguments
-        Assert.That(pc.GetAllArguments(), Is.Empty);
+            //new pc should have no arguments
+            Assert.That(pc.GetAllArguments(), Is.Empty);
+        });
 
         //we create them (the root and nested ones!)
         var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
@@ -394,8 +400,11 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
             var val2 = (Dictionary<TableInfo, string>)arg.GetValueAsSystemType();
             Assert.That(val2, Has.Count.EqualTo(2));
-            Assert.That(val2[ti1], Is.EqualTo("Fish"));
-            Assert.That(val2[ti2], Is.EqualTo("Fish"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(val2[ti1], Is.EqualTo("Fish"));
+                Assert.That(val2[ti2], Is.EqualTo("Fish"));
+            });
         }
         finally
         {

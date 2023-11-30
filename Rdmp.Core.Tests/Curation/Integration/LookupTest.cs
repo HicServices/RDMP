@@ -140,15 +140,18 @@ public class LookupTest : DatabaseTests
 
             _=new Lookup(repo, child, child2, child3, ExtractionJoinType.Left, null);
 
-            Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Has.Length.EqualTo(1));
-            Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Is.Empty);
-            Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Is.Empty);
-            Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
-            Assert.That(child3.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Has.Length.EqualTo(1));
+                Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description), Is.Empty);
+                Assert.That(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Is.Empty);
+                Assert.That(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
+                Assert.That(child3.GetAllLookupForColumnInfoWhereItIsA(LookupType.AnyKey), Has.Length.EqualTo(1));
 
 
-            Assert.That(parent.IsLookupTable());
-            Assert.That(parent2.IsLookupTable(), Is.False);
+                Assert.That(parent.IsLookupTable());
+                Assert.That(parent2.IsLookupTable(), Is.False);
+            });
         }
         finally
         {
@@ -224,31 +227,43 @@ public class LookupTest : DatabaseTests
             desc = new ColumnInfo(CatalogueRepository, "UnitTest_TestDescription", "int", pkTable);
             lookup = new Lookup(CatalogueRepository, desc, fk, pk, ExtractionJoinType.Left, null);
 
-            Assert.That(pk.Name, Is.EqualTo(lookup.PrimaryKey.Name));
-            Assert.That(pk.ID, Is.EqualTo(lookup.PrimaryKey.ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(pk.Name, Is.EqualTo(lookup.PrimaryKey.Name));
+                Assert.That(pk.ID, Is.EqualTo(lookup.PrimaryKey.ID));
 
-            Assert.That(fk.Name, Is.EqualTo(lookup.ForeignKey.Name));
-            Assert.That(fk.ID, Is.EqualTo(lookup.ForeignKey.ID));
+                Assert.That(fk.Name, Is.EqualTo(lookup.ForeignKey.Name));
+                Assert.That(fk.ID, Is.EqualTo(lookup.ForeignKey.ID));
 
-            Assert.That(desc.Name, Is.EqualTo(lookup.Description.Name));
-            Assert.That(desc.ID, Is.EqualTo(lookup.Description.ID));
+                Assert.That(desc.Name, Is.EqualTo(lookup.Description.Name));
+                Assert.That(desc.ID, Is.EqualTo(lookup.Description.ID));
+            });
 
             //Create the composite lookup
             composite = new LookupCompositeJoinInfo(CatalogueRepository, lookup, fk2, pk2);
 
-            Assert.That(lookup.ID, Is.EqualTo(composite.OriginalLookup_ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(lookup.ID, Is.EqualTo(composite.OriginalLookup_ID));
 
-            Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey.ID));
-            Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey_ID));
-            Assert.That(pk2.Name, Is.EqualTo(composite.PrimaryKey.Name));
+                Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey.ID));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(pk2.ID, Is.EqualTo(composite.PrimaryKey_ID));
+                Assert.That(pk2.Name, Is.EqualTo(composite.PrimaryKey.Name));
 
-            Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey.ID));
-            Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey_ID));
-            Assert.That(fk2.Name, Is.EqualTo(composite.ForeignKey.Name));
+                Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey.ID));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(fk2.ID, Is.EqualTo(composite.ForeignKey_ID));
+                Assert.That(fk2.Name, Is.EqualTo(composite.ForeignKey.Name));
 
-            //get a fresh copy out of memory now that we have created the Lookup composite key, confirm the integrity of that relationship
-            Assert.That(lookup.GetSupplementalJoins().Count(), Is.EqualTo(1));
-            Assert.That(composite.ID, Is.EqualTo(lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>().First().ID));
+                //get a fresh copy out of memory now that we have created the Lookup composite key, confirm the integrity of that relationship
+                Assert.That(lookup.GetSupplementalJoins().Count(), Is.EqualTo(1));
+                Assert.That(composite.ID, Is.EqualTo(lookup.GetSupplementalJoins().Cast<LookupCompositeJoinInfo>().First().ID));
+            });
 
             composite.DeleteInDatabase();
             composite = null;
@@ -475,8 +490,8 @@ public class LookupTest : DatabaseTests
 
                 //should have the lookup join and the virtual column _Desc
                 var sqlAfter = GetSql(mainCata);
-                Assert.That(sqlAfter.Contains("JOIN"));
-                Assert.That(sqlAfter.Contains("SendingLocation_Desc"));
+                Assert.That(sqlAfter, Does.Contain("JOIN"));
+                Assert.That(sqlAfter, Does.Contain("SendingLocation_Desc"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(testCase));

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
@@ -89,7 +90,7 @@ public class ExcelConversionTest
 
         var ex = Assert.Throws<Exception>(() => TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
-        Assert.That(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
+        Assert.That(ex.Message, Does.StartWith("Did not find any files matching Pattern '*.fish' in directory"));
     }
 
     private static void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets,
@@ -99,8 +100,11 @@ public class ExcelConversionTest
 
         try
         {
-            Assert.That(f.Exists);
-            Assert.That(f.Length, Is.GreaterThan(100));
+            Assert.Multiple(() =>
+            {
+                Assert.That(f.Exists);
+                Assert.That(f.Length, Is.GreaterThan(100));
+            });
 
             var converter = new ExcelToCSVFilesConverter();
 
@@ -118,8 +122,11 @@ public class ExcelConversionTest
 
             foreach (var fileCreated in filesCreated)
             {
-                Assert.That(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
-                Assert.GreaterOrEqual(fileCreated.Length, 100);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(Regex.IsMatch(fileCreated.Name, "Sheet[0-9].csv"));
+                    Assert.That(fileCreated.Length, Is.GreaterThanOrEqualTo(100));
+                });
                 fileCreated.Delete();
             }
         }

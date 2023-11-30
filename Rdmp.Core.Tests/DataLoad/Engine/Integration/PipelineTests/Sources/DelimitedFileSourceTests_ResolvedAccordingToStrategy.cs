@@ -297,9 +297,12 @@ to be honest,Bob,20",
             s.BadDataHandlingStrategy = BadDataHandlingStrategy.IgnoreRows;
         });
         Assert.That(dt.Rows, Has.Count.EqualTo(3));
-        Assert.That(dt.Rows[1][0], Is.EqualTo("to be honest"));
-        Assert.That(dt.Rows[1][1], Is.EqualTo("Bob"));
-        Assert.That(dt.Rows[1][2], Is.EqualTo(20));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[1][0], Is.EqualTo("to be honest"));
+            Assert.That(dt.Rows[1][1], Is.EqualTo("Bob"));
+            Assert.That(dt.Rows[1][2], Is.EqualTo(20));
+        });
     }
 
     [Test]
@@ -347,10 +350,16 @@ to be honest",
             s.ForceHeadersReplacesFirstLineInFile = true;
         });
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
-        Assert.That(dt.Columns, Has.Count.EqualTo(2));
-        Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Thomas"));
-        Assert.That(dt.Rows[0]["BloodGlucose"], Is.EqualTo(100));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Thomas"));
+            Assert.That(dt.Rows[0]["BloodGlucose"], Is.EqualTo(100));
+        });
     }
 
     [Test]
@@ -366,9 +375,15 @@ to be honest",
             s.ForceHeaders = "Name,BloodGlucose";
         });
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2));
-        Assert.That(dt.Columns, Has.Count.EqualTo(2));
-        Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Thomas"));
-        Assert.That(dt.Rows[0]["BloodGlucose"], Is.EqualTo(100));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Thomas"));
+            Assert.That(dt.Rows[0]["BloodGlucose"], Is.EqualTo(100));
+        });
     }
 }

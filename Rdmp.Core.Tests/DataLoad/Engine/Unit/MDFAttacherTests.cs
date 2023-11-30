@@ -128,14 +128,16 @@ public class MDFAttacherTests : DatabaseTests
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 serverDatabasePath, null);
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
+                Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
 
-            Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
-            Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
+                Assert.That(locations.CopyToLdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf"));
+                Assert.That(locations.CopyToMdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
 
-            Assert.That(locations.CopyToLdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf"));
-            Assert.That(locations.CopyToMdf, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
-
-            Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
+                Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
+            });
         }
         finally
         {
@@ -236,14 +238,16 @@ public class MDFAttacherTests : DatabaseTests
             var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 serverDatabasePath, @"//MyDbServer1/Share/Database");
 
+            Assert.Multiple(() =>
+            {
+                Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
+                Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
 
-            Assert.That(locations.OriginLocationMdf, Is.EqualTo(new FileInfo(mdf).FullName));
-            Assert.That(locations.OriginLocationLdf, Is.EqualTo(new FileInfo(ldf).FullName));
+                Assert.That(locations.CopyToLdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf"));
+                Assert.That(locations.CopyToMdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf"));
 
-            Assert.That(locations.CopyToLdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf"));
-            Assert.That(locations.CopyToMdf, Does.Match(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf"));
-
-            Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
+                Assert.That(locations.AttachMdfPath, Is.EqualTo(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf"));
+            });
         }
         finally
         {

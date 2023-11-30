@@ -60,9 +60,12 @@ public class GatherAndShareTests : DatabaseTests
 
         var gObj = Gatherer.GatherDependencies(anoTable);
 
-        //root should be the server
-        Assert.That(anoserver, Is.EqualTo(gObj.Object));
-        Assert.That(anoTable, Is.EqualTo(gObj.Children.Single().Object));
+        Assert.Multiple(() =>
+        {
+            //root should be the server
+            Assert.That(anoserver, Is.EqualTo(gObj.Object));
+            Assert.That(anoTable, Is.EqualTo(gObj.Children.Single().Object));
+        });
 
         //get the sharing definitions
         var shareManager = new ShareManager(RepositoryLocator);
@@ -89,28 +92,34 @@ public class GatherAndShareTests : DatabaseTests
 
         var anoserverAfter = new ExternalDatabaseServer(shareManager, defParent);
 
-        Assert.That(anoserverAfter.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(anoserverAfter.Exists());
 
-        //new instance
-        Assert.That(anoserver.ID, Is.Not.EqualTo(anoserverAfter.ID));
+            //new instance
+            Assert.That(anoserver.ID, Is.Not.EqualTo(anoserverAfter.ID));
 
-        //same properties
-        Assert.That(anoserver.Name, Is.EqualTo(anoserverAfter.Name));
-        Assert.That(anoserver.CreatedByAssembly, Is.EqualTo(anoserverAfter.CreatedByAssembly));
-        Assert.That(anoserver.Database, Is.EqualTo(anoserverAfter.Database));
-        Assert.That(anoserver.DatabaseType, Is.EqualTo(anoserverAfter.DatabaseType));
-        Assert.That(anoserver.Username, Is.EqualTo(anoserverAfter.Username));
-        Assert.That(anoserver.Password, Is.EqualTo(anoserverAfter.Password));
+            //same properties
+            Assert.That(anoserver.Name, Is.EqualTo(anoserverAfter.Name));
+            Assert.That(anoserver.CreatedByAssembly, Is.EqualTo(anoserverAfter.CreatedByAssembly));
+            Assert.That(anoserver.Database, Is.EqualTo(anoserverAfter.Database));
+            Assert.That(anoserver.DatabaseType, Is.EqualTo(anoserverAfter.DatabaseType));
+            Assert.That(anoserver.Username, Is.EqualTo(anoserverAfter.Username));
+            Assert.That(anoserver.Password, Is.EqualTo(anoserverAfter.Password));
+        });
 
         var anoTableAfter = new ANOTable(shareManager, defChild);
 
-        //new instance
-        Assert.That(anoTable.ID, Is.Not.EqualTo(anoTableAfter.ID));
-        Assert.That(anoTable.Server_ID, Is.Not.EqualTo(anoTableAfter.Server_ID));
+        Assert.Multiple(() =>
+        {
+            //new instance
+            Assert.That(anoTable.ID, Is.Not.EqualTo(anoTableAfter.ID));
+            Assert.That(anoTable.Server_ID, Is.Not.EqualTo(anoTableAfter.Server_ID));
 
-        //same properties
-        Assert.That(anoTable.NumberOfCharactersToUseInAnonymousRepresentation, Is.EqualTo(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation));
-        Assert.That(anoTable.Suffix, Is.EqualTo(anoTableAfter.Suffix));
+            //same properties
+            Assert.That(anoTable.NumberOfCharactersToUseInAnonymousRepresentation, Is.EqualTo(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation));
+            Assert.That(anoTable.Suffix, Is.EqualTo(anoTableAfter.Suffix));
+        });
 
         //change a property and save it
         anoTableAfter.Suffix = "CAMMELS!";
@@ -120,8 +129,11 @@ public class GatherAndShareTests : DatabaseTests
         //reimport (this time it should be an update, we import the share definitions and it overrides our database copy (sharing is UPSERT)
         var anoTableAfter2 = new ANOTable(shareManager, defChild);
 
-        Assert.That(anoTableAfter2.ID, Is.EqualTo(anoTableAfter.ID));
-        Assert.That(anoTableAfter2.Suffix, Is.EqualTo("N"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(anoTableAfter2.ID, Is.EqualTo(anoTableAfter.ID));
+            Assert.That(anoTableAfter2.Suffix, Is.EqualTo("N"));
+        });
 
         anoTableAfter.DeleteInDatabase();
         anoserverAfter.DeleteInDatabase();
@@ -214,25 +226,34 @@ public class GatherAndShareTests : DatabaseTests
         //test importing the Catalogue properties only
         ShareManager.ImportPropertiesOnly(cata, shareDefinition[0]);
 
-        //import the defined properties but not name
-        Assert.That(cata.Name, Is.EqualTo("fishfish"));
-        Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
-        Assert.That(cata.LoadMetadata_ID, Is.Null);
+        Assert.Multiple(() =>
+        {
+            //import the defined properties but not name
+            Assert.That(cata.Name, Is.EqualTo("fishfish"));
+            Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
+            Assert.That(cata.LoadMetadata_ID, Is.Null);
+        });
         cata.SaveToDatabase();
 
         cata.DeleteInDatabase();
 
-        //none of these should now exist thanks to cascade deletes
-        Assert.That(cata.Exists(), Is.False);
-        Assert.That(catalogueItem1.Exists(), Is.False);
-        Assert.That(catalogueItem2.Exists(), Is.False);
+        Assert.Multiple(() =>
+        {
+            //none of these should now exist thanks to cascade deletes
+            Assert.That(cata.Exists(), Is.False);
+            Assert.That(catalogueItem1.Exists(), Is.False);
+            Assert.That(catalogueItem2.Exists(), Is.False);
+        });
 
         //import the saved copy
         var newObjects = shareManager.ImportSharedObject(shareDefinition).ToArray();
 
-        Assert.That(((Catalogue)newObjects[0]).Name, Is.EqualTo("Cata"));
-        Assert.That(((CatalogueItem)newObjects[1]).Name, Is.EqualTo("Ci1"));
-        Assert.That(((CatalogueItem)newObjects[2]).Name, Is.EqualTo("Ci2"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(((Catalogue)newObjects[0]).Name, Is.EqualTo("Cata"));
+            Assert.That(((CatalogueItem)newObjects[1]).Name, Is.EqualTo("Ci1"));
+            Assert.That(((CatalogueItem)newObjects[2]).Name, Is.EqualTo("Ci2"));
+        });
     }
 
     [Test]

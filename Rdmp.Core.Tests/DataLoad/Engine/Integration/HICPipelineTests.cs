@@ -279,7 +279,7 @@ public class HICPipelineTests : DatabaseTests
                 var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator,
                     ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                     new GracefulCancellationToken()));
-                Assert.That(ex.InnerException.Message.Contains("Login failed for user 'IveGotaLovely'"),
+                Assert.That(ex.InnerException.Message, Does.Contain("Login failed for user 'IveGotaLovely'"),
                     "Error message did not contain expected text");
                 return;
             }
@@ -291,8 +291,11 @@ public class HICPipelineTests : DatabaseTests
 
 
             var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f => f.FullName);
-            Assert.That(archiveFile, Is.Not.Null, "Archive file has not been created by the load.");
-            Assert.That(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any(), Is.False);
+            Assert.Multiple(() =>
+            {
+                Assert.That(archiveFile, Is.Not.Null, "Archive file has not been created by the load.");
+                Assert.That(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any(), Is.False);
+            });
         }
         finally
         {

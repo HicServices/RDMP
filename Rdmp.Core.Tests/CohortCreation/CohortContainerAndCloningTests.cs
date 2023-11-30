@@ -37,11 +37,14 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
 
         try
         {
-            Assert.That(aggregate2.Order, Is.EqualTo(1));
-            Assert.That(aggregate1.Order, Is.EqualTo(5));
+            Assert.Multiple(() =>
+            {
+                Assert.That(aggregate2.Order, Is.EqualTo(1));
+                Assert.That(aggregate1.Order, Is.EqualTo(5));
 
-            Assert.That(aggregate2.ID, Is.EqualTo(rootcontainer.GetAggregateConfigurations()[0].ID));
-            Assert.That(aggregate1.ID, Is.EqualTo(rootcontainer.GetAggregateConfigurations()[1].ID));
+                Assert.That(aggregate2.ID, Is.EqualTo(rootcontainer.GetAggregateConfigurations()[0].ID));
+                Assert.That(aggregate1.ID, Is.EqualTo(rootcontainer.GetAggregateConfigurations()[1].ID));
+            });
         }
         finally
         {
@@ -66,10 +69,13 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
         {
             //there should be 1 child
             var aggregateConfigurations = rootcontainer.GetAggregateConfigurations();
-            Assert.That(aggregateConfigurations, Has.Length.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(aggregateConfigurations, Has.Length.EqualTo(1));
 
-            //child should follow naming convention
-            Assert.That(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregateConfigurations[0]));
+                //child should follow naming convention
+                Assert.That(cohortIdentificationConfiguration.IsValidNamedConfiguration(aggregateConfigurations[0]));
+            });
 
             //clone should have a different ID - also it was created after so should be higher ID
             Assert.That(aggregateConfigurations[0].ID, Is.GreaterThan(aggregate1.ID));
@@ -120,15 +126,21 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
 
         try
         {
-            Assert.That(aggregate1.ID, Is.Not.EqualTo(clone.ID));
-            Assert.That(aggregate1.RootFilterContainer_ID, Is.Not.EqualTo(clone.RootFilterContainer_ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(aggregate1.ID, Is.Not.EqualTo(clone.ID));
+                Assert.That(aggregate1.RootFilterContainer_ID, Is.Not.EqualTo(clone.RootFilterContainer_ID));
+            });
 
 
             var cloneContainer = clone.RootFilterContainer;
             var cloneFilter = cloneContainer.GetFilters().Single();
 
-            Assert.That(container.ID, Is.Not.EqualTo(cloneContainer.ID));
-            Assert.That(filter.ID, Is.Not.EqualTo(cloneFilter.ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(container.ID, Is.Not.EqualTo(cloneContainer.ID));
+                Assert.That(filter.ID, Is.Not.EqualTo(cloneFilter.ID));
+            });
 
             var cloneParameter = (AggregateFilterParameter)cloneFilter.GetAllParameters().Single();
             Assert.That(param.ID, Is.Not.EqualTo(cloneParameter.ID));
@@ -136,11 +148,13 @@ public class CohortContainerAndCloningTests : CohortIdentificationTests
             //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
             var cohortAggregateSql = new CohortQueryBuilder(clone, null, null).SQL;
 
+            Assert.Multiple(() =>
+            {
 
-            //the basic aggregate has the filter, parameter and group by
-            Assert.That(CollapseWhitespace(aggregateSql), Is.EqualTo(CollapseWhitespace(
-                    string.Format(
-                        @"DECLARE @sex AS varchar(50);
+                //the basic aggregate has the filter, parameter and group by
+                Assert.That(CollapseWhitespace(aggregateSql), Is.EqualTo(CollapseWhitespace(
+                        string.Format(
+                            @"DECLARE @sex AS varchar(50);
 SET @sex='M';
 /*cic_{0}_UnitTestAggregate1*/
 SELECT 
@@ -159,14 +173,14 @@ group by
 order by 
 [" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData].[chi]", cohortIdentificationConfiguration.ID))));
 
-            //the expected differences are
-            //1. should not have the count
-            //2. should not have the group by
-            //3. should be marked with the cic comment with the ID matching the CohortIdentificationConfiguration.ID
-            //4. should have a distinct on the identifier column
+                //the expected differences are
+                //1. should not have the count
+                //2. should not have the group by
+                //3. should be marked with the cic comment with the ID matching the CohortIdentificationConfiguration.ID
+                //4. should have a distinct on the identifier column
 
-            Assert.That(
-cohortAggregateSql, Is.EqualTo($@"DECLARE @sex AS varchar(50);
+                Assert.That(
+    cohortAggregateSql, Is.EqualTo($@"DECLARE @sex AS varchar(50);
 SET @sex='M';
 /*cic_{cohortIdentificationConfiguration.ID}_UnitTestAggregate1*/
 SELECT
@@ -179,6 +193,7 @@ WHERE
 /*MyFilter*/
 sex=@sex
 )"));
+            });
 
 
             clone.RootFilterContainer.DeleteInDatabase();
@@ -227,12 +242,15 @@ sex=@sex
         {
             var clone = cohortIdentificationConfiguration.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
 
-            //the objects should be different
-            Assert.That(clone.ID, Is.Not.EqualTo(cohortIdentificationConfiguration.ID));
-            Assert.That(clone.Name.EndsWith("(Clone)"));
+            Assert.Multiple(() =>
+            {
+                //the objects should be different
+                Assert.That(clone.ID, Is.Not.EqualTo(cohortIdentificationConfiguration.ID));
+                Assert.That(clone.Name, Does.EndWith("(Clone)"));
 
-            Assert.That(cohortIdentificationConfiguration.RootCohortAggregateContainer_ID, Is.Not.EqualTo(clone.RootCohortAggregateContainer_ID));
-            Assert.That(clone.RootCohortAggregateContainer_ID, Is.Not.Null);
+                Assert.That(cohortIdentificationConfiguration.RootCohortAggregateContainer_ID, Is.Not.EqualTo(clone.RootCohortAggregateContainer_ID));
+                Assert.That(clone.RootCohortAggregateContainer_ID, Is.Not.Null);
+            });
 
             var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration, null).SQL;
             var cloneSQL = new CohortQueryBuilder(clone, null).SQL;

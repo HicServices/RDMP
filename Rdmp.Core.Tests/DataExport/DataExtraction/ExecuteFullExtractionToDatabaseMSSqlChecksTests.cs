@@ -49,8 +49,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
         var tomemory = new ToMemoryCheckNotifier();
         destination.Check(tomemory);
 
-        Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
-        Assert.That(tomemory.Messages[0].Message.StartsWith("Target database server property has not been set"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
+            Assert.That(tomemory.Messages[0].Message, Does.StartWith("Target database server property has not been set"));
+        });
     }
 
     [Test]
@@ -67,9 +70,12 @@ public class ExecuteFullExtractionToDatabaseMSSqlChecksTests : DatabaseTests
             var tomemory = new ToMemoryCheckNotifier();
             destination.Check(tomemory);
 
-            Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
-            Assert.That(tomemory.Messages[0].Message
-                .StartsWith("TargetDatabaseServer does not have a .Server specified"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(tomemory.Messages[0].Result, Is.EqualTo(CheckResult.Fail));
+                Assert.That(tomemory.Messages[0].Message
+    , Does.StartWith("TargetDatabaseServer does not have a .Server specified"));
+            });
         }
         finally
         {

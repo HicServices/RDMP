@@ -41,9 +41,12 @@ internal class ExecutableProcessTaskTests : DatabaseTests
                 new RuntimeArgumentCollection(processTask.ProcessTaskArguments.Cast<IArgument>().ToArray(), null);
 
             var runtimeTask = new ExecutableRuntimeTask(processTask, args);
-            Assert.That(runtimeTask.ExeFilepath, Is.EqualTo(expectedPath));
+            Assert.Multiple(() =>
+            {
+                Assert.That(runtimeTask.ExeFilepath, Is.EqualTo(expectedPath));
 
-            Assert.That(runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().Count(), Is.EqualTo(1));
+                Assert.That(runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().Count(), Is.EqualTo(1));
+            });
 
             var dictionaryOfStringArguments = runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>()
                 .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);

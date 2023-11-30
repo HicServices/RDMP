@@ -33,11 +33,14 @@ internal class CommandLineObjectPickerTests : UnitTests
         const string str = "Shiver me timbers";
         var picker = new CommandLineObjectPicker(new[] { str }, GetActivator());
 
-        Assert.That(picker[0].RawValue, Is.EqualTo(str));
-        Assert.That(picker[0].DatabaseEntities, Is.Null);
-        Assert.That(picker[0].Database, Is.Null);
-        Assert.That(picker[0].Table, Is.Null);
-        Assert.That(picker[0].Type, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].RawValue, Is.EqualTo(str));
+            Assert.That(picker[0].DatabaseEntities, Is.Null);
+            Assert.That(picker[0].Database, Is.Null);
+            Assert.That(picker[0].Table, Is.Null);
+            Assert.That(picker[0].Type, Is.Null);
+        });
     }
 
     [Test]
@@ -68,14 +71,17 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         Assert.That(picker.Length, Is.EqualTo(1));
 
-        Assert.That(picker[0].Database, Is.Null);
-        Assert.That(picker[0].DatabaseEntities, Is.Null);
-        Assert.That(picker[0].ExplicitNull, Is.False);
-        Assert.That(picker[0].RawValue, Is.EqualTo(val));
-        Assert.That(picker[0].Type, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].Database, Is.Null);
+            Assert.That(picker[0].DatabaseEntities, Is.Null);
+            Assert.That(picker[0].ExplicitNull, Is.False);
+            Assert.That(picker[0].RawValue, Is.EqualTo(val));
+            Assert.That(picker[0].Type, Is.Null);
 
-        Assert.That(picker[0].GetValueForParameterOfType(typeof(string)), Is.EqualTo(val));
-        Assert.That(picker.HasArgumentOfType(0, typeof(string)));
+            Assert.That(picker[0].GetValueForParameterOfType(typeof(string)), Is.EqualTo(val));
+            Assert.That(picker.HasArgumentOfType(0, typeof(string)));
+        });
     }
 
     [Test]
@@ -124,22 +130,25 @@ internal class CommandLineObjectPickerTests : UnitTests
         //when interpreting the string "Catalogue" for a command
         var picker = new CommandLineObjectPicker(new[] { "Catalogue" }, GetActivator());
 
-        //we can pick it as either a Catalogue or a collection of all the Catalogues
-        Assert.That(picker.Arguments.Single().Type, Is.EqualTo(typeof(Catalogue)));
-        Assert.That(picker.Arguments.Single().DatabaseEntities, Is.Empty);
+        Assert.Multiple(() =>
+        {
+            //we can pick it as either a Catalogue or a collection of all the Catalogues
+            Assert.That(picker.Arguments.Single().Type, Is.EqualTo(typeof(Catalogue)));
+            Assert.That(picker.Arguments.Single().DatabaseEntities, Is.Empty);
 
-        //when interpretting as a Type we get Catalogue
-        Assert.That(picker.Arguments.First().HasValueOfType(typeof(Type)));
-        Assert.That(picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)), Is.EqualTo(typeof(Catalogue)));
+            //when interpretting as a Type we get Catalogue
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(Type)));
+            Assert.That(picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)), Is.EqualTo(typeof(Catalogue)));
 
-        //if it is looking for an ienumerable of objects
-        Assert.That(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
-        Assert.That((IMapsDirectlyToDatabaseTable[])picker.Arguments.First()
-            .GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])), Is.Empty);
+            //if it is looking for an ienumerable of objects
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+            Assert.That((IMapsDirectlyToDatabaseTable[])picker.Arguments.First()
+                .GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])), Is.Empty);
 
-        Assert.That(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
-        Assert.That(
-            ((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray(), Is.Empty);
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
+            Assert.That(
+                ((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray(), Is.Empty);
+        });
     }
 
     [TestCase(typeof(PickDatabase))]
@@ -157,10 +166,13 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = (PickObjectBase)ObjectConstructor.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
-        Assert.IsNotEmpty(picker.Help, "No Help for picker {0}", picker);
-        Assert.IsNotEmpty(picker.Format, "No Format for picker {0}", picker);
-        Assert.That(picker.Examples, Is.Not.Null, $"No Examples for picker {picker}");
-        Assert.IsNotEmpty(picker.Examples, "No Examples for picker {0}", picker);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker.Help, Is.Not.Empty, $"No Help for picker {picker}");
+            Assert.That(picker.Format, Is.Not.Empty, $"No Format for picker {picker}");
+            Assert.That(picker.Examples, Is.Not.Null, $"No Examples for picker {picker}");
+        });
+        Assert.That(picker.Examples, Is.Not.Empty, $"No Examples for picker {picker}");
 
         foreach (var example in picker.Examples)
         {
@@ -178,8 +190,11 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         var picker = new CommandLineObjectPicker(new[] { "Name" }, GetActivator());
 
-        Assert.That(picker[0].Type, Is.Null);
-        Assert.That(picker[0].RawValue, Is.EqualTo("Name"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].Type, Is.Null);
+            Assert.That(picker[0].RawValue, Is.EqualTo("Name"));
+        });
     }
 
     [TestCase("null")]
@@ -201,8 +216,11 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, GetActivator());
 
-        Assert.That(picker[0].DatabaseEntities[0], Is.EqualTo(cata1));
-        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].DatabaseEntities[0], Is.EqualTo(cata1));
+            Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -249,7 +267,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(ci));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(ci2));
-        Assert.That(picker[0].DatabaseEntities.Contains(ci3), Is.False);
+        Assert.That(picker[0].DatabaseEntities, Does.Not.Contain(ci3));
     }
 
     [Test]
@@ -269,7 +287,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(c1));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(c3));
-        Assert.That(picker[0].DatabaseEntities.Contains(c2), Is.False);
+        Assert.That(picker[0].DatabaseEntities, Does.Not.Contain(c2));
     }
 
     [Test]

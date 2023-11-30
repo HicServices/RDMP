@@ -57,13 +57,16 @@ internal class IColumnTests
     {
         var syntax = MicrosoftQuerySyntaxHelper.Instance;
 
-        Assert.That(syntax.GetRuntimeName("[test]"), Is.EqualTo("test"));
-        Assert.That(syntax.GetRuntimeName("`test`"), Is.EqualTo("`test`"));
-        Assert.That(syntax.GetRuntimeName("`[test]`"), Is.EqualTo("`[test]`"));
-        Assert.That(syntax.GetRuntimeName("[mydb].[test]"), Is.EqualTo("test"));
-        Assert.That(syntax.GetRuntimeName("`mymysqldb`.`test`"), Is.EqualTo("`test`"));
-        Assert.That(syntax.GetRuntimeName("[mydb]..[test]"), Is.EqualTo("test"));
-        Assert.That(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), Is.EqualTo("test"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(syntax.GetRuntimeName("[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("`test`"), Is.EqualTo("`test`"));
+            Assert.That(syntax.GetRuntimeName("`[test]`"), Is.EqualTo("`[test]`"));
+            Assert.That(syntax.GetRuntimeName("[mydb].[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("`mymysqldb`.`test`"), Is.EqualTo("`test`"));
+            Assert.That(syntax.GetRuntimeName("[mydb]..[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), Is.EqualTo("test"));
+        });
     }
 
     [Test]

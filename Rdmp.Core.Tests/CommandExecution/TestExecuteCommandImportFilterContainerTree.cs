@@ -51,10 +51,13 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         sds.ClearAllInjections();
         Assert.That(sds.RootFilterContainer, Is.Not.Null);
         Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
-        Assert.That(sds.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
-        Assert.That(sds.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
 
-        Assert.That(sds.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+        });
     }
 
     [Test]
@@ -94,10 +97,13 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         ac.ClearAllInjections();
         Assert.That(ac.RootFilterContainer, Is.Not.Null);
         Assert.That(ac.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
-        Assert.That(ac.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
-        Assert.That(ac.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
 
-        Assert.That(ac.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+        });
     }
 
 
@@ -139,13 +145,19 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         cmd.Execute();
 
         sds.ClearAllInjections();
-        Assert.That(sds.RootFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.OR));
-        Assert.That(sds.RootFilterContainer, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.OR));
+            Assert.That(sds.RootFilterContainer, Is.Not.Null);
+        });
         Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
 
         var subContainers = sds.RootFilterContainer.GetSubContainers();
         Assert.That(subContainers, Has.Length.EqualTo(2));
-        Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.AND), Is.EqualTo(1));
-        Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.OR), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.AND), Is.EqualTo(1));
+            Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.OR), Is.EqualTo(1));
+        });
     }
 }

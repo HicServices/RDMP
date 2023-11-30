@@ -56,8 +56,11 @@ public class CredentialsTests : DatabaseTests
 
         try
         {
-            Assert.That(newCredentials.Name, Is.EqualTo("bob"));
-            Assert.That(newCredentials.ID, Is.Not.EqualTo(0));
+            Assert.Multiple(() =>
+            {
+                Assert.That(newCredentials.Name, Is.EqualTo("bob"));
+                Assert.That(newCredentials.ID, Is.Not.EqualTo(0));
+            });
         }
         finally
         {
@@ -84,10 +87,13 @@ public class CredentialsTests : DatabaseTests
         try
         {
             Assert.That(newCopy, Is.Not.Null);
-            Assert.That(newCopy.ID, Is.EqualTo(newCredentials.ID));
-            Assert.That(newCopy.Username, Is.EqualTo(newCredentials.Username));
-            Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo(newCredentials.GetDecryptedPassword()));
-            Assert.That(newCopy.Password, Is.EqualTo(newCredentials.Password));
+            Assert.Multiple(() =>
+            {
+                Assert.That(newCopy.ID, Is.EqualTo(newCredentials.ID));
+                Assert.That(newCopy.Username, Is.EqualTo(newCredentials.Username));
+                Assert.That(newCopy.GetDecryptedPassword(), Is.EqualTo(newCredentials.GetDecryptedPassword()));
+                Assert.That(newCopy.Password, Is.EqualTo(newCredentials.Password));
+            });
         }
         finally
         {
@@ -201,12 +207,15 @@ public class CredentialsTests : DatabaseTests
             originalCredentials.SaveToDatabase();
 
             var newCopy = CatalogueRepository.GetObjectByID<DataAccessCredentials>(originalCredentials.ID);
-            Assert.That(newCopy.Name, Is.EqualTo(originalCredentials.Name));
-            Assert.That(newCopy.Username, Is.EqualTo(originalCredentials.Username));
-            Assert.That(newCopy.Password, Is.EqualTo(originalCredentials.Password));
+            Assert.Multiple(() =>
+            {
+                Assert.That(newCopy.Name, Is.EqualTo(originalCredentials.Name));
+                Assert.That(newCopy.Username, Is.EqualTo(originalCredentials.Username));
+                Assert.That(newCopy.Password, Is.EqualTo(originalCredentials.Password));
 
-            //test overridden Equals
-            Assert.That(newCopy, Is.EqualTo(originalCredentials));
+                //test overridden Equals
+                Assert.That(newCopy, Is.EqualTo(originalCredentials));
+            });
             originalCredentials.Password = "fish";
             Assert.That(newCopy, Is.EqualTo(originalCredentials)); //they are still equal because IDs are the same
         }
@@ -324,8 +333,11 @@ public class CredentialsTests : DatabaseTests
                 Password = "pass"
             };
 
-            Assert.That(cred.Password, Is.Not.EqualTo("pass"));
-            Assert.That(cred.GetDecryptedPassword(), Is.EqualTo("pass"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(cred.Password, Is.Not.EqualTo("pass"));
+                Assert.That(cred.GetDecryptedPassword(), Is.EqualTo("pass"));
+            });
 
 
             cred.SaveToDatabase();
@@ -335,10 +347,13 @@ public class CredentialsTests : DatabaseTests
             var constr =
                 (SqlConnectionStringBuilder)c
                     .GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).Builder;
-            Assert.That(constr.DataSource, Is.EqualTo("myserver"));
-            Assert.That(constr.IntegratedSecurity, Is.False);
-            Assert.That(constr.UserID, Is.EqualTo("bob"));
-            Assert.That(constr.Password, Is.EqualTo("pass"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(constr.DataSource, Is.EqualTo("myserver"));
+                Assert.That(constr.IntegratedSecurity, Is.False);
+                Assert.That(constr.UserID, Is.EqualTo("bob"));
+                Assert.That(constr.Password, Is.EqualTo("pass"));
+            });
         }
         finally
         {
@@ -361,8 +376,11 @@ public class CredentialsTests : DatabaseTests
 
 
         var manager = new TableInfoCredentialsManager(CatalogueTableRepository);
-        Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", null), Is.EqualTo(creds));
-        Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", ""), Is.EqualTo(creds));
+        Assert.Multiple(() =>
+        {
+            Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", null), Is.EqualTo(creds));
+            Assert.That(manager.GetCredentialByUsernameAndPasswordIfExists("Root", ""), Is.EqualTo(creds));
+        });
     }
 
     [Test]
@@ -378,9 +396,12 @@ public class CredentialsTests : DatabaseTests
         var cred = credentialsFactory.Create(t1, "blarg", "flarg", DataAccessContext.Any);
         var cred2 = credentialsFactory.Create(t2, "blarg", "flarg", DataAccessContext.Any);
 
-        Assert.That(CatalogueRepository.GetAllObjects<DataAccessCredentials>(), Has.Length.EqualTo(credCount + 1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(CatalogueRepository.GetAllObjects<DataAccessCredentials>(), Has.Length.EqualTo(credCount + 1));
 
-        Assert.That(cred2, Is.EqualTo(cred),
-            $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
+            Assert.That(cred2, Is.EqualTo(cred),
+                $"Expected {nameof(DataAccessCredentialsFactory)} to reuse existing credentials for both tables as they have the same username/password - e.g. bulk insert");
+        });
     }
 }

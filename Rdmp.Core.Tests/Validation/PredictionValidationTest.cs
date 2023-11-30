@@ -155,7 +155,7 @@ internal class PredictionValidationTest
         var prediction = new Prediction(new ChiSexPredictor(), "gender");
         var v = CreateInitialisedValidatorWithNoPrimaryConstraint(prediction);
 
-        Assert.Null(v.Validate(TestConstants.InvalidChiAndValidSex));
+        Assert.That(v.Validate(TestConstants.InvalidChiAndValidSex), Is.Null);
     }
 
     #endregion

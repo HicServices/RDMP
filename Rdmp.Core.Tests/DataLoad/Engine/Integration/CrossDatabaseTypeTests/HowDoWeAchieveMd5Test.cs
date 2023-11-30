@@ -41,7 +41,7 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
 
         Assert.That(value, Is.Not.Null);
         Assert.That(value, Is.Not.EqualTo("Fish"));
-        Assert.GreaterOrEqual(value.ToString().Length, 32);
+        Assert.That(value.ToString(), Has.Length.GreaterThanOrEqualTo(32));
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -74,6 +74,6 @@ internal class HowDoWeAchieveMd5Test : DatabaseTests
         Console.WriteLine($"Value was:{value}");
 
         Assert.That(value, Is.Not.Null);
-        Assert.GreaterOrEqual(value.ToString().Length, 32);
+        Assert.That(value.ToString(), Has.Length.GreaterThanOrEqualTo(32));
     }
 }

@@ -64,9 +64,12 @@ internal class UnitTestsAllObjectsSupported : UnitTests
                 {
                     //and that it returns an instance
                     Assert.That(instance, Is.Not.Null);
-                    Assert.That(instance.Exists());
-                    Assert.That(instance.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
-                        "Type was '" + t.Name + "'");
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(instance.Exists());
+                        Assert.That(instance.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
+                            "Type was '" + t.Name + "'");
+                    });
                 }
                 catch (Exception e)
                 {

@@ -28,9 +28,12 @@ internal class ExtractableCohortAuditLogBuilderTests : UnitTests
                 var fi2 = ExtractableCohortAuditLogBuilder.GetObjectIfAny(moqCohort, RepositoryLocator);
 
         Assert.That(fi2, Is.Not.Null);
-        Assert.That(fi2, Is.InstanceOf<FileInfo>());
-        Assert.That(((FileInfo)fi2).FullName, Is.EqualTo(fi.FullName));
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(fi2, Is.InstanceOf<FileInfo>());
+            Assert.That(((FileInfo)fi2).FullName, Is.EqualTo(fi.FullName));
+        });
+    }
 
 
         [Test]

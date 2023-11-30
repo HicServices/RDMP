@@ -41,13 +41,15 @@ public class TestDemographyCreation
 
         demog.GenerateTestDataFile(people, f, numberOfRecords);
 
-        //one progress task only, should have reported craeting 10,000 rows
-        //one progress task only, should have reported creating the correct number of rows
-        Assert.That(finished);
-        Assert.That(finishedWithRecords, Is.EqualTo(numberOfRecords));
+        Assert.Multiple(() =>
+        {
+            //one progress task only, should have reported craeting 10,000 rows
+            //one progress task only, should have reported creating the correct number of rows
+            Assert.That(finished);
+            Assert.That(finishedWithRecords, Is.EqualTo(numberOfRecords));
 
-        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length,
-            numberOfRecords); //can be newlines in middle of file
+            Assert.That(File.ReadAllLines(f.FullName), Has.Length.GreaterThanOrEqualTo(numberOfRecords)); //can be newlines in middle of file
+        });
 
         f.Delete();
     }

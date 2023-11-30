@@ -452,13 +452,16 @@ public class AggregateDataBasedTests : DatabaseTests
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.Multiple(() =>
+            {
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
-            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
-            Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("F"));
-            Assert.That(resultTable.Columns[4].ColumnName, Is.EqualTo("G"));
+                Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+                Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+                Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("F"));
+                Assert.That(resultTable.Columns[4].ColumnName, Is.EqualTo("G"));
+            });
 
             //T,E,F,G
             VerifyRowExist(resultTable, "2000", null, null, null,
@@ -506,12 +509,15 @@ public class AggregateDataBasedTests : DatabaseTests
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.Multiple(() =>
+            {
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
-            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
-            Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("G"));
+                Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+                Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+                Assert.That(resultTable.Columns[3].ColumnName, Is.EqualTo("G"));
+            });
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
             VerifyRowExist(resultTable, "2000", null, null,
@@ -569,11 +575,14 @@ public class AggregateDataBasedTests : DatabaseTests
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.Multiple(() =>
+            {
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
-            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+                Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("T"));
+                Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+            });
 
             //T,E,G - F does not appear because WHERE throws it out (both counts are below 42)
             VerifyRowExist(resultTable, "2000", null,
@@ -633,12 +642,15 @@ public class AggregateDataBasedTests : DatabaseTests
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.Multiple(() =>
+            {
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            //sort in AggregateTopX is the pivot dimension asc (i.e. order alphabetically)
-            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
-            Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("G"));
+                //sort in AggregateTopX is the pivot dimension asc (i.e. order alphabetically)
+                Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+                Assert.That(resultTable.Columns[2].ColumnName, Is.EqualTo("G"));
+            });
 
             //E,G (note that only 1 value appears for E because WHERE throws out rest).  Also note the two columns are E and G because that is Top 2 when alphabetically sorted of the pivot values (E,F,G,T) that match the filter (F doesn't)
             VerifyRowExist(resultTable, "2000", null,
@@ -698,11 +710,14 @@ public class AggregateDataBasedTests : DatabaseTests
 
             var resultTable = GetResultForBuilder(builder, tbl);
 
-            //axis is ordered ascending by date starting in 2000 so that row should come first
-            Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
+            Assert.Multiple(() =>
+            {
+                //axis is ordered ascending by date starting in 2000 so that row should come first
+                Assert.That(AreBasicallyEquals("2000", resultTable.Rows[0][0]));
 
-            //where logic matches T in spades but HAVING statement throws it out for having more than 4 records total
-            Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+                //where logic matches T in spades but HAVING statement throws it out for having more than 4 records total
+                Assert.That(resultTable.Columns[1].ColumnName, Is.EqualTo("E&, %a' mp;E"));
+            });
 
             //Only E appears because of Top 1 pivot statement
             VerifyRowExist(resultTable, "2000",

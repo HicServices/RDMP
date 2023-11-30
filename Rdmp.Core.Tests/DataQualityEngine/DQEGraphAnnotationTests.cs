@@ -29,19 +29,25 @@ public class DQEGraphAnnotationTests : DatabaseTests
             var annotation = new DQEGraphAnnotation(dqeRepo, 1, 2, 3, 4, "Fishesfly", evaluation,
                 DQEGraphType.TimePeriodicityGraph, "ALL");
 
-            Assert.That(annotation.StartX, Is.EqualTo(1));
-            Assert.That(annotation.StartY, Is.EqualTo(2));
-            Assert.That(annotation.EndX, Is.EqualTo(3));
-            Assert.That(annotation.EndY, Is.EqualTo(4));
-            Assert.That(annotation.AnnotationIsForGraph, Is.EqualTo(DQEGraphType.TimePeriodicityGraph));
+            Assert.Multiple(() =>
+            {
+                Assert.That(annotation.StartX, Is.EqualTo(1));
+                Assert.That(annotation.StartY, Is.EqualTo(2));
+                Assert.That(annotation.EndX, Is.EqualTo(3));
+                Assert.That(annotation.EndY, Is.EqualTo(4));
+                Assert.That(annotation.AnnotationIsForGraph, Is.EqualTo(DQEGraphType.TimePeriodicityGraph));
 
-            //should be about 2 milliseconds ago
-            Assert.That(annotation.CreationDate, Is.LessThanOrEqualTo(DateTime.Now.AddSeconds(3)));
-            //certainly shouldn't be before yesterday!
-            Assert.That(annotation.CreationDate, Is.GreaterThan(DateTime.Now.AddDays(-1)));
+                //should be about 2 milliseconds ago
+                Assert.That(annotation.CreationDate, Is.LessThanOrEqualTo(DateTime.Now.AddSeconds(3)));
+            });
+            Assert.Multiple(() =>
+            {
+                //certainly shouldn't be before yesterday!
+                Assert.That(annotation.CreationDate, Is.GreaterThan(DateTime.Now.AddDays(-1)));
 
-            //text should match
-            Assert.That(annotation.Text, Is.EqualTo("Fishesfly"));
+                //text should match
+                Assert.That(annotation.Text, Is.EqualTo("Fishesfly"));
+            });
 
             annotation.Text = "flibble";
             annotation.SaveToDatabase();

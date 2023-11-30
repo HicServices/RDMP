@@ -19,8 +19,11 @@ internal class ExecuteCommandClearFavouritesTests : UITests
     {
         var cmd = new ExecuteCommandClearFavourites(ItemActivator);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("You do not have any Favourites").IgnoreCase);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("You do not have any Favourites").IgnoreCase);
+        });
 
         var myFavCatalogue = WhenIHaveA<Catalogue>();
 

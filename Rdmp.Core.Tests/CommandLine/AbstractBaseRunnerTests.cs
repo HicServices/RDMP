@@ -128,8 +128,11 @@ public class AbstractBaseRunnerTests : UnitTests
             .ToArray();
 
         Assert.That(results, Has.Length.EqualTo(2));
-        Assert.That(results[0], Is.SameAs(c));
-        Assert.That(results[1], Is.SameAs(c2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(results[0], Is.SameAs(c));
+            Assert.That(results[1], Is.SameAs(c2));
+        });
     }
 
     [Test]

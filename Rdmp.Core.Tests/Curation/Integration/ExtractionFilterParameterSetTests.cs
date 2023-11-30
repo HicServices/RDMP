@@ -35,7 +35,10 @@ internal class ExtractionFilterParameterSetTests : DatabaseTests
         Assert.That(vals[0].Exists());
 
         paramSet.DeleteInDatabase();
-        Assert.That(paramSet.Exists(), Is.False);
-        Assert.That(vals[0].Exists(), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(paramSet.Exists(), Is.False);
+            Assert.That(vals[0].Exists(), Is.False);
+        });
     }
 }

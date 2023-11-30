@@ -41,9 +41,12 @@ public class CacheFetchRequestProviderTests
 
         var provider = new FailedCacheFetchRequestProvider(cacheProgress, 2);
         var fetchRequest = provider.GetNext(ThrowImmediatelyDataLoadEventListener.Quiet);
-        Assert.That(fetchRequest, Is.Not.Null);
-        Assert.That(new TimeSpan(8, 0, 0), Is.EqualTo(fetchRequest.ChunkPeriod));
-        Assert.That(failure.FetchRequestStart, Is.EqualTo(fetchRequest.Start));
+        Assert.Multiple(() =>
+        {
+            Assert.That(fetchRequest, Is.Not.Null);
+            Assert.That(new TimeSpan(8, 0, 0), Is.EqualTo(fetchRequest.ChunkPeriod));
+            Assert.That(failure.FetchRequestStart, Is.EqualTo(fetchRequest.Start));
+        });
         Assert.That(fetchRequest.IsRetry);
         cacheProgress.Received(1);
     }

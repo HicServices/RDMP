@@ -21,10 +21,13 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         var ac = WhenIHaveA<AggregateConfiguration>();
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.That(ac.RootFilterContainer_ID, Is.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer_ID, Is.Null);
 
-        Assert.That(cmd.ReasonCommandImpossible, Is.Null);
-        Assert.That(cmd.IsImpossible, Is.False);
+            Assert.That(cmd.ReasonCommandImpossible, Is.Null);
+            Assert.That(cmd.IsImpossible, Is.False);
+        });
 
         cmd.Execute();
 
@@ -41,8 +44,11 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
 
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There is already a root filter container on this object"));
-        Assert.That(cmd.IsImpossible);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There is already a root filter container on this object"));
+            Assert.That(cmd.IsImpossible);
+        });
     }
 
     [Test]
@@ -58,7 +64,10 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
 
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Filters cannot be added to API calls"));
-        Assert.That(cmd.IsImpossible);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Filters cannot be added to API calls"));
+            Assert.That(cmd.IsImpossible);
+        });
     }
 }

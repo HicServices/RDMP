@@ -60,10 +60,13 @@ internal class TableInfoTests : DatabaseTests
 
         var tableAfter = CatalogueRepository.GetObjectByID<TableInfo>(table.ID);
 
-        Assert.That(tableAfter.Database == "CHI_AMALG");
-        Assert.That(tableAfter.Server == "Highly restricted");
-        Assert.That(tableAfter.Name == "Fishmongery!");
-        Assert.That(tableAfter.DatabaseType == DatabaseType.Oracle);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tableAfter.Database, Is.EqualTo("CHI_AMALG"));
+            Assert.That(tableAfter.Server, Is.EqualTo("Highly restricted"));
+            Assert.That(tableAfter.Name, Is.EqualTo("Fishmongery!"));
+            Assert.That(tableAfter.DatabaseType, Is.EqualTo(DatabaseType.Oracle));
+        });
 
         tableAfter.DeleteInDatabase();
     }
@@ -87,18 +90,21 @@ internal class TableInfoTests : DatabaseTests
 
         try
         {
-            Assert.That(c.GetRuntimeName(), Is.EqualTo("ANOMyCol"));
-            Assert.That(c.GetRuntimeName(LoadStage.AdjustRaw), Is.EqualTo("MyCol"));
-            Assert.That(c.GetRuntimeName(LoadStage.PostLoad), Is.EqualTo("ANOMyCol"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(c.GetRuntimeName(), Is.EqualTo("ANOMyCol"));
+                Assert.That(c.GetRuntimeName(LoadStage.AdjustRaw), Is.EqualTo("MyCol"));
+                Assert.That(c.GetRuntimeName(LoadStage.PostLoad), Is.EqualTo("ANOMyCol"));
 
-            Assert.That(table.GetRuntimeName(), Is.EqualTo("TestTableName"));
-            Assert.That(table.GetRuntimeName(LoadBubble.Raw), Is.EqualTo("TestTableName"));
-            Assert.That(table.GetRuntimeName(LoadBubble.Staging), Is.EqualTo("TestDB_TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(), Is.EqualTo("TestTableName"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Raw), Is.EqualTo("TestTableName"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging), Is.EqualTo("TestDB_TestTableName_STAGING"));
 
-            Assert.That(table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()), Is.EqualTo("TestTableName_STAGING"));
-            Assert.That(table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")), Is.EqualTo("TestDB_TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()), Is.EqualTo("TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")), Is.EqualTo("TestDB_TestTableName_STAGING"));
 
-            Assert.That(table.GetRuntimeName(LoadBubble.Live), Is.EqualTo("TestTableName"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Live), Is.EqualTo("TestTableName"));
+            });
         }
         finally
         {
@@ -120,30 +126,39 @@ internal class TableInfoTests : DatabaseTests
         var tbl = db.CreateTable("Fish", new[] { new DatabaseColumnRequest("MyCol", "int") { IsPrimaryKey = true } },
             "Omg");
 
-        Assert.That(tbl.GetRuntimeName(), Is.EqualTo("Fish"));
-        Assert.That(tbl.Schema, Is.EqualTo("Omg"));
-        Assert.That(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.GetRuntimeName(), Is.EqualTo("Fish"));
+            Assert.That(tbl.Schema, Is.EqualTo("Omg"));
+            Assert.That(tbl.GetFullyQualifiedName(), Does.EndWith("[Omg].[Fish]"));
 
-        Assert.That(tbl.Exists());
+            Assert.That(tbl.Exists());
+        });
 
         Import(tbl, out var ti, out var cols);
 
         Assert.That(ti.Schema, Is.EqualTo("Omg"));
         var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
-        Assert.That(tbl2.Schema, Is.EqualTo("Omg"));
-        Assert.That(tbl2.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl2.Schema, Is.EqualTo("Omg"));
+            Assert.That(tbl2.Exists());
 
-        Assert.That(ti.Name.EndsWith("[Omg].[Fish]"));
+            Assert.That(ti.Name, Does.EndWith("[Omg].[Fish]"));
 
-        Assert.That(ti.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+            Assert.That(ti.GetFullyQualifiedName(), Does.EndWith("[Omg].[Fish]"));
+        });
 
         var c = cols.Single();
 
-        Assert.That(c.GetRuntimeName(), Is.EqualTo("MyCol"));
-        Assert.That(c.GetFullyQualifiedName(), Does.Contain("[Omg].[Fish]"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.GetRuntimeName(), Is.EqualTo("MyCol"));
+            Assert.That(c.GetFullyQualifiedName(), Does.Contain("[Omg].[Fish]"));
 
-        //should be primary key
-        Assert.That(c.IsPrimaryKey);
+            //should be primary key
+            Assert.That(c.IsPrimaryKey);
+        });
 
         var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
         var impl = triggerFactory.Create(tbl);
@@ -152,9 +167,12 @@ internal class TableInfoTests : DatabaseTests
 
         impl.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.That(impl.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+        Assert.Multiple(() =>
+        {
+            Assert.That(impl.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
 
-        Assert.That(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+            Assert.That(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        });
 
         //should be synced
         var sync = new TableInfoSynchronizer(ti);
@@ -188,8 +206,11 @@ internal class TableInfoTests : DatabaseTests
         var tbl = db.CreateTable("MyTable", dt);
         Import(tbl, out var tblInfo, out _);
 
-        Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.Table));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.Table));
+        });
 
         var viewName = "MyView";
 
@@ -222,8 +243,11 @@ FROM {1}",
         var sync = new TableInfoSynchronizer(viewInfo);
         sync.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.View));
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.View));
+        });
 
         view.Drop();
         Assert.That(view.Exists(), Is.False);

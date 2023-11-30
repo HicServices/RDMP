@@ -165,18 +165,24 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.That(p1.SequenceEqual(p2), Is.False);
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (e.g. localhost/127.0.0.1)
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (e.g. localhost/127.0.0.1)
 
-        Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
-        Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
         Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (must not be equal because the server is different!)
     }
 
@@ -200,18 +206,24 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.That(p1.SequenceEqual(p2), Is.False);
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (must not be equal because DatabaseType differs)
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (must not be equal because DatabaseType differs)
 
-        Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
-        Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
         Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (must not be equal because the server is different!)
     }
 
@@ -232,18 +244,24 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.That(p1.SequenceEqual(p2), Is.False);
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
-        Assert.That(p2[1], Is.EqualTo(p1[1])); // Server
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.EqualTo(p1[1])); // Server
 
-        Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
-        Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
         Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (i.e. Frank/Biff)
     }
 

@@ -48,9 +48,12 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
         var allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
         allocator.Initialize(req);
 
-        //allocator is being asked to allocate when there are no cohorts at all defined
-        Assert.That(defTable.GetRowCount(), Is.EqualTo(0));
-        Assert.That(allocator.AllocateReleaseIdentifier("0101010101"), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //allocator is being asked to allocate when there are no cohorts at all defined
+            Assert.That(defTable.GetRowCount(), Is.EqualTo(0));
+            Assert.That(allocator.AllocateReleaseIdentifier("0101010101"), Is.Not.Null);
+        });
 
         //Now let's define a cohort identifier for someone (0202020202) who is not in our project
         defTable.Insert(new Dictionary<string, object>
@@ -73,10 +76,13 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
         allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
         allocator.Initialize(req);
 
-        //allocator is being asked to allocate when there are cohorts defined including one with our person 02020202 but that person was in a different project
-        Assert.That(defTable.GetRowCount(), Is.EqualTo(1));
-        Assert.That(cohortTable.GetRowCount(), Is.EqualTo(1));
-        Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //allocator is being asked to allocate when there are cohorts defined including one with our person 02020202 but that person was in a different project
+            Assert.That(defTable.GetRowCount(), Is.EqualTo(1));
+            Assert.That(cohortTable.GetRowCount(), Is.EqualTo(1));
+            Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        });
         Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.EqualTo("0x0123"));
 
 
@@ -101,10 +107,13 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
         allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
         allocator.Initialize(req);
 
-        //allocator is being asked to allocate when the person 0202020202 has previously appeared under our project (10)
-        Assert.That(defTable.GetRowCount(), Is.EqualTo(2));
-        Assert.That(cohortTable.GetRowCount(), Is.EqualTo(2));
-        Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //allocator is being asked to allocate when the person 0202020202 has previously appeared under our project (10)
+            Assert.That(defTable.GetRowCount(), Is.EqualTo(2));
+            Assert.That(cohortTable.GetRowCount(), Is.EqualTo(2));
+            Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        });
         Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.EqualTo("0x0127"));
 
 
@@ -130,9 +139,12 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
         allocator = new ProjectConsistentGuidReleaseIdentifierAllocator();
         allocator.Initialize(req);
 
-        //allocator is being asked to allocate when the person 0202020202 has previously appeared under our project (10) as release identifiers 0x0127 and 0x0128
-        Assert.That(defTable.GetRowCount(), Is.EqualTo(3));
-        Assert.That(cohortTable.GetRowCount(), Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            //allocator is being asked to allocate when the person 0202020202 has previously appeared under our project (10) as release identifiers 0x0127 and 0x0128
+            Assert.That(defTable.GetRowCount(), Is.EqualTo(3));
+            Assert.That(cohortTable.GetRowCount(), Is.EqualTo(3));
+        });
 
         var ex = Assert.Throws<Exception>(() => allocator.AllocateReleaseIdentifier("0202020202"));
 
@@ -148,10 +160,13 @@ internal class ProjectConsistentGuidReleaseIdentifierAllocatorTests : DatabaseTe
                 .ExecuteScalar();
         }
 
-        //should be happy now again
-        Assert.That(defTable.GetRowCount(), Is.EqualTo(3));
-        Assert.That(cohortTable.GetRowCount(), Is.EqualTo(3));
-        Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            //should be happy now again
+            Assert.That(defTable.GetRowCount(), Is.EqualTo(3));
+            Assert.That(cohortTable.GetRowCount(), Is.EqualTo(3));
+            Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.Not.Null);
+        });
         Assert.That(allocator.AllocateReleaseIdentifier("0202020202"), Is.EqualTo("0x0127"));
     }
 }

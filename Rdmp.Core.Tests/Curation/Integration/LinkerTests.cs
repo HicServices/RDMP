@@ -50,18 +50,21 @@ internal class LinkerTests : DatabaseTests
         var highEnergyTable = new TableInfo(CatalogueRepository, "HighEnergyShizzle");
         var velocityColumn = new ColumnInfo(CatalogueRepository, "Velocity Of Matter", "int", highEnergyTable);
 
-        ////////////Check the creation worked ok
-        Assert.That(predator, Is.Not.Null); //catalogue
-        Assert.That(lazor, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            ////////////Check the creation worked ok
+            Assert.That(predator, Is.Not.Null); //catalogue
+            Assert.That(lazor, Is.Not.Null);
 
-        Assert.That(highEnergyTable, Is.Not.Null); //underlying table stuff
-        Assert.That(velocityColumn, Is.Not.Null);
+            Assert.That(highEnergyTable, Is.Not.Null); //underlying table stuff
+            Assert.That(velocityColumn, Is.Not.Null);
+        });
 
         ////////////// Create links between stuff and check they were created successfully //////////////
 
         //create a link between catalogue item lazor and velocity column
         lazor.SetColumnInfo(velocityColumn);
-        Assert.That(lazor.ColumnInfo.ID == velocityColumn.ID);
+        Assert.That(lazor.ColumnInfo.ID, Is.EqualTo(velocityColumn.ID));
 
         ////////////////cleanup ---- Delete everything that we created -------- //////////////
         velocityColumn

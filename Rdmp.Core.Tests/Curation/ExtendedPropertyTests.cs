@@ -18,22 +18,34 @@ internal class ExtendedPropertyTests : DatabaseTests
         var cata = new Catalogue(CatalogueRepository, "My cata");
         var prop = new ExtendedProperty(CatalogueRepository, cata, "Fish", 5);
 
-        Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(5));
-        Assert.That(prop.IsReferenceTo(cata));
+        Assert.Multiple(() =>
+        {
+            Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(5));
+            Assert.That(prop.IsReferenceTo(cata));
+        });
 
         prop.SetValue(10);
         prop.SaveToDatabase();
 
-        Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
-        Assert.That(prop.IsReferenceTo(cata));
+        Assert.Multiple(() =>
+        {
+            Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
+            Assert.That(prop.IsReferenceTo(cata));
+        });
 
         prop.RevertToDatabaseState();
 
-        Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
-        Assert.That(prop.IsReferenceTo(cata));
+        Assert.Multiple(() =>
+        {
+            Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
+            Assert.That(prop.IsReferenceTo(cata));
+        });
 
         var prop2 = CatalogueRepository.GetObjectByID<ExtendedProperty>(prop.ID);
-        Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
-        Assert.That(prop.IsReferenceTo(cata));
+        Assert.Multiple(() =>
+        {
+            Assert.That(prop.GetValueAsSystemType(), Is.EqualTo(10));
+            Assert.That(prop.IsReferenceTo(cata));
+        });
     }
 }

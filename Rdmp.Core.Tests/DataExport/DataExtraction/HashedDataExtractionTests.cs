@@ -46,16 +46,19 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
                 .ToArray();
 
         Assert.That(messages, Has.Length.EqualTo(1), "Expected a message about what the final extraction SQL was");
-        Assert.That(messages[0].Message.Contains(" HASH JOIN "),
+        Assert.That(messages[0].Message, Does.Contain(" HASH JOIN "),
             "expected use of hash matching was not reported by ExecuteDatasetExtractionSource in the SQL actually executed");
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
-        //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
+        Assert.Multiple(() =>
+        {
+            //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
+            Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
 {_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01"));
 
-        Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+        });
         File.Delete(r.OutputFile);
     }
 }

@@ -66,10 +66,10 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
             var worked = Validator.LoadFromXml(testData.catalogue.ValidatorXML);
 
             //notice that it is the ID of the referenced column that is maintained not the name of it! that is because we need to use a data access portal to get the contents of the column which might be in a different table (and normally would be)
-            Assert.That(testData.catalogue.ValidatorXML.Contains("previous_address_L2"), Is.False);
-            Assert.That(testData.catalogue.ValidatorXML.Contains(l2ColumnInfo.ID.ToString()));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Not.Contain("previous_address_L2"));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Contain(l2ColumnInfo.ID.ToString()));
 
-            Assert.That(testData.catalogue.ValidatorXML.Contains("previous_address_L1"));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Contain("previous_address_L1"));
 
             //we expect the validation XML to find the reference
             var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);

@@ -41,8 +41,11 @@ public class ObjectSharingObscureDependencyFinderTests : DatabaseTests
         _share.GetImportAs(ec.SharingUID, c2);
         _share.GetImportAs(eci.SharingUID, ci2);
 
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Has.Length.EqualTo(2));
-        Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(CatalogueRepository.GetAllObjects<ObjectExport>(), Has.Length.EqualTo(2));
+            Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));
+        });
         Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>()
 , Has.Length.EqualTo(2)); //successive calls shouldn't generate extra entries since they are same obj
         Assert.That(CatalogueRepository.GetAllObjects<ObjectImport>(), Has.Length.EqualTo(2));

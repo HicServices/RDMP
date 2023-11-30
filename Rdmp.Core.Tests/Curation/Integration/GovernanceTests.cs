@@ -40,8 +40,11 @@ public class GovernanceTests : DatabaseTests
     {
         var gov = GetGov();
 
-        Assert.That(gov, Is.Not.Null);
-        Assert.That(DateTime.Now.Date, Is.EqualTo(gov.StartDate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(gov, Is.Not.Null);
+            Assert.That(DateTime.Now.Date, Is.EqualTo(gov.StartDate));
+        });
     }
 
     [Test]

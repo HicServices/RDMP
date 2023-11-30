@@ -82,12 +82,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             var dt = destinationTable.GetDataTable();
 
             Assert.That(dt.Rows, Has.Count.EqualTo(1));
-            Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
-            Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
-            Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
+            Assert.Multiple(() =>
+            {
+                Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
+                Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
 
-            Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
-            Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
+                Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
+                Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
+            });
 
             AssertLookupsEtcExist(dbToExtractTo);
         }
@@ -102,12 +105,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
     private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
     {
-        Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem")
-            .Exists());
-        Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp")
-            .Exists());
-        Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff")
-            .Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem")
+                    .Exists());
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp")
+                .Exists());
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff")
+                .Exists());
+        });
     }
 
     private void CreateLookupsEtc()

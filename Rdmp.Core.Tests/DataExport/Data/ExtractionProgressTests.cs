@@ -138,13 +138,19 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var cloneSds = clone.SelectedDataSets.Single();
         var cloneProgress = cloneSds.ExtractionProgressIfAny;
 
+        Assert.Multiple(() =>
+        {
 
-        // should be different instances
-        Assert.That(cloneProgress, Is.Not.SameAs(origProgress));
+            // should be different instances
+            Assert.That(cloneProgress, Is.Not.SameAs(origProgress));
 
-        Assert.That(new DateTime(2001, 01, 01), Is.EqualTo(cloneProgress.StartDate));
-        Assert.That(cloneProgress.ProgressDate, Is.Null, "Expected progress to be reset on clone");
-        Assert.That(new DateTime(2020, 01, 01), Is.EqualTo(cloneProgress.EndDate));
+            Assert.That(new DateTime(2001, 01, 01), Is.EqualTo(cloneProgress.StartDate));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(cloneProgress.ProgressDate, Is.Null, "Expected progress to be reset on clone");
+            Assert.That(new DateTime(2020, 01, 01), Is.EqualTo(cloneProgress.EndDate));
+        });
     }
 
     private ExtractionProgress CreateAnExtractionProgress() => CreateAnExtractionProgress(out _);

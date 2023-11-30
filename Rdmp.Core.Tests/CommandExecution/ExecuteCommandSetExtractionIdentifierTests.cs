@@ -43,21 +43,27 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                 ei1.IsExtractionIdentifier = true;
                 ei1.SaveToDatabase();
 
-        // before we run the command the primary ei1 is the identifier
-        Assert.That(ei1.IsExtractionIdentifier);
-        Assert.That(otherEi.IsExtractionIdentifier, Is.False);
+        Assert.Multiple(() =>
+        {
+            // before we run the command the primary ei1 is the identifier
+            Assert.That(ei1.IsExtractionIdentifier);
+            Assert.That(otherEi.IsExtractionIdentifier, Is.False);
+        });
 
-                // by picking the second (FFF) we should switch
-                var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
+        // by picking the second (FFF) we should switch
+        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
                     null, "FFF");
                 cmd.Execute();
 
-        // original should no longer be the extraction identifer
-        Assert.That(ei1.IsExtractionIdentifier, Is.False);
+        Assert.Multiple(() =>
+        {
+            // original should no longer be the extraction identifer
+            Assert.That(ei1.IsExtractionIdentifier, Is.False);
 
-        // and the one picked should now be the only one
-        Assert.That(otherEi.IsExtractionIdentifier);
-        }
+            // and the one picked should now be the only one
+            Assert.That(otherEi.IsExtractionIdentifier);
+        });
+    }
 
         [Test]
         public void TestSetExtractionIdentifier_Catalogue_ButColumnDoesNotExist()
@@ -93,10 +99,13 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                     , "happyfun");
                 cmd.Execute();
 
-        // affects extraction specific version
-        Assert.That(ec1.IsExtractionIdentifier);
+        Assert.Multiple(() =>
+        {
+            // affects extraction specific version
+            Assert.That(ec1.IsExtractionIdentifier);
 
-        // but not master
-        Assert.That(ec1.CatalogueExtractionInformation.IsExtractionIdentifier, Is.False);
-        }
+            // but not master
+            Assert.That(ec1.CatalogueExtractionInformation.IsExtractionIdentifier, Is.False);
+        });
+    }
 }

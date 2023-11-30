@@ -222,10 +222,13 @@ public class TestDataAccess : DatabaseTests
             //t has no credentials
             var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
-            Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
-            Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
-            Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
-            Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(true));
+            Assert.Multiple(() =>
+            {
+                Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(true));
+            });
 
             var creds = new DataAccessCredentials(CatalogueRepository, "Bob");
             try
@@ -241,12 +244,15 @@ public class TestDataAccess : DatabaseTests
                 ////t has some credentials now
                 server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
-                Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
-                Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
-                Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
-                Assert.That(((SqlConnectionStringBuilder)server.Builder).UserID, Is.EqualTo("frank"));
-                Assert.That(((SqlConnectionStringBuilder)server.Builder).Password, Is.EqualTo("bobsPassword"));
-                Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(false));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).UserID, Is.EqualTo("frank"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).Password, Is.EqualTo("bobsPassword"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(false));
+                });
             }
             finally
             {

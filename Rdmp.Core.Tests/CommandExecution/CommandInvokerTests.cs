@@ -92,8 +92,11 @@ public class CommandInvokerTests : UnitTests
             base.Execute();
             Console.Write($"_a was {_a}");
             Console.Write($"_b was {_b}");
-            Assert.That(_a, Is.Not.Null);
-            Assert.That(_b, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_a, Is.Not.Null);
+                Assert.That(_b, Is.Not.Null);
+            });
         }
     }
 }

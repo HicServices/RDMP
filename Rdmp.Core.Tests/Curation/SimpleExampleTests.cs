@@ -28,9 +28,12 @@ public class SimpleExampleTests : DatabaseTests
     {
         var database = GetCleanedServer(type);
 
-        Assert.That(database.Exists());
-        Assert.That(database.DiscoverTables(true), Is.Empty);
-        Assert.That(database.GetRuntimeName(), Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(database.Exists());
+            Assert.That(database.DiscoverTables(true), Is.Empty);
+            Assert.That(database.GetRuntimeName(), Is.Not.Null);
+        });
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -46,10 +49,13 @@ public class SimpleExampleTests : DatabaseTests
 
         var tbl = database.CreateTable("MyTable", dt);
 
-        //at this point we are reading it with the credentials setup by GetCleanedServer
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
-        Assert.That(tbl.DiscoverColumns(), Has.Length.EqualTo(1));
-        Assert.That(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
+        Assert.Multiple(() =>
+        {
+            //at this point we are reading it with the credentials setup by GetCleanedServer
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumns(), Has.Length.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("MyCol").IsPrimaryKey);
+        });
 
         //create a reference to the table in RMDP
         Import(tbl, out var tableInfo, out var columnInfos);
@@ -63,16 +69,19 @@ public class SimpleExampleTests : DatabaseTests
         //get new reference to the table
         var newTbl = newDatabase.ExpectTable(tableInfo.GetRuntimeName());
 
-        //the credentials should be different
-        Assert.That(newTbl.Database.Server.ExplicitUsernameIfAny, Is.Not.EqualTo(tbl.Database.Server.ExplicitUsernameIfAny));
+        Assert.Multiple(() =>
+        {
+            //the credentials should be different
+            Assert.That(newTbl.Database.Server.ExplicitUsernameIfAny, Is.Not.EqualTo(tbl.Database.Server.ExplicitUsernameIfAny));
 
-        //try re-reading the data
-        Assert.That(newTbl.GetRowCount(), Is.EqualTo(1));
-        Assert.That(newTbl.DiscoverColumns(), Has.Length.EqualTo(1));
-        Assert.That(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
+            //try re-reading the data
+            Assert.That(newTbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(newTbl.DiscoverColumns(), Has.Length.EqualTo(1));
+            Assert.That(newTbl.DiscoverColumn("MyCol").IsPrimaryKey);
 
-        //low priority user shouldn't be able to drop tables
-        Assert.That(newTbl.Drop, Throws.Exception);
+            //low priority user shouldn't be able to drop tables
+            Assert.That(newTbl.Drop, Throws.Exception);
+        });
 
         //normal testing user should be able to
         tbl.Drop();

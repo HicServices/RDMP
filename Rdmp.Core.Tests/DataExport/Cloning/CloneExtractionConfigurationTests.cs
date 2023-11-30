@@ -40,7 +40,7 @@ public class CloneExtractionConfigurationTests : TestsRequiringAnExtractionConfi
                 null);
             filter.SaveToDatabase();
 
-            Assert.That(filter.ExtractionFilterParameters.Count() == 1);
+            Assert.That(filter.ExtractionFilterParameters.Count(), Is.EqualTo(1));
 
             //create a root container
             var container = new FilterContainer(DataExportRepository);
@@ -91,8 +91,11 @@ AND
 ));
 
             var deepClone = _configuration.DeepCloneWithNewIDs();
-            Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
-            Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
+                Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+            });
             try
             {
                 var request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
@@ -124,22 +127,28 @@ AND
         origProgress.SaveToDatabase();
 
         var deepClone = _configuration.DeepCloneWithNewIDs();
-        Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
-        Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+        Assert.Multiple(() =>
+        {
+            Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
+            Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+        });
 
         var clonedSds = deepClone.SelectedDataSets.Single(s => s.ExtractableDataSet_ID == sds.ExtractableDataSet_ID);
 
         var clonedProgress = clonedSds.ExtractionProgressIfAny;
 
         Assert.That(clonedProgress, Is.Not.Null);
-        Assert.That(clonedProgress.StartDate, Is.Null);
-        Assert.That(clonedProgress.ProgressDate, Is.Null,
-            "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
+        Assert.Multiple(() =>
+        {
+            Assert.That(clonedProgress.StartDate, Is.Null);
+            Assert.That(clonedProgress.ProgressDate, Is.Null,
+                "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
 
-        Assert.That(origProgress.EndDate, Is.EqualTo(clonedProgress.EndDate));
-        Assert.That(origProgress.NumberOfDaysPerBatch, Is.EqualTo(clonedProgress.NumberOfDaysPerBatch));
-        Assert.That(origProgress.Name, Is.EqualTo(clonedProgress.Name));
-        Assert.That(origProgress.ExtractionInformation_ID, Is.EqualTo(clonedProgress.ExtractionInformation_ID));
+            Assert.That(origProgress.EndDate, Is.EqualTo(clonedProgress.EndDate));
+            Assert.That(origProgress.NumberOfDaysPerBatch, Is.EqualTo(clonedProgress.NumberOfDaysPerBatch));
+            Assert.That(origProgress.Name, Is.EqualTo(clonedProgress.Name));
+            Assert.That(origProgress.ExtractionInformation_ID, Is.EqualTo(clonedProgress.ExtractionInformation_ID));
+        });
 
 
         deepClone.DeleteInDatabase();

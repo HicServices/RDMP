@@ -239,12 +239,15 @@ public class CommittingNewCohortsTests : TestsRequiringACohort
 
         // should have been updated to use the new cohort
         Assert.That(migrate ? cohort999.ID : cohort998.ID, Is.EqualTo(ec1.Cohort_ID));
-        Assert.That(migrate ? cohort999.ID : cohort998.ID, Is.EqualTo(ec2.Cohort_ID));
+        Assert.Multiple(() =>
+        {
+            Assert.That(migrate ? cohort999.ID : cohort998.ID, Is.EqualTo(ec2.Cohort_ID));
 
-        // should not have magically gotten a cohort
-        Assert.That(ec3.Cohort_ID, Is.Null);
+            // should not have magically gotten a cohort
+            Assert.That(ec3.Cohort_ID, Is.Null);
 
-        // is frozen so should not have been changed to the new cohort (and therefore still use cohort998)
-        Assert.That(cohort998.ID, Is.EqualTo(ec4.Cohort_ID));
+            // is frozen so should not have been changed to the new cohort (and therefore still use cohort998)
+            Assert.That(cohort998.ID, Is.EqualTo(ec4.Cohort_ID));
+        });
     }
 }

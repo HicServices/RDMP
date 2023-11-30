@@ -115,8 +115,7 @@ public class CohortSummaryQueryBuilderTests : DatabaseTests
         var ex = Assert.Throws<ArgumentException>(() => new CohortSummaryQueryBuilder(acDataset, acCohort, null));
 
         Assert.That(
-            ex.Message.StartsWith(
-                "Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset"));
+            ex.Message, Does.StartWith("Constructor arguments to CohortSummaryQueryBuilder must belong to the same dataset"));
         acCohort.RevertToDatabaseState();
     }
 

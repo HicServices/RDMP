@@ -293,8 +293,11 @@ end
         while (r.Read())
         {
             rowsReturned++;
-            Assert.That(r["chi"], Is.Not.Null);
-            Assert.That(r["definitionID"], Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r["chi"], Is.Not.Null);
+                Assert.That(r["definitionID"], Is.Not.Null);
+            });
         }
 
         Assert.That(rowsReturned, Is.EqualTo(5));
@@ -342,9 +345,12 @@ end
             con.Open();
             var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            Assert.That(r.Read());
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
 
-            Assert.That(r[1], Is.EqualTo(10));
+                Assert.That(r[1], Is.EqualTo(10));
+            });
 
             Assert.That(r.Read(), Is.False);
         }
@@ -365,9 +371,12 @@ end
             con.Open();
             var r = db.Server.GetCommand(sql, con).ExecuteReader();
 
-            Assert.That(r.Read());
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
 
-            Assert.That(r[1], Is.EqualTo(1)); //should now only have 1 record being returned and counted when executing
+                Assert.That(r[1], Is.EqualTo(1)); //should now only have 1 record being returned and counted when executing
+            });
 
             Assert.That(r.Read(), Is.False);
         }
@@ -445,9 +454,12 @@ end
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(1));
 
-        Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("ReleaseId"));
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("ReleaseId"));
+        });
 
         //should be a guid
         Assert.That(dt.Rows[0][0].ToString(), Has.Length.GreaterThan(10));

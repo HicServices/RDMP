@@ -16,9 +16,12 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
     public void TestDeletingACatalogue_NoneInDbIsFine()
     {
         var prev = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
-        Assert.That(prev, Is.Empty);
+        Assert.Multiple(() =>
+        {
+            Assert.That(prev, Is.Empty);
 
-        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
+            Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
+        });
 
         var now = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
         Assert.That(now, Is.Empty);
@@ -30,8 +33,11 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var cata = WhenIHaveA<Catalogue>();
         cata.Name = "bob";
 
-        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
-        Assert.That(cata.Exists(), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
+            Assert.That(cata.Exists(), Is.False);
+        });
     }
 
     [Test]
@@ -40,10 +46,13 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var cata = WhenIHaveA<Catalogue>();
         cata.Name = "ffff";
 
-        Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(Run("delete", "Catalogue:bob"), Is.EqualTo(0));
 
-        // should not have been deleted because name does not match what is sought to be deleted
-        Assert.That(cata.Exists());
+            // should not have been deleted because name does not match what is sought to be deleted
+            Assert.That(cata.Exists());
+        });
 
         //cleanup
         cata.DeleteInDatabase();
@@ -72,11 +81,14 @@ internal class ExecuteCommandDeleteTestsCli : CommandCliTests
         var c1 = WhenIHaveA<Catalogue>();
         var c2 = WhenIHaveA<Catalogue>();
 
-        // delete all catalogues
-        Assert.That(Run("delete", "Catalogue", "true"), Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            // delete all catalogues
+            Assert.That(Run("delete", "Catalogue", "true"), Is.EqualTo(0));
 
-        Assert.That(c1.Exists(), Is.False);
-        Assert.That(c2.Exists(), Is.False);
+            Assert.That(c1.Exists(), Is.False);
+            Assert.That(c2.Exists(), Is.False);
+        });
     }
 
     [Test]

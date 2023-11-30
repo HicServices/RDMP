@@ -39,8 +39,11 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
             joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                 aggregate1);
 
-            Assert.That(cohortIdentificationConfiguration.ID, Is.EqualTo(joinable.CohortIdentificationConfiguration_ID));
-            Assert.That(aggregate1.ID, Is.EqualTo(joinable.AggregateConfiguration_ID));
+            Assert.Multiple(() =>
+            {
+                Assert.That(cohortIdentificationConfiguration.ID, Is.EqualTo(joinable.CohortIdentificationConfiguration_ID));
+                Assert.That(aggregate1.ID, Is.EqualTo(joinable.AggregateConfiguration_ID));
+            });
         }
         finally
         {
@@ -88,7 +91,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 var ex = Assert.Throws<SqlException>(() =>
                     new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration,
                         aggregate1));
-                Assert.That(ex.Message.Contains("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
+                Assert.That(ex.Message, Does.Contain("ix_eachAggregateCanOnlyBeJoinableOnOneProject"));
             }
         }
         finally
@@ -107,7 +110,7 @@ public class JoinableCohortConfigurationTests : CohortIdentificationTests
                 aggregate1);
             joinable.AddUser(aggregate2);
 
-            Assert.That(joinable.Users.Length == 1);
+            Assert.That(joinable.Users, Has.Length.EqualTo(1));
             Assert.That(joinable.Users[0].AggregateConfiguration, Is.EqualTo(aggregate2));
         }
         finally

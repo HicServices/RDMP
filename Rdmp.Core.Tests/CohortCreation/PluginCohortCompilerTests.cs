@@ -82,8 +82,11 @@ public class PluginCohortCompilerTests : CohortQueryBuilderWithCacheTests
         Assert.That(dt.Rows, Has.Count.EqualTo(2));
         var results2 = new[] { (string)dt.Rows[0][0], (string)dt.Rows[1][0] };
 
-        Assert.That(results2[0], Is.EqualTo(results[0]));
-        Assert.That(results2[1], Is.EqualTo(results[1]));
+        Assert.Multiple(() =>
+        {
+            Assert.That(results2[0], Is.EqualTo(results[0]));
+            Assert.That(results2[1], Is.EqualTo(results[1]));
+        });
     }
 
     [Test]

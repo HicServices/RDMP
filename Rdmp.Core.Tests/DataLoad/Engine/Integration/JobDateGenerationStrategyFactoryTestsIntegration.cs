@@ -61,8 +61,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
     {
         var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
             _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.That(ex.Message.StartsWith(
-            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
+        Assert.That(ex.Message, Does.StartWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration does not have ANY process tasks of type ProcessTaskType.DataProvider"));
     }
 
 
@@ -79,8 +78,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var ex = Assert.Throws<CacheDataProviderFindingException>(() =>
             _factory.Create(_lp, ThrowImmediatelyDataLoadEventListener.Quiet));
-        Assert.That(ex.Message.StartsWith(
-            "LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
+        Assert.That(ex.Message, Does.StartWith("LoadMetadata JobDateGenerationStrategyFactoryTestsIntegration has some DataProviders tasks but none of them wrap classes that implement ICachedDataProvider"));
     }
 
 

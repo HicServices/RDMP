@@ -45,9 +45,12 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
-            Assert.That(lines[0], Is.EqualTo("SuperSecretThing,ReleaseID"));
-            Assert.That(lines[1], Is.EqualTo("monkeys can all secretly fly,Pub_54321"));
-            Assert.That(lines[2], Is.EqualTo("the wizard of OZ was a man behind a machine,Pub_11ftw"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(lines[0], Is.EqualTo("SuperSecretThing,ReleaseID"));
+                Assert.That(lines[1], Is.EqualTo("monkeys can all secretly fly,Pub_54321"));
+                Assert.That(lines[2], Is.EqualTo("the wizard of OZ was a man behind a machine,Pub_11ftw"));
+            });
         }
         finally
         {
@@ -118,8 +121,11 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
         var bobLine = lines.Single(l => l.StartsWith("Pub_54321,Bob"));
         var frankLine = lines.Single(l => l.StartsWith("Pub_11ftw,Frank"));
 
-        Assert.That(bobLine, Is.EqualTo("Pub_54321,Bob,2001-01-01,monkeys can all secretly fly"));
-        Assert.That(frankLine, Is.EqualTo("Pub_11ftw,Frank,2001-10-29,the wizard of OZ was a man behind a machine"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(bobLine, Is.EqualTo("Pub_54321,Bob,2001-01-01,monkeys can all secretly fly"));
+            Assert.That(frankLine, Is.EqualTo("Pub_11ftw,Frank,2001-10-29,the wizard of OZ was a man behind a machine"));
+        });
 
         asExtractable.DeleteInDatabase();
     }
@@ -188,9 +194,12 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
-        Assert.That(lines[0], Is.EqualTo("ReleaseID,Name,DateOfBirth"));
-        Assert.That(lines[1], Is.EqualTo("Pub_54321,Bob,2001-01-01"));
-        Assert.That(lines, Has.Length.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(lines[0], Is.EqualTo("ReleaseID,Name,DateOfBirth"));
+            Assert.That(lines[1], Is.EqualTo("Pub_54321,Bob,2001-01-01"));
+            Assert.That(lines, Has.Length.EqualTo(2));
+        });
     }
 
 

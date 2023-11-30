@@ -21,8 +21,11 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Wrong number of parameters supplied to command, expected 3 but got 1"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Wrong number of parameters supplied to command, expected 3 but got 1"));
+        });
     }
 
     [Test]
@@ -33,8 +36,11 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{c.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("First parameter must be an IArgumentHost"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("First parameter must be an IArgumentHost"));
+        });
     }
 
     [Test]
@@ -46,8 +52,11 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Could not find argument called 'fff' on "));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Could not find argument called 'fff' on "));
+        });
     }
 
     [Test]
@@ -64,8 +73,11 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "yyy" }, GetActivator());
         var cmd = new ExecuteCommandSetArgument(GetMockActivator(), picker);
 
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Provided value 'yyy' does not match expected Type 'Int32' of "));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.StartWith("Provided value 'yyy' does not match expected Type 'Int32' of "));
+        });
     }
 
 

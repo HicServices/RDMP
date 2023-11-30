@@ -25,14 +25,17 @@ internal class PickTableTests : UnitTests
 
         Assert.That(result.Table, Is.Not.Null);
 
-        Assert.That(result.Table.TableType, Is.EqualTo(TableType.View));
-        Assert.That(result.Table.Schema, Is.EqualTo("dbo"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Table.TableType, Is.EqualTo(TableType.View));
+            Assert.That(result.Table.Schema, Is.EqualTo("dbo"));
 
-        Assert.That(result.Table.GetRuntimeName(), Is.EqualTo("v_cool"));
-        Assert.That(result.Table.Database.GetRuntimeName(), Is.EqualTo("MyDb"));
-        Assert.That(result.Table.Database.Server.Name, Is.EqualTo("localhost\\sqlexpress"));
-        Assert.That(result.Table.Database.Server.DatabaseType, Is.EqualTo(DatabaseType.MicrosoftSQLServer));
-        Assert.That(result.Table.Database.Server.ExplicitPasswordIfAny, Is.Null);
-        Assert.That(result.Table.Database.Server.ExplicitUsernameIfAny, Is.Null);
+            Assert.That(result.Table.GetRuntimeName(), Is.EqualTo("v_cool"));
+            Assert.That(result.Table.Database.GetRuntimeName(), Is.EqualTo("MyDb"));
+            Assert.That(result.Table.Database.Server.Name, Is.EqualTo("localhost\\sqlexpress"));
+            Assert.That(result.Table.Database.Server.DatabaseType, Is.EqualTo(DatabaseType.MicrosoftSQLServer));
+            Assert.That(result.Table.Database.Server.ExplicitPasswordIfAny, Is.Null);
+            Assert.That(result.Table.Database.Server.ExplicitUsernameIfAny, Is.Null);
+        });
     }
 }

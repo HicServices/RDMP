@@ -59,7 +59,10 @@ public class EndToEndDLETest : TestsRequiringADle
 
         RunDLE(lmd, 30000, true);
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
-        Assert.That(tbl.GetDataTable().Rows[0][",,,,"], Is.EqualTo("fishon"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.GetDataTable().Rows[0][",,,,"], Is.EqualTo("fishon"));
+        });
     }
 }

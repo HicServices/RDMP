@@ -20,8 +20,11 @@ public class SimpleCohortIdentificationTests : DatabaseTests
 
         try
         {
-            Assert.That(config.Exists());
-            Assert.That(config.Name, Is.EqualTo("franky"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(config.Exists());
+                Assert.That(config.Name, Is.EqualTo("franky"));
+            });
 
             config.Description = "Hi there";
             config.SaveToDatabase();
@@ -77,10 +80,13 @@ public class SimpleCohortIdentificationTests : DatabaseTests
 
             //container 1 should now contain container 2
             Assert.That(container.GetSubContainers(), Has.Length.EqualTo(1));
-            Assert.That(container.GetSubContainers(), Does.Contain(container2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(container.GetSubContainers(), Does.Contain(container2));
 
-            //container 2 should not have any children
-            Assert.That(container2.GetSubContainers(), Is.Empty);
+                //container 2 should not have any children
+                Assert.That(container2.GetSubContainers(), Is.Empty);
+            });
         }
         finally
         {

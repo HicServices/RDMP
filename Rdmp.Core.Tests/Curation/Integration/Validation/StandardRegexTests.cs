@@ -24,8 +24,11 @@ public class StandardRegexTests : DatabaseTests
         var regex = new StandardRegex(CatalogueRepository);
         try
         {
-            Assert.That(regex.ConceptName, Is.Not.Null);
-            Assert.That(string.IsNullOrEmpty(regex.Description));
+            Assert.Multiple(() =>
+            {
+                Assert.That(regex.ConceptName, Is.Not.Null);
+                Assert.That(string.IsNullOrEmpty(regex.Description));
+            });
 
             regex.ConceptName = "Fish";
             regex.Regex = "^(Fish)$";

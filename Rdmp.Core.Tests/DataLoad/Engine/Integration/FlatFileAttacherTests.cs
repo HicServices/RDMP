@@ -127,17 +127,26 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Bob"));
-            Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Franky"));
-            Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Manny2"));
-            Assert.That(r["name2"], Is.EqualTo("Ok"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Manny2"));
+                Assert.That(r["name2"], Is.EqualTo("Ok"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -183,13 +192,19 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Bob"));
-            Assert.That(r["name2"], Is.EqualTo(new DateTime(2001, 01, 13)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo(new DateTime(2001, 01, 13)));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Franky"));
-            Assert.That(r["name2"], Is.EqualTo(new DateTime(2002, 01, 13)));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo(new DateTime(2002, 01, 13)));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -224,13 +239,19 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2 from Bob", con).ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Face"));
-            Assert.That(r["name2"], Is.EqualTo("Basher"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Face"));
+                Assert.That(r["name2"], Is.EqualTo("Basher"));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Candy"));
-            Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Candy"));
+                Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -279,14 +300,20 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2,FilePath from Bob", con).ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Face"));
-            Assert.That(r["name2"], Is.EqualTo("Basher"));
-            Assert.That(r["FilePath"], Is.EqualTo(filename));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Face"));
+                Assert.That(r["name2"], Is.EqualTo("Basher"));
+                Assert.That(r["FilePath"], Is.EqualTo(filename));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Candy"));
-            Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Candy"));
+                Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -336,13 +363,19 @@ public class FlatFileAttacherTests : DatabaseTests
             con.Open();
             var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
                 .ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Bob"));
-            Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Franky"));
-            Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -385,13 +418,19 @@ public class FlatFileAttacherTests : DatabaseTests
             con.Open();
             var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
                 .ExecuteReader();
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Bob"));
-            Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.That(r.Read());
-            Assert.That(r["name"], Is.EqualTo("Franky"));
-            Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);

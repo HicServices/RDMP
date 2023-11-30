@@ -41,8 +41,11 @@ public class JsonSerializationTests : DatabaseTests
 
         Assert.That(mySerializeableAfter, Is.Not.EqualTo(mySerializeable));
         Assert.That(mySerializeableAfter.SelectedCatalogue, Is.EqualTo(mySerializeable.SelectedCatalogue));
-        Assert.That(mySerializeableAfter.SelectedCatalogue.Name, Is.EqualTo(mySerializeable.SelectedCatalogue.Name));
-        Assert.That(mySerializeableAfter.Title, Is.EqualTo("War and Pieces"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(mySerializeableAfter.SelectedCatalogue.Name, Is.EqualTo(mySerializeable.SelectedCatalogue.Name));
+            Assert.That(mySerializeableAfter.Title, Is.EqualTo("War and Pieces"));
+        });
         mySerializeableAfter.SelectedCatalogue.Name = "Cannon balls";
         mySerializeableAfter.SelectedCatalogue.SaveToDatabase();
 

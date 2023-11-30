@@ -33,7 +33,7 @@ internal class DataFlowComponentTests
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
             renamer.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
-        Assert.That(ex.Message.Contains("does not exist in the supplied data table"));
+        Assert.That(ex.Message, Does.Contain("does not exist in the supplied data table"));
     }
 
     [Test]
@@ -69,7 +69,7 @@ internal class DataFlowComponentTests
 
         var ex = Assert.Throws<InvalidOperationException>(() =>
             dropper.ProcessPipelineData(toProcess, ThrowImmediatelyDataLoadEventListener.Quiet, cts.Token));
-        Assert.That(ex.Message.Contains("does not exist in the supplied data table"));
+        Assert.That(ex.Message, Does.Contain("does not exist in the supplied data table"));
     }
 
     [Test]
@@ -114,6 +114,6 @@ internal class ColumnforbidlistTests
         forbidlister.Rationale = "kaleidoscope engage";
         var ex = Assert.Throws<Exception>(() =>
             forbidlister.ProcessPipelineData(toProcess, new ThrowImmediatelyDataLoadJob(), null));
-        Assert.That(ex.Message.Contains("kaleidoscope engage"));
+        Assert.That(ex.Message, Does.Contain("kaleidoscope engage"));
     }
 }

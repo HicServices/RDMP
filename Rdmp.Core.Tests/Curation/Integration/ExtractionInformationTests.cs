@@ -29,12 +29,15 @@ public class ExtractionInformationTests : DatabaseTests
         ti = new TableInfo(CatalogueRepository, "HighEnergyShizzle");
         columnInfo = new ColumnInfo(CatalogueRepository, "VelocityOfMatter", "int", ti);
 
-        ////////////Check the creation worked ok
-        Assert.That(cata, Is.Not.Null); //catalogue
-        Assert.That(cataItem, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            ////////////Check the creation worked ok
+            Assert.That(cata, Is.Not.Null); //catalogue
+            Assert.That(cataItem, Is.Not.Null);
 
-        Assert.That(ti, Is.Not.Null); //underlying table stuff
-        Assert.That(columnInfo, Is.Not.Null);
+            Assert.That(ti, Is.Not.Null); //underlying table stuff
+            Assert.That(columnInfo, Is.Not.Null);
+        });
 
         ////////////// Create links between stuff and check they were created successfully //////////////
 
@@ -46,8 +49,8 @@ public class ExtractionInformationTests : DatabaseTests
     public void BasicIDsAreCorrect()
     {
         var firstLinked = cataItem.ColumnInfo;
-        Assert.That(firstLinked != null);
-        Assert.That(firstLinked.ID == columnInfo.ID);
+        Assert.That(firstLinked, Is.Not.EqualTo(null));
+        Assert.That(firstLinked.ID, Is.EqualTo(columnInfo.ID));
     }
 
 
@@ -88,10 +91,13 @@ public class ExtractionInformationTests : DatabaseTests
             var filterFastThings_NewCopyFromDB =
                 CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
 
-            Assert.That(filterFastThings_NewCopyFromDB.ID, Is.EqualTo(filterFastThings.ID));
-            Assert.That(filterFastThings_NewCopyFromDB.Description, Is.EqualTo(filterFastThings.Description));
-            Assert.That(filterFastThings_NewCopyFromDB.Name, Is.EqualTo(filterFastThings.Name));
-            Assert.That(filterFastThings_NewCopyFromDB.WhereSQL, Is.EqualTo(filterFastThings.WhereSQL));
+            Assert.Multiple(() =>
+            {
+                Assert.That(filterFastThings_NewCopyFromDB.ID, Is.EqualTo(filterFastThings.ID));
+                Assert.That(filterFastThings_NewCopyFromDB.Description, Is.EqualTo(filterFastThings.Description));
+                Assert.That(filterFastThings_NewCopyFromDB.Name, Is.EqualTo(filterFastThings.Name));
+                Assert.That(filterFastThings_NewCopyFromDB.WhereSQL, Is.EqualTo(filterFastThings.WhereSQL));
+            });
         }
         finally
         {
@@ -125,12 +131,15 @@ public class ExtractionInformationTests : DatabaseTests
 
             //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by colum/item pair)
             var extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
-            Assert.That(extractInfo2_CameFromLinker.ID, Is.EqualTo(extractInfo.ID));
-            Assert.That(extractInfo2_CameFromLinker.SelectSQL, Is.EqualTo(extractInfo.SelectSQL));
+            Assert.Multiple(() =>
+            {
+                Assert.That(extractInfo2_CameFromLinker.ID, Is.EqualTo(extractInfo.ID));
+                Assert.That(extractInfo2_CameFromLinker.SelectSQL, Is.EqualTo(extractInfo.SelectSQL));
 
-            //make sure it saves properly
-            Assert.That(extractInfo2_CameFromLinker.Order, Is.EqualTo(123));
-            Assert.That(extractInfo2_CameFromLinker.ExtractionCategory, Is.EqualTo(ExtractionCategory.Supplemental));
+                //make sure it saves properly
+                Assert.That(extractInfo2_CameFromLinker.Order, Is.EqualTo(123));
+                Assert.That(extractInfo2_CameFromLinker.ExtractionCategory, Is.EqualTo(ExtractionCategory.Supplemental));
+            });
         }
         finally
         {

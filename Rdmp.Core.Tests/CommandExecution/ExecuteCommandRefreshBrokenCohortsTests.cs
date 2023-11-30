@@ -62,11 +62,17 @@ internal class ExecuteCommandRefreshBrokenCohortsTests
 
 
         cmd = new ExecuteCommandRefreshBrokenCohorts(activator);
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There are no broken ExternalCohortTable to clear status on"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There are no broken ExternalCohortTable to clear status on"));
+        });
 
         cmd = new ExecuteCommandRefreshBrokenCohorts(activator, ect);
-        Assert.That(cmd.IsImpossible);
-        Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("'yarg' is not broken"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("'yarg' is not broken"));
+        });
     }
 }

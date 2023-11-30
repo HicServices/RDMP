@@ -303,16 +303,18 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
 
         AssertNoErrors(compiler);
 
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+    compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, Is.EqualTo(0));
+            Assert.That(
+                compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, Is.GreaterThan(0)); //both ac should have the same total
+            Assert.That(
+                compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, Is.GreaterThan(0)); // that is not 0
 
-        Assert.That(
-compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }).Key.FinalRowCount, Is.EqualTo(0));
-        Assert.That(
-            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac1)).Key.FinalRowCount, Is.GreaterThan(0)); //both ac should have the same total
-        Assert.That(
-            compiler.Tasks.Single(t => t.Key is AggregationTask at && at.Aggregate.Equals(ac2)).Key.FinalRowCount, Is.GreaterThan(0)); // that is not 0
-
-        Assert.That(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
-            "Expected EXCEPT container to use the cache");
+            Assert.That(compiler.Tasks.Any(static t => t.Key.GetCachedQueryUseCount().Equals("2/2")),
+                "Expected EXCEPT container to use the cache");
+        });
     }
 
     /// <summary>
@@ -541,9 +543,12 @@ compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }
         var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>()
             .Single(t => t.Aggregate.Equals(hospitalAdmissions));
 
-        Assert.That(hospitalAdmissionsTask.State, Is.EqualTo(CompilationState.Crashed));
+        Assert.Multiple(() =>
+        {
+            Assert.That(hospitalAdmissionsTask.State, Is.EqualTo(CompilationState.Crashed));
 
-        Assert.That(hospitalAdmissionsTask.CrashMessage.ToString(), Does.Contain("is not fully cached and CacheUsageDecision is MustUse"));
+            Assert.That(hospitalAdmissionsTask.CrashMessage.ToString(), Does.Contain("is not fully cached and CacheUsageDecision is MustUse"));
+        });
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -811,7 +816,7 @@ compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }
     /// <param name="compiler"></param>
     private static void AssertNoErrors(CohortCompiler compiler)
     {
-        Assert.IsNotEmpty(compiler.Tasks);
+        Assert.That(compiler.Tasks, Is.Not.Empty);
 
         TestContext.WriteLine($"| Task | Type | State | Error | RowCount | CacheUse |");
 
@@ -833,8 +838,11 @@ compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }
         string expectedErrorMessageToContain)
     {
         var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
-        Assert.That(acResult.Key.State, Is.EqualTo(CompilationState.Crashed));
-        Assert.That(acResult.Key.CrashMessage.Message, Does.Contain(expectedErrorMessageToContain));
+        Assert.Multiple(() =>
+        {
+            Assert.That(acResult.Key.State, Is.EqualTo(CompilationState.Crashed));
+            Assert.That(acResult.Key.CrashMessage.Message, Does.Contain(expectedErrorMessageToContain));
+        });
     }
 
     /// <summary>
@@ -889,8 +897,11 @@ compiler.Tasks.Single(static t => t.Value is { IsResultsForRootContainer: true }
         var containerResult =
             compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
 
-        Assert.That(containerResult.Key.State, Is.EqualTo(CompilationState.Finished));
-        Assert.That(containerResult.Key.GetCachedQueryUseCount(), Is.EqualTo(expectedCacheUsageCount));
+        Assert.Multiple(() =>
+        {
+            Assert.That(containerResult.Key.State, Is.EqualTo(CompilationState.Finished));
+            Assert.That(containerResult.Key.GetCachedQueryUseCount(), Is.EqualTo(expectedCacheUsageCount));
+        });
     }
 
     #endregion

@@ -61,10 +61,13 @@ public class PackageListIsCorrectTests
         undocumented.AppendJoin(Environment.NewLine, undocumentedPackages);
 
         var unusedPackages = packagesMarkdown.Except(usedPackages).ToArray();
-        Assert.That(unusedPackages, Is.Empty,
-            $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
-        Assert.Zero(undocumentedPackages.Count,
-            $"One or more packages not documented in PACKAGES.md. Recommended addition:{Environment.NewLine}{undocumented}");
+        Assert.Multiple(() =>
+        {
+            Assert.That(unusedPackages, Is.Empty,
+                    $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
+            Assert.That(undocumentedPackages, Is.Empty,
+                $"One or more packages not documented in PACKAGES.md. Recommended addition:{Environment.NewLine}{undocumented}");
+        });
     }
 
     /// <summary>

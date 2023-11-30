@@ -40,8 +40,11 @@ public class ArgumentTypeTests : UnitTests
     {
         var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
 
-        Assert.That(args.Single().GetValueAsSystemType(), Is.EqualTo(1.0));
-        Assert.That(args.Single().Value, Is.EqualTo("1"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(args.Single().GetValueAsSystemType(), Is.EqualTo(1.0));
+            Assert.That(args.Single().Value, Is.EqualTo("1"));
+        });
     }
 
     private class TestClassDemandingDouble

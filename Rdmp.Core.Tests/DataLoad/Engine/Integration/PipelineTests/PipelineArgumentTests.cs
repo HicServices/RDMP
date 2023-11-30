@@ -41,8 +41,11 @@ public class PipelineArgumentTests : DatabaseTests
             arg.SetType(nullableType);
             arg.SetValue(value);
 
-            Assert.That(arg.GetSystemType(), Is.EqualTo(nullableType));
-            Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(value));
+            Assert.Multiple(() =>
+            {
+                Assert.That(arg.GetSystemType(), Is.EqualTo(nullableType));
+                Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(value));
+            });
         }
         finally
         {

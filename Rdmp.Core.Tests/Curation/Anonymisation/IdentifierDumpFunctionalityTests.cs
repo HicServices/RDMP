@@ -85,8 +85,11 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
 
             var dt = _bulkData.GetDataTable(1000);
 
-            Assert.That(dt.Rows, Has.Count.EqualTo(1000));
-            Assert.That(dt.Columns.Contains("surname"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(dt.Rows, Has.Count.EqualTo(1000));
+                Assert.That(dt.Columns.Contains("surname"));
+            });
 
             //for checking the final ID table has the correct values in
             foreach (DataRow row in dt.Rows)
@@ -117,9 +120,9 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
             //make sure the values in the ID table match the ones we originally had in the pipeline
             while (r.Read())
                 if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
-                    Assert.That(r["surname"] == DBNull.Value);
+                    Assert.That(r["surname"], Is.EqualTo(DBNull.Value));
                 else
-                    Assert.That(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),
+                    Assert.That(chiToSurnameDictionary[r["chi"].ToString()], Does.Contain(r["surname"] as string),
                         "Dictionary did not contain expected surname:" + r["surname"]);
             r.Close();
 
@@ -310,11 +313,14 @@ public class IdentifierDumpFunctionalityTests : TestsRequiringFullAnonymisationS
         }
         catch (Exception ex)
         {
-            Assert.That(
-                ex.Message, Does.StartWith("Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
-            Assert.That(ex.InnerException?.Message.StartsWith("Connected successfully to server",StringComparison.Ordinal)==true);
-            Assert.That(ex.InnerException?.Message.EndsWith(
-                " but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)",StringComparison.Ordinal)==true);
+            Assert.Multiple(() =>
+            {
+                Assert.That(
+                            ex.Message, Does.StartWith("Exception occurred when trying to find stored procedure sp_createIdentifierDump"));
+                Assert.That(ex.InnerException?.Message.StartsWith("Connected successfully to server", StringComparison.Ordinal), Is.EqualTo(true));
+                Assert.That(ex.InnerException?.Message.EndsWith(
+                    " but did not find the stored procedure sp_createIdentifierDump in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)", StringComparison.Ordinal), Is.EqualTo(true));
+            });
         }
         finally
         {

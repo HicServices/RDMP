@@ -39,9 +39,12 @@ internal class SearchablesMatchScorerTests : UnitTests
         var cataScore = scores.Single(d => Equals(d.Key.Key, cata));
         var projScore = scores.Single(d => Equals(d.Key.Key, proj));
 
-        // Both score because they have the text FF
-        Assert.That(cataScore.Value, Is.GreaterThan(0));
-        Assert.That(projScore.Value, Is.GreaterThan(0));
+        Assert.Multiple(() =>
+        {
+            // Both score because they have the text FF
+            Assert.That(cataScore.Value, Is.GreaterThan(0));
+            Assert.That(projScore.Value, Is.GreaterThan(0));
+        });
 
         // Catalogue scores higher because it is an exact match to the name
         Assert.That(cataScore.Value, Is.GreaterThan(projScore.Value));

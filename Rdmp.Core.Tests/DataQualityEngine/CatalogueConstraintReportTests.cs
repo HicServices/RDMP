@@ -80,7 +80,7 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         if (testCancellingValidationEarly)
         {
             Assert.That(
-                listener.EventsReceivedBySender[report].Count(m => m.Exception is OperationCanceledException) == 1);
+                listener.EventsReceivedBySender[report].Count(m => m.Exception is OperationCanceledException), Is.EqualTo(1));
             testData.DeleteCatalogue();
             return;
         }
@@ -96,22 +96,28 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
 
         Assert.That(results, Is.Not.Null);
 
-        //the sum of all consequences across all data load run ids should be the record count
-        Assert.That(results.RowStates.Sum(r => r.Missing + r.Invalid + r.Wrong + r.Correct), Is.EqualTo(10000));
+        Assert.Multiple(() =>
+        {
+            //the sum of all consequences across all data load run ids should be the record count
+            Assert.That(results.RowStates.Sum(r => r.Missing + r.Invalid + r.Wrong + r.Correct), Is.EqualTo(10000));
 
-        //there should be at least 5 data load run ids (should be around 12 actually - see BulkTestData but theoretically everyone could magically - all 10,000 into 5 decades - or even less but those statistics must be astronomical)
-        Assert.GreaterOrEqual(results.RowStates.Length, 5);
+            //there should be at least 5 data load run ids (should be around 12 actually - see BulkTestData but theoretically everyone could magically - all 10,000 into 5 decades - or even less but those statistics must be astronomical)
+            Assert.That(results.RowStates, Has.Length.GreaterThanOrEqualTo(5));
 
-        //there should be lots of column results too
-        Assert.GreaterOrEqual(results.ColumnStates.Length, 5);
+            //there should be lots of column results too
+            Assert.That(results.ColumnStates, Has.Length.GreaterThanOrEqualTo(5));
+        });
 
         //Did it log?
         var logManager = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
         Assert.That(log, Is.Not.Null);
-        Assert.GreaterOrEqual(log.StartTime, startTime);
-        Assert.That(log.Errors, Is.Empty);
-        Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(numberOfRecordsToGenerate));
+        Assert.Multiple(() =>
+        {
+            Assert.That(log.StartTime, Is.GreaterThanOrEqualTo(startTime));
+            Assert.That(log.Errors, Is.Empty);
+            Assert.That(log.TableLoadInfos.Single().Inserts, Is.EqualTo(numberOfRecordsToGenerate));
+        });
 
         testData.DeleteCatalogue();
     }
@@ -226,14 +232,16 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         var notifier = new ToMemoryCheckNotifier();
         report.Check(notifier);
 
-        Assert.That(notifier.GetWorst(), Is.EqualTo(CheckResult.Warning));
-        Assert.That(notifier.Messages.Select(m => m.Message).ToArray(), Does.Contain("Found column in query builder columns which matches TargetProperty Name"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(notifier.GetWorst(), Is.EqualTo(CheckResult.Warning));
+            Assert.That(notifier.Messages.Select(m => m.Message).ToArray(), Does.Contain("Found column in query builder columns which matches TargetProperty Name"));
 
-        Assert.That(report.CatalogueSupportsReport(_catalogue));
+            Assert.That(report.CatalogueSupportsReport(_catalogue));
+        });
 
         var ex = Assert.Throws<Exception>(() => report.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.That(ex.Message ==
-                      "Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)");
+        Assert.That(ex.Message, Is.EqualTo("Did not find ExtractionInformation for a column called hic_dataLoadRunID, this will prevent you from viewing the resulting report subdivided by data load batch (make sure you have this column and that it is marked as extractable)"));
     }
 
     #endregion

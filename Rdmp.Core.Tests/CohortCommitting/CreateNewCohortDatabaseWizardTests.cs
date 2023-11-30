@@ -100,8 +100,11 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         candidates = wizard.GetPrivateIdentifierCandidates();
 
         var candidate = candidates.Single(c => c.RuntimeName.Equals("PrivateIdentifierA"));
-        Assert.That(candidate.DataType, Is.EqualTo("varchar(10)"));
-        Assert.That(candidate.MatchingExtractionInformations.Single().ID == _extractionInfo1.ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(candidate.DataType, Is.EqualTo("varchar(10)"));
+            Assert.That(candidate.MatchingExtractionInformations.Single().ID, Is.EqualTo(_extractionInfo1.ID));
+        });
     }
 
     [TestCase("text")]
@@ -147,10 +150,13 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
 
         //database should exist
         DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(cohortDatabaseName);
-        Assert.That(db.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(db.Exists());
 
-        //did it create the correct type?
-        Assert.That(ect.DatabaseType, Is.EqualTo(type));
+            //did it create the correct type?
+            Assert.That(ect.DatabaseType, Is.EqualTo(type));
+        });
 
         //the ExternalCohortTable should pass tests
         ect.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -187,20 +193,26 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         Assert.That(cohort, Is.Not.Null);
 
         var externalData = cohort.GetExternalData();
-        Assert.That(externalData.ExternalProjectNumber, Is.EqualTo(10));
-        Assert.That(string.IsNullOrEmpty(externalData.ExternalDescription), Is.False);
+        Assert.Multiple(() =>
+        {
+            Assert.That(externalData.ExternalProjectNumber, Is.EqualTo(10));
+            Assert.That(string.IsNullOrEmpty(externalData.ExternalDescription), Is.False);
 
 
-        Assert.That(externalData.ExternalCohortCreationDate.Value.Year, Is.EqualTo(DateTime.Now.Year));
-        Assert.That(externalData.ExternalCohortCreationDate.Value.Month, Is.EqualTo(DateTime.Now.Month));
-        Assert.That(externalData.ExternalCohortCreationDate.Value.Day, Is.EqualTo(DateTime.Now.Day));
-        Assert.That(externalData.ExternalCohortCreationDate.Value.Hour, Is.EqualTo(DateTime.Now.Hour));
+            Assert.That(externalData.ExternalCohortCreationDate.Value.Year, Is.EqualTo(DateTime.Now.Year));
+            Assert.That(externalData.ExternalCohortCreationDate.Value.Month, Is.EqualTo(DateTime.Now.Month));
+            Assert.That(externalData.ExternalCohortCreationDate.Value.Day, Is.EqualTo(DateTime.Now.Day));
+            Assert.That(externalData.ExternalCohortCreationDate.Value.Hour, Is.EqualTo(DateTime.Now.Hour));
+        });
 
         cohort.AppendToAuditLog("Test");
 
-        Assert.That(cohort.AuditLog.Contains("Test"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(cohort.AuditLog, Does.Contain("Test"));
 
-        Assert.That(cohort.Count, Is.EqualTo(1));
+            Assert.That(cohort.Count, Is.EqualTo(1));
+        });
         Assert.That(cohort.CountDistinct, Is.EqualTo(1));
 
         var cohortTable = cohort.FetchEntireCohort();
@@ -223,10 +235,13 @@ public class CreateNewCohortDatabaseWizardTests : DatabaseTests
         cohort.ReverseAnonymiseDataTable(dtAno, ThrowImmediatelyDataLoadEventListener.Quiet, true);
 
         Assert.That(dtAno.Columns, Has.Count.EqualTo(2));
-        Assert.That(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dtAno.Columns.Contains(cohort.GetPrivateIdentifier(true)));
 
-        Assert.That(dtAno.Rows[0][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
-        Assert.That(dtAno.Rows[1][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
+            Assert.That(dtAno.Rows[0][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
+            Assert.That(dtAno.Rows[1][cohort.GetPrivateIdentifier(true)], Is.EqualTo("101243"));
+        });
 
         //make sure that it shows up in the child provider (provides fast object access in CLI and builds tree model for UI)
         var repo = new DataExportChildProvider(RepositoryLocator, null, ThrowImmediatelyCheckNotifier.Quiet, null);

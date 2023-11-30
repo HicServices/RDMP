@@ -29,7 +29,7 @@ public class TriggerTests : DatabaseTests
     private DiscoveredDatabase _database;
 
 
-    public void CreateTable(DatabaseType dbType)
+    private void CreateTable(DatabaseType dbType)
     {
         _database = GetCleanedServer(dbType);
 
@@ -76,8 +76,11 @@ public class TriggerTests : DatabaseTests
         _table.CreatePrimaryKey(new[] { _table.DiscoverColumn("name") });
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
-        Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+            Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
+        });
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -95,8 +98,11 @@ public class TriggerTests : DatabaseTests
 
         GetImplementer().CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
-        Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(GetImplementer().GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+            Assert.That(GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody(), Is.EqualTo(true));
+        });
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -139,23 +145,29 @@ public class TriggerTests : DatabaseTests
 
         RunSQL("UPDATE {0} set bubbles =99", _table.GetFullyQualifiedName());
 
-        //new value is 99
-        Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()), Is.EqualTo(99));
-        //archived value is 3
-        Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()), Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            //new value is 99
+            Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _table.GetFullyQualifiedName()), Is.EqualTo(99));
+            //archived value is 3
+            Assert.That(ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()), Is.EqualTo(3));
+        });
 
         //Legacy table valued function only works for MicrosoftSQLServer
         if (dbType == DatabaseType.MicrosoftSQLServer)
         {
-            //legacy in 2001-01-01 it didn't exist
-            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"), Is.Null);
-            //legacy in 2001-01-03 it did exist and was 3
-            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"), Is.EqualTo(3));
-            //legacy boundary case?
-            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                //legacy in 2001-01-01 it didn't exist
+                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-01') where name = 'Franky'"), Is.Null);
+                //legacy in 2001-01-03 it did exist and was 3
+                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-03') where name = 'Franky'"), Is.EqualTo(3));
+                //legacy boundary case?
+                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy('2001-01-02') where name = 'Franky'"), Is.EqualTo(3));
 
-            //legacy today it is 99
-            Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"), Is.EqualTo(99));
+                //legacy today it is 99
+                Assert.That(ExecuteScalar("Select bubbles FROM TriggerTests_Legacy(GETDATE()) where name = 'Franky'"), Is.EqualTo(99));
+            });
         }
 
         // Live row should now reflect that it is validFrom today
@@ -198,18 +210,24 @@ public class TriggerTests : DatabaseTests
 
         Thread.Sleep(1000);
 
-        Assert.That(_table.GetRowCount(), Is.EqualTo(1));
-        Assert.That(_archiveTable.GetRowCount(), Is.EqualTo(4));
+        Assert.Multiple(() =>
+        {
+            Assert.That(_table.GetRowCount(), Is.EqualTo(1));
+            Assert.That(_archiveTable.GetRowCount(), Is.EqualTo(4));
+        });
 
         Import(_table, out var ti, out var cols);
         var fetcher = new DiffDatabaseDataFetcher(1, ti, 7, 100);
 
         fetcher.FetchData(new AcceptAllCheckNotifier());
-        Assert.That(fetcher.Updates_New.Rows[0]["bubbles"], Is.EqualTo(4));
-        Assert.That(fetcher.Updates_Replaced.Rows[0]["bubbles"], Is.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(fetcher.Updates_New.Rows[0]["bubbles"], Is.EqualTo(4));
+            Assert.That(fetcher.Updates_Replaced.Rows[0]["bubbles"], Is.EqualTo(3));
 
-        Assert.That(fetcher.Updates_New.Rows, Has.Count.EqualTo(1));
-        Assert.That(fetcher.Updates_Replaced.Rows, Has.Count.EqualTo(1));
+            Assert.That(fetcher.Updates_New.Rows, Has.Count.EqualTo(1));
+            Assert.That(fetcher.Updates_Replaced.Rows, Has.Count.EqualTo(1));
+        });
     }
 
 

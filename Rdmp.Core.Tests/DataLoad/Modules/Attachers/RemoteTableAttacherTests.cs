@@ -107,8 +107,11 @@ internal class RemoteTableAttacherTests : DatabaseTests
         var tbl2 = db.CreateTable("table2",
             new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
 
-        Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
-        Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        });
 
         var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -124,8 +127,11 @@ internal class RemoteTableAttacherTests : DatabaseTests
         job.StartLogging();
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
-        Assert.That(tbl2.GetRowCount(), Is.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(1));
+        });
     }
 
     private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
@@ -158,8 +164,11 @@ internal class RemoteTableAttacherTests : DatabaseTests
             new DatabaseColumnRequest("DateCol", new DatabaseTypeRequest(typeof(DateTime)))
         });
 
-        Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
-        Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        });
 
         var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -191,7 +200,10 @@ internal class RemoteTableAttacherTests : DatabaseTests
         job.StartLogging();
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
-        Assert.That(tbl2.GetRowCount(), Is.EqualTo(mismatchProgress ? 0 : 1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(mismatchProgress ? 0 : 1));
+        });
     }
 }

@@ -31,7 +31,7 @@ internal class ArbitraryFolderNodeTests : UITests
         Assert.That(menu1, Is.Not.Null);
         var count1 = menu1.Items.Count;
         //some you get for free e.g. Expand/Collapse
-        Assert.GreaterOrEqual(count1, 2);
+        Assert.That(count1, Is.GreaterThanOrEqualTo(2));
 
         //set the menu to have one command in it
         node.CommandGetter = () => new IAtomicCommand[] { new ImpossibleCommand("Do Nothing") };

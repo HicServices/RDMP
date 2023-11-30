@@ -48,9 +48,12 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length)); // NO new column added
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length)); // NO new column added
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("DateOfBirth"));
     }
@@ -65,8 +68,11 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(2));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("ReleaseID"));
     }
@@ -81,9 +87,12 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length + 1)); // synth PK is added
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length + 1)); // synth PK is added
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -101,9 +110,12 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length + 3)); // the "desc" column is added to the existing ones
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length + 3)); // the "desc" column is added to the existing ones
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
@@ -124,10 +136,13 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length +
-                              2)); // the "desc" column is added to the existing ones + the SynthPk
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length +
+                                  2)); // the "desc" column is added to the existing ones + the SynthPk
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 

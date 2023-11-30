@@ -32,9 +32,12 @@ public class ShareLoadMetadataTests : UnitTests
 
         var lmd2 = ShareToNewRepository(lmd);
 
-        //different repos so not identical
-        Assert.That(ReferenceEquals(lmd, lmd2), Is.False);
-        Assert.That(lmd2.Name, Is.EqualTo(lmd.Name));
+        Assert.Multiple(() =>
+        {
+            //different repos so not identical
+            Assert.That(ReferenceEquals(lmd, lmd2), Is.False);
+            Assert.That(lmd2.Name, Is.EqualTo(lmd.Name));
+        });
     }
 
     [Test]
@@ -47,12 +50,15 @@ public class ShareLoadMetadataTests : UnitTests
         var cata1 = lmd1.GetAllCatalogues().Single();
         var cata2 = lmd2.GetAllCatalogues().Single();
 
-        //different repos so not identical
-        Assert.That(ReferenceEquals(lmd1, lmd2), Is.False);
-        Assert.That(ReferenceEquals(cata1, cata2), Is.False);
+        Assert.Multiple(() =>
+        {
+            //different repos so not identical
+            Assert.That(ReferenceEquals(lmd1, lmd2), Is.False);
+            Assert.That(ReferenceEquals(cata1, cata2), Is.False);
 
-        Assert.That(lmd2.Name, Is.EqualTo(lmd1.Name));
-        Assert.That(cata2.Name, Is.EqualTo(cata1.Name));
+            Assert.That(lmd2.Name, Is.EqualTo(lmd1.Name));
+            Assert.That(cata2.Name, Is.EqualTo(cata1.Name));
+        });
     }
 
     /// <summary>

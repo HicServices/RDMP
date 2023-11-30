@@ -29,7 +29,7 @@ public class ComprehensiveQueryPerformanceCounterTests : DatabaseTests
             //send some queries
             var cata = new Catalogue(CatalogueRepository, "Fish");
 
-            Assert.That(cata.Name.Equals("Fish"));
+            Assert.That(cata.Name, Is.EqualTo("Fish"));
 
             var commands = pCounter.DictionaryOfQueries.Values.ToArray();
             Assert.That(commands.Any(c => c.QueryText.Contains("SELECT * FROM [Catalogue] WHERE ID=")));
