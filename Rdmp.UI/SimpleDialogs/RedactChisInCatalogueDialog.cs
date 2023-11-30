@@ -46,8 +46,8 @@ namespace Rdmp.UI.SimpleDialogs
             var column = result.ItemArray[2].ToString();
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
-            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, columnValue, name);
-            rc.SaveToDatabase();
+            //var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, columnValue, name);
+            //rc.SaveToDatabase();
             result.Delete();
             _results.AcceptChanges();
             dgResults.DataSource = _results;

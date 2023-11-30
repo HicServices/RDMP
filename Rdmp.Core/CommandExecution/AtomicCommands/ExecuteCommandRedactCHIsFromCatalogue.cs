@@ -50,19 +50,19 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
     {
         Console.WriteLine("Found CHI!");
         redactionCount++;
-        var rc = new RedactedCHI(_activator.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi,columnValue,20),$"{table}.{column}");
-        rc.SaveToDatabase();
-        var redactedValue = columnValue.Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
-        //TODO can be smarted about how we wrote tothe db, can share a connection etc
-        var sql = $"UPDATE {table} SET {column}='{redactedValue}' where {column}='{columnValue}'";
-        var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-        var conn = server.GetConnection();
-        conn.Open();
-        using (var cmd = server.GetCommand(sql, conn))
-        {
-            cmd.ExecuteNonQuery();
-            conn.Close();
-        }
+        //var rc = new RedactedCHI(_activator.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi,columnValue,20),$"{table}.{column}");
+        //rc.SaveToDatabase();
+        //var redactedValue = columnValue.Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
+        ////TODO can be smarted about how we wrote tothe db, can share a connection etc
+        //var sql = $"UPDATE {table} SET {column}='{redactedValue}' where {column}='{columnValue}'";
+        //var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
+        //var conn = server.GetConnection();
+        //conn.Open();
+        //using (var cmd = server.GetCommand(sql, conn))
+        //{
+        //    cmd.ExecuteNonQuery();
+        //    conn.Close();
+        //}
     }
 
 

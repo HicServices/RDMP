@@ -28,21 +28,10 @@ namespace Rdmp.Core.Curation.Data;
 public class RedactedCHI : DatabaseEntity, IRedactedCHI
 {
     private string _potentialCHI;
-    private string _chiContext;
-    private string _chiLocation;
-    //string _name;
-    //string _digitalObjectIdentifier;
-    //string _source;
-    //private string _folder = FolderHelper.Root;
-
-    ///// <inheritdoc/>
-    //[DoNotImportDescriptions]
-    //[UsefulProperty]
-    //public string Folder
-    //{
-    //    get => _folder;
-    //    set => SetField(ref _folder, FolderHelper.Adjust(value));
-    //}
+    private int _replacementIndex;
+    private string _table;
+    private string _pkValue;
+    private string _columnName;
 
     [NotNull]
     public string PotentialCHI
@@ -52,24 +41,38 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     }
 
     [NotNull]
-    public string CHIContext
+    public int ReplacementIndex
     {
-        get => _chiContext;
-        set => SetField(ref _chiContext, value);
+        get => _replacementIndex;
+        set => SetField(ref _replacementIndex, value);
     }
 
     [NotNull]
-    public string CHILocation
+    public string TableName
     {
-        get => _chiLocation;
-        set => SetField(ref _chiLocation, value);
+        get => _table;
+        set => SetField(ref _table, value);
     }
 
-    public RedactedCHI(ICatalogueRepository catalogueRepository, string potentialCHI, string chiContext,string chiLocation)
+    [NotNull]
+    public string PKValue
+    {
+        get => _pkValue;
+        set => SetField(ref _pkValue, value);
+    }
+
+    [NotNull]
+    public string ColumnName
+    {
+        get => _columnName;
+        set => SetField(ref _columnName, value);
+    }
+
+    public RedactedCHI(ICatalogueRepository catalogueRepository, string potentialCHI, int replacementIndex, string table, string pkValue,string columnName)
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"potentialCHI", potentialCHI },{"CHIContext",chiContext},{"CHILocation", chiLocation}
+            {"potentialCHI", potentialCHI },{"replacementIndex",replacementIndex},{"tableName",table},{"PKValue",pkValue},{"cColumnName",columnName}
         });
     }
 
@@ -78,7 +81,10 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
        : base(repository, r)
     {
         PotentialCHI = r["PotentialChi"].ToString();
-        CHIContext = r["CHIContext"].ToString();
-        CHILocation = r["CHILocation"].ToString();
+        ReplacementIndex = int.Parse(r["ReplacementIndex"].ToString());
+        TableName = r["TableName"].ToString();
+        PKValue = r["PKValue"].ToString();
+        ColumnName = r["ColumnName"].ToString();
+
     }
 }

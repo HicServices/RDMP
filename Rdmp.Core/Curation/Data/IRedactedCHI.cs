@@ -19,13 +19,14 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// This class stores the redacted CHIs that are found during data load of via catalogue mutilation
 /// </summary>
-public interface IRedactedCHI :IMapsDirectlyToDatabaseTable
+public interface IRedactedCHI : IMapsDirectlyToDatabaseTable
 {
 
     ICatalogueRepository CatalogueRepository { get; }
 
     string PotentialCHI { get; }
-    string CHIContext{ get; }
-
-    string CHILocation { get; }
+    int ReplacementIndex { get; }
+    string TableName { get; }
+    string PKValue { get; }
+    string ColumnName { get; }
 }

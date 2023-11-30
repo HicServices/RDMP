@@ -71,9 +71,20 @@ internal class ExecuteCHIRedactionStage
                 {
                     if (_redact)
                     {
-                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi, row[col].ToString(), 20), $"{tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "")}.[{col.ColumnName}]"); //todo make sure this matches
+                        var replacementIdex = row[col].ToString().IndexOf(foundChi);
+                        var foundTable = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "");
+                        var pk = tbl.DiscoverColumns().Where(col => col.IsPrimaryKey).First();
+                        var pkValue = "";
+                        if(pk is not null)
+                        {
+                            
+                            //pkValue = row[pk.]
+                        }
+                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, foundTable, pkValue, col.ColumnName);
+                        //var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, ExecuteCommandIdentifyCHIInCatalogue.WrapCHIInContext(foundChi, row[col].ToString(), 20), $"{tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "")}.[{col.ColumnName}]"); //todo make sure this matches
                         rc.SaveToDatabase();
-                        row[col] = row[col].ToString().Replace(foundChi, $"REDACTED_CHI_{rc.ID}");
+                        var redactionString = "REDACTED###";
+                        row[col] = row[col].ToString().Replace(foundChi, redactionString.Substring(0,Math.Min(foundChi.Length,redactionString.Length)));
                     }
                     else
                     {
