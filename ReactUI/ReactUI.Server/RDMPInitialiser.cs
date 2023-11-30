@@ -17,8 +17,8 @@ namespace ReactUI.Server
 
         //private static string _CatalogueConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True";
         //private static string _DataExportConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True";
-        private static string _CatalogueConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_Catalogue;Integrated Security=True;Trust Server Certificate=True";
-        private static string _DataExportConnectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=RDMP_DataExport;Integrated Security=True;Trust Server Certificate=True";
+        private static string _CatalogueConnectionString = "Data Source=host.docker.internal\\sqlexpress01;Initial Catalog=RDMP4_Catalogue;Integrated Security=True;Trust Server Certificate=True";
+        private static string _DataExportConnectionString = "Data Source=host.docker.internal\\sqlexpress01;Initial Catalog=RDMP4_DataExport;Integrated Security=True;Trust Server Certificate=True";
 
         public static void Init(RDMPBootstrapOptions args)
         {
