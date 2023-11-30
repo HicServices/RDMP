@@ -15,9 +15,9 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests;
 
 public class CohortQueryBuilderTestsInvolvingTableValuedParameters : DatabaseTests
 {
-    private TestableTableValuedFunction _function = new();
+    private readonly TestableTableValuedFunction _function = new();
 
-    public void CreateFunction()
+    private void CreateFunction()
     {
         _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
     }

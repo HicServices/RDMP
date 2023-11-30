@@ -31,7 +31,7 @@ public class GetDatabaseDiagramBinaryTest : DatabaseTests
         Assert.That(bytesAsString, Has.Length.GreaterThan(100000));
     }
 
-    public static string ByteArrayToString(byte[] ba)
+    private static string ByteArrayToString([NotNull] byte[] ba)
     {
         var hex = BitConverter.ToString(ba);
         return hex.Replace("-", "");

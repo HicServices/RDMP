@@ -149,7 +149,7 @@ AND
     }
 
 
-    public void IntroduceOrphan()
+    private void IntroduceOrphan()
     {
         var cols = _configuration.GetAllExtractableColumnsFor(_extractableDataSet).Cast<ExtractableColumn>().ToArray();
 
