@@ -36,7 +36,6 @@
 | SixLabors.ImageSharp.Drawing | [GitHub](https://github.com/SixLabors/ImageSharp.Drawing) | [Apache 2.0](https://github.com/SixLabors/ImageSharp/blob/main/LICENSE) | Font handling for ImageSharp | |
 | System.Threading.AccessControl | [GitHub](https://github.com/dotnet/runtime) |[MIT](https://opensource.org/licenses/MIT) | Required by Scintilla for sync primitives |  |
 | System.Threading.ThreadPool | [GitHub](https://github.com/dotnet/corefx) |[MIT](https://opensource.org/licenses/MIT) | Required to compile native linux binaries |  |
-| System.Security.Permissions |[GitHub](https://github.com/dotnet/corefx) |[MIT](https://opensource.org/licenses/MIT) | Provides common types for Xml doc reading in UI code |  |
 | [AutoComplete Console](https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications) by Jasper Lammers | Embedded | [CPOL](https://www.codeproject.com/info/cpol10.aspx) | Provides interactive autocomplete in console input | |
 | System.Resources.Extensions | [GitHub](https://github.com/dotnet/corefx) | [MIT](https://opensource.org/licenses/MIT) | Allows [publishing with dotnet publish on machines with netcoreapp3.0 SDK installed](https://github.com/microsoft/msbuild/issues/4704#issuecomment-530034240) | |
 | Spectre.Console | [GitHub](https://github.com/spectreconsole/spectre.console) | [MIT](https://opensource.org/licenses/MIT) | Allows richer command line interactions| |
