@@ -38,30 +38,32 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void RevertButtonClick(int itemIndex)
         {
-            //var result = _results.Rows[itemIndex];
-            //var potentialCHI = result.ItemArray[0].ToString();
-            //var context = result.ItemArray[1].ToString();
-            //var column = result.ItemArray[3].ToString();
-            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
-            //if (redactedChi is not null)
-            //{
-            //    var cmd = new ExecuteCommandRevertRedactedCHI(_activator, redactedChi);
-            //    cmd.Execute();
-            //    result.Delete();
-            //    _results.AcceptChanges();
-            //    dtResults.DataSource = _results;
-            //    dtResults.Columns[5].Visible = false;//todo this isn't quite right
+            var result = _results.Rows[itemIndex];
+            var potentialCHI = result.ItemArray[0].ToString();
+            var column = result.ItemArray[2].ToString();
+            var table = result.ItemArray[3].ToString();
+            var pkColumn = result.ItemArray[4].ToString();
+            var pkValue = result.ItemArray[5].ToString();
+            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.ColumnName == column && rc.PKColumnName == pkColumn && rc.PKValue == pkValue && rc.TableName == table).First();
+            if (redactedChi is not null)
+            {
+                var cmd = new ExecuteCommandRevertRedactedCHI(_activator, redactedChi);
+                cmd.Execute();
+                result.Delete();
+                _results.AcceptChanges();
+                dtResults.DataSource = _results;
+                dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
-            //}
+            }
         }
 
         private void ConfirmButtonClick(int itemIndex)
         {
-            var result = _results.Rows[itemIndex];
-            var potentialCHI = result.ItemArray[0].ToString();
-            var context = result.ItemArray[1].ToString();
-            var column = result.ItemArray[3].ToString();
-            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.CHIContext == context && rc.CHILocation == column).First();
+            //var result = _results.Rows[itemIndex];
+            //var potentialCHI = result.ItemArray[0].ToString();
+            //var context = result.ItemArray[1].ToString();
+            //var column = result.ItemArray[3].ToString();
+            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && column == rc.ColumnName).First();
             //if (redactedChi is not null)
             //{
             //    var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
@@ -128,12 +130,13 @@ namespace Rdmp.UI.SimpleDialogs
             dt.Columns.Add(new DataColumn("Potental CHI", typeof(string)));
             dt.Columns.Add(new DataColumn("Context", typeof(string)));
             dt.Columns.Add(new DataColumn("Column", typeof(string)));
-            //dt.Columns.Add(new DataColumn("_hiddenFullLocation", typeof(string)));
+            dt.Columns.Add(new DataColumn("Table", typeof(string)));
+            dt.Columns.Add(new DataColumn("_pkColumn", typeof(string)));
+            dt.Columns.Add(new DataColumn("_pkValue", typeof(string)));
             foreach (var rc in redactedChis)
             {
-                //dt.Rows.Add(new object[] { rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation), rc.CHILocation });
                 var context = "TODO";
-                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName });
+                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName, rc.TableName,rc.PKColumnName,rc.PKValue });
             }
             dtResults.DataSource = dt;
             dtResults.Columns[3].Visible = false;

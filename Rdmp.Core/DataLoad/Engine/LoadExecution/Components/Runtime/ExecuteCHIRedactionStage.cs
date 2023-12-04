@@ -91,7 +91,8 @@ internal class ExecuteCHIRedactionStage
                                 pkValue = row[index].ToString();
                             }
                         }
-                        var ft = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "");
+                        //var ft = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "");
+                        var ft = tbl.GetFullyQualifiedName().Replace("_RAW", "");
                         ft = ft.Replace("..", ".[dbo].");
                         var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex,ft, pkValue, pkColumnName.Split(".").Last(),$"[{col.ColumnName}]");
                         rc.SaveToDatabase();

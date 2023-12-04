@@ -91,8 +91,8 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
         PotentialCHI = r["PotentialChi"].ToString();
         ReplacementIndex = int.Parse(r["ReplacementIndex"].ToString());
         TableName = r["TableName"].ToString();
+        PKColumnName = r["PKColumnName"].ToString();
         PKValue = r["PKValue"].ToString();
-        PKValue = r["PKColumnName"].ToString();
         ColumnName = r["ColumnName"].ToString();
 
     }
