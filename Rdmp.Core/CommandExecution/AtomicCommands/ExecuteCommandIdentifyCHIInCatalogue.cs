@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataViewing;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
@@ -79,6 +80,9 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             columnAllowList.AddRange(_extractionSpecificAllowances);
         if (_allowLists.TryGetValue(_catalouge.Name, out var _catalogueSpecificAllowances))
             columnAllowList.AddRange(_catalogueSpecificAllowances.ToList());
+
+
+
         foreach (var item in _catalouge.CatalogueItems)
         {
             if (columnAllowList.Contains(item.Name)) continue;
@@ -91,7 +95,8 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             int idxOfLastSplit = column.LastIndexOf('.');
             var columnName = column[(idxOfLastSplit + 1)..];
             var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-            var sql = $"SELECT {columnName} from {column[..idxOfLastSplit]}";
+            var pkColumn = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First().Name.Split(".").Last();
+            var sql = $"SELECT {columnName},{pkColumn} from {column[..idxOfLastSplit]}";
             var dt = new DataTable();
             dt.BeginLoadData();
             using (var cmd = server.GetCommand(sql, server.GetConnection()))
@@ -128,6 +133,9 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
 
     private string getPKValue(DataRow row, DataTable dt)
     {
+        //todo doesn't work with multitable catalogues
+
+
         var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
         if (pkColumnInfo != null)
         {

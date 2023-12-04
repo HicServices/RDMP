@@ -59,21 +59,23 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void ConfirmButtonClick(int itemIndex)
         {
-            //var result = _results.Rows[itemIndex];
-            //var potentialCHI = result.ItemArray[0].ToString();
-            //var context = result.ItemArray[1].ToString();
-            //var column = result.ItemArray[3].ToString();
-            //var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && column == rc.ColumnName).First();
-            //if (redactedChi is not null)
-            //{
-            //    var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
-            //    cmd.Execute();
-            //    result.Delete();
-            //    _results.AcceptChanges();
-            //    dtResults.DataSource = _results;
-            //    dtResults.Columns[5].Visible = false;//todo this isn't quite right
+            var result = _results.Rows[itemIndex];
+            var potentialCHI = result.ItemArray[0].ToString();
+            var column = result.ItemArray[2].ToString();
+            var table = result.ItemArray[3].ToString();
+            var pkColumn = result.ItemArray[4].ToString();
+            var pkValue = result.ItemArray[5].ToString();
+            var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.ColumnName == column && rc.PKColumnName == pkColumn && rc.PKValue == pkValue && rc.TableName == table).First();
+            if (redactedChi is not null)
+            {
+                var cmd = new ExecuteCommandConfirmRedactedCHI(_activator, redactedChi);
+                cmd.Execute();
+                result.Delete();
+                _results.AcceptChanges();
+                dtResults.DataSource = _results;
+                dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
-            //}
+            }
         }
 
         private void handleClick(object sender, DataGridViewCellEventArgs e)
@@ -93,7 +95,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (_activator.YesNo("Do you want to revert all these redactions?", "Revert All"))
             {
-                foreach (var rIndex in Enumerable.Range(0,_results.Rows.Count))
+                foreach (var rIndex in Enumerable.Range(0, _results.Rows.Count))
                 {
                     RevertButtonClick(rIndex);
                 }
@@ -136,7 +138,7 @@ namespace Rdmp.UI.SimpleDialogs
             foreach (var rc in redactedChis)
             {
                 var context = "TODO";
-                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName, rc.TableName,rc.PKColumnName,rc.PKValue });
+                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName, rc.TableName, rc.PKColumnName, rc.PKValue });
             }
             dtResults.DataSource = dt;
             dtResults.Columns[3].Visible = false;
