@@ -79,7 +79,8 @@ jobs:
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
       - name: Initialise RDMP
-        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+        run: |
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Populate Databases.yaml
         shell: bash
         run: |
@@ -261,7 +262,27 @@ jobs:
   upload:
     name: Upload Build Artifact
     runs-on: windows-latest
-    needs: ['tidy-up','coveralls']
+    needs: ['tidy-up']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Calculate SHA256SUMS
+        run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            dist
+
+  production-upload:
+    name: Production Upload
+    runs-on: windows-latest
+    needs: ['upload','coveralls']
+    if: contains(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/cache/restore@v3
         id: restore-build
@@ -271,16 +292,6 @@ jobs:
       - name: Upload Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
-
-      - name: Calculate SHA256SUMS
-        run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist
-          path: |
-            dist
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@2.7.0
         if: contains(github.ref, 'refs/tags/v')
@@ -289,7 +300,7 @@ jobs:
           file: dist/*
           tag: ${{ github.ref }}
           overwrite: true
-          file_glob: true
+          file_glob: true 
 
   # super-lint:
   #   # Name the Job
