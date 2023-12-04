@@ -723,7 +723,7 @@ public class UnitTests
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 
             //all other properties should be legit
-            Assert.That(memValue?.Equals(dbValue)==true, $"{memObj.GetType().Name} Property {property.Name} differed Memory={memValue} and Db={dbValue}");
+            Assert.That(memValue,Is.EqualTo(dbValue), $"{memObj.GetType().Name} Property {property.Name} differed Memory='{memValue}' and Db='{dbValue}'");
         }
     }
 
