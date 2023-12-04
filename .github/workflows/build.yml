@@ -69,7 +69,7 @@ jobs:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
-      - name: Switch to test database
+      - name: Populate Databases.yaml 
         shell: bash
         run: |
             find ./Tools/rdmp/Databases.yaml -type f -exec sed -i 's/RDMP_/TEST_/g' {} \;
@@ -130,7 +130,7 @@ jobs:
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
   coveralls:
-    name: File system tests
+    name: Coveralls 
     runs-on: windows-latest
     needs: ['local-tests','db-tests']
     steps:
@@ -259,9 +259,9 @@ jobs:
           dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
           done
   upload:
-    name: Permission fixing etc.
+    name: Upload Build Artifact
     runs-on: windows-latest
-    needs: ['tidy-up']
+    needs: ['tidy-up','coveralls']
     steps:
       - uses: actions/cache/restore@v3
         id: restore-build
