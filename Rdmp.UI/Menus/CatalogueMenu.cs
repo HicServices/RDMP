@@ -24,8 +24,16 @@ internal class CatalogueMenu : RDMPContextMenuStrip
     public CatalogueMenu(RDMPContextMenuStripArgs args, Catalogue catalogue) : base(args, catalogue)
     {
         var isApiCall = catalogue.IsApiCall();
-        Add(new ExecuteCommandRedactCHIsInCatalogue(_activator, catalogue));
-        Add(new ExecuteCommandViewRedactedCHIsInCatalogue(_activator,catalogue));
+        Add(new ExecuteCommandRedactCHIsInCatalogue(_activator, catalogue)
+        {
+            OverrideCommandName = "Find && Redact CHIs in Catalogue",
+            Weight = -86.9f
+        });
+        Add(new ExecuteCommandViewRedactedCHIsInCatalogue(_activator, catalogue)
+        {
+            OverrideCommandName = "View Redacted CHIs in Catalogue",
+            Weight = -86.9f
+        });
 
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {

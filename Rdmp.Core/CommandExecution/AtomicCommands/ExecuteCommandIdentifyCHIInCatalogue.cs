@@ -3,6 +3,7 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
+using Org.BouncyCastle.Asn1.Crmf;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -33,7 +34,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         _catalouge = catalogue;
         _activator = activator;
         _bailOutEarly = bailOutEarly;
-        if(!string.IsNullOrWhiteSpace(allowListLocation))
+        if (!string.IsNullOrWhiteSpace(allowListLocation))
         {
             var allowListFileContent = File.ReadAllText(allowListLocation);
             var deserializer = new DeserializerBuilder().Build();
@@ -54,17 +55,19 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
 
 
 
-    private void handleFoundCHI(string foundChi,string contextValue, string columnName)
+    private void handleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue)
     {
-        if(foundChis.Rows.Count == 0)
+        if (foundChis.Rows.Count == 0)
         {
             //init
             foundChis.Columns.Add("Potential CHI");
             foundChis.Columns.Add("Context");
             foundChis.Columns.Add("Source Column Name");
+            foundChis.Columns.Add("PK Value");
+            foundChis.Columns.Add("replacementIndex");
         }
-        var shrunkContext = WrapCHIInContext(foundChi,contextValue);
-        foundChis.Rows.Add(foundChi, shrunkContext, columnName);
+        var shrunkContext = WrapCHIInContext(foundChi, contextValue);
+        foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, contextValue.IndexOf(foundChi));
     }
     public DataTable foundChis = new();
 
@@ -104,21 +107,40 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
                 var potentialCHI = CHIColumnFinder.GetPotentialCHI(value);
                 if (!string.IsNullOrWhiteSpace(potentialCHI))
                 {
-                    handleFoundCHI(potentialCHI, value, item.Name);
+                    var pkValue = getPKValue(row, dt);
+                    handleFoundCHI(potentialCHI, value, item.Name, pkValue);
                     if (_bailOutEarly)
                     {
                         break;
                     }
                 }
-                
+
 
             }
         }
         Console.WriteLine($"Found {foundChis.Rows.Count} CHIs in the {_catalouge.Name} Catalogue.");
-        foreach(DataRow row in foundChis.Rows)
+        foreach (DataRow row in foundChis.Rows)
         {
             Console.WriteLine($"{row["potential CHI"]} | {row["Context"]} | {row["Source Column Name"]}");
 
         }
+    }
+
+    private string getPKValue(DataRow row, DataTable dt)
+    {
+        var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
+        if (pkColumnInfo != null)
+        {
+            var pkName = pkColumnInfo.Name.Split(".").Last().Replace("[", "").Replace("]", "");
+            var arrayNames = (from DataColumn x
+                              in dt.Columns.Cast<DataColumn>()
+                              select x.ColumnName).ToList();
+            var index = arrayNames.IndexOf(pkName);
+            if (index != -1)
+            {
+                return row[index].ToString();
+            }
+        }
+        return "Error: Unknown PK";
     }
 }

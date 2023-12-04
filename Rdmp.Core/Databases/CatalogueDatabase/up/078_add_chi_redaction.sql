@@ -10,6 +10,7 @@ CREATE TABLE [dbo].RedactedCHI(
 	ReplacementIndex[int] NOT NULL,
 	TableName[nvarchar](500) NOT NULL,
 	PKValue[nvarchar](500) NOT NULL,
+	PKColumnName[nvarchar](500) NOT NULL,
 	ColumnName[nvarchar](500) NOT NULL,
  CONSTRAINT [PK_RedactedCHI] PRIMARY KEY CLUSTERED 
 (

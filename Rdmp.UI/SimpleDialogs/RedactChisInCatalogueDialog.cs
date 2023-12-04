@@ -6,6 +6,7 @@
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.MainFormUITabs;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -46,8 +47,10 @@ namespace Rdmp.UI.SimpleDialogs
             var column = result.ItemArray[2].ToString();
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
-            //var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, columnValue, name);
-            //rc.SaveToDatabase();
+            var pkValue = result.ItemArray[3].ToString();
+            var replacementIdex = int.Parse(result.ItemArray[4].ToString());
+            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, name.Replace($".[{column}]",""), pkValue,"TODO", $"[{column}]");
+            rc.SaveToDatabase();
             result.Delete();
             _results.AcceptChanges();
             dgResults.DataSource = _results;

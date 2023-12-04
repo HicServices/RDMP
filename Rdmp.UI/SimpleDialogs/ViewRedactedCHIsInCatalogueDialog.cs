@@ -120,7 +120,7 @@ namespace Rdmp.UI.SimpleDialogs
             lblLoading.Visible = _isLoading;
             dtResults.Visible = !_isLoading;
             List<string> columns = _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).Select(ci => ci.Name).ToList();
-            List<RedactedCHI> redactedChis = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => columns.Contains($"{rc.TableName}.[{rc.ColumnName}]")).ToList();//
+            List<RedactedCHI> redactedChis = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => columns.Contains($"{rc.TableName}.{rc.ColumnName}")).ToList();//
 
 
 
@@ -128,10 +128,12 @@ namespace Rdmp.UI.SimpleDialogs
             dt.Columns.Add(new DataColumn("Potental CHI", typeof(string)));
             dt.Columns.Add(new DataColumn("Context", typeof(string)));
             dt.Columns.Add(new DataColumn("Column", typeof(string)));
-            dt.Columns.Add(new DataColumn("_hiddenFullLocation", typeof(string)));
+            //dt.Columns.Add(new DataColumn("_hiddenFullLocation", typeof(string)));
             foreach (var rc in redactedChis)
             {
                 //dt.Rows.Add(new object[] { rc.PotentialCHI, rc.CHIContext, locationToColumn(rc.CHILocation), rc.CHILocation });
+                var context = "TODO";
+                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName });
             }
             dtResults.DataSource = dt;
             dtResults.Columns[3].Visible = false;

@@ -31,6 +31,7 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     private int _replacementIndex;
     private string _table;
     private string _pkValue;
+    private string _pkColumnName;
     private string _columnName;
 
     [NotNull]
@@ -62,17 +63,24 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
     }
 
     [NotNull]
+    public string PKColumnName
+    {
+        get => _pkColumnName;
+        set => SetField(ref _pkColumnName, value);
+    }
+
+    [NotNull]
     public string ColumnName
     {
         get => _columnName;
         set => SetField(ref _columnName, value);
     }
 
-    public RedactedCHI(ICatalogueRepository catalogueRepository, string potentialCHI, int replacementIndex, string table, string pkValue,string columnName)
+    public RedactedCHI(ICatalogueRepository catalogueRepository, string potentialCHI, int replacementIndex, string table, string pkValue, string pkColumnName, string columnName)
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"potentialCHI", potentialCHI },{"replacementIndex",replacementIndex},{"tableName",table},{"PKValue",pkValue},{"columnName",columnName}
+            {"potentialCHI", potentialCHI },{"replacementIndex",replacementIndex},{"tableName",table},{"PKValue",pkValue},{"pkColumnName",pkColumnName},{"columnName",columnName}
         });
     }
 
@@ -84,6 +92,7 @@ public class RedactedCHI : DatabaseEntity, IRedactedCHI
         ReplacementIndex = int.Parse(r["ReplacementIndex"].ToString());
         TableName = r["TableName"].ToString();
         PKValue = r["PKValue"].ToString();
+        PKValue = r["PKColumnName"].ToString();
         ColumnName = r["ColumnName"].ToString();
 
     }

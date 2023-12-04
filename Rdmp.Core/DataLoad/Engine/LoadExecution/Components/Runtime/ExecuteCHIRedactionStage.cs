@@ -75,10 +75,12 @@ internal class ExecuteCHIRedactionStage
                         var foundTable = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "").Split("..")[1].Replace("[", "").Replace("]", "");
                         var catalogue = _job.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(catalogue => catalogue.Name == foundTable).First();
                         var pkValue = "fake";
+                        var pkColumnName = "Unknown";
                         if (catalogue != null)
                         {
                             //this can probably be tidied up
                             var pkColumnInfo = catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
+                            pkColumnName = pkColumnInfo.Name;
                             if (pkColumnInfo != null)
                             {
                                 var pkName = pkColumnInfo.Name.Split(".").Last().Replace("[", "").Replace("]", "");
@@ -91,9 +93,9 @@ internal class ExecuteCHIRedactionStage
                         }
                         var ft = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "");
                         ft = ft.Replace("..", ".[dbo].");
-                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex,ft, pkValue, $"[{col.ColumnName}]");
+                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex,ft, pkValue, pkColumnName.Split(".").Last(),$"[{col.ColumnName}]");
                         rc.SaveToDatabase();
-                        var redactionString = "REDACTED###";
+                        var redactionString = "##########";
                         row[col] = row[col].ToString().Replace(foundChi, redactionString.Substring(0, Math.Min(foundChi.Length, redactionString.Length)));
                     }
                     else

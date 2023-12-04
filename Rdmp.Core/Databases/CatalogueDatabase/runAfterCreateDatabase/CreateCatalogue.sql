@@ -904,8 +904,11 @@ GO
 CREATE TABLE [dbo].RedactedCHI(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[PotentialCHI] [varchar](500) NOT NULL,
-	[CHIContext][nvarchar](50) NOT NULL,
-	CHILocation[nvarchar](500) NOT NULL,
+	ReplacementIndex[int] NOT NULL,
+	TableName[nvarchar](500) NOT NULL,
+	PKValue[nvarchar](500) NOT NULL,
+	PKColumnName[nvarchar](500) NOT NULL,
+	ColumnName[nvarchar](500) NOT NULL,
  CONSTRAINT [PK_RedactedCHI] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
