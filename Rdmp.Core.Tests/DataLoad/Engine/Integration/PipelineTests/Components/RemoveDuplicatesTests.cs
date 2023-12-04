@@ -18,7 +18,7 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestRemovingDuplicatesFromDataTable()
     {
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Columns.Add("Col2", typeof(int));
 
@@ -55,14 +55,15 @@ public class RemoveDuplicatesTests
     [Test]
     public void TestEmptyDataTable()
     {
-        Assert.That(new RemoveDuplicates().ProcessPipelineData(new DataTable(), ThrowImmediatelyDataLoadEventListener.Quiet,
+        using var dt = new DataTable();
+        Assert.That(new RemoveDuplicates().ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet,
                 new GracefulCancellationToken()).Rows, Is.Empty);
     }
 
     [Test]
     public void TestMultipleBatches()
     {
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("Col1");
         dt.Columns.Add("Col2", typeof(int));
 
