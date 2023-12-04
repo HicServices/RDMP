@@ -12,7 +12,7 @@ jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
   setup:
-    name: Checkout Code & Setup & Build
+    name: Checkout Code, Setup & Build
     # Set the type of machine to run on
     runs-on: windows-latest
     steps:
@@ -44,8 +44,8 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
-  run-tests:
-    name: Run Tests
+  tests-setup:
+    name: Setup Tests
     runs-on: windows-latest
     needs: ['setup']
     steps:
@@ -54,10 +54,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v3.2.0
-        with:
-          dotnet-version: 7.0.x
       - name: Install MS SQL 2019 Express LocalDB
         uses: crazy-max/ghaction-chocolatey@v3
         with:
@@ -97,7 +93,203 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
+  db-tests:
+    name: Database Tests
+    runs-on: windows-latest
+    needs: ['tests-setup']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Test (DB)
+        shell: bash
+        run: |
+          rm -rf coverage
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` db-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` db-core.lcov
+  local-tests:
+    name: File system tests
+    runs-on: windows-latest
+    needs: ['tests-setup']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Test with local file system
+        shell: bash
+        run:  |
+          echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-core.lcov
+  coveralls:
+    name: File system tests
+    runs-on: windows-latest
+    needs: ['local-tests','db-tests']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - uses: coverallsapp/github-action@v2.2.3
+        with:
+          github-token: ${{ secrets.github_token }}
+          files: ./db-ui.lcov ./db-core.lcov ./fs-ui.lcov ./fs-core.lcov
+          flag-name: unit tests
+  bundle:
+    name: Bundle Build
+    runs-on: windows-latest
+    needs: ['setup'] #used to be coveralls
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Package
+        run: |
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+      - name: Install Plugins
+        shell: bash
+        run: |
+          for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest https://api.github.com/repos/HICServices/HicPlugin/releases/latest https://api.github.com/repos/HICServices/RdmpExtensions/releases/latest
+          do
+            PluginName="$(cut -d/ -f6 <<< $plugin)"
+            NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
+            echo $NAME
+            curl -OL  $NAME
+            for platform in PublishWindows PublishLinux PublishWinForms
+            do
+              cp *.nupkg $platform
+            done
+            rm *.nupkg
+          done
+  sign:
+    name: Code Sign
+    runs-on: windows-latest
+    needs: ['bundle']
+    if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Sign
+        shell: bash
+        run: |
+          [[ ${{github.ref}} != 'refs/heads/develop']] &&   [[ ${{github.ref}} != 'refs/heads/main']] && echo "Skipping code signing as were not on the develop or main branch" && exit 1
+          dotnet tool install --global AzureSignTool 
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
+          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
+          mkdir -p dist
+          cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
+          (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
+          mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
+          echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
+  tidy-up:
+    name: Permission fixing etc.
+    runs-on: windows-latest
+    needs: ['sign']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Install Perl dependencies
+        uses: shogo82148/actions-setup-perl@v1.24.3
+        with:
+          install-modules-with: cpanm
+          install-modules: Archive::Zip Archive::Tar
+      - name: Fix execute permissions
+        shell: perl {0}
+        run: |
+          use strict;
+          use warnings;
+          use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+          use Archive::Tar;
 
+          my ($tarname,$zipname)=('dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar','dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip');
+
+          # Find rdmp in .tar, set permissions 0755
+          my $tar=Archive::Tar->new($tarname) || die "read $tarname:$!\n";
+          my @tarbits=$tar->get_files();
+          foreach my $bit (@tarbits) {
+            $bit->chmod('0755') if $bit->name =~ /\/rdmp$/;
+          }
+          $tar->write( $tarname );
+
+          # Find rdmp in .zip, set permissions 0755
+          my $srczip = Archive::Zip->new($zipname);
+          my $zip=Archive::Zip->new();
+          foreach my $bit ($srczip->members()) {
+            print "Adding ",$bit->fileName(),"\n";
+            my $m=$zip->addString($bit->contents(),$bit->fileName());
+            $m->fileName($bit->fileName());
+            my $iszip=$bit->fileName() =~ /\.zip$/i;
+            $m->desiredCompressionMethod($iszip ? COMPRESSION_STORED : COMPRESSION_DEFLATED);
+            $m->desiredCompressionLevel($iszip ? 0 :  9 );
+          }
+          $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
+          $zip->overwriteAs($zipname);
+      - name: Compress tar
+        run: |
+          7z a -txz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar.xz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
+          rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
+
+      - name: Build Nuget packages
+        if: contains(github.ref, 'refs/tags/v')
+        shell: bash
+        run: |
+          for i in Rdmp.Core/Rdmp.Core.csproj Rdmp.UI/Rdmp.UI.csproj Tests.Common/Tests.Common.csproj
+          do
+          dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
+          done
+  upload:
+    name: Permission fixing etc.
+    runs-on: windows-latest
+    needs: ['tidy-up']
+    steps:
+      - uses: actions/cache/restore@v3
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key
+      - name: Upload Nuget packages
+        if: contains(github.ref, 'refs/tags/v')
+        run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
+
+      - name: Calculate SHA256SUMS
+        run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: |
+            dist
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@2.7.0
+        if: contains(github.ref, 'refs/tags/v')
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
 
   # super-lint:
   #   # Name the Job
