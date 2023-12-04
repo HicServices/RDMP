@@ -12,7 +12,7 @@ jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
   setup:
-    name: Checkout Code & Setup && Build
+    name: Checkout Code & Setup & Build
     # Set the type of machine to run on
     runs-on: windows-latest
     steps:
@@ -42,7 +42,7 @@ jobs:
         id: cache-build
         uses: actions/cache/save@v3
         with:
-          path: ${{ github.workspace }}/rdmp-build
+          path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
   run-tests:
     name: Run Tests
@@ -52,7 +52,7 @@ jobs:
       - uses: actions/cache/restore@v3
         id: restore-build
         with:
-          path: ${{ github.workspace }}/rdmp-build
+          path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3.2.0
