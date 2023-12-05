@@ -799,6 +799,7 @@ public class DataExportChildProvider : CatalogueChildProvider
             _extractionInformationsByCatalogueItem = dxOther._extractionInformationsByCatalogueItem;
             _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
             ProjectRootFolder = dxOther.ProjectRootFolder;
+            DatasetRootFolder = dxOther.DatasetRootFolder;
         }
     }
 

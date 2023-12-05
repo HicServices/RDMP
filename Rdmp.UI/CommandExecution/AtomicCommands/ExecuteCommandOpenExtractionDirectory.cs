@@ -73,13 +73,13 @@ internal class ExecuteCommandOpenExtractionDirectory : BasicUICommandExecution
                 // all datasets have been extracted to disk
 
                 // but do they have a shared parent dir?
-                var files = cumulativeExtractionResults.Select(c => new FileInfo(c.DestinationDescription)).ToArray();
+                var files = cumulativeExtractionResults.Select(static c => new FileInfo(c.DestinationDescription)).ToArray();
 
-                var parents = files.Select(f => f.Directory?.Parent?.FullName).Where(d => d != null).Distinct()
+                var parents = files.Select(static f => f.Directory?.Parent?.FullName).Where(static d => d != null).Distinct()
                     .ToArray();
 
                 if (parents.Length != 1)
-                    SetImpossible($"Extracted files do not share a common extraction directory");
+                    SetImpossible("Extracted files do not share a common extraction directory");
                 else
                     _dir = new DirectoryInfo(parents[0]);
             }

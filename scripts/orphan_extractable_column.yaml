@@ -10,5 +10,5 @@ Commands:
   # TODO: we should detect and fail in this situation unless user sets specific error message suppression
 
   # check and execute the config
-  - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command check
-  - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command run
+  # - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command check
+  # - extract -e "ExtractionConfiguration:New Clone" -p "Pipeline:DATA EXPORT*To CSV" --command run
