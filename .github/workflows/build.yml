@@ -226,7 +226,13 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundle
-      - name: Sign
+      - name: Determine RDMP build version
+        id: version
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Check output
+        run: echo ${{ steps.version.outputs.rdmpversion }}
+      - name: Sign & zip
         shell: bash
         run: |
           if [ ${{github.ref}} != 'refs/heads/develop' ] || [ ${{github.ref}} != 'refs/heads/main' ]
