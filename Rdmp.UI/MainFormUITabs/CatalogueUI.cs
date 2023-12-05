@@ -123,20 +123,12 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
         _catalogue = databaseObject;
-        var associatedDatasets = new List<string>();
-        foreach (var catalogueItem in _catalogue.CatalogueItems)
-        {
-            var datasetId = catalogueItem.ColumnInfo.Dataset_ID;
-            if (datasetId != null)
-            {
-                var foundDataset = _catalogue.CatalogueRepository.GetAllObjectsWhere<Dataset>("ID", datasetId).First();
-                if (!associatedDatasets.Contains(foundDataset.Name))
-                {
-                    associatedDatasets.Add(foundDataset.Name);
-                }
-
-            }
-        }
+        var associatedDatasets = _catalogue.CatalogueItems
+            .Select(static catalogueItem => catalogueItem.ColumnInfo.Dataset_ID)
+            .Where(static datasetId => datasetId != null)
+            .Select(datasetId =>
+                _catalogue.CatalogueRepository.GetAllObjectsWhere<Dataset>("ID", datasetId).First())
+            .Select(static ds=>ds.Name).ToList();
         if (associatedDatasets.Count > 0)
         {
             lbDatasets.Visible = true;

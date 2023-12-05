@@ -6,6 +6,7 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents;
 
@@ -27,6 +28,7 @@ internal class
         ItemActivator.Activate<DatsetConfigurationUI, Dataset>(target);
     }
 
+    [CanBeNull]
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd,
         Dataset target,
         InsertOption insertOption = InsertOption.Default) =>

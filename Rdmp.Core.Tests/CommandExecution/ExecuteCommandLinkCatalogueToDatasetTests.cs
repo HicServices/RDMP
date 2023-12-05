@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 
@@ -33,11 +34,11 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
 
 
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
-        Assert.DoesNotThrow(() => cmd.Execute());
+        Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
         var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset);
-        Assert.DoesNotThrow(() => linkCmd.Execute());
+        Assert.DoesNotThrow(linkCmd.Execute);
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>();
         foreach (var ci in columInfo)
         {
@@ -71,11 +72,11 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
 
 
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
-        Assert.DoesNotThrow(() => cmd.Execute());
+        Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
         var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset, false);
-        Assert.DoesNotThrow(() => linkCmd.Execute());
+        Assert.DoesNotThrow(linkCmd.Execute);
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(ci => _cata1.CatalogueItems.Contains(ci));
         foreach (var ci in columInfo)
         {
@@ -93,26 +94,26 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
     public void TestLinkCatalogueToDatasetBadCatalogue()
     {
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
-        Assert.DoesNotThrow(() => cmd.Execute());
+        Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), null, founddataset, false);
-        Assert.Throws<Exception>(()=>linkCmd.Execute());
+        Assert.Throws<ImpossibleCommandException>(linkCmd.Execute);
     }
 
     [Test]
     public void TestLinkCatalogueToDatasetBadDataset()
     {
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
-        Assert.DoesNotThrow(() => cmd.Execute());
+        Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), new Catalogue(GetMockActivator().RepositoryLocator.CatalogueRepository,"catalogue"), null, false);
-        Assert.Throws<Exception>(() => linkCmd.Execute());
+        Assert.Throws<ImpossibleCommandException>(linkCmd.Execute);
     }
 
     [Test] 
     public void TestLinkCatalogueToDatasetBadEverything()
     {
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), null, null, false);
-        Assert.Throws<Exception>(() => linkCmd.Execute());
+        Assert.Throws<ImpossibleCommandException>(linkCmd.Execute);
     }
 }
