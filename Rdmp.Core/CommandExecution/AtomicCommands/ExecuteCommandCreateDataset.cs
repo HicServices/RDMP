@@ -5,12 +5,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateDataset : BasicCommandExecution, IAtomicCommand
 {
-
-
-    private string _doi;
-    private string _name;
-    private string _source;
-    IBasicActivateItems _activator;
+    private readonly string _doi;
+    private readonly string _name;
+    private readonly string _source;
+    private readonly IBasicActivateItems _activator;
 
     public ExecuteCommandCreateDataset(IBasicActivateItems activator, [DemandsInitialization("The name of the dataset")]string name, string doi = null,string source = null) : base(activator)
     {
