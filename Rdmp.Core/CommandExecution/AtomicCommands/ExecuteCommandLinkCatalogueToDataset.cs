@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
 using System;
+using Rdmp.Core.Curation.Data;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -37,7 +37,7 @@ public sealed class ExecuteCommandLinkCatalogueToDataset : BasicCommandExecution
             if (!_linkAll) continue;
 
             var databaseName = ci.Name[..ci.Name.LastIndexOf('.')];
-            var catalogueItems = ci.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".")] == databaseName).ToList();
+            var catalogueItems = ci.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName).ToList();
             foreach (var aci in catalogueItems)
             {
                 aci.Dataset_ID = _dataset.ID;
