@@ -231,6 +231,7 @@ public class AtomicCommandFactory : CommandFactoryBase
         if (Is(o, out CatalogueItem ci))
         {
             yield return new ExecuteCommandCreateNewFilter(_activator, ci) { OverrideCommandName = "Add New Filter" };
+            yield return new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, ci);
             yield return new ExecuteCommandMakeCatalogueItemExtractable(_activator, ci);
             yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
             yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci)
