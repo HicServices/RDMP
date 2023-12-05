@@ -22,7 +22,7 @@ public class BundledLookupTableTests : UnitTests
         var t = l.PrimaryKey.TableInfo;
 
         var bundle = new BundledLookupTable(t);
-        Assert.AreEqual("select * from [MyDb]..[ChildTable]", bundle.GetDataTableFetchSql());
+        Assert.That(bundle.GetDataTableFetchSql(), Is.EqualTo("select * from [MyDb]..[ChildTable]"));
     }
 
     [Test]
@@ -35,25 +35,25 @@ public class BundledLookupTableTests : UnitTests
         engineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         var bundle = new BundledLookupTable(t);
-        Assert.AreEqual(@"
+        Assert.That(bundle.GetDataTableFetchSql(), Is.EqualTo(@"
 SELECT 
 
 ChildCol,
 Desc
 FROM 
-ChildTable", bundle.GetDataTableFetchSql());
+ChildTable"));
 
 
         // ei 1 is suplemental now
         eis[1].ExtractionCategory = ExtractionCategory.Supplemental;
         eis[1].SaveToDatabase();
 
-        Assert.AreEqual(@"
+        Assert.That(bundle.GetDataTableFetchSql(), Is.EqualTo(@"
 SELECT 
 
 ChildCol
 FROM 
-ChildTable", bundle.GetDataTableFetchSql());
+ChildTable"));
 
 
         // ei 0 is marked IsExtractionIdentifier - so is also not a valid
@@ -64,8 +64,7 @@ ChildTable", bundle.GetDataTableFetchSql());
 
         // so now there are no columns at all that are extractable
         var ex = Assert.Throws<QueryBuildingException>(() => bundle.GetDataTableFetchSql());
-        Assert.AreEqual(
-            "Lookup table 'ChildTable' has a Catalogue defined 'ChildTable' but it has no Core extractable columns",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Lookup table 'ChildTable' has a Catalogue defined 'ChildTable' but it has no Core extractable columns"));
     }
 }

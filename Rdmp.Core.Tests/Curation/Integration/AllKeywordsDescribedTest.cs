@@ -51,7 +51,7 @@ public class AllKeywordsDescribedTest : DatabaseTests
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
-        Assert.AreEqual(0, problems.Count);
+        Assert.That(problems, Is.Empty);
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class AllKeywordsDescribedTest : DatabaseTests
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
-        Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
+        Assert.That(problems, Is.Empty, @"Add a description for each of these to KeywordHelp.txt");
     }
 
     [Test]
@@ -96,7 +96,7 @@ public class AllKeywordsDescribedTest : DatabaseTests
         foreach (var problem in problems)
             Console.WriteLine($"Fatal Problem:{problem}");
 
-        Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
+        Assert.That(problems, Is.Empty, @"Add a description for each of these to KeywordHelp.txt");
     }
 
     private static IEnumerable<string> GetForeignKeys(DiscoveredServer server)

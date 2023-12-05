@@ -194,7 +194,7 @@ public partial class UserInterfaceStandardisationChecker
         foreach (var problem in problems)
             Console.WriteLine($"FATAL ERROR PROBLEM:{problem}");
 
-        Assert.AreEqual(problems.Count, 0);
+        Assert.That(problems, Is.Empty);
     }
 
     private string GetExpectedClassOrInterface(string expectedClassName)

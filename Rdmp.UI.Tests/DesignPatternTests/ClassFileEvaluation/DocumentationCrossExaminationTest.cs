@@ -376,7 +376,7 @@ internal class DocumentationCrossExaminationTest
                 Console.WriteLine(problem);
         }
 
-        Assert.AreEqual(0, problems.Count,
+        Assert.That(problems, Is.Empty,
             "Expected there to be nothing talked about in comments that doesn't appear in the codebase somewhere");
     }
 
@@ -437,7 +437,7 @@ internal class DocumentationCrossExaminationTest
             var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
             var docs = Regex.Replace(kvp.Value, "\\s+", " ");
 
-            Assert.AreEqual(code.Trim(), docs.Trim(),
+            Assert.That(docs.Trim(), Is.EqualTo(code.Trim()),
                 $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
         }
     }

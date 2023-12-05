@@ -23,7 +23,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
         var cmd = new ExecuteCommandSimilar(activator, cata1, false);
 
-        Assert.AreEqual(cata2, cmd.Matched.Single());
+        Assert.That(cmd.Matched.Single(), Is.EqualTo(cata2));
 
         cata1.DeleteInDatabase();
         cata2.DeleteInDatabase();
@@ -38,7 +38,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
         var cmd = new ExecuteCommandSimilar(activator, c1, true);
 
-        Assert.IsEmpty(cmd.Matched);
+        Assert.That(cmd.Matched, Is.Empty);
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
@@ -56,7 +56,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
         var cmd = new ExecuteCommandSimilar(activator, c1, true);
 
-        Assert.AreEqual(c2, cmd.Matched.Single());
+        Assert.That(cmd.Matched.Single(), Is.EqualTo(c2));
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();
@@ -74,7 +74,7 @@ public class ExecuteCommandSimilarTests : CommandCliTests
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
         var cmd = new ExecuteCommandSimilar(activator, c1, true);
 
-        Assert.AreEqual(c2, cmd.Matched.Single());
+        Assert.That(cmd.Matched.Single(), Is.EqualTo(c2));
 
         c1.DeleteInDatabase();
         c2.DeleteInDatabase();

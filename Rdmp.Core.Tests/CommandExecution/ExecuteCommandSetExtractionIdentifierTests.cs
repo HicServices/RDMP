@@ -27,7 +27,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                     null, "happyfun");
                 cmd.Execute();
 
-                Assert.IsTrue(ei1.IsExtractionIdentifier);
+        Assert.That(ei1.IsExtractionIdentifier);
         }
 
         [Test]
@@ -43,21 +43,27 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                 ei1.IsExtractionIdentifier = true;
                 ei1.SaveToDatabase();
 
-                // before we run the command the primary ei1 is the identifier
-                Assert.IsTrue(ei1.IsExtractionIdentifier);
-                Assert.IsFalse(otherEi.IsExtractionIdentifier);
+        Assert.Multiple(() =>
+        {
+            // before we run the command the primary ei1 is the identifier
+            Assert.That(ei1.IsExtractionIdentifier);
+            Assert.That(otherEi.IsExtractionIdentifier, Is.False);
+        });
 
-                // by picking the second (FFF) we should switch
-                var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
+        // by picking the second (FFF) we should switch
+        var cmd = new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue,
                     null, "FFF");
                 cmd.Execute();
 
-                // original should no longer be the extraction identifer
-                Assert.IsFalse(ei1.IsExtractionIdentifier);
+        Assert.Multiple(() =>
+        {
+            // original should no longer be the extraction identifer
+            Assert.That(ei1.IsExtractionIdentifier, Is.False);
 
-                // and the one picked should now be the only one
-                Assert.IsTrue(otherEi.IsExtractionIdentifier);
-        }
+            // and the one picked should now be the only one
+            Assert.That(otherEi.IsExtractionIdentifier);
+        });
+    }
 
         [Test]
         public void TestSetExtractionIdentifier_Catalogue_ButColumnDoesNotExist()
@@ -72,7 +78,7 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                     new ExecuteCommandSetExtractionIdentifier(GetMockActivator(), ei1.CatalogueItem.Catalogue, null,
                             "trollolo")
                         .Execute());
-                Assert.AreEqual("Could not find column(s) trollolo amongst available columns (happyfun)", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Could not find column(s) trollolo amongst available columns (happyfun)"));
         }
 
 
@@ -93,10 +99,13 @@ internal class ExecuteCommandSetExtractionIdentifierTests : CommandCliTests
                     , "happyfun");
                 cmd.Execute();
 
-                // affects extraction specific version
-                Assert.IsTrue(ec1.IsExtractionIdentifier);
+        Assert.Multiple(() =>
+        {
+            // affects extraction specific version
+            Assert.That(ec1.IsExtractionIdentifier);
 
-                // but not master
-                Assert.IsFalse(ec1.CatalogueExtractionInformation.IsExtractionIdentifier);
-        }
+            // but not master
+            Assert.That(ec1.CatalogueExtractionInformation.IsExtractionIdentifier, Is.False);
+        });
+    }
 }

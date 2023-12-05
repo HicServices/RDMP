@@ -33,8 +33,7 @@ public class SimpleColumnInfoTests : DatabaseTests
 
         Import(t, out var ti, out var cis);
 
-        Assert.AreEqual(expectedLength,
-            cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString());
+        Assert.That(cis.Single().Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString(), Is.EqualTo(expectedLength));
 
         ti.DeleteInDatabase();
     }

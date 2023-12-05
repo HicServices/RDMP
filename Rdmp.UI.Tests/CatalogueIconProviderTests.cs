@@ -26,7 +26,7 @@ internal class CatalogueIconProviderTests : UITests
 
         var img = provider.GetImage(new object(), OverlayKind.None);
 
-        Assert.IsFalse(provider.HasIcon(new object()));
+        Assert.That(provider.HasIcon(new object()), Is.False);
     }
 
     [Test]
@@ -43,15 +43,15 @@ internal class CatalogueIconProviderTests : UITests
             {
                 d.IsDisabled = true;
 
-                Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
+                Assert.That(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
                     $"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
 
                 d.IsDisabled = false;
-                Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)),
+                Assert.That(IsBlackAndWhite(provider.GetImage(obj, OverlayKind.Add)), Is.False,
                     $"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
             }
 
-            Assert.IsTrue(provider.HasIcon(obj), $"Object of Type '{obj.GetType().Name}' did not have an image");
+            Assert.That(provider.HasIcon(obj), $"Object of Type '{obj.GetType().Name}' did not have an image");
             objectCount++;
         }
 
@@ -66,10 +66,10 @@ internal class CatalogueIconProviderTests : UITests
 
         var ac = WhenIHaveA<AggregateConfiguration>();
 
-        Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac)), "Image was unexpectedly Grayscale");
+        Assert.That(IsBlackAndWhite(provider.GetImage(ac)), Is.False, "Image was unexpectedly Grayscale");
 
         ac.IsDisabled = true;
-        Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac)), "Image was expected to be Grayscale but wasn't'");
+        Assert.That(IsBlackAndWhite(provider.GetImage(ac)), "Image was expected to be Grayscale but wasn't'");
     }
 
 
@@ -84,7 +84,7 @@ internal class CatalogueIconProviderTests : UITests
         var provider = new CatalogueIconProvider(RepositoryLocator, null);
         provider.GetImage(me, OverlayKind.Add);
 
-        Assert.IsFalse(provider.HasIcon(me));
+        Assert.That(provider.HasIcon(me), Is.False);
     }
 
     private class IAmMe : IMasqueradeAs

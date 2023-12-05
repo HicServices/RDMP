@@ -18,7 +18,7 @@ public class UsefulStuffTests : DatabaseTests
     {
         var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         var table = db.ExpectTable("GetRowCountWhenNoIndexes");
-        Assert.AreEqual("GetRowCountWhenNoIndexes", table.GetRuntimeName());
+        Assert.That(table.GetRuntimeName(), Is.EqualTo("GetRowCountWhenNoIndexes"));
         var server = table.Database.Server;
 
         using var con = server.GetConnection();
@@ -28,9 +28,12 @@ public class UsefulStuffTests : DatabaseTests
         cmd.ExecuteNonQuery();
 
         var cmdInsert = server.GetCommand($"INSERT INTO {table.GetRuntimeName()} VALUES (1,'Fish')", con);
-        Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmdInsert.ExecuteNonQuery(), Is.EqualTo(1));
 
-        Assert.AreEqual(1, table.GetRowCount());
+            Assert.That(table.GetRowCount(), Is.EqualTo(1));
+        });
     }
 
     [Test]
@@ -44,40 +47,43 @@ public class UsefulStuffTests : DatabaseTests
         cmd.ExecuteNonQuery();
 
         var cmdInsert = db.Server.GetCommand("INSERT INTO GetRowCount_Views VALUES (1,'Fish')", con);
-        Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
+        Assert.That(cmdInsert.ExecuteNonQuery(), Is.EqualTo(1));
 
 
         var cmdView = db.Server.GetCommand(
             "CREATE VIEW v_GetRowCount_Views as select * from GetRowCount_Views", con);
         cmdView.ExecuteNonQuery();
 
-        Assert.AreEqual(1, db.ExpectTable("v_GetRowCount_Views").GetRowCount());
+        Assert.That(db.ExpectTable("v_GetRowCount_Views").GetRowCount(), Is.EqualTo(1));
     }
 
     [Test]
     public void PascalCaseStringToHumanReadable()
     {
-        Assert.AreEqual("teststringhere", UsefulStuff.PascalCaseStringToHumanReadable("teststringhere"));
-        Assert.AreEqual("test Stringhere", UsefulStuff.PascalCaseStringToHumanReadable("testStringhere"));
-        Assert.AreEqual("test String Here", UsefulStuff.PascalCaseStringToHumanReadable("testStringHere"));
-        Assert.AreEqual("Test String Here", UsefulStuff.PascalCaseStringToHumanReadable("TestStringHere"));
-        Assert.AreEqual("TEST String Here", UsefulStuff.PascalCaseStringToHumanReadable("TESTStringHere"));
-        Assert.AreEqual("Test STRING Here", UsefulStuff.PascalCaseStringToHumanReadable("TestSTRINGHere"));
-        Assert.AreEqual("Test String HERE", UsefulStuff.PascalCaseStringToHumanReadable("TestStringHERE"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("teststringhere"), Is.EqualTo("teststringhere"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("testStringhere"), Is.EqualTo("test Stringhere"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("testStringHere"), Is.EqualTo("test String Here"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("TestStringHere"), Is.EqualTo("Test String Here"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("TESTStringHere"), Is.EqualTo("TEST String Here"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("TestSTRINGHere"), Is.EqualTo("Test STRING Here"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("TestStringHERE"), Is.EqualTo("Test String HERE"));
 
-        //Some practical tests for completeness sake
-        Assert.AreEqual("A", UsefulStuff.PascalCaseStringToHumanReadable("A"));
-        Assert.AreEqual("AS", UsefulStuff.PascalCaseStringToHumanReadable("AS"));
-        Assert.AreEqual("A String", UsefulStuff.PascalCaseStringToHumanReadable("AString"));
-        Assert.AreEqual("String A Test", UsefulStuff.PascalCaseStringToHumanReadable("StringATest"));
-        Assert.AreEqual("String AS Test", UsefulStuff.PascalCaseStringToHumanReadable("StringASTest"));
-        Assert.AreEqual("CT Head", UsefulStuff.PascalCaseStringToHumanReadable("CTHead"));
-        Assert.AreEqual("WHERE Clause", UsefulStuff.PascalCaseStringToHumanReadable("WHEREClause"));
-        Assert.AreEqual("Sql WHERE", UsefulStuff.PascalCaseStringToHumanReadable("SqlWHERE"));
+            //Some practical tests for completeness sake
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("A"), Is.EqualTo("A"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("AS"), Is.EqualTo("AS"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("AString"), Is.EqualTo("A String"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("StringATest"), Is.EqualTo("String A Test"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("StringASTest"), Is.EqualTo("String AS Test"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("CTHead"), Is.EqualTo("CT Head"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("WHEREClause"), Is.EqualTo("WHERE Clause"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("SqlWHERE"), Is.EqualTo("Sql WHERE"));
 
-        Assert.AreEqual("Test String", UsefulStuff.PascalCaseStringToHumanReadable("Test_String"));
-        Assert.AreEqual("Test string", UsefulStuff.PascalCaseStringToHumanReadable("Test_string"));
-        Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString"));
-        Assert.AreEqual("test String", UsefulStuff.PascalCaseStringToHumanReadable("_testString_"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("Test_String"), Is.EqualTo("Test String"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("Test_string"), Is.EqualTo("Test string"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("_testString"), Is.EqualTo("test String"));
+            Assert.That(UsefulStuff.PascalCaseStringToHumanReadable("_testString_"), Is.EqualTo("test String"));
+        });
     }
 }

@@ -18,7 +18,7 @@ public class LoggingTabUITests : UITests
     {
         var o = WhenIHaveA<ExternalDatabaseServer>();
         var ui = AndLaunch<LoggingTabUI>(o);
-        Assert.IsNotNull(ui);
+        Assert.That(ui, Is.Not.Null);
         AssertErrorWasShown(ExpectedErrorType.KilledForm, "Database My Server did not exist");
     }
 }

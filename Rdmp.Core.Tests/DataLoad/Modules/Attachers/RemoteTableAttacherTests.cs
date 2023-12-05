@@ -99,35 +99,39 @@ internal class RemoteTableAttacherTests : DatabaseTests
 
         attacher.Initialize(null, db);
 
-        using (var dt = new DataTable())
+        using var dt = new DataTable();
+        dt.Columns.Add("Col1");
+        dt.Rows.Add("fff");
+
+        var tbl1 = db.CreateTable("table1", dt);
+        var tbl2 = db.CreateTable("table2",
+            new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
+
+        Assert.Multiple(() =>
         {
-            dt.Columns.Add("Col1");
-            dt.Rows.Add("fff");
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        });
 
-            var tbl1 = db.CreateTable("table1", dt);
-            var tbl2 = db.CreateTable("table2",
-                new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)) });
+        var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
-            Assert.AreEqual(1, tbl1.GetRowCount());
-            Assert.AreEqual(0, tbl2.GetRowCount());
+        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+        lmd.CatalogueRepository.Returns(CatalogueRepository);
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
 
-            var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+        var dbConfiguration = new HICDatabaseConfiguration(lmd,
+            RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
 
-            var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
-            lmd.CatalogueRepository.Returns(CatalogueRepository);
-            logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+        var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration);
+        job.StartLogging();
+        attacher.Attach(job, new GracefulCancellationToken());
 
-            var dbConfiguration = new HICDatabaseConfiguration(lmd,
-                RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
-
-            var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
-                ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration);
-            job.StartLogging();
-            attacher.Attach(job, new GracefulCancellationToken());
-
-            Assert.AreEqual(1, tbl1.GetRowCount());
-            Assert.AreEqual(1, tbl2.GetRowCount());
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(1));
+        });
     }
 
     private void RunAttachStageWithLoadProgressJob(RemoteTableAttacher attacher, DiscoveredDatabase db,
@@ -160,8 +164,11 @@ internal class RemoteTableAttacherTests : DatabaseTests
             new DatabaseColumnRequest("DateCol", new DatabaseTypeRequest(typeof(DateTime)))
         });
 
-        Assert.AreEqual(3, tbl1.GetRowCount());
-        Assert.AreEqual(0, tbl2.GetRowCount());
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        });
 
         var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
 
@@ -193,7 +200,10 @@ internal class RemoteTableAttacherTests : DatabaseTests
         job.StartLogging();
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.AreEqual(3, tbl1.GetRowCount());
-        Assert.AreEqual(mismatchProgress ? 0 : 1, tbl2.GetRowCount());
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(mismatchProgress ? 0 : 1));
+        });
     }
 }

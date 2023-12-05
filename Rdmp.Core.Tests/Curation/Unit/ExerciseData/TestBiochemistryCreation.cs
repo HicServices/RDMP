@@ -39,12 +39,14 @@ public class TestBiochemistryCreation
 
         biochem.GenerateTestDataFile(people, f, numberOfRecords);
 
-        //one progress task only, should have reported creating the correct number of rows
-        Assert.IsTrue(finished);
-        Assert.AreEqual(numberOfRecords, finishedWithRecords);
+        Assert.Multiple(() =>
+        {
+            //one progress task only, should have reported creating the correct number of rows
+            Assert.That(finished);
+            Assert.That(finishedWithRecords, Is.EqualTo(numberOfRecords));
 
-        Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length,
-            numberOfRecords); //can be newlines in middle of file
+            Assert.That(File.ReadAllLines(f.FullName), Has.Length.GreaterThanOrEqualTo(numberOfRecords)); //can be newlines in middle of file
+        });
 
         Console.WriteLine($"Created file: {f.FullName}");
         f.Delete();

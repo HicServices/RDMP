@@ -21,7 +21,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             cat.DeleteInDatabase();
 
-        Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty,
             "Failed to clear CatalogueRepository");
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandList),
@@ -49,7 +49,7 @@ internal class TestsExecuteCommandList : CommandCliTests
         var mock = GetMockActivator();
 
         var cmd = new ExecuteCommandList(mock, new[] { c });
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 

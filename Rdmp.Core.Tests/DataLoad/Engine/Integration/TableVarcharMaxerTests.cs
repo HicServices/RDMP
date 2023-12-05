@@ -60,16 +60,16 @@ public class TableVarcharMaxerTests : DatabaseTests
         switch (dbType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Dave").DataType.SQLType);
-                Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("varchar(max)"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("longtext", tbl.DiscoverColumn("Dave").DataType.SQLType);
-                Assert.AreEqual(allDataTypes ? "longtext" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("longtext"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "longtext" : "int"));
                 break;
             case DatabaseType.Oracle:
-                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Dave").DataType.SQLType);
-                Assert.AreEqual(allDataTypes ? "varchar(max)" : "int", tbl.DiscoverColumn("Frank").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Dave").DataType.SQLType, Is.EqualTo("varchar(max)"));
+                Assert.That(tbl.DiscoverColumn("Frank").DataType.SQLType, Is.EqualTo(allDataTypes ? "varchar(max)" : "int"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(dbType));
@@ -111,13 +111,13 @@ public class TableVarcharMaxerTests : DatabaseTests
         switch (dbType)
         {
             case DatabaseType.MicrosoftSQLServer:
-                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType, Is.EqualTo("varchar(max)"));
                 break;
             case DatabaseType.MySql:
-                Assert.AreEqual("longtext", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType, Is.EqualTo("longtext"));
                 break;
             case DatabaseType.Oracle:
-                Assert.AreEqual("varchar(max)", tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType);
+                Assert.That(tbl.DiscoverColumn("Da'   ,,;ve").DataType.SQLType, Is.EqualTo("varchar(max)"));
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(dbType));

@@ -162,7 +162,7 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
             ThrowImmediatelyCheckNotifier.Quiet,
             new GracefulCancellationToken());
 
-        Assert.AreEqual(0, returnCode, "Return code from runner was non zero");
+        Assert.That(returnCode,Is.EqualTo(0), "Return code from runner was non zero");
     }
 
     protected void Execute(out ExtractionPipelineUseCase pipelineUseCase,
@@ -186,9 +186,9 @@ public class TestsRequiringAnExtractionConfiguration : TestsRequiringACohort
 
             pipelineUseCase.Execute(listener);
 
-            Assert.IsNotEmpty(pipelineUseCase.Source.Request.QueryBuilder.SQL);
+            Assert.That(pipelineUseCase.Source.Request.QueryBuilder.SQL,Is.Not.Empty);
 
-            Assert.IsTrue(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
+            Assert.That(pipelineUseCase.ExtractCommand.State == ExtractCommandState.Completed);
         }
         finally
         {

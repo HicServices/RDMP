@@ -34,11 +34,11 @@ internal class CatalogueRepositoryTests
 
         var msg = Assert.Throws<Exception>(() => repo.TestConnection());
 
-        StringAssert.StartsWith("Testing connection failed", msg.Message);
-        StringAssert.DoesNotContain("omg", msg.Message);
-        StringAssert.Contains("****", msg.Message);
-        StringAssert.Contains("Timeout", msg.Message);
-        StringAssert.Contains("2", msg.Message);
+        Assert.That(msg.Message, Does.StartWith("Testing connection failed"));
+        Assert.That(msg.Message, Does.Not.Contain("omg"));
+        Assert.That(msg.Message, Does.Contain("****"));
+        Assert.That(msg.Message, Does.Contain("Timeout"));
+        Assert.That(msg.Message, Does.Contain("2"));
     }
 
     [Test]
@@ -59,9 +59,9 @@ internal class CatalogueRepositoryTests
 
         var msg = Assert.Throws<Exception>(() => repo.TestConnection());
 
-        StringAssert.StartsWith("Testing connection failed", msg.Message);
-        StringAssert.Contains("Integrated Security=", msg.Message);
-        StringAssert.Contains("Timeout", msg.Message);
-        StringAssert.Contains("2", msg.Message);
+        Assert.That(msg.Message, Does.StartWith("Testing connection failed"));
+        Assert.That(msg.Message, Does.Contain("Integrated Security="));
+        Assert.That(msg.Message, Does.Contain("Timeout"));
+        Assert.That(msg.Message, Does.Contain("2"));
     }
 }

@@ -43,7 +43,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         var tbl = db.CreateTable("MyTable", dt);
 
-        Assert.AreEqual(1, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
         Import(tbl, out var ti, out _);
 
         //Create a virtual RAW column
@@ -78,8 +78,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
                 var ex = Assert.Throws<PipelineCrashedException>(() =>
                     attacher.Attach(job, new GracefulCancellationToken()));
 
-                Assert.AreEqual("Invalid column name 'MyMissingCol'.",
-                    ex.InnerException.InnerException.InnerException.Message);
+                Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Invalid column name 'MyMissingCol'."));
                 return;
             case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
                 break;
@@ -89,7 +88,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
         dt = tbl.GetDataTable();
 

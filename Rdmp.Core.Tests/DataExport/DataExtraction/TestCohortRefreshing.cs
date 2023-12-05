@@ -45,14 +45,17 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
 
         var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
 
-        Assert.NotNull(engine.Request.NewCohortDefinition);
+        Assert.That(engine.Request.NewCohortDefinition, Is.Not.Null);
 
         var oldData = oldcohort.GetExternalData();
 
         engine.Request.NewCohortDefinition.CohortReplacedIfAny = oldcohort;
 
-        Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
-        Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
+        Assert.Multiple(() =>
+        {
+            Assert.That(engine.Request.NewCohortDefinition.Description, Is.EqualTo(oldData.ExternalDescription));
+            Assert.That(engine.Request.NewCohortDefinition.Version, Is.EqualTo(oldData.ExternalVersion + 1));
+        });
     }
 
     /// <summary>
@@ -133,14 +136,17 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             var engine = new CohortRefreshEngine(ThrowImmediatelyDataLoadEventListener.Quiet, _configuration);
             engine.Execute();
 
-            Assert.NotNull(engine.Request.NewCohortDefinition);
+            Assert.That(engine.Request.NewCohortDefinition, Is.Not.Null);
 
             var oldData = oldcohort.GetExternalData();
 
-            Assert.AreEqual(oldData.ExternalDescription, engine.Request.NewCohortDefinition.Description);
-            Assert.AreEqual(oldData.ExternalVersion + 1, engine.Request.NewCohortDefinition.Version);
+            Assert.Multiple(() =>
+            {
+                Assert.That(engine.Request.NewCohortDefinition.Description, Is.EqualTo(oldData.ExternalDescription));
+                Assert.That(engine.Request.NewCohortDefinition.Version, Is.EqualTo(oldData.ExternalVersion + 1));
 
-            Assert.AreNotEqual(oldcohort.CountDistinct, engine.Request.CohortCreatedIfAny.CountDistinct);
+                Assert.That(engine.Request.CohortCreatedIfAny.CountDistinct, Is.Not.EqualTo(oldcohort.CountDistinct));
+            });
 
             //now nuke all data in the catalogue so the cic returns nobody (except that the identifiers are cached eh?)
             DataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.InternalDataProcessing)
@@ -154,15 +160,16 @@ public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
             //execute it
             var ex = Assert.Throws<PipelineCrashedException>(() => engine.Execute());
 
-            Assert.IsTrue(
-                ex.InnerException.InnerException.Message.Contains(
-                    "CohortIdentificationCriteria execution resulted in an empty dataset"));
+            Assert.Multiple(() =>
+            {
+                Assert.That(
+                            ex.InnerException.InnerException.Message, Does.Contain("CohortIdentificationCriteria execution resulted in an empty dataset"));
 
-            //expected this message to happen
-            //that it did clear the cache
-            Assert.AreEqual(1,
-                toMem.EventsReceivedBySender.SelectMany(kvp => kvp.Value)
-                    .Count(msg => msg.Message.Equals("Clearing Cohort Identifier Cache")));
+                //expected this message to happen
+                //that it did clear the cache
+                Assert.That(toMem.EventsReceivedBySender.SelectMany(kvp => kvp.Value)
+                        .Count(msg => msg.Message.Equals("Clearing Cohort Identifier Cache")), Is.EqualTo(1));
+            });
         }
         finally
         {

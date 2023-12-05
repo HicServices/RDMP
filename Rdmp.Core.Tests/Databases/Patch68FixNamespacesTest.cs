@@ -44,8 +44,7 @@ internal class Patch68FixNamespacesTest : UnitTests
 
             var foundNow = Core.Repositories.MEF.GetType(newClass);
 
-            Assert.IsNotNull(foundNow, "Patch did not work correctly for Type '{0}' which after renaming became '{1}'",
-                oldClass, newClass);
+            Assert.That(foundNow, Is.Not.Null, $"Patch did not work correctly for Type '{oldClass}' which after renaming became '{newClass}'");
         }
     }
 

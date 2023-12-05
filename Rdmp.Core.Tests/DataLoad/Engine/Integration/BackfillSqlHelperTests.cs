@@ -63,11 +63,11 @@ public class BackfillSqlHelperTests : FromToDatabaseTests
             From, joinPath);
 
 
-        Assert.AreEqual(string.Format(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
+        Assert.That(sql, Is.EqualTo(string.Format(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
 FROM [{0}]..[Results] CurrentTable
 LEFT JOIN [{0}]..[Samples] j1 ON j1.ID = CurrentTable.SampleID
 LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.HeaderID",
-            From.GetRuntimeName()), sql);
+            From.GetRuntimeName())));
     }
 
     private void ThreeTableSetupWhereTimePeriodIsGrandparent()
@@ -90,7 +90,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         tiHeaders.IsPrimaryExtractionTable = true;
         tiHeaders.SaveToDatabase();
 
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+        Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(15), "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository, ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
@@ -149,7 +149,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         return ti;
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+    private static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
         string columnDefinitions)
     {
         using var conn = db.Server.GetConnection();
@@ -157,7 +157,7 @@ LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.
         CreateTableWithColumnDefinitions(db, tableName, columnDefinitions, conn);
     }
 
-    public static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
+    private static void CreateTableWithColumnDefinitions(DiscoveredDatabase db, string tableName,
         string columnDefinitions, DbConnection conn)
     {
         var sql = $"CREATE TABLE {tableName} ({columnDefinitions})";

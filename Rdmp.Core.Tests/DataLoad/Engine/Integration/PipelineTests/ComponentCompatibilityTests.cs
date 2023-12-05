@@ -18,6 +18,6 @@ public class ComponentCompatibilityTests : UnitTests
     [Test]
     public void GetComponentsCompatibleWithBulkInsertContext()
     {
-        Assert.True(MEF.GetTypes<IDataFlowComponent<DataTable>>().Any());
+        Assert.That(MEF.GetTypes<IDataFlowComponent<DataTable>>().Any());
     }
 }

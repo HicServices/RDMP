@@ -42,9 +42,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         ep.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("R0016 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but there is no audit of previously extracted SQL (needed for checking cohort changes)"));
     }
 
     [Test]
@@ -72,9 +71,8 @@ public class SelectedDataSetsCheckerTests : TestsRequiringAnExtractionConfigurat
         audit.SaveToDatabase();
 
         var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            $"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo($"R0017 ExtractionProgress 'mybatch' is 'in progress' (ProgressDate is not null) but we did not find the expected Cohort WHERE Sql in the audit of SQL extracted with the last batch.  Did you change the cohort without resetting the ProgressDate? The SQL we expected to find was '[{TestDatabaseNames.Prefix}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599'"));
 
         // tidy up
         ep.DeleteInDatabase();
