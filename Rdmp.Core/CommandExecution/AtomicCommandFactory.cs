@@ -473,7 +473,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
             { Weight = -50.5f };
 
-
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
             if (pcic != null) clone.SetTarget((DatabaseEntity)pcic.Project);
@@ -565,7 +564,6 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out AllPluginsNode _))
         {
-            yield return new ExecuteCommandAddPlugins(_activator);
             yield return new ExecuteCommandAddPlugins(_activator);
             yield return new ExecuteCommandPrunePlugin(_activator);
             yield return new ExecuteCommandExportPlugins(_activator);
