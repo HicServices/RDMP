@@ -8,6 +8,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp;
@@ -15,11 +16,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution
 {
     private readonly ColumnInfo _columnInfo;
     private Dataset _selectedDataset;
-    private IActivateItems _activateItems;
+    private readonly IActivateItems _activateItems;
 
     public ExecuteCommandLinkColumnInfoToDataSetUI(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
     {
@@ -27,13 +28,14 @@ public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, 
         _activateItems = activator;
     }
 
+    [NotNull]
     public override string GetCommandHelp() =>
         "Link this column to an existing dataset";
 
     public override void Execute()
     {
         base.Execute();
-        Dataset[] datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
+        var datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
         DialogArgs da =  new()
         {
             WindowTitle = "Link a dataset with this column",
@@ -47,6 +49,6 @@ public class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExecution, 
 
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
 }

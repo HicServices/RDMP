@@ -141,7 +141,7 @@ public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
         {
             lbDatasets.Visible = true;
             lbDatasetslbl.Visible = true;
-            string finalString = associatedDatasets.Count == 1 ? associatedDatasets[0] : String.Join(", ", associatedDatasets.ToArray(), 0, associatedDatasets.Count - 1) + " and " + associatedDatasets.LastOrDefault();
+            var finalString = associatedDatasets.Count == 1 ? associatedDatasets[0] : string.Join(", ", associatedDatasets.ToArray(), 0, associatedDatasets.Count - 1) + " and " + associatedDatasets.LastOrDefault();
             lbDatasets.Text = $"This catalogues contains data from the datasets:{finalString}";
         }
         else

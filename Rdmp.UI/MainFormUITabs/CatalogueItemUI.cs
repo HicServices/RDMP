@@ -41,7 +41,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         AssociatedCollection = RDMPCollection.Catalogue;
 
         ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-      
+
     }
 
     private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
