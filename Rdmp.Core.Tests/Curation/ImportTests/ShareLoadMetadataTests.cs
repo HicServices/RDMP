@@ -32,9 +32,12 @@ public class ShareLoadMetadataTests : UnitTests
 
         var lmd2 = ShareToNewRepository(lmd);
 
-        //different repos so not identical
-        Assert.IsFalse(ReferenceEquals(lmd, lmd2));
-        Assert.AreEqual(lmd.Name, lmd2.Name);
+        Assert.Multiple(() =>
+        {
+            //different repos so not identical
+            Assert.That(ReferenceEquals(lmd, lmd2), Is.False);
+            Assert.That(lmd2.Name, Is.EqualTo(lmd.Name));
+        });
     }
 
     [Test]
@@ -47,12 +50,15 @@ public class ShareLoadMetadataTests : UnitTests
         var cata1 = lmd1.GetAllCatalogues().Single();
         var cata2 = lmd2.GetAllCatalogues().Single();
 
-        //different repos so not identical
-        Assert.IsFalse(ReferenceEquals(lmd1, lmd2));
-        Assert.IsFalse(ReferenceEquals(cata1, cata2));
+        Assert.Multiple(() =>
+        {
+            //different repos so not identical
+            Assert.That(ReferenceEquals(lmd1, lmd2), Is.False);
+            Assert.That(ReferenceEquals(cata1, cata2), Is.False);
 
-        Assert.AreEqual(lmd1.Name, lmd2.Name);
-        Assert.AreEqual(cata1.Name, cata2.Name);
+            Assert.That(lmd2.Name, Is.EqualTo(lmd1.Name));
+            Assert.That(cata2.Name, Is.EqualTo(cata1.Name));
+        });
     }
 
     /// <summary>
@@ -69,13 +75,13 @@ public class ShareLoadMetadataTests : UnitTests
         var pt2 = lmd2.ProcessTasks.Single();
 
         //different repos so not identical
-        Assert.IsFalse(ReferenceEquals(lmd1, lmd2));
+        Assert.That(ReferenceEquals(lmd1, lmd2), Is.False);
         AssertAreEqual(lmd1, lmd2);
 
-        Assert.IsFalse(ReferenceEquals(pt1, pt2));
+        Assert.That(ReferenceEquals(pt1, pt2), Is.False);
         AssertAreEqual(pt1, pt2);
 
-        Assert.IsFalse(ReferenceEquals(pt1.ProcessTaskArguments.Single(), pt2.ProcessTaskArguments.Single()));
+        Assert.That(ReferenceEquals(pt1.ProcessTaskArguments.Single(), pt2.ProcessTaskArguments.Single()), Is.False);
         AssertAreEqual(pt1.ProcessTaskArguments.Single(), pt2.ProcessTaskArguments.Single());
     }
 
@@ -105,12 +111,12 @@ public class ShareLoadMetadataTests : UnitTests
         var lmd2 = ShareToNewRepository(lmd1);
 
         //different repos so not identical
-        Assert.IsFalse(ReferenceEquals(lmd1, lmd2));
+        Assert.That(ReferenceEquals(lmd1, lmd2), Is.False);
         AssertAreEqual(lmd1, lmd2);
 
         var pt2 = lmd2.ProcessTasks.Single();
 
-        Assert.IsFalse(ReferenceEquals(pt1, pt2));
+        Assert.That(ReferenceEquals(pt1, pt2), Is.False);
         AssertAreEqual(pt1, pt2);
 
         AssertAreEqual(pt1.GetAllArguments(), pt2.GetAllArguments());
@@ -156,7 +162,7 @@ public class ShareLoadMetadataTests : UnitTests
 
         //check that reflection can assemble the master ProcessTask
         var t = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(pt1, stg);
-        Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
+        Assert.That(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn, Is.Not.Null);
 
         //share to the second repository (which won't have that ColumnInfo)
         var lmd2 = ShareToNewRepository(lmd1);
@@ -166,14 +172,14 @@ public class ShareLoadMetadataTests : UnitTests
 
         //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
         var t2 = (MutilateDataTablesRuntimeTask)RuntimeTaskFactory.Create(lmd2.ProcessTasks.Single(), stg);
-        Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
+        Assert.That(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn, Is.Null);
     }
 
     private LoadMetadata ShareToNewRepository(LoadMetadata lmd)
     {
         var gatherer = new Gatherer(RepositoryLocator);
 
-        Assert.IsTrue(gatherer.CanGatherDependencies(lmd));
+        Assert.That(gatherer.CanGatherDependencies(lmd));
         var rootObj = gatherer.GatherDependencies(lmd);
 
         var sm = new ShareManager(RepositoryLocator, null);

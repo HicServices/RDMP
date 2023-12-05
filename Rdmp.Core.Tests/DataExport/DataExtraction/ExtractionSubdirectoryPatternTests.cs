@@ -26,7 +26,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         };
 
         var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern cannot contain dots", ex.Message);
+        Assert.That(ex.Message, Does.Contain("ExtractionSubdirectoryPattern cannot contain dots"));
     }
 
     [TestCase("bad")]
@@ -42,7 +42,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         };
 
         var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Configuration element", ex.Message);
+        Assert.That(ex.Message, Does.Contain("ExtractionSubdirectoryPattern must contain a Configuration element"));
     }
 
     [TestCase("$c/fff")]
@@ -55,7 +55,7 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         };
 
         var ex = Assert.Throws<Exception>(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("ExtractionSubdirectoryPattern must contain a Dataset element", ex.Message);
+        Assert.That(ex.Message, Does.Contain("ExtractionSubdirectoryPattern must contain a Dataset element"));
     }
 
     /*
@@ -94,6 +94,6 @@ internal class ExtractionSubdirectoryPatternTests : UnitTests
         Assert.DoesNotThrow(() => dest.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
         var answer = dest.GetDirectoryFor(cmd);
-        StringAssert.IsMatch(pattern, answer.FullName.Replace('\\', '/'));
+        Assert.That(answer.FullName.Replace('\\', '/'), Does.Match(pattern));
     }
 }

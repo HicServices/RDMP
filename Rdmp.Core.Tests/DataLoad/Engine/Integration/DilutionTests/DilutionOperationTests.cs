@@ -57,9 +57,9 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
             var result = server.GetCommand("SELECT * from DateRoundingTests", con).ExecuteScalar();
 
             if (expectedDilute == null)
-                Assert.AreEqual(DBNull.Value, result);
+                Assert.That(result, Is.EqualTo(DBNull.Value));
             else
-                Assert.AreEqual(DateTime.Parse(expectedDilute), result);
+                Assert.That(result, Is.EqualTo(DateTime.Parse(expectedDilute)));
         }
         finally
         {
@@ -118,9 +118,9 @@ INSERT INTO DateRoundingTests VALUES ({insert})", con).ExecuteNonQuery();
             var result = server.GetCommand("SELECT * from ExcludeRight3OfPostcodes", con).ExecuteScalar();
 
             if (expectedDilute == null)
-                Assert.AreEqual(DBNull.Value, result);
+                Assert.That(result, Is.EqualTo(DBNull.Value));
             else
-                Assert.AreEqual(expectedDilute, result);
+                Assert.That(result, Is.EqualTo(expectedDilute));
         }
         finally
         {
@@ -162,7 +162,7 @@ INSERT INTO DiluteToBitFlagTests VALUES ({insert})", con).ExecuteNonQuery();
 
             var result = server.GetCommand("SELECT * from DiluteToBitFlagTests", con).ExecuteScalar();
 
-            Assert.AreEqual(expectedDilute, Convert.ToBoolean(result));
+            Assert.That(Convert.ToBoolean(result), Is.EqualTo(expectedDilute));
         }
         finally
         {

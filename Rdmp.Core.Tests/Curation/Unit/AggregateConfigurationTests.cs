@@ -25,7 +25,7 @@ internal class AggregateConfigurationTests : UnitTests
 
         // empty tables should not get nuked
         AggregateConfiguration.AdjustGraphDataTable(dt);
-        Assert.AreEqual(2, dt.Columns.Count);
+        Assert.That(dt.Columns, Has.Count.EqualTo(2));
 
         dt.Dispose();
     }
@@ -48,12 +48,12 @@ internal class AggregateConfigurationTests : UnitTests
 
         if (includeZeroSeries)
         {
-            Assert.AreEqual(3, dt.Columns.Count);
+            Assert.That(dt.Columns, Has.Count.EqualTo(3));
         }
         else
         {
             // col1 should have been gotten rid of
-            Assert.AreEqual(2, dt.Columns.Count);
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
             dt.Columns.Contains("date");
             dt.Columns.Contains("col2");
         }

@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data.Dashboarding;
 
@@ -194,6 +195,6 @@ public static class PersistStringHelper
     /// <param name="key"></param>
     /// <param name="valueIfMissing"></param>
     /// <returns></returns>
-    public static bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing) =>
-        dict == null || !dict.ContainsKey(key) ? valueIfMissing : bool.Parse(dict[key]);
+    public static bool GetBool([CanBeNull] Dictionary<string, string> dict, string key, bool valueIfMissing) =>
+        dict?.TryGetValue(key,out var value)!=true ? valueIfMissing : bool.Parse(value);
 }

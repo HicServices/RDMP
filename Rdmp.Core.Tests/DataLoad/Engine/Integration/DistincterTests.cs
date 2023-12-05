@@ -78,7 +78,7 @@ public class DistincterTests : DatabaseTests
 
         var rowsAfter = tbl.GetRowCount();
 
-        Assert.AreEqual(rowsBefore / 2, rowsAfter);
+        Assert.That(rowsAfter, Is.EqualTo(rowsBefore / 2));
 
         db.Drop();
     }
@@ -137,7 +137,7 @@ public class DistincterTests : DatabaseTests
 
         var rowsAfter = tbl.GetRowCount();
 
-        Assert.AreEqual(rowsBefore, rowsAfter);
+        Assert.That(rowsAfter, Is.EqualTo(rowsBefore));
 
         db.Drop();
     }

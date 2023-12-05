@@ -18,7 +18,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
@@ -51,7 +50,7 @@ public class UITests : UnitTests
     /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
     /// visibly appear but will be mounted on a Form and generally should behave like live ones.
     /// 
-    /// <para>Method only tracks one set of results at once, so if you call this method more than once then expect old Errors to disapear.</para>
+    /// <para>Method only tracks one set of results at once, so if you call this method more than once then expect old Errors to disappear.</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="o"></param>
@@ -59,7 +58,7 @@ public class UITests : UnitTests
     /// will have to call it yourself</param>
     /// <returns></returns>
     /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
-    public T AndLaunch<T>(DatabaseEntity o, bool setDatabaseObject = true)
+    internal T AndLaunch<T>(DatabaseEntity o, bool setDatabaseObject = true)
         where T : Control, IRDMPSingleDatabaseObjectControl, new()
     {
         var ui = new T();
@@ -70,15 +69,7 @@ public class UITests : UnitTests
     }
 
 
-    public T AndLaunch<T>() where T : RDMPCollectionUI, new()
-    {
-        var ui = new T();
-        AndLaunch(ui);
-        ui.SetItemActivator(ItemActivator);
-        return ui;
-    }
-
-    public void AndLaunch(Control ui)
+    internal void AndLaunch(Control ui)
     {
         //clear the old results
         ClearResults();
@@ -118,8 +109,11 @@ public class UITests : UnitTests
     /// <param name="expectedReason">The reason it should be impossible - uses StringAssert.Contains</param>
     protected static void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
     {
-        Assert.IsTrue(cmd.IsImpossible);
-        StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain(expectedReason));
+        });
     }
 
     /// <summary>
@@ -172,24 +166,24 @@ public class UITests : UnitTests
         switch (expectedErrorLevel)
         {
             case ExpectedErrorType.KilledForm:
-                Assert.IsEmpty(ItemActivator.Results.KilledForms);
+                Assert.That(ItemActivator.Results.KilledForms, Is.Empty);
                 break;
             case ExpectedErrorType.Fatal:
-                Assert.IsEmpty(ItemActivator.Results.FatalCalls);
+                Assert.That(ItemActivator.Results.FatalCalls, Is.Empty);
                 break;
             case ExpectedErrorType.FailedCheck:
 
                 //there must have been something checked that failed with the provided message
                 if (_checkResults != null)
-                    Assert.IsEmpty(_checkResults.Messages.Where(m => m.Result == CheckResult.Fail));
+                    Assert.That(_checkResults.Messages.Where(static m => m.Result == CheckResult.Fail), Is.Empty);
                 break;
             case ExpectedErrorType.ErrorProvider:
-                Assert.IsEmpty(GetAllErrorProviderErrorsShown());
+                Assert.That(GetAllErrorProviderErrorsShown(), Is.Empty);
 
                 break;
             case ExpectedErrorType.GlobalErrorCheckNotifier:
 
-                Assert.IsEmpty(((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier).Messages);
+                Assert.That(((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier).Messages, Is.Empty);
 
                 break;
 
@@ -217,13 +211,13 @@ public class UITests : UnitTests
         switch (expectedErrorLevel)
         {
             case ExpectedErrorType.KilledForm:
-                Assert.IsTrue(
+                Assert.That(
                     ItemActivator.Results.KilledForms.Values.Any(v => v.Message.Contains(expectedContainsText)),
                     "Failed to find expected Exception, Exceptions were:\r\n" + string.Join(Environment.NewLine,
                         ItemActivator.Results.KilledForms.Values.Select(v => v.ToString())));
                 break;
             case ExpectedErrorType.Fatal:
-                Assert.IsTrue(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
+                Assert.That(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
                 break;
             case ExpectedErrorType.FailedCheck:
 
@@ -240,7 +234,7 @@ public class UITests : UnitTests
                 break;
             case ExpectedErrorType.ErrorProvider:
 
-                Assert.IsTrue(GetAllErrorProviderErrorsShown().Any(m => m.Contains(expectedContainsText)));
+                Assert.That(GetAllErrorProviderErrorsShown().Any(m => m.Contains(expectedContainsText)));
 
                 break;
             default:
@@ -251,7 +245,7 @@ public class UITests : UnitTests
     private static void AssertFailedCheck(ToMemoryCheckNotifier checkResults, string expectedContainsText)
     {
         //there must have been something checked that failed with the provided message
-        Assert.IsTrue(checkResults.Messages.Any(m =>
+        Assert.That(checkResults.Messages.Any(m =>
             m.Message.Contains(expectedContainsText) ||
             (m.Ex != null && m.Ex.Message.Contains(expectedContainsText)
                           && m.Result == CheckResult.Fail)));

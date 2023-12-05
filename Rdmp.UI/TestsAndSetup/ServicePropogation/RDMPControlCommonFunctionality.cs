@@ -396,9 +396,10 @@ public class RDMPControlCommonFunctionality
 
         if (!string.IsNullOrWhiteSpace(underMenu))
         {
-            if (!_addToMenuSubmenus.ContainsKey(underMenu))
+            if (!_addToMenuSubmenus.TryGetValue(underMenu, out ToolStripMenuItem stripMenuItem))
             {
-                _addToMenuSubmenus.Add(underMenu, new ToolStripMenuItem(underMenu));
+                stripMenuItem = new ToolStripMenuItem(underMenu);
+                _addToMenuSubmenus.Add(underMenu, stripMenuItem);
 
                 // If it's the GoTo menu then when the user expands the menu we have to fetch the objects
                 // and update the IsImpossible status etc.
@@ -406,8 +407,8 @@ public class RDMPControlCommonFunctionality
                     RDMPContextMenuStrip.RegisterFetchGoToObjecstCallback(_addToMenuSubmenus[underMenu]);
             }
 
-            _addToMenuSubmenus[underMenu].DropDownItems.Add(menuItem);
-            _menuDropDown.DropDownItems.Add(_addToMenuSubmenus[underMenu]);
+            stripMenuItem.DropDownItems.Add(menuItem);
+            _menuDropDown.DropDownItems.Add(stripMenuItem);
         }
         else
         {

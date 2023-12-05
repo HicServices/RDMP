@@ -29,8 +29,7 @@ internal class MasterDatabaseScriptExecutorTests : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             mds.CreateAndPatchDatabase(new LoggingDatabasePatcher(), new AcceptAllCheckNotifier()));
 
-        StringAssert.Contains(
-            "is already set up as a platform database for another schema (it has the 'ScriptsRun' table)",
-            ex.InnerException.Message);
+        Assert.That(
+            ex.InnerException.Message, Does.Contain("is already set up as a platform database for another schema (it has the 'ScriptsRun' table)"));
     }
 }

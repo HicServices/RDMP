@@ -18,7 +18,7 @@ public class ExternalCohortTableUITests : UITests
     {
         var o = WhenIHaveA<ExternalCohortTable>();
         var ui = AndLaunch<ExternalCohortTableUI>(o);
-        Assert.IsNotNull(ui);
+        Assert.That(ui, Is.Not.Null);
 
         //because cohort table doesnt actually go to a legit database the source should have been forbidlisted during the child provider stage (not really related to our UI).
         AssertErrorWasShown(ExpectedErrorType.GlobalErrorCheckNotifier,

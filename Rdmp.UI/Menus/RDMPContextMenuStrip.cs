@@ -142,13 +142,13 @@ public class RDMPContextMenuStrip : ContextMenuStrip
 
     private ToolStripMenuItem AddMenuIfNotExists(string submenu, Image image = null)
     {
-        if (!_subMenuDictionary.ContainsKey(submenu))
+        if (!_subMenuDictionary.TryGetValue(submenu, out var menuItem))
         {
-            var m = new ToolStripMenuItem(submenu, image);
-            _subMenuDictionary.Add(submenu, m);
+            menuItem = new ToolStripMenuItem(submenu, image);
+            _subMenuDictionary.Add(submenu, menuItem);
         }
 
-        return _subMenuDictionary[submenu];
+        return menuItem;
     }
 
     public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)

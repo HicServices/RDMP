@@ -19,9 +19,8 @@ internal class TestExecuteCommandImportTableInfo : CommandCliTests
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
             new CommandLineObjectPicker(Array.Empty<string>(), GetActivator())));
 
-        StringAssert.StartsWith(
-            "Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.StartWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was Missing"));
     }
 
     [Test]
@@ -30,9 +29,8 @@ internal class TestExecuteCommandImportTableInfo : CommandCliTests
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
             new CommandLineObjectPicker(new string[] { "MyTable" }, GetActivator())));
 
-        StringAssert.StartsWith(
-            "Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was MyTable",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.StartWith("Expected parameter at index 0 to be a FAnsi.Discovery.DiscoveredTable (for parameter 'table') but it was MyTable"));
     }
 
     [Test]
@@ -44,6 +42,6 @@ internal class TestExecuteCommandImportTableInfo : CommandCliTests
         var ex = Assert.Throws<Exception>(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandImportTableInfo),
             new CommandLineObjectPicker(new string[] { tbl, "true" }, GetActivator())));
 
-        StringAssert.StartsWith("Could not reach server myServerAddress", ex.Message);
+        Assert.That(ex.Message, Does.StartWith("Could not reach server myServerAddress"));
     }
 }

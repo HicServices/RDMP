@@ -1518,19 +1518,18 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            //if we don't have a record of any children in the child dictionary for the parent model object
-            if (!_childDictionary.ContainsKey(model))
+            //if we have a record of any children in the child dictionary for the parent model object
+            if (_childDictionary.TryGetValue(model,out var cached))
+                return cached.OrderBy(static o => o.ToString()).ToArray();
+
+            return model switch
             {
                 //if they want the children of a Pipeline (which we don't track) just serve the components
-                if (model is Pipeline p) return p.PipelineComponents.ToArray();
+                Pipeline p => p.PipelineComponents.ToArray(),
                 //if they want the children of a PipelineComponent (which we don't track) just serve the arguments
-                if (model is PipelineComponent pc) return pc.PipelineComponentArguments.ToArray();
-
-                return Array.Empty<object>(); //return none
-            }
-
-
-            return _childDictionary[model].OrderBy(o => o.ToString()).ToArray();
+                PipelineComponent pc => pc.PipelineComponentArguments.ToArray(),
+                _ => Array.Empty<object>()
+            };
         }
     }
 

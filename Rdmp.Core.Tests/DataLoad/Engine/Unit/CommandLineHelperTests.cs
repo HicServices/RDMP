@@ -22,22 +22,21 @@ internal class CommandLineHelperTests
     public void TestGetValueString()
     {
         var date = new DateTime(2004, 1, 1);
-        Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
+        Assert.That(CommandLineHelper.GetValueString(date), Is.EqualTo("\"2004-01-01\""));
 
 
         var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
-        Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));
+        Assert.That(CommandLineHelper.GetValueString(fi), Is.EqualTo($@"""{TestContext.CurrentContext.TestDirectory}"""));
 
         const string db = "db-name";
-        Assert.AreEqual(db, CommandLineHelper.GetValueString(db));
+        Assert.That(CommandLineHelper.GetValueString(db), Is.EqualTo(db));
 
         ImplementationManager.Load<MicrosoftSQLImplementation>();
 
         //notice how server and db don't actually exist, thats cool they implement IMightNotExist
         var dbInfo =
             new DiscoveredServer(new SqlConnectionStringBuilder { DataSource = "server" }).ExpectDatabase("db");
-        Assert.AreEqual("--database-name=db --database-server=server",
-            CommandLineHelper.CreateArgString("DbInfo", dbInfo));
+        Assert.That(CommandLineHelper.CreateArgString("DbInfo", dbInfo), Is.EqualTo("--database-name=db --database-server=server"));
     }
 
     [Test]
@@ -52,7 +51,7 @@ internal class CommandLineHelperTests
     {
         var date = new DateTime(2004, 1, 1);
         var argString = CommandLineHelper.CreateArgString("DateFrom", date);
-        Assert.AreEqual("--date-from=\"2004-01-01\"", argString);
+        Assert.That(argString, Is.EqualTo("--date-from=\"2004-01-01\""));
     }
 
     [Test]
@@ -60,7 +59,7 @@ internal class CommandLineHelperTests
     {
         var date = new DateTime(2004, 1, 1, 12, 34, 56);
         var argString = CommandLineHelper.CreateArgString("DateFrom", date);
-        Assert.AreEqual("--date-from=\"2004-01-01 12:34:56\"", argString);
+        Assert.That(argString, Is.EqualTo("--date-from=\"2004-01-01 12:34:56\""));
     }
 
     [Test]

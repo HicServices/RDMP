@@ -88,13 +88,19 @@ public class CustomDateCachingTests : DatabaseTests
             .Select(n => n.Message.TrimStart('!'))
             .ToArray();
 
-        //should not have been updated because this is a backfill request
-        Assert.AreEqual(new DateTime(2020, 1, 1), cacheProgress.CacheFillProgress);
+        Assert.Multiple(() =>
+        {
+            //should not have been updated because this is a backfill request
+            Assert.That(cacheProgress.CacheFillProgress, Is.EqualTo(new DateTime(2020, 1, 1)));
 
-        Assert.IsTrue(task.IsCompleted);
-        Assert.IsTrue(dateNotifications.Contains(startDate.ToString("g")));
-        Assert.IsTrue(dateNotifications.Contains(endDate.ToString("g")));
-        Assert.IsTrue(task.Status == TaskStatus.RanToCompletion);
+            Assert.That(task.IsCompleted);
+            Assert.That(dateNotifications, Does.Contain(startDate.ToString("g")));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dateNotifications, Does.Contain(endDate.ToString("g")));
+            Assert.That(task.Status, Is.EqualTo(TaskStatus.RanToCompletion));
+        });
 
         projDir.RootPath.Delete(true);
     }

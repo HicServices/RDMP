@@ -91,14 +91,14 @@ public class EndToEndCacheTest : DatabaseTests
         cachingHost.Start(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
         // should be numDaysToCache days in cache
-        Assert.AreEqual(NumDaysToCache, _LoadDirectory.Cache.GetFiles("*.csv").Length);
+        Assert.That(_LoadDirectory.Cache.GetFiles("*.csv"), Has.Length.EqualTo(NumDaysToCache));
 
         // make sure each file is named as expected
         var cacheFiles = _LoadDirectory.Cache.GetFiles().Select(fi => fi.Name).ToArray();
         for (var i = -NumDaysToCache; i < 0; i++)
         {
             var filename = $"{DateTime.Now.AddDays(i):yyyyMMdd}.csv";
-            Assert.IsTrue(cacheFiles.Contains(filename), filename + " not found");
+            Assert.That(cacheFiles, Does.Contain(filename), filename + " not found");
         }
     }
 
@@ -107,7 +107,7 @@ public class EndToEndCacheTest : DatabaseTests
     {
         var t = Task.Factory.StartNew(() =>
         {
-            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Length);
+            Assert.That(_LoadDirectory.Cache.GetFiles("*.csv"), Is.Empty);
 
             var auto = new CacheRunner(new CacheOptions
             { CacheProgress = _cp.ID.ToString(), Command = CommandLineActivity.run });
@@ -115,6 +115,6 @@ public class EndToEndCacheTest : DatabaseTests
                 ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         });
 
-        Assert.True(t.Wait(60000));
+        Assert.That(t.Wait(60000));
     }
 }

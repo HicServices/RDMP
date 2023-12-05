@@ -33,15 +33,18 @@ public class CohortCompilerRunnerTests : DatabaseTests
         var runner = new CohortCompilerRunner(compiler, 5000);
         runner.Run(new CancellationToken());
 
-        Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
+        Assert.That(runner.ExecutionPhase, Is.EqualTo(CohortCompilerRunner.Phase.Finished));
 
         var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
 
-        Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
-        Assert.IsNull(rootTask.Key.CrashMessage);
-        Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rootTask.Value.IsResultsForRootContainer);
+            Assert.That(rootTask.Key.CrashMessage, Is.Null);
+            Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
 
-        Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
+            Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+        });
     }
 
     [Test]
@@ -64,17 +67,20 @@ public class CohortCompilerRunnerTests : DatabaseTests
         var runner = new CohortCompilerRunner(compiler, 5000);
         runner.Run(new CancellationToken());
 
-        Assert.AreEqual(CohortCompilerRunner.Phase.Finished, runner.ExecutionPhase);
+        Assert.That(runner.ExecutionPhase, Is.EqualTo(CohortCompilerRunner.Phase.Finished));
 
         var rootTask = runner.Compiler.Tasks.Single(t => t.Key is AggregationContainerTask);
 
-        Assert.IsTrue(rootTask.Value.IsResultsForRootContainer);
-        Assert.IsNull(rootTask.Key.CrashMessage);
-        Assert.AreEqual(CompilationState.Finished, rootTask.Key.State);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rootTask.Value.IsResultsForRootContainer);
+            Assert.That(rootTask.Key.CrashMessage, Is.Null);
+            Assert.That(rootTask.Key.State, Is.EqualTo(CompilationState.Finished));
 
-        Assert.IsTrue(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
+            Assert.That(runner.Compiler.AreaAllQueriesCached(rootTask.Key));
 
-        Assert.AreEqual(dt.Rows.Count, rootTask.Value.Identifiers.Rows.Count);
+            Assert.That(rootTask.Value.Identifiers.Rows, Has.Count.EqualTo(dt.Rows.Count));
+        });
     }
 
     private void SetupCohort(out DiscoveredDatabase db, out CohortIdentificationConfiguration cic, out DataTable dt)

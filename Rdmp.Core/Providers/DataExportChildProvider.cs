@@ -621,13 +621,14 @@ public class DataExportChildProvider : CatalogueChildProvider
     public List<CohortSourceUsedByProjectNode> GetAllCohortProjectUsageNodesFor(Project project)
     {
         //if the current project does not have a number or there are no cohorts associated with it
-        if (project.ProjectNumber == null || !ProjectNumberToCohortsDictionary.ContainsKey(project.ProjectNumber.Value))
+        if (project.ProjectNumber == null ||
+            !ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var cohorts))
             return new List<CohortSourceUsedByProjectNode>();
 
         var toReturn = new List<CohortSourceUsedByProjectNode>();
 
 
-        foreach (var cohort in ProjectNumberToCohortsDictionary[project.ProjectNumber.Value])
+        foreach (var cohort in cohorts)
         {
             //get the source of the cohort
             var source = CohortSources.Single(s => s.ID == cohort.ExternalCohortTable_ID);

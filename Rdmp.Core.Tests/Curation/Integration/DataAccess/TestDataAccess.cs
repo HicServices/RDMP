@@ -41,7 +41,7 @@ public class TestDataAccess : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
                 true));
-        StringAssert.Contains("collection could not agree on a single Password", ex.Message);
+        Assert.That(ex.Message, Does.Contain("collection could not agree on a single Password"));
     }
 
     [Test]
@@ -57,7 +57,7 @@ public class TestDataAccess : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
                 true));
-        StringAssert.Contains("collection could not agree whether to use Credentials", ex.Message);
+        Assert.That(ex.Message, Does.Contain("collection could not agree whether to use Credentials"));
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class TestDataAccess : DatabaseTests
         var ex = Assert.Throws<Exception>(() =>
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
                 true));
-        StringAssert.Contains("collection could not agree on a single Username", ex.Message);
+        Assert.That(ex.Message, Does.Contain("collection could not agree on a single Username"));
     }
 
 
@@ -89,7 +89,7 @@ public class TestDataAccess : DatabaseTests
 
         var server =
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
-        Assert.AreEqual("frank", server.Name);
+        Assert.That(server.Name, Is.EqualTo("frank"));
     }
 
     [Test]
@@ -104,9 +104,8 @@ public class TestDataAccess : DatabaseTests
         var ex = Assert.Throws<ExpectedIdenticalStringsException>(() =>
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing,
                 true));
-        StringAssert.Contains(
-            "All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Contain("All data access points must be into the same database, access points 'frankbob' and 'frankBOB' are into different databases"));
     }
 
     #endregion
@@ -127,7 +126,7 @@ public class TestDataAccess : DatabaseTests
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
 
         //test result
-        Assert.AreEqual("bob's Database", result.Builder["Initial Catalog"]);
+        Assert.That(result.Builder["Initial Catalog"], Is.EqualTo("bob's Database"));
     }
 
     [Test]
@@ -144,7 +143,7 @@ public class TestDataAccess : DatabaseTests
             DataAccessPortal.ExpectDistinctServer(testPoints.ToArray(), DataAccessContext.InternalDataProcessing, true);
 
         //test result
-        Assert.AreEqual("mypas", result.Builder["Password"]);
+        Assert.That(result.Builder["Password"], Is.EqualTo("mypas"));
     }
 
     #endregion
@@ -174,7 +173,7 @@ public class TestDataAccess : DatabaseTests
             Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(asyncException, true));
         }
 
-        Assert.IsEmpty(asyncExceptions);
+        Assert.That(asyncExceptions, Is.Empty);
     }
 
     private List<Exception> asyncExceptions = new();
@@ -223,10 +222,13 @@ public class TestDataAccess : DatabaseTests
             //t has no credentials
             var server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
-            Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
-            Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
-            Assert.AreEqual("bobsDatabase", ((SqlConnectionStringBuilder)server.Builder).InitialCatalog);
-            Assert.AreEqual(true, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
+            Assert.Multiple(() =>
+            {
+                Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
+                Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(true));
+            });
 
             var creds = new DataAccessCredentials(CatalogueRepository, "Bob");
             try
@@ -242,12 +244,15 @@ public class TestDataAccess : DatabaseTests
                 ////t has some credentials now
                 server = DataAccessPortal.ExpectServer(t, DataAccessContext.InternalDataProcessing);
 
-                Assert.AreEqual(typeof(SqlConnectionStringBuilder), server.Builder.GetType());
-                Assert.AreEqual("fish", ((SqlConnectionStringBuilder)server.Builder).DataSource);
-                Assert.AreEqual("bobsDatabase", ((SqlConnectionStringBuilder)server.Builder).InitialCatalog);
-                Assert.AreEqual("frank", ((SqlConnectionStringBuilder)server.Builder).UserID);
-                Assert.AreEqual("bobsPassword", ((SqlConnectionStringBuilder)server.Builder).Password);
-                Assert.AreEqual(false, ((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(server.Builder.GetType(), Is.EqualTo(typeof(SqlConnectionStringBuilder)));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).DataSource, Is.EqualTo("fish"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).InitialCatalog, Is.EqualTo("bobsDatabase"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).UserID, Is.EqualTo("frank"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).Password, Is.EqualTo("bobsPassword"));
+                    Assert.That(((SqlConnectionStringBuilder)server.Builder).IntegratedSecurity, Is.EqualTo(false));
+                });
             }
             finally
             {

@@ -26,13 +26,12 @@ public class CohortQueryBuilderTests : CohortIdentificationTests
     {
         var builder = new CohortQueryBuilder(aggregate1, null, null);
 
-        Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT 
 distinct
 [" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
 FROM 
-[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)),
-            CollapseWhitespace(builder.SQL));
+[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID))));
     }
 
     [Test]
@@ -40,14 +39,13 @@ FROM
     {
         var builder = new CohortQueryBuilder(aggregate1, null, null);
 
-        Assert.AreEqual(CollapseWhitespace(
+        Assert.That(CollapseWhitespace(builder.GetDatasetSampleSQL()), Is.EqualTo(CollapseWhitespace(
                 string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	TOP 1000
 	*
 	FROM 
-	[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID)),
-            CollapseWhitespace(builder.GetDatasetSampleSQL()));
+	[" + _scratchDatabaseName + @"].[dbo].[BulkData]", cohortIdentificationConfiguration.ID))));
     }
 
 
@@ -63,7 +61,7 @@ FROM
 
         var builder = new CohortQueryBuilder(aggregate1, null, null);
 
-        Assert.AreEqual(CollapseWhitespace(
+        Assert.That(CollapseWhitespace(builder.GetDatasetSampleSQL()), Is.EqualTo(CollapseWhitespace(
             string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 	SELECT
     distinct
@@ -74,14 +72,14 @@ FROM
     group by 
     [" + _scratchDatabaseName + @"].[dbo].[BulkData].[chi]
     HAVING
-    count(*)>1", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
+    count(*)>1", cohortIdentificationConfiguration.ID))));
     }
 
 
     [Test]
     public void TestGettingAggregateSQLFromEntirity()
     {
-        Assert.AreEqual(null, aggregate1.GetCohortAggregateContainerIfAny());
+        Assert.That(aggregate1.GetCohortAggregateContainerIfAny(), Is.EqualTo(null));
 
         //set the order so that 2 comes before 1
         rootcontainer.AddChild(aggregate2, 1);
@@ -89,11 +87,11 @@ FROM
 
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
-        Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
+        Assert.That(aggregate1.GetCohortAggregateContainerIfAny(), Is.EqualTo(rootcontainer));
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(string.Format(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
                     @"(
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
@@ -112,7 +110,7 @@ FROM
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
                     , cohortIdentificationConfiguration.ID))
-                , CollapseWhitespace(builder.SQL));
+));
         }
         finally
         {
@@ -141,13 +139,15 @@ FROM
         try
         {
             var allConfigurations = rootcontainer.GetAllAggregateConfigurationsRecursively();
-            Assert.IsTrue(allConfigurations.Contains(aggregate1));
-            Assert.IsTrue(allConfigurations.Contains(aggregate2));
-            Assert.IsTrue(allConfigurations.Contains(aggregate3));
+            Assert.That(allConfigurations, Does.Contain(aggregate1));
+            Assert.That(allConfigurations, Does.Contain(aggregate2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(allConfigurations, Does.Contain(aggregate3));
 
-            Assert.AreEqual(
-                CollapseWhitespace(string.Format(
-                    @"(
+                Assert.That(
+                    CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
+                        @"(
 	/*cic_{0}_UnitTestAggregate1*/
 	SELECT
 	distinct
@@ -177,8 +177,8 @@ FROM
 	)
 
 )", cohortIdentificationConfiguration.ID))
-                ,
-                CollapseWhitespace(builder.SQL));
+    ));
+            });
         }
         finally
         {
@@ -207,8 +207,8 @@ FROM
 
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"(
 
@@ -240,7 +240,7 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )", cohortIdentificationConfiguration.ID))
-                , CollapseWhitespace(builder.SQL));
+));
         }
         finally
         {
@@ -285,8 +285,8 @@ FROM
 
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
@@ -314,12 +314,12 @@ SET @abracadabra=1;
 	)
 )
 ", cohortIdentificationConfiguration.ID))
-                , CollapseWhitespace(builder.SQL));
+));
 
 
             var builder2 = new CohortQueryBuilder(aggregate1, null, null);
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder2.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
@@ -333,14 +333,13 @@ WHERE
 (
 /*hithere*/
 1=@abracadabra
-)", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder2.SQL));
+)", cohortIdentificationConfiguration.ID))));
 
 
             var selectStar = new CohortQueryBuilder(aggregate1, null, null).GetDatasetSampleSQL();
 
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(selectStar), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @abracadabra AS int;
 SET @abracadabra=1;
@@ -355,8 +354,7 @@ SET @abracadabra=1;
 	(
 	/*hithere*/
 	1=@abracadabra
-	)", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(selectStar));
+	)", cohortIdentificationConfiguration.ID))));
         }
         finally
         {
@@ -383,8 +381,8 @@ SET @abracadabra=1;
 
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -404,16 +402,15 @@ SET @abracadabra=1;
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
 
 
             var builder2 = new CohortQueryBuilder(rootcontainer, null, null)
             {
                 StopContainerWhenYouReach = null
             };
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder2.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -442,8 +439,7 @@ SET @abracadabra=1;
 	FROM 
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder2.SQL));
+", cohortIdentificationConfiguration.ID))));
         }
         finally
         {
@@ -485,8 +481,8 @@ SET @abracadabra=1;
 
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -519,8 +515,7 @@ SET @abracadabra=1;
 	)
 
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
         }
         finally
         {
@@ -550,8 +545,8 @@ SET @abracadabra=1;
             rootcontainer.AddChild(container1);
 
             var builder = new CohortQueryBuilder(rootcontainer, null, null);
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -593,7 +588,7 @@ SET @abracadabra=1;
 
 )
 ", cohortIdentificationConfiguration.ID))
-                , CollapseWhitespace(builder.SQL));
+));
         }
         finally
         {
@@ -670,8 +665,8 @@ SET @abracadabra=1;
         try
         {
             if (valuesAreSame)
-                Assert.AreEqual(
-                    CollapseWhitespace(
+                Assert.That(
+                    CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                         string.Format(
                             @"DECLARE @bob AS varchar(10);
 SET @bob='Boom!';
@@ -709,11 +704,10 @@ SET @bob='Boom!';
 	@bob = 'bob'
 	)
 )
-", cohortIdentificationConfiguration.ID)),
-                    CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
             else
-                Assert.AreEqual(
-                    CollapseWhitespace(
+                Assert.That(
+                    CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                         string.Format(
                             @"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
@@ -753,8 +747,7 @@ SET @bob_2='Boom!';
 	@bob_2 = 'bob'
 	)
 )
-", cohortIdentificationConfiguration.ID)),
-                    CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
         }
         finally
         {
@@ -774,7 +767,7 @@ SET @bob_2='Boom!';
     [Test]
     public void TestGettingAggregateSQL_Aggregate_IsDisabled()
     {
-        Assert.AreEqual(null, aggregate1.GetCohortAggregateContainerIfAny());
+        Assert.That(aggregate1.GetCohortAggregateContainerIfAny(), Is.EqualTo(null));
 
         //set the order so that 2 comes before 1
         rootcontainer.AddChild(aggregate2, 1);
@@ -784,13 +777,13 @@ SET @bob_2='Boom!';
         aggregate1.IsDisabled = true;
         aggregate1.SaveToDatabase();
 
-        Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
+        Assert.That(aggregate1.GetCohortAggregateContainerIfAny(), Is.EqualTo(rootcontainer));
 
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(string.Format(
+            Assert.That(
+CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(string.Format(
                     @"(
 	/*cic_{0}_UnitTestAggregate2*/
 	SELECT
@@ -800,7 +793,7 @@ SET @bob_2='Boom!';
 	[" + _scratchDatabaseName + @"].[dbo].[BulkData]
 )"
                     , cohortIdentificationConfiguration.ID))
-                , CollapseWhitespace(builder.SQL));
+));
         }
         finally
         {
@@ -866,8 +859,8 @@ SET @bob_2='Boom!';
 
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @bob AS varchar(10);
 SET @bob='Grenades Are Go';
@@ -904,8 +897,7 @@ SET @bob_2='Boom!';
 	@bob_2 = 'bob'
 	)
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
         }
         finally
         {
