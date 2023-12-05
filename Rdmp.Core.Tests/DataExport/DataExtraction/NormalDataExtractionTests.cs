@@ -10,7 +10,6 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.QueryBuilding;
 using Tests.Common.Scenarios;
