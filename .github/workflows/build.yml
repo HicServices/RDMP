@@ -105,11 +105,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
-      - uses: actions/cache/restore@v3
-        id: restore-build
-        with:
-          path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
       - uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.github_token }}
