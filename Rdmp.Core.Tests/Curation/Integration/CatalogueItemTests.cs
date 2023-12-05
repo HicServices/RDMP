@@ -20,10 +20,13 @@ internal class CatalogueItemTests : DatabaseTests
         var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
         var child2 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM2");
 
-        Assert.IsTrue(child1.Catalogue_ID == parent.ID);
-        Assert.IsTrue(child2.Catalogue_ID == parent.ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(child1.Catalogue_ID, Is.EqualTo(parent.ID));
+            Assert.That(child2.Catalogue_ID, Is.EqualTo(parent.ID));
 
-        Assert.IsTrue(child1.ID != child2.ID);
+            Assert.That(child1.ID, Is.Not.EqualTo(child2.ID));
+        });
 
         child1.DeleteInDatabase();
         child2.DeleteInDatabase();
@@ -39,7 +42,7 @@ internal class CatalogueItemTests : DatabaseTests
         var child1 = new CatalogueItem(CatalogueRepository, parent, "GROG_ITEM1");
         child1.SetColumnInfo(null);
 
-        Assert.IsNull(child1.ColumnInfo_ID);
+        Assert.That(child1.ColumnInfo_ID, Is.Null);
         child1.DeleteInDatabase();
         parent.DeleteInDatabase();
     }
@@ -54,10 +57,13 @@ internal class CatalogueItemTests : DatabaseTests
 
         var children = parent.CatalogueItems;
 
-        Assert.AreEqual(children.Length, 2);
-        Assert.IsTrue(children[0].ID == child1.ID || children[1].ID == child1.ID);
-        Assert.IsTrue(children[0].ID == child2.ID || children[1].ID == child2.ID);
-        Assert.IsTrue(children[0].ID != children[1].ID);
+        Assert.That(children, Has.Length.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(children[0].ID == child1.ID || children[1].ID == child1.ID);
+            Assert.That(children[0].ID == child2.ID || children[1].ID == child2.ID);
+            Assert.That(children[0].ID, Is.Not.EqualTo(children[1].ID));
+        });
 
         children[0].DeleteInDatabase();
         children[1].DeleteInDatabase();
@@ -86,15 +92,18 @@ internal class CatalogueItemTests : DatabaseTests
 
         var childAfter = CatalogueRepository.GetObjectByID<CatalogueItem>(child.ID);
 
-        Assert.IsTrue(child.Name == childAfter.Name);
-        Assert.IsTrue(child.Agg_method == childAfter.Agg_method);
-        Assert.IsTrue(child.Comments == childAfter.Comments);
-        Assert.IsTrue(child.Limitations == childAfter.Limitations);
-        Assert.IsTrue(child.Description == childAfter.Description);
-        Assert.IsTrue(child.Periodicity == childAfter.Periodicity);
-        Assert.IsTrue(child.Research_relevance == childAfter.Research_relevance);
-        Assert.IsTrue(child.Statistical_cons == childAfter.Statistical_cons);
-        Assert.IsTrue(child.Topic == childAfter.Topic);
+        Assert.Multiple(() =>
+        {
+            Assert.That(child.Name, Is.EqualTo(childAfter.Name));
+            Assert.That(child.Agg_method, Is.EqualTo(childAfter.Agg_method));
+            Assert.That(child.Comments, Is.EqualTo(childAfter.Comments));
+            Assert.That(child.Limitations, Is.EqualTo(childAfter.Limitations));
+            Assert.That(child.Description, Is.EqualTo(childAfter.Description));
+            Assert.That(child.Periodicity, Is.EqualTo(childAfter.Periodicity));
+            Assert.That(child.Research_relevance, Is.EqualTo(childAfter.Research_relevance));
+            Assert.That(child.Statistical_cons, Is.EqualTo(childAfter.Statistical_cons));
+            Assert.That(child.Topic, Is.EqualTo(childAfter.Topic));
+        });
 
         child.DeleteInDatabase();
         parent.DeleteInDatabase();
@@ -126,18 +135,21 @@ internal class CatalogueItemTests : DatabaseTests
             child.SaveToDatabase();
             cloneChild = child.CloneCatalogueItemWithIDIntoCatalogue(parent2);
 
-            //get the clone that was returned
-            Assert.AreEqual(cloneChild.Catalogue_ID, parent2.ID); //it is in the second one
-            Assert.AreNotEqual(cloneChild.Catalogue_ID, parent.ID); //it is not in the first one
-            Assert.AreNotEqual(cloneChild.ID, child.ID); //it has a new ID
+            Assert.Multiple(() =>
+            {
+                //get the clone that was returned
+                Assert.That(parent2.ID, Is.EqualTo(cloneChild.Catalogue_ID)); //it is in the second one
+                Assert.That(parent.ID, Is.Not.EqualTo(cloneChild.Catalogue_ID)); //it is not in the first one
+                Assert.That(child.ID, Is.Not.EqualTo(cloneChild.ID)); //it has a new ID
 
-            Assert.AreEqual(cloneChild.Limitations, child.Limitations);
-            Assert.AreEqual(cloneChild.Description, child.Description);
-            Assert.AreEqual(cloneChild.Name, child.Name);
-            Assert.AreEqual(cloneChild.Periodicity, child.Periodicity);
-            Assert.AreEqual(cloneChild.Research_relevance, child.Research_relevance);
-            Assert.AreEqual(cloneChild.Statistical_cons, child.Statistical_cons);
-            Assert.AreEqual(cloneChild.Topic, child.Topic);
+                Assert.That(child.Limitations, Is.EqualTo(cloneChild.Limitations));
+                Assert.That(child.Description, Is.EqualTo(cloneChild.Description));
+                Assert.That(child.Name, Is.EqualTo(cloneChild.Name));
+                Assert.That(child.Periodicity, Is.EqualTo(cloneChild.Periodicity));
+                Assert.That(child.Research_relevance, Is.EqualTo(cloneChild.Research_relevance));
+                Assert.That(child.Statistical_cons, Is.EqualTo(cloneChild.Statistical_cons));
+                Assert.That(child.Topic, Is.EqualTo(cloneChild.Topic));
+            });
         }
         finally
         {
@@ -165,11 +177,14 @@ internal class CatalogueItemTests : DatabaseTests
 
         c.DeleteInDatabase();
 
-        Assert.IsFalse(c.Exists());
-        Assert.IsFalse(ci.Exists());
-        Assert.IsFalse(ei.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.Exists(), Is.False);
+            Assert.That(ci.Exists(), Is.False);
+            Assert.That(ei.Exists(), Is.False);
 
-        Assert.IsTrue(t.Exists());
-        Assert.AreEqual(!makeOrphanFirst, col.Exists());
+            Assert.That(t.Exists());
+            Assert.That(col.Exists(), Is.EqualTo(!makeOrphanFirst));
+        });
     }
 }

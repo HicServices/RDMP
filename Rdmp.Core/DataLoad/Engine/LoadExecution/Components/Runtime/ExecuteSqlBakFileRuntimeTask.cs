@@ -67,12 +67,12 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         if (File.Exists(primaryFilePhysicalName) || File.Exists(logFilePhysicalName))
         {
             var timestamp = DateTime.Now.Millisecond.ToString();
-            var primaryFileName = primaryFilePhysicalName.Substring(0, primaryFilePhysicalName.Length - 4);
-            var primaryFileExtention = primaryFilePhysicalName.Substring(primaryFilePhysicalName.Length - 4);
-            primaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtention}";
-            var logFileName = logFilePhysicalName.Substring(0, logFilePhysicalName.Length - 4);
-            var logFileExtention = logFilePhysicalName.Substring(logFilePhysicalName.Length - 4);
-            logFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtention}";
+            var primaryFileName = primaryFilePhysicalName[..^4];
+            var primaryFileExtension = primaryFilePhysicalName[^4..];
+            primaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtension}";
+            var logFileName = logFilePhysicalName[..^4];
+            var logFileExtension = logFilePhysicalName[^4..];
+            logFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtension}";
         }
 
         var name = db.ToString();

@@ -32,6 +32,6 @@ internal class MigrationStrategyTests : DatabaseTests
         var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
 
         var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
-        Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There are no primary keys declared in table Bob"));
     }
 }

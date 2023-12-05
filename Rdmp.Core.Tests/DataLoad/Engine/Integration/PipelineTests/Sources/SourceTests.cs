@@ -29,8 +29,7 @@ public class SourceTests : DatabaseTests
     {
         var source = new DbDataCommandDataFlowSource("Select top 3 * from master.sys.tables", "Query Sys tables",
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder, 30);
-        Assert.AreEqual(3,
-            source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()).Rows.Count);
+        Assert.That(source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()).Rows, Has.Count.EqualTo(3));
     }
 
 
@@ -44,7 +43,7 @@ public class SourceTests : DatabaseTests
         var ti = new TableInfo(CatalogueRepository, "TestTableInfo");
         context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti);
 
-        Assert.AreEqual(component.PreInitToThis, ti);
+        Assert.That(ti, Is.EqualTo(component.PreInitToThis));
         ti.DeleteInDatabase();
     }
 
@@ -73,7 +72,7 @@ public class SourceTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ci));
-        StringAssert.Contains("The following expected types were not passed to PreInitialize:TableInfo", ex.Message);
+        Assert.That(ex.Message, Does.Contain("The following expected types were not passed to PreInitialize:TableInfo"));
     }
 
     [Test]
@@ -86,9 +85,8 @@ public class SourceTests : DatabaseTests
         var ti = new TableInfo(new MemoryCatalogueRepository(), "Foo");
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, ti));
-        StringAssert.Contains(
-            "Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Contain("Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) "));
     }
 
     [Test]
@@ -107,9 +105,8 @@ public class SourceTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() =>
             context.PreInitialize(ThrowImmediatelyDataLoadEventListener.Quiet, component, testTableInfo));
-        StringAssert.Contains(
-            $"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Contain($"The following expected types were not passed to PreInitialize:LoadModuleAssembly{Environment.NewLine}The object types passed were:{Environment.NewLine}Rdmp.Core.Curation.Data.TableInfo:Test Table Info"));
     }
 
     [Test]
@@ -122,7 +119,7 @@ public class SourceTests : DatabaseTests
         var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
         var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);
 
-        Assert.IsTrue(context.IsAllowable(pipeline));
+        Assert.That(context.IsAllowable(pipeline));
 
         pipeline.DeleteInDatabase();
     }
@@ -145,11 +142,13 @@ public class SourceTests : DatabaseTests
 
         Console.WriteLine(reason);
 
-        Assert.IsFalse(rejection, reason);
+        Assert.Multiple(() =>
+        {
+            Assert.That(rejection, Is.False, reason);
 
-        Assert.AreEqual(
-            "Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context",
-            reason);
+            Assert.That(
+                reason, Is.EqualTo("Component TestPipeComponent implements a forbidden type (IPipelineRequirement<TableInfo>) under the pipeline usage context"));
+        });
 
         pipeline.DeleteInDatabase();
     }

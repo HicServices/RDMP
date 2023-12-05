@@ -38,10 +38,13 @@ internal class RdmpScriptTests : UnitTests
         var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
             ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(0, exitCode);
-        Assert.AreEqual(1, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Length);
+        Assert.Multiple(() =>
+        {
+            Assert.That(exitCode, Is.EqualTo(0));
+            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
+        });
 
-        Assert.AreEqual(expectedName, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().Name);
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().Name, Is.EqualTo(expectedName));
     }
 
     [TestCase("NewObject Catalogue 'fffff'", "NewObject CatalogueItem Catalogue:*fff* 'bbbb'", "bbbb")]
@@ -70,11 +73,14 @@ internal class RdmpScriptTests : UnitTests
         var exitCode = runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
             ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(0, exitCode);
-        Assert.AreEqual(1, RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Length);
+        Assert.Multiple(() =>
+        {
+            Assert.That(exitCode, Is.EqualTo(0));
+            Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Has.Length.EqualTo(1));
+        });
         var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Single().CatalogueItems.Single();
 
-        Assert.AreEqual(expectedCataItemName, ci.Name);
+        Assert.That(ci.Name, Is.EqualTo(expectedCataItemName));
     }
 
     [Test]
@@ -82,18 +88,24 @@ internal class RdmpScriptTests : UnitTests
     {
         var vals = ExecuteCommandRunner.SplitCommandLine("NewObject CatalogueItem 'Catalogue:\"fff\"' 'bbbb'")
             .ToArray();
-        Assert.AreEqual("NewObject", vals[0]);
-        Assert.AreEqual("CatalogueItem", vals[1]);
-        Assert.AreEqual("Catalogue:\"fff\"", vals[2]);
-        Assert.AreEqual("bbbb", vals[3]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(vals[0], Is.EqualTo("NewObject"));
+            Assert.That(vals[1], Is.EqualTo("CatalogueItem"));
+            Assert.That(vals[2], Is.EqualTo("Catalogue:\"fff\""));
+            Assert.That(vals[3], Is.EqualTo("bbbb"));
+        });
     }
 
     [Test]
     public void Test_SplitCommandLine_QuotesInStrings()
     {
         var vals = ExecuteCommandRunner.SplitCommandLine("NewObject CatalogueItem bb\"'bb'").ToArray();
-        Assert.AreEqual("NewObject", vals[0]);
-        Assert.AreEqual("CatalogueItem", vals[1]);
-        Assert.AreEqual("bb\"'bb'", vals[2]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(vals[0], Is.EqualTo("NewObject"));
+            Assert.That(vals[1], Is.EqualTo("CatalogueItem"));
+            Assert.That(vals[2], Is.EqualTo("bb\"'bb'"));
+        });
     }
 }

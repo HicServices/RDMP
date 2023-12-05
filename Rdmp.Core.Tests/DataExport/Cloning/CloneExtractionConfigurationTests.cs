@@ -28,7 +28,7 @@ public class CloneExtractionConfigurationTests : TestsRequiringAnExtractionConfi
         if (introduceOrphanExtractionInformation)
             IntroduceOrphan();
 
-        Assert.IsEmpty(_configuration.ReleaseLog);
+        Assert.That(_configuration.ReleaseLog, Is.Empty);
 
         var filter = new ExtractionFilter(CatalogueRepository, "FilterByFish", _extractionInformations[0]);
         try
@@ -40,7 +40,7 @@ public class CloneExtractionConfigurationTests : TestsRequiringAnExtractionConfi
                 null);
             filter.SaveToDatabase();
 
-            Assert.IsTrue(filter.ExtractionFilterParameters.Count() == 1);
+            Assert.That(filter.ExtractionFilterParameters.Count(), Is.EqualTo(1));
 
             //create a root container
             var container = new FilterContainer(DataExportRepository);
@@ -60,8 +60,8 @@ public class CloneExtractionConfigurationTests : TestsRequiringAnExtractionConfi
 
             var request = new ExtractDatasetCommand(_configuration, new ExtractableDatasetBundle(_extractableDataSet));
             request.GenerateQueryBuilder();
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+CollapseWhitespace(request.QueryBuilder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"DECLARE @fish AS varchar(50);
 SET @fish='jormungander';
@@ -88,17 +88,20 @@ AND
 [{0}CohortDatabase]..[Cohort].[cohortDefinition_id]=-599
 "
                         , TestDatabaseNames.Prefix))
-                , CollapseWhitespace(request.QueryBuilder.SQL));
+));
 
             var deepClone = _configuration.DeepCloneWithNewIDs();
-            Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
-            Assert.AreNotEqual(deepClone.ID, _configuration.ID);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
+                Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+            });
             try
             {
                 var request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                 request2.GenerateQueryBuilder();
 
-                Assert.AreEqual(request.QueryBuilder.SQL, request2.QueryBuilder.SQL);
+                Assert.That(request2.QueryBuilder.SQL, Is.EqualTo(request.QueryBuilder.SQL));
             }
             finally
             {
@@ -124,22 +127,28 @@ AND
         origProgress.SaveToDatabase();
 
         var deepClone = _configuration.DeepCloneWithNewIDs();
-        Assert.AreEqual(deepClone.Cohort_ID, _configuration.Cohort_ID);
-        Assert.AreNotEqual(deepClone.ID, _configuration.ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_configuration.Cohort_ID, Is.EqualTo(deepClone.Cohort_ID));
+            Assert.That(_configuration.ID, Is.Not.EqualTo(deepClone.ID));
+        });
 
         var clonedSds = deepClone.SelectedDataSets.Single(s => s.ExtractableDataSet_ID == sds.ExtractableDataSet_ID);
 
         var clonedProgress = clonedSds.ExtractionProgressIfAny;
 
-        Assert.IsNotNull(clonedProgress);
-        Assert.IsNull(clonedProgress.StartDate);
-        Assert.IsNull(clonedProgress.ProgressDate,
-            "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
+        Assert.That(clonedProgress, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(clonedProgress.StartDate, Is.Null);
+            Assert.That(clonedProgress.ProgressDate, Is.Null,
+                "Cloning a ExtractionProgress should reset its ProgressDate back to null in anticipation of it being extracted again");
 
-        Assert.AreEqual(clonedProgress.EndDate, origProgress.EndDate);
-        Assert.AreEqual(clonedProgress.NumberOfDaysPerBatch, origProgress.NumberOfDaysPerBatch);
-        Assert.AreEqual(clonedProgress.Name, origProgress.Name);
-        Assert.AreEqual(clonedProgress.ExtractionInformation_ID, origProgress.ExtractionInformation_ID);
+            Assert.That(origProgress.EndDate, Is.EqualTo(clonedProgress.EndDate));
+            Assert.That(origProgress.NumberOfDaysPerBatch, Is.EqualTo(clonedProgress.NumberOfDaysPerBatch));
+            Assert.That(origProgress.Name, Is.EqualTo(clonedProgress.Name));
+            Assert.That(origProgress.ExtractionInformation_ID, Is.EqualTo(clonedProgress.ExtractionInformation_ID));
+        });
 
 
         deepClone.DeleteInDatabase();
@@ -149,7 +158,7 @@ AND
     }
 
 
-    public void IntroduceOrphan()
+    private void IntroduceOrphan()
     {
         var cols = _configuration.GetAllExtractableColumnsFor(_extractableDataSet).Cast<ExtractableColumn>().ToArray();
 

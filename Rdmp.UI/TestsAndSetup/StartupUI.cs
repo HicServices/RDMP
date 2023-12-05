@@ -279,16 +279,15 @@ public partial class StartupUI : Form, ICheckNotifier
                 ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(), CheckResult.Success));
                 return;
             case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
-                if (!_haveWarnedAboutOutOfDate)
-                {
-                    MessageBox.Show(
-                        "The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
-                    _haveWarnedAboutOutOfDate = true;
-                }
+                if (_haveWarnedAboutOutOfDate) return;
+
+                MessageBox.Show(
+                    "The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
+                _haveWarnedAboutOutOfDate = true;
 
                 return;
             default:
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException(nameof(eventArgs),$"Invalid status {eventArgs.Status}");
         }
     }
 

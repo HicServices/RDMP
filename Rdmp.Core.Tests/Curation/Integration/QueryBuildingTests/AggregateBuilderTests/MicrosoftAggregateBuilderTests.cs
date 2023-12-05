@@ -19,7 +19,7 @@ public class MicrosoftAggregateBuilderTests : AggregateBuilderTestsBase
         var builder = new AggregateBuilder(null, "count(*)", null);
         builder.AddColumn(_dimension1);
 
-        Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -28,7 +28,7 @@ T1
 group by 
 Col1
 order by 
-Col1"), CollapseWhitespace(builder.SQL));
+Col1")));
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ Col1"), CollapseWhitespace(builder.SQL));
         var builder = new AggregateBuilder(null, "count(cast(1 AS int))", null);
         builder.AddColumn(_dimension1);
 
-        Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(cast(1 AS int)) AS MyCount
@@ -49,7 +49,7 @@ T1
 group by 
 Col1
 order by 
-Col1"), CollapseWhitespace(builder.SQL));
+Col1")));
     }
 
     [Test]
@@ -59,7 +59,7 @@ Col1"), CollapseWhitespace(builder.SQL));
         builder.AddColumn(_dimension1);
         builder.AddColumn(_dimension2);
 
-        Assert.AreEqual(CollapseWhitespace(CollapseWhitespace(@"/**/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(CollapseWhitespace(@"/**/
 SELECT
 Col1,
 Col2,
@@ -71,7 +71,7 @@ Col1,
 Col2
 order by 
 Col1,
-Col2")), CollapseWhitespace(builder.SQL));
+Col2"))));
     }
 
     [Test]
@@ -81,7 +81,7 @@ Col2")), CollapseWhitespace(builder.SQL));
         builder.AddColumn(_dimension1);
         builder.AddColumn(_dimension2);
 
-        Assert.AreEqual(CollapseWhitespace(@"/*MyConfig*/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(@"/*MyConfig*/
 SELECT 
 Col1,
 Col2,
@@ -93,7 +93,7 @@ Col1,
 Col2
 order by 
 Col1,
-Col2"), CollapseWhitespace(builder.SQL));
+Col2")));
     }
 
     [Test]
@@ -102,7 +102,7 @@ Col2"), CollapseWhitespace(builder.SQL));
         var topX1 = new AggregateTopX(CatalogueRepository, _configuration, 10);
         var ex = Assert.Throws<Exception>(() => new AggregateTopX(CatalogueRepository, _configuration, 10));
 
-        Assert.AreEqual("AggregateConfiguration MyConfig already has a TopX", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("AggregateConfiguration MyConfig already has a TopX"));
         topX1.DeleteInDatabase();
     }
 
@@ -125,7 +125,7 @@ Col2"), CollapseWhitespace(builder.SQL));
 
         var builder = _configuration.GetQueryBuilder();
 
-        Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace($@"/*MyConfig*/
 SELECT 
 TOP 10
 Col1,
@@ -137,7 +137,7 @@ group by
 Col1,
 Col2
 order by 
-{countColField} {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
+{countColField} {(asc ? "asc" : "desc")}")));
 
         _configuration.CountSQL = beforeCountSQL;
         topX.DeleteInDatabase();
@@ -159,7 +159,7 @@ order by
 
         var builder = _configuration.GetQueryBuilder();
 
-        Assert.AreEqual(CollapseWhitespace($@"/*MyConfig*/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace($@"/*MyConfig*/
 SELECT 
 TOP 10
 Col1,
@@ -171,7 +171,7 @@ group by
 Col1,
 Col2
 order by 
-Col1 {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
+Col1 {(asc ? "asc" : "desc")}")));
 
         topX.DeleteInDatabase();
     }
@@ -181,10 +181,10 @@ Col1 {(asc ? "asc" : "desc")}"), CollapseWhitespace(builder.SQL));
     {
         var builder = new AggregateBuilder(null, "count(*)", null, new[] { _ti });
 
-        Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(@"/**/
 SELECT 
 count(*) AS MyCount
 FROM 
-T1"), CollapseWhitespace(builder.SQL));
+T1")));
     }
 }

@@ -18,7 +18,7 @@ public class UsefulStuffUnitTests
     [TestCase("1203567855", true)]
     public void ChiValidationTests(string chi, bool valid)
     {
-        Assert.AreEqual(valid, UsefulStuff.CHIisOK(chi), "Validation gave incorrect answer for CHI '{0}'", chi);
+        Assert.That(UsefulStuff.CHIisOK(chi), Is.EqualTo(valid), $"Validation gave incorrect answer for CHI '{chi}'");
     }
 
     [TestCase("[ff ff]", "ff ff")]
@@ -35,7 +35,7 @@ public class UsefulStuffUnitTests
         foreach (var suffix in new[] { "", "\n", "\r", "\r\n", ",\r\n" })
         {
             var output = UsefulStuff.GetArrayOfColumnNamesFromStringPastedInByUser($"{input}{suffix}");
-            Assert.AreEqual(expectedOutput, output.Single());
+            Assert.That(output.Single(), Is.EqualTo(expectedOutput));
         }
     }
 
@@ -44,6 +44,6 @@ public class UsefulStuffUnitTests
     public void ClipboardHtmlTest()
     {
         const string test = "Version:1.0\r\nStartHTML:000051\r\nEndHTML:0000000055\r\nTest";
-        Assert.AreEqual(test, UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString("Test"));
+        Assert.That(UsefulStuff.GetClipboardFormattedHtmlStringFromHtmlString("Test"), Is.EqualTo(test));
     }
 }

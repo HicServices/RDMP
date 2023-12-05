@@ -36,7 +36,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Upper = DateTime.MaxValue;
         var v = CreateLiteralDateValidator(b);
 
-        Assert.IsNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Null);
     }
 
     [Test]
@@ -47,7 +47,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Upper = DateTime.MinValue.AddYears(1);
         var v = CreateLiteralDateValidator(b);
 
-        Assert.NotNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Not.Null);
     }
 
     [Test]
@@ -58,7 +58,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Upper = DateTime.MaxValue;
         var v = CreateLiteralDateValidator(b);
 
-        Assert.NotNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Not.Null);
     }
 
     [Test]
@@ -71,7 +71,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateLiteralDateValidator(b);
 
-        Assert.NotNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Not.Null);
     }
 
     [Test]
@@ -83,7 +83,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = false;
         var v = CreateLiteralDateValidator(b);
 
-        Assert.NotNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Not.Null);
     }
 
     [Test]
@@ -95,7 +95,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = true;
         var v = CreateLiteralDateValidator(b);
 
-        Assert.IsNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Null);
     }
 
     [Test]
@@ -107,7 +107,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = true;
         var v = CreateLiteralDateValidator(b);
 
-        Assert.IsNull(v.Validate(_d));
+        Assert.That(v.Validate(_d), Is.Null);
     }
 
     #endregion
@@ -123,7 +123,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateAdmissionDateValidator(b);
 
-        Assert.IsNull(v.Validate(TestConstants.AdmissionDateOccursAfterDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursAfterDob), Is.Null);
     }
 
 
@@ -136,7 +136,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateAdmissionDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.AdmissionDateOccursBeforeDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursBeforeDob), Is.Not.Null);
     }
 
     [Test]
@@ -148,7 +148,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = false;
         var v = CreateAdmissionDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.AdmissionDateOccursOnDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursOnDob), Is.Not.Null);
     }
 
     [Test]
@@ -167,7 +167,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var l = result.GetExceptionList();
 
-        StringAssert.EndsWith($"Expected a date greater than [{b.LowerFieldName}].", l[0].Message);
+        Assert.That(l[0].Message, Does.EndWith($"Expected a date greater than [{b.LowerFieldName}]."));
         Console.WriteLine(result.Message);
     }
 
@@ -180,7 +180,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateParentDobValidator(b);
 
-        Assert.IsNull(v.Validate(TestConstants.ParentDobOccursBeforeDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursBeforeDob), Is.Null);
     }
 
     [Test]
@@ -192,7 +192,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateParentDobValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.ParentDobOccursOnDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursOnDob), Is.Not.Null);
     }
 
     [Test]
@@ -204,7 +204,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateParentDobValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.ParentDobOccursAfterDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursAfterDob), Is.Not.Null);
     }
 
     [Test]
@@ -223,7 +223,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var l = result.GetExceptionList();
 
-        StringAssert.EndsWith($"Expected a date less than [{b.UpperFieldName}].", l[0].Message);
+        Assert.That(l[0].Message, Does.EndWith($"Expected a date less than [{b.UpperFieldName}]."));
         Console.WriteLine(result.Message);
     }
 
@@ -236,7 +236,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateOperationDateValidator(b);
 
-        Assert.IsNull(v.Validate(TestConstants.OperationOccursDuringStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursDuringStay), Is.Null);
     }
 
     [Test]
@@ -249,7 +249,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateOperationDateValidator(b);
 
-        Assert.IsNull(v.Validate(TestConstants.OperationOccursOnStartOfStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursOnStartOfStay), Is.Null);
     }
 
     [Test]
@@ -262,7 +262,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateOperationDateValidator(b);
 
-        Assert.IsNull(v.Validate(TestConstants.OperationOccursOnEndOfStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursOnEndOfStay), Is.Null);
     }
 
     [Test]
@@ -274,7 +274,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = false;
         var v = CreateOperationDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.OperationOccursOnStartOfStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursOnStartOfStay), Is.Not.Null);
     }
 
     [Test]
@@ -286,7 +286,7 @@ internal class BoundsValidationDateTest : ValidationTests
         b.Inclusive = false;
         var v = CreateOperationDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.OperationOccursOnEndOfStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursOnEndOfStay), Is.Not.Null);
     }
 
     [Test]
@@ -298,7 +298,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateOperationDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.OperationOccursBeforeStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursBeforeStay), Is.Not.Null);
     }
 
     [Test]
@@ -310,7 +310,7 @@ internal class BoundsValidationDateTest : ValidationTests
 
         var v = CreateOperationDateValidator(b);
 
-        Assert.NotNull(v.Validate(TestConstants.OperationOccursAfterStay));
+        Assert.That(v.Validate(TestConstants.OperationOccursAfterStay), Is.Not.Null);
     }
 
     #endregion
@@ -341,7 +341,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("admission_date").OccursAfter("dob");
 
-        Assert.IsNull(v.Validate(TestConstants.AdmissionDateOccursAfterDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursAfterDob), Is.Null);
     }
 
     [Test]
@@ -350,7 +350,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("admission_date").OccursAfter("dob");
 
-        Assert.NotNull(v.Validate(TestConstants.AdmissionDateOccursBeforeDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursBeforeDob), Is.Not.Null);
     }
 
     [Test]
@@ -359,7 +359,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("admission_date").OccursAfter("dob");
 
-        Assert.NotNull(v.Validate(TestConstants.AdmissionDateOccursOnDob));
+        Assert.That(v.Validate(TestConstants.AdmissionDateOccursOnDob), Is.Not.Null);
     }
 
     [Test]
@@ -368,7 +368,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("parent_dob").OccursBefore("dob");
 
-        Assert.IsNull(v.Validate(TestConstants.ParentDobOccursBeforeDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursBeforeDob), Is.Null);
     }
 
     [Test]
@@ -377,7 +377,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("parent_dob").OccursBefore("dob");
 
-        Assert.NotNull(v.Validate(TestConstants.ParentDobOccursAfterDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursAfterDob), Is.Not.Null);
     }
 
     [Test]
@@ -386,7 +386,7 @@ internal class BoundsValidationDateTest : ValidationTests
         var v = new Validator();
         v.EnsureThatValue("parent_dob").OccursBefore("dob");
 
-        Assert.NotNull(v.Validate(TestConstants.ParentDobOccursOnDob));
+        Assert.That(v.Validate(TestConstants.ParentDobOccursOnDob), Is.Not.Null);
     }
 
     #endregion

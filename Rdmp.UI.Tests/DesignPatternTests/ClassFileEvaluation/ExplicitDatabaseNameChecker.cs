@@ -66,6 +66,6 @@ public class ExplicitDatabaseNameChecker
             Console.WriteLine(
                 $"FAIL: File '{kvp.Key}' contains a reference to an explicitly prohibited database name string ('{kvp.Value}')");
 
-        Assert.AreEqual(0, problemFiles.Count);
+        Assert.That(problemFiles, Is.Empty);
     }
 }

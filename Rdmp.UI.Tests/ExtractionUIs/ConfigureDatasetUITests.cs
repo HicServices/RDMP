@@ -25,36 +25,35 @@ internal class ConfigureDatasetUITests : UITests
 
         //should be at least 2 in the config for this test to be sensible
         var cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
-        Assert.GreaterOrEqual(cols.Length, 2);
+        Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
         ItemActivator.RefreshBus.BeforePublish += (s, e) => publishCount++;
 
-        Assert.AreEqual(0, publishCount);
+        Assert.That(publishCount, Is.EqualTo(0));
 
         ui.ExcludeAll();
 
-        Assert.AreEqual(1, publishCount);
+        Assert.That(publishCount, Is.EqualTo(1));
 
         AssertNoErrors();
 
         //should now be no columns in the extraction configuration
-        Assert.IsEmpty(sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet));
+        Assert.That(sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet), Is.Empty);
 
         ui.IncludeAll();
 
         //should now be another publish event
-        Assert.AreEqual(2, publishCount);
+        Assert.That(publishCount, Is.EqualTo(2));
 
         //and the columns should be back in the configuration
         cols = sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet);
-        Assert.GreaterOrEqual(cols.Length, 2);
+        Assert.That(cols, Has.Length.GreaterThanOrEqualTo(2));
 
         //multiple includes shouldnt change the number of columns
         ui.IncludeAll();
         ui.IncludeAll();
         ui.IncludeAll();
 
-        Assert.AreEqual(cols.Length,
-            sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet).Length);
+        Assert.That(sds.ExtractionConfiguration.GetAllExtractableColumnsFor(sds.ExtractableDataSet), Has.Length.EqualTo(cols.Length));
     }
 }

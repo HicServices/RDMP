@@ -41,11 +41,14 @@ public class TestPrescribingCreation
 
         prescribing.GenerateTestDataFile(people, f, numberOfRecords);
 
-        //one progress task only, should have reported creating the correct number of rows
-        Assert.IsTrue(finished);
-        Assert.AreEqual(numberOfRecords, finishedWithRecords);
+        Assert.Multiple(() =>
+        {
+            //one progress task only, should have reported creating the correct number of rows
+            Assert.That(finished);
+            Assert.That(finishedWithRecords, Is.EqualTo(numberOfRecords));
 
-        Assert.GreaterOrEqual(File.ReadLines(f.FullName).Count(), numberOfRecords); //can be newlines in middle of file
+            Assert.That(File.ReadLines(f.FullName).Count(), Is.GreaterThanOrEqualTo(numberOfRecords)); //can be newlines in middle of file
+        });
         f.Delete();
     }
 }

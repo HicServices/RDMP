@@ -32,14 +32,14 @@ public class AggregationTests : DatabaseTests
         //do a count * on the query builder
         var queryBuilder = new AggregateBuilder("", "count(*)", null, new[] { _function.TableInfoCreated });
 
-        Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
-        Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"SELECT"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"count(*)"));
 
-        Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-        Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='fish';"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"DECLARE @name AS varchar(50);"));
+        Assert.That(queryBuilder.SQL, Does.Contain(@"SET @name='fish';"));
 
-        Assert.IsTrue(
-            queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+        Assert.That(
+            queryBuilder.SQL, Does.Contain("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
         Console.WriteLine(queryBuilder.SQL);
     }
@@ -63,8 +63,8 @@ public class AggregationTests : DatabaseTests
 
             var queryBuilder = agg.GetQueryBuilder();
 
-            Assert.AreEqual(
-                $@"DECLARE @startNumber AS int;
+            Assert.That(
+queryBuilder.SQL, Is.EqualTo($@"DECLARE @startNumber AS int;
 SET @startNumber=5;
 DECLARE @stopNumber AS int;
 SET @stopNumber=10;
@@ -76,7 +76,7 @@ count(*) AS MyCount
 FROM 
 [{TestDatabaseNames.Prefix}ScratchArea]..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction
 HAVING
-count(*)>1", queryBuilder.SQL);
+count(*)>1"));
         }
         finally
         {
@@ -105,18 +105,18 @@ count(*)>1", queryBuilder.SQL);
             //do a count * on the query builder
             var queryBuilder = agg.GetQueryBuilder();
 
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"SELECT"));
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"count(*)"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"SELECT"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"count(*)"));
 
             //should have this version of things
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"DECLARE @name AS varchar(50);"));
-            Assert.IsTrue(queryBuilder.SQL.Contains(@"SET @name='lobster';"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"DECLARE @name AS varchar(50);"));
+            Assert.That(queryBuilder.SQL, Does.Contain(@"SET @name='lobster';"));
 
             //isntead of this verison of things
-            Assert.IsFalse(queryBuilder.SQL.Contains(@"SET @name='fish';"));
+            Assert.That(queryBuilder.SQL, Does.Not.Contain(@"SET @name='fish';"));
 
-            Assert.IsTrue(
-                queryBuilder.SQL.Contains("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
+            Assert.That(
+                queryBuilder.SQL, Does.Contain("..MyAwesomeFunction(@startNumber,@stopNumber,@name) AS MyAwesomeFunction"));
 
             Console.WriteLine(queryBuilder.SQL);
         }

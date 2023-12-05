@@ -35,7 +35,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, c.ID.ToString()), Is.EqualTo(c));
     }
 
     [Test]
@@ -48,7 +48,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*"));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*"), Is.EqualTo(c));
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Project>();
         WhenIHaveA<Project>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, c.ID.ToString()));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, c.ID.ToString()), Is.EqualTo(c));
     }
 
     [Test]
@@ -71,7 +71,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Project>();
         WhenIHaveA<Project>();
         var r = new TestRunner();
-        Assert.AreEqual(c, TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, "Project:*go*"));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Project>(RepositoryLocator, "Project:*go*"), Is.EqualTo(c));
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.IsNull(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, expression));
+        Assert.That(TestRunner.GetObjectFromCommandLineString<Catalogue>(RepositoryLocator, expression), Is.Null);
     }
 
     /// <summary>
@@ -112,7 +112,7 @@ public class AbstractBaseRunnerTests : UnitTests
         WhenIHaveA<Catalogue>();
         WhenIHaveA<Catalogue>();
         var r = new TestRunner();
-        Assert.IsEmpty(TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, expression));
+        Assert.That(TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, expression), Is.Empty);
     }
 
 
@@ -127,9 +127,12 @@ public class AbstractBaseRunnerTests : UnitTests
         var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, $"{c.ID},{c2.ID}")
             .ToArray();
 
-        Assert.AreEqual(2, results.Length);
-        Assert.AreSame(c, results[0]);
-        Assert.AreSame(c2, results[1]);
+        Assert.That(results, Has.Length.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(results[0], Is.SameAs(c));
+            Assert.That(results[1], Is.SameAs(c2));
+        });
     }
 
     [Test]
@@ -149,9 +152,9 @@ public class AbstractBaseRunnerTests : UnitTests
         var results = TestRunner.GetObjectsFromCommandLineString<Catalogue>(RepositoryLocator, "Catalogue:*go*")
             .ToArray();
 
-        Assert.AreEqual(2, results.Length);
-        Assert.Contains(c, results);
-        Assert.Contains(c2, results);
+        Assert.That(results, Has.Length.EqualTo(2));
+        Assert.That(results, Does.Contain(c));
+        Assert.That(results, Does.Contain(c2));
     }
 
     private class TestRunner : Runner

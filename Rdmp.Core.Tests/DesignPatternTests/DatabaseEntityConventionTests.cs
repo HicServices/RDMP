@@ -37,6 +37,6 @@ public class DatabaseEntityConventionTests : UnitTests
         foreach (var problem in problems)
             TestContext.Out.WriteLine(problem);
 
-        Assert.IsEmpty(problems);
+        Assert.That(problems, Is.Empty);
     }
 }

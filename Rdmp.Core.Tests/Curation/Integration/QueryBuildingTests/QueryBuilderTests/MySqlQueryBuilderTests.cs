@@ -24,7 +24,7 @@ public class MySqlQueryBuilderTests : DatabaseTests
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`", "varchar(10)", t);
-        Assert.AreEqual("col", col.GetRuntimeName());
+        Assert.That(col.GetRuntimeName(), Is.EqualTo("col"));
 
         var cata = new Catalogue(CatalogueRepository, "cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
@@ -32,12 +32,12 @@ public class MySqlQueryBuilderTests : DatabaseTests
 
         var qb = new QueryBuilder(null, null);
         qb.AddColumn(extractionInfo);
-        Assert.AreEqual(CollapseWhitespace(
+        Assert.That(CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(
             @"SELECT 
 `db`.`tbl`.`col`
 FROM 
 `db`.`tbl`"
-        ), CollapseWhitespace(qb.SQL));
+        )));
     }
 
     [Test]
@@ -50,7 +50,7 @@ FROM
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "`db`.`tbl`.`col`", "varchar(10)", t);
-        Assert.AreEqual("col", col.GetRuntimeName());
+        Assert.That(col.GetRuntimeName(), Is.EqualTo("col"));
 
         var cata = new Catalogue(CatalogueRepository, "cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
@@ -61,8 +61,8 @@ FROM
             TopX = 35
         };
         qb.AddColumn(extractionInfo);
-        Assert.AreEqual(
-            CollapseWhitespace(
+        Assert.That(
+CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(
                 """
                 SELECT
                 `db`.`tbl`.`col`
@@ -70,13 +70,13 @@ FROM
                 `db`.`tbl`
                 LIMIT 35
                 """)
-            , CollapseWhitespace(qb.SQL));
+));
 
 
         //editing the topX should invalidate the SQL automatically
         qb.TopX = 50;
-        Assert.AreEqual(
-            CollapseWhitespace(
+        Assert.That(
+CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(
                 """
                 SELECT
                 `db`.`tbl`.`col`
@@ -84,6 +84,6 @@ FROM
                 `db`.`tbl`
                 LIMIT 50
                 """)
-            , CollapseWhitespace(qb.SQL));
+));
     }
 }

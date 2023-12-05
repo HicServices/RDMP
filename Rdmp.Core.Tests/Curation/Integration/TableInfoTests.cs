@@ -28,7 +28,7 @@ internal class TableInfoTests : DatabaseTests
     public void GetAllTableInfos_moreThan1_pass()
     {
         var tableInfo = new TableInfo(CatalogueRepository, "AMAGAD!!!");
-        Assert.IsTrue(CatalogueRepository.GetAllObjects<TableInfo>().Any());
+        Assert.That(CatalogueRepository.GetAllObjects<TableInfo>().Any());
         tableInfo.DeleteInDatabase();
     }
 
@@ -37,12 +37,12 @@ internal class TableInfoTests : DatabaseTests
     {
         var table = new TableInfo(CatalogueRepository, "TestDB..TestTableName");
 
-        Assert.NotNull(table);
+        Assert.That(table, Is.Not.Null);
 
         table.DeleteInDatabase();
 
         var ex = Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<TableInfo>(table.ID));
-        Assert.AreEqual(ex.Message, $"Could not find TableInfo with ID {table.ID}");
+        Assert.That($"Could not find TableInfo with ID {table.ID}", Is.EqualTo(ex.Message));
     }
 
     [Test]
@@ -60,10 +60,13 @@ internal class TableInfoTests : DatabaseTests
 
         var tableAfter = CatalogueRepository.GetObjectByID<TableInfo>(table.ID);
 
-        Assert.IsTrue(tableAfter.Database == "CHI_AMALG");
-        Assert.IsTrue(tableAfter.Server == "Highly restricted");
-        Assert.IsTrue(tableAfter.Name == "Fishmongery!");
-        Assert.IsTrue(tableAfter.DatabaseType == DatabaseType.Oracle);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tableAfter.Database, Is.EqualTo("CHI_AMALG"));
+            Assert.That(tableAfter.Server, Is.EqualTo("Highly restricted"));
+            Assert.That(tableAfter.Name, Is.EqualTo("Fishmongery!"));
+            Assert.That(tableAfter.DatabaseType, Is.EqualTo(DatabaseType.Oracle));
+        });
 
         tableAfter.DeleteInDatabase();
     }
@@ -87,19 +90,21 @@ internal class TableInfoTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual("ANOMyCol", c.GetRuntimeName());
-            Assert.AreEqual("MyCol", c.GetRuntimeName(LoadStage.AdjustRaw));
-            Assert.AreEqual("ANOMyCol", c.GetRuntimeName(LoadStage.PostLoad));
+            Assert.Multiple(() =>
+            {
+                Assert.That(c.GetRuntimeName(), Is.EqualTo("ANOMyCol"));
+                Assert.That(c.GetRuntimeName(LoadStage.AdjustRaw), Is.EqualTo("MyCol"));
+                Assert.That(c.GetRuntimeName(LoadStage.PostLoad), Is.EqualTo("ANOMyCol"));
 
-            Assert.AreEqual("TestTableName", table.GetRuntimeName());
-            Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Raw));
-            Assert.AreEqual("TestDB_TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging));
+                Assert.That(table.GetRuntimeName(), Is.EqualTo("TestTableName"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Raw), Is.EqualTo("TestTableName"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging), Is.EqualTo("TestDB_TestTableName_STAGING"));
 
-            Assert.AreEqual("TestTableName_STAGING", table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()));
-            Assert.AreEqual("TestDB_TestTableName_STAGING",
-                table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new SuffixBasedNamer()), Is.EqualTo("TestTableName_STAGING"));
+                Assert.That(table.GetRuntimeName(LoadBubble.Staging, new FixedStagingDatabaseNamer("TestDB")), Is.EqualTo("TestDB_TestTableName_STAGING"));
 
-            Assert.AreEqual("TestTableName", table.GetRuntimeName(LoadBubble.Live));
+                Assert.That(table.GetRuntimeName(LoadBubble.Live), Is.EqualTo("TestTableName"));
+            });
         }
         finally
         {
@@ -121,41 +126,53 @@ internal class TableInfoTests : DatabaseTests
         var tbl = db.CreateTable("Fish", new[] { new DatabaseColumnRequest("MyCol", "int") { IsPrimaryKey = true } },
             "Omg");
 
-        Assert.AreEqual("Fish", tbl.GetRuntimeName());
-        Assert.AreEqual("Omg", tbl.Schema);
-        Assert.IsTrue(tbl.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.GetRuntimeName(), Is.EqualTo("Fish"));
+            Assert.That(tbl.Schema, Is.EqualTo("Omg"));
+            Assert.That(tbl.GetFullyQualifiedName(), Does.EndWith("[Omg].[Fish]"));
 
-        Assert.IsTrue(tbl.Exists());
+            Assert.That(tbl.Exists());
+        });
 
         Import(tbl, out var ti, out var cols);
 
-        Assert.AreEqual("Omg", ti.Schema);
+        Assert.That(ti.Schema, Is.EqualTo("Omg"));
         var tbl2 = ti.Discover(DataAccessContext.InternalDataProcessing);
-        Assert.AreEqual("Omg", tbl2.Schema);
-        Assert.IsTrue(tbl2.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl2.Schema, Is.EqualTo("Omg"));
+            Assert.That(tbl2.Exists());
 
-        Assert.IsTrue(ti.Name.EndsWith("[Omg].[Fish]"));
+            Assert.That(ti.Name, Does.EndWith("[Omg].[Fish]"));
 
-        Assert.IsTrue(ti.GetFullyQualifiedName().EndsWith("[Omg].[Fish]"));
+            Assert.That(ti.GetFullyQualifiedName(), Does.EndWith("[Omg].[Fish]"));
+        });
 
         var c = cols.Single();
 
-        Assert.AreEqual("MyCol", c.GetRuntimeName());
-        StringAssert.Contains("[Omg].[Fish]", c.GetFullyQualifiedName());
+        Assert.Multiple(() =>
+        {
+            Assert.That(c.GetRuntimeName(), Is.EqualTo("MyCol"));
+            Assert.That(c.GetFullyQualifiedName(), Does.Contain("[Omg].[Fish]"));
 
-        //should be primary key
-        Assert.IsTrue(c.IsPrimaryKey);
+            //should be primary key
+            Assert.That(c.IsPrimaryKey);
+        });
 
         var triggerFactory = new TriggerImplementerFactory(DatabaseType.MicrosoftSQLServer);
         var impl = triggerFactory.Create(tbl);
 
-        Assert.AreEqual(TriggerStatus.Missing, impl.GetTriggerStatus());
+        Assert.That(impl.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Missing));
 
         impl.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(TriggerStatus.Enabled, impl.GetTriggerStatus());
+        Assert.Multiple(() =>
+        {
+            Assert.That(impl.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
 
-        Assert.IsTrue(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+            Assert.That(impl.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        });
 
         //should be synced
         var sync = new TableInfoSynchronizer(ti);
@@ -164,17 +181,17 @@ internal class TableInfoTests : DatabaseTests
         //Test importing the _Legacy table valued function that should be created in the Omg schema and test synching that too.
         var tvf = ti.Discover(DataAccessContext.InternalDataProcessing).Database
             .ExpectTableValuedFunction("Fish_Legacy", "Omg");
-        Assert.IsTrue(tvf.Exists());
+        Assert.That(tvf.Exists());
 
         var importerTvf = new TableValuedFunctionImporter(CatalogueRepository, tvf);
         importerTvf.DoImport(out var tvfTi, out var tvfCols);
 
-        Assert.AreEqual("Omg", tvfTi.Schema);
+        Assert.That(tvfTi.Schema, Is.EqualTo("Omg"));
 
         var syncTvf = new TableInfoSynchronizer(tvfTi);
         syncTvf.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
-        StringAssert.EndsWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy", tvfTi.Name);
+        Assert.That(tvfTi.Name, Does.EndWith("[Omg].Fish_Legacy(@index) AS Fish_Legacy"));
     }
 
     [TestCaseSource(typeof(All), nameof(All.DatabaseTypes))]
@@ -189,8 +206,11 @@ internal class TableInfoTests : DatabaseTests
         var tbl = db.CreateTable("MyTable", dt);
         Import(tbl, out var tblInfo, out _);
 
-        Assert.IsTrue(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.AreEqual(TableType.Table, tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.That(tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.Table));
+        });
 
         var viewName = "MyView";
 
@@ -223,10 +243,13 @@ FROM {1}",
         var sync = new TableInfoSynchronizer(viewInfo);
         sync.Synchronize(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
-        Assert.AreEqual(TableType.View, viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+        Assert.Multiple(() =>
+        {
+            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.That(viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType, Is.EqualTo(TableType.View));
+        });
 
         view.Drop();
-        Assert.IsFalse(view.Exists());
+        Assert.That(view.Exists(), Is.False);
     }
 }

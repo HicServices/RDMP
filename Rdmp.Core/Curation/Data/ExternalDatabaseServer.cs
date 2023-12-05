@@ -37,7 +37,7 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
     private readonly SelfCertifyingDataAccessPoint _selfCertifyingDataAccessPoint;
 
     /// <summary>
-    /// Human readable name for the server e.g. 'My Favourite Logging Database'
+    /// Human-readable name for the server e.g. 'My Favourite Logging Database'
     /// </summary>
     [Unique]
     [NotNull]

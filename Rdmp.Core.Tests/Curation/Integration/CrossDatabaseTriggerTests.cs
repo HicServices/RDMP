@@ -35,9 +35,12 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         var factory = new TriggerImplementerFactory(type);
         var implementer = factory.Create(tbl);
 
-        Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
+        Assert.Multiple(() =>
+        {
+            Assert.That(implementer.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Missing));
 
-        Assert.AreEqual(2, tbl.DiscoverColumns().Length);
+            Assert.That(tbl.DiscoverColumns(), Has.Length.EqualTo(2));
+        });
 
         implementer = factory.Create(tbl);
 
@@ -50,31 +53,33 @@ public class CrossDatabaseTriggerTests : DatabaseTests
 
         implementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(4, tbl.DiscoverColumns().Length);
+        Assert.That(tbl.DiscoverColumns(), Has.Length.EqualTo(4));
 
         var archiveTable = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_Archive");
-        Assert.IsTrue(archiveTable.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(archiveTable.Exists());
 
-        Assert.AreEqual(7, archiveTable.DiscoverColumns().Length);
+            Assert.That(archiveTable.DiscoverColumns(), Has.Length.EqualTo(7));
+        });
 
-        Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("name")));
-        Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("bubbles")));
-        Assert.AreEqual(1,
-            archiveTable.DiscoverColumns().Count(c =>
-                c.GetRuntimeName().Equals("hic_dataLoadrunID", StringComparison.CurrentCultureIgnoreCase)));
-        Assert.AreEqual(1,
-            archiveTable.DiscoverColumns().Count(c =>
-                c.GetRuntimeName().Equals("hic_validFrom", StringComparison.CurrentCultureIgnoreCase)));
-        Assert.AreEqual(1,
-            archiveTable.DiscoverColumns().Count(c =>
-                c.GetRuntimeName().Equals("hic_validTo", StringComparison.CurrentCultureIgnoreCase)));
-        Assert.AreEqual(1,
-            archiveTable.DiscoverColumns().Count(c =>
-                c.GetRuntimeName().Equals("hic_userID", StringComparison.CurrentCultureIgnoreCase)));
-        Assert.AreEqual(1, archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("hic_status")));
+        Assert.Multiple(() =>
+        {
+            Assert.That(archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("name")), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("bubbles")), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c =>
+                    c.GetRuntimeName().Equals("hic_dataLoadrunID", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c =>
+                    c.GetRuntimeName().Equals("hic_validFrom", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c =>
+                    c.GetRuntimeName().Equals("hic_validTo", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c =>
+                    c.GetRuntimeName().Equals("hic_userID", StringComparison.CurrentCultureIgnoreCase)), Is.EqualTo(1));
+            Assert.That(archiveTable.DiscoverColumns().Count(c => c.GetRuntimeName().Equals("hic_status")), Is.EqualTo(1));
 
-        //is the trigger now existing
-        Assert.AreEqual(TriggerStatus.Enabled, implementer.GetTriggerStatus());
+            //is the trigger now existing
+            Assert.That(implementer.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Enabled));
+        });
 
         //does it function as expected
         using (var con = tbl.Database.Server.GetConnection())
@@ -84,23 +89,29 @@ public class CrossDatabaseTriggerTests : DatabaseTests
                 $"INSERT INTO {tbl.GetRuntimeName()}(name,bubbles) VALUES('bob',1)", con);
             cmd.ExecuteNonQuery();
 
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Assert.AreEqual(0, archiveTable.GetRowCount());
+            Assert.Multiple(() =>
+            {
+                Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+                Assert.That(archiveTable.GetRowCount(), Is.EqualTo(0));
+            });
 
             cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set bubbles=2", con);
             cmd.ExecuteNonQuery();
 
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Assert.AreEqual(1, archiveTable.GetRowCount());
+            Assert.Multiple(() =>
+            {
+                Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+                Assert.That(archiveTable.GetRowCount(), Is.EqualTo(1));
+            });
 
             var archive = archiveTable.GetDataTable();
             var dr = archive.Rows.Cast<DataRow>().Single();
 
-            Assert.AreEqual(((DateTime)dr["hic_validTo"]).Date, DateTime.Now.Date);
+            Assert.That(DateTime.Now.Date, Is.EqualTo(((DateTime)dr["hic_validTo"]).Date));
         }
 
         //do the strict check too
-        Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.That(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
 
         tbl.AddColumn("amagad", new DatabaseTypeRequest(typeof(float), null, new DecimalSize(2, 2)), true, 30);
         implementer = factory.Create(tbl);
@@ -113,7 +124,7 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         var checks = new TriggerChecks(tbl);
         checks.Check(new AcceptAllCheckNotifier());
 
-        Assert.IsTrue(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        Assert.That(implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
 
 
         //does it function as expected
@@ -121,8 +132,11 @@ public class CrossDatabaseTriggerTests : DatabaseTests
         {
             con.Open();
 
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Assert.AreEqual(1, archiveTable.GetRowCount());
+            Assert.Multiple(() =>
+            {
+                Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+                Assert.That(archiveTable.GetRowCount(), Is.EqualTo(1));
+            });
 
             var cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set amagad=1.0", con);
             cmd.ExecuteNonQuery();
@@ -130,18 +144,27 @@ public class CrossDatabaseTriggerTests : DatabaseTests
             cmd = tbl.Database.Server.GetCommand($"UPDATE {tbl.GetRuntimeName()} set amagad=.09", con);
             cmd.ExecuteNonQuery();
 
-            Assert.AreEqual(1, tbl.GetRowCount());
-            Assert.AreEqual(3, archiveTable.GetRowCount());
+            Assert.Multiple(() =>
+            {
+                Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+                Assert.That(archiveTable.GetRowCount(), Is.EqualTo(3));
+            });
 
             var archive = archiveTable.GetDataTable();
-            Assert.AreEqual(1, archive.Rows.Cast<DataRow>().Count(r => Equals(r["amagad"], (decimal)1.00)));
-            Assert.AreEqual(2, archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value));
+            Assert.Multiple(() =>
+            {
+                Assert.That(archive.Rows.Cast<DataRow>().Count(r => Equals(r["amagad"], (decimal)1.00)), Is.EqualTo(1));
+                Assert.That(archive.Rows.Cast<DataRow>().Count(r => r["amagad"] == DBNull.Value), Is.EqualTo(2));
+            });
         }
 
         implementer.DropTrigger(out var problems, out _);
 
-        Assert.IsTrue(string.IsNullOrEmpty(problems));
+        Assert.Multiple(() =>
+        {
+            Assert.That(string.IsNullOrEmpty(problems));
 
-        Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
+            Assert.That(implementer.GetTriggerStatus(), Is.EqualTo(TriggerStatus.Missing));
+        });
     }
 }

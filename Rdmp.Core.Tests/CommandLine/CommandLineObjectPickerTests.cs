@@ -33,11 +33,14 @@ internal class CommandLineObjectPickerTests : UnitTests
         const string str = "Shiver me timbers";
         var picker = new CommandLineObjectPicker(new[] { str }, GetActivator());
 
-        Assert.AreEqual(str, picker[0].RawValue);
-        Assert.IsNull(picker[0].DatabaseEntities);
-        Assert.IsNull(picker[0].Database);
-        Assert.IsNull(picker[0].Table);
-        Assert.IsNull(picker[0].Type);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].RawValue, Is.EqualTo(str));
+            Assert.That(picker[0].DatabaseEntities, Is.Null);
+            Assert.That(picker[0].Database, Is.Null);
+            Assert.That(picker[0].Table, Is.Null);
+            Assert.That(picker[0].Type, Is.Null);
+        });
     }
 
     [Test]
@@ -47,13 +50,13 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{cata.ID}" }, GetActivator());
 
-        Assert.AreEqual(cata, picker[0].DatabaseEntities.Single());
+        Assert.That(picker[0].DatabaseEntities.Single(), Is.EqualTo(cata));
 
 
         //specifying the same ID twice shouldn't return duplicate objects
         picker = new CommandLineObjectPicker(new[] { $"Catalogue:{cata.ID},{cata.ID}" }, GetActivator());
 
-        Assert.AreEqual(cata, picker[0].DatabaseEntities.Single());
+        Assert.That(picker[0].DatabaseEntities.Single(), Is.EqualTo(cata));
     }
 
     /// <summary>
@@ -66,16 +69,19 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         var picker = new CommandLineObjectPicker(new[] { val }, GetActivator());
 
-        Assert.AreEqual(1, picker.Length);
+        Assert.That(picker.Length, Is.EqualTo(1));
 
-        Assert.IsNull(picker[0].Database);
-        Assert.IsNull(picker[0].DatabaseEntities);
-        Assert.IsFalse(picker[0].ExplicitNull);
-        Assert.AreEqual(val, picker[0].RawValue);
-        Assert.IsNull(picker[0].Type);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].Database, Is.Null);
+            Assert.That(picker[0].DatabaseEntities, Is.Null);
+            Assert.That(picker[0].ExplicitNull, Is.False);
+            Assert.That(picker[0].RawValue, Is.EqualTo(val));
+            Assert.That(picker[0].Type, Is.Null);
 
-        Assert.AreEqual(val, picker[0].GetValueForParameterOfType(typeof(string)));
-        Assert.IsTrue(picker.HasArgumentOfType(0, typeof(string)));
+            Assert.That(picker[0].GetValueForParameterOfType(typeof(string)), Is.EqualTo(val));
+            Assert.That(picker.HasArgumentOfType(0, typeof(string)));
+        });
     }
 
     [Test]
@@ -86,9 +92,9 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:{cata1.ID},{cata2.ID}" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(cata1, picker[0].DatabaseEntities);
-        Assert.Contains(cata2, picker[0].DatabaseEntities);
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata2));
     }
 
     [Test]
@@ -108,9 +114,9 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue:lol*" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(cata1, picker[0].DatabaseEntities);
-        Assert.Contains(cata2, picker[0].DatabaseEntities);
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata2));
     }
 
     [Test]
@@ -119,27 +125,30 @@ internal class CommandLineObjectPickerTests : UnitTests
         foreach (var cat in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
             cat.DeleteInDatabase();
 
-        Assert.IsEmpty(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
+        Assert.That(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), Is.Empty);
 
         //when interpreting the string "Catalogue" for a command
         var picker = new CommandLineObjectPicker(new[] { "Catalogue" }, GetActivator());
 
-        //we can pick it as either a Catalogue or a collection of all the Catalogues
-        Assert.AreEqual(typeof(Catalogue), picker.Arguments.Single().Type);
-        Assert.IsEmpty(picker.Arguments.Single().DatabaseEntities);
+        Assert.Multiple(() =>
+        {
+            //we can pick it as either a Catalogue or a collection of all the Catalogues
+            Assert.That(picker.Arguments.Single().Type, Is.EqualTo(typeof(Catalogue)));
+            Assert.That(picker.Arguments.Single().DatabaseEntities, Is.Empty);
 
-        //when interpretting as a Type we get Catalogue
-        Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(Type)));
-        Assert.AreEqual(typeof(Catalogue), picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)));
+            //when interpretting as a Type we get Catalogue
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(Type)));
+            Assert.That(picker.Arguments.Single().GetValueForParameterOfType(typeof(Type)), Is.EqualTo(typeof(Catalogue)));
 
-        //if it is looking for an ienumerable of objects
-        Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
-        Assert.IsEmpty((IMapsDirectlyToDatabaseTable[])picker.Arguments.First()
-            .GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+            //if it is looking for an ienumerable of objects
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(IMapsDirectlyToDatabaseTable[])));
+            Assert.That((IMapsDirectlyToDatabaseTable[])picker.Arguments.First()
+                .GetValueForParameterOfType(typeof(IMapsDirectlyToDatabaseTable[])), Is.Empty);
 
-        Assert.IsTrue(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
-        Assert.IsEmpty(
-            ((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray());
+            Assert.That(picker.Arguments.First().HasValueOfType(typeof(Catalogue[])));
+            Assert.That(
+                ((Catalogue[])picker.Arguments.First().GetValueForParameterOfType(typeof(Catalogue[]))).ToArray(), Is.Empty);
+        });
     }
 
     [TestCase(typeof(PickDatabase))]
@@ -157,20 +166,22 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = (PickObjectBase)ObjectConstructor.Construct(pickerType, GetActivator(new RepositoryProvider(mem)));
 
-        Assert.IsNotEmpty(picker.Help, "No Help for picker {0}", picker);
-        Assert.IsNotEmpty(picker.Format, "No Format for picker {0}", picker);
-        Assert.IsNotNull(picker.Examples, "No Examples for picker {0}", picker);
-        Assert.IsNotEmpty(picker.Examples, "No Examples for picker {0}", picker);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker.Help, Is.Not.Empty, $"No Help for picker {picker}");
+            Assert.That(picker.Format, Is.Not.Empty, $"No Format for picker {picker}");
+            Assert.That(picker.Examples, Is.Not.Null, $"No Examples for picker {picker}");
+        });
+        Assert.That(picker.Examples, Is.Not.Empty, $"No Examples for picker {picker}");
 
         foreach (var example in picker.Examples)
         {
             //examples should be matched by the picker!
-            Assert.IsTrue(picker.IsMatch(example, 0),
-                "Example of picker '{0}' did not match the regex,listed example is '{1}'", picker, example);
+            Assert.That(picker.IsMatch(example, 0), $"Example of picker '{picker}' did not match the regex,listed example is '{example}'");
 
             var result = picker.Parse(example, 0);
 
-            Assert.IsNotNull(result);
+            Assert.That(result, Is.Not.Null);
         }
     }
 
@@ -179,8 +190,11 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         var picker = new CommandLineObjectPicker(new[] { "Name" }, GetActivator());
 
-        Assert.IsNull(picker[0].Type);
-        Assert.AreEqual("Name", picker[0].RawValue);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].Type, Is.Null);
+            Assert.That(picker[0].RawValue, Is.EqualTo("Name"));
+        });
     }
 
     [TestCase("null")]
@@ -188,7 +202,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     public void PickNull(string nullString)
     {
         var picker = new CommandLineObjectPicker(new[] { nullString }, GetActivator());
-        Assert.IsTrue(picker[0].ExplicitNull);
+        Assert.That(picker[0].ExplicitNull);
     }
 
     [Test]
@@ -202,8 +216,11 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, GetActivator());
 
-        Assert.AreEqual(cata1, picker[0].DatabaseEntities[0]);
-        Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
+        Assert.Multiple(() =>
+        {
+            Assert.That(picker[0].DatabaseEntities[0], Is.EqualTo(cata1));
+            Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -214,9 +231,9 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"c:{cata1.ID},{cata2.ID}" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(cata1, picker[0].DatabaseEntities);
-        Assert.Contains(cata2, picker[0].DatabaseEntities);
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata2));
     }
 
     [Test]
@@ -229,9 +246,9 @@ internal class CommandLineObjectPickerTests : UnitTests
         // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
         var picker = new CommandLineObjectPicker(new[] { $"c" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(cata1, picker[0].DatabaseEntities);
-        Assert.Contains(cata2, picker[0].DatabaseEntities);
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(cata2));
     }
 
     [Test]
@@ -247,10 +264,10 @@ internal class CommandLineObjectPickerTests : UnitTests
         var cataId = ci.Catalogue.ID;
         var picker = new CommandLineObjectPicker(new[] { $"CatalogueItem?Catalogue_ID:{cataId}" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(ci, picker[0].DatabaseEntities);
-        Assert.Contains(ci2, picker[0].DatabaseEntities);
-        Assert.IsFalse(picker[0].DatabaseEntities.Contains(ci3));
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(ci));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(ci2));
+        Assert.That(picker[0].DatabaseEntities, Does.Not.Contain(ci3));
     }
 
     [Test]
@@ -267,10 +284,10 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, GetActivator());
 
-        Assert.AreEqual(2, picker[0].DatabaseEntities.Count);
-        Assert.Contains(c1, picker[0].DatabaseEntities);
-        Assert.Contains(c3, picker[0].DatabaseEntities);
-        Assert.IsFalse(picker[0].DatabaseEntities.Contains(c2));
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(c1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(c3));
+        Assert.That(picker[0].DatabaseEntities, Does.Not.Contain(c2));
     }
 
     [Test]
@@ -286,8 +303,8 @@ internal class CommandLineObjectPickerTests : UnitTests
         var picker = new CommandLineObjectPicker(new[] { $"Catalogue?PivotCategory_ExtractionInformation_ID:null" },
             GetActivator());
 
-        Assert.AreEqual(1, picker[0].DatabaseEntities.Count);
-        Assert.Contains(c2, picker[0].DatabaseEntities);
+        Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(1));
+        Assert.That(picker[0].DatabaseEntities, Does.Contain(c2));
     }
 
     [Test]
@@ -295,6 +312,6 @@ internal class CommandLineObjectPickerTests : UnitTests
     {
         var ex = Assert.Throws<Exception>(() =>
             new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, GetActivator()));
-        Assert.AreEqual("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'"));
     }
 }

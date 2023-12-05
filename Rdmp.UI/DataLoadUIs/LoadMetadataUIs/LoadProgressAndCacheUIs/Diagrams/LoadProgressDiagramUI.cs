@@ -11,6 +11,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using BrightIdeasSoftware;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -52,13 +53,13 @@ public partial class LoadProgressDiagramUI : RDMPUserControl
         new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();
     }
 
+    [NotNull]
     private object AspectGetterLastDQERun(object rowObject)
     {
-        var c = (Catalogue)rowObject;
+        if (rowObject is not Catalogue c) return "Not a catalogue";
 
-        return !_report.CataloguesWithDQERuns.ContainsKey(c)
-            ? "Never"
-            : _report.CataloguesWithDQERuns[c].DateOfEvaluation;
+        return !_report.CataloguesWithDQERuns.TryGetValue(c, out var value) ? "Never"
+            : value.DateOfEvaluation;
     }
 
     public void SetLoadProgress(LoadProgress lp, IActivateItems activator)

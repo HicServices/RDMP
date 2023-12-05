@@ -41,13 +41,16 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
             var customDataCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("custTable99.csv"));
 
-            Assert.IsNotNull(customDataCsv);
+            Assert.That(customDataCsv, Is.Not.Null);
 
             var lines = File.ReadAllLines(customDataCsv.FullName);
 
-            Assert.AreEqual("SuperSecretThing,ReleaseID", lines[0]);
-            Assert.AreEqual("monkeys can all secretly fly,Pub_54321", lines[1]);
-            Assert.AreEqual("the wizard of OZ was a man behind a machine,Pub_11ftw", lines[2]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(lines[0], Is.EqualTo("SuperSecretThing,ReleaseID"));
+                Assert.That(lines[1], Is.EqualTo("monkeys can all secretly fly,Pub_54321"));
+                Assert.That(lines[2], Is.EqualTo("the wizard of OZ was a man behind a machine,Pub_11ftw"));
+            });
         }
         finally
         {
@@ -108,18 +111,21 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
-        Assert.IsNotNull(mainDataTableCsv);
-        Assert.AreEqual("TestTable.csv", mainDataTableCsv.Name);
+        Assert.That(mainDataTableCsv, Is.Not.Null);
+        Assert.That(mainDataTableCsv.Name, Is.EqualTo("TestTable.csv"));
 
         var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
-        Assert.AreEqual("ReleaseID,Name,DateOfBirth,SuperSecretThing", lines[0]);
+        Assert.That(lines[0], Is.EqualTo("ReleaseID,Name,DateOfBirth,SuperSecretThing"));
 
         var bobLine = lines.Single(l => l.StartsWith("Pub_54321,Bob"));
         var frankLine = lines.Single(l => l.StartsWith("Pub_11ftw,Frank"));
 
-        Assert.AreEqual("Pub_54321,Bob,2001-01-01,monkeys can all secretly fly", bobLine);
-        Assert.AreEqual("Pub_11ftw,Frank,2001-10-29,the wizard of OZ was a man behind a machine", frankLine);
+        Assert.Multiple(() =>
+        {
+            Assert.That(bobLine, Is.EqualTo("Pub_54321,Bob,2001-01-01,monkeys can all secretly fly"));
+            Assert.That(frankLine, Is.EqualTo("Pub_11ftw,Frank,2001-10-29,the wizard of OZ was a man behind a machine"));
+        });
 
         asExtractable.DeleteInDatabase();
     }
@@ -184,13 +190,16 @@ public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
 
         var mainDataTableCsv = results.DirectoryPopulated.GetFiles().Single(f => f.Name.Equals("TestTable.csv"));
 
-        Assert.IsNotNull(mainDataTableCsv);
+        Assert.That(mainDataTableCsv, Is.Not.Null);
 
         var lines = File.ReadAllLines(mainDataTableCsv.FullName);
 
-        Assert.AreEqual("ReleaseID,Name,DateOfBirth", lines[0]);
-        Assert.AreEqual("Pub_54321,Bob,2001-01-01", lines[1]);
-        Assert.AreEqual(2, lines.Length);
+        Assert.Multiple(() =>
+        {
+            Assert.That(lines[0], Is.EqualTo("ReleaseID,Name,DateOfBirth"));
+            Assert.That(lines[1], Is.EqualTo("Pub_54321,Bob,2001-01-01"));
+            Assert.That(lines, Has.Length.EqualTo(2));
+        });
     }
 
 
