@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.SubComponents;
 
-partial class DatsetConfigurationUI
+partial class DatasetConfigurationUI
 {
     /// <summary>
     /// Required designer variable.

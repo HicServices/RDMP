@@ -9,23 +9,25 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.SubComponents;
-public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber
+public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber
 {
-    DatasetConfigurationUICommon Common;
+    private readonly DatasetConfigurationUICommon _common;
 
-    public DatsetConfigurationUI()
+    public DatasetConfigurationUI()
     {
         InitializeComponent();
-        Common = new DatasetConfigurationUICommon();
+        _common = new DatasetConfigurationUICommon();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Dataset databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
-        Common.Dataset = databaseObject;
+        _common.Dataset = databaseObject;
 
-        var catalogues = databaseObject.CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("Dataset_ID", databaseObject.ID).SelectMany(ci => ci.CatalogueItems).ToList().Select(ci => ci.CatalogueName).Distinct();
-        if(catalogues.Count() < 1)
+        var catalogues = databaseObject.CatalogueRepository
+            .GetAllObjectsWhere<ColumnInfo>("Dataset_ID", databaseObject.ID).SelectMany(static ci => ci.CatalogueItems)
+            .Select(static ci => ci.CatalogueName).Distinct().ToList();
+        if(catalogues.Count < 1)
         {
             lblDatasetUsage.Text = "This dataset is not linked to data yet.";
         }
@@ -35,10 +37,10 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
             lblDatasetUsage.Text = $"This dataset is used in the following catalogues:{Environment.NewLine}{catalogueString}";
         }
 
-        Bind(tbName, "Text", "Name", c => c.Name);
-        Bind(tbDOI, "Text", "DigitalObjectIdentifier", c => c.DigitalObjectIdentifier);
-        Bind(tbSource, "Text", "Source", c => c.Source);
-        Bind(tbFolder, "Text", "Folder", c => c.Folder);
+        Bind(tbName, "Text", "Name", static c => c.Name);
+        Bind(tbDOI, "Text", "DigitalObjectIdentifier", static c => c.DigitalObjectIdentifier);
+        Bind(tbSource, "Text", "Source", static c => c.Source);
+        Bind(tbFolder, "Text", "Folder", static c => c.Folder);
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
         GetObjectSaverButton()?.Enable(false);

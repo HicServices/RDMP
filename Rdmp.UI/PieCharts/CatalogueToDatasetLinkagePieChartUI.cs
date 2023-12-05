@@ -32,21 +32,21 @@ namespace Rdmp.UI.PieCharts;
 /// </summary>
 public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDashboardableControl
 {
-    private ToolStripButton btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
+    private readonly ToolStripButton _btnSingleCatalogue = new("Single", CatalogueIcons.Catalogue.ImageToBitmap())
     { Name = "btnSingleCatalogue" };
 
-    private ToolStripButton btnAllCatalogues =
+    private readonly ToolStripButton _btnAllCatalogues =
         new("All", CatalogueIcons.AllCataloguesUsedByLoadMetadataNode.ImageToBitmap()) { Name = "btnAllCatalogues" };
 
-    private ToolStripButton btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
+    private readonly ToolStripButton _btnRefresh = new("Refresh", FamFamFamIcons.text_list_bullets.ImageToBitmap())
     { Name = "btnRefresh" };
 
-    private ToolStripLabel toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
+    private readonly ToolStripLabel _toolStripLabel1 = new("Type:") { Name = "toolStripLabel1" };
 
-    private ToolStripButton btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
+    private readonly ToolStripButton _btnShowLabels = new("Labels", FamFamFamIcons.text_align_left.ImageToBitmap())
     { Name = "btnShowLabels", CheckOnClick = true };
 
-    private List<ToolStripMenuItem> _flagOptions = new();
+    private readonly List<ToolStripMenuItem> _flagOptions = new();
 
     public CatalogueToDatasetLinkagePieChartUI()
     {
@@ -54,10 +54,10 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
 
         btnViewDataTable.Image = CatalogueIcons.TableInfo.ImageToBitmap();
 
-        btnAllCatalogues.Click += btnAllCatalogues_Click;
-        btnSingleCatalogue.Click += btnSingleCatalogue_Click;
-        btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
-        btnRefresh.Click += btnRefresh_Click;
+        _btnAllCatalogues.Click += btnAllCatalogues_Click;
+        _btnSingleCatalogue.Click += btnSingleCatalogue_Click;
+        _btnShowLabels.CheckStateChanged += btnShowLabels_CheckStateChanged;
+        _btnRefresh.Click += btnRefresh_Click;
 
         //put edit mode on for the designer
         NotifyEditModeChange(false);
@@ -65,7 +65,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
 
     private void SetupFlags()
     {
-        if (!firstTime)
+        if (!_firstTime)
             return;
 
         AddFlag("Non Extractable Catalogues", c => c.IncludeNonExtractableCatalogues,
@@ -84,7 +84,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
             (c, r) => c.IncludeInternalCatalogueItems = r);
         AddFlag("Deprecated Catalogue Items", c => c.IncludeDeprecatedCatalogueItems,
             (c, r) => c.IncludeDeprecatedCatalogueItems = r);
-        firstTime = false;
+        _firstTime = false;
     }
 
     private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection, bool> getProp,
@@ -181,7 +181,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
     }
 
     private bool _bLoading;
-    private bool firstTime = true;
+    private bool _firstTime = true;
 
     public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
     {
@@ -190,19 +190,19 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
 
         _collection = (GoodBadCataloguePieChartObjectCollection)collection;
 
-        if (firstTime)
+        if (_firstTime)
             SetupFlags();
 
-        btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
-        btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
-        btnShowLabels.Checked = _collection.ShowLabels;
+        _btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
+        _btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
+        _btnShowLabels.Checked = _collection.ShowLabels;
 
-        CommonFunctionality.Add(btnAllCatalogues);
-        CommonFunctionality.Add(toolStripLabel1);
-        CommonFunctionality.Add(btnAllCatalogues);
-        CommonFunctionality.Add(btnSingleCatalogue);
-        CommonFunctionality.Add(btnShowLabels);
-        CommonFunctionality.Add(btnRefresh);
+        CommonFunctionality.Add(_btnAllCatalogues);
+        CommonFunctionality.Add(_toolStripLabel1);
+        CommonFunctionality.Add(_btnAllCatalogues);
+        CommonFunctionality.Add(_btnSingleCatalogue);
+        CommonFunctionality.Add(_btnShowLabels);
+        CommonFunctionality.Add(_btnRefresh);
 
         foreach (var mi in _flagOptions)
             CommonFunctionality.AddToMenu(mi);
@@ -245,8 +245,8 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
 
     private void btnAllCatalogues_Click(object sender, EventArgs e)
     {
-        btnAllCatalogues.Checked = true;
-        btnSingleCatalogue.Checked = false;
+        _btnAllCatalogues.Checked = true;
+        _btnSingleCatalogue.Checked = false;
         _collection.SetAllCataloguesMode();
         GenerateChart();
         SaveCollectionChanges();
@@ -260,8 +260,8 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
         }, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected)) return;
         _collection.SetSingleCatalogueMode(selected);
 
-        btnAllCatalogues.Checked = false;
-        btnSingleCatalogue.Checked = true;
+        _btnAllCatalogues.Checked = false;
+        _btnSingleCatalogue.Checked = true;
 
         SaveCollectionChanges();
         GenerateChart();
@@ -282,7 +282,7 @@ public partial class CatalogueToDatasetLinkagePieChartUI : RDMPUserControl, IDas
 
     private void btnShowLabels_CheckStateChanged(object sender, EventArgs e)
     {
-        _collection.ShowLabels = btnShowLabels.Checked;
+        _collection.ShowLabels = _btnShowLabels.Checked;
 
         chart1.Series[0]["PieLabelStyle"] = _collection.ShowLabels ? "Inside" : "Disabled";
         SaveCollectionChanges();

@@ -25,7 +25,7 @@ internal class
 
     public override void Activate(Dataset target)
     {
-        ItemActivator.Activate<DatsetConfigurationUI, Dataset>(target);
+        ItemActivator.Activate<DatasetConfigurationUI, Dataset>(target);
     }
 
     [CanBeNull]
