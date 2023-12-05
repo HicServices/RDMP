@@ -3,8 +3,10 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 using System;
@@ -48,9 +50,33 @@ namespace Rdmp.UI.SimpleDialogs
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
             var pkValue = result.ItemArray[3].ToString();
-            var replacementIdex = int.Parse(result.ItemArray[4].ToString());
-            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, name.Replace($".[{column}]",""), pkValue,"TODO", $"[{column}]");
+            var pkColumn = result.ItemArray[4].ToString();
+            var replacementIdex = int.Parse(result.ItemArray[5].ToString());
+            var table = name.Replace($".[{column}]", "");
+            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, table, pkValue,"TODO", $"[{column}]");
             rc.SaveToDatabase();
+
+            var redactedString = new string('#', foundChi.Length);
+            var fetchSQL = $"select {column} from {table} where {pkColumn} = '{pkValue}' and charindex('{foundChi}',{column},{replacementIdex}) >0";
+            var existingResultsDT = new DataTable();
+            var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name == $"{table}.[{column}]").First();
+            var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
+            using (var con = (SqlConnection)catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetConnection())
+            {
+                con.Open();
+                var da = new SqlDataAdapter(new SqlCommand(fetchSQL, con));
+                da.Fill(existingResultsDT);
+                if (existingResultsDT.Rows.Count > 0 && existingResultsDT.Rows[0].ItemArray.Length > 0)
+                {
+                    var currentContext = existingResultsDT.Rows[0].ItemArray[0].ToString();
+                    var newContext = currentContext.Replace(foundChi, redactedString);
+                    var updateSQL = $"update {table} set {column}='{newContext}' where {pkColumn} = '{pkValue}' and {column}='{currentContext}'";
+                    var updateCmd = new SqlCommand(updateSQL, con);
+                    updateCmd.ExecuteNonQuery();
+                }
+            }
+
+
             result.Delete();
             _results.AcceptChanges();
             dgResults.DataSource = _results;

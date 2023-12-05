@@ -56,7 +56,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
 
 
 
-    private void handleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue)
+    private void handleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
     {
         if (foundChis.Rows.Count == 0)
         {
@@ -65,10 +65,11 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             foundChis.Columns.Add("Context");
             foundChis.Columns.Add("Source Column Name");
             foundChis.Columns.Add("PK Value");
+            foundChis.Columns.Add("PK Column");
             foundChis.Columns.Add("replacementIndex");
         }
         var shrunkContext = WrapCHIInContext(foundChi, contextValue);
-        foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, contextValue.IndexOf(foundChi));
+        foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, pkColumn, contextValue.IndexOf(foundChi));
     }
     public DataTable foundChis = new();
 
@@ -112,8 +113,9 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
                 var potentialCHI = CHIColumnFinder.GetPotentialCHI(value);
                 if (!string.IsNullOrWhiteSpace(potentialCHI))
                 {
-                    var pkValue = getPKValue(row, dt);
-                    handleFoundCHI(potentialCHI, value, item.Name, pkValue);
+                    var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
+                    var pkValue = getPKValue(pkColumnInfo, row, dt);
+                    handleFoundCHI(potentialCHI, value, item.Name, pkValue, pkColumnInfo.Name);
                     if (_bailOutEarly)
                     {
                         break;
@@ -131,12 +133,10 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         }
     }
 
-    private string getPKValue(DataRow row, DataTable dt)
+    private string getPKValue(ColumnInfo pkColumnInfo, DataRow row, DataTable dt)
     {
         //todo doesn't work with multitable catalogues
 
-
-        var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
         if (pkColumnInfo != null)
         {
             var pkName = pkColumnInfo.Name.Split(".").Last().Replace("[", "").Replace("]", "");
