@@ -1,22 +1,16 @@
-﻿using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandDeleteDatasetUI : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandDeleteDatasetUI : BasicUICommandExecution
 {
-    private IActivateItems _activateItems;
-    private Dataset _dataset;
+    private readonly IActivateItems _activateItems;
+    private readonly Dataset _dataset;
 
     public ExecuteCommandDeleteDatasetUI(IActivateItems activator, Dataset dataset) : base(activator)
     {
@@ -31,12 +25,11 @@ public class ExecuteCommandDeleteDatasetUI : BasicUICommandExecution, IAtomicCom
     {
         base.Execute();
         var confirmDelete = YesNo( $"Are you sure you want to delete the dataset \"{_dataset.Name}\"?", $"Delete Dataset: {_dataset.Name}");
-        if (confirmDelete)
-        {
-            var cmd = new Core.CommandExecution.AtomicCommands.ExecuteCommandDeleteDataset(_activateItems, _dataset);
-            cmd.Execute();
-            _activateItems.RefreshBus.Publish(this, new Refreshing.RefreshObjectEventArgs(_dataset));
-        }
+        if (!confirmDelete) return;
+
+        var cmd = new Core.CommandExecution.AtomicCommands.ExecuteCommandDeleteDataset(_activateItems, _dataset);
+        cmd.Execute();
+        _activateItems.RefreshBus.Publish(this, new Refreshing.RefreshObjectEventArgs(_dataset));
     }
 
 

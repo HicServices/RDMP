@@ -1,9 +1,8 @@
 ﻿using Rdmp.Core.Curation.Data;
-using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateDataset : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateDataset : BasicCommandExecution
 {
     private readonly string _doi;
     private readonly string _name;
