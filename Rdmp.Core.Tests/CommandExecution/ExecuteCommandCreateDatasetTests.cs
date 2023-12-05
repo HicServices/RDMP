@@ -27,6 +27,6 @@ public class ExecuteCommandCreateDatasetTests : CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset2","somedoi","some source");
         Assert.DoesNotThrow(() => cmd.Execute());
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>().Where(ds => ds.Name == "dataset2" && ds.DigitalObjectIdentifier == "somedoi" && ds.Source == "some source").First();
-        Assert.IsNotNull(founddataset);
+        Assert.That(founddataset,Is.Not.Null);
     }
 }

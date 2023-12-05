@@ -49,7 +49,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>();
             foreach (var ci in columInfo)
             {
-                Assert.AreEqual(ci.Dataset_ID, founddataset.ID);
+                Assert.That(ci.Dataset_ID, Is.EqualTo(founddataset.ID));
             }
         }
         [Test]
@@ -84,17 +84,17 @@ namespace Rdmp.Core.Tests.CommandExecution
             var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(ci => _cata1.CatalogueItems.Contains(ci));
             foreach (var ci in columInfo)
             {
-                Assert.AreEqual(ci.ColumnInfo.Dataset_ID, founddataset.ID);
+                Assert.That(ci.ColumnInfo.Dataset_ID, Is.EqualTo(founddataset.ID));
             }
 
             var columInfo2 = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(ci => _cata2.CatalogueItems.Contains(ci));
             foreach (var ci in columInfo2)
             {
-                Assert.AreEqual(ci.ColumnInfo.Dataset_ID, null);
+                Assert.That(ci.ColumnInfo.Dataset_ID, Is.Null);
             }
         }
         [Test]
-        public void TestLinkCatalogueToDatasetBadCoulmnInfo()
+        public void TestLinkCatalogueToDatasetBadColumnInfo()
         {
             var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
             Assert.DoesNotThrow(() => cmd.Execute());
