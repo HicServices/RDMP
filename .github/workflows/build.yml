@@ -266,6 +266,10 @@ jobs:
         run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
       - name: Check output
         run: echo ${{ steps.version.outputs.rdmpversion }}
+      - name: test to remove
+        run: |
+            ls
+            ls dist
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.3
         with:
