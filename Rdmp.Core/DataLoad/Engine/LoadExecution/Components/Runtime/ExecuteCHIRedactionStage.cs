@@ -14,6 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ internal class ExecuteCHIRedactionStage
     private readonly IDataLoadJob _job;
     private readonly DiscoveredDatabase _db;
     private readonly LoadStage _loadStage;
-    private Dictionary<string, List<string>> _allowList;
+    private Dictionary<string, List<String>> _allowLists = new();
     private bool _redact;
 
     public ExecuteCHIRedactionStage(IDataLoadJob job, DiscoveredDatabase db, LoadStage loadStage)
@@ -35,12 +36,12 @@ internal class ExecuteCHIRedactionStage
         _loadStage = loadStage;
     }
 
-    public ExitCodeType Execute(bool redact, Dictionary<string, List<string>> allowLists = null)
+    public ExitCodeType Execute(bool redact, Dictionary<string,List<String>> allowLists = null)
     {
         if (_loadStage != LoadStage.AdjustRaw && _loadStage != LoadStage.AdjustStaging)
             throw new NotSupportedException("This mutilator can only run in AdjustRaw or AdjustStaging");
 
-        _allowList = allowLists;
+        _allowLists = allowLists;
         _redact = redact;
         foreach (var tableInfo in _job.RegularTablesToLoad)
         {
@@ -61,9 +62,15 @@ internal class ExecuteCHIRedactionStage
         _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
              $"About to run {GetType()} mutilation on table {tbl}"));
         var dt = tbl.GetDataTable();
+        List<String> _allowList = new();
+        if (_allowLists.TryGetValue("RDMP_ALL", out var _extractionSpecificAllowances))
+            _allowList.AddRange(_extractionSpecificAllowances);
+        var y = tbl.ToString();
+        if (_allowLists.TryGetValue(tbl.ToString(), out var _catalogueSpecificAllowances))
+            _allowList.AddRange(_catalogueSpecificAllowances.ToList());
         foreach (DataColumn col in dt.Columns)
         {
-            if (_allowList.ContainsKey(col.ColumnName)) continue;
+            if (_allowList.Contains(col.ColumnName)) continue;
             foreach (DataRow row in dt.Rows)
             {
                 var foundChi = CHIColumnFinder.GetPotentialCHI(row[col].ToString());
@@ -79,7 +86,7 @@ internal class ExecuteCHIRedactionStage
                         if (catalogue != null)
                         {
                             //this can probably be tidied up
-                            var pkColumnInfo = catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
+                            var pkColumnInfo = catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey && x.Name.Contains(foundTable)).First(); //there may be more, but we just need one
                             pkColumnName = pkColumnInfo.Name;
                             if (pkColumnInfo != null)
                             {
@@ -91,10 +98,9 @@ internal class ExecuteCHIRedactionStage
                                 pkValue = row[index].ToString();
                             }
                         }
-                        //var ft = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "");
-                        var ft = tbl.GetFullyQualifiedName().Replace("_RAW", "");
-                        ft = ft.Replace("..", ".[dbo].");
-                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex,ft, pkValue, pkColumnName.Split(".").Last(),$"[{col.ColumnName}]");
+                        var ft = tbl.GetFullyQualifiedName().Replace("_RAW", ""); //TODO
+                        //ft = ft.Replace("..", ".[dbo].");
+                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, ft, pkValue, pkColumnName.Split(".").Last(), $"[{col.ColumnName}]");
                         rc.SaveToDatabase();
                         var redactionString = "##########";
                         row[col] = row[col].ToString().Replace(foundChi, redactionString.Substring(0, Math.Min(foundChi.Length, redactionString.Length)));

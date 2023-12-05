@@ -13,6 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,7 +27,7 @@ internal class CHIRedactionMutilator : IPluginMutilateDataTables
 
     private DiscoveredDatabase _db;
     private LoadStage _loadStage;
-    private readonly Dictionary<string, List<string>> _allowLists = new();
+    private Dictionary<string, List<string>> _allowLists = new();
 
 
 
@@ -40,14 +41,20 @@ internal class CHIRedactionMutilator : IPluginMutilateDataTables
     public bool Redact { get; set; } = true;
     public void Check(ICheckNotifier notifier)
     {
+        PopulateAllowList();
+    }
+
+    private void PopulateAllowList()
+    {
         if (!string.IsNullOrWhiteSpace(AllowListFileLocation))
         {
             var allowListFileContent = File.ReadAllText(AllowListFileLocation);
+            _allowLists = new();
             var deserializer = new DeserializerBuilder().Build();
             var yamlObject = deserializer.Deserialize<Dictionary<string, List<string>>>(allowListFileContent);
-            foreach (var (cat, columns) in yamlObject)
+            foreach (var item in yamlObject)
             {
-                _allowLists.Add(cat, columns);
+                _allowLists.Add(item.Key, item.Value);
             }
         }
     }
@@ -64,6 +71,7 @@ internal class CHIRedactionMutilator : IPluginMutilateDataTables
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
+        PopulateAllowList();
         var redactor = new ExecuteCHIRedactionStage(job, _db, _loadStage);
         return redactor.Execute(Redact, _allowLists);
     }
