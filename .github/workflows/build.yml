@@ -109,10 +109,12 @@ jobs:
         shell: bash
         run: |
           ls Rdmp.UI.Tests
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-ui.lcov
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build -c Release
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj -c Release
+          # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          # mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          mv `find coverage -type f` db-core.lcov
+          # mv `find coverage -type f` db-core.lcov
       # - uses: coverallsapp/github-action@v2.2.3
       #   with:
       #     github-token: ${{ secrets.github_token }}
