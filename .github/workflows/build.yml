@@ -210,6 +210,12 @@ jobs:
             done
             rm *.nupkg
           done
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundle
   sign:
     name: Code Sign
     runs-on: windows-latest
@@ -219,7 +225,7 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-bundle
       - name: Sign
         shell: bash
         run: |
@@ -238,6 +244,12 @@ jobs:
               echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
               (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
           fi
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundle
   tidy-up:
     name: Permission fixing etc.
     runs-on: windows-latest
@@ -247,7 +259,7 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-bundle
       - name: Determine RDMP build version
         id: version
         shell: bash
@@ -303,6 +315,12 @@ jobs:
           do
           dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
           done
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundle
   upload:
     name: Upload Build Artifact
     runs-on: windows-latest
@@ -312,7 +330,7 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-bundle
       - name: Calculate SHA256SUMS
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
       - name: Archive production artifacts
@@ -321,6 +339,12 @@ jobs:
           name: dist
           path: |
             dist
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundle
 
   production-upload:
     name: Production Upload
@@ -332,7 +356,7 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-bundle
       - name: Upload Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
