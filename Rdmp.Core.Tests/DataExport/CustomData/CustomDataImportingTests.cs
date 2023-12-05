@@ -11,8 +11,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common.Scenarios;
 

@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.Tests.CohortCreation;
-using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution
 {

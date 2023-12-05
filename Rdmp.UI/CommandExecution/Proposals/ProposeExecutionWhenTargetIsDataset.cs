@@ -6,10 +6,8 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents;
-using System;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
