@@ -46,7 +46,8 @@ public class ExplicitDatabaseNameChecker
                 "ToLoggingDatabaseDataLoadEventListener.cs",
                 "ExecuteCommandIdentifyCHIInCatalogue.cs", //uses the RDMP_ALL allow list
                 "ExecuteCommandRedactCHIsFromCatalogue.cs", //uses the RDMP_ALL allow list
-                "CHIColumnFinder.cs" //uses the RDMP_ALL allow list
+                "CHIColumnFinder.cs", //uses the RDMP_ALL allow list
+                "ExecuteCHIRedactionStage.cs" //Users the RDMP_ALL allow list
 
             }); //allowed because it's default arguments for CLI
 
