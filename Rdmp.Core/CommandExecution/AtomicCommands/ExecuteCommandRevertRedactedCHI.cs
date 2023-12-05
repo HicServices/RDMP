@@ -20,7 +20,7 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
     RedactedCHI _redactedCHI;
     IBasicActivateItems _activator;
 
-    public ExecuteCommandRevertRedactedCHI(IBasicActivateItems activator, [DemandsInitialization("Redacted CHIto Revert")] RedactedCHI redaction) : base(activator)
+    public ExecuteCommandRevertRedactedCHI(IBasicActivateItems activator, [DemandsInitialization("Redacted CHI to Revert")] RedactedCHI redaction) : base(activator)
     {
         _redactedCHI = redaction;
         _activator = activator;
@@ -30,7 +30,7 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
     {
         base.Execute();
         var redactedString = new string('#', _redactedCHI.PotentialCHI.Length);
-        var fetchSQL = $"select {_redactedCHI.ColumnName} from {_redactedCHI.TableName} where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and charindex('{redactedString}',{_redactedCHI.ColumnName},{_redactedCHI.ReplacementIndex}) =1";
+        var fetchSQL = $"select {_redactedCHI.ColumnName} from {_redactedCHI.TableName} where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and charindex('{redactedString}',{_redactedCHI.ColumnName},{_redactedCHI.ReplacementIndex}) >0";
         var existingResultsDT = new DataTable();
         var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name == $"{_redactedCHI.TableName}.{_redactedCHI.ColumnName}").First();
         var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
@@ -45,9 +45,9 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
                 var newContext = currentContext.Replace(redactedString, _redactedCHI.PotentialCHI);
                 var updateSQL = $"update {_redactedCHI.TableName} set {_redactedCHI.ColumnName}='{newContext}' where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and {_redactedCHI.ColumnName}='{currentContext}'";
                 var updateCmd = new SqlCommand(updateSQL, con);
-                updateCmd.ExecuteNonQuery();
+                //updateCmd.ExecuteNonQuery();
             }
-            _redactedCHI.DeleteInDatabase();
+            //_redactedCHI.DeleteInDatabase();
 
         }
     }
