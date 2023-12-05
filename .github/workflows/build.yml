@@ -125,15 +125,18 @@ jobs:
       - name: Initialise RDMP
         run: |
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+      - name: Build
+        run: |
+          dotnet build --configuration Release --verbosity minimal
       - name: Test (DB)
         shell: bash
         run: |
             ls Rdmp.UI.Tests
             dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build -c Release
             echo "Hello world!"
-            # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-            # mv `find coverage -type f` db-ui.lcov
             dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+             # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+            # mv `find coverage -type f` db-ui.lcov
             # mv `find coverage -type f` db-core.lcov
       # - uses: coverallsapp/github-action@v2.2.3
       #   with:
@@ -154,11 +157,12 @@ jobs:
         shell: bash
         run:  |
           echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-          # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build  -c Release 
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build  -c Release
+          # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           # mv `find coverage -type f` fs-ui.lcov
           # dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build  -c Release
+          
           # mv `find coverage -type f` fs-core.lcov
       # - uses: coverallsapp/github-action@v2.2.3
       #   with:
@@ -208,17 +212,21 @@ jobs:
       - name: Sign
         shell: bash
         run: |
-          [[ ${{github.ref}} != 'refs/heads/develop']] &&   [[ ${{github.ref}} != 'refs/heads/main']] && echo "Skipping code signing as were not on the develop or main branch" && exit 0
-          dotnet tool install --global AzureSignTool 
-          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
-          AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
-          mkdir -p dist
-          cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
-          (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
-          mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
-          echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
+          if [ ${{github.ref}} != 'refs/heads/develop' ] || [ ${{github.ref}} != 'refs/heads/main' ]
+          then 
+              echo "Skipping code signing as were not on the develop or main branch" && exit 0
+          else 
+              dotnet tool install --global AzureSignTool 
+              AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
+              AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
+              mkdir -p dist
+              cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
+              (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
+              (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
+              mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
+              echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
+              (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
+          fi
   tidy-up:
     name: Permission fixing etc.
     runs-on: windows-latest
