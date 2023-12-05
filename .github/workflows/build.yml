@@ -140,7 +140,7 @@ jobs:
   local-tests:
     name: File system tests
     runs-on: windows-latest
-    needs: ['tests-setup','db-tests']
+    needs: ['tests-setup']
     steps:
       - uses: actions/cache/restore@v3
         id: restore-build
@@ -164,6 +164,12 @@ jobs:
       - name: Test with local file system
         shell: bash
         run:  |
+          echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-ui.lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          mv `find coverage -type f` fs-core.lcov
+          echo "test to put local files also in this step"
           echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-ui.lcov
