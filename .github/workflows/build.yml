@@ -95,6 +95,12 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v3
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-with-setup
   db-tests:
     name: Database Tests
     runs-on: windows-latest
@@ -104,13 +110,12 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-with-setup
       - name: Test (DB)
         shell: bash
         run: |
           ls Rdmp.UI.Tests
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build -c Release
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj -c Release
           # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           # mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
@@ -129,14 +134,16 @@ jobs:
         id: restore-build
         with:
           path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key
+          key: ${{ github.sha }}-your-cache-key-with-setup
       - name: Test with local file system
         shell: bash
         run:  |
           echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          # dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build  -c Release 
           # mv `find coverage -type f` fs-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          # dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build  -c Release
           # mv `find coverage -type f` fs-core.lcov
       # - uses: coverallsapp/github-action@v2.2.3
       #   with:
