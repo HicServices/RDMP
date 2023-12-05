@@ -153,6 +153,23 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-with-setup
+      - name: Initialise LocalDB
+        shell: bash
+        run: |
+          SqlLocalDB.exe create MSSQLLocalDB -s
+          sqlcmd -l 180 -S '(localdb)\MSSQLLocalDB' -Q "SELECT @@VERSION;"
+          sed -i'' -e 's/localhost/\(localdb\)\\MSSQLLocalDB/' Tests.Common/TestDatabases.txt
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '8.0'
+          root-password: 'YourStrong!Passw0rd'
+          auto-start: true
+      - name: Initialise RDMP
+        run: |
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+      - name: Build
+        run: |
+          dotnet build --configuration Release --verbosity minimal
       - name: Test with local file system
         shell: bash
         run:  |
@@ -237,6 +254,12 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key
+      - name: Determine RDMP build version
+        id: version
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Check output
+        run: echo ${{ steps.version.outputs.rdmpversion }}
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.3
         with:
