@@ -125,9 +125,6 @@ jobs:
       - name: Initialise RDMP
         run: |
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
-      # - name: Build
-      #   run: |
-      #     dotnet build --configuration Release --verbosity minimal
       - name: Test (DB)
         shell: bash
         run: |
@@ -143,7 +140,7 @@ jobs:
   local-tests:
     name: File system tests
     runs-on: windows-latest
-    needs: ['tests-setup']
+    needs: ['tests-setup','db-tests']
     steps:
       - uses: actions/cache/restore@v3
         id: restore-build
@@ -164,9 +161,6 @@ jobs:
       - name: Initialise RDMP
         run: |
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
-      # - name: Build
-      #   run: |
-      #     dotnet build --configuration Release --verbosity minimal
       - name: Test with local file system
         shell: bash
         run:  |
