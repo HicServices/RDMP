@@ -16,19 +16,17 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution, IAtomicCommand
         _doi = doi;
         _source = source;
         _activator = activator;
+
+        if (string.IsNullOrWhiteSpace(_name))
+            SetImpossible("Datasets require a name");
     }
 
 
     public override void Execute()
     {
-        if (string.IsNullOrWhiteSpace(_name))
-        {
-            throw new Exception("Datasets requires a name");
-        }
         base.Execute();
         var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
         _activator.Publish(dataset);
-
     }
 }
