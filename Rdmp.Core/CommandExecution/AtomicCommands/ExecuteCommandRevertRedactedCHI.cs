@@ -45,9 +45,9 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
                 var newContext = currentContext.Replace(redactedString, _redactedCHI.PotentialCHI);
                 var updateSQL = $"update {_redactedCHI.TableName} set {_redactedCHI.ColumnName}='{newContext}' where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and {_redactedCHI.ColumnName}='{currentContext}'";
                 var updateCmd = new SqlCommand(updateSQL, con);
-                //updateCmd.ExecuteNonQuery();
+                updateCmd.ExecuteNonQuery();
             }
-            //_redactedCHI.DeleteInDatabase();
+            _redactedCHI.DeleteInDatabase();
 
         }
     }
