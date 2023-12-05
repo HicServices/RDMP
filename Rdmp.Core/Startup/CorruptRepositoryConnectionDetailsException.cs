@@ -13,7 +13,7 @@ namespace Rdmp.Core.Startup;
 /// <summary>
 /// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
 /// </summary>
-[Serializable]
+//[Serializable]
 public class CorruptRepositoryConnectionDetailsException : Exception
 {
     public CorruptRepositoryConnectionDetailsException()
@@ -29,8 +29,7 @@ public class CorruptRepositoryConnectionDetailsException : Exception
     {
     }
 
-    protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info,
-        context)
-    {
-    }
+    //protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info, context)
+    //{
+    //}
 }
