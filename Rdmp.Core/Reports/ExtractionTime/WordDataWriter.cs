@@ -17,6 +17,7 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Validation.Constraints;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
@@ -55,17 +56,14 @@ public class WordDataWriter : DocXHelper
 
 
 
-    private string getDOI(Curation.Data.Dataset ds)
+    [NotNull]
+    private static string GetDoi([NotNull] Curation.Data.Dataset ds)
     {
-        if (!string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier))
-        {
-            return $" (DOI: {ds.DigitalObjectIdentifier})";
-        }
-        return "";
+        return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
     }
 
     /// <summary>
-    /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
+    /// Generates a new metadata word file in the extraction directory and populates it with information about the extraction.
     /// It returns the open document as an object so that you can supplement it e.g. with catalogue information
     /// </summary>
     /// <returns></returns>
@@ -83,18 +81,8 @@ public class WordDataWriter : DocXHelper
 
             var rowCount = _destination.GeneratesFiles ? 10 : 5;
 
-            List<int> foundDatasets = new();
-            foreach (var col in Executer.Source.Request.ColumnsToExtract)
-            {
-                var colInfo = col.ColumnInfo;
-                if (colInfo.Dataset_ID > 0)
-                {
-                    if (!foundDatasets.Contains((int)colInfo.Dataset_ID))
-                    {
-                        foundDatasets.Add((int)colInfo.Dataset_ID);
-                    }
-                }
-            }
+            var foundDatasets = Executer.Source.Request.ColumnsToExtract.Select(static col => col.ColumnInfo)
+                .Where(static ci => ci.Dataset_ID > 0).Select(static ci => ci.Dataset_ID.Value).Distinct().ToList();
             if (foundDatasets.Count > 0)
             {
                 rowCount++;
@@ -175,23 +163,13 @@ public class WordDataWriter : DocXHelper
 
             if (foundDatasets.Count > 0)
             {
-                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>();
+                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>().ToList();
 
-                string datasetString = "";
-                int last = foundDatasets.Last();
-                foreach (var ds in foundDatasets)
-                {
-                    var fullDataset = datasets.FirstOrDefault(d => d.ID == ds);
-                    if (fullDataset != null)
-                    {
-                        datasetString += $"{fullDataset.Name}{getDOI(fullDataset)}";
-                        if(last != ds)
-                        {
-                            datasetString += ", ";
-                        }
-                    }
-                }
-
+                var datasetString = string.Join(", ",
+                    foundDatasets
+                        .Select(ds => datasets.FirstOrDefault(d => d.ID == ds))
+                        .Where(static d => d != null)
+                        .Select(static fullDataset => $"{fullDataset.Name}{GetDoi(fullDataset)}"));
 
                 SetTableCell(t, rownum, 0, "Datasets Used");
                 SetTableCell(t, rownum, 1, datasetString);

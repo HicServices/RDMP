@@ -12,6 +12,7 @@ using NPOI.XWPF.UserModel;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Reports.ExtractionTime;
 
@@ -160,13 +161,10 @@ public class WordDataReleaseFileGenerator : DocXHelper
             Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }
 
-    private string getDOI(Curation.Data.Dataset ds)
+    [NotNull]
+    private string getDOI([NotNull] Curation.Data.Dataset ds)
     {
-        if (!string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier))
-        {
-            return $" (DOI: {ds.DigitalObjectIdentifier})";
-        }
-        return "";
+        return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
     }
 
     private void CreateFileSummary(XWPFDocument document)
@@ -189,13 +187,9 @@ public class WordDataReleaseFileGenerator : DocXHelper
             var extractableDataset = _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID);
             SetTableCell(table, tableLine, 0,
               extractableDataset.ToString());
-            var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(c => c.ColumnInfo).Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
+            var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(static c => c.ColumnInfo).Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
             var datasets = _repository.CatalogueRepository.GetAllObjects<Curation.Data.Dataset>().Where(d => linkedDatasets.Contains(d.ID)).ToList();
-            string datasetString = "";
-            foreach (var ds in datasets)
-            {
-                datasetString += $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}";
-            }
+            var datasetString = string.Join("",datasets.Select(ds=> $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}"));
             SetTableCell(table, tableLine, 1, result.FiltersUsed);
             SetTableCell(table, tableLine, 2, filename);
             SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
