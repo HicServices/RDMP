@@ -128,9 +128,9 @@ jobs:
       - name: Test (DB)
         shell: bash
         run: |
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-core.lcov
       - uses: coverallsapp/github-action@v2.2.3
         with:
@@ -165,9 +165,9 @@ jobs:
         shell: bash
         run:  |
           echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-ui.lcov
-          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
+          dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
       - uses: coverallsapp/github-action@v2.2.3
         with:
