@@ -101,7 +101,7 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-with-setup
-  local:
+  tests:
     name: Run Tests
     runs-on: windows-latest
     needs: ['tests-setup']
@@ -367,7 +367,7 @@ jobs:
   production-upload:
     name: Production Upload
     runs-on: windows-latest
-    needs: ['upload','local-tests']
+    needs: ['upload','tests']
     if: contains(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/cache/restore@v3
