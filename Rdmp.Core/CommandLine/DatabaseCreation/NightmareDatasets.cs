@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using BadMedicine;
 using BadMedicine.Datasets;
@@ -19,8 +18,6 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
-[SuppressMessage("Security", "SCS0005:Weak random number generator.",
-    Justification = "We are generating random metadata, security does not enter into the equation")]
 internal class NightmareDatasets : DataGenerator
 {
     private IRDMPPlatformRepositoryServiceLocator _repos;

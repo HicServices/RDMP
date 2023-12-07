@@ -19,8 +19,11 @@ internal class ExtractionFilterUITests : UITests
 
         var set = new ExtractionFilterParameterSet(Repository, filter, "fff");
 
-        Assert.IsTrue(filter.Exists());
-        Assert.IsTrue(set.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(filter.Exists());
+            Assert.That(set.Exists());
+        });
 
         var activator = new TestActivateItems(this, Repository)
         {
@@ -31,7 +34,10 @@ internal class ExtractionFilterUITests : UITests
         var del = new ExecuteCommandDelete(activator, filter);
         del.Execute();
 
-        Assert.IsFalse(filter.Exists());
-        Assert.IsFalse(set.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(filter.Exists(), Is.False);
+            Assert.That(set.Exists(), Is.False);
+        });
     }
 }

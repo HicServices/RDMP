@@ -8,7 +8,6 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data;

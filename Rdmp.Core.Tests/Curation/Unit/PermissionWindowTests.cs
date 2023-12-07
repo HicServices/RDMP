@@ -36,15 +36,18 @@ public class PermissionWindowTests : DatabaseTests
         };
 
         var periods = newPermissionWindow.PermissionWindowPeriods;
-        Assert.AreEqual(2, periods.Count);
+        Assert.That(periods, Has.Count.EqualTo(2));
 
         var newPeriod1 = periods[0];
-        Assert.AreEqual((int)DayOfWeek.Monday, newPeriod1.DayOfWeek);
+        Assert.Multiple(() =>
+        {
+            Assert.That(newPeriod1.DayOfWeek, Is.EqualTo((int)DayOfWeek.Monday));
 
-        Assert.AreEqual(6, newPeriod1.End.Hours);
+            Assert.That(newPeriod1.End.Hours, Is.EqualTo(6));
+        });
 
         var newPeriod2 = periods[1];
-        Assert.AreEqual(17, newPeriod2.Start.Hours);
+        Assert.That(newPeriod2.Start.Hours, Is.EqualTo(17));
     }
 
     [Test]
@@ -63,7 +66,7 @@ public class PermissionWindowTests : DatabaseTests
 
         var permissionWindow = new PermissionWindow(CatalogueRepository);
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });
-        Assert.IsTrue(permissionWindow.WithinPermissionWindow());
+        Assert.That(permissionWindow.WithinPermissionWindow());
     }
 
     [Test]
@@ -81,6 +84,6 @@ public class PermissionWindowTests : DatabaseTests
 
         var permissionWindow = new PermissionWindow(CatalogueRepository);
         permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod> { period1 });
-        Assert.IsFalse(permissionWindow.WithinPermissionWindow());
+        Assert.That(permissionWindow.WithinPermissionWindow(), Is.False);
     }
 }

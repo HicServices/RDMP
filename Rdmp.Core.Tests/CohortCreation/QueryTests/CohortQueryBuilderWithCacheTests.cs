@@ -59,8 +59,8 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
         var builder = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
         try
         {
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builder.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -71,8 +71,7 @@ public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
 	FROM 
 	[" + TestDatabaseNames.Prefix + @"ScratchArea].[dbo].[BulkData]
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builder.SQL));
+", cohortIdentificationConfiguration.ID))));
 
             var server = queryCacheDatabase.Server;
             using (var con = server.GetConnection())
@@ -96,8 +95,8 @@ FROM
 
             var builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration, null);
 
-            Assert.AreEqual(
-                CollapseWhitespace(
+            Assert.That(
+                CollapseWhitespace(builderCached.SQL), Is.EqualTo(CollapseWhitespace(
                     string.Format(
                         @"
 (
@@ -106,8 +105,7 @@ FROM
                         "]..[IndexedExtractionIdentifierList_AggregateConfiguration" + aggregate1.ID + @"]
 
 )
-", cohortIdentificationConfiguration.ID)),
-                CollapseWhitespace(builderCached.SQL));
+", cohortIdentificationConfiguration.ID))));
         }
         finally
         {

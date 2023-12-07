@@ -36,18 +36,18 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         Import(tbl, out var tblInfo, out _);
 
-        Assert.AreEqual(5, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(5));
 
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
             { DisallowInput = true };
 
         var cmd = new ExecuteCommandAlterTableMakeDistinct(activator, tblInfo, 700, true);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
 
-        Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
 
         tbl.CreatePrimaryKey(tbl.DiscoverColumn("fff"));
 
@@ -55,6 +55,6 @@ internal class ExecuteCommandAlterTableMakeDistinctTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-        Assert.AreEqual("Table 'MyTable' has primary key columns so cannot contain duplication", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Table 'MyTable' has primary key columns so cannot contain duplication"));
     }
 }

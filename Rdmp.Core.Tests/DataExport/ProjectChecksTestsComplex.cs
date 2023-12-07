@@ -35,9 +35,8 @@ public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
         var exception = Assert.Throws<Exception>(() =>
             new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), _project).Check(
                 ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual(
-            "Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment",
-            exception.Message);
+        Assert.That(
+            exception.Message, Is.EqualTo("Dataset TestTable is set to DisableExtraction=true, probably someone doesn't want you extracting this dataset at the moment"));
 
         //but if the user goes ahead and executes the extraction that should fail too
         var source = new ExecuteDatasetExtractionSource();
@@ -45,6 +44,6 @@ public class ProjectChecksTestsComplex : TestsRequiringAnExtractionConfiguration
         var exception2 = Assert.Throws<Exception>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
 
-        Assert.AreEqual("Cannot extract TestTable because DisableExtraction is set to true", exception2?.Message);
+        Assert.That(exception2?.Message, Is.EqualTo("Cannot extract TestTable because DisableExtraction is set to true"));
     }
 }

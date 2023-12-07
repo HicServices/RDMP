@@ -73,9 +73,8 @@ public class CachedFileRetrieverTests : DatabaseTests
             // Should fail after determining that the files in ForLoading do not match the job specification
             var ex = Assert.Throws<InvalidOperationException>(() =>
                 retriever.Fetch(job, new GracefulCancellationToken()));
-            Assert.IsTrue(
-                ex.Message.StartsWith(
-                    "The files in ForLoading do not match what this job expects to be loading from the cache."),
+            Assert.That(
+                ex.Message, Does.StartWith("The files in ForLoading do not match what this job expects to be loading from the cache."),
                 ex.Message + Environment.NewLine + Environment.NewLine + ex.StackTrace);
         }
         finally
@@ -121,7 +120,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             retriever.Fetch(job, new GracefulCancellationToken());
 
             // And ForLoading should still have the file in it (i.e. it hasn't mysteriously disappeared)
-            Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
+            Assert.That(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
         }
         finally
         {
@@ -164,7 +163,7 @@ public class CachedFileRetrieverTests : DatabaseTests
             retriever.Fetch(job, new GracefulCancellationToken());
 
             // And the retriever should have copied the cached archive file into ForLoading
-            Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
+            Assert.That(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
         }
         finally
         {

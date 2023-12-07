@@ -28,7 +28,7 @@ public class LoadMetadataTests : DatabaseTests
             loadMetadata.SaveToDatabase();
 
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
-            Assert.AreEqual(loadMetadataWithIdAfterwards.LocationOfFlatFiles, TestContext.CurrentContext.TestDirectory);
+            Assert.That(TestContext.CurrentContext.TestDirectory, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfFlatFiles));
         }
         finally
         {
@@ -44,22 +44,22 @@ public class LoadMetadataTests : DatabaseTests
         try
         {
             //default
-            Assert.IsFalse(loadMetadata.IgnoreTrigger);
+            Assert.That(loadMetadata.IgnoreTrigger, Is.False);
             loadMetadata.SaveToDatabase();
-            Assert.IsFalse(loadMetadata.IgnoreTrigger);
+            Assert.That(loadMetadata.IgnoreTrigger, Is.False);
             loadMetadata.SaveToDatabase();
 
             loadMetadata.IgnoreTrigger = true;
-            Assert.IsTrue(loadMetadata.IgnoreTrigger);
+            Assert.That(loadMetadata.IgnoreTrigger);
             loadMetadata.RevertToDatabaseState();
-            Assert.IsFalse(loadMetadata.IgnoreTrigger);
+            Assert.That(loadMetadata.IgnoreTrigger, Is.False);
 
 
             loadMetadata.IgnoreTrigger = true;
-            Assert.IsTrue(loadMetadata.IgnoreTrigger);
+            Assert.That(loadMetadata.IgnoreTrigger);
             loadMetadata.SaveToDatabase();
             var lmd2 = RepositoryLocator.CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
-            Assert.IsTrue(lmd2.IgnoreTrigger);
+            Assert.That(lmd2.IgnoreTrigger);
         }
         finally
         {
@@ -73,13 +73,13 @@ public class LoadMetadataTests : DatabaseTests
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
         var tbl = db.ExpectTable("Imaginary");
 
-        Assert.IsFalse(tbl.Exists());
+        Assert.That(tbl.Exists(), Is.False);
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
         var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-        StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
+        Assert.That(ex.Message, Does.Match("Table '.*Imaginary.*' does not exist"));
     }
 
     [Test]
@@ -90,12 +90,12 @@ public class LoadMetadataTests : DatabaseTests
         f.Create(db, CatalogueRepository);
 
         var tbl = f.TableInfoCreated.Discover(DataAccessContext.DataLoad);
-        Assert.IsTrue(tbl.Exists());
+        Assert.That(tbl.Exists());
 
         var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(f.TableInfoCreated);
         var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(db.Server));
         var ex = Assert.Throws<Exception>(() => checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
 
-        StringAssert.IsMatch("Table '.*MyAwesomeFunction.*' is a TableValuedFunction", ex.Message);
+        Assert.That(ex.Message, Does.Match("Table '.*MyAwesomeFunction.*' is a TableValuedFunction"));
     }
 }

@@ -7,7 +7,6 @@
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Tests.CommandExecution;
@@ -24,11 +23,11 @@ internal sealed class TestExecuteCommandClearUserSettings : CommandCliTests
 
         invoker.ExecuteCommand(typeof(ExecuteCommandSetUserSetting), new CommandLineObjectPicker(new[] { nameof(UserSettings.Wait5SecondsAfterStartupUI), "true" }, activator));
 
-        Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.That(UserSettings.Wait5SecondsAfterStartupUI);
         invoker.ExecuteCommand(typeof(ExecuteCommandSetUserSetting), new CommandLineObjectPicker(new[] { nameof(UserSettings.Wait5SecondsAfterStartupUI), "false" }, activator));
-        Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.That(UserSettings.Wait5SecondsAfterStartupUI, Is.False);
         invoker.ExecuteCommand(typeof(ExecuteCommandClearUserSettings), new CommandLineObjectPicker(System.Array.Empty<string>(), activator));
 
-        Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.That(UserSettings.Wait5SecondsAfterStartupUI);
     }
 }

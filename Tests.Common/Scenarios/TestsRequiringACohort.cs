@@ -177,7 +177,7 @@ GO
     private void CreateExtractableCohort()
     {
         _extractableCohort = new ExtractableCohort(DataExportRepository, _externalCohortTable, cohortIDInTestData);
-        Assert.AreEqual(_extractableCohort.OriginID, cohortIDInTestData);
+        Assert.That(_extractableCohort.OriginID, Is.EqualTo(cohortIDInTestData));
     }
 
     private void SetupCohortDefinitionAndCustomTable(DbConnection con)
@@ -236,6 +236,6 @@ GO
             $"INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('{privateID}','{publicID}',{cohortIDInTestData})";
 
         using var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con);
-        Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
+        Assert.That(insertRecord.ExecuteNonQuery(),Is.EqualTo(1));
     }
 }

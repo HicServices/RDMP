@@ -202,5 +202,6 @@ public enum RDMPConcept
     MutilateDataTables,
     Commit,
     Memento,
-    TableInfoDatabaseNode
+    TableInfoDatabaseNode,
+    Dataset
 }

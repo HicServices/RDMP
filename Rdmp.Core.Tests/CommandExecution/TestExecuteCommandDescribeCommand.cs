@@ -24,10 +24,10 @@ internal class TestExecuteCommandDescribeCommand : CommandCliTests
 
         var cmd = new ExecuteCommandDescribe(activator,
             new CommandLineObjectPicker(new[] { forCommand.Name }, activator));
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
         cmd.Execute();
-        StringAssert.Contains(expectedHelp, cmd.HelpShown);
+        Assert.That(cmd.HelpShown, Does.Contain(expectedHelp));
     }
 
     [Test]

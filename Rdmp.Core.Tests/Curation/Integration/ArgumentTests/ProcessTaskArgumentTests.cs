@@ -50,12 +50,12 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
                 var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
 
-                Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
+                Assert.That(pta.Value, Is.EqualTo(newInstanceOfPTA.Value));
 
                 var t1 = (TableInfo)pta.GetValueAsSystemType();
                 var t2 = (TableInfo)newInstanceOfPTA.GetValueAsSystemType();
 
-                Assert.AreEqual(t1.ID, t2.ID);
+                Assert.That(t2.ID, Is.EqualTo(t1.ID));
             }
             finally
             {
@@ -104,12 +104,12 @@ public class ProcessTaskArgumentTests : DatabaseTests
                 pta.SaveToDatabase();
 
                 var newInstanceOfPTA = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
-                Assert.AreEqual(newInstanceOfPTA.Value, pta.Value);
+                Assert.That(pta.Value, Is.EqualTo(newInstanceOfPTA.Value));
 
                 var p1 = (PreLoadDiscardedColumn)pta.GetValueAsSystemType();
                 var p2 = (PreLoadDiscardedColumn)newInstanceOfPTA.GetValueAsSystemType();
 
-                Assert.AreEqual(p1.ID, p2.ID);
+                Assert.That(p2.ID, Is.EqualTo(p1.ID));
             }
             finally
             {
@@ -153,7 +153,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             tableInfo.DeleteInDatabase();
 
             //give the object back now please? - returns null because it's gone (new behaviour)
-            Assert.IsNull(pta.GetValueAsSystemType());
+            Assert.That(pta.GetValueAsSystemType(), Is.Null);
 
             //old behaviour
             /*var ex = Assert.Throws<KeyNotFoundException>(()=>pta.GetValueAsSystemType());
@@ -188,9 +188,8 @@ public class ProcessTaskArgumentTests : DatabaseTests
                 pta.SetType(typeof(PreLoadDiscardedColumn));
                 //then surprise! heres a TableInfo!
                 var ex = Assert.Throws<Exception>(() => pta.SetValue(tableInfo));
-                StringAssert.Contains(
-                    "has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",
-                    ex.Message);
+                Assert.That(
+                    ex.Message, Does.Contain("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)"));
             }
             finally
             {
@@ -226,8 +225,8 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
             var loadedPta = CatalogueRepository.GetObjectByID<ProcessTaskArgument>(pta.ID);
             var value = loadedPta.GetValueAsSystemType() as EncryptedString;
-            Assert.NotNull(value);
-            Assert.AreEqual("test123", value.GetDecryptedValue());
+            Assert.That(value, Is.Not.Null);
+            Assert.That(value.GetDecryptedValue(), Is.EqualTo("test123"));
         }
         finally
         {
@@ -251,11 +250,14 @@ public class ProcessTaskArgumentTests : DatabaseTests
         {
             var arg = pt.ProcessTaskArguments.Single();
 
-            Assert.AreEqual("MyBool", arg.Name);
-            Assert.AreEqual("System.Boolean", arg.Type);
-            Assert.AreEqual("Fishes", arg.Description);
-            Assert.AreEqual("True", arg.Value);
-            Assert.AreEqual(true, arg.GetValueAsSystemType());
+            Assert.Multiple(() =>
+            {
+                Assert.That(arg.Name, Is.EqualTo("MyBool"));
+                Assert.That(arg.Type, Is.EqualTo("System.Boolean"));
+                Assert.That(arg.Description, Is.EqualTo("Fishes"));
+                Assert.That(arg.Value, Is.EqualTo("True"));
+                Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(true));
+            });
         }
         finally
         {
@@ -275,12 +277,15 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
         //some of the DemandsInitialization on BasicDataReleaseDestination should be nested
         var f = new ArgumentFactory();
-        Assert.True(
-            ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
-                .Any(r => r.ParentPropertyInfo != null));
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                    ArgumentFactory.GetRequiredProperties(typeof(BasicDataReleaseDestination))
+                        .Any(r => r.ParentPropertyInfo != null));
 
-        //new pc should have no arguments
-        Assert.That(pc.GetAllArguments(), Is.Empty);
+            //new pc should have no arguments
+            Assert.That(pc.GetAllArguments(), Is.Empty);
+        });
 
         //we create them (the root and nested ones!)
         var args = pc.CreateArgumentsForClassIfNotExists<BasicDataReleaseDestination>();
@@ -296,7 +301,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
 
         var destInstance = DataFlowPipelineEngineFactory.CreateDestinationIfExists(pipe);
 
-        Assert.AreEqual(true, ((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess);
+        Assert.That(((BasicDataReleaseDestination)destInstance).ReleaseSettings.DeleteFilesOnSuccess, Is.EqualTo(true));
     }
 
 
@@ -315,12 +320,12 @@ public class ProcessTaskArgumentTests : DatabaseTests
             arg.SetValue(ExitCodeType.OperationNotRequired);
 
             //should have set Value string to the ID of the object
-            Assert.AreEqual(arg.Value, ExitCodeType.OperationNotRequired.ToString());
+            Assert.That(arg.Value, Is.EqualTo(ExitCodeType.OperationNotRequired.ToString()));
 
             arg.SaveToDatabase();
 
             //but as system Type should return the server
-            Assert.AreEqual(arg.GetValueAsSystemType(), ExitCodeType.OperationNotRequired);
+            Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(ExitCodeType.OperationNotRequired));
         }
         finally
         {
@@ -348,12 +353,12 @@ public class ProcessTaskArgumentTests : DatabaseTests
             arg.SetValue(server);
 
             //should have set Value string to the ID of the object
-            Assert.AreEqual(arg.Value, server.ID.ToString());
+            Assert.That(server.ID.ToString(), Is.EqualTo(arg.Value));
 
             arg.SaveToDatabase();
 
             //but as system Type should return the server
-            Assert.AreEqual(arg.GetValueAsSystemType(), server);
+            Assert.That(server, Is.EqualTo(arg.GetValueAsSystemType()));
         }
         finally
         {
@@ -378,7 +383,7 @@ public class ProcessTaskArgumentTests : DatabaseTests
             arg.SetType(typeof(Dictionary<TableInfo, string>));
             arg.SaveToDatabase();
 
-            Assert.AreEqual(typeof(Dictionary<TableInfo, string>), arg.GetConcreteSystemType());
+            Assert.That(arg.GetConcreteSystemType(), Is.EqualTo(typeof(Dictionary<TableInfo, string>)));
 
             var ti1 = new TableInfo(CatalogueRepository, "test1");
             var ti2 = new TableInfo(CatalogueRepository, "test2");
@@ -394,9 +399,12 @@ public class ProcessTaskArgumentTests : DatabaseTests
             arg.SaveToDatabase();
 
             var val2 = (Dictionary<TableInfo, string>)arg.GetValueAsSystemType();
-            Assert.AreEqual(2, val2.Count);
-            Assert.AreEqual("Fish", val2[ti1]);
-            Assert.AreEqual("Fish", val2[ti2]);
+            Assert.That(val2, Has.Count.EqualTo(2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(val2[ti1], Is.EqualTo("Fish"));
+                Assert.That(val2[ti2], Is.EqualTo("Fish"));
+            });
         }
         finally
         {

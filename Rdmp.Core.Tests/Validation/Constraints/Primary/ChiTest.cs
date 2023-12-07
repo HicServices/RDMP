@@ -33,14 +33,14 @@ internal class ChiTest : ValidationTests
     [TestCase("02044503731")]
     public void Validate_InvalidChi_ThrowsException(string code)
     {
-        Assert.NotNull(_chi.Validate(code));
+        Assert.That(_chi.Validate(code), Is.Not.Null);
     }
 
     [TestCase(null)]
     [TestCase("0204450373")]
     public void Validate_ValidChi_Success(string code)
     {
-        Assert.IsNull(_chi.Validate(code));
+        Assert.That(_chi.Validate(code), Is.Null);
     }
 
     [Test]
@@ -48,7 +48,7 @@ internal class ChiTest : ValidationTests
     {
         var result = _chi.Validate("banana");
 
-        Assert.NotNull(result.SourceConstraint);
-        Assert.AreEqual(typeof(Chi), result.SourceConstraint.GetType());
+        Assert.That(result.SourceConstraint, Is.Not.Null);
+        Assert.That(result.SourceConstraint.GetType(), Is.EqualTo(typeof(Chi)));
     }
 }

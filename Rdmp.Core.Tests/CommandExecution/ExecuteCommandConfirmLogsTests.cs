@@ -35,7 +35,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
-        Assert.AreEqual("There are no log entries for MyLmd", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There are no log entries for MyLmd"));
     }
 
     [TestCase(true)]
@@ -78,13 +78,13 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
 
-        // we have created log entry but it did not have an end time.  This is a sad entry because it never completed
+        // we have created log entry, but it did not have an end time.  This is a sad entry because it never completed
         lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
 
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
-        StringAssert.IsMatch("Latest logs for MyLmd .* indicate that it did not complete", ex.Message);
+        Assert.That(ex.Message, Does.Match("Latest logs for MyLmd .* indicate that it did not complete"));
     }
 
     [Test]
@@ -106,7 +106,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
-        StringAssert.IsMatch("Latest logs for MyLmd .* indicate that it failed", ex.Message);
+        Assert.That(ex.Message, Does.Match("Latest logs for MyLmd .* indicate that it failed"));
     }
 
 
@@ -134,8 +134,8 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var cmd = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), lmd, "00:00:01");
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd.Execute());
 
-        StringAssert.IsMatch(
-            "Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*", ex.Message);
+        Assert.That(
+ex.Message, Does.Match("Latest logged activity for MyLmd is .*.  This is older than the requested date threshold:.*"));
     }
 
     [Test]
@@ -185,6 +185,6 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var cmd2 = new ExecuteCommandConfirmLogs(new ThrowImmediatelyActivator(RepositoryLocator), cp2, null);
         var ex = Assert.Throws<LogsNotConfirmedException>(() => cmd2.Execute());
 
-        Assert.AreEqual("There are no log entries for MyCoolCache", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There are no log entries for MyCoolCache"));
     }
 }

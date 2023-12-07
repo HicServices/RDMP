@@ -71,10 +71,10 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
                 var copy = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
 
                 copy.Description = "fish";
-                Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent);
+                Assert.That(copy.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent));
 
                 copy.SaveToDatabase();
-                Assert.IsTrue(copy.HasLocalChanges().Evaluation == ChangeDescription.NoChanges);
+                Assert.That(copy.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
             }
 
             //now fetch them out of database lots of times
@@ -102,7 +102,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         using var con = useTransaction
             ? CatalogueTableRepository.BeginNewTransactedConnection()
             : CatalogueTableRepository.GetConnection();
-        Assert.AreEqual(ConnectionState.Open, con.Connection.State);
+        Assert.That(con.Connection.State, Is.EqualTo(ConnectionState.Open));
         Thread.Sleep(1000);
 
         if (useTransaction)
@@ -110,7 +110,7 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         else
             con.Connection.Close();
 
-        Assert.AreEqual(ConnectionState.Closed, con.Connection.State);
+        Assert.That(con.Connection.State, Is.EqualTo(ConnectionState.Closed));
     }
 
     [Test]
@@ -154,6 +154,6 @@ public class SuperMultiThreadedVolumeAccess : DatabaseTests
         while (ts.Any(t => t.IsAlive))
             ts.FirstOrDefault(t => t.IsAlive)?.Join(100);
 
-        Assert.IsEmpty(exes);
+        Assert.That(exes, Is.Empty);
     }
 }

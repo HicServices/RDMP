@@ -30,7 +30,6 @@ public class CohortIdentificationConfigurationUICommon
     public CohortIdentificationConfiguration Configuration;
 
     public ExternalDatabaseServer QueryCachingServer;
-    private CohortAggregateContainer _root;
     private CancellationTokenSource _cancelGlobalOperations;
     private ISqlParameter[] _globals;
     public CohortCompilerRunner Runner;
@@ -145,7 +144,6 @@ public class CohortIdentificationConfigurationUICommon
 
         Configuration.CreateRootContainerIfNotExists();
         //if there is no root container,create one
-        _root = Configuration.RootCohortAggregateContainer;
         _globals = Configuration.GetAllParameters();
 
         //Could have configured/unconfigured a joinable state
@@ -195,7 +193,7 @@ public class CohortIdentificationConfigurationUICommon
 
         task = Compiler.AddTask(configOrContainer, _globals);
 
-        //Task is now in state NotScheduled so we can start it
+        //Task is now in state NotScheduled, so we can start it
         Compiler.LaunchSingleTask(task, Timeout, true);
     }
 

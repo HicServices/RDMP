@@ -18,6 +18,6 @@ public class MySqlTriggerImplementerTests
     [TestCase("10.5.64-MariaDB", false)]
     public void TestOldNew(string versionString, bool expectToUseOldMethod)
     {
-        Assert.AreEqual(expectToUseOldMethod, MySqlTriggerImplementer.UseOldDateTimeDefaultMethod(versionString));
+        Assert.That(MySqlTriggerImplementer.UseOldDateTimeDefaultMethod(versionString), Is.EqualTo(expectToUseOldMethod));
     }
 }

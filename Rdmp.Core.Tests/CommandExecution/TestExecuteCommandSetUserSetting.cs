@@ -22,36 +22,38 @@ internal class TestExecuteCommandSetUserSetting : CommandCliTests
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),
             new CommandLineObjectPicker(new[] { "Wait5SecondsAfterStartupUI", "true" }, GetActivator()));
 
-        Assert.IsTrue(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.That(UserSettings.Wait5SecondsAfterStartupUI);
 
         GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetUserSetting),
             new CommandLineObjectPicker(new[] { "Wait5SecondsAfterStartupUI", "false" }, GetActivator()));
 
-        Assert.IsFalse(UserSettings.Wait5SecondsAfterStartupUI);
+        Assert.That(UserSettings.Wait5SecondsAfterStartupUI, Is.False);
     }
 
     [Test]
     public void TestSettingErrorCodeValue_InvalidValue()
     {
         var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "foo");
-        Assert.IsTrue(cmd.IsImpossible);
-        Assert.AreEqual(cmd.ReasonCommandImpossible,
-            "Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail");
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Invalid enum value.  When setting an error code you must supply a value of one of :Success,Warning,Fail"));
+        });
     }
 
     [Test]
     public void TestSettingErrorCodeValue_Success()
     {
-        Assert.AreEqual("R001", ErrorCodes.ExistingExtractionTableInDatabase.Code);
+        Assert.That(ErrorCodes.ExistingExtractionTableInDatabase.Code, Is.EqualTo("R001"));
         var before = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
-        Assert.AreNotEqual(CheckResult.Success, before);
+        Assert.That(before, Is.Not.EqualTo(CheckResult.Success));
 
         var cmd = new ExecuteCommandSetUserSetting(GetActivator(), "R001", "Success");
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         var after = UserSettings.GetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase);
-        Assert.AreEqual(CheckResult.Success, after);
+        Assert.That(after, Is.EqualTo(CheckResult.Success));
 
         //reset the original state of the system (the default)
         UserSettings.SetErrorReportingLevelFor(ErrorCodes.ExistingExtractionTableInDatabase, before);

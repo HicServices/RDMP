@@ -230,18 +230,14 @@ public partial class ParameterCollectionUI : RDMPUserControl
     private void miAddParameter_Click(object sender, EventArgs e)
     {
         var r = new Random();
+        using var dialog = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
+        if (dialog.ShowDialog() != DialogResult.OK) return;
 
-#pragma warning disable SCS0005 // Weak random generator: This is only used to create an initial value for a parameter.
-        var dialog = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, $"@MyParam{r.Next()}");
-#pragma warning restore SCS0005 // Weak random generator
-        if (dialog.ShowDialog() == DialogResult.OK)
-        {
-            var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
+        var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
 
-            Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
+        Options.ParameterManager.ParametersFoundSoFarInQueryGeneration[Options.CurrentLevel].Add(newParameter);
 
-            RefreshParametersFromDatabase();
-        }
+        RefreshParametersFromDatabase();
     }
 
     private void olvParameters_KeyDown(object sender, KeyEventArgs e)
