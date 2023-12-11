@@ -49,6 +49,6 @@ public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecu
         cmd.Execute();
     }
 
-    public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
+    //public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>
+    //    iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
 }

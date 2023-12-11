@@ -100,10 +100,13 @@ internal class ExecuteCHIRedactionStage
                         }
                         var ft = tbl.GetFullyQualifiedName().Replace("_RAW", ""); //TODO
                         ft = ft.Replace("..", ".[dbo].");
-                        var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, ft, pkValue, pkColumnName.Split(".").Last(), $"[{col.ColumnName}]");
-                        rc.SaveToDatabase();
-                        var redactionString = "##########";
-                        row[col] = row[col].ToString().Replace(foundChi, redactionString.Substring(0, Math.Min(foundChi.Length, redactionString.Length)));
+                        if (pkColumnName.Split(".").Last().Replace("[","").Replace("]","") != $"{col.ColumnName}")
+                        {
+                            var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, ft, pkValue, pkColumnName.Split(".").Last(), $"[{col.ColumnName}]");
+                            rc.SaveToDatabase();
+                            var redactionString = "##########";
+                            row[col] = row[col].ToString().Replace(foundChi, redactionString.Substring(0, Math.Min(foundChi.Length, redactionString.Length)));
+                        }
                     }
                     else
                     {

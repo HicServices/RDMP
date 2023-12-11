@@ -53,11 +53,11 @@ namespace Rdmp.UI.SimpleDialogs
             var pkColumn = result.ItemArray[4].ToString();
             var replacementIdex = int.Parse(result.ItemArray[5].ToString());
             var table = name.Replace($".[{column}]", "");
-            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, table, pkValue,"TODO", $"[{column}]");
+            var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, table, pkValue,pkColumn, $"[{column}]");
             rc.SaveToDatabase();
 
             var redactedString = new string('#', foundChi.Length);
-            var fetchSQL = $"select {column} from {table} where {pkColumn} = '{pkValue}' and charindex('{foundChi}',{column},{replacementIdex}) >0";
+            var fetchSQL = $"select TOP 1 {column} from {table} where {pkColumn} = '{pkValue}' and charindex('{foundChi}',{column},{replacementIdex}) >0";
             var existingResultsDT = new DataTable();
             var columnInfo = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name == $"{table}.[{column}]").First();
             var catalogue = columnInfo.CatalogueItems.FirstOrDefault().Catalogue;
@@ -93,6 +93,9 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void ShowResults()
         {
+            if(_results.Rows.Count ==0) { 
+                //TODO show a 'no results found' message
+            }
             dgResults.DataSource = _results;
             DataGridViewButtonColumn confirmColumn = new DataGridViewButtonColumn();
             confirmColumn.Text = "Redact";
