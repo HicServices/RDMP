@@ -1,32 +1,16 @@
-﻿using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.UI;
+﻿using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Rdmp.UI.Refreshing;
-using static Azure.Core.HttpHeader;
 using Rdmp.Core.Dataset;
 using Rdmp.Core.Curation.Data;
-using NPOI.OpenXmlFormats.Dml.Diagram;
-using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.Core.ReusableLibraryCode.Settings;
-using Rdmp.Core;
-using Rdmp.UI.Collections;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 
+
 namespace Rdmp.UI.SubComponents;
-public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefreshBusSubscriber
+public partial class DatsetConfigurationUI : DatsetConfigurationUI_DesignProvider, IRefreshBusSubscriber
 {
     DatasetConfigurationUICommon Common;
 
@@ -80,6 +64,6 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_Design, IRefr
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<DatsetConfigurationUI_Design, UserControl>))]
 public abstract class
-    DatsetConfigurationUI_Design : RDMPSingleDatabaseObjectControl<Dataset>
+    DatsetConfigurationUI_DesignProvider : RDMPSingleDatabaseObjectControl<Dataset>
 {
 }

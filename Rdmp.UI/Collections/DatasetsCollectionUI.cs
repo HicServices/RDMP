@@ -6,9 +6,10 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Linq;
+using Rdmp.Core.Curation.Data;
+
+namespace Rdmp.UI.Collections;
 
 public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
