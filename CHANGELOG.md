@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Add command to dump current platform DB to directory
+
 ## [8.1.1] - 2023-12-01
 
 ### Changed
