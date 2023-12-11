@@ -93,8 +93,9 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void ShowResults()
         {
-            if(_results.Rows.Count ==0) { 
+            if(_results.Rows.Count ==0) {
                 //TODO show a 'no results found' message
+                return;
             }
             dgResults.DataSource = _results;
             DataGridViewButtonColumn confirmColumn = new DataGridViewButtonColumn();
