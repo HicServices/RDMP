@@ -70,7 +70,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.Path = path;
         _task.SaveToDatabase();
         var ex = Assert.Throws<Exception>(() => _checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("does not have a path specified", ex.Message);
+        Assert.That(ex.Message, Does.Contain("does not have a path specified"));
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.LoadStage = stage;
         _task.SaveToDatabase();
         var ex = Assert.Throws<ArgumentException>(() => _checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.IsTrue(Regex.IsMatch(ex.Message,
+        Assert.That(Regex.IsMatch(ex.Message,
             "Path is blank for ProcessTask 'New Process.*' - it should be a class name of type"));
     }
 
@@ -98,9 +98,8 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.Path = typeof(object).ToString();
         _task.SaveToDatabase();
         var ex = Assert.Throws<Exception>(() => _checker.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "Requested typeToCreate 'System.Object' was not assignable to the required Type 'IMutilateDataTables'",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Requested typeToCreate 'System.Object' was not assignable to the required Type 'IMutilateDataTables'"));
     }
 
     [Test]
@@ -116,8 +115,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
 
         var ex = Assert.Throws<Exception>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}",
-            ex.InnerException.Message);
+        Assert.That(ex.InnerException.Message, Is.EqualTo($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}"));
     }
 
     [Test]
@@ -137,9 +135,8 @@ public class ProcessTaskCheckingTests : DatabaseTests
 
             var ex = Assert.Throws<ArgumentException>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
 
-            Assert.AreEqual(
-                @"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo(@"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection"));
         }
         finally
         {
@@ -188,7 +185,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
                     Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(msg.Ex));
             }
 
-            Assert.AreEqual(CheckResult.Success, results.GetWorst());
+            Assert.That(results.GetWorst(), Is.EqualTo(CheckResult.Success));
         }
         finally
         {
@@ -207,6 +204,6 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.Path = path;
         _task.SaveToDatabase();
         var ex = Assert.Throws<Exception>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        StringAssert.Contains("bob.exe which does not exist at this time.", ex?.Message);
+        Assert.That(ex?.Message, Does.Contain("bob.exe which does not exist at this time."));
     }
 }

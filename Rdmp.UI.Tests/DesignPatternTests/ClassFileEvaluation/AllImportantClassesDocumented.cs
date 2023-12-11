@@ -141,7 +141,7 @@ public partial class AllImportantClassesDocumented
         Console.WriteLine($"Total Documented Classes:{commentedCount}");
         Console.WriteLine($"Total Lines of Classes Documentation:{commentLineCount}");
 
-        Assert.AreEqual(0, problems.Count);
+        Assert.That(problems, Is.Empty);
     }
 
     [GeneratedRegex("namespace (.*)")]

@@ -35,6 +35,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
             Weight = -86.9f
         });
 
+        Add(new ExecuteCommandLinkCatalogueToDatasetUI(_activator, catalogue));
         Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue)
         {
             Weight = -99.059f

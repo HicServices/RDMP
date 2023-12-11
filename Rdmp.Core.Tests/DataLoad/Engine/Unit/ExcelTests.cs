@@ -54,8 +54,11 @@ public class ExcelTests
     [Test]
     public void TestFilesExists()
     {
-        Assert.IsTrue(_fileLocations[TestFile].Exists);
-        Assert.IsTrue(_fileLocations[FreakyTestFile].Exists);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_fileLocations[TestFile].Exists);
+            Assert.That(_fileLocations[FreakyTestFile].Exists);
+        });
     }
 
     [Test]
@@ -67,7 +70,7 @@ public class ExcelTests
         };
         invalid.PreInitialize(new FlatFileToLoad(new FileInfo(TestFile)), ThrowImmediatelyDataLoadEventListener.Quiet);
         var ex = Assert.Throws<Exception>(() => invalid.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains("File Book1.xlsx has a prohibited file extension .xlsx", ex?.Message);
+        Assert.That(ex?.Message, Does.Contain("File Book1.xlsx has a prohibited file extension .xlsx"));
     }
 
     [Test]
@@ -81,18 +84,21 @@ public class ExcelTests
             ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(6, dt.Columns.Count);
-        Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
-        Assert.AreEqual("Score", dt.Columns[1].ColumnName);
-        Assert.AreEqual("IsEvil", dt.Columns[2].ColumnName);
+        Assert.That(dt.Columns, Has.Count.EqualTo(6));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
 
-        Assert.AreEqual("DateField", dt.Columns[3].ColumnName);
-        Assert.AreEqual("DoubleField", dt.Columns[4].ColumnName);
-        Assert.AreEqual("MixedField", dt.Columns[5].ColumnName);
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
+            Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
 
-        Assert.AreEqual("Bob", dt.Rows[0][0]);
-        Assert.AreEqual("3", dt.Rows[0][1]);
-        Assert.AreEqual("yes", dt.Rows[0][2]);
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
+        });
     }
 
 
@@ -110,21 +116,24 @@ public class ExcelTests
             ThrowImmediatelyDataLoadEventListener.Quiet);
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(7, dt.Columns.Count);
-        Assert.AreEqual("Participant", dt.Columns[0].ColumnName);
-        Assert.AreEqual("Score", dt.Columns[1].ColumnName);
-        Assert.AreEqual("IsEvil", dt.Columns[2].ColumnName);
+        Assert.That(dt.Columns, Has.Count.EqualTo(7));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Participant"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Score"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("IsEvil"));
 
-        Assert.AreEqual("DateField", dt.Columns[3].ColumnName);
-        Assert.AreEqual("DoubleField", dt.Columns[4].ColumnName);
-        Assert.AreEqual("MixedField", dt.Columns[5].ColumnName);
-        Assert.AreEqual("Path", dt.Columns[6].ColumnName);
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("DateField"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("DoubleField"));
+            Assert.That(dt.Columns[5].ColumnName, Is.EqualTo("MixedField"));
+            Assert.That(dt.Columns[6].ColumnName, Is.EqualTo("Path"));
 
-        Assert.AreEqual("Bob", dt.Rows[0][0]);
-        Assert.AreEqual("3", dt.Rows[0][1]);
-        Assert.AreEqual("yes", dt.Rows[0][2]);
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Bob"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("3"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("yes"));
 
-        Assert.AreEqual(_fileLocations[versionOfTestFile].FullName, dt.Rows[0][6]);
+            Assert.That(dt.Rows[0][6], Is.EqualTo(_fileLocations[versionOfTestFile].FullName));
+        });
     }
 
 
@@ -146,27 +155,30 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(5, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(5));
 
-        Assert.AreEqual("2001-01-01", dt.Rows[0][3]);
-        Assert.AreEqual("0.1", dt.Rows[0][4]);
-        Assert.AreEqual("10:30:00", dt.Rows[0][5]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0][3], Is.EqualTo("2001-01-01"));
+            Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
+            Assert.That(dt.Rows[0][5], Is.EqualTo("10:30:00"));
 
-        Assert.AreEqual("2001-01-01 10:30:00", dt.Rows[1][3]);
-        Assert.AreEqual("0.51", dt.Rows[1][4]);
-        Assert.AreEqual("11:30:00", dt.Rows[1][5]);
+            Assert.That(dt.Rows[1][3], Is.EqualTo("2001-01-01 10:30:00"));
+            Assert.That(dt.Rows[1][4], Is.EqualTo("0.51"));
+            Assert.That(dt.Rows[1][5], Is.EqualTo("11:30:00"));
 
-        Assert.AreEqual("2002-01-01 11:30:00", dt.Rows[2][3]);
-        Assert.AreEqual("0.22", dt.Rows[2][4]);
-        Assert.AreEqual("0.1", dt.Rows[2][5]);
+            Assert.That(dt.Rows[2][3], Is.EqualTo("2002-01-01 11:30:00"));
+            Assert.That(dt.Rows[2][4], Is.EqualTo("0.22"));
+            Assert.That(dt.Rows[2][5], Is.EqualTo("0.1"));
 
-        Assert.AreEqual("2003-01-01 01:30:00", dt.Rows[3][3]);
-        Assert.AreEqual("0.10", dt.Rows[3][4]);
-        Assert.AreEqual("0.51", dt.Rows[3][5]);
+            Assert.That(dt.Rows[3][3], Is.EqualTo("2003-01-01 01:30:00"));
+            Assert.That(dt.Rows[3][4], Is.EqualTo("0.10"));
+            Assert.That(dt.Rows[3][5], Is.EqualTo("0.51"));
 
-        Assert.AreEqual("2015-09-18", dt.Rows[4][3]);
-        Assert.AreEqual("15:09:00", dt.Rows[4][4]);
-        Assert.AreEqual("00:03:56", dt.Rows[4][5]);
+            Assert.That(dt.Rows[4][3], Is.EqualTo("2015-09-18"));
+            Assert.That(dt.Rows[4][4], Is.EqualTo("15:09:00"));
+            Assert.That(dt.Rows[4][5], Is.EqualTo("00:03:56"));
+        });
     }
 
     [Test]
@@ -182,30 +194,35 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(2, dt.Rows.Count);
-        Assert.AreEqual(5, dt.Columns.Count);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.That(dt.Columns, Has.Count.EqualTo(5));
+        });
 
-        Assert.AreEqual("Name", dt.Columns[0].ColumnName);
-        Assert.AreEqual("Category", dt.Columns[1].ColumnName);
-        Assert.AreEqual("Age", dt.Columns[2].ColumnName);
-        Assert.AreEqual("Wage", dt.Columns[3].ColumnName);
-        Assert.AreEqual("Invisibre",
-            dt.Columns[4].ColumnName); //this column is hidden in the spreadsheet but we still load it
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Category"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Age"));
+            Assert.That(dt.Columns[3].ColumnName, Is.EqualTo("Wage"));
+            Assert.That(dt.Columns[4].ColumnName, Is.EqualTo("Invisibre")); //this column is hidden in the spreadsheet but we still load it
 
-        Assert.AreEqual("Frank", dt.Rows[0][0]);
-        Assert.AreEqual("Upper, Left", dt.Rows[0][1]);
-        Assert.AreEqual("30", dt.Rows[0][2]);
+            Assert.That(dt.Rows[0][0], Is.EqualTo("Frank"));
+            Assert.That(dt.Rows[0][1], Is.EqualTo("Upper, Left"));
+            Assert.That(dt.Rows[0][2], Is.EqualTo("30"));
 
-        //its a pound symbol alright! but since there is 2 encodings for pound symbol let's just make everyones life easier
-        StringAssert.IsMatch(@"^\W11.00$", dt.Rows[0][3].ToString());
+            //its a pound symbol alright! but since there is 2 encodings for pound symbol let's just make everyones life easier
+            Assert.That(dt.Rows[0][3].ToString(), Does.Match(@"^\W11.00$"));
 
-        Assert.AreEqual("0.1", dt.Rows[0][4]);
+            Assert.That(dt.Rows[0][4], Is.EqualTo("0.1"));
 
-        Assert.AreEqual("Castello", dt.Rows[1][0]);
-        Assert.AreEqual("Lower, Back", dt.Rows[1][1]);
-        Assert.AreEqual("31", dt.Rows[1][2]);
-        Assert.AreEqual("50.00%", dt.Rows[1][3]);
-        Assert.AreEqual("0.2", dt.Rows[1][4]);
+            Assert.That(dt.Rows[1][0], Is.EqualTo("Castello"));
+            Assert.That(dt.Rows[1][1], Is.EqualTo("Lower, Back"));
+            Assert.That(dt.Rows[1][2], Is.EqualTo("31"));
+            Assert.That(dt.Rows[1][3], Is.EqualTo("50.00%"));
+            Assert.That(dt.Rows[1][4], Is.EqualTo("0.2"));
+        });
     }
 
 
@@ -219,7 +236,7 @@ public class ExcelTests
         source.PreInitialize(new FlatFileToLoad(_fileLocations[TestFile]), listener);
         var dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(5, dt.Rows.Count);
+        Assert.That(dt.Rows, Has.Count.EqualTo(5));
     }
 
     [Test]
@@ -237,7 +254,7 @@ public class ExcelTests
 
         Console.Write(messages.ToString());
 
-        Assert.IsTrue(args.Any(a =>
+        Assert.That(args.Any(a =>
             a.Message.Contains("Discarded the following data (that was found in unnamed columns):RowCount:5") &&
             a.ProgressEventType == ProgressEventType.Warning));
     }
@@ -249,18 +266,23 @@ public class ExcelTests
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
             "DataLoad", "Engine", "Resources", "BlankLineBook.xlsx"));
-        Assert.IsTrue(fi.Exists);
+        Assert.That(fi.Exists);
 
         source.PreInitialize(new FlatFileToLoad(fi), ThrowImmediatelyDataLoadEventListener.Quiet);
 
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-
-        Assert.AreEqual(3, dt.Rows.Count);
-        Assert.AreEqual(2, dt.Columns.Count);
-        Assert.AreEqual("Name", dt.Columns[0].ColumnName);
-        Assert.AreEqual("Age", dt.Columns[1].ColumnName);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(3));
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("Name"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("Age"));
+        });
     }
 
 
@@ -272,14 +294,14 @@ public class ExcelTests
 
         var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine", "Resources",
             "BlankBook.xlsx"));
-        Assert.IsTrue(fi.Exists);
+        Assert.That(fi.Exists);
 
         source.PreInitialize(new FlatFileToLoad(fi), ThrowImmediatelyDataLoadEventListener.Quiet);
 
 
         var ex = Assert.Throws<FlatFileLoadException>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        Assert.AreEqual("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty", ex?.Message);
+        Assert.That(ex?.Message, Is.EqualTo("The Excel sheet 'Sheet1' in workbook 'BlankBook.xlsx' is empty"));
     }
 
     [Test]
@@ -296,8 +318,7 @@ public class ExcelTests
         var source = new ExcelDataFlowSource();
         source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.csv")), ThrowImmediatelyDataLoadEventListener.Quiet);
         var ex = Assert.Throws<Exception>(() => source.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",
-            ex?.Message);
+        Assert.That(ex?.Message, Is.EqualTo("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)"));
     }
 
     [TestCase(true)]
@@ -326,17 +347,17 @@ public class ExcelTests
             ? loc.Directory.GetFiles("Book1_Sheet1.csv").Single()
             : loc.Directory.GetFiles("Sheet1.csv").Single();
 
-        Assert.IsTrue(file.Exists);
+        Assert.That(file.Exists);
 
         var contents = File.ReadAllText(file.FullName);
 
-        Assert.AreEqual(
-            @"Participant,Score,IsEvil,DateField,DoubleField,MixedField
+        Assert.That(
+contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }), Is.EqualTo(@"Participant,Score,IsEvil,DateField,DoubleField,MixedField
 Bob,3,yes,2001-01-01,0.1,10:30:00
 Frank,1.1,no,2001-01-01 10:30:00,0.51,11:30:00
 Hank,2.1,no,2002-01-01 11:30:00,0.22,0.1
 Shanker,2,yes,2003-01-01 01:30:00,0.10,0.51
-Bobboy,2,maybe,2015-09-18,15:09:00,00:03:56", contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }));
+Bobboy,2,maybe,2015-09-18,15:09:00,00:03:56"));
 
         file.Delete();
     }

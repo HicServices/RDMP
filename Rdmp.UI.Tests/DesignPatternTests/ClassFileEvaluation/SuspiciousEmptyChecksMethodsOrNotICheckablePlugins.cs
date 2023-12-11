@@ -75,7 +75,7 @@ public partial class SuspiciousEmptyChecksMethodsOrNotICheckablePlugins
         foreach (var fail in _fails)
             Console.WriteLine(fail);
 
-        Assert.AreEqual(0, _fails.Count);
+        Assert.That(_fails, Is.Empty);
     }
 
     [GeneratedRegex("(\\b|[a-z])Test(\\b|[A-Z])")]

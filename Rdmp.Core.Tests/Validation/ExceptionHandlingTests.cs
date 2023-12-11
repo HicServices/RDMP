@@ -46,6 +46,6 @@ internal class ExceptionHandlingTests
 
         var result = validator.Validate(row);
 
-        Assert.AreEqual(2, result.GetExceptionList().Count);
+        Assert.That(result.GetExceptionList(), Has.Count.EqualTo(2));
     }
 }

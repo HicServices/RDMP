@@ -24,20 +24,23 @@ public class DependencyTests : DatabaseTests
 
         try
         {
-            //col depends on tr
-            Assert.Contains(t, col.GetObjectsThisDependsOn());
-            Assert.Contains(col, t.GetObjectsDependingOnThis());
+            Assert.Multiple(() =>
+            {
+                //col depends on tr
+                Assert.That(col.GetObjectsThisDependsOn(), Does.Contain(t));
+                Assert.That(t.GetObjectsDependingOnThis(), Does.Contain(col));
 
-            //catalogue depends on catalogue items existing (slightly counter intuitive but think of it as data flow out of technical low level data through transforms into datasets - and then into researchers and research projects)
-            Assert.Contains(cat, ci.GetObjectsDependingOnThis());
-            Assert.Contains(ci, cat.GetObjectsThisDependsOn());
+                //catalogue depends on catalogue items existing (slightly counter intuitive but think of it as data flow out of technical low level data through transforms into datasets - and then into researchers and research projects)
+                Assert.That(ci.GetObjectsDependingOnThis(), Does.Contain(cat));
+                Assert.That(cat.GetObjectsThisDependsOn(), Does.Contain(ci));
 
-            //catalogue item should not be relying on anything currently (no link to underlying technical data)
-            Assert.IsNull(ci.GetObjectsThisDependsOn());
+                //catalogue item should not be relying on anything currently (no link to underlying technical data)
+                Assert.That(ci.GetObjectsThisDependsOn(), Is.Null);
+            });
 
             //now they are associated so the ci should be dependent on the col
             ci.SetColumnInfo(col);
-            Assert.Contains(col, ci.GetObjectsDependingOnThis());
+            Assert.That(ci.GetObjectsDependingOnThis(), Does.Contain(col));
         }
         finally
         {

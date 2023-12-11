@@ -24,7 +24,7 @@ public class ANOStoreFunctionalityTests : TestsRequiringFullAnonymisationSuite
         var cmd = server.GetCommand("Select version from RoundhousE.Version", con);
         var version = new Version(cmd.ExecuteScalar().ToString());
 
-        Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+        Assert.That(version, Is.GreaterThanOrEqualTo(new Version("0.0.0.0")));
 
         con.Close();
     }
@@ -40,7 +40,7 @@ public class ANOStoreFunctionalityTests : TestsRequiringFullAnonymisationSuite
                DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
         {
             var version = new Version(cmd.ExecuteScalar().ToString());
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+            Assert.That(version, Is.GreaterThanOrEqualTo(new Version("0.0.0.0")));
         }
 
         connection.Close();
@@ -55,7 +55,7 @@ public class ANOStoreFunctionalityTests : TestsRequiringFullAnonymisationSuite
         var cmd = IdentifierDump_Database.Server.GetCommand("Select version from RoundhousE.Version", con);
         var version = new Version(cmd.ExecuteScalar().ToString());
 
-        Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+        Assert.That(version, Is.GreaterThanOrEqualTo(new Version("0.0.0.0")));
 
         con.Close();
     }
@@ -70,7 +70,7 @@ public class ANOStoreFunctionalityTests : TestsRequiringFullAnonymisationSuite
         using (var cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
         {
             var version = new Version(cmd.ExecuteScalar().ToString());
-            Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+            Assert.That(version, Is.GreaterThanOrEqualTo(new Version("0.0.0.0")));
         }
 
 

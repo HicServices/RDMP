@@ -32,7 +32,7 @@ public class MySqlAggregateBuilderTests : AggregateBuilderTestsBase
         builder.AggregateTopX = topx;
 
 
-        Assert.AreEqual(CollapseWhitespace(@"/**/
+        Assert.That(CollapseWhitespace(builder.SQL.Trim()), Is.EqualTo(CollapseWhitespace(@"/**/
 SELECT 
 Col1,
 count(*) AS MyCount
@@ -42,7 +42,7 @@ group by
 Col1
 order by 
 Col1 desc
-LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
+LIMIT 32")));
 
 
         topx.DeleteInDatabase();
@@ -66,7 +66,7 @@ LIMIT 32"), CollapseWhitespace(builder.SQL.Trim()));
         };
         builder.AggregateTopX = topx;
 
-        Assert.AreEqual(useAliasForGroupBy
+        Assert.That(CollapseWhitespace(builder.SQL), Is.EqualTo(useAliasForGroupBy
             ? CollapseWhitespace(@"/**/
 SELECT 
 Col1,
@@ -88,7 +88,7 @@ group by
 Col1
 order by 
 count(*) asc
-LIMIT 31"), CollapseWhitespace(builder.SQL));
+LIMIT 31")));
 
 
         topx.DeleteInDatabase();

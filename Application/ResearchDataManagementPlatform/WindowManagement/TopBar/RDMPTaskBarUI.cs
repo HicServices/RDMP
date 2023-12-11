@@ -51,8 +51,11 @@ public partial class RDMPTaskBarUI : UserControl
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
-        btnLoad.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-        btnLoad.BackgroundImage = BackColorProvider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
+        btnDataSets.Image = CatalogueIcons.Dataset.ImageToBitmap();
+        btnDataSets.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.Datasets);
+
+        btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
+        btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.DataLoad);
 
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
@@ -106,8 +109,9 @@ public partial class RDMPTaskBarUI : UserControl
             btnSavedCohorts.ToolTipText = "Finalised identifier lists, ready for linkage and extraction";
             btnDataExport.ToolTipText = "Show Projects and Extractable Dataset Packages allowing data extraction";
             btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
-            btnLoad.ToolTipText = "Load configurations for reading data into your databases";
+            btnLoads.ToolTipText = "Load configurations for reading data into your databases";
             btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
+            btnDataSets.ToolTipText = "All external datasets that have been configured for use in RDMP";
         }
         catch (Exception e)
         {
@@ -180,12 +184,14 @@ public partial class RDMPTaskBarUI : UserControl
             collectionToToggle = RDMPCollection.DataExport;
         else if (button == btnTables)
             collectionToToggle = RDMPCollection.Tables;
-        else if (button == btnLoad)
+        else if (button == btnLoads)
             collectionToToggle = RDMPCollection.DataLoad;
         else if (button == btnSavedCohorts)
             collectionToToggle = RDMPCollection.SavedCohorts;
         else if (button == btnFavourites)
             collectionToToggle = RDMPCollection.Favourites;
+        else if (button == btnDataSets)
+            collectionToToggle = RDMPCollection.Datasets;
         else
             throw new ArgumentOutOfRangeException(nameof(button));
 

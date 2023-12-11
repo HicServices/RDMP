@@ -38,22 +38,28 @@ internal class SetNullTests
 
         var result = operation.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
 
-        Assert.AreEqual(3, result.Rows.Count);
+        Assert.That(result.Rows, Has.Count.EqualTo(3));
 
-        Assert.AreEqual("cat", result.Rows[0]["a"]);
-        Assert.AreEqual(DBNull.Value, result.Rows[0]["b"]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Rows[0]["a"], Is.EqualTo("cat"));
+            Assert.That(result.Rows[0]["b"], Is.EqualTo(DBNull.Value));
 
-        Assert.AreEqual("dog", result.Rows[1]["a"]);
-        Assert.AreEqual("dog", result.Rows[1]["b"]);
+            Assert.That(result.Rows[1]["a"], Is.EqualTo("dog"));
+            Assert.That(result.Rows[1]["b"], Is.EqualTo("dog"));
 
-        Assert.AreEqual("cat", result.Rows[2]["a"]);
-        Assert.AreEqual("dog", result.Rows[2]["b"]);
+            Assert.That(result.Rows[2]["a"], Is.EqualTo("cat"));
+            Assert.That(result.Rows[2]["b"], Is.EqualTo("dog"));
+        });
 
         operation.Dispose(listener, null);
 
         var msg = listener.EventsReceivedBySender[operation].Single();
 
-        Assert.AreEqual(ProgressEventType.Warning, msg.ProgressEventType);
-        Assert.AreEqual("Total SetNull operations for ColumnNameToFind 'b' was 1", msg.Message);
+        Assert.Multiple(() =>
+        {
+            Assert.That(msg.ProgressEventType, Is.EqualTo(ProgressEventType.Warning));
+            Assert.That(msg.Message, Is.EqualTo("Total SetNull operations for ColumnNameToFind 'b' was 1"));
+        });
     }
 }

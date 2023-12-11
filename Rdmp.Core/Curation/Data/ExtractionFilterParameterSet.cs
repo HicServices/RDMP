@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
 /// Often an ExtractionFilter will have a parameter associated with it (or more than one).  In this case it can be that you want to curate various values and give them
-/// meaningful titles.  For exmaple if you have a filter 'Hospitalised with condition X' which has parameter @ConditionList.  Then you decide that you want to curate
+/// meaningful titles.  For example if you have a filter 'Hospitalised with condition X' which has parameter @ConditionList.  Then you decide that you want to curate
 /// a list 'A101.23,B21.1' as 'People hospitalised with drug dependency'.  This 'known meaningful parameter values set' is called a ExtractionFilterParameterSet.  You
 /// can provide a name and a description for the concept.  Then you create a value for each parameter in the associated filter.  See ExtractionFilterParameterSetValue for
 /// the value recordings.
@@ -38,7 +38,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
     /// <summary>
-    /// Human readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting information about how it works, quirks etc
+    /// Human-readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting information about how it works, quirks etc
     /// </summary>
     public string Description
     {

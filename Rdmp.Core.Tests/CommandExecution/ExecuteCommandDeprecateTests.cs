@@ -16,10 +16,10 @@ internal class ExecuteCommandDeprecateTests : CommandCliTests
     {
         var c = WhenIHaveA<Catalogue>();
 
-        Assert.IsFalse(c.IsDeprecated);
+        Assert.That(c.IsDeprecated, Is.False);
 
         Run("Deprecate", $"Catalogue:{c.ID}");
 
-        Assert.IsTrue(c.IsDeprecated);
+        Assert.That(c.IsDeprecated);
     }
 }

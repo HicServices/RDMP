@@ -57,13 +57,16 @@ internal class IColumnTests
     {
         var syntax = MicrosoftQuerySyntaxHelper.Instance;
 
-        Assert.AreEqual(syntax.GetRuntimeName("[test]"), "test");
-        Assert.AreEqual(syntax.GetRuntimeName("`test`"), "`test`");
-        Assert.AreEqual(syntax.GetRuntimeName("`[test]`"), "`[test]`");
-        Assert.AreEqual(syntax.GetRuntimeName("[mydb].[test]"), "test");
-        Assert.AreEqual(syntax.GetRuntimeName("`mymysqldb`.`test`"), "`test`");
-        Assert.AreEqual(syntax.GetRuntimeName("[mydb]..[test]"), "test");
-        Assert.AreEqual(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), "test");
+        Assert.Multiple(() =>
+        {
+            Assert.That(syntax.GetRuntimeName("[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("`test`"), Is.EqualTo("`test`"));
+            Assert.That(syntax.GetRuntimeName("`[test]`"), Is.EqualTo("`[test]`"));
+            Assert.That(syntax.GetRuntimeName("[mydb].[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("`mymysqldb`.`test`"), Is.EqualTo("`test`"));
+            Assert.That(syntax.GetRuntimeName("[mydb]..[test]"), Is.EqualTo("test"));
+            Assert.That(syntax.GetRuntimeName("[SERVER].[mydb]..[test]"), Is.EqualTo("test"));
+        });
     }
 
     [Test]
@@ -74,14 +77,14 @@ internal class IColumnTests
             Alias = "test"
         };
 
-        Assert.AreEqual(tc.GetRuntimeName(), "test");
+        Assert.That(tc.GetRuntimeName(), Is.EqualTo("test"));
 
         tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])"; //still has Alias
-        Assert.AreEqual(tc.GetRuntimeName(), "test");
+        Assert.That(tc.GetRuntimeName(), Is.EqualTo("test"));
 
         tc.Alias = null;
         tc.SelectSQL = "[mydb]..[myExcitingField]";
-        Assert.AreEqual(tc.GetRuntimeName(), "myExcitingField");
+        Assert.That(tc.GetRuntimeName(), Is.EqualTo("myExcitingField"));
     }
 
     [Test]
@@ -120,7 +123,7 @@ internal class IColumnTests
             Alias = "bob smith"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Whitespace found in unwrapped Alias \"bob smith\"", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Whitespace found in unwrapped Alias \"bob smith\""));
     }
 
     [Test]
@@ -132,7 +135,7 @@ internal class IColumnTests
         };
 
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Invalid characters found in Alias \"`bob\"", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Invalid characters found in Alias \"`bob\""));
     }
 
     [Test]
@@ -143,7 +146,7 @@ internal class IColumnTests
             Alias = "bob]"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Invalid characters found in Alias \"bob]\"", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Invalid characters found in Alias \"bob]\""));
     }
 
     [Test]
@@ -155,6 +158,6 @@ internal class IColumnTests
             SelectSQL = "GetSomething('here'"
         };
         var ex = Assert.Throws<SyntaxErrorException>(() => tc.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual("Mismatch in the number of opening '(' and closing ')'", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Mismatch in the number of opening '(' and closing ')'"));
     }
 }

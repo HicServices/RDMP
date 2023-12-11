@@ -139,7 +139,7 @@ public class RefreshBus
     public void EstablishSelfDestructProtocol<T>(RDMPSingleDatabaseObjectControl<T> user, IActivateItems activator,
         T originalObject) where T : DatabaseEntity
     {
-        //they already subscribed to self destruct protocols - repeat subscriptions can be caused by registering in SetDatabaseObject and then refresh callbacks triggering more calls to SetDatabaseObject within the Controls lifetime
+        //they already subscribed to self-destruct protocols - repeat subscriptions can be caused by registering in SetDatabaseObject and then refresh callbacks triggering more calls to SetDatabaseObject within the Controls lifetime
         var existingSubscription =
             _selfDestructors.OfType<SelfDestructProtocol<T>>().SingleOrDefault(s => s.User == user);
 
@@ -164,7 +164,7 @@ public class RefreshBus
 
         var parentForm = user.ParentForm ?? throw new ArgumentException(
             "Control must have an established ParentForm, you should not attempt to establish a lifetime subscription until your control is loaded (i.e. don't call this in your constructor)",
-            "c");
+            nameof(user));
 
         //when their parent closes we unsubscribe them
         parentForm.FormClosed += (s, e) =>

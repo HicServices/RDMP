@@ -29,12 +29,15 @@ public class ExtractionInformationTests : DatabaseTests
         ti = new TableInfo(CatalogueRepository, "HighEnergyShizzle");
         columnInfo = new ColumnInfo(CatalogueRepository, "VelocityOfMatter", "int", ti);
 
-        ////////////Check the creation worked ok
-        Assert.IsNotNull(cata); //catalogue
-        Assert.IsNotNull(cataItem);
+        Assert.Multiple(() =>
+        {
+            ////////////Check the creation worked ok
+            Assert.That(cata, Is.Not.Null); //catalogue
+            Assert.That(cataItem, Is.Not.Null);
 
-        Assert.IsNotNull(ti); //underlying table stuff
-        Assert.IsNotNull(columnInfo);
+            Assert.That(ti, Is.Not.Null); //underlying table stuff
+            Assert.That(columnInfo, Is.Not.Null);
+        });
 
         ////////////// Create links between stuff and check they were created successfully //////////////
 
@@ -46,8 +49,8 @@ public class ExtractionInformationTests : DatabaseTests
     public void BasicIDsAreCorrect()
     {
         var firstLinked = cataItem.ColumnInfo;
-        Assert.IsTrue(firstLinked != null);
-        Assert.IsTrue(firstLinked.ID == columnInfo.ID);
+        Assert.That(firstLinked, Is.Not.EqualTo(null));
+        Assert.That(firstLinked.ID, Is.EqualTo(columnInfo.ID));
     }
 
 
@@ -71,27 +74,30 @@ public class ExtractionInformationTests : DatabaseTests
                 Description = "Query to identify things that travel faster than X miles per hour!"
             };
             filterFastThings.SaveToDatabase();
-            Assert.AreEqual(filterFastThings.Name, "FastThings");
+            Assert.That(filterFastThings.Name, Is.EqualTo("FastThings"));
 
             parameter = new ExtractionFilterParameter(CatalogueRepository, "DECLARE @X INT", filterFastThings);
 
-            Assert.IsNotNull(parameter);
-            Assert.AreEqual(parameter.ParameterName, "@X");
+            Assert.That(parameter, Is.Not.Null);
+            Assert.That(parameter.ParameterName, Is.EqualTo("@X"));
 
             parameter.Value = "500";
             parameter.SaveToDatabase();
 
             var afterSave = CatalogueRepository.GetObjectByID<ExtractionFilterParameter>(parameter.ID);
-            Assert.AreEqual(afterSave.Value, "500");
+            Assert.That(afterSave.Value, Is.EqualTo("500"));
 
 
             var filterFastThings_NewCopyFromDB =
                 CatalogueRepository.GetObjectByID<ExtractionFilter>(filterFastThings.ID);
 
-            Assert.AreEqual(filterFastThings.ID, filterFastThings_NewCopyFromDB.ID);
-            Assert.AreEqual(filterFastThings.Description, filterFastThings_NewCopyFromDB.Description);
-            Assert.AreEqual(filterFastThings.Name, filterFastThings_NewCopyFromDB.Name);
-            Assert.AreEqual(filterFastThings.WhereSQL, filterFastThings_NewCopyFromDB.WhereSQL);
+            Assert.Multiple(() =>
+            {
+                Assert.That(filterFastThings_NewCopyFromDB.ID, Is.EqualTo(filterFastThings.ID));
+                Assert.That(filterFastThings_NewCopyFromDB.Description, Is.EqualTo(filterFastThings.Description));
+                Assert.That(filterFastThings_NewCopyFromDB.Name, Is.EqualTo(filterFastThings.Name));
+                Assert.That(filterFastThings_NewCopyFromDB.WhereSQL, Is.EqualTo(filterFastThings.WhereSQL));
+            });
         }
         finally
         {
@@ -121,16 +127,19 @@ public class ExtractionInformationTests : DatabaseTests
             extractInfo.SaveToDatabase();
 
             //confirm the insert worked
-            Assert.AreEqual(extractInfo.SelectSQL, "dave");
+            Assert.That(extractInfo.SelectSQL, Is.EqualTo("dave"));
 
             //fetch the extraction information via the linked CatalogueItem - ColumnInfo pair (i.e. we are testing the alternate route to fetch ExtractionInformation - by ID or by colum/item pair)
             var extractInfo2_CameFromLinker = cataItem.ExtractionInformation;
-            Assert.AreEqual(extractInfo.ID, extractInfo2_CameFromLinker.ID);
-            Assert.AreEqual(extractInfo.SelectSQL, extractInfo2_CameFromLinker.SelectSQL);
+            Assert.Multiple(() =>
+            {
+                Assert.That(extractInfo2_CameFromLinker.ID, Is.EqualTo(extractInfo.ID));
+                Assert.That(extractInfo2_CameFromLinker.SelectSQL, Is.EqualTo(extractInfo.SelectSQL));
 
-            //make sure it saves properly
-            Assert.AreEqual(extractInfo2_CameFromLinker.Order, 123);
-            Assert.AreEqual(extractInfo2_CameFromLinker.ExtractionCategory, ExtractionCategory.Supplemental);
+                //make sure it saves properly
+                Assert.That(extractInfo2_CameFromLinker.Order, Is.EqualTo(123));
+                Assert.That(extractInfo2_CameFromLinker.ExtractionCategory, Is.EqualTo(ExtractionCategory.Supplemental));
+            });
         }
         finally
         {

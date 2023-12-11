@@ -26,7 +26,7 @@ public class CatalogueCheckTests : DatabaseTests
         };
 
         var ex = Assert.Throws<Exception>(() => cata.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.IsTrue(ex.Message.Contains("The following invalid characters were found:'\\','.','#'"));
+        Assert.That(ex.Message, Does.Contain("The following invalid characters were found:'\\','.','#'"));
 
         cata.DeleteInDatabase();
     }
@@ -48,14 +48,14 @@ public class CatalogueCheckTests : DatabaseTests
         //shouldn't be any errors
         var tomemory = new ToMemoryCheckNotifier();
         cata.Check(tomemory);
-        Assert.AreEqual(CheckResult.Success, tomemory.GetWorst());
+        Assert.That(tomemory.GetWorst(), Is.EqualTo(CheckResult.Success));
 
         //delete all the records in the table
         tbl.Truncate();
         cata.Check(tomemory);
 
         //now it should warn us that it is empty
-        Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
+        Assert.That(tomemory.GetWorst(), Is.EqualTo(CheckResult.Warning));
 
         tbl.Drop();
 
@@ -63,6 +63,6 @@ public class CatalogueCheckTests : DatabaseTests
         cata.Check(tomemory);
 
         //now it should fail checks
-        Assert.AreEqual(CheckResult.Fail, tomemory.GetWorst());
+        Assert.That(tomemory.GetWorst(), Is.EqualTo(CheckResult.Fail));
     }
 }

@@ -51,7 +51,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         cmd.Execute();
 
         var ac1 = (AggregateConfiguration)cic.RootCohortAggregateContainer.GetOrderedContents().First();
-        Assert.AreEqual(0, ac1.Order);
+        Assert.That(ac1.Order, Is.EqualTo(0));
 
         //add another one
         var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,
@@ -64,11 +64,14 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         ac1 = (AggregateConfiguration)all[0];
         var ac2 = (AggregateConfiguration)all[1];
 
-        Assert.AreEqual(0, ac1.Order);
-        Assert.AreEqual(1, ac2.Order);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac1.Order, Is.EqualTo(0));
+            Assert.That(ac2.Order, Is.EqualTo(1));
 
-        Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length,
-            "Expected you to create 2 AggregateConfiguration only");
+            Assert.That(Repository.GetAllObjects<AggregateConfiguration>(), Has.Length.EqualTo(2),
+                "Expected you to create 2 AggregateConfiguration only");
+        });
     }
 
 
@@ -106,9 +109,12 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         var ac2 = (AggregateConfiguration)subcontainer.GetOrderedContents().Single();
         var intersect = (CohortAggregateContainer)all[0];
 
-        Assert.AreEqual(0, intersect.Order);
-        Assert.AreEqual(1, ac1.Order);
-        Assert.AreEqual(0, ac2.Order);
+        Assert.Multiple(() =>
+        {
+            Assert.That(intersect.Order, Is.EqualTo(0));
+            Assert.That(ac1.Order, Is.EqualTo(1));
+            Assert.That(ac2.Order, Is.EqualTo(0));
+        });
 
         //now move the Ac2 to Root (problematic since both Ac 2 and the INTERSECT have Order 0 - in their own separate containers)
         var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator,
@@ -127,9 +133,12 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         intersect = (CohortAggregateContainer)all[1];
         ac1 = (AggregateConfiguration)all[2];
 
-        Assert.AreEqual(0, ac2.Order);
-        Assert.AreEqual(1, intersect.Order);
-        Assert.AreEqual(2, ac1.Order);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac2.Order, Is.EqualTo(0));
+            Assert.That(intersect.Order, Is.EqualTo(1));
+            Assert.That(ac1.Order, Is.EqualTo(2));
+        });
     }
 
     private void DeleteOldAggregates()
@@ -138,7 +147,7 @@ internal class CohortIdentificationConfigurationUnitTests : UITests
         foreach (var ac in Repository.GetAllObjects<AggregateConfiguration>())
             ac.DeleteInDatabase();
 
-        Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length,
+        Assert.That(Repository.GetAllObjects<AggregateConfiguration>(), Is.Empty,
             "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
     }
 }

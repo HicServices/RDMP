@@ -40,30 +40,33 @@ internal class DublinCoreTests
         }
 
         var contents = File.ReadAllText(f.FullName);
-        StringAssert.Contains(def.Title, contents);
-        StringAssert.Contains(def.Alternative, contents);
-        StringAssert.Contains(def.Description, contents);
-        StringAssert.Contains(def.Format, contents);
-        StringAssert.Contains(def.Publisher, contents);
-        StringAssert.Contains(def.Subject, contents);
+        Assert.That(contents, Does.Contain(def.Title));
+        Assert.That(contents, Does.Contain(def.Alternative));
+        Assert.That(contents, Does.Contain(def.Description));
+        Assert.That(contents, Does.Contain(def.Format));
+        Assert.That(contents, Does.Contain(def.Publisher));
+        Assert.That(contents, Does.Contain(def.Subject));
 
-        StringAssert.Contains("2001-01-01", contents);
-        StringAssert.Contains("http://foo.com", contents);
-        StringAssert.Contains("http://foo2.com", contents);
+        Assert.That(contents, Does.Contain("2001-01-01"));
+        Assert.That(contents, Does.Contain("http://foo.com"));
+        Assert.That(contents, Does.Contain("http://foo2.com"));
 
         var def2 = new DublinCoreDefinition();
         def2.LoadFrom(XDocument.Load(f.FullName).Root);
 
-        Assert.AreEqual(def.Title, def2.Title);
-        Assert.AreEqual(def.Alternative, def2.Alternative);
-        Assert.AreEqual(def.Description, def2.Description);
-        Assert.AreEqual(def.Format, def2.Format);
-        Assert.AreEqual(def.Publisher, def2.Publisher);
-        Assert.AreEqual(def.Subject, def2.Subject);
+        Assert.Multiple(() =>
+        {
+            Assert.That(def2.Title, Is.EqualTo(def.Title));
+            Assert.That(def2.Alternative, Is.EqualTo(def.Alternative));
+            Assert.That(def2.Description, Is.EqualTo(def.Description));
+            Assert.That(def2.Format, Is.EqualTo(def.Format));
+            Assert.That(def2.Publisher, Is.EqualTo(def.Publisher));
+            Assert.That(def2.Subject, Is.EqualTo(def.Subject));
 
-        Assert.AreEqual(def.Modified, def2.Modified);
-        Assert.AreEqual(def.IsPartOf.ToString(), def2.IsPartOf.ToString());
-        Assert.AreEqual(def.Identifier.ToString(), def2.Identifier.ToString());
+            Assert.That(def2.Modified, Is.EqualTo(def.Modified));
+            Assert.That(def2.IsPartOf.ToString(), Is.EqualTo(def.IsPartOf.ToString()));
+            Assert.That(def2.Identifier.ToString(), Is.EqualTo(def.Identifier.ToString()));
+        });
     }
 
     [Test]
@@ -133,24 +136,27 @@ internal class DublinCoreTests
 
         def.LoadFrom(doc.Root);
 
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN", def.Title));
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking",
-            def.Alternative));
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"national centre, network information support, library
+        Assert.Multiple(() =>
+        {
+            Assert.That(DatabaseTests.AreBasicallyEquals("UKOLN", def.Title));
+            Assert.That(DatabaseTests.AreBasicallyEquals("UK Office for Library and Information Networking",
+                def.Alternative));
+            Assert.That(DatabaseTests.AreBasicallyEquals(@"national centre, network information support, library
     community, awareness, research, information services,public
     library networking, bibliographic management, distributed
     library systems, metadata, resource discovery,
     conferences,lectures, workshops", def.Subject));
 
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(@"UKOLN is a national focus of expertise in digital information
+            Assert.That(DatabaseTests.AreBasicallyEquals(@"UKOLN is a national focus of expertise in digital information
     management. It provides policy, research and awareness services
     to the UK library, information and cultural heritage communities.
     UKOLN is based at the University of Bath.", def.Description));
 
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals("UKOLN, University of Bath", def.Publisher));
-        StringAssert.AreEqualIgnoringCase("http://www.bath.ac.uk/", def.IsPartOf.AbsoluteUri);
-        StringAssert.AreEqualIgnoringCase("http://www.ukoln.ac.uk/", def.Identifier.AbsoluteUri);
-        Assert.IsTrue(DatabaseTests.AreBasicallyEquals(new DateTime(2001, 07, 18), def.Modified));
+            Assert.That(DatabaseTests.AreBasicallyEquals("UKOLN, University of Bath", def.Publisher));
+            Assert.That(def.IsPartOf.AbsoluteUri, Is.EqualTo("http://www.bath.ac.uk/").IgnoreCase);
+            Assert.That(def.Identifier.AbsoluteUri, Is.EqualTo("http://www.ukoln.ac.uk/").IgnoreCase);
+            Assert.That(DatabaseTests.AreBasicallyEquals(new DateTime(2001, 07, 18), def.Modified));
+        });
     }
 
     /// <summary>

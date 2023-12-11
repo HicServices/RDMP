@@ -21,14 +21,17 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         var ac = WhenIHaveA<AggregateConfiguration>();
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.IsNull(ac.RootFilterContainer_ID);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer_ID, Is.Null);
 
-        Assert.IsNull(cmd.ReasonCommandImpossible);
-        Assert.IsFalse(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Is.Null);
+            Assert.That(cmd.IsImpossible, Is.False);
+        });
 
         cmd.Execute();
 
-        Assert.IsNotNull(ac.RootFilterContainer_ID);
+        Assert.That(ac.RootFilterContainer_ID, Is.Not.Null);
     }
 
     [Test]
@@ -37,12 +40,15 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         var ac = WhenIHaveA<AggregateConfiguration>();
 
         ac.CreateRootContainerIfNotExists();
-        Assert.IsNotNull(ac.RootFilterContainer_ID);
+        Assert.That(ac.RootFilterContainer_ID, Is.Not.Null);
 
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.AreEqual("There is already a root filter container on this object", cmd.ReasonCommandImpossible);
-        Assert.IsTrue(cmd.IsImpossible);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("There is already a root filter container on this object"));
+            Assert.That(cmd.IsImpossible);
+        });
     }
 
     [Test]
@@ -54,11 +60,14 @@ public class ExecuteCommandAddNewFilterContainerTests : UnitTests
         c.Name = $"{PluginCohortCompiler.ApiPrefix}MyAwesomeAPI";
         c.SaveToDatabase();
 
-        Assert.IsTrue(c.IsApiCall());
+        Assert.That(c.IsApiCall());
 
         var cmd = new ExecuteCommandAddNewFilterContainer(new ThrowImmediatelyActivator(RepositoryLocator), ac);
 
-        Assert.AreEqual("Filters cannot be added to API calls", cmd.ReasonCommandImpossible);
-        Assert.IsTrue(cmd.IsImpossible);
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.ReasonCommandImpossible, Is.EqualTo("Filters cannot be added to API calls"));
+            Assert.That(cmd.IsImpossible);
+        });
     }
 }

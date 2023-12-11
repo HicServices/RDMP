@@ -26,9 +26,8 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var sds = new SelectedDataSets(DataExportRepository, config, eds, null);
 
         var ex = Assert.Throws<ArgumentException>(() => new ExtractionProgress(DataExportRepository, sds));
-        Assert.AreEqual(
-            "Cannot create ExtractionProgress because Catalogue MyCata does not have a time coverage column",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Cannot create ExtractionProgress because Catalogue MyCata does not have a time coverage column"));
     }
 
     [Test]
@@ -49,7 +48,7 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         // try to create a second progress for the same dataset being extracted
         var ex = Assert.Throws<Exception>(() => new ExtractionProgress(DataExportRepository, sds));
 
-        Assert.AreEqual("There is already an ExtractionProgress associated with MyCata", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There is already an ExtractionProgress associated with MyCata"));
 
         // now delete the original and make sure we can recreate it ok
         progress.DeleteInDatabase();
@@ -64,25 +63,25 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
     {
         var progress = CreateAnExtractionProgress();
 
-        Assert.IsTrue(progress.Exists());
+        Assert.That(progress.Exists());
         progress.SelectedDataSets.DeleteInDatabase();
-        Assert.IsFalse(progress.Exists());
+        Assert.That(progress.Exists(), Is.False);
     }
 
     [Test]
     public void ExtractionProgress_RetrySave()
     {
         var progress = CreateAnExtractionProgress();
-        Assert.AreEqual(progress.Retry, RetryStrategy.NoRetry);
+        Assert.That(progress.Retry, Is.EqualTo(RetryStrategy.NoRetry));
 
         progress.Retry = RetryStrategy.IterativeBackoff1Hour;
         progress.SaveToDatabase();
 
         progress.RevertToDatabaseState();
-        Assert.AreEqual(progress.Retry, RetryStrategy.IterativeBackoff1Hour);
+        Assert.That(progress.Retry, Is.EqualTo(RetryStrategy.IterativeBackoff1Hour));
 
         var freshCopy = progress.Repository.GetObjectByID<ExtractionProgress>(progress.ID);
-        Assert.AreEqual(freshCopy.Retry, RetryStrategy.IterativeBackoff1Hour);
+        Assert.That(freshCopy.Retry, Is.EqualTo(RetryStrategy.IterativeBackoff1Hour));
 
         progress.DeleteInDatabase();
     }
@@ -108,13 +107,12 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
 
         Execute(out _, out var result);
 
-        Assert.IsTrue(result.GeneratesFiles);
+        Assert.That(result.GeneratesFiles);
         var fileContents = File.ReadAllText(result.OutputFile);
 
         // Headers should be in file because it is a first batch
-        Assert.AreEqual(
-            $"ReleaseID,Name,DateOfBirth{Environment.NewLine}Pub_54321,Dave,2001-01-01{Environment.NewLine}",
-            fileContents);
+        Assert.That(
+            fileContents, Is.EqualTo($"ReleaseID,Name,DateOfBirth{Environment.NewLine}Pub_54321,Dave,2001-01-01{Environment.NewLine}"));
 
         File.Delete(result.OutputFile);
         progress.DeleteInDatabase();
@@ -140,13 +138,19 @@ internal class ExtractionProgressTests : TestsRequiringAnExtractionConfiguration
         var cloneSds = clone.SelectedDataSets.Single();
         var cloneProgress = cloneSds.ExtractionProgressIfAny;
 
+        Assert.Multiple(() =>
+        {
 
-        // should be different instances
-        Assert.AreNotSame(origProgress, cloneProgress);
+            // should be different instances
+            Assert.That(cloneProgress, Is.Not.SameAs(origProgress));
 
-        Assert.AreEqual(cloneProgress.StartDate, new DateTime(2001, 01, 01));
-        Assert.IsNull(cloneProgress.ProgressDate, "Expected progress to be reset on clone");
-        Assert.AreEqual(cloneProgress.EndDate, new DateTime(2020, 01, 01));
+            Assert.That(new DateTime(2001, 01, 01), Is.EqualTo(cloneProgress.StartDate));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(cloneProgress.ProgressDate, Is.Null, "Expected progress to be reset on clone");
+            Assert.That(new DateTime(2020, 01, 01), Is.EqualTo(cloneProgress.EndDate));
+        });
     }
 
     private ExtractionProgress CreateAnExtractionProgress() => CreateAnExtractionProgress(out _);

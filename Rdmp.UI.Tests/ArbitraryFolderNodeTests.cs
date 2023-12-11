@@ -28,10 +28,10 @@ internal class ArbitraryFolderNodeTests : UITests
         var node = new ArbitraryFolderNode("my node", 0);
 
         var menu1 = common.GetMenuIfExists(node);
-        Assert.IsNotNull(menu1);
+        Assert.That(menu1, Is.Not.Null);
         var count1 = menu1.Items.Count;
         //some you get for free e.g. Expand/Collapse
-        Assert.GreaterOrEqual(count1, 2);
+        Assert.That(count1, Is.GreaterThanOrEqualTo(2));
 
         //set the menu to have one command in it
         node.CommandGetter = () => new IAtomicCommand[] { new ImpossibleCommand("Do Nothing") };
@@ -42,7 +42,7 @@ internal class ArbitraryFolderNodeTests : UITests
 
         // expect 2 new entries in the context menu.  The "Do Nothing" command added above
         // and a tool strip seperator to divide the menu commands from the common commands
-        Assert.AreEqual(count1 + 2, count2);
+        Assert.That(count2, Is.EqualTo(count1 + 2));
 
         //what happens if the delegate crashes?
         node.CommandGetter = () => throw new NotSupportedException("It went wrong!");

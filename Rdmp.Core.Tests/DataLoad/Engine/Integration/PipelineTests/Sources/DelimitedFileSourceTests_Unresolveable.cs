@@ -39,17 +39,17 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
         {
             case BadDataHandlingStrategy.ThrowException:
                 var ex = Assert.Throws<FlatFileLoadException>(() => RunGetChunk(file, Adjust));
-                Assert.AreEqual("Bad data found on line 9", ex?.Message);
+                Assert.That(ex?.Message, Is.EqualTo("Bad data found on line 9"));
                 break;
             case BadDataHandlingStrategy.IgnoreRows:
                 var dt = RunGetChunk(file, Adjust);
-                Assert.AreEqual(2, dt.Rows.Count); //reads first 2 rows and chucks the rest!
+                Assert.That(dt.Rows, Has.Count.EqualTo(2)); //reads first 2 rows and chucks the rest!
                 break;
             case BadDataHandlingStrategy.DivertRows:
 
                 //read 2 rows and rejected the rest
                 var dt2 = RunGetChunk(file, Adjust);
-                Assert.AreEqual(2, dt2.Rows.Count);
+                Assert.That(dt2.Rows, Has.Count.EqualTo(2));
                 AssertDivertFileIsExactly(
                     $"Frank,\"Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}Frank,Is the greatest,100{Environment.NewLine}");
 
@@ -78,7 +78,7 @@ internal class DelimitedFileSourceTests_Unresolveable : DelimitedFileSourceTests
         }
 
         var dt2 = RunGetChunk(file, Adjust);
-        Assert.AreEqual(5, dt2.Rows.Count);
-        Assert.AreEqual("\"Is the greatest", dt2.Rows[1]["Description"]);
+        Assert.That(dt2.Rows, Has.Count.EqualTo(5));
+        Assert.That(dt2.Rows[1]["Description"], Is.EqualTo("\"Is the greatest"));
     }
 }

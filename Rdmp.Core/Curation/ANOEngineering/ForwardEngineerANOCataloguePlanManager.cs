@@ -82,9 +82,10 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             plan.SetToRecommendedPlan();
     }
 
-    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col) => !Plans.ContainsKey(col)
-        ? throw new Exception($"No plan found for column {col}")
-        : Plans[col];
+    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col) =>
+        !Plans.TryGetValue(col, out var anoPlan)
+            ? throw new Exception($"No plan found for column {col}")
+        : anoPlan;
 
     public IExternalDatabaseServer GetIdentifierDumpServer() =>
         Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);

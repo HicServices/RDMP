@@ -21,13 +21,16 @@ internal class TypeTextOrCancelDialogTests : UITests
         //pretend like we launched it
         LastUserInterfaceLaunched = dlg;
 
-        //the title and body should be a reasonable length
-        Assert.AreEqual(1, dlg.Text.Length);
-        Assert.AreEqual(1, GetControl<TextBox>()[1].Text.Length);
+        Assert.Multiple(() =>
+        {
+            //the title and body should be a reasonable length
+            Assert.That(dlg.Text, Has.Length.EqualTo(1));
+            Assert.That(GetControl<TextBox>()[1].Text, Has.Length.EqualTo(1));
 
-        //dialog shouldn't go thinner than 540 or wider than 840 pixels
-        Assert.GreaterOrEqual(dlg.Width, 540);
-        Assert.LessOrEqual(dlg.Width, 840);
+            //dialog shouldn't go thinner than 540 or wider than 840 pixels
+            Assert.That(dlg.Width, Is.GreaterThanOrEqualTo(540));
+        });
+        Assert.That(dlg.Width, Is.LessThanOrEqualTo(840));
     }
 
     [Test]
@@ -46,12 +49,15 @@ internal class TypeTextOrCancelDialogTests : UITests
         //pretend like we launched it
         LastUserInterfaceLaunched = dlg;
 
-        //the title and body should be a reasonable length
-        Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE, dlg.Text.Length);
-        Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<TextBox>()[1].Text.Length);
+        Assert.Multiple(() =>
+        {
+            //the title and body should be a reasonable length
+            Assert.That(dlg.Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_TITLE));
+            Assert.That(GetControl<TextBox>()[1].Text, Has.Length.EqualTo(WideMessageBox.MAX_LENGTH_BODY));
 
-        //dialog shouldn't go thinner than 540 or wider than 840 pixels
-        Assert.GreaterOrEqual(dlg.Width, 540);
-        Assert.LessOrEqual(dlg.Width, 840);
+            //dialog shouldn't go thinner than 540 or wider than 840 pixels
+            Assert.That(dlg.Width, Is.GreaterThanOrEqualTo(540));
+        });
+        Assert.That(dlg.Width, Is.LessThanOrEqualTo(840));
     }
 }

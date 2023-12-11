@@ -19,6 +19,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -211,24 +212,24 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     public virtual void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo,
         DataAccessContext context)
     {
-        if (!CredentialsDictionary.ContainsKey(tableInfo))
+        if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsMap))
             return;
 
-        CredentialsDictionary[tableInfo].Remove(context);
+        credentialsMap.Remove(context);
 
         tableInfo.ClearAllInjections();
     }
 
     public virtual void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
-        if (!CredentialsDictionary.ContainsKey(tableInfo))
+        if (!CredentialsDictionary.TryGetValue(tableInfo, out var credentialsMap))
             return;
 
-        var toRemove = CredentialsDictionary[tableInfo].Where(v => Equals(v.Value, credentials)).Select(k => k.Key)
+        var toRemove = credentialsMap.Where(v => Equals(v.Value, credentials)).Select(k => k.Key)
             .ToArray();
 
         foreach (var context in toRemove)
-            CredentialsDictionary[tableInfo].Remove(context);
+            credentialsMap.Remove(context);
     }
 
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
@@ -287,31 +288,27 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
     {
-        var everyone = Enumerable.Empty<ITableInfo>();
+        var everyone =
+            // join with everyone? .... what do you mean everyone? EVERYONE!!!!
+            UserSettings.AlwaysJoinEverything
+                ? configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables()
+                : Enumerable.Empty<ITableInfo>();
 
-        // join with everyone? .... what do you mean everyone? EVERYONE!!!!
-        if (UserSettings.AlwaysJoinEverything)
-            everyone = configuration.Catalogue.GetTableInfosIdeallyJustFromMainTables();
-
-        return !ForcedJoins.ContainsKey(configuration)
-            ? everyone.ToArray()
-            : ForcedJoins[configuration].Union(everyone).ToArray();
+        return !ForcedJoins.TryGetValue(configuration, out var forced) ? everyone.ToArray()
+            : forced.Union(everyone).ToArray();
     }
 
-    public virtual void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+    public virtual void BreakLinkBetween([NotNull] AggregateConfiguration configuration, ITableInfo tableInfo)
     {
-        if (!ForcedJoins.ContainsKey(configuration))
-            return;
-
-        ForcedJoins[configuration].Remove(tableInfo);
+        if (ForcedJoins.TryGetValue(configuration, out var value)) value.Remove(tableInfo);
     }
 
-    public virtual void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
+    public virtual void CreateLinkBetween([NotNull] AggregateConfiguration configuration, ITableInfo tableInfo)
     {
-        if (!ForcedJoins.ContainsKey(configuration))
-            ForcedJoins.Add(configuration, new HashSet<ITableInfo>());
+        if (!ForcedJoins.TryGetValue(configuration,out var forced))
+            ForcedJoins.Add(configuration, forced=new HashSet<ITableInfo>());
 
-        ForcedJoins[configuration].Add(tableInfo);
+        forced.Add(tableInfo);
     }
 
     #endregion
@@ -367,15 +364,15 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public IOrderable[] GetChildren(CohortAggregateContainer parent)
     {
-        return !CohortContainerContents.ContainsKey(parent)
-            ? Array.Empty<IOrderable>()
-            : CohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
+        return !CohortContainerContents.TryGetValue(parent, out var cohortContainerContents) ?
+            Array.Empty<IOrderable>()
+            : cohortContainerContents.OrderBy(static o => o.Order).Select(static o => o.Orderable).ToArray();
     }
 
     public CohortAggregateContainer GetParent(CohortAggregateContainer child)
     {
         var match = CohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child)))
-            .Select(kvp => kvp.Key).ToArray();
+            .Select(static kvp => kvp.Key).ToArray();
         return match.Length > 0 ? match.Single() : null;
     }
 
@@ -411,21 +408,22 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     protected Dictionary<IContainer, HashSet<IContainer>> WhereSubContainers { get; set; } = new();
 
-    public IContainer[] GetSubContainers(IContainer container) => !WhereSubContainers.ContainsKey(container)
-        ? Array.Empty<IContainer>()
-        : WhereSubContainers[container].ToArray();
+    [NotNull]
+    public IContainer[] GetSubContainers(IContainer container) =>
+        !WhereSubContainers.TryGetValue(container, out var containers)
+            ? Array.Empty<IContainer>()
+        : containers.ToArray();
 
     public virtual void MakeIntoAnOrphan(IContainer container)
     {
         foreach (var contents in WhereSubContainers)
-            if (contents.Value.Contains(container))
-                contents.Value.Remove(container);
+            contents.Value.Remove(container);
     }
 
+    [CanBeNull]
     public IContainer GetParentContainerIfAny(IContainer container)
     {
-        var match = WhereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
-        return match.Length != 0 ? match[0].Key : null;
+        return WhereSubContainers.FirstOrDefault(k => k.Value.Contains(container)).Key;
     }
 
     public IFilter[] GetFilters(IContainer container)
@@ -472,13 +470,13 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
 
     public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
     {
-        return GovernanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
+        return GovernanceCoverage.ToDictionary(static k => k.Key.ID,
+            static v => new HashSet<int>(v.Value.Select(static c => c.ID)));
     }
 
     public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod) =>
-        !GovernanceCoverage.ContainsKey(governancePeriod)
-            ? Enumerable.Empty<ICatalogue>()
-            : GovernanceCoverage[governancePeriod];
+        !GovernanceCoverage.TryGetValue(governancePeriod, out var governedCatalogues) ? Enumerable.Empty<ICatalogue>()
+            : governedCatalogues;
 
     #endregion
 

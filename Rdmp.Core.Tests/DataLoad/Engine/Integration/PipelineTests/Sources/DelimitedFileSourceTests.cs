@@ -47,7 +47,7 @@ public class DelimitedFileSourceTests
         var source = new DelimitedFlatFileDataFlowSource();
         var ex = Assert.Throws<Exception>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        StringAssert.Contains("_fileToLoad was not set", ex.Message);
+        Assert.That(ex.Message, Does.Contain("_fileToLoad was not set"));
     }
 
     [Test]
@@ -58,7 +58,7 @@ public class DelimitedFileSourceTests
         source.PreInitialize(new FlatFileToLoad(testFile), ThrowImmediatelyDataLoadEventListener.Quiet);
         var ex = Assert.Throws<Exception>(() =>
             source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-        StringAssert.Contains("Separator has not been set", ex.Message);
+        Assert.That(ex.Message, Does.Contain("Separator has not been set"));
     }
 
     [Test]
@@ -78,17 +78,22 @@ public class DelimitedFileSourceTests
         Console.WriteLine(
             $"Resulting columns were:{string.Join(",", chunk.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
-        Assert.IsTrue(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
-        Assert.IsTrue(
-            chunk.Columns
-                .Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns.Contains("chi")); //notice the lack of whitespace!
+            Assert.That(
+                chunk.Columns
+                    .Contains("study ID")); //whitespace is allowed in the middle though... because we like a challenge!
 
-        Assert.AreEqual(3, chunk.Columns.Count);
-        Assert.AreEqual(1, chunk.Rows.Count);
-        Assert.AreEqual("0101010101", chunk.Rows[0][0]);
-        Assert.AreEqual(5, chunk.Rows[0][1]);
-        Assert.AreEqual(new DateTime(2001, 1, 5),
-            chunk.Rows[0][2]); //notice the strong typing (we are not looking for strings here)
+            Assert.That(chunk.Columns, Has.Count.EqualTo(3));
+            Assert.That(chunk.Rows, Has.Count.EqualTo(1));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
+            Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
+            Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -104,12 +109,17 @@ public class DelimitedFileSourceTests
 
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.AreEqual(3, chunk.Columns.Count);
-        Assert.AreEqual(1, chunk.Rows.Count);
-        Assert.AreEqual("0101010101", chunk.Rows[0][0]);
-        Assert.AreEqual(5, chunk.Rows[0][1]);
-        Assert.AreEqual(new DateTime(2001, 1, 5),
-            chunk.Rows[0][2]); //notice the strong typing (we are not looking for strings here)
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns, Has.Count.EqualTo(3));
+            Assert.That(chunk.Rows, Has.Count.EqualTo(1));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Rows[0][0], Is.EqualTo("0101010101"));
+            Assert.That(chunk.Rows[0][1], Is.EqualTo(5));
+            Assert.That(chunk.Rows[0][2], Is.EqualTo(new DateTime(2001, 1, 5))); //notice the strong typing (we are not looking for strings here)
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -128,13 +138,19 @@ public class DelimitedFileSourceTests
 
         //preview should be correct
         var preview = source.TryGetPreview();
-        Assert.AreEqual(typeof(string), preview.Columns["StudyID"].DataType);
-        Assert.AreEqual("5", preview.Rows[0]["StudyID"]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(preview.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
+            Assert.That(preview.Rows[0]["StudyID"], Is.EqualTo("5"));
+        });
 
         //as should live run
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(typeof(string), chunk.Columns["StudyID"].DataType);
-        Assert.AreEqual("5", chunk.Rows[0]["StudyID"]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.Columns["StudyID"].DataType, Is.EqualTo(typeof(string)));
+            Assert.That(chunk.Rows[0]["StudyID"], Is.EqualTo("5"));
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -163,10 +179,13 @@ public class DelimitedFileSourceTests
         source.MaxBatchSize = 10000;
         source.StronglyTypeInput = true; //makes the source interpret the file types properly
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(3, dt.Rows.Count);
-        Assert.AreEqual("\"Sick\" headaches", dt.Rows[0][1]);
-        Assert.AreEqual("2\" length of wood", dt.Rows[1][1]);
-        Assert.AreEqual("\"\"The bends\"\"", dt.Rows[2][1]);
+        Assert.That(dt.Rows, Has.Count.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0][1], Is.EqualTo("\"Sick\" headaches"));
+            Assert.That(dt.Rows[1][1], Is.EqualTo("2\" length of wood"));
+            Assert.That(dt.Rows[2][1], Is.EqualTo("\"\"The bends\"\""));
+        });
 
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
@@ -207,24 +226,23 @@ public class DelimitedFileSourceTests
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() =>
                         source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-                    StringAssert.Contains("line 4", ex.Message);
+                    Assert.That(ex.Message, Does.Contain("line 4"));
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.IsNotNull(dt);
+                    Assert.That(dt, Is.Not.Null);
 
-                    Assert.AreEqual(4, dt.Rows.Count);
+                    Assert.That(dt.Rows, Has.Count.EqualTo(4));
                     break;
                 case BadDataHandlingStrategy.DivertRows:
                     var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.AreEqual(4, dt2.Rows.Count);
+                    Assert.That(dt2.Rows, Has.Count.EqualTo(4));
 
-                    Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
+                    Assert.That(source.EventHandlers.DivertErrorsFile, Is.Not.Null);
 
-                    Assert.AreEqual($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}",
-                        File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                    Assert.That(File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName), Is.EqualTo($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}"));
 
                     break;
                 default:
@@ -265,8 +283,8 @@ public class DelimitedFileSourceTests
         try
         {
             var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-            Assert.AreEqual(2, chunk.Rows.Count);
-            Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
+            Assert.That(chunk.Rows, Has.Count.EqualTo(2));
+            Assert.That(chunk.Rows[1][2], Is.EqualTo("Dave is \"over\" 1000 years old"));
         }
         finally
         {
@@ -311,11 +329,13 @@ public class DelimitedFileSourceTests
         try
         {
             var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-            Assert.AreEqual(5, chunk.Rows.Count);
-            Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
-            Assert.AreEqual($"Dave is {Environment.NewLine}over 1000 years old", chunk.Rows[2][2]);
-            Assert.AreEqual("Dave is over\" 1000 years old\"",
-                chunk.Rows[3][2]); //notice this line drops some of the quotes, we just have to live with that
+            Assert.That(chunk.Rows, Has.Count.EqualTo(5));
+            Assert.Multiple(() =>
+            {
+                Assert.That(chunk.Rows[1][2], Is.EqualTo("Dave is \"over\" 1000 years old"));
+                Assert.That(chunk.Rows[2][2], Is.EqualTo($"Dave is {Environment.NewLine}over 1000 years old"));
+                Assert.That(chunk.Rows[3][2], Is.EqualTo("Dave is over\" 1000 years old\"")); //notice this line drops some of the quotes, we just have to live with that
+            });
         }
         finally
         {
@@ -357,7 +377,7 @@ public class DelimitedFileSourceTests
         {
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-            Assert.AreEqual("Bad data found on line 3", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Bad data found on line 3"));
         }
         finally
         {
@@ -396,7 +416,7 @@ old"",2001-01-05");
         {
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-            Assert.AreEqual("Bad data found on line 3", ex.Message);
+            Assert.That(ex.Message, Is.EqualTo("Bad data found on line 3"));
         }
         finally
         {
@@ -441,24 +461,23 @@ old"",2001-01-05");
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() =>
                         source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-                    StringAssert.Contains("line 6", ex.Message);
+                    Assert.That(ex.Message, Does.Contain("line 6"));
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.IsNotNull(dt);
+                    Assert.That(dt, Is.Not.Null);
 
-                    Assert.AreEqual(4, dt.Rows.Count);
+                    Assert.That(dt.Rows, Has.Count.EqualTo(4));
                     break;
                 case BadDataHandlingStrategy.DivertRows:
                     var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.AreEqual(4, dt2.Rows.Count);
+                    Assert.That(dt2.Rows, Has.Count.EqualTo(4));
 
-                    Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
+                    Assert.That(source.EventHandlers.DivertErrorsFile, Is.Not.Null);
 
-                    Assert.AreEqual($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}",
-                        File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                    Assert.That(File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName), Is.EqualTo($"0101010101,5,2001-01-05,fish,watafak{Environment.NewLine}"));
 
                     break;
                 default:
@@ -500,10 +519,10 @@ old"",2001-01-05");
         try
         {
             var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-            Assert.IsNotNull(dt);
-            Assert.AreEqual(5, dt.Rows.Count);
-            Assert.AreEqual(@"5
-    The first", dt.Rows[0][1]);
+            Assert.That(dt, Is.Not.Null);
+            Assert.That(dt.Rows, Has.Count.EqualTo(5));
+            Assert.That(dt.Rows[0][1], Is.EqualTo(@"5
+    The first"));
         }
         finally
         {
@@ -546,25 +565,25 @@ old"",2001-01-05");
                 case BadDataHandlingStrategy.ThrowException:
                     var ex = Assert.Throws<FlatFileLoadException>(() =>
                         source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken()));
-                    StringAssert.Contains("line 2", ex.Message);
+                    Assert.That(ex.Message, Does.Contain("line 2"));
                     break;
                 case BadDataHandlingStrategy.IgnoreRows:
                     var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.IsNotNull(dt);
+                    Assert.That(dt, Is.Not.Null);
 
-                    Assert.AreEqual(4, dt.Rows.Count);
+                    Assert.That(dt.Rows, Has.Count.EqualTo(4));
                     break;
                 case BadDataHandlingStrategy.DivertRows:
                     var dt2 = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet,
                         new GracefulCancellationToken());
-                    Assert.AreEqual(4, dt2.Rows.Count);
+                    Assert.That(dt2.Rows, Has.Count.EqualTo(4));
 
-                    Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
+                    Assert.That(source.EventHandlers.DivertErrorsFile, Is.Not.Null);
 
-                    Assert.AreEqual(@"0101010101,5
+                    Assert.That(File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName), Is.EqualTo(@"0101010101,5
     The first,2001-01-05
-", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+"));
 
                     break;
                 default:
@@ -601,15 +620,18 @@ old"",2001-01-05");
 
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
-        Assert.NotNull(dt);
+        Assert.That(dt, Is.Not.Null);
 
-        Assert.AreEqual(3, dt.Columns.Count);
+        Assert.That(dt.Columns, Has.Count.EqualTo(3));
 
-        Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
-        Assert.AreEqual("StudyID", dt.Columns[1].ColumnName);
-        Assert.AreEqual("Date", dt.Columns[2].ColumnName);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("StudyID"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Date"));
 
-        Assert.AreEqual(2, dt.Rows.Count);
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
         source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
@@ -639,14 +661,17 @@ old"",2001-01-05");
 
         var dt = source.GetChunk(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
-        Assert.NotNull(dt);
+        Assert.That(dt, Is.Not.Null);
 
         //should only be one column (chi since we ignore study and date)
-        Assert.AreEqual(2, dt.Columns.Count);
-        Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
-        Assert.AreEqual("SomeText", dt.Columns[1].ColumnName);
+        Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("SomeText"));
 
-        Assert.AreEqual(2, dt.Rows.Count);
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
         source.Dispose(new ThrowImmediatelyDataLoadJob(), null);
 
@@ -665,7 +690,7 @@ old"",2001-01-05");
         "onceUpon")] //Dodgy characters are stripped before cammel casing after spaces so 'u' gets cammeled even though it has a symbol before it.
     public void TestMakingHeaderNamesSane(string bad, string expectedGood)
     {
-        Assert.AreEqual(expectedGood, QuerySyntaxHelper.MakeHeaderNameSensible(bad));
+        Assert.That(QuerySyntaxHelper.MakeHeaderNameSensible(bad), Is.EqualTo(expectedGood));
     }
 
 
@@ -698,16 +723,22 @@ old"",2001-01-05");
         source.StronglyTypeInput = true;
 
         var dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
-        Assert.AreEqual(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize, dt.Rows.Count);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
+            Assert.That(dt.Rows, Has.Count.EqualTo(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize));
+        });
 
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.AreEqual(typeof(decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
-        Assert.AreEqual(2, dt.Rows.Count);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns.Cast<DataColumn>().Single().DataType, Is.EqualTo(typeof(decimal)));
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        });
 
 
         dt = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        Assert.IsNull(dt);
+        Assert.That(dt, Is.Null);
     }
 
     /// <summary>
@@ -731,7 +762,7 @@ old"",2001-01-05");
 
         var toMem = new ToMemoryDataLoadEventListener(true);
         var ex = Assert.Throws<FlatFileLoadException>(() => source.GetChunk(toMem, new GracefulCancellationToken()));
-        Assert.AreEqual("Bad data found on line 2", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Bad data found on line 2"));
         source.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
     }
 }

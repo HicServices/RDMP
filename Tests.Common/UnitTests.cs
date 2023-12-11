@@ -60,7 +60,8 @@ public class UnitTests
         "DQEGraphAnnotation",
         "Evaluation",
         "WindowLayout",
-        "RedactedCHI"
+        "RedactedCHI",
+        "Dataset"
     });
 
 
@@ -688,8 +689,7 @@ public class UnitTests
             }
             catch (Exception e)
             {
-                Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name,
-                    property.Name, e);
+                Assert.Fail($"{memObj.GetType().Name} Property {property.Name} could not be read from Memory:\r\n{e}");
             }
 
             try
@@ -698,8 +698,7 @@ public class UnitTests
             }
             catch (Exception e)
             {
-                Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name,
-                    property.Name, e);
+                Assert.Fail($"{dbObj.GetType().Name} Property {property.Name} could not be read from Database:\r\n{e}");
             }
 
             if (memValue is IMapsDirectlyToDatabaseTable table)
@@ -716,8 +715,7 @@ public class UnitTests
 
             if (memValue is DateTime memTime && dbValue is DateTime dbTime)
                 if (!AreAboutTheSameTime(memTime, dbTime))
-                    Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",
-                        memObj.GetType().Name, property.Name, memTime, dbTime);
+                    Assert.Fail($"Dates differed, {memObj.GetType().Name} Property {property.Name} differed Memory={memTime} and Db={dbTime}");
                 else
                     return;
 
@@ -726,8 +724,7 @@ public class UnitTests
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 
             //all other properties should be legit
-            Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,
-                property.Name, memValue, dbValue);
+            Assert.That(memValue,Is.EqualTo(dbValue), $"{memObj.GetType().Name} Property {property.Name} differed Memory='{memValue}' and Db='{dbValue}'");
         }
     }
 
@@ -737,7 +734,7 @@ public class UnitTests
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
 
-        Assert.AreEqual(memObjectsArr.Length, dbObjectsArr.Length);
+        Assert.That(memObjectsArr.Length==dbObjectsArr.Length);
 
         for (var i = 0; i < memObjectsArr.Length; i++)
             AssertAreEqual(memObjectsArr[i], dbObjectsArr[i], firstIteration);

@@ -25,6 +25,6 @@ public class TestAcronymGeneration : DatabaseTests
 
         var suggestion = DitaCatalogueExtractor.GetAcronymSuggestionFromCatalogueName(name);
 
-        Assert.AreEqual(predictedAcronym, suggestion);
+        Assert.That(suggestion, Is.EqualTo(predictedAcronym));
     }
 }
