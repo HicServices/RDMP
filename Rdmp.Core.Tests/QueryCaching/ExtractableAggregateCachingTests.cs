@@ -59,8 +59,7 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
                 new DataTable(), 30)));
 
 
-        Assert.IsTrue(ex.Message.StartsWith(
-            "The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
+        Assert.That(ex.Message, Does.StartWith("The DataTable that you claimed was an ExtractableAggregateResults had zero columns and therefore cannot be cached"));
 
         var dt = new DataTable();
         dt.Columns.Add("Col1");
@@ -70,9 +69,8 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
             _manager.CommitResults(
                 new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
-        Assert.IsTrue(
-            ex2.Message.StartsWith(
-                "Aggregate ExtractableAggregateCachingTests is not marked as IsExtractable therefore cannot be cached"));
+        Assert.That(
+            ex2.Message, Does.StartWith("Aggregate ExtractableAggregateCachingTests is not marked as IsExtractable therefore cannot be cached"));
 
 
         _config.IsExtractable = true;
@@ -90,9 +88,8 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
             _manager.CommitResults(
                 new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
-        Assert.IsTrue(
-            ex3.Message.StartsWith(
-                "Aggregate ExtractableAggregateCachingTests contains dimensions marked as IsExtractionIdentifier or HashOnDataRelease (Col1)"));
+        Assert.That(
+            ex3.Message, Does.StartWith("Aggregate ExtractableAggregateCachingTests contains dimensions marked as IsExtractionIdentifier or HashOnDataRelease (Col1)"));
 
         _extractionInformation.IsExtractionIdentifier = false;
         _extractionInformation.SaveToDatabase();
@@ -112,7 +109,10 @@ public class ExtractableAggregateCachingTests : QueryCachingDatabaseTests
         con.Open();
         using var cmd = DatabaseCommandHelper.GetCommand($"Select * from {table.GetFullyQualifiedName()}", con);
         using var r = cmd.ExecuteReader();
-        Assert.IsTrue(r.Read());
-        Assert.AreEqual("fishy!", r["Col1"]);
+        Assert.Multiple(() =>
+        {
+            Assert.That(r.Read());
+            Assert.That(r["Col1"], Is.EqualTo("fishy!"));
+        });
     }
 }

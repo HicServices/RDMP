@@ -74,7 +74,7 @@ public class BasicParameterUseTests : DatabaseTests
             new ParameterCreator(filter.GetFilterFactory(), null, null).CreateAll(filter, null);
 
             var p = filter.GetAllParameters().Single();
-            Assert.AreEqual("@n", p.ParameterName);
+            Assert.That(p.ParameterName, Is.EqualTo("@n"));
             p.ParameterSQL = p.ParameterSQL.Replace("varchar(50)", "int"); //make it int
             p.Value = "20";
             p.SaveToDatabase();
@@ -91,10 +91,12 @@ public class BasicParameterUseTests : DatabaseTests
 
             var cmd = db.Server.GetCommand(sql, con);
             var r = cmd.ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual(
-                20,
-                r[extractionInformation.GetRuntimeName()]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(
+                    r[extractionInformation.GetRuntimeName()], Is.EqualTo(20));
+            });
             ///////////////////////////////////////////////////////////////////////////////////////
         }
         finally

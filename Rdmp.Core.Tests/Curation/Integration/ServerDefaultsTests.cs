@@ -17,11 +17,11 @@ public class ServerDefaultsTests : DatabaseTests
     [Test]
     public void TestClearSameDefaultTwice()
     {
-        Assert.IsNotNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Not.Null);
         CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
         CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
         CatalogueRepository.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
-        Assert.IsNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
     }
 
     [Test]
@@ -31,13 +31,15 @@ public class ServerDefaultsTests : DatabaseTests
 
         try
         {
-            Assert.AreEqual("Deleteme", databaseServer.Name);
+            Assert.That(databaseServer.Name, Is.EqualTo("Deleteme"));
             databaseServer.Password = "nothing"; //automatically encrypts password
 
-            Assert.AreNotEqual("nothing", databaseServer.Password); //should not match what we just set it to
-            Assert.AreEqual("nothing",
-                databaseServer
-                    .GetDecryptedPassword()); //should match what we set it to because of explicit call to decrypt
+            Assert.Multiple(() =>
+            {
+                Assert.That(databaseServer.Password, Is.Not.EqualTo("nothing")); //should not match what we just set it to
+                Assert.That(databaseServer
+                        .GetDecryptedPassword(), Is.EqualTo("nothing")); //should match what we set it to because of explicit call to decrypt
+            });
 
             databaseServer.Server = "Bob";
             databaseServer.Database = "TEST";
@@ -67,7 +69,7 @@ public class ServerDefaultsTests : DatabaseTests
             //now we deleted it!
             eds.DeleteInDatabase();
 
-            Assert.IsNull(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+            Assert.That(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID), Is.Null);
         }
         finally
         {

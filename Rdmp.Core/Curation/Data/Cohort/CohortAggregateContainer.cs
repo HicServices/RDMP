@@ -328,12 +328,12 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
                 foreach (var j in usedJoins)
                 {
                     //for some reason the CohortIdentificationConfiguration didn't properly clone the joinable permission or didn't add it to the dictionary
-                    if (!parentToCloneJoinablesDictionary.ContainsKey(j.JoinableCohortAggregateConfiguration))
+                    if (!parentToCloneJoinablesDictionary.TryGetValue(j.JoinableCohortAggregateConfiguration, out var
+                            cloneJoinable))
                         throw new KeyNotFoundException(
                             $"Configuration {configClone} uses Patient Index Table {j.AggregateConfiguration} but our dictionary did not have the key, why was that joinable not cloned?");
 
                     //we do have a clone copy of the joinable permission, set the clone aggregate
-                    var cloneJoinable = parentToCloneJoinablesDictionary[j.JoinableCohortAggregateConfiguration];
                     var cloneJoinUse = cloneJoinable.AddUser(configClone);
 
                     cloneJoinUse.JoinType = j.JoinType;

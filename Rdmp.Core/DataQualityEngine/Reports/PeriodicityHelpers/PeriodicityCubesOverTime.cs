@@ -40,30 +40,28 @@ public class PeriodicityCubesOverTime
         PeriodicityCube newCube = null;
 
         //if year is missing
-        if (!hyperCube.ContainsKey(year))
+        if (!hyperCube.TryGetValue(year, out var cubes))
         {
             //create month dictionary
             var perMonth = new Dictionary<int, PeriodicityCube> {
                 //add month user wants to month dictionary
                 { month, newCube = new PeriodicityCube(year, month) } };
+            cubes = perMonth;
 
             //add month dictionary to year dictionary
-            hyperCube.Add(year, perMonth);
+            hyperCube.Add(year, cubes);
         }
 
         //if month is missing
-        if (!hyperCube[year].ContainsKey(month))
-            hyperCube[year]
-                .Add(month, newCube = new PeriodicityCube(year, month)); //add the month to the year dictionary
-
-        //increment the cell
-        hyperCube[year][month].GetStateForConsequence(worstConsequenceInRow).CountOfRecords++;
+        if (!cubes.ContainsKey(month))
+            cubes.Add(month, newCube = new PeriodicityCube(year, month)); //add the month to the year dictionary
+        cubes[month].GetStateForConsequence(worstConsequenceInRow).CountOfRecords++;
 
         if (newCube != null)
             allCubes.Add(newCube);
     }
 
-    public void CommitToDatabase(Evaluation evaluation)
+    internal void CommitToDatabase(Evaluation evaluation)
     {
         allCubes.ForEach(c => c.CommitToDatabase(evaluation, _pivotCategory));
     }

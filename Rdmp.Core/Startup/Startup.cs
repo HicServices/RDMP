@@ -194,7 +194,7 @@ public class Startup
                         ? RDMPPlatformDatabaseStatus.Healthy
                         : RDMPPlatformDatabaseStatus.RequiresPatching,
                     Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
-                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                    _ => throw new InvalidOperationException(nameof(patchingRequired))
                 }));
         }
         catch (Exception e)

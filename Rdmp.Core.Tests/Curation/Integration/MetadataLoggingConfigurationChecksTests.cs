@@ -25,7 +25,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var cata2 = WhenIHaveA<Catalogue>();
         cata2.LoadMetadata_ID = lmd.ID;
 
-        Assert.AreEqual(2, lmd.GetAllCatalogues().Count());
+        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
         var toMem = new ToMemoryCheckNotifier();
@@ -45,7 +45,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
 
         cata1.LoggingDataTask = "OMG YEAGH";
 
-        Assert.AreEqual(2, lmd.GetAllCatalogues().Count());
+        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
         var toMem = new ToMemoryCheckNotifier();
@@ -67,7 +67,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         cata2.LoggingDataTask = "OMG YEAGH";
         cata2.LiveLoggingServer_ID = null;
 
-        Assert.AreEqual(2, lmd.GetAllCatalogues().Count());
+        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
         var toMem = new ToMemoryCheckNotifier();
@@ -97,7 +97,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var defaults = RepositoryLocator.CatalogueRepository;
         defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, eds);
 
-        Assert.AreEqual(2, lmd.GetAllCatalogues().Count());
+        Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
         var toMem = new ToMemoryCheckNotifier();
@@ -111,7 +111,10 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     {
         var msg = toMem.Messages.First(m => m.Result == CheckResult.Fail);
 
-        Assert.AreEqual(expectedMessage, msg.Message, "Expected error message was wrong");
-        Assert.AreEqual(expectedFix, msg.ProposedFix, "Expected proposed fix was wrong");
+        Assert.Multiple(() =>
+        {
+            Assert.That(msg.Message, Is.EqualTo(expectedMessage), "Expected error message was wrong");
+            Assert.That(msg.ProposedFix, Is.EqualTo(expectedFix), "Expected proposed fix was wrong");
+        });
     }
 }

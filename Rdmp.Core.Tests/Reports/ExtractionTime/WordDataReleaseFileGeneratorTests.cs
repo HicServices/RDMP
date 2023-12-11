@@ -21,6 +21,6 @@ internal class WordDataReleaseFileGeneratorTests : TestsRequiringAnExtractionCon
         var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "release.doc");
         report.GenerateWordFile(filename);
 
-        Assert.IsTrue(File.Exists(filename));
+        Assert.That(File.Exists(filename));
     }
 }

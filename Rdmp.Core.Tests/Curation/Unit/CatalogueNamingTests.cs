@@ -19,7 +19,7 @@ public class CatalogueNamingTests
     [TestCase("<Catalogue>WTF?</Catalogue>")]
     public void StupidCatalogueNames(string name)
     {
-        Assert.IsFalse(Catalogue.IsAcceptableName(name));
+        Assert.That(Catalogue.IsAcceptableName(name), Is.False);
     }
 
     [Test]
@@ -30,6 +30,6 @@ public class CatalogueNamingTests
     [TestCase("Bob&Betty")]
     public void SensibleCatalogueNames(string name)
     {
-        Assert.IsTrue(Catalogue.IsAcceptableName(name));
+        Assert.That(Catalogue.IsAcceptableName(name));
     }
 }

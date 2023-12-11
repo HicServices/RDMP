@@ -1,13 +1,11 @@
-﻿
-using NPOI.OpenXmlFormats.Dml.WordProcessing;
-using Rdmp.Core.Curation.Data;
+﻿using Rdmp.Core.Curation.Data;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
-public class ExecuteCommandDeleteDataset: BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandDeleteDataset: BasicCommandExecution
 {
-    private Curation.Data.Dataset _dataset;
-    private IBasicActivateItems _activator;
+    private readonly Curation.Data.Dataset _dataset;
+    private readonly IBasicActivateItems _activator;
 public ExecuteCommandDeleteDataset(IBasicActivateItems activator, [DemandsInitialization("The Dataset to delete")]Curation.Data.Dataset dataset)
     {
         _dataset = dataset;

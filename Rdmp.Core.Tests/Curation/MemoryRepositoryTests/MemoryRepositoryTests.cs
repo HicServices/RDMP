@@ -35,7 +35,7 @@ internal class MemoryRepositoryTests
     {
         var memCatalogue = new Catalogue(_repo, "My New Catalogue");
 
-        Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
+        Assert.That(_repo.GetObjectByID<Catalogue>(memCatalogue.ID), Is.EqualTo(memCatalogue));
     }
 
     [Test]
@@ -50,16 +50,16 @@ internal class MemoryRepositoryTests
 
         var ei = new ExtractionInformation(_repo, myCol, col, col.Name);
 
-        Assert.AreEqual(memCatalogue, _repo.GetObjectByID<Catalogue>(memCatalogue.ID));
+        Assert.That(_repo.GetObjectByID<Catalogue>(memCatalogue.ID), Is.EqualTo(memCatalogue));
 
         var qb = new QueryBuilder(null, null);
         qb.AddColumnRange(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-        Assert.AreEqual(@"
+        Assert.That(qb.SQL, Is.EqualTo(@"
 SELECT 
 
 Mycol
 FROM 
-My table", qb.SQL);
+My table"));
     }
 }

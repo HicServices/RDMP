@@ -54,7 +54,7 @@ internal class ZipTests
         _zt.ArchiveFiles(files.ToArray(), when, _listener);
         using (var zip = ZipFile.Open(targetzip.FullName, ZipArchiveMode.Read))
         {
-            Assert.True(zip.Entries.Count == 1);
+            Assert.That(zip.Entries, Has.Count.EqualTo(1));
         }
 
         // Create a second file and add that to the zip too
@@ -67,17 +67,17 @@ internal class ZipTests
         _zt.ArchiveFiles(files.ToArray(), when, _listener);
         using (var zip = ZipFile.Open(targetzip.FullName, ZipArchiveMode.Read))
         {
-            Assert.True(zip.Entries.Count == 2);
+            Assert.That(zip.Entries, Has.Count.EqualTo(2));
         }
 
         // Re-add just the first file: resulting zip should still contain both files
         _zt.ArchiveFiles(files.GetRange(0, 1).ToArray(), when, _listener);
         using (var zip = ZipFile.Open(targetzip.FullName, ZipArchiveMode.Read))
         {
-            Assert.True(zip.Entries.Count == 2);
+            Assert.That(zip.Entries, Has.Count.EqualTo(2));
         }
 
-        files.ForEach(s => File.Delete(s.FullName));
+        files.ForEach(static s => File.Delete(s.FullName));
         File.Delete(targetzip.FullName);
     }
 }

@@ -37,13 +37,13 @@ public class SelectedColumnsTests : DatabaseTests
 
             var cols = config.GetAllExtractableColumnsFor(ds);
 
-            Assert.AreEqual(1, cols.Length);
-            Assert.AreEqual(extractableColumn, cols.Single());
+            Assert.That(cols, Has.Length.EqualTo(1));
+            Assert.That(cols.Single(), Is.EqualTo(extractableColumn));
 
             cols = config.GetAllExtractableColumnsFor(ds);
 
-            Assert.AreEqual(1, cols.Length);
-            Assert.AreEqual(extractableColumn, cols.Single());
+            Assert.That(cols, Has.Length.EqualTo(1));
+            Assert.That(cols.Single(), Is.EqualTo(extractableColumn));
         }
         finally
         {

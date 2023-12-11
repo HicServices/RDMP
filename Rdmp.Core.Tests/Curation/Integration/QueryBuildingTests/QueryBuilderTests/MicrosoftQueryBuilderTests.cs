@@ -24,7 +24,7 @@ internal class MicrosoftQueryBuilderTests : DatabaseTests
         t.SaveToDatabase();
 
         var col = new ColumnInfo(CatalogueRepository, "[db]..[tbl].[col]", "varchar(10)", t);
-        Assert.AreEqual("col", col.GetRuntimeName());
+        Assert.That(col.GetRuntimeName(), Is.EqualTo("col"));
 
         var cata = new Catalogue(CatalogueRepository, "cata");
         var catalogueItem = new CatalogueItem(CatalogueRepository, cata, "col");
@@ -35,25 +35,25 @@ internal class MicrosoftQueryBuilderTests : DatabaseTests
             TopX = 35
         };
         qb.AddColumn(extractionInfo);
-        Assert.AreEqual(
-            CollapseWhitespace(
+        Assert.That(
+CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(
                 @"SELECT 
 TOP 35
 [db]..[tbl].[col]
 FROM 
 [db]..[tbl]")
-            , CollapseWhitespace(qb.SQL));
+));
 
 
         //editting the topX should invalidate the SQL automatically
         qb.TopX = 50;
-        Assert.AreEqual(
-            CollapseWhitespace(
+        Assert.That(
+CollapseWhitespace(qb.SQL), Is.EqualTo(CollapseWhitespace(
                 @"SELECT 
 TOP 50
 [db]..[tbl].[col]
 FROM 
 [db]..[tbl]")
-            , CollapseWhitespace(qb.SQL));
+));
     }
 }

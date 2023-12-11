@@ -42,7 +42,7 @@ internal class HousekeepingTests : DatabaseTests
 
         var triggerImplementer = factory.Create(table);
         var isEnabled = triggerImplementer.GetTriggerStatus();
-        Assert.AreEqual(TriggerStatus.Enabled, isEnabled);
+        Assert.That(isEnabled, Is.EqualTo(TriggerStatus.Enabled));
 
 
         // disable the trigger and test correct reporting
@@ -57,6 +57,6 @@ internal class HousekeepingTests : DatabaseTests
         }
 
         isEnabled = triggerImplementer.GetTriggerStatus();
-        Assert.AreEqual(TriggerStatus.Disabled, isEnabled);
+        Assert.That(isEnabled, Is.EqualTo(TriggerStatus.Disabled));
     }
 }

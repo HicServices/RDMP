@@ -9,13 +9,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
-using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -94,8 +92,8 @@ public class CachingHostTests : UnitTests
         }
         catch (AggregateException e)
         {
-            Assert.AreEqual(1, e.InnerExceptions.Count);
-            Assert.IsInstanceOf(typeof(TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
+            Assert.That(e.InnerExceptions, Has.Count.EqualTo(1));
+            Assert.That(e.InnerExceptions[0], Is.InstanceOf(typeof(TaskCanceledException)), e.InnerExceptions[0].Message);
         }
         finally
         {

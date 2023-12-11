@@ -21,12 +21,12 @@ public class ExpectedIdenticalStringsExceptionTests
     {
         var ex = new ExpectedIdenticalStringsException("These are different", "fish", "egg");
 
-        Assert.AreEqual(
-            @"These are different
+        Assert.That(
+ex.Message, Is.EqualTo(@"These are different
 Strings differ at index 0
 EXPECTED:fish
 ACTUAL  :egg
----------^", ex.Message);
+---------^"));
     }
 
     [Test]
@@ -34,13 +34,13 @@ ACTUAL  :egg
     {
         var ex = new ExpectedIdenticalStringsException("These are different", "fish", "fins");
 
-        Assert.AreEqual(
-            @"These are different
+        Assert.That(
+ex.Message, Is.EqualTo(@"These are different
 Strings differ at index 2
 EXPECTED:fish
 ACTUAL  :fins
 -----------^"
-            , ex.Message);
+));
     }
 
 
@@ -49,13 +49,13 @@ ACTUAL  :fins
     {
         var ex = new ExpectedIdenticalStringsException("These are different", "fish", "fish fly high");
 
-        Assert.AreEqual(
-            @"These are different
+        Assert.That(
+ex.Message, Is.EqualTo(@"These are different
 Strings are identical except that Expected string ends at character 4 while the Actual string had 9 additional characters
 EXPECTED:fish
 ACTUAL  :fish fly high
 -------------^"
-            , ex.Message);
+));
     }
 
     [Test]
@@ -64,13 +64,13 @@ ACTUAL  :fish fly high
         var ex = new ExpectedIdenticalStringsException("These are different", @"fi
 sh", "fish");
 
-        Assert.AreEqual(
-            $@"These are different
+        Assert.That(
+ex.Message, Is.EqualTo($@"These are different
 Strings differ at index 2
 EXPECTED:fi{eol}sh
 ACTUAL  :fish
 -----------^"
-            , ex.Message);
+));
     }
 
 
@@ -81,13 +81,13 @@ ACTUAL  :fish
             @"Theosophists have guessed at the awesome grandeur of the cosmic cycle where our world and human race form transient incidents",
             @"Theosophists have guessed at the awesome grandeur of the cosmic cycle wherein our world and human race form transient incidents");
 
-        Assert.AreEqual(
-            @"These are different
+        Assert.That(
+ex.Message, Is.EqualTo(@"These are different
 Strings differ at index 75
 EXPECTED:e cosmic cycle where our world...
 ACTUAL  :e cosmic cycle wherein our wor...
 -----------------------------^"
-            , ex.Message);
+));
     }
 
     [Test]
@@ -104,10 +104,10 @@ if the queer clay bas-relief and the disjointed jottings, ramblings, and cutting
 my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r", ""));
 
         // .Replace above forces Unix-style strings for test consistency
-        Assert.AreEqual($@"These are different
+        Assert.That(ex.Message, Is.EqualTo($@"These are different
 Strings differ at index 34
 EXPECTED:d be the\nmeaning \nof the que...
 ACTUAL  :d be the\nmeaning \nif the que...
------------------------------^", ex.Message);
+-----------------------------^"));
     }
 }

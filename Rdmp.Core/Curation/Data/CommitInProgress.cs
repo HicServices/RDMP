@@ -97,16 +97,16 @@ public class CommitInProgress : IDisposable
         if (!Settings.UseTransactions) return;
 
         // one of the objects we are tracking has been deleted
-        if (originalStates.ContainsKey(e.Object))
+        if (originalStates.TryGetValue(e.Object, out var inProgress))
         {
             // change our understanding of this object
 
-            if (originalStates[e.Object].Type == MementoType.Add)
+            if (inProgress.Type == MementoType.Add)
                 // ok user created this object during the commit then deleted it again... odd but fair enough
                 // pretend it never existed
                 originalStates.Remove(e.Object);
             else
-                originalStates[e.Object].Type = MementoType.Delete;
+                inProgress.Type = MementoType.Delete;
         }
         else
         {

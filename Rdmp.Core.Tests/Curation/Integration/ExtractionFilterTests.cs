@@ -18,8 +18,7 @@ public class ExtractionFilterTests : DatabaseTests
     {
         var filter = GetFilterWithParameterSet();
         var ex = Assert.Throws<Exception>(() => filter.DeleteInDatabase());
-        Assert.AreEqual("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it",
-            ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Cannot delete 'Age' because there are one or more ExtractionFilterParameterSet declared on it"));
     }
 
     private ExtractionFilter GetFilterWithParameterSet()

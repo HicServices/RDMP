@@ -109,29 +109,26 @@ internal class ViewSourceCodeToolTip : ToolTip
 
     private static string[] ReadAllLinesCached(string filename)
     {
-        if (!SourceFileCache.ContainsKey(filename))
+        if (SourceFileCache.TryGetValue(filename, out var fileContents)) return fileContents;
+
+        //if you have the original file
+        if (File.Exists(filename))
         {
-            string[] fileContents;
+            fileContents = File.ReadLines(filename).ToArray();
+        }
+        //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
+        else
+        {
+            var contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
 
-            //if you have the original file
-            if (File.Exists(filename))
-            {
-                fileContents = File.ReadLines(filename).ToArray();
-            }
-            //otherwise get it from SourceCodeForSelfAwareness.zip / Plugin zip source codes
-            else
-            {
-                var contentsInOneLine = ViewSourceCodeDialog.GetSourceForFile(Path.GetFileName(filename));
+            if (contentsInOneLine == null)
+                return null;
 
-                if (contentsInOneLine == null)
-                    return null;
-
-                fileContents = contentsInOneLine.Split('\n');
-            }
-
-            SourceFileCache.Add(filename, fileContents);
+            fileContents = contentsInOneLine.Split('\n');
         }
 
-        return SourceFileCache[filename];
+        SourceFileCache.Add(filename, fileContents);
+
+        return fileContents;
     }
 }

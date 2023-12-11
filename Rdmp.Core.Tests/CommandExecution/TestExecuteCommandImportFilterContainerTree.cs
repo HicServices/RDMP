@@ -36,7 +36,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         ac.RootFilterContainer.AddChild(filterToImport);
 
         //there should be no root container
-        Assert.IsNull(sds.RootFilterContainer);
+        Assert.That(sds.RootFilterContainer, Is.Null);
 
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
@@ -45,16 +45,19 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr, sds, ac);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         sds.ClearAllInjections();
-        Assert.IsNotNull(sds.RootFilterContainer);
-        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length);
-        Assert.AreEqual("MyFilter", sds.RootFilterContainer.GetFilters()[0].Name);
-        Assert.AreEqual("true", sds.RootFilterContainer.GetFilters()[0].WhereSQL);
+        Assert.That(sds.RootFilterContainer, Is.Not.Null);
+        Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
 
-        Assert.AreNotEqual(filterToImport.GetType(), sds.RootFilterContainer.GetFilters()[0].GetType());
+            Assert.That(sds.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+        });
     }
 
     [Test]
@@ -79,7 +82,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         cic.RootCohortAggregateContainer.AddChild(ac, 1);
 
         //there should be no root container
-        Assert.IsNull(ac.RootFilterContainer);
+        Assert.That(ac.RootFilterContainer, Is.Null);
 
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
@@ -88,16 +91,19 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr, ac, sds);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         ac.ClearAllInjections();
-        Assert.IsNotNull(ac.RootFilterContainer);
-        Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length);
-        Assert.AreEqual("MyFilter", ac.RootFilterContainer.GetFilters()[0].Name);
-        Assert.AreEqual("true", ac.RootFilterContainer.GetFilters()[0].WhereSQL);
+        Assert.That(ac.RootFilterContainer, Is.Not.Null);
+        Assert.That(ac.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].Name, Is.EqualTo("MyFilter"));
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].WhereSQL, Is.EqualTo("true"));
 
-        Assert.AreNotEqual(filterToImport.GetType(), ac.RootFilterContainer.GetFilters()[0].GetType());
+            Assert.That(ac.RootFilterContainer.GetFilters()[0].GetType(), Is.Not.EqualTo(filterToImport.GetType()));
+        });
     }
 
 
@@ -126,7 +132,7 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         root.AddChild(new AggregateFilterContainer(Repository, FilterContainerOperation.OR));
 
         //there should be no root container
-        Assert.IsNull(sds.RootFilterContainer);
+        Assert.That(sds.RootFilterContainer, Is.Null);
 
         //run the command
         var mgr = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
@@ -135,17 +141,23 @@ internal class TestExecuteCommandImportFilterContainerTree : CommandInvokerTests
         };
         var cmd = new ExecuteCommandImportFilterContainerTree(mgr, sds, ac);
 
-        Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
         cmd.Execute();
 
         sds.ClearAllInjections();
-        Assert.AreEqual(FilterContainerOperation.OR, sds.RootFilterContainer.Operation);
-        Assert.IsNotNull(sds.RootFilterContainer);
-        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length);
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer.Operation, Is.EqualTo(FilterContainerOperation.OR));
+            Assert.That(sds.RootFilterContainer, Is.Not.Null);
+        });
+        Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1));
 
         var subContainers = sds.RootFilterContainer.GetSubContainers();
-        Assert.AreEqual(2, subContainers.Length);
-        Assert.AreEqual(1, subContainers.Count(e => e.Operation == FilterContainerOperation.AND));
-        Assert.AreEqual(1, subContainers.Count(e => e.Operation == FilterContainerOperation.OR));
+        Assert.That(subContainers, Has.Length.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.AND), Is.EqualTo(1));
+            Assert.That(subContainers.Count(e => e.Operation == FilterContainerOperation.OR), Is.EqualTo(1));
+        });
     }
 }

@@ -172,6 +172,6 @@ public class TestCommandsAreSupported : UnitTests
     // [TestCase(typeof(ExecuteCommandSetDataAccessContextForCredentials))] // Not currently CLI compatible
     public void TestIsSupported(Type t)
     {
-        Assert.IsNull(invoker.WhyCommandNotSupported(t), $"Type {t} was not supported by CommandInvoker");
+        Assert.That(invoker.WhyCommandNotSupported(t), Is.Null, $"Type {t} was not supported by CommandInvoker");
     }
 }

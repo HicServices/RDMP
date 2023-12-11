@@ -45,6 +45,6 @@ public class AllObjectsHaveImages : DatabaseTests
             Console.WriteLine(
                 $"The following Database Object Types are missing concepts (and therefore images) in CatalogueManager.exe{Environment.NewLine}{string.Join($",{Environment.NewLine}", missingConcepts)}");
 
-        Assert.AreEqual(0, missingConcepts.Count);
+        Assert.That(missingConcepts, Is.Empty);
     }
 }

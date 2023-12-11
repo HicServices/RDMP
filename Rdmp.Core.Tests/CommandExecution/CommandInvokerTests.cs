@@ -72,7 +72,7 @@ public class CommandInvokerTests : UnitTests
         {
             base.Execute();
             Console.Write($"Arg was {_arg}");
-            Assert.IsNotNull(_arg);
+            Assert.That(_arg, Is.Not.Null);
         }
     }
 
@@ -92,8 +92,11 @@ public class CommandInvokerTests : UnitTests
             base.Execute();
             Console.Write($"_a was {_a}");
             Console.Write($"_b was {_b}");
-            Assert.IsNotNull(_a);
-            Assert.IsNotNull(_b);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_a, Is.Not.Null);
+                Assert.That(_b, Is.Not.Null);
+            });
         }
     }
 }

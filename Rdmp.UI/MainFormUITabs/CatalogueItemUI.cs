@@ -41,7 +41,6 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         AssociatedCollection = RDMPCollection.Catalogue;
 
         ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-      
     }
 
     private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
@@ -69,7 +68,8 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
             {
                 lbDatasetValue.Visible = true;
                 lbDataset.Visible = true;
-                var dataset = _catalogueItem.CatalogueRepository.GetAllObjects<Dataset>().Where(ds => ds.ID == columnInfoDatasetValue).First();
+                var dataset = _catalogueItem.CatalogueRepository.GetAllObjects<Dataset>()
+                    .FirstOrDefault(ds => ds.ID == columnInfoDatasetValue);
                 if (dataset != null)
                 {
                     lbDatasetValue.Text = dataset.Name;
@@ -94,7 +94,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
 
-        if (_catalogueItem.ExtractionInformation == null)
+        if (_catalogueItem?.ExtractionInformation == null)
             CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem),
                 "Make Extractable");
     }

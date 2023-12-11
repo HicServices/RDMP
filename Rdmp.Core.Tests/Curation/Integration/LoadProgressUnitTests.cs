@@ -82,7 +82,7 @@ public class LoadProgressUnitTests : UnitTests
         var jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
         var job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
-        Assert.IsNull(job);
+        Assert.That(job, Is.Null);
 
         // We have 1 day to load (date is the last fully loaded date)
         lp.DataLoadProgress = DateTime.Now.AddDays(-2);
@@ -92,6 +92,6 @@ public class LoadProgressUnitTests : UnitTests
         jobFactory = new SingleScheduledJobFactory(lp, strat, 999, lp.LoadMetadata, null);
 
         job = jobFactory.Create(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, null);
-        Assert.AreEqual(1, ((ScheduledDataLoadJob)job).DatesToRetrieve.Count);
+        Assert.That(((ScheduledDataLoadJob)job).DatesToRetrieve, Has.Count.EqualTo(1));
     }
 }

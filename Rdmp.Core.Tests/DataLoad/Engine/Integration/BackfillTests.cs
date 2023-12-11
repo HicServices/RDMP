@@ -78,11 +78,11 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Should still be 1 record, this would be migrated to To");
+            Assert.That(numRows, Is.EqualTo(1), "Should still be 1 record, this would be migrated to To");
 
             cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
             var description = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual(description, "Newer than in To, should update To",
+            Assert.That(description, Is.EqualTo("Newer than in To, should update To"),
                 "Description has been altered but is a valid update to To so should not have been touched.");
         }
     }
@@ -94,7 +94,7 @@ public class BackfillTests : FromToDatabaseTests
         // Set SetUp catalogue entities
         AddTableToCatalogue(DatabaseName, "Samples", "ID", out _, true);
 
-        Assert.AreEqual(5, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+        Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(5), "Unexpected number of items in catalogue");
     }
 
     private void Mutilate(string timeColumnName)
@@ -154,7 +154,7 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(0, numRows,
+            Assert.That(numRows, Is.EqualTo(0),
                 "The record to be loaded is older than the corresponding record in To, should have been deleted");
         }
     }
@@ -202,11 +202,11 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "The record to be loaded is an insert should not have been deleted");
+            Assert.That(numRows, Is.EqualTo(1), "The record to be loaded is an insert should not have been deleted");
 
             cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
             var description = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual(description, "Does not exist in To, should remain in From after mutilation.",
+            Assert.That(description, Is.EqualTo("Does not exist in To, should remain in From after mutilation."),
                 "Description has been altered but is a valid update to To so should not have been touched.");
         }
     }
@@ -254,7 +254,7 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(2, numRows,
+            Assert.That(numRows, Is.EqualTo(2),
                 "Record 2 should have been deleted as it is an update to a record for which we have a later version.");
         }
     }
@@ -276,7 +276,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+        Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(10), "Unexpected number of items in catalogue");
 
         // Samples (1:M) Results join
         new JoinInfo(CatalogueRepository, ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
@@ -346,11 +346,11 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows);
+            Assert.That(numRows, Is.EqualTo(1));
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(3, numRows);
+            Assert.That(numRows, Is.EqualTo(3));
         }
     }
 
@@ -416,31 +416,31 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Item should still remain as there still should be a single result to insert.");
+            Assert.That(numRows, Is.EqualTo(1), "Item should still remain as there still should be a single result to insert.");
 
             cmd = new SqlCommand(@"SELECT * FROM Results", connection);
             using (var reader = cmd.ExecuteReader())
             {
-                Assert.IsTrue(reader.HasRows);
+                Assert.That(reader.HasRows);
 
                 reader.Read();
-                Assert.AreEqual(12, reader["ID"]);
+                Assert.That(reader["ID"], Is.EqualTo(12));
 
                 var hasMoreResults = reader.Read();
-                Assert.IsFalse(hasMoreResults, "Should only be one Result row left in From");
+                Assert.That(hasMoreResults, Is.False, "Should only be one Result row left in From");
             }
 
             cmd = new SqlCommand(@"SELECT * FROM Samples", connection);
             using (var reader = cmd.ExecuteReader())
             {
-                Assert.IsTrue(reader.HasRows);
+                Assert.That(reader.HasRows);
 
                 reader.Read();
-                Assert.AreEqual("", reader["Description"].ToString(),
+                Assert.That(reader["Description"].ToString(), Is.EqualTo(""),
                     "The To sample had a blank description which should have been copied in to the earlier From record.");
 
                 var hasMoreResults = reader.Read();
-                Assert.IsFalse(hasMoreResults, "Should only be one Samples row in From");
+                Assert.That(hasMoreResults, Is.False, "Should only be one Samples row in From");
             }
         }
     }
@@ -507,11 +507,11 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "This is an insert, no data should be deleted/altered.");
+            Assert.That(numRows, Is.EqualTo(1), "This is an insert, no data should be deleted/altered.");
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(3, numRows, "This is an insert, no data should be deleted/altered.");
+            Assert.That(numRows, Is.EqualTo(3), "This is an insert, no data should be deleted/altered.");
         }
     }
 
@@ -533,7 +533,7 @@ public class BackfillTests : FromToDatabaseTests
         tiSamples.IsPrimaryExtractionTable = true;
         tiSamples.SaveToDatabase();
 
-        Assert.AreEqual(10, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+        Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(10), "Unexpected number of items in catalogue");
 
         // Headers (1:M) Samples join
         new JoinInfo(CatalogueRepository, ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
@@ -600,11 +600,11 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(0, numRows, "Sample should be deleted as it is older than corresponding row in To.");
+            Assert.That(numRows, Is.EqualTo(0), "Sample should be deleted as it is older than corresponding row in To.");
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(0, numRows, "Header should have been pruned as it no longer has any children in From.");
+            Assert.That(numRows, Is.EqualTo(0), "Header should have been pruned as it no longer has any children in From.");
         }
     }
 
@@ -672,16 +672,16 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Should still be 1 sample");
+            Assert.That(numRows, Is.EqualTo(1), "Should still be 1 sample");
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows,
+            Assert.That(numRows, Is.EqualTo(1),
                 "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
 
             cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
             var discipline = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual("Biochemistry", discipline,
+            Assert.That(discipline, Is.EqualTo("Biochemistry"),
                 "Header record in From be updated to reflect what is in To: the To record is authoritative as it contains at least one child from a later date.");
         }
     }
@@ -746,16 +746,16 @@ public class BackfillTests : FromToDatabaseTests
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
             var numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows, "Should still be 1 sample");
+            Assert.That(numRows, Is.EqualTo(1), "Should still be 1 sample");
 
             cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
             numRows = cmd.ExecuteScalar();
-            Assert.AreEqual(1, numRows,
+            Assert.That(numRows, Is.EqualTo(1),
                 "Header should still be there (shouldn't be able to delete it as there should be a FK constraint with Samples)");
 
             cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
             var discipline = cmd.ExecuteScalar().ToString();
-            Assert.AreEqual("Haematology", discipline,
+            Assert.That(discipline, Is.EqualTo("Haematology"),
                 "Header record in From should not be updated as it is 'correct'.");
         }
     }
@@ -834,38 +834,56 @@ public class BackfillTests : FromToDatabaseTests
             using (var reader = cmd.ExecuteReader())
             {
                 reader.Read();
-                Assert.AreEqual(11, reader["ID"]);
-                Assert.AreEqual("2016-01-05T12:00:00", ((DateTime)reader["SampleDate"]).ToString("s"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(11));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
+                });
 
                 reader.Read();
-                Assert.AreEqual(14, reader["ID"]);
-                Assert.AreEqual("2016-01-15T12:00:00", ((DateTime)reader["SampleDate"]).ToString("s"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(14));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-15T12:00:00"));
+                });
 
                 reader.Read();
-                Assert.AreEqual(17, reader["ID"]);
-                Assert.AreEqual("2016-01-05T12:00:00", ((DateTime)reader["SampleDate"]).ToString("s"));
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(17));
+                    Assert.That(((DateTime)reader["SampleDate"]).ToString("s"), Is.EqualTo("2016-01-05T12:00:00"));
 
-                Assert.IsFalse(reader.Read(), "Should only be three samples");
+                    Assert.That(reader.Read(), Is.False, "Should only be three samples");
+                });
             }
 
             cmd = new SqlCommand(@"SELECT * FROM Headers ORDER BY ID", connection);
             using (var reader = cmd.ExecuteReader())
             {
-                Assert.IsTrue(reader.HasRows);
+                Assert.That(reader.HasRows);
 
                 reader.Read();
-                Assert.AreEqual(1, reader["ID"]);
-                Assert.AreEqual("Haematology", reader["Discipline"]);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(1));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Haematology"));
+                });
 
                 reader.Read();
-                Assert.AreEqual(2, reader["ID"]);
-                Assert.AreEqual("Biochemistry", reader["Discipline"]);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(2));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
+                });
 
                 reader.Read();
-                Assert.AreEqual(5, reader["ID"]);
-                Assert.AreEqual("Biochemistry", reader["Discipline"]);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(reader["ID"], Is.EqualTo(5));
+                    Assert.That(reader["Discipline"], Is.EqualTo("Biochemistry"));
 
-                Assert.IsFalse(reader.Read(), "Should only be three headers");
+                    Assert.That(reader.Read(), Is.False, "Should only be three headers");
+                });
             }
         }
     }
@@ -927,7 +945,7 @@ public class BackfillTests : FromToDatabaseTests
         var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
         // should be all entities set SetUp now
-        Assert.AreEqual(15, _catalogue.CatalogueItems.Length, "Unexpected number of items in catalogue");
+        Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(15), "Unexpected number of items in catalogue");
 
         #endregion
 
@@ -1020,11 +1038,11 @@ public class BackfillTests : FromToDatabaseTests
 
         var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Header", connection);
         var numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(3, numRows, "Should be 3 header records");
+        Assert.That(numRows, Is.EqualTo(3), "Should be 3 header records");
 
         cmd = new SqlCommand(@"SELECT Discipline FROM Header WHERE ID=1", connection);
         var discipline = cmd.ExecuteScalar();
-        Assert.AreEqual("Biochemistry", discipline,
+        Assert.That(discipline, Is.EqualTo("Biochemistry"),
             "The mutilator should **NOT** have updated record 1 from Biochemistry to Haematology. Although the load updates one of the To samples, the most recent To sample is later than the most recent loaded sample so the parent data in To takes precedence over the parent data in From.");
 
         // Not convinced about this test case
@@ -1034,20 +1052,20 @@ public class BackfillTests : FromToDatabaseTests
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples WHERE ID = 2", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(0, numRows, "Sample ID = 2 has not been deleted");
+        Assert.That(numRows, Is.EqualTo(0), "Sample ID = 2 has not been deleted");
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(2, numRows,
+        Assert.That(numRows, Is.EqualTo(2),
             "Sample ID = 2 has been deleted but something has happened to the other samples (should be untouched)");
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results WHERE SampleID = 2", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(0, numRows, "Results belonging to Sample ID = 2 have not been deleted");
+        Assert.That(numRows, Is.EqualTo(0), "Results belonging to Sample ID = 2 have not been deleted");
 
         cmd = new SqlCommand(@"SELECT COUNT(*) FROM Results", connection);
         numRows = cmd.ExecuteScalar();
-        Assert.AreEqual(4, numRows,
+        Assert.That(numRows, Is.EqualTo(4),
             "Results belonging to Sample ID = 2 have been deleted but something has happeded to the other results (should be untouched)");
 
         connection.Close();

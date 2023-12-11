@@ -173,7 +173,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     if (pivotValue != null)
                     {
                         //if it is a novel
-                        if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
+                        if (!byPivotCategoryCubesOverTime.TryGetValue(pivotValue, out var periodicityCubesOverTime))
                         {
                             //we will need to expand the dictionaries
                             if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
@@ -183,12 +183,13 @@ public class CatalogueConstraintReport : DataQualityReport
                             //expand both the time periodicity and the state results
                             byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
                                 new DQEStateOverDataLoadRunId(pivotValue));
-                            byPivotCategoryCubesOverTime.Add(pivotValue, new PeriodicityCubesOverTime(pivotValue));
+                            periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotValue);
+                            byPivotCategoryCubesOverTime.Add(pivotValue, periodicityCubesOverTime);
                         }
 
                         //now we are sure that the dictionaries have the category field we can increment it
                         ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-                            byPivotCategoryCubesOverTime[pivotValue], byPivotRowStatesOverDataLoadRunId[pivotValue]);
+periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                     }
 
                     if (progress % 5000 == 0)

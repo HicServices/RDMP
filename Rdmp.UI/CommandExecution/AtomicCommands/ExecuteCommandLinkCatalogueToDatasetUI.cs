@@ -4,28 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution
 {
     private readonly Catalogue _catalogue;
     private Dataset _selectedDataset;
-    private IActivateItems _activateItems;
+    private readonly IActivateItems _activateItems;
 
     public ExecuteCommandLinkCatalogueToDatasetUI(IActivateItems activator, Catalogue catalogue) : base(activator)
     {
@@ -39,7 +34,7 @@ public class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, I
     public override void Execute()
     {
         base.Execute();
-        Dataset[] datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
+        var datasets = _activateItems.RepositoryLocator.CatalogueRepository.GetAllObjects<Dataset>();
         DialogArgs da = new()
         {
             WindowTitle = "Link a dataset with this catalogue",
@@ -47,14 +42,13 @@ public class ExecuteCommandLinkCatalogueToDatasetUI : BasicUICommandExecution, I
              "Select the Dataset that this catalogue information came from"
         };
         _selectedDataset = SelectOne(da, datasets);
-        if (_selectedDataset is not null)
-        {
-            var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
-            var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
-            cmd.Execute();
-        }
+        if (_selectedDataset is null) return;
+
+        var backfill = YesNo("Link all other columns that match the source table?", "Do you want to link this dataset to all other columns that reference the same table as this column?");
+        var cmd = new ExecuteCommandLinkCatalogueToDataset(_activateItems, _catalogue, _selectedDataset, backfill);
+        cmd.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Dataset, OverlayKind.Link);
 }

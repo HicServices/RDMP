@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataViewing;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers.Copying;
@@ -128,29 +129,28 @@ public partial class LoadDiagramUI : LoadDiagram_Design
                     : Color.LightGray,
                 LoadDiagramState.Different => Color.Red,
                 LoadDiagramState.New => Color.Red,
-                _ => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException(nameof(e),$"Invalid state for LoadDiagramState {state}")
             };
     }
 
-    private object olvState_AspectGetter(object rowobject)
-    {
-        return rowobject switch
+    [CanBeNull]
+    private static object olvState_AspectGetter(object rowObject) =>
+        rowObject switch
         {
             DiscoveredTable or DiscoveredColumn => LoadDiagramState.New,
             IHasLoadDiagramState stateHaver => stateHaver.State,
             _ => null
         };
-    }
 
-    private object olvDataType_AspectGetter(object rowobject)
-    {
-        return rowobject switch
+    [CanBeNull]
+    private static object olvDataType_AspectGetter(object rowObject) =>
+        rowObject switch
         {
             LoadDiagramColumnNode colNode => colNode.GetDataType(),
             DiscoveredColumn discCol => discCol.DataType.SQLType,
             _ => null
         };
-    }
+
     private string CellToolTipGetter(OLVColumn column, object modelObject) =>
         modelObject is LoadDiagramServerNode loadDiagramServerNode
             ? loadDiagramServerNode.ErrorDescription
