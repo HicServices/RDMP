@@ -936,10 +936,15 @@ CREATE TABLE [dbo].RedactedCHI(
 	PKColumnName[nvarchar](500) NOT NULL,
 	ColumnName[nvarchar](500) NOT NULL,
  CONSTRAINT [PK_RedactedCHI] PRIMARY KEY CLUSTERED 
+ (
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
 
 GO
 SET ANSI_PADDING OFF
 GO
+
 ALTER TABLE [dbo].[ANOTable] ADD  CONSTRAINT [DF_ANOTable_SoftwareVersion]  DEFAULT ([dbo].[GetSoftwareVersion]()) FOR [SoftwareVersion]
 GO
 ALTER TABLE [dbo].[AggregateConfiguration] ADD  CONSTRAINT [DF_AggregateConfiguration_dtCreated]  DEFAULT (getdate()) FOR [dtCreated]
