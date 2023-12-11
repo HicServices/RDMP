@@ -20,7 +20,7 @@ public class CommitAssemblyTest
 
         var t = Type.GetType(s.GetType().AssemblyQualifiedName);
 
-        Assert.AreEqual(s.GetType(), t);
+        Assert.That(t, Is.EqualTo(s.GetType()));
     }
 
     public enum ScheduleStrategy

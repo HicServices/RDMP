@@ -36,6 +36,6 @@ public class InterfaceDeclarationsCorrect
                 .Select(static matchingInterface =>
                     $"FAIL: Interface '{matchingInterface.Name}' does not inherit IMapsDirectlyToDatabaseTable")
                 .ToList();
-        Assert.IsEmpty(problems);
+        Assert.That(problems, Is.Empty);
     }
 }

@@ -77,18 +77,20 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             ExecuteRunner();
 
             var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
-            Assert.IsTrue(destinationTable.Exists());
+            Assert.That(destinationTable.Exists());
 
             var dt = destinationTable.GetDataTable();
 
-            Assert.AreEqual(1, dt.Rows.Count);
-            Assert.AreEqual(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim(), dt.Rows[0]["ReleaseID"]);
-            Assert.AreEqual(new DateTime(2001, 1, 1), dt.Rows[0]["DateOfBirth"]);
-            Assert.AreEqual(2001, dt.Rows[0]["YearOfBirth"]);
+            Assert.That(dt.Rows, Has.Count.EqualTo(1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
+                Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
 
-            Assert.AreEqual(_columnToTransform.Data_type,
-                destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType);
-            Assert.AreEqual("int", destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType);
+                Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
+                Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
+            });
 
             AssertLookupsEtcExist(dbToExtractTo);
         }
@@ -103,12 +105,15 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
     private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
     {
-        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem")
-            .Exists());
-        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp")
-            .Exists());
-        Assert.IsTrue(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff")
-            .Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_Biochem")
+                    .Exists());
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_Globals_Hosp")
+                .Exists());
+            Assert.That(dbToExtractTo.ExpectTable("ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable_z_fff")
+                .Exists());
+        });
     }
 
     private void CreateLookupsEtc()
@@ -210,7 +215,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
 
-        Assert.AreEqual("TargetDatabaseServer", argumentServer.Name);
+        Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
         argumentServer.SetValue(_extractionServer);
         argumentServer.SaveToDatabase();
         argumentDbNamePattern.SetValue($"{TestDatabaseNames.Prefix}$p_$n");

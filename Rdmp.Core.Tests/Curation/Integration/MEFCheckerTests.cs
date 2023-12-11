@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.Data;
@@ -19,7 +18,7 @@ public class MEFCheckerTests : UnitTests
     [Test]
     public void FindClass_WrongCase_FoundAnyway()
     {
-        Assert.AreEqual(typeof(Catalogue), Core.Repositories.MEF.GetType("catalogue"));
+        Assert.That(Core.Repositories.MEF.GetType("catalogue"), Is.EqualTo(typeof(Catalogue)));
     }
 
     [Test]
@@ -27,9 +26,8 @@ public class MEFCheckerTests : UnitTests
     {
         var m = new MEFChecker("", s => Assert.Fail());
         var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        Assert.AreEqual(
-            "MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty"));
     }
 
     [Test]
@@ -53,8 +51,7 @@ public class MEFCheckerTests : UnitTests
     {
         var m = new MEFChecker("CatalogueLibrary.UncleSam", s => Assert.Fail());
         var ex = Assert.Throws<Exception>(() => m.Check(ThrowImmediatelyCheckNotifier.Quiet));
-        StringAssert.Contains(
-            "Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",
-            ex?.Message);
+        Assert.That(
+            ex?.Message, Does.Contain("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name"));
     }
 }

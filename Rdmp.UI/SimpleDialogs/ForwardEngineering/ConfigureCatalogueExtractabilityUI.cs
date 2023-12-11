@@ -395,7 +395,7 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
         var toChangeTo = ddCategoriseMany.SelectedItem;
         var itemsToChange = filteredObjects.Where(obj => obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo)).Select(static cp => cp.CatalogueItem.Name).ToArray();
         var columnChangeDetails = itemsToChange.Length < 3
-            ? new StringBuilder().AppendJoin(", ", itemsToChange[0..^1])
+            ? new StringBuilder().AppendJoin(", ", itemsToChange[..^1])
                 .Append(itemsToChange.Length > 1 ? " and " : "").Append(itemsToChange[^1]).ToString()
             : $"{(itemsToChange.Length == filteredObjects.Length ? "all " : "")}{itemsToChange.Length} columns";
 

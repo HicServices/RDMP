@@ -25,7 +25,7 @@ internal class TestExecuteCommandDescribe : UnitTests
                 c.Description = "fish";
 
                 var describe = new ExecuteCommandDescribe(mock, new[] { c });
-                Assert.IsFalse(describe.IsImpossible, describe.ReasonCommandImpossible);
+        Assert.That(describe.IsImpossible, Is.False, describe.ReasonCommandImpossible);
 
                 describe.Execute();
 

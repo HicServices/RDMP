@@ -224,7 +224,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 {
                     ProgressType.Records => "records",
                     ProgressType.Kilobytes => "KB",
-                    _ => throw new ArgumentOutOfRangeException("type")
+                    _ => throw new InvalidOperationException("type")
                 };
 
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription,

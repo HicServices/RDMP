@@ -38,7 +38,7 @@ public abstract class DelimitedFileSourceTestsBase
             Assert.Fail($"No Divert file was generated at expected path {filename}");
 
         var contents = File.ReadAllText(filename);
-        Assert.AreEqual(expectedContents, contents);
+        Assert.That(contents, Is.EqualTo(expectedContents));
     }
 
 

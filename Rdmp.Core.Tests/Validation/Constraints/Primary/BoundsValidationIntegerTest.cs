@@ -30,6 +30,6 @@ internal class BoundsValidationIntegerTest : ValidationTests
 
         var d = new Dictionary<string, object> { { "number", 119 } };
 
-        Assert.IsNull(v.Validate(d));
+        Assert.That(v.Validate(d), Is.Null);
     }
 }

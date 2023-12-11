@@ -39,12 +39,15 @@ internal class SearchablesMatchScorerTests : UnitTests
         var cataScore = scores.Single(d => Equals(d.Key.Key, cata));
         var projScore = scores.Single(d => Equals(d.Key.Key, proj));
 
-        // Both score because they have the text FF
-        Assert.Greater(cataScore.Value, 0);
-        Assert.Greater(projScore.Value, 0);
+        Assert.Multiple(() =>
+        {
+            // Both score because they have the text FF
+            Assert.That(cataScore.Value, Is.GreaterThan(0));
+            Assert.That(projScore.Value, Is.GreaterThan(0));
+        });
 
         // Catalogue scores higher because it is an exact match to the name
-        Assert.Greater(cataScore.Value, projScore.Value);
+        Assert.That(cataScore.Value, Is.GreaterThan(projScore.Value));
     }
 
 
@@ -71,7 +74,7 @@ internal class SearchablesMatchScorerTests : UnitTests
             new List<Type> { typeof(CohortAggregateContainer) }, CancellationToken.None);
 
         var score = scores.Single(d => Equals(d.Key.Key, container));
-        Assert.Greater(score.Value, 0);
+        Assert.That(score.Value, Is.GreaterThan(0));
     }
 
     /// <summary>
@@ -103,9 +106,9 @@ internal class SearchablesMatchScorerTests : UnitTests
         if (userSetting)
             // although the text appears in the search they are not doing it by exact type name and their settings
             // mean they don't want to see these objects by default.
-            Assert.AreEqual(0, score.Value);
+            Assert.That(score.Value, Is.EqualTo(0));
         else
-            Assert.Greater(score.Value, 0);
+            Assert.That(score.Value, Is.GreaterThan(0));
     }
 
     [TestCase(true, true, true)]
@@ -220,10 +223,10 @@ internal class SearchablesMatchScorerTests : UnitTests
         var score = scores.Single(d => Equals(d.Key.Key, c));
 
         if (expectedResult)
-            Assert.Greater(score.Value, 0);
+            Assert.That(score.Value, Is.GreaterThan(0));
         else
             // score 0 and don't be included in results
-            Assert.AreEqual(0, score.Value);
+            Assert.That(score.Value, Is.EqualTo(0));
 
         // Cleanup test
         foreach (var d in Repository.GetAllObjects<ExtractableDataSet>()) d.DeleteInDatabase();

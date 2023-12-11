@@ -21,9 +21,12 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
 
                 var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, c2);
 
-                Assert.IsTrue(cmd.IsImpossible);
-                StringAssert.Contains("is not marked IsDeprecated", cmd.ReasonCommandImpossible);
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("is not marked IsDeprecated"));
+        });
+    }
 
         [Test]
         public void CommandImpossible_BecauseDifferentTypes()
@@ -36,9 +39,12 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
 
                 var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, ci1);
 
-                Assert.IsTrue(cmd.IsImpossible);
-                StringAssert.Contains("because it is a different object Type", cmd.ReasonCommandImpossible);
-        }
+        Assert.Multiple(() =>
+        {
+            Assert.That(cmd.IsImpossible);
+            Assert.That(cmd.ReasonCommandImpossible, Does.Contain("because it is a different object Type"));
+        });
+    }
 
         [Test]
         public void CommandImpossible_Allowed()
@@ -50,7 +56,7 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
                 c1.SaveToDatabase();
 
                 var cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, c2);
-                Assert.IsFalse(cmd.IsImpossible, cmd.ReasonCommandImpossible);
+        Assert.That(cmd.IsImpossible, Is.False, cmd.ReasonCommandImpossible);
 
                 cmd.Execute();
 
@@ -58,24 +64,27 @@ internal class ExecuteCommandReplacedByTests : CommandCliTests
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
                     .Single(r => r.IsReferenceTo(c1));
 
-                Assert.IsTrue(replacement.IsReferenceTo(c1));
-                Assert.AreEqual(c2.ID.ToString(), replacement.Value);
+        Assert.Multiple(() =>
+        {
+            Assert.That(replacement.IsReferenceTo(c1));
+            Assert.That(replacement.Value, Is.EqualTo(c2.ID.ToString()));
+        });
 
-                // running command multiple times shouldn't result in duplicate objects
-                cmd.Execute();
+        // running command multiple times shouldn't result in duplicate objects
+        cmd.Execute();
                 cmd.Execute();
                 cmd.Execute();
                 cmd.Execute();
 
-                Assert.AreEqual(1, RepositoryLocator.CatalogueRepository
+        Assert.That(RepositoryLocator.CatalogueRepository
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-                    .Count(r => r.IsReferenceTo(c1)));
+                    .Count(r => r.IsReferenceTo(c1)), Is.EqualTo(1));
 
                 cmd = new ExecuteCommandReplacedBy(GetMockActivator(), c1, null);
                 cmd.Execute();
 
-                Assert.IsEmpty(RepositoryLocator.CatalogueRepository
+        Assert.That(RepositoryLocator.CatalogueRepository
                     .GetAllObjectsWhere<ExtendedProperty>("Name", ExtendedProperty.ReplacedBy)
-                    .Where(r => r.IsReferenceTo(c1)));
+                    .Where(r => r.IsReferenceTo(c1)), Is.Empty);
         }
 }

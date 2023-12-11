@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Implementations.MicrosoftSQL;
-using NSubstitute;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.Curation.Unit;
@@ -18,24 +16,19 @@ public class SqlSyntaxHelperTests
     [Test]
     public void GetNullSubstituteTests()
     {
-        Assert.AreEqual("-999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
-        Assert.AreEqual("-9999999999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));
-        Assert.AreEqual("-99.9",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true));
-        Assert.AreEqual("-.9999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true));
+        Assert.Multiple(() =>
+        {
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true), Is.EqualTo("-999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true), Is.EqualTo("-9999999999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", true), Is.EqualTo("-99.9"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", true), Is.EqualTo("-.9999"));
 
 
-        Assert.AreEqual("999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false));
-        Assert.AreEqual("9999999999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false));
-        Assert.AreEqual("99.9",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false));
-        Assert.AreEqual(".9999",
-            PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3)", false), Is.EqualTo("999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(10)", false), Is.EqualTo("9999999999"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(3,1)", false), Is.EqualTo("99.9"));
+            Assert.That(PrimaryKeyCollisionResolver.GetNullSubstituteForComparisonsWithDataType("decimal(4,4)", false), Is.EqualTo(".9999"));
+        });
     }
 
     [Test]
@@ -45,18 +38,27 @@ public class SqlSyntaxHelperTests
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count(*)", out var method, out var contents);
 
-        Assert.AreEqual("count", method);
-        Assert.AreEqual("*", contents);
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("count"));
+            Assert.That(contents, Is.EqualTo("*"));
+        });
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("count()", out method, out contents);
 
-        Assert.AreEqual("count", method);
-        Assert.AreEqual("", contents);
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("count"));
+            Assert.That(contents, Is.EqualTo(""));
+        });
 
 
         syntaxHelper.SplitLineIntoOuterMostMethodAndContents("LTRIM(RTRIM([Fish]))", out method, out contents);
 
-        Assert.AreEqual("LTRIM", method);
-        Assert.AreEqual("RTRIM([Fish])", contents);
+        Assert.Multiple(() =>
+        {
+            Assert.That(method, Is.EqualTo("LTRIM"));
+            Assert.That(contents, Is.EqualTo("RTRIM([Fish])"));
+        });
     }
 }

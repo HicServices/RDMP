@@ -100,8 +100,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// The full human readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
-    /// if there are multiple tables powering the Catalogue or they don't have user accessible names.
+    /// The full human-readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
+    /// if there are multiple tables powering the Catalogue, osr they don't have user accessible names.
     /// </summary>
     [Unique]
     [NotNull]

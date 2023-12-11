@@ -29,18 +29,24 @@ internal class DataLoadEngineTestsBase : DatabaseTests
     {
         var o = row[SpecialFieldNames.DataLoadRunID];
 
-        Assert.IsNotNull(o, "A row which was expected to have a hic_dataLoadRunID had null instead");
-        Assert.AreNotEqual(DBNull.Value, o,
-            "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
-        Assert.GreaterOrEqual((int)o, 0);
+        Assert.That(o, Is.Not.Null, "A row which was expected to have a hic_dataLoadRunID had null instead");
+        Assert.Multiple(() =>
+        {
+            Assert.That(o, Is.Not.EqualTo(DBNull.Value),
+                    "A row which was expected to have a hic_dataLoadRunID had DBNull.Value instead");
+            Assert.That((int)o, Is.GreaterThanOrEqualTo(0));
+        });
 
         var d = row[SpecialFieldNames.ValidFrom];
-        Assert.IsNotNull(d, "A row which was expected to have a hic_validFrom had null instead");
-        Assert.AreNotEqual(DBNull.Value, d,
-            "A row which was expected to have a hic_validFrom had DBNull.Value instead");
+        Assert.That(d, Is.Not.Null, "A row which was expected to have a hic_validFrom had null instead");
+        Assert.Multiple(() =>
+        {
+            Assert.That(d, Is.Not.EqualTo(DBNull.Value),
+                    "A row which was expected to have a hic_validFrom had DBNull.Value instead");
 
-        //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
-        Assert.GreaterOrEqual((DateTime)d, DateTime.Now.Subtract(new TimeSpan(2, 0, 0)));
+            //expect validFrom to be after 2 hours ago (to handle UTC / BST nonsense)
+            Assert.That((DateTime)d, Is.GreaterThanOrEqualTo(DateTime.Now.Subtract(new TimeSpan(2, 0, 0))));
+        });
     }
 
     protected void CreateCSVProcessTask(LoadMetadata lmd, ITableInfo ti, string regex)
@@ -87,7 +93,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         //make the catalogue use the load configuration
         cata.LoadMetadata_ID = lmd.ID;
         cata.LoggingDataTask = lmd.Name;
-        Assert.IsNotNull(cata.LiveLoggingServer_ID); //catalogue should have one of these because of system defaults
+        Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null); //catalogue should have one of these because of system defaults
         cata.SaveToDatabase();
 
         return ti;

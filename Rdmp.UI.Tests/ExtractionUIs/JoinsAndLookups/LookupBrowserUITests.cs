@@ -18,7 +18,7 @@ public class LookupBrowserUITests : UITests
     {
         var o = WhenIHaveA<Lookup>();
         var ui = AndLaunch<LookupBrowserUI>(o);
-        Assert.IsNotNull(ui);
+        Assert.That(ui, Is.Not.Null);
         //AssertNoErrors(ExpectedErrorType.Fatal);
         //AssertNoErrors(ExpectedErrorType.KilledForm);
     }

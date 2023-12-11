@@ -24,25 +24,25 @@ internal class HistoryProviderTests : UnitTests
         var provider = new HistoryProvider(RepositoryLocator);
         provider.Clear();
 
-        Assert.IsEmpty(provider.History);
+        Assert.That(provider.History, Is.Empty);
 
         provider.Add(c);
 
-        Assert.AreEqual(1, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(1));
 
         provider.Add(c);
 
-        Assert.AreEqual(1, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(1));
 
         provider.Add(c);
 
-        Assert.AreEqual(1, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(1));
 
         var p = WhenIHaveA<Project>();
 
         provider.Add(p);
 
-        Assert.AreEqual(2, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -55,7 +55,7 @@ internal class HistoryProviderTests : UnitTests
 
         var provider = new HistoryProvider(RepositoryLocator);
         provider.Clear();
-        Assert.IsEmpty(provider.History);
+        Assert.That(provider.History, Is.Empty);
 
         provider.History.Add(new HistoryEntry(c1, new DateTime(2001, 01, 01)));
         provider.History.Add(new HistoryEntry(c2, new DateTime(2002, 02, 01)));
@@ -63,20 +63,26 @@ internal class HistoryProviderTests : UnitTests
         provider.History.Add(new HistoryEntry(c4, new DateTime(2004, 01, 04)));
 
         provider.Save(2);
-        Assert.AreEqual(2, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(2));
 
-        Assert.AreEqual(c4, provider.History[0].Object);
-        Assert.AreEqual(c3, provider.History[1].Object);
-        Assert.AreEqual(new DateTime(2004, 01, 04), provider.History[0].Date);
-        Assert.AreEqual(new DateTime(2003, 03, 01), provider.History[1].Date);
+        Assert.Multiple(() =>
+        {
+            Assert.That(provider.History[0].Object, Is.EqualTo(c4));
+            Assert.That(provider.History[1].Object, Is.EqualTo(c3));
+            Assert.That(provider.History[0].Date, Is.EqualTo(new DateTime(2004, 01, 04)));
+            Assert.That(provider.History[1].Date, Is.EqualTo(new DateTime(2003, 03, 01)));
+        });
 
 
         var provider2 = new HistoryProvider(RepositoryLocator);
 
-        Assert.AreEqual(c4, provider2.History[0].Object);
-        Assert.AreEqual(c3, provider2.History[1].Object);
-        Assert.AreEqual(new DateTime(2004, 01, 04), provider2.History[0].Date);
-        Assert.AreEqual(new DateTime(2003, 03, 01), provider2.History[1].Date);
+        Assert.Multiple(() =>
+        {
+            Assert.That(provider2.History[0].Object, Is.EqualTo(c4));
+            Assert.That(provider2.History[1].Object, Is.EqualTo(c3));
+            Assert.That(provider2.History[0].Date, Is.EqualTo(new DateTime(2004, 01, 04)));
+            Assert.That(provider2.History[1].Date, Is.EqualTo(new DateTime(2003, 03, 01)));
+        });
     }
 
     [Test]
@@ -89,7 +95,7 @@ internal class HistoryProviderTests : UnitTests
 
         var provider = new HistoryProvider(RepositoryLocator);
         provider.Clear();
-        Assert.IsEmpty(provider.History);
+        Assert.That(provider.History, Is.Empty);
 
         //these were viewed recently
         provider.History.Add(new HistoryEntry(c1, new DateTime(2001, 01, 01)));
@@ -101,14 +107,20 @@ internal class HistoryProviderTests : UnitTests
 
         //persist only 1 entry (by Type)
         provider.Save(1);
-        Assert.AreEqual(2, provider.History.Count);
+        Assert.That(provider.History, Has.Count.EqualTo(2));
 
-        Assert.AreEqual(c2, provider.History[0].Object);
-        Assert.AreEqual(lmd2, provider.History[1].Object);
+        Assert.Multiple(() =>
+        {
+            Assert.That(provider.History[0].Object, Is.EqualTo(c2));
+            Assert.That(provider.History[1].Object, Is.EqualTo(lmd2));
+        });
 
         var provider2 = new HistoryProvider(RepositoryLocator);
 
-        Assert.AreEqual(c2, provider2.History[0].Object);
-        Assert.AreEqual(lmd2, provider2.History[1].Object);
+        Assert.Multiple(() =>
+        {
+            Assert.That(provider2.History[0].Object, Is.EqualTo(c2));
+            Assert.That(provider2.History[1].Object, Is.EqualTo(lmd2));
+        });
     }
 }

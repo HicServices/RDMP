@@ -23,23 +23,26 @@ public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourc
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(3, dt.Rows.Count);
-        Assert.AreEqual(true, dt.Rows[0]["A"]);
-        Assert.AreEqual(17, dt.Rows[0]["B"]);
-        Assert.AreEqual("Beginning of a long", dt.Rows[0]["C"]);
-        Assert.AreEqual(37, dt.Rows[0]["D"]);
+        Assert.That(dt.Rows, Has.Count.EqualTo(3));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["A"], Is.EqualTo(true));
+            Assert.That(dt.Rows[0]["B"], Is.EqualTo(17));
+            Assert.That(dt.Rows[0]["C"], Is.EqualTo("Beginning of a long"));
+            Assert.That(dt.Rows[0]["D"], Is.EqualTo(37));
 
 
-        Assert.AreEqual(DBNull.Value, dt.Rows[1]["A"]);
-        Assert.AreEqual(DBNull.Value, dt.Rows[1]["B"]);
-        Assert.AreEqual("description of something", dt.Rows[1]["C"]);
-        Assert.AreEqual(DBNull.Value, dt.Rows[1]["D"]);
+            Assert.That(dt.Rows[1]["A"], Is.EqualTo(DBNull.Value));
+            Assert.That(dt.Rows[1]["B"], Is.EqualTo(DBNull.Value));
+            Assert.That(dt.Rows[1]["C"], Is.EqualTo("description of something"));
+            Assert.That(dt.Rows[1]["D"], Is.EqualTo(DBNull.Value));
 
 
-        Assert.AreEqual(DBNull.Value, dt.Rows[2]["A"]);
-        Assert.AreEqual(DBNull.Value, dt.Rows[2]["B"]);
-        Assert.AreEqual("really boring", dt.Rows[2]["C"]);
-        Assert.AreEqual(DBNull.Value, dt.Rows[2]["D"]);
+            Assert.That(dt.Rows[2]["A"], Is.EqualTo(DBNull.Value));
+            Assert.That(dt.Rows[2]["B"], Is.EqualTo(DBNull.Value));
+            Assert.That(dt.Rows[2]["C"], Is.EqualTo("really boring"));
+            Assert.That(dt.Rows[2]["D"], Is.EqualTo(DBNull.Value));
+        });
     }
 
     [Test]
@@ -53,9 +56,12 @@ public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourc
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(2, dt.Rows.Count);
-        Assert.AreEqual("Frank", dt.Rows[0]["Name"]);
-        Assert.AreEqual("Herbert", dt.Rows[1]["Name"]);
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Frank"));
+            Assert.That(dt.Rows[1]["Name"], Is.EqualTo("Herbert"));
+        });
     }
 
     [Test]
@@ -70,12 +76,15 @@ Herbert,2002-01-01,Hey"
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(2, dt.Rows.Count);
-        Assert.AreEqual("Frank", dt.Rows[0]["Name"]);
-        Assert.AreEqual(@"Frank is
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["Name"], Is.EqualTo("Frank"));
+            Assert.That(dt.Rows[0]["Description"], Is.EqualTo(@"Frank is
 
-the best ever", dt.Rows[0]["Description"]);
-        Assert.AreEqual("Herbert", dt.Rows[1]["Name"]);
+the best ever"));
+            Assert.That(dt.Rows[1]["Name"], Is.EqualTo("Herbert"));
+        });
     }
 
     [TestCase("")]
@@ -93,10 +102,13 @@ the best ever", dt.Rows[0]["Description"]);
         );
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(2, dt.Rows.Count);
-        Assert.AreEqual(DBNull.Value, dt.Rows[0]["Name"]);
-        Assert.AreEqual("Herbert", dt.Rows[1]["Name"]);
-        Assert.AreEqual(DBNull.Value, dt.Rows[1]["Dob"]);
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows[0]["Name"], Is.EqualTo(DBNull.Value));
+            Assert.That(dt.Rows[1]["Name"], Is.EqualTo("Herbert"));
+            Assert.That(dt.Rows[1]["Dob"], Is.EqualTo(DBNull.Value));
+        });
     }
 
 
@@ -114,8 +126,11 @@ the best ever", dt.Rows[0]["Description"]);
             "0101010101,5,2001-01-05");
 
         var dt = RunGetChunk(file);
-        Assert.AreEqual(4, dt.Rows.Count);
-        Assert.AreEqual(3, dt.Columns.Count);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(4));
+            Assert.That(dt.Columns, Has.Count.EqualTo(3));
+        });
     }
 
     [Test]
@@ -130,12 +145,18 @@ the best ever", dt.Rows[0]["Description"]);
             "0101010101,5,2001-01-05");
 
         var dt = RunGetChunk(file);
-        Assert.IsNotNull(dt);
-        Assert.AreEqual(4, dt.Rows.Count);
-        Assert.AreEqual(3, dt.Columns.Count); //and therefore do not appear in the output table
-        Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
-        Assert.AreEqual("StudyID", dt.Columns[1].ColumnName);
-        Assert.AreEqual("Date", dt.Columns[2].ColumnName);
+        Assert.That(dt, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(4));
+            Assert.That(dt.Columns, Has.Count.EqualTo(3)); //and therefore do not appear in the output table
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("StudyID"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Date"));
+        });
     }
 
     [TestCase(true)]
@@ -161,11 +182,17 @@ the best ever", dt.Rows[0]["Description"]);
         else
             dt = RunGetChunk(file);
 
-        Assert.IsNotNull(dt);
-        Assert.AreEqual(4, dt.Rows.Count);
-        Assert.AreEqual(3, dt.Columns.Count);
-        Assert.AreEqual("CHI", dt.Columns[0].ColumnName);
-        Assert.AreEqual("StudyID", dt.Columns[1].ColumnName);
-        Assert.AreEqual("Date", dt.Columns[2].ColumnName);
+        Assert.That(dt, Is.Not.Null);
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Rows, Has.Count.EqualTo(4));
+            Assert.That(dt.Columns, Has.Count.EqualTo(3));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(dt.Columns[0].ColumnName, Is.EqualTo("CHI"));
+            Assert.That(dt.Columns[1].ColumnName, Is.EqualTo("StudyID"));
+            Assert.That(dt.Columns[2].ColumnName, Is.EqualTo("Date"));
+        });
     }
 }

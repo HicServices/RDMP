@@ -23,44 +23,62 @@ public class CatalogueUITests : UITests
         var ui = AndLaunch<CatalogueUI>(cata);
 
         //there no unsaved changes
-        Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
+        Assert.That(cata.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
 
         //but when I type text
         ui._scintillaDescription.Text = "amagad zombies";
 
-        //my class should get the typed text but it shouldn't be saved into the database yet
-        Assert.AreEqual("amagad zombies", cata.Description);
-        Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, cata.HasLocalChanges().Evaluation);
+        Assert.Multiple(() =>
+        {
+            //my class should get the typed text but it shouldn't be saved into the database yet
+            Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
+            Assert.That(cata.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent));
+        });
 
         //when I press undo
         var saver = ui.GetObjectSaverButton();
         saver.Undo();
 
-        //it should set the text editor back to blank
-        Assert.AreEqual("", ui._scintillaDescription.Text);
-        //and clear my class property
-        Assert.AreEqual(null, cata.Description);
+        Assert.Multiple(() =>
+        {
+            //it should set the text editor back to blank
+            Assert.That(ui._scintillaDescription.Text, Is.EqualTo(""));
+            //and clear my class property
+            Assert.That(cata.Description, Is.EqualTo(null));
+        });
 
         //redo should update both the local class and text box
         saver.Redo();
-        Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
-        Assert.AreEqual("amagad zombies", cata.Description);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ui._scintillaDescription.Text, Is.EqualTo("amagad zombies"));
+            Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
+        });
 
         //undo a redo should still be valid
         saver.Undo();
-        Assert.AreEqual("", ui._scintillaDescription.Text);
-        Assert.AreEqual(null, cata.Description);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ui._scintillaDescription.Text, Is.EqualTo(""));
+            Assert.That(cata.Description, Is.EqualTo(null));
+        });
 
         saver.Redo();
-        Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
-        Assert.AreEqual("amagad zombies", cata.Description);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ui._scintillaDescription.Text, Is.EqualTo("amagad zombies"));
+            Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
+        });
 
         //when I save
         saver.Save();
 
-        //my class should have no changes (vs the database) and should have the proper description
-        Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
-        Assert.AreEqual("amagad zombies", cata.Description);
+        Assert.Multiple(() =>
+        {
+            //my class should have no changes (vs the database) and should have the proper description
+            Assert.That(cata.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges));
+            Assert.That(cata.Description, Is.EqualTo("amagad zombies"));
+        });
 
         AssertNoErrors(ExpectedErrorType.Any);
 

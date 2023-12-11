@@ -7,7 +7,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -64,7 +63,7 @@ public class ImportFilesDataProviderTests : DatabaseTests
         provider.Fetch(job, new GracefulCancellationToken());
 
         //destination is empty because nothing matched
-        Assert.IsEmpty(targetDir.GetFiles());
+        Assert.That(targetDir.GetFiles(), Is.Empty);
 
         //give it correct pattern
         provider.FilePattern = "*.txt";
@@ -72,23 +71,32 @@ public class ImportFilesDataProviderTests : DatabaseTests
         //execute the provider
         provider.Fetch(job, new GracefulCancellationToken());
 
-        //both files should exist
-        Assert.AreEqual(1, targetDir.GetFiles().Length);
-        Assert.AreEqual(1, sourceDir.GetFiles().Length);
+        Assert.Multiple(() =>
+        {
+            //both files should exist
+            Assert.That(targetDir.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(sourceDir.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         //simulate load failure
         provider.LoadCompletedSoDispose(ExitCodeType.Abort, new ThrowImmediatelyDataLoadJob());
 
-        //both files should exist
-        Assert.AreEqual(1, targetDir.GetFiles().Length);
-        Assert.AreEqual(1, sourceDir.GetFiles().Length);
+        Assert.Multiple(() =>
+        {
+            //both files should exist
+            Assert.That(targetDir.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(sourceDir.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         //simulate load success
         provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
-        //both files should exist because Delete on success is false
-        Assert.AreEqual(1, targetDir.GetFiles().Length);
-        Assert.AreEqual(1, sourceDir.GetFiles().Length);
+        Assert.Multiple(() =>
+        {
+            //both files should exist because Delete on success is false
+            Assert.That(targetDir.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(sourceDir.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         //change behaviour to delete on successful data loads
         provider.DeleteFilesOnsuccessfulLoad = true;
@@ -96,15 +104,21 @@ public class ImportFilesDataProviderTests : DatabaseTests
         //simulate load failure
         provider.LoadCompletedSoDispose(ExitCodeType.Error, new ThrowImmediatelyDataLoadJob());
 
-        //both files should exist
-        Assert.AreEqual(1, targetDir.GetFiles().Length);
-        Assert.AreEqual(1, sourceDir.GetFiles().Length);
+        Assert.Multiple(() =>
+        {
+            //both files should exist
+            Assert.That(targetDir.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(sourceDir.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         //simulate load success
         provider.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadJob());
 
-        //only forLoading file should exist (in real life that one would be handled by archivng already)
-        Assert.AreEqual(1, targetDir.GetFiles().Length);
-        Assert.AreEqual(0, sourceDir.GetFiles().Length);
+        Assert.Multiple(() =>
+        {
+            //only forLoading file should exist (in real life that one would be handled by archivng already)
+            Assert.That(targetDir.GetFiles(), Has.Length.EqualTo(1));
+            Assert.That(sourceDir.GetFiles(), Is.Empty);
+        });
     }
 }

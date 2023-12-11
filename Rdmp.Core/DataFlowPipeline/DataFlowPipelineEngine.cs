@@ -158,7 +158,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             }
             catch (Exception e)
             {
-                //dispose crashing is only a dealbreaker if there wasn't already an exception in the pipeline
+                //dispose crashing is only a deal-breaker if there wasn't already an exception in the pipeline
                 if (exception == null)
                     throw;
 
@@ -176,7 +176,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                 }
                 catch (Exception e)
                 {
-                    //dispose crashing is only a dealbreaker if there wasn't already an exception in the pipeline
+                    //dispose crashing is only a deal-breaker if there wasn't already an exception in the pipeline
                     if (exception == null)
                         throw;
 

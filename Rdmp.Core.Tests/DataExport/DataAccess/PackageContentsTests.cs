@@ -24,7 +24,7 @@ public class PackageContentsTests : DatabaseTests
         var package = new ExtractableDataSetPackage(DataExportRepository, "My Cool Package");
         try
         {
-            Assert.AreEqual("My Cool Package", package.Name);
+            Assert.That(package.Name, Is.EqualTo("My Cool Package"));
             package.Name = "FishPackage";
             package.SaveToDatabase();
 
@@ -32,13 +32,13 @@ public class PackageContentsTests : DatabaseTests
             var packageContents = DataExportRepository;
 
             var results = packageContents.GetAllDataSets(package, null);
-            Assert.AreEqual(0, results.Length);
+            Assert.That(results, Is.Empty);
 
             packageContents.AddDataSetToPackage(package, ds);
 
             results = packageContents.GetAllDataSets(package, DataExportRepository.GetAllObjects<ExtractableDataSet>());
-            Assert.AreEqual(1, results.Length);
-            Assert.AreEqual(ds, results[0]);
+            Assert.That(results, Has.Length.EqualTo(1));
+            Assert.That(results[0], Is.EqualTo(ds));
 
             packageContents.RemoveDataSetFromPackage(package, ds);
 
