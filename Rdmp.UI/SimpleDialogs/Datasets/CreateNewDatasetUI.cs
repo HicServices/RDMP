@@ -26,5 +26,4 @@ public partial class CreateNewDatasetUI : RDMPForm
         cmd.Execute();
         Close();
     }
-
 }
