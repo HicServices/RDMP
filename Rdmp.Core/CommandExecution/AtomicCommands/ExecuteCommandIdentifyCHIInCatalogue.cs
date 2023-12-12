@@ -60,7 +60,6 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     private void handleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
     {
         if (pkColumn.Split(".").Last().Replace("[", "").Replace("]", "") == columnName.Replace("[", "").Replace("]", "")) return; //don't redact PKs, it gets messy
-        //^TODO check this works and doesn;t need to munge the []^
         if (foundChis.Rows.Count == 0)
         {
             //init
