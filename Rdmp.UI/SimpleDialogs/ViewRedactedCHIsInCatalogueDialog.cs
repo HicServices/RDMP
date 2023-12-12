@@ -105,9 +105,9 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (_activator.YesNo("Do you want to confirm all these redactions?", "Confirm All"))
             {
-                foreach (var rIndex in Enumerable.Range(0, _results.Rows.Count))
+                foreach (var rIndex in Enumerable.Range(0,_results.Rows.Count))
                 {
-                    ConfirmButtonClick(rIndex);
+                    ConfirmButtonClick(0);
                 }
             }
         }
