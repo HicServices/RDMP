@@ -21,6 +21,7 @@ namespace Rdmp.UI.SimpleDialogs
     public partial class ViewRedactedCHIsInCatalogueDialog : Form
     {
         private bool _isLoading = true;
+        private bool _firstTime = true;
         private IBasicActivateItems _activator;
         private ICatalogue _catalogue;
         private DataTable _results;
@@ -52,7 +53,10 @@ namespace Rdmp.UI.SimpleDialogs
                 result.Delete();
                 _results.AcceptChanges();
                 dtResults.DataSource = _results;
-                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+                //dtResults.Columns[5].Visible = false;
+                //dtResults.Columns[5].Visible = false;
+                //dtResults.Columns[5].Visible = false;
+                //dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
             }
         }
@@ -73,7 +77,9 @@ namespace Rdmp.UI.SimpleDialogs
                 result.Delete();
                 _results.AcceptChanges();
                 dtResults.DataSource = _results;
-                dtResults.Columns[5].Visible = false;//todo this isn't quite right
+                //dtResults.Columns[5].Visible = false;
+
+                //dtResults.Columns[5].Visible = false;//todo this isn't quite right
 
             }
         }
@@ -112,12 +118,6 @@ namespace Rdmp.UI.SimpleDialogs
             }
         }
 
-        private string locationToColumn(string location)
-        {
-            var lastIdx = location.LastIndexOf('.');
-            return location[(lastIdx + 1)..];
-        }
-
         private void FindChis()
         {
             _isLoading = true;
@@ -141,8 +141,14 @@ namespace Rdmp.UI.SimpleDialogs
                 dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName, rc.TableName, rc.PKColumnName, rc.PKValue });
             }
             dtResults.DataSource = dt;
-            dtResults.Columns[3].Visible = false;
-            _results = dt;
+            if (_firstTime)
+            {
+                dtResults.Columns[5].Visible = false;
+                dtResults.Columns[4].Visible = false;
+                _firstTime = false;
+            }
+                //dtResults.Columns[3].Visible = false;
+                _results = dt;
             DataGridViewButtonColumn revertColumn = new DataGridViewButtonColumn();
             revertColumn.Text = "Revert";
             revertColumn.Name = "Revert";

@@ -30,6 +30,7 @@ namespace Rdmp.UI.SimpleDialogs
         private IActivateItems _activator;
         private ICatalogue _catalogue;
         private DataTable _results;
+        private bool _firstTime = true;
 
         public RedactChisInCatalogueDialog(IActivateItems activator, ICatalogue catalogue)
         {
@@ -106,6 +107,13 @@ namespace Rdmp.UI.SimpleDialogs
             if (dgResults.Columns["Redact"] == null)
             {
                 dgResults.Columns.Insert(3, confirmColumn);
+            }
+            if (_firstTime)
+            {
+                dgResults.Columns[4].Visible = false;
+                dgResults.Columns[5].Visible = false;
+                dgResults.Columns[6].Visible = false;
+                _firstTime = false;
             }
             dgResults.Visible = true;
             lbResults.Visible = false;
