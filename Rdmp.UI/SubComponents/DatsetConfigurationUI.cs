@@ -10,7 +10,7 @@ using Rdmp.UI.ItemActivation;
 
 
 namespace Rdmp.UI.SubComponents;
-public partial class DatsetConfigurationUI : DatsetConfigurationUI_DesignProvider, IRefreshBusSubscriber
+public partial class DatsetConfigurationUI : DatsetConfigurationUI_DesignProviderUI, IRefreshBusSubscriber
 {
     DatasetConfigurationUICommon Common;
 
@@ -64,6 +64,6 @@ public partial class DatsetConfigurationUI : DatsetConfigurationUI_DesignProvide
 [TypeDescriptionProvider(
     typeof(AbstractControlDescriptionProvider<DatsetConfigurationUI_Design, UserControl>))]
 public abstract class
-    DatsetConfigurationUI_DesignProvider : RDMPSingleDatabaseObjectControl<Dataset>
+    DatsetConfigurationUI_DesignProviderUI : RDMPSingleDatabaseObjectControl<Dataset>
 {
 }
