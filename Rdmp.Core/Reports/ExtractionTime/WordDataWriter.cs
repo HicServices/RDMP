@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NPOI.XWPF.UserModel;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
@@ -20,7 +19,6 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Validation.Constraints;
-using static Rdmp.Core.ReusableLibraryCode.Diff;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Reports.ExtractionTime;

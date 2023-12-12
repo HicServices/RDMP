@@ -47,7 +47,6 @@ public sealed class ExecuteCommandLinkColumnInfoToDataSetUI : BasicUICommandExec
         var cmd = new ExecuteCommandLinkColumnInfoToDataset(_activateItems,_columnInfo, _selectedDataset,backfill);
         cmd.Execute();
 
-
     }
 
     public override Image<Rgba32> GetImage([NotNull] IIconProvider iconProvider) =>
