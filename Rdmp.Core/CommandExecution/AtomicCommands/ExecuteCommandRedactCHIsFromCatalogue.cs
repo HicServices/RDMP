@@ -86,9 +86,9 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
             var pkValue = result.ItemArray[3].ToString();
-            var pkColumn = result.ItemArray[4].ToString();
             var replacementIdex = int.Parse(result.ItemArray[5].ToString());
             var table = name.Replace($".[{column}]", "");
+            var pkColumn = result.ItemArray[4].ToString().Replace(table, "").Replace(".", "");
             var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, table, pkValue, pkColumn, $"[{column}]");
             rc.SaveToDatabase();
 
