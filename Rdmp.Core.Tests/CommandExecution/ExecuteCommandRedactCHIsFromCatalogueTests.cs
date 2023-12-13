@@ -72,7 +72,7 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
         var tempFileToCreate = Path.Combine(TestContext.CurrentContext.TestDirectory, "allowList.yaml");
         var allowList = File.Create(tempFileToCreate);
         allowList.Close();
-        File.WriteAllLines(tempFileToCreate, new string[] { "RDMP_ALL:", "- SampleType" });
+        File.WriteAllLines(tempFileToCreate, new string[] { "Biochemistry:", "- SampleType" });
         var cmd = new ExecuteCommandRedactCHIsFromCatalogue(new ThrowImmediatelyActivator(RepositoryLocator), biochemistry, tempFileToCreate);
         Assert.DoesNotThrow(() => cmd.Execute());
         var dt = new DataTable();

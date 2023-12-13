@@ -107,7 +107,7 @@ internal class ExecuteCommandIdentifyCHIInCatalogueTests : DatabaseTests
         var tempFileToCreate = Path.Combine(TestContext.CurrentContext.TestDirectory, "allowList.yaml");
         var allowList = File.Create(tempFileToCreate);
         allowList.Close();
-        File.WriteAllLines(tempFileToCreate, new string[] { "RDMP_ALL:", "- SampleType" });
+        File.WriteAllLines(tempFileToCreate, new string[] { "Biochemistry:", "- SampleType" });
         var cmd = new ExecuteCommandIdentifyCHIInCatalogue(new ThrowImmediatelyActivator(RepositoryLocator), biochemistry, false, tempFileToCreate);
         Assert.DoesNotThrow(() => cmd.Execute());
         Assert.That(cmd.foundChis.Rows.Count, Is.EqualTo(0));
