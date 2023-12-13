@@ -33,7 +33,6 @@ public class Gatherer
         _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
         _functions.Add(typeof(ColumnInfo), o => GatherDependencies((ColumnInfo)o));
         _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-        _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
 
         _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -64,16 +63,6 @@ public class Gatherer
     {
         var root = new GatheredObject(anoTable.Server);
         root.Children.Add(new GatheredObject(anoTable));
-
-        return root;
-    }
-
-    public static GatheredObject GatherDependencies(Plugin plugin)
-    {
-        var root = new GatheredObject(plugin);
-
-        foreach (var lma in plugin.LoadModuleAssemblies)
-            root.Children.Add(new GatheredObject(lma));
 
         return root;
     }

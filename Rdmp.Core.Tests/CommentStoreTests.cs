@@ -27,9 +27,9 @@ internal class CommentStoreTests
 
         store.AddXmlDoc(doc.FirstChild);
 
-        Assert.AreEqual(
-            @"Does some stuff"
-            , store["WindowFactory"]);
+        Assert.That(
+store["WindowFactory"], Is.EqualTo(@"Does some stuff"
+));
     }
 
     [Test]
@@ -49,9 +49,9 @@ internal class CommentStoreTests
 
         store.AddXmlDoc(doc.FirstChild);
 
-        Assert.AreEqual(
-            @"Does some stuff"
-            , store["WindowFactory"]);
+        Assert.That(
+store["WindowFactory"], Is.EqualTo(@"Does some stuff"
+));
     }
 
     [Test]
@@ -73,11 +73,11 @@ internal class CommentStoreTests
 
         store.AddXmlDoc(doc.FirstChild);
 
-        Assert.AreEqual(
-            @"Does some stuff This is still one para
+        Assert.That(
+store["WindowFactory"], Is.EqualTo(@"Does some stuff This is still one para
 
 this is next para"
-            , store["WindowFactory"]);
+));
     }
 
 
@@ -97,10 +97,10 @@ this is next para"
         //also shouldn't bomb but should be 0
         store.AddXmlDoc(doc.FirstChild.FirstChild);
 
-        Assert.IsEmpty(store);
+        Assert.That(store, Is.Empty);
 
         store.AddXmlDoc(doc.FirstChild);
-        Assert.IsEmpty(store);
+        Assert.That(store, Is.Empty);
 
         doc.LoadXml(
             @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
@@ -108,7 +108,7 @@ this is next para"
                 </member>");
 
         store.AddXmlDoc(doc.FirstChild);
-        Assert.IsEmpty(store);
+        Assert.That(store, Is.Empty);
 
 
         doc.LoadXml(
@@ -117,7 +117,7 @@ this is next para"
                 </member>");
 
         store.AddXmlDoc(doc.FirstChild);
-        Assert.IsNotEmpty(store);
+        Assert.That(store, Is.Not.Empty);
     }
 
 
@@ -142,11 +142,11 @@ this is next para"
 
         store.AddXmlDoc(doc.FirstChild);
 
-        Assert.AreEqual(
-            @"Does some stuff This is still one para
+        Assert.That(
+store["WindowFactory"], Is.EqualTo(@"Does some stuff This is still one para
 
 this is next para"
-            , store["WindowFactory"]);
+));
     }
 
 
@@ -172,10 +172,10 @@ got it?
 
         store.AddXmlDoc(doc.FirstChild);
 
-        Assert.AreEqual(
-            @"Does some stuff And some more stuff IObjectCollectionControl (for RDMPCollectionUI see WindowManager ).
+        Assert.That(
+store["WindowFactory"], Is.EqualTo(@"Does some stuff And some more stuff IObjectCollectionControl (for RDMPCollectionUI see WindowManager ).
 
 paragraph 2 got it?"
-            , store["WindowFactory"]);
+));
     }
 }

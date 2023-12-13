@@ -53,7 +53,7 @@ public class AllUIsDocumentedTest : UnitTests
         foreach (var error in Errors)
             Console.WriteLine($"FATAL NAMESPACE ERROR FAILURE:{error}");
 
-        Assert.AreEqual(Errors.Count, 0);
+        Assert.That(Errors, Is.Empty);
     }
 
     private string[] _exemptNamespaces =

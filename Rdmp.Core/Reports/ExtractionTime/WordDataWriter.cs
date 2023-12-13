@@ -17,6 +17,7 @@ using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Validation.Constraints;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
@@ -53,8 +54,16 @@ public class WordDataWriter : DocXHelper
     private static readonly object OLockOnWordUsage = new();
     private readonly IExecuteDatasetExtractionDestination _destination;
 
+
+
+    [NotNull]
+    private static string GetDoi([NotNull] Curation.Data.Dataset ds)
+    {
+        return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
+    }
+
     /// <summary>
-    /// Generates a new meta data word file in the extraction directory and populates it with information about the extraction.
+    /// Generates a new metadata word file in the extraction directory and populates it with information about the extraction.
     /// It returns the open document as an object so that you can supplement it e.g. with catalogue information
     /// </summary>
     /// <returns></returns>
@@ -71,6 +80,14 @@ public class WordDataWriter : DocXHelper
             InsertHeader(document, "File Data");
 
             var rowCount = _destination.GeneratesFiles ? 10 : 5;
+
+            var foundDatasets = Executer.Source.Request.ColumnsToExtract.Select(static col => col.ColumnInfo)
+                .Where(static ci => ci.Dataset_ID > 0).Select(static ci => ci.Dataset_ID.Value).Distinct().ToList();
+            if (foundDatasets.Count > 0)
+            {
+                rowCount++;
+            }
+
 
             var t = InsertTable(document, rowCount, 2);
 
@@ -142,6 +159,21 @@ public class WordDataWriter : DocXHelper
                 InsertSectionPageBreak(document);
 
                 CreateValidationResultsTable(document);
+            }
+
+            if (foundDatasets.Count > 0)
+            {
+                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>().ToList();
+
+                var datasetString = string.Join(", ",
+                    foundDatasets
+                        .Select(ds => datasets.FirstOrDefault(d => d.ID == ds))
+                        .Where(static d => d != null)
+                        .Select(static fullDataset => $"{fullDataset.Name}{GetDoi(fullDataset)}"));
+
+                SetTableCell(t, rownum, 0, "Datasets Used");
+                SetTableCell(t, rownum, 1, datasetString);
+                rownum++;
             }
 
             //if a count of date times seen exists for this extraction create a graph of the counts seen

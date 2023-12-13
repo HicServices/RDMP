@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery;
@@ -392,18 +393,22 @@ public partial class ConfigureCatalogueExtractabilityUI : RDMPForm, ISaveableUI
     {
         var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
         var toChangeTo = ddCategoriseMany.SelectedItem;
+        var itemsToChange = filteredObjects.Where(obj => obj.ExtractionInformation is null || !obj.ExtractionInformation.ExtractionCategory.Equals(toChangeTo)).Select(static cp => cp.CatalogueItem.Name).ToArray();
+        var columnChangeDetails = itemsToChange.Length < 3
+            ? new StringBuilder().AppendJoin(", ", itemsToChange[..^1])
+                .Append(itemsToChange.Length > 1 ? " and " : "").Append(itemsToChange[^1]).ToString()
+            : $"{(itemsToChange.Length == filteredObjects.Length ? "all " : "")}{itemsToChange.Length} columns";
 
-        if (MessageBox.Show($"Set {filteredObjects.Length} to '{toChangeTo}'?",
-                "Confirm Overwrite?", MessageBoxButtons.OKCancel) == DialogResult.OK)
-        {
-            foreach (object o in filteredObjects)
-                if (toChangeTo.Equals(NotExtractable))
-                    MakeExtractable(o, false);
-                else
-                    MakeExtractable(o, true, (ExtractionCategory)toChangeTo);
+        if (MessageBox.Show($"Set {columnChangeDetails} to '{toChangeTo}'?",
+                "Confirm Overwrite?", MessageBoxButtons.OKCancel) != DialogResult.OK) return;
 
-            _ddChangeAllChanged = true;
-        }
+        foreach (var o in filteredObjects)
+            if (toChangeTo.Equals(NotExtractable))
+                MakeExtractable(o, false);
+            else
+                MakeExtractable(o, true, (ExtractionCategory)toChangeTo);
+
+        _ddChangeAllChanged = true;
     }
 
     private void FinaliseExtractability()

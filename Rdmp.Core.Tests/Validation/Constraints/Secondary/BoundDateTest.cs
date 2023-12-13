@@ -26,7 +26,7 @@ internal class BoundDateTest
 
         var result = CallValidateOnValidData("admission_date", b);
 
-        Assert.IsNull(result);
+        Assert.That(result, Is.Null);
     }
 
     [Test]
@@ -34,14 +34,14 @@ internal class BoundDateTest
     {
         var b = (BoundDate)Validator.CreateConstraint("bounddate", Consequence.Wrong);
 
-        Assert.IsTrue(b.Inclusive);
+        Assert.That(b.Inclusive);
 
 
         var cols = new object[] { DateTime.Parse("2007-10-09 00:00:00.0000000") };
         var names = new string[] { "dob2" };
         b.LowerFieldName = "dob2";
 
-        Assert.IsNull(b.Validate(DateTime.Parse("2007-10-09 00:00:00.0000000"), cols, names));
+        Assert.That(b.Validate(DateTime.Parse("2007-10-09 00:00:00.0000000"), cols, names), Is.Null);
     }
 
     [Test]
@@ -52,7 +52,7 @@ internal class BoundDateTest
         b.LowerFieldName = "dob";
         b.Upper = DateTime.MaxValue;
 
-        Assert.NotNull(CallValidateOnInvalidData("admission_date", b));
+        Assert.That(CallValidateOnInvalidData("admission_date", b), Is.Not.Null);
     }
 
 
@@ -71,8 +71,8 @@ internal class BoundDateTest
             Assert.Fail("Expected validation exception, but none came");
 
 
-        Assert.NotNull(result.SourceConstraint);
-        Assert.AreEqual(result.SourceConstraint.Consequence, Consequence.InvalidatesRow);
+        Assert.That(result.SourceConstraint, Is.Not.Null);
+        Assert.That(result.SourceConstraint.Consequence, Is.EqualTo(Consequence.InvalidatesRow));
     }
 
 

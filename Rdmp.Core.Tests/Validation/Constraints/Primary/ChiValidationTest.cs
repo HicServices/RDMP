@@ -37,7 +37,7 @@ internal class ChiValidationTest : ValidationTests
         var domainObject = new Dictionary<string, object> { { "chi", TestConstants._VALID_CHI } };
 
         // 6. Validate, passing in the target object to be validated against - ValidationFailure or null is returned
-        Assert.IsNull(validator.Validate(domainObject));
+        Assert.That(validator.Validate(domainObject), Is.Null);
     }
 
     [Test]
@@ -78,6 +78,6 @@ internal class ChiValidationTest : ValidationTests
         };
 
         // 9. Validate, passing in the target object to be validated against
-        Assert.IsNull(validator.Validate(domainObject));
+        Assert.That(validator.Validate(domainObject), Is.Null);
     }
 }

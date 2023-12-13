@@ -38,7 +38,7 @@ internal class DataAccessPortalCollectionTests
         _dap.Server.Returns("loco");
         _dap.DatabaseType.Returns(DatabaseType.Oracle);
         collection.Add(_dap);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.That(collection.Points, Has.Count.EqualTo(1));
     }
 
     [Test]
@@ -47,22 +47,22 @@ internal class DataAccessPortalCollectionTests
         var collection = new DataAccessPointCollection(true);
 
         var _dap = Substitute.For<IDataAccessPoint>();
-        _dap.Server = ("loco");
-        _dap.Database = ("B");
-        _dap.DatabaseType = (DatabaseType.Oracle);
+        _dap.Server = "loco";
+        _dap.Database = "B";
+        _dap.DatabaseType = DatabaseType.Oracle;
 
         var _dap0 = Substitute.For<IDataAccessPoint>();
-        _dap0.Server = ("loco");
-        _dap0.Database = ("A");
-        _dap0.DatabaseType = (DatabaseType.Oracle);
+        _dap0.Server = "loco";
+        _dap0.Database = "A";
+        _dap0.DatabaseType = DatabaseType.Oracle;
 
         collection.Add(_dap0);
         collection.Add(_dap);
 
-        Assert.AreEqual(2, collection.Points.Count);
+        Assert.That(collection.Points, Has.Count.EqualTo(2));
 
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.IsNull(db);
+        Assert.That(db, Is.Null);
     }
 
     [Test]
@@ -88,11 +88,11 @@ internal class DataAccessPortalCollectionTests
 
         collection.Add(_dap0);
 
-        Assert.AreEqual(2, collection.Points.Count);
+        Assert.That(collection.Points, Has.Count.EqualTo(2));
 
         //they both go to loco server so the single server should specify loco but no clear db
         var db = collection.GetDistinctServer().GetCurrentDatabase();
-        Assert.IsNull(db);
+        Assert.That(db, Is.Null);
     }
 
     [Test]
@@ -119,7 +119,7 @@ internal class DataAccessPortalCollectionTests
 
         collection.Add(_dap0);
 
-        Assert.AreEqual(2, collection.Points.Count);
+        Assert.That(collection.Points, Has.Count.EqualTo(2));
     }
 
     [Test]
@@ -149,10 +149,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("ollection could not agree on a single Username",
-            ex.InnerException.Message);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("ollection could not agree on a single Username"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -187,10 +189,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("could not agree on a single Username to use to access the data under",
-            ex.InnerException.Message);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("could not agree on a single Username to use to access the data under"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -225,10 +229,12 @@ internal class DataAccessPortalCollectionTests
             collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("collection could not agree on a single Password to use to access the data under",
-            ex.InnerException.Message);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("collection could not agree on a single Password to use to access the data under"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
     [Test]
@@ -250,9 +256,12 @@ internal class DataAccessPortalCollectionTests
         collection.Add(_dap0)
         );
 
-        //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("There was a mismatch in server names for data access points", ex.InnerException.Message);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch in server names for data access points"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 
 
@@ -275,8 +284,11 @@ internal class DataAccessPortalCollectionTests
         collection.Add(_dap)
         );
 
-        //should be relevant error and it shouldn't have been added
-        StringAssert.Contains("There was a mismatch on DatabaseType for data access points", ex.InnerException.Message);
-        Assert.AreEqual(1, collection.Points.Count);
+        Assert.Multiple(() =>
+        {
+            //should be relevant error and it shouldn't have been added
+            Assert.That(ex.InnerException.Message, Does.Contain("There was a mismatch on DatabaseType for data access points"));
+            Assert.That(collection.Points, Has.Count.EqualTo(1));
+        });
     }
 }

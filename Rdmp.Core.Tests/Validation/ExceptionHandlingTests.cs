@@ -21,7 +21,7 @@ internal class ExceptionHandlingTests
     public void Validate_WhenMultipleErrors_ReturnsAllErrors()
     {
         var validator = new Validator();
-            
+
         var chi = new ItemValidator
         {
             PrimaryConstraint = (PrimaryConstraint)Validator.CreateConstraint("chi", Consequence.Wrong)
@@ -46,6 +46,6 @@ internal class ExceptionHandlingTests
 
         var result = validator.Validate(row);
 
-        Assert.AreEqual(2, result.GetExceptionList().Count);
+        Assert.That(result.GetExceptionList(), Has.Count.EqualTo(2));
     }
 }

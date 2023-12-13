@@ -104,7 +104,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                     OverrideCommandName = "Catalogue SQL/Data",
                     SuggestedCategory = View
                 };
-
                 yield return new ExecuteCommandAddNewCatalogueItem(_activator, c)
                 { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
                 yield return new ExecuteCommandAddNewAggregateGraph(_activator, c)
@@ -472,6 +471,8 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandFreezeCohortIdentificationConfiguration(_activator, cic, !cic.Frozen)
             { Weight = -50.5f };
+            yield return new ExecuteCommandCreateHoldoutLookup(_activator, cic)
+            { Weight = -50.5f };
 
             var clone = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator)
             { Weight = -50.4f, OverrideCommandName = "Clone" }.SetTarget(cic);
@@ -544,6 +545,8 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.SQLFile,
                 lsn.LoadMetadata, lsn.LoadStage);
             yield return new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.Executable,
+                lsn.LoadMetadata, lsn.LoadStage);
+            yield return new ExecuteCommandCreateNewFileBasedProcessTask(_activator, ProcessTaskType.SQLBakFile,
                 lsn.LoadMetadata, lsn.LoadStage);
         }
 

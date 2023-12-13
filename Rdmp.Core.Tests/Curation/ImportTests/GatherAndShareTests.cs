@@ -6,10 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -33,7 +31,7 @@ public class GatherAndShareTests : DatabaseTests
         var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json,
             typeof(Dictionary<RelationshipAttribute, Guid>), RepositoryLocator);
 
-        Assert.AreEqual(0, obj.Count);
+        Assert.That(obj, Is.Empty);
 
         //now add a key
         d.Add(new RelationshipAttribute(typeof(string), RelationshipType.SharedObject, "fff"), Guid.Empty);
@@ -42,7 +40,7 @@ public class GatherAndShareTests : DatabaseTests
         obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json,
             typeof(Dictionary<RelationshipAttribute, Guid>), RepositoryLocator);
 
-        Assert.AreEqual(1, obj.Count);
+        Assert.That(obj, Has.Count.EqualTo(1));
     }
 
     [TestCase(true)]
@@ -53,16 +51,19 @@ public class GatherAndShareTests : DatabaseTests
             new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", new ANOStorePatcher());
         var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "N");
 
-        Assert.AreEqual(anoTable.Server_ID, anoserver.ID);
+        Assert.That(anoserver.ID, Is.EqualTo(anoTable.Server_ID));
 
         var g = new Gatherer(RepositoryLocator);
-        Assert.IsTrue(g.CanGatherDependencies(anoTable));
+        Assert.That(g.CanGatherDependencies(anoTable));
 
         var gObj = Gatherer.GatherDependencies(anoTable);
 
-        //root should be the server
-        Assert.AreEqual(gObj.Object, anoserver);
-        Assert.AreEqual(gObj.Children.Single().Object, anoTable);
+        Assert.Multiple(() =>
+        {
+            //root should be the server
+            Assert.That(anoserver, Is.EqualTo(gObj.Object));
+            Assert.That(anoTable, Is.EqualTo(gObj.Children.Single().Object));
+        });
 
         //get the sharing definitions
         var shareManager = new ShareManager(RepositoryLocator);
@@ -89,69 +90,54 @@ public class GatherAndShareTests : DatabaseTests
 
         var anoserverAfter = new ExternalDatabaseServer(shareManager, defParent);
 
-        Assert.IsTrue(anoserverAfter.Exists());
+        Assert.Multiple(() =>
+        {
+            Assert.That(anoserverAfter.Exists());
 
-        //new instance
-        Assert.AreNotEqual(anoserverAfter.ID, anoserver.ID);
+            //new instance
+            Assert.That(anoserver.ID, Is.Not.EqualTo(anoserverAfter.ID));
 
-        //same properties
-        Assert.AreEqual(anoserverAfter.Name, anoserver.Name);
-        Assert.AreEqual(anoserverAfter.CreatedByAssembly, anoserver.CreatedByAssembly);
-        Assert.AreEqual(anoserverAfter.Database, anoserver.Database);
-        Assert.AreEqual(anoserverAfter.DatabaseType, anoserver.DatabaseType);
-        Assert.AreEqual(anoserverAfter.Username, anoserver.Username);
-        Assert.AreEqual(anoserverAfter.Password, anoserver.Password);
+            //same properties
+            Assert.That(anoserver.Name, Is.EqualTo(anoserverAfter.Name));
+            Assert.That(anoserver.CreatedByAssembly, Is.EqualTo(anoserverAfter.CreatedByAssembly));
+            Assert.That(anoserver.Database, Is.EqualTo(anoserverAfter.Database));
+            Assert.That(anoserver.DatabaseType, Is.EqualTo(anoserverAfter.DatabaseType));
+            Assert.That(anoserver.Username, Is.EqualTo(anoserverAfter.Username));
+            Assert.That(anoserver.Password, Is.EqualTo(anoserverAfter.Password));
+        });
 
         var anoTableAfter = new ANOTable(shareManager, defChild);
 
-        //new instance
-        Assert.AreNotEqual(anoTableAfter.ID, anoTable.ID);
-        Assert.AreNotEqual(anoTableAfter.Server_ID, anoTable.Server_ID);
+        Assert.Multiple(() =>
+        {
+            //new instance
+            Assert.That(anoTable.ID, Is.Not.EqualTo(anoTableAfter.ID));
+            Assert.That(anoTable.Server_ID, Is.Not.EqualTo(anoTableAfter.Server_ID));
 
-        //same properties
-        Assert.AreEqual(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation,
-            anoTable.NumberOfCharactersToUseInAnonymousRepresentation);
-        Assert.AreEqual(anoTableAfter.Suffix, anoTable.Suffix);
+            //same properties
+            Assert.That(anoTable.NumberOfCharactersToUseInAnonymousRepresentation, Is.EqualTo(anoTableAfter.NumberOfCharactersToUseInAnonymousRepresentation));
+            Assert.That(anoTable.Suffix, Is.EqualTo(anoTableAfter.Suffix));
+        });
 
         //change a property and save it
         anoTableAfter.Suffix = "CAMMELS!";
         CatalogueRepository.SaveToDatabase(anoTableAfter);
-        //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server refernced which is immaginary btw >< thats why we have the above line instead
+        //anoTableAfter.SaveToDatabase(); <- this decides to go check the ANOTable exists on the server referenced which is imaginary btw >< that's why we have the above line instead
 
-        //reimport (this time it should be an update, we import the share definitions and it overrdies our database copy (sharing is UPSERT)
+        //reimport (this time it should be an update, we import the share definitions and it overrides our database copy (sharing is UPSERT)
         var anoTableAfter2 = new ANOTable(shareManager, defChild);
 
-        Assert.AreEqual(anoTableAfter.ID, anoTableAfter2.ID);
-        Assert.AreEqual("N", anoTableAfter2.Suffix);
+        Assert.Multiple(() =>
+        {
+            Assert.That(anoTableAfter2.ID, Is.EqualTo(anoTableAfter.ID));
+            Assert.That(anoTableAfter2.Suffix, Is.EqualTo("N"));
+        });
 
         anoTableAfter.DeleteInDatabase();
         anoserverAfter.DeleteInDatabase();
 
         foreach (var o in RepositoryLocator.CatalogueRepository.GetAllObjects<ObjectImport>())
             o.DeleteInDatabase();
-    }
-
-    [Test]
-    public void GatherAndShare_Plugin_Test()
-    {
-        var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
-            $"Imaginary1{PackPluginRunner.PluginPackageSuffix}"));
-        File.WriteAllBytes(f1.FullName, new byte[] { 0x1, 0x2 });
-
-        var plugin = new Plugin(CatalogueRepository, new FileInfo(
-            $"Imaginary{PackPluginRunner.PluginPackageSuffix}"), new Version(1, 1, 1), new Version(1, 1, 1));
-        var lma1 = new LoadModuleAssembly(CatalogueRepository, f1, plugin);
-
-        Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
-
-        var g = new Gatherer(RepositoryLocator);
-        Assert.IsTrue(g.CanGatherDependencies(plugin));
-
-        var gObj = Gatherer.GatherDependencies(plugin);
-
-        //root should be the server
-        Assert.AreEqual(gObj.Object, plugin);
-        Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma1)));
     }
 
 
@@ -178,15 +164,15 @@ public class GatherAndShareTests : DatabaseTests
         var ei = new ExtractionInformation(CatalogueRepository, catalogueItem1, colInfo, "UPPER(C1) as Fish");
 
         //the logging server has a system default so should have been populated
-        Assert.IsNotNull(cata.LiveLoggingServer_ID);
+        Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null);
 
         //Catalogue sharing should be allowed
         var g = new Gatherer(RepositoryLocator);
-        Assert.IsTrue(g.CanGatherDependencies(cata));
+        Assert.That(g.CanGatherDependencies(cata));
 
         //gather the objects depending on Catalogue as a tree
         var gObj = Gatherer.GatherDependencies(cata);
-        Assert.AreEqual(2, gObj.Children.Count); //both cata items
+        Assert.That(gObj.Children, Has.Count.EqualTo(2)); //both cata items
 
         var lmd = new LoadMetadata(CatalogueRepository);
         cata.LoadMetadata_ID = lmd.ID;
@@ -222,10 +208,10 @@ public class GatherAndShareTests : DatabaseTests
 
         //revert the memory copy and check it got overwritten with the original saved values
         cata = CatalogueRepository.GetObjectByID<Catalogue>(cata.ID);
-        Assert.AreEqual("Cata", cata.Name);
+        Assert.That(cata.Name, Is.EqualTo("Cata"));
 
         var exports = CatalogueRepository.GetAllObjects<ObjectExport>();
-        Assert.IsTrue(exports.Any());
+        Assert.That(exports.Any());
 
         //now delete and report
         foreach (var d in exports)
@@ -238,25 +224,34 @@ public class GatherAndShareTests : DatabaseTests
         //test importing the Catalogue properties only
         ShareManager.ImportPropertiesOnly(cata, shareDefinition[0]);
 
-        //import the defined properties but not name
-        Assert.AreEqual("fishfish", cata.Name);
-        Assert.AreEqual(Catalogue.CataloguePeriodicity.BiMonthly, cata.Periodicity); //reset this though
-        Assert.IsNull(cata.LoadMetadata_ID);
+        Assert.Multiple(() =>
+        {
+            //import the defined properties but not name
+            Assert.That(cata.Name, Is.EqualTo("fishfish"));
+            Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
+            Assert.That(cata.LoadMetadata_ID, Is.Null);
+        });
         cata.SaveToDatabase();
 
         cata.DeleteInDatabase();
 
-        //none of these should now exist thanks to cascade deletes
-        Assert.IsFalse(cata.Exists());
-        Assert.IsFalse(catalogueItem1.Exists());
-        Assert.IsFalse(catalogueItem2.Exists());
+        Assert.Multiple(() =>
+        {
+            //none of these should now exist thanks to cascade deletes
+            Assert.That(cata.Exists(), Is.False);
+            Assert.That(catalogueItem1.Exists(), Is.False);
+            Assert.That(catalogueItem2.Exists(), Is.False);
+        });
 
         //import the saved copy
         var newObjects = shareManager.ImportSharedObject(shareDefinition).ToArray();
 
-        Assert.AreEqual("Cata", ((Catalogue)newObjects[0]).Name);
-        Assert.AreEqual("Ci1", ((CatalogueItem)newObjects[1]).Name);
-        Assert.AreEqual("Ci2", ((CatalogueItem)newObjects[2]).Name);
+        Assert.Multiple(() =>
+        {
+            Assert.That(((Catalogue)newObjects[0]).Name, Is.EqualTo("Cata"));
+            Assert.That(((CatalogueItem)newObjects[1]).Name, Is.EqualTo("Ci1"));
+            Assert.That(((CatalogueItem)newObjects[2]).Name, Is.EqualTo("Ci2"));
+        });
     }
 
     [Test]
@@ -301,12 +296,12 @@ public class GatherAndShareTests : DatabaseTests
         //Gather the dependencies (this is what we are testing)
         var gatherer = new Gatherer(RepositoryLocator);
 
-        Assert.IsTrue(gatherer.CanGatherDependencies(filter));
+        Assert.That(gatherer.CanGatherDependencies(filter));
         var gathered = Gatherer.GatherDependencies(filter);
 
         //gatherer should have gathered the filter and the parameter (but not the ExtractionFilterParameterSet sets)
-        Assert.AreEqual(1, gathered.Children.Count);
-        Assert.AreEqual(param, gathered.Children[0].Object);
+        Assert.That(gathered.Children, Has.Count.EqualTo(1));
+        Assert.That(gathered.Children[0].Object, Is.EqualTo(param));
 
         //Cleanup
         val.DeleteInDatabase();

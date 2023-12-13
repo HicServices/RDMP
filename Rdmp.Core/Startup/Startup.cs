@@ -194,7 +194,7 @@ public class Startup
                         ? RDMPPlatformDatabaseStatus.Healthy
                         : RDMPPlatformDatabaseStatus.RequiresPatching,
                     Patch.PatchingState.SoftwareBehindDatabase => RDMPPlatformDatabaseStatus.SoftwareOutOfDate,
-                    _ => throw new ArgumentOutOfRangeException(nameof(patchingRequired))
+                    _ => throw new InvalidOperationException(nameof(patchingRequired))
                 }));
         }
         catch (Exception e)
@@ -241,11 +241,7 @@ public class Startup
     /// <param name="notifier"></param>
     private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        /*foreach (var (name, body) in catalogueRepository.PluginManager.GetCompatiblePlugins()
-                     .SelectMany(static p => p.LoadModuleAssemblies).SelectMany(static a => a.GetContents()))*/
-        // Ignore tiny nupkg files from  old 'unit test'
         foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
-                     .Where(path => new FileInfo(path).Length > 100).Select(File.OpenRead)
                      .SelectMany(LoadModuleAssembly.GetContents))
             try
             {

@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
@@ -225,20 +226,18 @@ public class MemoryRepository : IRepository
     {
     }
 
-    public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
+    public void RevertToDatabaseState([NotNull] IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
     {
         //Mark any cached data as out of date
         if (mapsDirectlyToDatabaseTable is IInjectKnown inject)
             inject.ClearAllInjections();
 
-        if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
+        if (!_propertyChanges.TryGetValue(mapsDirectlyToDatabaseTable, out var changedExtendedEventArgsSet))
             return;
 
         var type = mapsDirectlyToDatabaseTable.GetType();
 
-        foreach (var e in
-                 _propertyChanges[mapsDirectlyToDatabaseTable]
-                     .ToArray()) //call ToArray to avoid cyclical events on SetValue
+        foreach (var e in changedExtendedEventArgsSet.ToArray()) //call ToArray to avoid cyclical events on SetValue
         {
             var prop = type.GetProperty(e.PropertyName);
             prop.SetValue(mapsDirectlyToDatabaseTable, e.OldValue); //reset the old values
@@ -248,6 +247,7 @@ public class MemoryRepository : IRepository
         _propertyChanges.TryRemove(mapsDirectlyToDatabaseTable, out _);
     }
 
+    [NotNull]
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
     {
         //if we don't know about it then it was deleted
@@ -255,12 +255,12 @@ public class MemoryRepository : IRepository
             return new RevertableObjectReport { Evaluation = ChangeDescription.DatabaseCopyWasDeleted };
 
         //if it has no changes (since a save)
-        if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
+        if (!_propertyChanges.TryGetValue(mapsDirectlyToDatabaseTable, out var changedExtendedEventArgsSet))
             return new RevertableObjectReport { Evaluation = ChangeDescription.NoChanges };
 
         //we have local 'unsaved' changes
         var type = mapsDirectlyToDatabaseTable.GetType();
-        var differences = _propertyChanges[mapsDirectlyToDatabaseTable].Select(
+        var differences = changedExtendedEventArgsSet.Select(
                 d => new RevertablePropertyDifference(type.GetProperty(d.PropertyName), d.NewValue, d.OldValue))
             .ToList();
 

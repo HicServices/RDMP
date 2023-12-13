@@ -208,7 +208,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             chunk = _hostedSource.GetChunk(listener, cancellationToken);
 
+
             chunk = _peeker.AddPeekedRowsIfAny(chunk);
+
+            if (Request != null && Request.DatasetBundle.DataSet is not null && chunk is not null)
+                chunk.TableName = $"{Request.DatasetBundle.DataSet}";
 
             //if we are trying to distinct the records in memory based on release id
             if (DistinctStrategy == DistinctStrategy.OrderByAndDistinctInMemory)
@@ -556,10 +560,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         //get up to 1000 records
         da.Fill(0, 1000, toReturn);
-            toReturn.EndLoadData();
+        toReturn.EndLoadData();
 
         con.Close();
-        toReturn.EndLoadData();
 
         return toReturn;
     }

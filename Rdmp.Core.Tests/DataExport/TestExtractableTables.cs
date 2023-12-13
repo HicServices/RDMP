@@ -25,7 +25,7 @@ public class TestExtractableTables : TestsRequiringACohort
     {
         var ex = Assert.Throws<Exception>(() =>
             new ExtractableCohort(DataExportRepository, _externalCohortTable, -899));
-        Assert.IsTrue(ex.Message.StartsWith("ID -899 does not exist in Cohort Definitions"));
+        Assert.That(ex.Message, Does.StartWith("ID -899 does not exist in Cohort Definitions"));
     }
 
 
@@ -38,7 +38,7 @@ public class TestExtractableTables : TestsRequiringACohort
         {
             //creates with a Null Catalogue until it is associated with a catalogue and saved
             eds = new ExtractableDataSet(DataExportRepository, cata);
-            Assert.AreEqual(cata.ID, eds.Catalogue_ID);
+            Assert.That(eds.Catalogue_ID, Is.EqualTo(cata.ID));
         }
         finally
         {
@@ -56,7 +56,7 @@ public class TestExtractableTables : TestsRequiringACohort
 
         try
         {
-            Assert.AreEqual(table.Name, "unit_test_UpdateProjectDatabaseTable");
+            Assert.That(table.Name, Is.EqualTo("unit_test_UpdateProjectDatabaseTable"));
             table.Name = "unit_test_UpdateProjectDatabaseTable2";
             table.SaveToDatabase();
 
@@ -79,7 +79,7 @@ public class TestExtractableTables : TestsRequiringACohort
 
         try
         {
-            Assert.AreEqual(table.Username, Environment.UserName);
+            Assert.That(Environment.UserName, Is.EqualTo(table.Username));
         }
         finally
         {
@@ -91,7 +91,7 @@ public class TestExtractableTables : TestsRequiringACohort
 
     #region helper methods
 
-    public static void PropertyValuesAreEquals(object actual, object expected)
+    private static void PropertyValuesAreEquals(object actual, object expected)
     {
         var properties = expected.GetType().GetProperties()
             .Where(info => !Attribute.IsDefined(info, typeof(DoNotExtractProperty))).ToArray();
@@ -106,29 +106,24 @@ public class TestExtractableTables : TestsRequiringACohort
             var actualValue = property.GetValue(actual, null);
 
             if (expectedValue is SqlCommand &&
-                actualValue is SqlCommand) //don't compare sql commands they will be subtly different or just refer to different objects iwth the exact same values
+                actualValue is SqlCommand) //don't compare sql commands they will be subtly different or just refer to different objects with the exact same values
                 continue;
 
             if (actualValue is IList list)
                 AssertListsAreEquals(property, list, (IList)expectedValue);
             else if (!Equals(expectedValue, actualValue))
-                Assert.Fail("Property {0}.{1} does not match. Expected: {2} but was: {3}", property.DeclaringType?.Name,
-                    property.Name, expectedValue, actualValue);
+                Assert.Fail($"Property {property.DeclaringType?.Name}.{property.Name} does not match. Expected: {expectedValue} but was: {actualValue}");
         }
     }
 
     private static void AssertListsAreEquals(PropertyInfo property, IList actualList, IList expectedList)
     {
         if (actualList.Count != expectedList.Count)
-            Assert.Fail(
-                "Property {0}.{1} does not match. Expected IList containing {2} elements but was IList containing {3} elements",
-                property.PropertyType.Name, property.Name, expectedList.Count, actualList.Count);
+            Assert.Fail($"Property {property.PropertyType.Name}.{property.Name} does not match. Expected IList containing {expectedList.Count} elements but was IList containing {actualList.Count} elements");
 
         for (var i = 0; i < actualList.Count; i++)
             if (!Equals(actualList[i], expectedList[i]))
-                Assert.Fail(
-                    "Property {0}.{1} does not match. Expected IList with element {1} equals to {2} but was IList with element {1} equals to {3}",
-                    property.PropertyType.Name, property.Name, expectedList[i], actualList[i]);
+                Assert.Fail($"Property {property.PropertyType.Name}.{property.Name} does not match. Expected IList with element {property.Name} equals to {expectedList[i]} but was IList with element {property.Name} equals to {actualList[i]}");
     }
 
     #endregion

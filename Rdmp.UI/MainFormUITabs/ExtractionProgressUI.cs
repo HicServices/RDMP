@@ -62,7 +62,7 @@ public partial class ExtractionProgressUI : ExtractionProgressUI_Design, ISaveab
         }
         else
         {
-            lblEvaluationDate.Text = $"(DQE has not been run)";
+            lblEvaluationDate.Text = "(DQE has not been run)";
             btnFromDQE.Enabled = false;
         }
 

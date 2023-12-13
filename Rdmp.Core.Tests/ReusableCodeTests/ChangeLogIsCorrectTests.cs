@@ -25,7 +25,7 @@ internal class ChangeLogIsCorrectTests
             log = dir.GetFiles("changelog.md", opts).SingleOrDefault();
         }
 
-        Assert.IsNotNull(log, "CHANGELOG.md not found");
+        Assert.That(log, Is.Not.Null, "CHANGELOG.md not found");
 
         var assemblyInfo = Path.Combine(log.Directory.FullName, "SharedAssemblyInfo.cs");
 
@@ -33,11 +33,11 @@ internal class ChangeLogIsCorrectTests
             Assert.Fail($"Could not find file {assemblyInfo}");
 
         var match = Regex.Match(File.ReadAllText(assemblyInfo), @"AssemblyInformationalVersion\(""([^-]+).*""\)");
-        Assert.IsTrue(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
+        Assert.That(match.Success, $"Could not find AssemblyInformationalVersion tag in {assemblyInfo}");
 
         var currentVersion = match.Groups[1].Value;
 
-        Assert.IsTrue(File.ReadLines(log.FullName).Any(l => l.Contains($"## [{currentVersion}]")),
+        Assert.That(File.ReadLines(log.FullName).Any(l => l.Contains($"## [{currentVersion}]")),
             $"{log.FullName} did not contain a header for the current version '{currentVersion}'");
     }
 }

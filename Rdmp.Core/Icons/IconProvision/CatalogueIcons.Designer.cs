@@ -187,16 +187,6 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllExpiredPluginsNode {
-            get {
-                object obj = ResourceManager.GetObject("AllExpiredPluginsNode", resourceCulture);
-                return ((Byte[])(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type Image.
-        /// </summary>
         public static Byte[] AllExternalServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
@@ -1265,7 +1255,20 @@ namespace Rdmp.Core.Icons.IconProvision
                 return ((Byte[])(obj));
             }
         }
-        
+
+
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] Dataset
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Dataset", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>

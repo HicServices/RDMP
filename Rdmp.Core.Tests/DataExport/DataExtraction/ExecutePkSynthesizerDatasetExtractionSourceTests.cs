@@ -48,9 +48,12 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length)); // NO new column added
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length)); // NO new column added
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("DateOfBirth"));
     }
@@ -65,8 +68,11 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(), Has.Count.EqualTo(_columnInfos.Length));
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(2));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("ReleaseID"));
     }
@@ -81,14 +87,17 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length + 1)); // synth PK is added
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length + 1)); // synth PK is added
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
     }
 
     [Test]
@@ -101,14 +110,17 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length + 3)); // the "desc" column is added to the existing ones
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length + 3)); // the "desc" column is added to the existing ones
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
 
         Database.ExpectTable("SimpleLookup").Drop();
         Database.ExpectTable("SimpleJoin").Drop();
@@ -124,15 +136,18 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
         source.PreInitialize(request, ThrowImmediatelyDataLoadEventListener.Quiet);
         var chunk = source.GetChunk(ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
 
-        Assert.That(chunk.PrimaryKey, Is.Not.Null);
-        Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
-            Has.Count.EqualTo(_columnInfos.Length +
-                              2)); // the "desc" column is added to the existing ones + the SynthPk
+        Assert.Multiple(() =>
+        {
+            Assert.That(chunk.PrimaryKey, Is.Not.Null);
+            Assert.That(chunk.Columns.Cast<DataColumn>().ToList(),
+                Has.Count.EqualTo(_columnInfos.Length +
+                                  2)); // the "desc" column is added to the existing ones + the SynthPk
+        });
         Assert.That(chunk.PrimaryKey, Has.Length.EqualTo(1));
         Assert.That(chunk.PrimaryKey.First().ColumnName, Is.EqualTo("SynthesizedPk"));
 
         var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
-        Assert.IsTrue(reghex.IsMatch(firstvalue));
+        Assert.That(reghex.IsMatch(firstvalue));
 
         Database.ExpectTable("SimpleLookup").Drop();
     }
@@ -207,7 +222,7 @@ public class ExecutePkSynthesizerDatasetExtractionSourceTests : TestsRequiringAn
                 dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
         dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-            
+
         var tbl = Database.CreateTable(testTableName,
             dt,
             new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });

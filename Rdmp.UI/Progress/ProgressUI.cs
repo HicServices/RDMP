@@ -224,7 +224,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
                 {
                     ProgressType.Records => "records",
                     ProgressType.Kilobytes => "KB",
-                    _ => throw new ArgumentOutOfRangeException("type")
+                    _ => throw new InvalidOperationException("type")
                 };
 
                 var handledByFlood = HandleFloodOfMessagesFromJob(message.Value.Sender, args.TaskDescription,
@@ -251,14 +251,13 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
         {
             if (_notificationQueue.Any())
             {
+                olvProgressEvents.BeginUpdate();
                 olvProgressEvents.AddObjects(_notificationQueue);
+                olvProgressEvents.EndUpdate();
                 _notificationQueue.Clear();
 
-                AutoResizeColumns();
             }
         }
-
-        olvProgressEvents.Sort();
     }
 
     private void AutoResizeColumns()

@@ -19,5 +19,6 @@ public enum RDMPCollection
     Favourites,
 
     Cohort,
-    DataLoad
+    DataLoad,
+    Datasets
 }

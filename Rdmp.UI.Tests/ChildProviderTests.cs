@@ -29,11 +29,11 @@ internal class ChildProviderTests : UITests
         var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
             ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
-        Assert.IsNotNull(desc);
+        Assert.That(desc, Is.Not.Null);
 
         //instead we should get a parent node with the name "Null Server"
         var parent = (TableInfoServerNode)desc.Parents[^2];
-        Assert.AreEqual(TableInfoServerNode.NullServerNode, parent.ServerName);
+        Assert.That(parent.ServerName, Is.EqualTo(TableInfoServerNode.NullServerNode));
     }
 
     [Test]
@@ -47,11 +47,11 @@ internal class ChildProviderTests : UITests
         var provider = new CatalogueChildProvider(Repository.CatalogueRepository, null,
             ThrowImmediatelyCheckNotifier.Quiet, null);
         var desc = provider.GetDescendancyListIfAnyFor(ti);
-        Assert.IsNotNull(desc);
+        Assert.That(desc, Is.Not.Null);
 
         //instead we should get a parent node with the name "Null Server"
         var parent = (TableInfoDatabaseNode)desc.Parents[^1];
-        Assert.AreEqual(TableInfoDatabaseNode.NullDatabaseNode, parent.DatabaseName);
+        Assert.That(parent.DatabaseName, Is.EqualTo(TableInfoDatabaseNode.NullDatabaseNode));
     }
 
     [Test]
@@ -79,7 +79,7 @@ internal class ChildProviderTests : UITests
             if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
-            Assert.AreNotSame(val1, val2, $"Prop {prop} was unexpectedly the same between child providers");
+            Assert.That(val2, Is.Not.SameAs(val1), $"Prop {prop} was unexpectedly the same between child providers");
         }
 
 
@@ -92,7 +92,7 @@ internal class ChildProviderTests : UITests
             if (val1 is Array a1 && val2 is Array a2 && a1.Length == 0 && a2.Length == 0)
                 continue;
 
-            Assert.AreNotSame(val1, val2, $"Field {field} was unexpectedly the same between child providers");
+            Assert.That(val2, Is.Not.SameAs(val1), $"Field {field} was unexpectedly the same between child providers");
         }
 
 
@@ -104,7 +104,7 @@ internal class ChildProviderTests : UITests
         foreach (var prop in typeof(DataExportChildProvider).GetProperties().Where(p => !skip.Contains(p.Name)))
             try
             {
-                Assert.AreSame(prop.GetValue(cp1), prop.GetValue(cp2),
+                Assert.That(prop.GetValue(cp2), Is.SameAs(prop.GetValue(cp1)),
                     $"Prop {prop} was not the same between child providers - after UpdateTo");
             }
             catch (Exception)
@@ -112,14 +112,14 @@ internal class ChildProviderTests : UITests
                 badProps.Add(prop.Name);
             }
 
-        Assert.IsEmpty(badProps);
+        Assert.That(badProps, Is.Empty);
 
         var badFields = new List<string>();
 
         foreach (var field in typeof(DataExportChildProvider).GetFields(bindFlags).Where(p => !skip.Contains(p.Name)))
             try
             {
-                Assert.AreSame(field.GetValue(cp1), field.GetValue(cp2),
+                Assert.That(field.GetValue(cp2), Is.SameAs(field.GetValue(cp1)),
                     $"Field {field} was not the same between child providers - after UpdateTo");
             }
             catch (Exception)
@@ -127,7 +127,7 @@ internal class ChildProviderTests : UITests
                 badFields.Add(field.Name);
             }
 
-        Assert.IsEmpty(badFields);
+        Assert.That(badFields, Is.Empty);
     }
 
     [Test]
@@ -145,7 +145,7 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.That(p2, Is.EqualTo(p1));
     }
 
     [Test]
@@ -165,23 +165,29 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.IsFalse(p1.SequenceEqual(p2));
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
-        Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
-        Assert.AreNotEqual(p1[1], p2[1]); // Server (e.g. localhost/127.0.0.1)
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (e.g. localhost/127.0.0.1)
 
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
-        Assert.AreNotEqual(p1[2], p2[2]); // Database (must not be equal because the server is different!)
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
+        Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (must not be equal because the server is different!)
     }
 
     /// <summary>
-    /// If two TableInfo differ by DatabaseType then they should have seperate hierarchies.
+    /// If two TableInfo differ by DatabaseType then they should have separate hierarchies.
     /// </summary>
     [Test]
     public void TestDuplicateTableInfos_DifferentServers_DatabaseTypeOnly()
@@ -200,19 +206,25 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.IsFalse(p1.SequenceEqual(p2));
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
-        Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
-        Assert.AreNotEqual(p1[1], p2[1]); // Server (must not be equal because DatabaseType differs)
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.Not.EqualTo(p1[1])); // Server (must not be equal because DatabaseType differs)
 
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
-        Assert.AreNotEqual(p1[2], p2[2]); // Database (must not be equal because the server is different!)
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
+        Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (must not be equal because the server is different!)
     }
 
     [Test]
@@ -232,19 +244,25 @@ internal class ChildProviderTests : UITests
         var p1 = cp.GetDescendancyListIfAnyFor(t1).Parents;
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
-        // both objects should have identical path
-        Assert.IsFalse(p1.SequenceEqual(p2));
+        Assert.Multiple(() =>
+        {
+            // both objects should have identical path
+            Assert.That(p1.SequenceEqual(p2), Is.False);
 
-        Assert.AreEqual(p1[0], p2[0]); // Data Repository Servers
+            Assert.That(p2[0], Is.EqualTo(p1[0])); // Data Repository Servers
 
 
-        Assert.IsInstanceOf<TableInfoServerNode>(p1[1]);
-        Assert.IsInstanceOf<TableInfoServerNode>(p2[1]);
-        Assert.AreEqual(p1[1], p2[1]); // Server
+            Assert.That(p1[1], Is.InstanceOf<TableInfoServerNode>());
+            Assert.That(p2[1], Is.InstanceOf<TableInfoServerNode>());
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(p2[1], Is.EqualTo(p1[1])); // Server
 
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p1[2]);
-        Assert.IsInstanceOf<TableInfoDatabaseNode>(p2[2]);
-        Assert.AreNotEqual(p1[2], p2[2]); // Database (i.e. Frank/Biff)
+            Assert.That(p1[2], Is.InstanceOf<TableInfoDatabaseNode>());
+            Assert.That(p2[2], Is.InstanceOf<TableInfoDatabaseNode>());
+        });
+        Assert.That(p2[2], Is.Not.EqualTo(p1[2])); // Database (i.e. Frank/Biff)
     }
 
     /// <summary>
@@ -270,7 +288,7 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.That(p2, Is.EqualTo(p1));
     }
 
     /// <summary>
@@ -296,6 +314,6 @@ internal class ChildProviderTests : UITests
         var p2 = cp.GetDescendancyListIfAnyFor(t2).Parents;
 
         // both objects should have identical path
-        Assert.IsTrue(p1.SequenceEqual(p2));
+        Assert.That(p2, Is.EqualTo(p1));
     }
 }

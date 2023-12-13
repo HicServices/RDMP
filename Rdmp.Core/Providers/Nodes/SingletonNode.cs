@@ -12,22 +12,19 @@ namespace Rdmp.Core.Providers.Nodes;
 /// </summary>
 public abstract class SingletonNode : Node
 {
-    protected readonly string Caption;
+    private readonly string _caption;
 
     protected SingletonNode(string caption)
     {
-        Caption = caption;
+        _caption = caption;
     }
 
-    public override string ToString() => Caption;
+    public override string ToString() => _caption;
 
-    protected bool Equals(SingletonNode other) => string.Equals(Caption, other.Caption);
+    public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
 
-    public override bool Equals(object obj)
-    {
-        if (obj is null) return false;
-        return ReferenceEquals(this, obj) || obj is SingletonNode other && Equals(other);
-    }
+    public override bool Equals(object obj) => obj is SingletonNode sn &&
+                                               Equals(sn);
 
-    public override int GetHashCode() => Caption.GetHashCode();
+    public override int GetHashCode() => _caption.GetHashCode();
 }

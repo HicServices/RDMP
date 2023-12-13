@@ -47,7 +47,7 @@ public class ParameterCreatorTests
 
                 var ex = Assert.Throws<NullReferenceException>(() => creator.CreateAll(f, null));
 
-                Assert.IsTrue(ex.Message.StartsWith("Parameter construction method returned null"));
+        Assert.That(ex.Message, Does.StartWith("Parameter construction method returned null"));
         }
 
         [Test]
@@ -157,10 +157,13 @@ public class ParameterCreatorTests
                 var creator = new ParameterCreator(factory, null, new[] { template });
                 creator.CreateAll(f, null);
 
-                Assert.AreEqual("5", pstub.Value);
-                Assert.AreEqual("fish", pstub.Comment);
+        Assert.Multiple(() =>
+        {
+            Assert.That(pstub.Value, Is.EqualTo("5"));
+            Assert.That(pstub.Comment, Is.EqualTo("fish"));
+        });
 
-                factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS int");
+        factory.Received(1).CreateNewParameter(f, "DECLARE @bob AS int");
         }
 
         [TestCase("[MyTable].[MyCol] = @name", "@name", "@name2", "[MyTable].[MyCol] = @name2")]
@@ -180,7 +183,7 @@ b=@b")]
         public void ReplaceParametersSQL(string haystack, string needle, string replacement, string expectedOutput)
         {
                 var output = ParameterCreator.RenameParameterInSQL(haystack, needle, replacement);
-                Assert.AreEqual(expectedOutput, output);
+        Assert.That(output, Is.EqualTo(expectedOutput));
         }
 
         [Test]
@@ -213,6 +216,6 @@ OR
 [test]..[prescribing].[approved_name] LIKE @drugName3_2";
 
 
-                Assert.AreEqual(expectedoutput, newString);
+        Assert.That(newString, Is.EqualTo(expectedoutput));
         }
 }

@@ -24,11 +24,14 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         var ac = WhenIHaveA<AggregateConfiguration>();
 
         // has no container to start with (no filters)
-        Assert.IsNull(ac.RootFilterContainer_ID);
+        Assert.That(ac.RootFilterContainer_ID, Is.Null);
         Run("CreateNewFilter", $"{nameof(AggregateConfiguration)}:{ac.ID}");
 
-        Assert.IsNotNull(ac.RootFilterContainer_ID, "Should now have a container");
-        Assert.AreEqual(1, ac.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
+        Assert.Multiple(() =>
+        {
+            Assert.That(ac.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
+            Assert.That(ac.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        });
     }
 
     [Test]
@@ -37,11 +40,14 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         var sds = WhenIHaveA<SelectedDataSets>();
 
         // has no container to start with (no filters)
-        Assert.IsNull(sds.RootFilterContainer_ID);
+        Assert.That(sds.RootFilterContainer_ID, Is.Null);
         Run("CreateNewFilter", $"{nameof(SelectedDataSets)}:{sds.ID}");
 
-        Assert.IsNotNull(sds.RootFilterContainer_ID, "Should now have a container");
-        Assert.AreEqual(1, sds.RootFilterContainer.GetFilters().Length, "Expected a single new filter");
+        Assert.Multiple(() =>
+        {
+            Assert.That(sds.RootFilterContainer_ID, Is.Not.Null, "Should now have a container");
+            Assert.That(sds.RootFilterContainer.GetFilters(), Has.Length.EqualTo(1), "Expected a single new filter");
+        });
     }
 
     [Test]
@@ -50,11 +56,14 @@ internal class ExecuteCommandCreateNewFilterCliTests : CommandCliTests
         var ei = WhenIHaveA<ExtractionInformation>();
 
         // no Catalogue level filters
-        Assert.IsEmpty(ei.ExtractionFilters);
+        Assert.That(ei.ExtractionFilters, Is.Empty);
         Run("CreateNewFilter", $"{nameof(ExtractionInformation)}:{ei.ID}", "My cool filter", "hb='t'");
 
         var f = ei.ExtractionFilters.Single();
-        Assert.AreEqual("My cool filter", f.Name);
-        Assert.AreEqual("hb='t'", f.WhereSQL);
+        Assert.Multiple(() =>
+        {
+            Assert.That(f.Name, Is.EqualTo("My cool filter"));
+            Assert.That(f.WhereSQL, Is.EqualTo("hb='t'"));
+        });
     }
 }

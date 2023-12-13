@@ -9,7 +9,6 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using NSubstitute;
 using NUnit.Framework;
-using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using Tests.Common;
@@ -32,6 +31,6 @@ internal class MigrationStrategyTests : DatabaseTests
         var migrationFieldProcessor = Substitute.For<IMigrationFieldProcessor>();
 
         var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
-        Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("There are no primary keys declared in table Bob"));
     }
 }

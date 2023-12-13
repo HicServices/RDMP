@@ -334,12 +334,12 @@ Since each section is runnable independently it is trivially easy for RDMP to pr
 
 ![Cohort Builder Tree](./Images/CohortBuilderUI.png)
 
-For full details on technical implementation see [Cohort Creation](../../Rdmp.Core/CohortCreation/Readme.md).
+For full details on technical implementation see [Cohort Creation](../../Rdmp.Core/CohortCreation/CohortCreation.md).
 
 ## Does the Cohort Builder support Excel, CSV files etc?
 <a name="cohort-build-with-file"/>
 
-Yes.  If a cohort is solely defined by the contents of such a file it can be [committed directly to the cohort store](../../Rdmp.Core/CohortCommitting/Readme.md).
+Yes.  If a cohort is solely defined by the contents of such a file it can be [committed directly to the cohort store](../../Rdmp.Core/CohortCommitting/CohortCommitting.md).
 
 If you need to combine data in the file (or multiple files) with data in your database then the first step is to create a new Catalogue by uploading the data into your database.  This has a number of advantages:
 
@@ -834,7 +834,7 @@ RDMP also supports creating the audit logging database in other [DBMS] types (e.
 ### System Logs
 
 System logs can be enabled for RDMP.  These are low level logs designed to be read by a software developer or IT specialist.  To enable
-this feature, locate the `NLog.template.config` file in your RDMP install directory.  Rename the file `NLog.config` (i.e. remove the word template).
+this feature, download [NLog.config](https://raw.githubusercontent.com/HicServices/RDMP/main/Tools/rdmp/NLog.config) to your RDMP install.
 This template generates file logs to a `./logs/` sub-directory.  You can adjust it to log anywhere including to databases/central server etc
 by [following the NLog targets guide](https://nlog-project.org/config/).  **Logs may contain identifiable or sensitive information so should
 be secured appropriately if enabled**. 
@@ -891,7 +891,7 @@ var catalogues = repository.GetAllObjects<Catalogue>();
 var catalogueItems = repository.GetAllObjects<CatalogueItem>();
 ```
 
-If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Reusable/MapsDirectlyToDatabaseTable/Injection/README.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
+If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Rdmp.Core/MapsDirectlyToDatabaseTable/Injection/Injection.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
 
 
 
@@ -904,9 +904,9 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 [hic_dataLoadRunID]: #hic_dataLoadRunID
 [Data Load Engine]: #data-load-engine
 [db_executor]: https://www.sqlmatters.com/Articles/Adding%20a%20db_executor%20role.aspx
-[cohort databases]: ../../Rdmp.Core/CohortCommitting/Readme.md
-[cohort database]: ../../Rdmp.Core/CohortCommitting/Readme.md
-[query cache]: ../../Rdmp.Core/CohortCreation/Readme.md
+[cohort databases]: ../../Rdmp.Core/CohortCommitting/CohortCommitting.md
+[cohort database]: ../../Rdmp.Core/CohortCommitting/CohortCommitting.md
+[query cache]: ../../Rdmp.Core/CohortCreation/CohortCreation.md
 [UNION]: ./Glossary.md#UNION
 [EXCEPT]: ./Glossary.md#EXCEPT
 [INTERSECT]: ./Glossary.md#INTERSECT

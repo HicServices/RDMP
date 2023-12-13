@@ -167,15 +167,6 @@ public class YamlRepository : MemoryDataExportRepository
             case ConcreteContainer container:
                 container.SetManager(this);
                 break;
-            case LoadModuleAssembly lma:
-                lock (lockFs)
-                {
-                    var file = GetNupkgPath(lma);
-
-                    if (File.Exists(file))
-                        lma.Bin = File.ReadAllBytes(file);
-                    break;
-                }
         }
     }
 
@@ -190,24 +181,12 @@ public class YamlRepository : MemoryDataExportRepository
         }
     }
 
-    private string GetNupkgPath(LoadModuleAssembly lma)
-    {
-        //somedir/LoadModuleAssembly/
-        var path = Path.GetDirectoryName(GetPath(lma));
-
-        //somedir/LoadModuleAssembly/MyPlugin1.0.0.nupkg
-        return Path.Combine(path, GetObjectByID<Plugin>(lma.Plugin_ID).Name);
-    }
-
     public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         lock (lockFs)
         {
             base.DeleteFromDatabase(oTableWrapperObject);
             File.Delete(GetPath(oTableWrapperObject));
-
-            // if deleting a LoadModuleAssembly also delete its binary content file (the plugin dlls in nupkg)
-            if (oTableWrapperObject is LoadModuleAssembly lma) File.Delete(GetNupkgPath(lma));
         }
     }
 
@@ -222,12 +201,6 @@ public class YamlRepository : MemoryDataExportRepository
         lock (lockFs)
         {
             File.WriteAllText(GetPath(o), yaml);
-
-            // Do not write plugin binary content into yaml that results in
-            // a massive blob of binary yaml (not useful and slow to load)
-            if (o is LoadModuleAssembly lma)
-                // write the nupkg as a binary file instead to the same folder
-                File.WriteAllBytes(GetNupkgPath(lma), lma.Bin);
         }
     }
 

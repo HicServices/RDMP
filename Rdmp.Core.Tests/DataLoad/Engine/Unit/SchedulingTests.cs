@@ -24,7 +24,7 @@ public class SchedulingTests
         var lastLoadDate =
             SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
 
-        Assert.AreEqual(new DateTime(2015, 12, 10, 0, 0, 0).Ticks, lastLoadDate.Ticks);
+        Assert.That(lastLoadDate.Ticks, Is.EqualTo(new DateTime(2015, 12, 10, 0, 0, 0).Ticks));
     }
 
     [Test]
@@ -37,7 +37,7 @@ public class SchedulingTests
         var lastLoadDate =
             SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Day, cacheFillProgress);
 
-        Assert.AreEqual(new DateTime(2015, 11, 30, 0, 0, 0).Ticks, lastLoadDate.Ticks);
+        Assert.That(lastLoadDate.Ticks, Is.EqualTo(new DateTime(2015, 11, 30, 0, 0, 0).Ticks));
     }
 
     [Test]
@@ -50,6 +50,6 @@ public class SchedulingTests
         var lastLoadDate =
             SingleScheduleCacheDateTrackingStrategy.CalculateLastLoadDate(CacheFileGranularity.Hour, cacheFillProgress);
 
-        Assert.AreEqual(new DateTime(2015, 12, 11, 14, 0, 0).Ticks, lastLoadDate.Ticks);
+        Assert.That(lastLoadDate.Ticks, Is.EqualTo(new DateTime(2015, 12, 11, 14, 0, 0).Ticks));
     }
 }

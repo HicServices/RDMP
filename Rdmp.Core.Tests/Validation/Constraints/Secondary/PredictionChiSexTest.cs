@@ -70,7 +70,7 @@ internal class PredictionChiSexTest
         var p = new Prediction(new ChiSexPredictor(), "gender");
         var otherCols = new object[] { "F" };
         var otherColsNames = new string[] { "gender" };
-        Assert.NotNull(p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames));
+        Assert.That(p.Validate(TestConstants._VALID_CHI, otherCols, otherColsNames), Is.Not.Null);
     }
 
     [Test]

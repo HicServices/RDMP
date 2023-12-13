@@ -22,13 +22,13 @@ internal class ExternalDatabaseServerUITests : UITests
         AssertNoErrors(ExpectedErrorType.Any);
 
         ui.tbUsername.Text = "fish";
-        Assert.AreEqual("fish", server.Username);
+        Assert.That(server.Username, Is.EqualTo("fish"));
 
         ui.GetObjectSaverButton().Save();
-        Assert.AreEqual("fish", server.Username);
+        Assert.That(server.Username, Is.EqualTo("fish"));
 
         ui.tbUsername.Text = "";
         ui.GetObjectSaverButton().Save();
-        Assert.AreEqual("", server.Username);
+        Assert.That(server.Username, Is.EqualTo(""));
     }
 }

@@ -47,7 +47,7 @@ public class ExtractionConfigurationTest : DatabaseTests
 
             _ = new ExtractableColumn(DataExportRepository, dataSet, configuration, extractionInformation, 0,
                 "Hashme2(Name)");
-            Assert.AreEqual(configuration.GetAllExtractableColumnsFor(dataSet).Length, 1);
+            Assert.That(configuration.GetAllExtractableColumnsFor(dataSet), Has.Length.EqualTo(1));
         }
         finally
         {

@@ -31,13 +31,13 @@ internal class CommitCohortExample : DatabaseTests
 
         //find the test server (where we will create the store schema)
         var db = GetCleanedServer(dbType);
-            
+
         //create the cohort store table
         var wizard = new CreateNewCohortDatabaseWizard(db, CatalogueRepository, DataExportRepository, false);
         var privateColumn = new PrivateIdentifierPrototype("chi", privateDataType);
         var externalCohortTable = wizard.CreateDatabase(privateColumn, ThrowImmediatelyCheckNotifier.Quiet);
 
-        Assert.AreEqual(dbType, externalCohortTable.DatabaseType);
+        Assert.That(externalCohortTable.DatabaseType, Is.EqualTo(dbType));
 
         //create a project into which we want to import a cohort
         var project = new Project(DataExportRepository, "MyProject")
@@ -73,7 +73,7 @@ internal class CommitCohortExample : DatabaseTests
             new GracefulCancellationToken());
 
         //there should be no cohorts yet
-        Assert.IsEmpty(DataExportRepository.GetAllObjects<ExtractableCohort>());
+        Assert.That(DataExportRepository.GetAllObjects<ExtractableCohort>(), Is.Empty);
 
         //dispose of the pipeline
         pipelineDestination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
@@ -81,19 +81,25 @@ internal class CommitCohortExample : DatabaseTests
         //now there should be one
         var cohort = DataExportRepository.GetAllObjects<ExtractableCohort>().Single();
 
-        //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
-        Assert.AreEqual(dbType, cohort.ExternalCohortTable.DatabaseType);
-        Assert.AreEqual(dbType, cohort.GetQuerySyntaxHelper().DatabaseType);
+        Assert.Multiple(() =>
+        {
+            //make sure we are all on the same page about what the DBMS type is (nothing cached etc)
+            Assert.That(cohort.ExternalCohortTable.DatabaseType, Is.EqualTo(dbType));
+            Assert.That(cohort.GetQuerySyntaxHelper().DatabaseType, Is.EqualTo(dbType));
 
-        Assert.AreEqual(500, cohort.ExternalProjectNumber);
-        Assert.AreEqual(2, cohort.CountDistinct);
+            Assert.That(cohort.ExternalProjectNumber, Is.EqualTo(500));
+            Assert.That(cohort.CountDistinct, Is.EqualTo(2));
+        });
 
         var tbl = externalCohortTable.DiscoverCohortTable();
-        Assert.AreEqual(2, tbl.GetRowCount());
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
         var dtInDatabase = tbl.GetDataTable();
 
-        //guid will be something like "6fb23de5-e8eb-46eb-84b5-dd368da21073"
-        Assert.AreEqual(36, dtInDatabase.Rows[0]["ReleaseId"].ToString().Length);
-        Assert.AreEqual("0101010101", dtInDatabase.Rows[0]["chi"]);
+        Assert.Multiple(() =>
+        {
+            //guid will be something like "6fb23de5-e8eb-46eb-84b5-dd368da21073"
+            Assert.That(dtInDatabase.Rows[0]["ReleaseId"].ToString(), Has.Length.EqualTo(36));
+            Assert.That(dtInDatabase.Rows[0]["chi"], Is.EqualTo("0101010101"));
+        });
     }
 }

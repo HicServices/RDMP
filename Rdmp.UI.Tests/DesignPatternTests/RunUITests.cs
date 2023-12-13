@@ -73,7 +73,8 @@ public class RunUITests : DatabaseTests
             typeof(ExecuteCommandCreateLookup),
             typeof(ExecuteCommandImportFilterDescriptionsFromShare),
             typeof(ExecuteCommandSetArgument),
-            typeof(ExecuteCommandAddToSession)
+            typeof(ExecuteCommandAddToSession),
+            typeof(ExecuteCommandDeletePlugin)
         });
 
     [Test]
@@ -86,7 +87,7 @@ public class RunUITests : DatabaseTests
 
         var commandCaller = new CommandInvoker(activator);
 
-        Assert.IsTrue(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
+        Assert.That(commandCaller.WhyCommandNotSupported(typeof(ExecuteCommandDelete)) is null);
 
         var notSupported = MEF.GetAllTypes()
             .Where(t => typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract &&
@@ -95,7 +96,7 @@ public class RunUITests : DatabaseTests
             .Where(t => commandCaller.WhyCommandNotSupported(t) is not null) //but for some reason isn't
             .ToArray();
 
-        Assert.AreEqual(0, notSupported.Length,
+        Assert.That(notSupported, Is.Empty,
             "The following commands were not compatible with RunUI:" + Environment.NewLine +
             string.Join(Environment.NewLine, notSupported.Select(t => t.Name)));
     }
@@ -114,7 +115,7 @@ public class RunUITests : DatabaseTests
                  })
         {
             var isSupported = commandCaller.WhyCommandNotSupported(t);
-            Assert.IsTrue(isSupported is null, $"Unsupported type {t} due to {isSupported}");
+            Assert.That(isSupported is null, $"Unsupported type {t} due to {isSupported}");
         }
     }
 

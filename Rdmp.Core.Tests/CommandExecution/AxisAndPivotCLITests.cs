@@ -21,9 +21,8 @@ public class AxisAndPivotCLITests : CommandCliTests
                 var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "fff");
                 var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-                Assert.AreEqual(
-                    "Could not find AggregateDimension fff in Aggregate My graph so could not set it as a pivot dimension.  Try adding the column to the aggregate first",
-                    ex.Message);
+        Assert.That(
+                    ex.Message, Is.EqualTo("Could not find AggregateDimension fff in Aggregate My graph so could not set it as a pivot dimension.  Try adding the column to the aggregate first"));
         }
 
         [Test]
@@ -39,12 +38,12 @@ public class AxisAndPivotCLITests : CommandCliTests
                 var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
                 cmd.Execute();
 
-                Assert.AreEqual(dim.ID, ac.PivotOnDimensionID);
+        Assert.That(ac.PivotOnDimensionID, Is.EqualTo(dim.ID));
 
                 cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, null);
                 cmd.Execute();
 
-                Assert.IsNull(ac.PivotOnDimensionID);
+        Assert.That(ac.PivotOnDimensionID, Is.Null);
         }
 
         [Test]
@@ -61,8 +60,7 @@ public class AxisAndPivotCLITests : CommandCliTests
                 var cmd = new ExecuteCommandSetPivot(GetMockActivator(), ac, "frogmarch");
                 var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-                Assert.AreEqual("AggregateDimension frogmarch is a Date so cannot set it as a Pivot for Aggregate My graph",
-                    ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("AggregateDimension frogmarch is a Date so cannot set it as a Pivot for Aggregate My graph"));
         }
 
         [Test]
@@ -73,9 +71,8 @@ public class AxisAndPivotCLITests : CommandCliTests
                 var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "fff");
                 var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-                Assert.AreEqual(
-                    "Could not find AggregateDimension fff in Aggregate My graph so could not set it as an axis dimension.  Try adding the column to the aggregate first",
-                    ex.Message);
+        Assert.That(
+                    ex.Message, Is.EqualTo("Could not find AggregateDimension fff in Aggregate My graph so could not set it as an axis dimension.  Try adding the column to the aggregate first"));
         }
 
         [Test]
@@ -89,17 +86,17 @@ public class AxisAndPivotCLITests : CommandCliTests
                 dim.Alias = "frogmarch";
                 dim.ColumnInfo.Data_type = "datetime";
 
-                Assert.IsNull(ac.GetAxisIfAny());
+        Assert.That(ac.GetAxisIfAny(), Is.Null);
 
                 var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
                 cmd.Execute();
 
-                Assert.IsNotNull(ac.GetAxisIfAny());
+        Assert.That(ac.GetAxisIfAny(), Is.Not.Null);
 
                 cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, null);
                 cmd.Execute();
 
-                Assert.IsNull(ac.GetAxisIfAny());
+        Assert.That(ac.GetAxisIfAny(), Is.Null);
         }
 
         [Test]
@@ -115,7 +112,6 @@ public class AxisAndPivotCLITests : CommandCliTests
                 var cmd = new ExecuteCommandSetAxis(GetMockActivator(), ac, "frogmarch");
                 var ex = Assert.Throws<Exception>(() => cmd.Execute());
 
-                Assert.AreEqual("AggregateDimension frogmarch is not a Date so cannot set it as an axis for Aggregate My graph",
-                    ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("AggregateDimension frogmarch is not a Date so cannot set it as an axis for Aggregate My graph"));
         }
 }

@@ -32,7 +32,7 @@ public class ArgumentTypeTests : UnitTests
         arg.SetType(t);
         arg.Value = val;
 
-        Assert.AreEqual(_expectedAnswers[expectedAnswerIdx], arg.GetValueAsSystemType());
+        Assert.That(arg.GetValueAsSystemType(), Is.EqualTo(_expectedAnswers[expectedAnswerIdx]));
     }
 
     [Test]
@@ -40,8 +40,11 @@ public class ArgumentTypeTests : UnitTests
     {
         var args = WhenIHaveA<ProcessTask>().CreateArgumentsForClassIfNotExists<TestClassDemandingDouble>();
 
-        Assert.AreEqual(1.0, args.Single().GetValueAsSystemType());
-        Assert.AreEqual("1", args.Single().Value);
+        Assert.Multiple(() =>
+        {
+            Assert.That(args.Single().GetValueAsSystemType(), Is.EqualTo(1.0));
+            Assert.That(args.Single().Value, Is.EqualTo("1"));
+        });
     }
 
     private class TestClassDemandingDouble

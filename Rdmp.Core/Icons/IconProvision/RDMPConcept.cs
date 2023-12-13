@@ -179,7 +179,6 @@ public enum RDMPConcept
     CohortAggregateContainer,
 
     AllPluginsNode,
-    AllExpiredPluginsNode,
     ProcessTask,
 
 
@@ -203,5 +202,6 @@ public enum RDMPConcept
     MutilateDataTables,
     Commit,
     Memento,
-    TableInfoDatabaseNode
+    TableInfoDatabaseNode,
+    Dataset
 }

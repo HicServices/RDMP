@@ -30,7 +30,7 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionP
         InsertOption insertOption = InsertOption.Default)
     {
         var sourceFileTaskCommand = cmd as FileCollectionCombineable;
-            
+
         if (cmd is ProcessTaskCombineable sourceProcessTaskCommand)
             return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);
 
@@ -41,6 +41,9 @@ internal class ProposeExecutionWhenTargetIsLoadStageNode : RDMPCommandExecutionP
             {
                 case ".sql":
                     return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,
+                        targetStage.LoadMetadata, targetStage.LoadStage, f);
+                case ".bak":
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLBakFile,
                         targetStage.LoadMetadata, targetStage.LoadStage, f);
                 case ".exe":
                     return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable,

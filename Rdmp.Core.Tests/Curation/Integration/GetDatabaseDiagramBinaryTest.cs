@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using NUnit.Framework;
 using Rdmp.Core.ReusableLibraryCode;
 using Tests.Common;
@@ -22,16 +23,16 @@ public class GetDatabaseDiagramBinaryTest : DatabaseTests
             con.Connection, con.Transaction);
         using var reader = cmd.ExecuteReader();
         //The system diagram exists
-        Assert.IsTrue(reader.Read());
+        Assert.That(reader.Read());
 
         var bytes = (byte[])reader[0];
         var bytesAsString = ByteArrayToString(bytes);
 
         Console.WriteLine(bytesAsString);
-        Assert.Greater(bytesAsString.Length, 100000);
+        Assert.That(bytesAsString, Has.Length.GreaterThan(100000));
     }
 
-    public static string ByteArrayToString(byte[] ba)
+    private static string ByteArrayToString([NotNull] byte[] ba)
     {
         var hex = BitConverter.ToString(ba);
         return hex.Replace("-", "");

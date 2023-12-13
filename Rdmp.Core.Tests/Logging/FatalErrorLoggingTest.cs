@@ -23,8 +23,11 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
 
-        Assert.Contains("Fish", lm.ListDataTasks());
-        Assert.Contains("Fish", lm.ListDataSets());
+        Assert.Multiple(() =>
+        {
+            Assert.That(lm.ListDataTasks(), Does.Contain("Fish"));
+            Assert.That(lm.ListDataSets(), Does.Contain("Fish"));
+        });
 
         lm.CreateNewLoggingTaskIfNotExists("Fish");
         lm.CreateNewLoggingTaskIfNotExists("Fish");
@@ -47,7 +50,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         d.LogFatalError("HICSSISLibraryTests.FataErrorLoggingTest", "Some terrible event happened");
 
-        Assert.IsTrue(d.IsClosed);
+        Assert.That(d.IsClosed);
     }
 
     [Test]
@@ -71,7 +74,7 @@ internal class FatalErrorLoggingTest : DatabaseTests
 
         ds[0].MD5 = hashAsBytes; //MD5 is a property so confirm write and read are the same - and don't bomb
 
-        Assert.AreEqual(ds[0].MD5, hashAsBytes);
+        Assert.That(hashAsBytes, Is.EqualTo(ds[0].MD5));
 
         var d = new DataLoadInfo("Internal", "HICSSISLibraryTests.FatalErrorLoggingTest",
             "Test case for fatal error generation",

@@ -52,15 +52,15 @@ internal class ExtractCommandStateMonitor
 
     public IEnumerable<object> GetAllChangedObjects(GlobalsBundle globals)
     {
-        foreach (var (key, value) in globals.States)
-            if (!GlobalsStates.ContainsKey(key))
+        foreach (var (key, state) in globals.States)
+            if (!GlobalsStates.TryGetValue(key, out var commandState))
             {
-                GlobalsStates.Add(key, value);
+                GlobalsStates.Add(key, state);
                 yield return key; //new objects also are returned as changed
             }
             else
             //State has changed since last save
-            if (GlobalsStates[key] != value)
+            if (commandState != state)
             {
                 yield return key;
             }

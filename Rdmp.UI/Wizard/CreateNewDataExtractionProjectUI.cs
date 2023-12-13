@@ -301,60 +301,60 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
 
             ProjectCreatedIfAny.SaveToDatabase();
 
-            if (_configuration == null && cbDefineCohort.Checked)
-            {
-                _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
-                    ProjectCreatedIfAny)
-                {
-                    Name = "Cases"
-                };
-                _configuration.SaveToDatabase();
-            }
-
-            foreach (ExtractableDataSet ds in _selectedDatasets)
-                _configuration.AddDatasetToConfiguration(ds);
-
-            ICommandExecution cmdAssociateCicWithProject = null;
-
-            if (_cohortCreated == null && cbDefineCohort.Checked)
-            {
-                var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1,
-                    ProjectCreatedIfAny.ProjectNumber.Value,
-                    (ExternalCohortTable)ddCohortSources.SelectedItem);
-
-                //execute the cohort creation bit
-                var cohortRequest = new CohortCreationRequest(ProjectCreatedIfAny, cohortDefinition,
-                    Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
-
-                ComboBox dd;
-                if (_cohortFile != null)
-                {
-                    //execute cohort creation from file.
-                    cohortRequest.FileToLoad = new FlatFileToLoad(_cohortFile);
-                    dd = ddFilePipeline;
-                }
-                else
-                {
-                    //execute cohort creation from cic
-                    cohortRequest.CohortIdentificationConfiguration =
-                        (CohortIdentificationConfiguration)cbxCohort.SelectedItem;
-                    dd = ddCicPipeline;
-
-
-                    //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
-                    cmdAssociateCicWithProject =
-                        new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
-                            ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
-                }
-
-                var engine = cohortRequest.GetEngine((Pipeline)dd.SelectedItem,
-                    ThrowImmediatelyDataLoadEventListener.Quiet);
-                engine.ExecutePipeline(new GracefulCancellationToken());
-                _cohortCreated = cohortRequest.CohortCreatedIfAny;
-            }
-
             if (cbDefineCohort.Checked)
             {
+                if (_configuration == null)
+                {
+                    _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
+                        ProjectCreatedIfAny)
+                    {
+                        Name = "Cases"
+                    };
+                    _configuration.SaveToDatabase();
+                }
+                foreach (var ds in _selectedDatasets)
+                    _configuration.AddDatasetToConfiguration(ds);
+
+
+                ICommandExecution cmdAssociateCicWithProject = null;
+
+                if (_cohortCreated == null)
+                {
+                    var cohortDefinition = new CohortDefinition(null, tbCohortName.Text, 1,
+                        ProjectCreatedIfAny.ProjectNumber.Value,
+                        (ExternalCohortTable)ddCohortSources.SelectedItem);
+
+                    //execute the cohort creation bit
+                    var cohortRequest = new CohortCreationRequest(ProjectCreatedIfAny, cohortDefinition,
+                        Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
+
+                    ComboBox dd;
+                    if (_cohortFile != null)
+                    {
+                        //execute cohort creation from file.
+                        cohortRequest.FileToLoad = new FlatFileToLoad(_cohortFile);
+                        dd = ddFilePipeline;
+                    }
+                    else
+                    {
+                        //execute cohort creation from cic
+                        cohortRequest.CohortIdentificationConfiguration =
+                            (CohortIdentificationConfiguration)cbxCohort.SelectedItem;
+                        dd = ddCicPipeline;
+
+
+                        //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
+                        cmdAssociateCicWithProject =
+                            new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
+                                ProjectCreatedIfAny).SetTarget(cohortRequest.CohortIdentificationConfiguration);
+                    }
+
+                    var engine = cohortRequest.GetEngine((Pipeline)dd.SelectedItem,
+                        ThrowImmediatelyDataLoadEventListener.Quiet);
+                    engine.ExecutePipeline(new GracefulCancellationToken());
+                    _cohortCreated = cohortRequest.CohortCreatedIfAny;
+                }
+
                 //associate the configuration with the cohort
                 _configuration.Cohort_ID = _cohortCreated.ID;
 

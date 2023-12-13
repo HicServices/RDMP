@@ -77,11 +77,6 @@ public interface ICatalogueRepository : IRepository, IServerDefaults
     IFilterManager FilterManager { get; }
 
     /// <summary>
-    /// Manager for identifying current active <see cref="Plugin"/>s
-    /// </summary>
-    IPluginManager PluginManager { get; }
-
-    /// <summary>
     /// Returns a new <see cref="LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
     /// </summary>
     /// <returns></returns>

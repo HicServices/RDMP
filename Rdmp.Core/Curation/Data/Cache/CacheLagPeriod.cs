@@ -10,7 +10,7 @@ namespace Rdmp.Core.Curation.Data.Cache;
 
 /// <summary>
 /// Describes the period of time for which data should not be fetched during caching (See <see cref="CacheProgress"/>) in Months/Days.  This allows for the fact that
-/// data in the remote server is unlikley to be real time up to the second accurate and you might need to delay requesting data until it has been collected.
+/// data in the remote server is unlikely to be real time up to the second accurate and you might need to delay requesting data until it has been collected.
 ///  
 /// <para>Serialises to/from simple string representation of duration + type, where type is month (m) or day (d)</para>
 /// </summary>

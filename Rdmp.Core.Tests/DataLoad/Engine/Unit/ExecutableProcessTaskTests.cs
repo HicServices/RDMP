@@ -34,7 +34,7 @@ internal class ExecutableProcessTaskTests
         var argString = task.CreateArgString();
         const string expectedArgString = $"--database-name={db}";
 
-        Assert.AreEqual(expectedArgString, argString);
+        Assert.That(argString, Is.EqualTo(expectedArgString));
     }
 
     [Test]
@@ -44,6 +44,6 @@ internal class ExecutableProcessTaskTests
         processTask.Path.Returns("path");
 
         var runtimeTask = new ExecutableRuntimeTask(processTask, null);
-        Assert.AreEqual("path", runtimeTask.ExeFilepath);
+        Assert.That(runtimeTask.ExeFilepath, Is.EqualTo("path"));
     }
 }
