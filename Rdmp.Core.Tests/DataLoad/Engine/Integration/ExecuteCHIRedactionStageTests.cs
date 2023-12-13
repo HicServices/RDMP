@@ -37,7 +37,6 @@ internal class ExecuteCHIRedactionStageTests: DatabaseTests
         }
 
         var job = Substitute.For<IDataLoadJob>();
-        //job.RegularTablesToLoad.Returns(new List<ITableInfo>(new[] { db.DiscoverTables }));
         var task = new ExecuteCHIRedactionStage(job, db, LoadStage.AdjustRaw);
         task.Execute(true);
         using (var con = db.Server.GetConnection())
@@ -50,7 +49,6 @@ internal class ExecuteCHIRedactionStageTests: DatabaseTests
             SqlDataAdapter da = new SqlDataAdapter((SqlCommand)cmdCreateTable);
             da.Fill(dt);
             Assert.That("##########", Is.EqualTo(dt.Rows[0][0]));
-
         }
     }
 }
