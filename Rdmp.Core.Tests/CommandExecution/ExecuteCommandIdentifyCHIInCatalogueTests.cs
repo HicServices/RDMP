@@ -1,16 +1,11 @@
-﻿using FAnsi;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CommandExecution;
@@ -85,10 +80,6 @@ internal class ExecuteCommandIdentifyCHIInCatalogueTests : DatabaseTests
     public void IdentifyCHIInCatalogue_FoundCHI_AllowList()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-
-        //var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
-        //pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
-
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
         creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });

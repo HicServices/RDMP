@@ -3,21 +3,14 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
-using Org.BouncyCastle.Asn1.Crmf;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataViewing;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -25,16 +18,13 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtomicCommand
 {
 
-    private ICatalogue _catalouge;
-    private IBasicActivateItems _activator;
-    private bool _bailOutEarly;
+    private readonly ICatalogue _catalouge;
+    private readonly bool _bailOutEarly;
     private readonly Dictionary<string, List<string>> _allowLists = new();
 
-    //TODO don;t show PKs
     public ExecuteCommandIdentifyCHIInCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] ICatalogue catalogue, bool bailOutEarly = false, string allowListLocation = null) : base(activator)
     {
         _catalouge = catalogue;
-        _activator = activator;
         _bailOutEarly = bailOutEarly;
         if (!string.IsNullOrWhiteSpace(allowListLocation))
         {
@@ -130,7 +120,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         Console.WriteLine($"Found {foundChis.Rows.Count} CHIs in the {_catalouge.Name} Catalogue.");
         foreach (DataRow row in foundChis.Rows)
         {
-            Console.WriteLine($"{row["potential CHI"]} | {row["Context"]} | {row["Source Column Name"]}");
+            Console.WriteLine($"{row["Potential CHI"]} | {row["Context"]} | {row["Source Column Name"]}");
 
         }
     }

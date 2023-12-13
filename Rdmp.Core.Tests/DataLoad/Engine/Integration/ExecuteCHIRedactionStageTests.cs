@@ -2,16 +2,10 @@
 using Microsoft.Data.SqlClient;
 using NSubstitute;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
@@ -48,7 +42,7 @@ internal class ExecuteCHIRedactionStageTests: DatabaseTests
            var dt = new DataTable();
             SqlDataAdapter da = new SqlDataAdapter((SqlCommand)cmdCreateTable);
             da.Fill(dt);
-            Assert.That("##########", Is.EqualTo(dt.Rows[0][0]));
+            Assert.That(dt.Rows[0][0], Is.EqualTo("##########"));
         }
     }
 }

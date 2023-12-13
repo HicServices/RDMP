@@ -9,10 +9,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandConfirmRedactedCHI : BasicCommandExecution, IAtomicCommand
 {
-    readonly RedactedCHI _redactedCHI;
-    public ExecuteCommandConfirmRedactedCHI(IBasicActivateItems activator, [DemandsInitialization("Redacted CHI to confirm")]RedactedCHI redaction): base(activator)
+    private readonly RedactedCHI _redactedCHI;
+    public ExecuteCommandConfirmRedactedCHI(IBasicActivateItems activator, [DemandsInitialization("Redacted CHI to confirm")]RedactedCHI redactedCHI): base(activator)
     {
-        _redactedCHI = redaction;
+        _redactedCHI = redactedCHI;
     }
 
     public override void Execute()
