@@ -63,10 +63,10 @@ internal class ExecuteCHIRedactionStage
              $"About to run {GetType()} mutilation on table {tbl}"));
         var dt = tbl.GetDataTable();
         List<String> _allowList = new();
-        if (_allowLists.TryGetValue("RDMP_ALL", out var _extractionSpecificAllowances))
+        if (_allowLists is not null && _allowLists.TryGetValue("RDMP_ALL", out var _extractionSpecificAllowances))
             _allowList.AddRange(_extractionSpecificAllowances);
         var y = tbl.ToString();
-        if (_allowLists.TryGetValue(tbl.ToString(), out var _catalogueSpecificAllowances))
+        if (_allowLists is not null && _allowLists.TryGetValue(tbl.ToString(), out var _catalogueSpecificAllowances))
             _allowList.AddRange(_catalogueSpecificAllowances.ToList());
         foreach (DataColumn col in dt.Columns)
         {
@@ -86,6 +86,7 @@ internal class ExecuteCHIRedactionStage
                         if (catalogue != null)
                         {
                             //this can probably be tidied up
+                            Console.WriteLine(foundTable);
                             var pkColumnInfo = catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey && x.Name.Contains(foundTable)).First(); //there may be more, but we just need one
                             pkColumnName = pkColumnInfo.Name;
                             if (pkColumnInfo != null)
@@ -102,6 +103,7 @@ internal class ExecuteCHIRedactionStage
                         ft = ft.Replace("..", ".[dbo].");
                         if (pkColumnName.Split(".").Last().Replace("[","").Replace("]","") != $"{col.ColumnName}")
                         {
+                            Console.WriteLine("hi");
                             var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, ft, pkValue, pkColumnName.Split(".").Last(), $"[{col.ColumnName}]");
                             rc.SaveToDatabase();
                             var redactionString = "##########";
