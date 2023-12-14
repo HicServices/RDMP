@@ -44,5 +44,5 @@ public enum ProcessTaskType
     /// <summary>
     /// ProcessTask is to import a SQL backup file directly to the server
     /// </summary>
-    SQLBakFile,
+    SQLBakFile
 }
