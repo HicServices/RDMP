@@ -16,8 +16,8 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
     public void RevertRedactedCHI_Valid()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
-        pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
+        //var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
+        //pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
         creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
