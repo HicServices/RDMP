@@ -45,8 +45,8 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         _clipboardContentGetter = clipboardContentGetter;
     }
 
-    //public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-    //    iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+        iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
 
     public override void Execute()
     {

@@ -7,18 +7,13 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandViewRedactedCHIsInCatalogue : BasicUICommandExecution
 {
-    private ICatalogue _catalogue;
-    private IActivateItems _activator;
+    private readonly ICatalogue _catalogue;
+    private readonly IActivateItems _activator;
     public ExecuteCommandViewRedactedCHIsInCatalogue(IActivateItems activator, ICatalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;

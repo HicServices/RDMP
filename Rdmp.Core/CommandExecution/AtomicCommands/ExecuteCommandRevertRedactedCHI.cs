@@ -6,19 +6,15 @@
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCommand
 {
-    RedactedCHI _redactedCHI;
-    IBasicActivateItems _activator;
+    private readonly RedactedCHI _redactedCHI;
+    private readonly IBasicActivateItems _activator;
 
     public ExecuteCommandRevertRedactedCHI(IBasicActivateItems activator, [DemandsInitialization("Redacted CHI to Revert")] RedactedCHI redaction) : base(activator)
     {
@@ -29,6 +25,7 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
     public override void Execute()
     {
         base.Execute();
+        //todo i think there is some duplication here with other files, may be able to use a helper
         var redactedString = new string('#', _redactedCHI.PotentialCHI.Length);
         var fetchSQL = $"select {_redactedCHI.ColumnName} from {_redactedCHI.TableName} where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and charindex('{redactedString}',{_redactedCHI.ColumnName},{_redactedCHI.ReplacementIndex}) >0";
         var existingResultsDT = new DataTable();
@@ -37,8 +34,11 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
         using (var con = (SqlConnection)catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetConnection())
         {
             con.Open();
-            var da = new SqlDataAdapter(new SqlCommand(fetchSQL, con));
+            var sqlCommand = new SqlCommand(fetchSQL, con);
+            var da = new SqlDataAdapter(sqlCommand);
             da.Fill(existingResultsDT);
+            sqlCommand.Dispose();
+            da.Dispose();
             if (existingResultsDT.Rows.Count > 0 && existingResultsDT.Rows[0].ItemArray.Length > 0)
             {
                 var currentContext = existingResultsDT.Rows[0].ItemArray[0].ToString();
@@ -46,9 +46,10 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
                 var updateSQL = $"update {_redactedCHI.TableName} set {_redactedCHI.ColumnName}='{newContext}' where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and {_redactedCHI.ColumnName}='{currentContext}'";
                 var updateCmd = new SqlCommand(updateSQL, con);
                 updateCmd.ExecuteNonQuery();
+                updateCmd.Dispose();
             }
             _redactedCHI.DeleteInDatabase();
-
         }
+        existingResultsDT.Dispose();
     }
 }

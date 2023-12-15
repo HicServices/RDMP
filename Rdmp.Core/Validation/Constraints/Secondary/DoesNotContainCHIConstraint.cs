@@ -15,14 +15,13 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 /// <summary>
-/// TODO
+/// Secondary constraint that looks for potential CHI values in the data
 /// </summary>
 public class DoesNotContainCHIConstraint : SecondaryConstraint, ICheckable
 {
-    private readonly IRepository _repository;
 
-    public DoesNotContainCHIConstraint() {
-        _repository = Validator.LocatorForXMLDeserialization.CatalogueRepository;
+    public DoesNotContainCHIConstraint()
+    {
     }
 
 
@@ -32,7 +31,7 @@ public class DoesNotContainCHIConstraint : SecondaryConstraint, ICheckable
 
     public override string GetHumanReadableDescriptionOfValidation()
     {
-        return "TODO";
+        return "Finds potential CHI values in the data";
     }
 
     public override void RenameColumn(string originalName, string newName)
@@ -47,7 +46,7 @@ public class DoesNotContainCHIConstraint : SecondaryConstraint, ICheckable
         if (string.IsNullOrWhiteSpace(value.ToString()))
             return null;
         var potentialCHI = CHIColumnFinder.GetPotentialCHI(value.ToString());
-        if(string.IsNullOrWhiteSpace(potentialCHI)) return null;
-        return new ValidationFailure($"Potential CHI {potentialCHI} was found.",this);
+        if (string.IsNullOrWhiteSpace(potentialCHI)) return null;
+        return new ValidationFailure($"Potential CHI {potentialCHI} was found.", this);
     }
 }

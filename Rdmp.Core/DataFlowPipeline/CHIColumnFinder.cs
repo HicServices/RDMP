@@ -90,7 +90,7 @@ public sealed partial class CHIColumnFinder : IPluginDataFlowComponent<DataTable
         var listFile = new Lazy<StreamWriter>(() =>
             {
                 var stream = fileLocation is not null ? File.AppendText(fileLocation) : null;
-                if (stream?.BaseStream.Length == 0)
+                if (stream?.BaseStream.Length == 0 && _csvColumns is not null)
                     stream.WriteLine(_csvColumns);
                 return stream;
             },

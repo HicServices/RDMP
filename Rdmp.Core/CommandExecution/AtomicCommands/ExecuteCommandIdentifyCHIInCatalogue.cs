@@ -22,6 +22,17 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     private readonly bool _bailOutEarly;
     private readonly Dictionary<string, List<string>> _allowLists = new();
 
+    private readonly string PotentialCHI = "Potential CHI";
+    private readonly string Context = "Context";
+    private readonly string SourceColumnName = "Source Column Name";
+    private readonly string PKValue = "PK Value";
+    private readonly string PKColumn = "PK Column";
+    private readonly string ReplacementIndex = "replacementIndex";
+    private readonly string RDMP_ALL = "RDMP_ALL";
+
+    public DataTable foundChis = new();
+
+
     public ExecuteCommandIdentifyCHIInCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] ICatalogue catalogue, bool bailOutEarly = false, string allowListLocation = null) : base(activator)
     {
         _catalouge = catalogue;
@@ -51,33 +62,12 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         return $"{source[Math.Max(0, foundIndex - padding)..foundIndex]}{chi}{source[(foundIndex + chi.Length)..Math.Min(foundIndex + chi.Length + padding, source.Length)]}";
     }
 
-
-    private readonly string PotentialCHI = "Potential CHI";
-    private readonly string Context = "Context";
-    private readonly string SourceColumnName = "Source Column Name";
-    private readonly string PKValue = "PK Value";
-    private readonly string PKColumn = "PK Column";
-    private readonly string ReplacementIndex = "replacementIndex";
-    private readonly string RDMP_ALL = "RDMP_ALL";
-
-
     private void HandleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
     {
         if (pkColumn.Split(".").Last().Replace("[", "").Replace("]", "") == columnName.Replace("[", "").Replace("]", "")) return; //don't redact PKs, it gets messy
-        //if (foundChis.Rows.Count == 0)
-        //{
-        //    // init
-        //    foundChis.Columns.Add(PotentialCHI);
-        //    foundChis.Columns.Add(Context);
-        //    foundChis.Columns.Add(SourceColumnName);
-        //    foundChis.Columns.Add(PKValue);
-        //    foundChis.Columns.Add(PKColumn);
-        //    foundChis.Columns.Add(ReplacementIndex);
-        //}
         var shrunkContext = WrapCHIInContext(foundChi, contextValue);
         foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, pkColumn, contextValue.IndexOf(foundChi));
     }
-    public DataTable foundChis = new();
 
     public override void Execute()
     {
@@ -102,7 +92,6 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             int idxOfLastSplit = column.LastIndexOf('.');
             var columnName = column[(idxOfLastSplit + 1)..];
             var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-            // what if there is no pk?
             var pkColumns = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey);
             if (pkColumns.Any())
             {
@@ -133,6 +122,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
                         }
                     }
                 }
+                dt.Dispose();
             }
             else
             {

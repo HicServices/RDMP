@@ -44,7 +44,7 @@
             btnSearch.TabIndex = 0;
             btnSearch.Text = "Search";
             btnSearch.UseVisualStyleBackColor = true;
-            btnSearch.Click += searchButtonClick;
+            btnSearch.Click += SearchButtonClick;
             // 
             // dtResults
             // 

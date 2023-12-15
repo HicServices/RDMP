@@ -8,12 +8,8 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -22,8 +18,8 @@ namespace Rdmp.UI.SimpleDialogs
     {
         private bool _isLoading = true;
         private bool _firstTime = true;
-        private IBasicActivateItems _activator;
-        private ICatalogue _catalogue;
+        private readonly IBasicActivateItems _activator;
+        private readonly ICatalogue _catalogue;
         private DataTable _results;
 
 
@@ -53,11 +49,6 @@ namespace Rdmp.UI.SimpleDialogs
                 result.Delete();
                 _results.AcceptChanges();
                 dtResults.DataSource = _results;
-                //dtResults.Columns[5].Visible = false;
-                //dtResults.Columns[5].Visible = false;
-                //dtResults.Columns[5].Visible = false;
-                //dtResults.Columns[5].Visible = false;//todo this isn't quite right
-
             }
         }
 
@@ -77,14 +68,10 @@ namespace Rdmp.UI.SimpleDialogs
                 result.Delete();
                 _results.AcceptChanges();
                 dtResults.DataSource = _results;
-                //dtResults.Columns[5].Visible = false;
-
-                //dtResults.Columns[5].Visible = false;//todo this isn't quite right
-
             }
         }
 
-        private void handleClick(object sender, DataGridViewCellEventArgs e)
+        private void HandleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.ColumnIndex == dtResults.Columns["Revert"].Index)
             {
@@ -147,7 +134,6 @@ namespace Rdmp.UI.SimpleDialogs
                 dtResults.Columns[4].Visible = false;
                 _firstTime = false;
             }
-                //dtResults.Columns[3].Visible = false;
                 _results = dt;
             DataGridViewButtonColumn revertColumn = new DataGridViewButtonColumn();
             revertColumn.Text = "Revert";
@@ -158,7 +144,7 @@ namespace Rdmp.UI.SimpleDialogs
             confirmColumn.Text = "Confirm";
             confirmColumn.Name = "Confirm";
             confirmColumn.UseColumnTextForButtonValue = true;
-            dtResults.CellClick += handleClick;
+            dtResults.CellClick += HandleClick;
             if (dtResults.Columns["Revert"] == null)
             {
                 dtResults.Columns.Insert(3, revertColumn);
@@ -173,7 +159,7 @@ namespace Rdmp.UI.SimpleDialogs
         }
 
 
-        private void searchButtonClick(object sender, EventArgs e)
+        private void SearchButtonClick(object sender, EventArgs e)
         {
             _isLoading = true;
             lblLoading.Visible = _isLoading;

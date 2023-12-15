@@ -8,27 +8,18 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.MainFormUITabs;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using YamlDotNet.Serialization;
 
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class RedactChisInCatalogueDialog : Form
     {
 
-        private IActivateItems _activator;
-        private ICatalogue _catalogue;
+        private readonly IActivateItems _activator;
+        private readonly ICatalogue _catalogue;
         private DataTable _results;
         private bool _firstTime = true;
 
@@ -46,9 +37,9 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void Redact(int rowIndex)
         {
+            //todo this whole function is duped elsehwere, join them up
             var result = _results.Rows[rowIndex];
             var foundChi = result.ItemArray[0].ToString();
-            var columnValue = result.ItemArray[1].ToString();
             var column = result.ItemArray[2].ToString();
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
@@ -111,6 +102,7 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 dgResults.Columns.Insert(3, confirmColumn);
             }
+            confirmColumn.Dispose();
             if (_firstTime)
             {
                 dgResults.Columns[4].Visible = false;

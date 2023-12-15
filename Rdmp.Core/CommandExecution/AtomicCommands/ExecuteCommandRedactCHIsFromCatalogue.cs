@@ -3,23 +3,11 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandExecution;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.Curation.Data;
-using YamlDotNet.Serialization;
-using System.IO;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System.Data;
-using static NPOI.HSSF.Util.HSSFColor;
-using Rdmp.Core.Curation.Data.Defaults;
-using TB.ComponentModel;
-using FAnsi.Discovery.TableCreation;
-using Rdmp.Core.DataFlowPipeline;
 using Microsoft.Data.SqlClient;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -27,11 +15,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAtomicCommand
 {
 
-    private ICatalogue _catalogue;
-    private IBasicActivateItems _activator;
-    private readonly Dictionary<string, List<string>> _allowLists = new();
+    private readonly ICatalogue _catalogue;
+    private readonly IBasicActivateItems _activator;
     public int redactionCount = 0;
-    private string _allowListLocation = "";
+    private readonly string _allowListLocation = "";
 
     public ExecuteCommandRedactCHIsFromCatalogue(IBasicActivateItems activator, [DemandsInitialization("The catalogue to search")] ICatalogue catalogue, string allowListLocation = null) : base(activator)
     {
@@ -51,7 +38,6 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
             redactionCount++;
             var result = row;
             var foundChi = result.ItemArray[0].ToString();
-            var columnValue = result.ItemArray[1].ToString();
             var column = result.ItemArray[2].ToString();
             var catalogueItem = _catalogue.CatalogueItems.Where(ci => ci.Name == column).First();
             var name = catalogueItem.ColumnInfo.Name;
@@ -70,8 +56,11 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
             using (var con = (SqlConnection)catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetConnection())
             {
                 con.Open();
-                var da = new SqlDataAdapter(new SqlCommand(fetchSQL, con));
+                var sqlCommand = new SqlCommand(fetchSQL, con);
+                var da = new SqlDataAdapter(sqlCommand);
                 da.Fill(existingResultsDT);
+                da.Dispose();
+                sqlCommand.Dispose();
                 if (existingResultsDT.Rows.Count > 0 && existingResultsDT.Rows[0].ItemArray.Length > 0)
                 {
                     var currentContext = existingResultsDT.Rows[0].ItemArray[0].ToString();
@@ -79,8 +68,11 @@ public class ExecuteCommandRedactCHIsFromCatalogue : BasicCommandExecution, IAto
                     var updateSQL = $"update {table} set {column}='{newContext}' where {pkColumn} = '{pkValue}' and {column}='{currentContext}'";
                     var updateCmd = new SqlCommand(updateSQL, con);
                     updateCmd.ExecuteNonQuery();
+                    updateCmd.Dispose();
                 }
             }
+            existingResultsDT.Dispose();
         }
+        results.Dispose();
     }
 }
