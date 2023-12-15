@@ -203,7 +203,7 @@ jobs:
 
       - name: Archive production artifacts
         if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |

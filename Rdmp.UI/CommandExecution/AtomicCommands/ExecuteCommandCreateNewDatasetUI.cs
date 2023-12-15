@@ -15,7 +15,7 @@ public class ExecuteCommandCreateNewDatasetUI : ExecuteCommandCreateDataset
     private readonly IActivateItems _activator;
 
     public ExecuteCommandCreateNewDatasetUI(IActivateItems activator) : base(
-        activator,"")
+        activator,"New Dataset")
     {
         _activator = activator;
     }
