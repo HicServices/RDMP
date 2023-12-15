@@ -64,10 +64,13 @@ internal class ExecuteCHIRedactionStageTests: DatabaseTests
 
             var cmdCreateTable = db.Server.GetCommand(
                 $"select SomeOtherValue from {db.GetRuntimeName()}.dbo.Test_Redaction", con);
+            dt.Dispose();
             dt = new DataTable();
             SqlDataAdapter da = new SqlDataAdapter((SqlCommand)cmdCreateTable);
             da.Fill(dt);
+            da.Dispose();
             Assert.That(dt.Rows[0][0], Is.EqualTo("F#########1"));
         }
+        dt.Dispose();
     }
 }

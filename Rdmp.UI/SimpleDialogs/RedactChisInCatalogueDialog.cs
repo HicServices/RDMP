@@ -39,6 +39,8 @@ namespace Rdmp.UI.SimpleDialogs
             _catalogue = catalogue;
             dgResults.Visible = false;
             lbResults.Visible = false;
+            lblNoResultsFound.Visible = false;
+
 
         }
 
@@ -95,9 +97,10 @@ namespace Rdmp.UI.SimpleDialogs
         private void ShowResults()
         {
             if(_results.Rows.Count ==0) {
-                //TODO show a 'no results found' message
+                lblNoResultsFound.Visible = true;
                 return;
             }
+            lblNoResultsFound.Visible = false;
             dgResults.DataSource = _results;
             DataGridViewButtonColumn confirmColumn = new DataGridViewButtonColumn();
             confirmColumn.Text = "Redact";
@@ -123,6 +126,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             dgResults.Visible = false;
             lbResults.Visible = false;
+            lblNoResultsFound.Visible = false;
             if (this.cbDoRedaction.Checked && _activator.YesNo("Are you sure you want to blindly redact?", "Redact Catalogue"))
             {
                 var cmd = new ExecuteCommandRedactCHIsFromCatalogue(_activator, _catalogue, tbAllowList.Text is not null ? tbAllowList.Text : "");

@@ -16,8 +16,6 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
     public void RevertRedactedCHI_Valid()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        //var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
-        //pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
         creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
@@ -57,6 +55,7 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
+        dt.Dispose();
     }
 
     [Test]
@@ -89,6 +88,7 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
+        dt.Dispose();
         var redactedChisCount = CatalogueRepository.GetAllObjects<RedactedCHI>().Length;
         var rCHI = CatalogueRepository.GetAllObjects<RedactedCHI>().First();
         var revertCmd = new ExecuteCommandRevertRedactedCHI(new ThrowImmediatelyActivator(RepositoryLocator), rCHI);
@@ -105,6 +105,7 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
+        dt.Dispose();
 
     }
     }

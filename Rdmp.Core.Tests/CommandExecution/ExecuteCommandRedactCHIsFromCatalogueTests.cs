@@ -18,8 +18,6 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
     public void RedactCHIsFromCatalogue_ValidSingle()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-        //var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
-        //pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
         creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
@@ -44,6 +42,7 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(2));
+        dt.Dispose();
     }
 
     [Test]
@@ -80,5 +79,6 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(0));
+        dt.Dispose();
     }
 }

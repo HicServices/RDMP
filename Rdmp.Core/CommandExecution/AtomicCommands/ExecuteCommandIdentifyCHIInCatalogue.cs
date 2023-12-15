@@ -26,6 +26,12 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     {
         _catalouge = catalogue;
         _bailOutEarly = bailOutEarly;
+        foundChis.Columns.Add(PotentialCHI);
+        foundChis.Columns.Add(Context);
+        foundChis.Columns.Add(SourceColumnName);
+        foundChis.Columns.Add(PKValue);
+        foundChis.Columns.Add(PKColumn);
+        foundChis.Columns.Add(ReplacementIndex);
         if (!string.IsNullOrWhiteSpace(allowListLocation))
         {
             var allowListFileContent = File.ReadAllText(allowListLocation);
@@ -46,20 +52,28 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     }
 
 
+    private readonly string PotentialCHI = "Potential CHI";
+    private readonly string Context = "Context";
+    private readonly string SourceColumnName = "Source Column Name";
+    private readonly string PKValue = "PK Value";
+    private readonly string PKColumn = "PK Column";
+    private readonly string ReplacementIndex = "replacementIndex";
+    private readonly string RDMP_ALL = "RDMP_ALL";
 
-    private void handleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
+
+    private void HandleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
     {
         if (pkColumn.Split(".").Last().Replace("[", "").Replace("]", "") == columnName.Replace("[", "").Replace("]", "")) return; //don't redact PKs, it gets messy
-        if (foundChis.Rows.Count == 0)
-        {
-            //init
-            foundChis.Columns.Add("Potential CHI");
-            foundChis.Columns.Add("Context");
-            foundChis.Columns.Add("Source Column Name");
-            foundChis.Columns.Add("PK Value");
-            foundChis.Columns.Add("PK Column");
-            foundChis.Columns.Add("replacementIndex");
-        }
+        //if (foundChis.Rows.Count == 0)
+        //{
+        //    // init
+        //    foundChis.Columns.Add(PotentialCHI);
+        //    foundChis.Columns.Add(Context);
+        //    foundChis.Columns.Add(SourceColumnName);
+        //    foundChis.Columns.Add(PKValue);
+        //    foundChis.Columns.Add(PKColumn);
+        //    foundChis.Columns.Add(ReplacementIndex);
+        //}
         var shrunkContext = WrapCHIInContext(foundChi, contextValue);
         foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, pkColumn, contextValue.IndexOf(foundChi));
     }
@@ -69,7 +83,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     {
         base.Execute();
         List<string> columnAllowList = new();
-        if (_allowLists.TryGetValue("RDMP_ALL", out var _extractionSpecificAllowances))
+        if (_allowLists.TryGetValue(RDMP_ALL, out var _extractionSpecificAllowances))
             columnAllowList.AddRange(_extractionSpecificAllowances);
         if (_allowLists.TryGetValue(_catalouge.Name, out var _catalogueSpecificAllowances))
             columnAllowList.AddRange(_catalogueSpecificAllowances.ToList());
@@ -88,44 +102,52 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             int idxOfLastSplit = column.LastIndexOf('.');
             var columnName = column[(idxOfLastSplit + 1)..];
             var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-            var pkColumn = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First().Name.Split(".").Last();
-            var sql = $"SELECT {columnName},{pkColumn} from {column[..idxOfLastSplit]}";
-            var dt = new DataTable();
-            dt.BeginLoadData();
-            using (var cmd = server.GetCommand(sql, server.GetConnection()))
-            {
-                using var da = server.GetDataAdapter(cmd);
-                da.Fill(dt);
-            }
-            dt.EndLoadData();
-            foreach (DataRow row in dt.Rows)
+            // what if there is no pk?
+            var pkColumns = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey);
+            if (pkColumns.Any())
             {
 
-                var value = row[dt.Columns[0].ColumnName].ToString();
-                var potentialCHI = CHIColumnFinder.GetPotentialCHI(value);
-                if (!string.IsNullOrWhiteSpace(potentialCHI))
+                var pkColumn = pkColumns.First().Name.Split(".").Last();
+                var sql = $"SELECT {columnName},{pkColumn} from {column[..idxOfLastSplit]}";
+                var dt = new DataTable();
+                dt.BeginLoadData();
+                using (var cmd = server.GetCommand(sql, server.GetConnection()))
                 {
-                    var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
-                    var pkValue = getPKValue(pkColumnInfo, row, dt);
-                    handleFoundCHI(potentialCHI, value, item.Name, pkValue, pkColumnInfo.Name);
-                    if (_bailOutEarly)
+                    using var da = server.GetDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+                dt.EndLoadData();
+                foreach (DataRow row in dt.Rows)
+                {
+
+                    var value = row[dt.Columns[0].ColumnName].ToString();
+                    var potentialCHI = CHIColumnFinder.GetPotentialCHI(value);
+                    if (!string.IsNullOrWhiteSpace(potentialCHI))
                     {
-                        break;
+                        var pkColumnInfo = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey).First();
+                        var pkValue = GetPKValue(pkColumnInfo, row, dt);
+                        HandleFoundCHI(potentialCHI, value, item.Name, pkValue, pkColumnInfo.Name);
+                        if (_bailOutEarly)
+                        {
+                            break;
+                        }
                     }
                 }
-
-
+            }
+            else
+            {
+                Console.WriteLine("Unable to find a primary key for this catalogue");
             }
         }
         Console.WriteLine($"Found {foundChis.Rows.Count} CHIs in the {_catalouge.Name} Catalogue.");
         foreach (DataRow row in foundChis.Rows)
         {
-            Console.WriteLine($"{row["Potential CHI"]} | {row["Context"]} | {row["Source Column Name"]}");
+            Console.WriteLine($"{row[PotentialCHI]} | {row[Context]} | {row[SourceColumnName]}");
 
         }
     }
 
-    private string getPKValue(ColumnInfo pkColumnInfo, DataRow row, DataTable dt)
+    private static string GetPKValue(ColumnInfo pkColumnInfo, DataRow row, DataTable dt)
     {
         //todo doesn't work with multitable catalogues
 

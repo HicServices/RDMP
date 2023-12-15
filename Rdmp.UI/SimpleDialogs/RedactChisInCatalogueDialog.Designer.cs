@@ -34,6 +34,7 @@
             label1 = new System.Windows.Forms.Label();
             tbAllowList = new System.Windows.Forms.TextBox();
             lbResults = new System.Windows.Forms.Label();
+            lblNoResultsFound = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)dgResults).BeginInit();
             SuspendLayout();
             // 
@@ -90,11 +91,21 @@
             lbResults.Size = new System.Drawing.Size(0, 15);
             lbResults.TabIndex = 6;
             // 
+            // lblNoResultsFound
+            // 
+            lblNoResultsFound.AutoSize = true;
+            lblNoResultsFound.Location = new System.Drawing.Point(316, 66);
+            lblNoResultsFound.Name = "lblNoResultsFound";
+            lblNoResultsFound.Size = new System.Drawing.Size(100, 15);
+            lblNoResultsFound.TabIndex = 7;
+            lblNoResultsFound.Text = "No Results Found";
+            // 
             // RedactChisInCatalogueDialog
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(lblNoResultsFound);
             Controls.Add(lbResults);
             Controls.Add(tbAllowList);
             Controls.Add(label1);
@@ -115,5 +126,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbAllowList;
         private System.Windows.Forms.Label lbResults;
+        private System.Windows.Forms.Label lblNoResultsFound;
     }
 }
