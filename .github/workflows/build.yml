@@ -12,10 +12,9 @@ jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
 
-  tests-setup:
-    name: Setup Tests
+  tests:
+    name: Run Tests
     runs-on: windows-latest
-    needs: ['setup']
     steps:
       - name: Populate Databases.yaml
         shell: bash
@@ -146,28 +145,6 @@ jobs:
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
           (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
-      - name: Cache Build
-        id: cache-build
-        uses: actions/cache/save@v3
-        with:
-          path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key-bundled
-  tidy-up:
-    name: Permission fixing etc.
-    runs-on: windows-latest
-    needs: ['sign']
-    steps:
-      - uses: actions/cache/restore@v3
-        id: restore-build
-        with:
-          path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key-bundled
-      - name: Determine RDMP build version
-        id: version
-        shell: bash
-        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
-      - name: Check output
-        run: echo ${{ steps.version.outputs.rdmpversion }}
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@v1.24.3
         with:
@@ -234,7 +211,7 @@ jobs:
   production-upload:
     name: Production Upload
     runs-on: windows-latest
-    needs: ['upload','tests']
+    needs: ['bundle','tests']
     if: contains(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/cache/restore@v3
@@ -242,6 +219,10 @@ jobs:
         with:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundled
+      - name: Determine RDMP build version
+        id: version
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
       - name: Upload Nuget packages
         run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
       - name: Upload binaries to release
