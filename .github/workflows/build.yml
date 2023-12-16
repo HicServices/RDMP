@@ -130,17 +130,6 @@ jobs:
             done
             rm *.nupkg
           done
-      - uses: actions/cache/restore@v3
-        id: restore-build
-        with:
-          path: ${{ github.workspace }}/
-          key: ${{ github.sha }}-your-cache-key-bundle
-      - name: Determine RDMP build version
-        id: version
-        shell: bash
-        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
-      - name: Check output
-        run: echo ${{ steps.version.outputs.rdmpversion }}
       - name: Sign & zip
         shell: bash
         run: |
