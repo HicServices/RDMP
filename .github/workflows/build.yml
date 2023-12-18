@@ -190,7 +190,7 @@ jobs:
       - name: Calculate SHA256SUMS
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
       - name: Archive production artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |
