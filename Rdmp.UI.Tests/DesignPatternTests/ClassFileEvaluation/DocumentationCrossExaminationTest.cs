@@ -275,7 +275,10 @@ internal class DocumentationCrossExaminationTest
         "MakeAnonymous",
         "ReleaseIdentifierAllocation",
         "SocialSecurityNumber",
-        "BuildInParallel"
+        "BuildInParallel",
+
+        //Quickstart.ms
+        "ResearchDataManagmentPlatform"
     };
 
     #endregion

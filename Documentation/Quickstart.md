@@ -16,4 +16,14 @@
 5. Press the `Create` button
     RDMP will now create the platform databases it requires. Any issues will be flagged in the results table.
 6. RDMP will now restart, allow it to do its thing
-7.  Congratualtions, you've successfully set up RDMP. Explore RDMP with your fake data, or check out  the [User Manual](./CodeTutorials/UserManual.md) for more info on what RDMP can do.
+7.  Congratualtions, you've successfully set up RDMP. Explore RDMP with your fake data, or check out the [User Manual](./CodeTutorials/UserManual.md) for more info on what RDMP can do.
+
+
+## Steps for CLI
+1. Download the latest release of RDMP from [GitHub](https://github.com/HicServices/RDMP/releases/latest). It will be called something like `rdmp-8.1.1-cli-win-x64.zip` for windows and `rdmp-8.1.1-cli-linux-x64.zip` for linux
+2. Unzip this file
+3. Inside this folder you should finda file called`rdmp.exe`. Run the command `rdmp.exe install "{YOUR_SQL_SERVER_CONNECTION_STRING}" RDMP_ -e`
+    * Replace `YOUR_SQL_SERVER_CONNECTION_STRING` with the connection string to your SQL Server
+    * An example of this would be `localhost\sqlexpress;Uid=user;Pwd=password`
+    * This command creates the platform databases RDMP requires. Any issues will appear in stdout
+4. Congratualtions, you've successfully set up RDMP using the CLI. Check out the [User Manual](./CodeTutorials/UserManual.md) for more info on what RDMP can do.
