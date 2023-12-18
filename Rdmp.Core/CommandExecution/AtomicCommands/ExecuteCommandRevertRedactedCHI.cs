@@ -25,7 +25,6 @@ public class ExecuteCommandRevertRedactedCHI : BasicCommandExecution, IAtomicCom
     public override void Execute()
     {
         base.Execute();
-        //todo i think there is some duplication here with other files, may be able to use a helper
         var redactedString = new string('#', _redactedCHI.PotentialCHI.Length);
         var fetchSQL = $"select {_redactedCHI.ColumnName} from {_redactedCHI.TableName} where {_redactedCHI.PKColumnName} = '{_redactedCHI.PKValue}' and charindex('{redactedString}',{_redactedCHI.ColumnName},{_redactedCHI.ReplacementIndex}) >0";
         var existingResultsDT = new DataTable();

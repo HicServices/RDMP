@@ -80,8 +80,6 @@ internal class ExecuteCHIRedactionStage
                         var pkColumnName = "Unknown";
                         if (catalogue != null)
                         {
-                            //this can probably be tidied up
-                            //is likely code duplication with another file
                             var pkColumnInfo = catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey && x.Name.Contains(foundTable)).First(); //there may be more, but we just need one
                             if (pkColumnInfo != null)
                             {
