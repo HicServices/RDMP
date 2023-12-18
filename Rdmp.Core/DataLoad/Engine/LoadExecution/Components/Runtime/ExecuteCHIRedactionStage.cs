@@ -74,7 +74,7 @@ internal class ExecuteCHIRedactionStage
                     if (_redact)
                     {
                         var replacementIdex = row[col].ToString().IndexOf(foundChi);
-                        var foundTable = tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "").Split("..")[1].Replace("[", "").Replace("]", "");
+                        var foundTable = _chiRedactionHelper.StripEnclosingBrackets(tbl.GetFullyQualifiedName().Replace(_loadStage.ToString(), "").Split("..")[1]);
                         var catalogue = _job.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(catalogue => catalogue.Name == foundTable).First();
                         var pkValue = "Unknown";
                         var pkColumnName = "Unknown";
