@@ -277,7 +277,7 @@ internal class DocumentationCrossExaminationTest
         "SocialSecurityNumber",
         "BuildInParallel",
 
-        //Quickstart.ms
+        //Quickstart.md
         "ResearchDataManagmentPlatform"
     };
 
