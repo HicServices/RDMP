@@ -92,9 +92,10 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             var column = item.ColumnInfo.Name;
             int idxOfLastSplit = column.LastIndexOf('.');
             var columnName = column[(idxOfLastSplit + 1)..];
+            var table = column[..(idxOfLastSplit + 1)];
             var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
             var pkColumns = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey);
-            if (pkColumns.Where(pkc => pkc.Name.Contains(columnName)).Any())
+            if (pkColumns.Where(pkc => pkc.Name.Contains(table)).Any())
             {
 
                 var pkColumn = pkColumns.First().Name.Split(".").Last();

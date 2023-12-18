@@ -83,8 +83,8 @@
         <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-        <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
+      <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
+      <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Compile Update="Curation\TestResources.Designer.cs">

@@ -7,6 +7,7 @@ using Tests.Common;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System.Data;
+using System;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 
@@ -16,6 +17,9 @@ internal class ExecuteCommandRevertRedactedCHITests : DatabaseTests
     public void RevertRedactedCHI_Valid()
     {
         var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator, null, null);
+        pipes.CreatePipelines(new PlatformDatabaseCreationOptions());
+
         var creator = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator);
         creator.Create(db, ThrowImmediatelyCheckNotifier.Quiet,
             new PlatformDatabaseCreationOptions { Seed = 500, DropDatabases = true });
