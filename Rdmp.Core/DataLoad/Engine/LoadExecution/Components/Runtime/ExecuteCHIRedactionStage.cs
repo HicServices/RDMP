@@ -23,6 +23,7 @@ internal class ExecuteCHIRedactionStage
     private readonly LoadStage _loadStage;
     private Dictionary<string, List<String>> _allowLists = new();
     private bool _redact;
+    private CHIRedactionHelpers _chiRedactionHelper = new CHIRedactionHelpers(null,null);
 
     public ExecuteCHIRedactionStage(IDataLoadJob job, DiscoveredDatabase db, LoadStage loadStage)
     {
@@ -85,7 +86,7 @@ internal class ExecuteCHIRedactionStage
                             if (pkColumnInfo != null)
                             {
                                 pkColumnName = pkColumnInfo.Name;
-                                var pkName = pkColumnInfo.Name.Split(".").Last().Replace("[", "").Replace("]", "");
+                                var pkName = _chiRedactionHelper.GetColumnNameFromColumnInfoName(pkColumnInfo.Name);
                                 var arrayNames = (from DataColumn x
                                                   in dt.Columns.Cast<DataColumn>()
                                                   select x.ColumnName).ToList();
@@ -103,7 +104,7 @@ internal class ExecuteCHIRedactionStage
                             ft = ft.Replace("_STAGING", "");
                         }
                         ft = ft.Replace("..", ".[dbo].");
-                        if (pkColumnName.Split(".").Last().Replace("[","").Replace("]","") != $"{col.ColumnName}")
+                        if (_chiRedactionHelper.GetColumnNameFromColumnInfoName(pkColumnName) != $"{col.ColumnName}")
                         {
                             var rc = new RedactedCHI(_job.RepositoryLocator.CatalogueRepository, foundChi, replacementIdex, ft, pkValue, pkColumnName.Split(".").Last(), $"[{col.ColumnName}]");
                             rc.SaveToDatabase();

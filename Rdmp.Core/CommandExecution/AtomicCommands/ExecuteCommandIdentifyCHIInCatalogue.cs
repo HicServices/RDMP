@@ -29,6 +29,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
     private readonly string PKColumn = "PK Column";
     private readonly string ReplacementIndex = "replacementIndex";
     private readonly string RDMP_ALL = "RDMP_ALL";
+    private CHIRedactionHelpers redactionHelper = new CHIRedactionHelpers(null, null);
 
     public DataTable foundChis = new();
 
@@ -64,7 +65,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
 
     private void HandleFoundCHI(string foundChi, string contextValue, string columnName, string pkValue, string pkColumn)
     {
-        if (pkColumn.Split(".").Last().Replace("[", "").Replace("]", "") == columnName.Replace("[", "").Replace("]", "")) return; //don't redact PKs, it gets messy
+        if (redactionHelper.GetColumnNameFromColumnInfoName(pkColumn) == redactionHelper.StripEnclosingBrackets(columnName)) return; //don't redact PKs, it gets messy
         var shrunkContext = WrapCHIInContext(foundChi, contextValue);
         foundChis.Rows.Add(foundChi, shrunkContext, columnName, pkValue, pkColumn, contextValue.IndexOf(foundChi));
     }
@@ -138,13 +139,11 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
         }
     }
 
-    private static string GetPKValue(ColumnInfo pkColumnInfo, DataRow row, DataTable dt)
+    private string GetPKValue(ColumnInfo pkColumnInfo, DataRow row, DataTable dt)
     {
-        //todo doesn't work with multitable catalogues
-
         if (pkColumnInfo != null)
         {
-            var pkName = pkColumnInfo.Name.Split(".").Last().Replace("[", "").Replace("]", "");
+            var pkName = redactionHelper.GetColumnNameFromColumnInfoName(pkColumnInfo.Name);
             var arrayNames = (from DataColumn x
                               in dt.Columns.Cast<DataColumn>()
                               select x.ColumnName).ToList();
