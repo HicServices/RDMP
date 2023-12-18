@@ -122,7 +122,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\078_add_chi_redaction.sql" />
-07		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
+		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
 		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
 		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
 		<None Remove="Databases\DataExportDatabase\up\003_PreventDoubleAddingCatalogueIdx.sql" />
