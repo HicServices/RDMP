@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 using Microsoft.Data.SqlClient;
+using NLog.LayoutRenderers;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -11,6 +12,7 @@ using Rdmp.UI.ItemActivation;
 using System;
 using System.Data;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -34,6 +36,16 @@ namespace Rdmp.UI.SimpleDialogs
 
 
         }
+        private static string ReplaceLastOccurrence(string source, string find, string replace)
+        {
+            int place = source.LastIndexOf(find);
+
+            if (place == -1)
+                return source;
+
+            return source.Remove(place, find.Length).Insert(place, replace);
+        }
+
 
         private void Redact(int rowIndex)
         {
@@ -45,7 +57,10 @@ namespace Rdmp.UI.SimpleDialogs
             var name = catalogueItem.ColumnInfo.Name;
             var pkValue = result.ItemArray[3].ToString();
             var replacementIdex = int.Parse(result.ItemArray[5].ToString());
-            var table = name.Replace($".[{column}]", "");
+            var table = name;
+            table = ReplaceLastOccurrence(table, $".[{column}]", "");
+
+            //var table = Regex.Replace(name,);//name.Replace($".[{column}]", "");
             var pkColumn = result.ItemArray[4].ToString().Replace(table,"").Replace(".","");
             var rc = new RedactedCHI(_catalogue.CatalogueRepository, foundChi, replacementIdex, table, pkValue,pkColumn, $"[{column}]");
             rc.SaveToDatabase();

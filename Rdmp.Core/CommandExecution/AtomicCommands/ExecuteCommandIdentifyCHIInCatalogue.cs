@@ -93,7 +93,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             var columnName = column[(idxOfLastSplit + 1)..];
             var server = _catalouge.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
             var pkColumns = _catalouge.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey);
-            if (pkColumns.Any())
+            if (pkColumns.Where(pkc => pkc.Name.Contains(columnName)).Any())
             {
 
                 var pkColumn = pkColumns.First().Name.Split(".").Last();
@@ -126,6 +126,7 @@ public class ExecuteCommandIdentifyCHIInCatalogue : BasicCommandExecution, IAtom
             }
             else
             {
+                //todo this should probably warn the UI
                 Console.WriteLine("Unable to find a primary key for this catalogue");
             }
         }
