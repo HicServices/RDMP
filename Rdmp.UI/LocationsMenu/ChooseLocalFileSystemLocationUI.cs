@@ -100,10 +100,8 @@ public partial class ChooseLocalFileSystemLocationUI : Form
                 Directory.CreateDirectory(tbLocalFileSystemLocation.Text);
                 isValid = true;
             }
-            catch (Exception)
-            {
-                isValid = false;
-            }
+            finally{ }
+           
         }
         if (isValid)
         {

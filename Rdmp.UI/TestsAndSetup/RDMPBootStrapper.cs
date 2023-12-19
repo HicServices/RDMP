@@ -89,7 +89,7 @@ public class RDMPBootStrapper
                     startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
                 }catch(Exception ex)
                 {
-                    Console.WriteLine(ex.Message);//todo
+                    ExceptionViewer.Show("Failed to use local file system as repository", ex);
                 }
             }
             else if (!string.IsNullOrWhiteSpace(_catalogueConnection) &&
