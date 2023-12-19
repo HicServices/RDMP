@@ -76,8 +76,8 @@
             cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
             label15 = new System.Windows.Forms.Label();
-            tbQuickstartLocation = new System.Windows.Forms.TextBox();
-            cbUseQuickstart = new System.Windows.Forms.CheckBox();
+            tbLocalFileSystemLocation = new System.Windows.Forms.TextBox();
+            cbUseLocalFileSystem = new System.Windows.Forms.CheckBox();
             cbAutoResizeColumns = new System.Windows.Forms.CheckBox();
             label12 = new System.Windows.Forms.Label();
             tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
@@ -574,8 +574,8 @@
             // groupBox7
             // 
             groupBox7.Controls.Add(label15);
-            groupBox7.Controls.Add(tbQuickstartLocation);
-            groupBox7.Controls.Add(cbUseQuickstart);
+            groupBox7.Controls.Add(tbLocalFileSystemLocation);
+            groupBox7.Controls.Add(cbUseLocalFileSystem);
             groupBox7.Controls.Add(cbAutoResizeColumns);
             groupBox7.Controls.Add(label12);
             groupBox7.Controls.Add(tbArchiveTriggerTimeout);
@@ -607,23 +607,23 @@
             label15.TabIndex = 28;
             label15.Text = "Location";
             // 
-            // tbQuickstartLocation
+            // tbLocalFileSystemLocation
             // 
-            tbQuickstartLocation.Location = new System.Drawing.Point(156, 228);
-            tbQuickstartLocation.Name = "tbQuickstartLocation";
-            tbQuickstartLocation.Size = new System.Drawing.Size(110, 23);
-            tbQuickstartLocation.TabIndex = 27;
-            tbQuickstartLocation.TextChanged += tbQuickStartLocation_TextChanged;
+            tbLocalFileSystemLocation.Location = new System.Drawing.Point(156, 228);
+            tbLocalFileSystemLocation.Name = "tbLocalFileSystemLocation";
+            tbLocalFileSystemLocation.Size = new System.Drawing.Size(110, 23);
+            tbLocalFileSystemLocation.TabIndex = 27;
+            tbLocalFileSystemLocation.TextChanged += tbLocalFileSystemLocation_TextChanged;
             // 
-            // cbUseQuickstart
+            // cbUseLocalFileSystem
             // 
-            cbUseQuickstart.AutoSize = true;
-            cbUseQuickstart.Location = new System.Drawing.Point(7, 232);
-            cbUseQuickstart.Name = "cbUseQuickstart";
-            cbUseQuickstart.Size = new System.Drawing.Size(138, 19);
-            cbUseQuickstart.TabIndex = 26;
-            cbUseQuickstart.Text = "Use Local File System";
-            cbUseQuickstart.UseVisualStyleBackColor = true;
+            cbUseLocalFileSystem.AutoSize = true;
+            cbUseLocalFileSystem.Location = new System.Drawing.Point(7, 232);
+            cbUseLocalFileSystem.Name = "cbUseLocalFileSystem";
+            cbUseLocalFileSystem.Size = new System.Drawing.Size(138, 19);
+            cbUseLocalFileSystem.TabIndex = 26;
+            cbUseLocalFileSystem.Text = "Use Local File System";
+            cbUseLocalFileSystem.UseVisualStyleBackColor = true;
             // 
             // cbAutoResizeColumns
             // 
@@ -848,7 +848,7 @@
         private System.Windows.Forms.CheckBox cbExpandAllInCohortBuilder;
         private System.Windows.Forms.CheckBox cbUseAliasInsteadOfTransformInGroupByAggregateGraphs;
         private System.Windows.Forms.Label label15;
-        private System.Windows.Forms.TextBox tbQuickstartLocation;
-        private System.Windows.Forms.CheckBox cbUseQuickstart;
+        private System.Windows.Forms.TextBox tbLocalFileSystemLocation;
+        private System.Windows.Forms.CheckBox cbUseLocalFileSystem;
     }
 }

@@ -68,7 +68,7 @@ public partial class ChooseQuickStartLocationUI : Form
         lblBadFilePath.TabIndex = 4;
         lblBadFilePath.Text = "Invalid File Path";
         // 
-        // ChooseQuickStartLocationUI
+        // ChooseLocalFileStorageLocationUI
         // 
         ClientSize = new System.Drawing.Size(440, 142);
         Controls.Add(lblBadFilePath);
