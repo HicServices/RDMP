@@ -27,6 +27,12 @@ public static class UserSettings
                                                               "Isolated Storage does not work in this environment...");
 
 
+    public static bool UseQuickStartSettings
+    {
+        get => AppSettings.GetValueOrDefault("UseQuickStartSettings", false);
+        set => AppSettings.AddOrUpdateValue("UseQuickStartSettings", value);
+    }
+
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP
     /// </summary>

@@ -207,8 +207,11 @@ public partial class ChoosePlatformDatabasesUI : Form
     {
         //if save is successful
         if (SaveConnectionStrings())
+        {
             //integrity checks passed
+            UserSettings.UseQuickStartSettings = true;
             RestartApplication();
+        }
     }
 
     private void btnCheckDataExportManager_Click(object sender, EventArgs e)

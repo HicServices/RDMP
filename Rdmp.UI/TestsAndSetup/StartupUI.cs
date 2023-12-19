@@ -35,6 +35,7 @@ public partial class StartupUI : Form, ICheckNotifier
     /// </summary>
     public bool CouldNotReachTier1Database { get; private set; }
 
+
     private readonly Startup _startup;
 
     //Constructor
@@ -287,7 +288,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
                 return;
             default:
-                throw new ArgumentOutOfRangeException(nameof(eventArgs),$"Invalid status {eventArgs.Status}");
+                throw new ArgumentOutOfRangeException(nameof(eventArgs), $"Invalid status {eventArgs.Status}");
         }
     }
 
@@ -359,4 +360,10 @@ public partial class StartupUI : Form, ICheckNotifier
 
     [GeneratedRegex("^(\\d+)%")]
     private static partial Regex Percentage();
+
+    private void btnQuickStart_Click(object sender, EventArgs e)
+    {
+        UserSettings.UseQuickStartSettings = true;
+        ApplicationRestarter.Restart();
+    }
 }

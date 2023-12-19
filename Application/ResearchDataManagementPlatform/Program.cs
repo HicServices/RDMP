@@ -7,8 +7,10 @@
 using System;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup;
 using Rdmp.UI;
 using Rdmp.UI.SimpleDialogs;
@@ -54,6 +56,12 @@ internal static partial class Program
             ExceptionViewer.Show(ex);
             return -500;
         }
+        if(UserSettings.UseQuickStartSettings)
+        {
+            arg.Dir = "\\temp\\rdmpDir";
+
+        }
+
 
         var bootStrapper =
             new RDMPBootStrapper(arg, locator =>
