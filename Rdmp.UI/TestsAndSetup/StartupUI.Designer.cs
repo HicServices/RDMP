@@ -101,7 +101,7 @@ namespace Rdmp.UI.TestsAndSetup
             btnQuickStart.TabIndex = 6;
             btnQuickStart.Text = "Use Local File System";
             btnQuickStart.UseVisualStyleBackColor = true;
-            btnQuickStart.Click += btnQuickStart_Click;
+            btnQuickStart.Click += btnLocalFileSystem_Click;
             // 
             // StartupUI
             // 

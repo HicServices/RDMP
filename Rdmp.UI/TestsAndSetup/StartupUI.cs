@@ -362,7 +362,7 @@ public partial class StartupUI : Form, ICheckNotifier
     [GeneratedRegex("^(\\d+)%")]
     private static partial Regex Percentage();
 
-    private void btnQuickStart_Click(object sender, EventArgs e)
+    private void btnLocalFileSystem_Click(object sender, EventArgs e)
     {
         DoNotContinue = true;
         _chooseLocalFileSystem = new ChooseLocalFileSystemLocationUI();
