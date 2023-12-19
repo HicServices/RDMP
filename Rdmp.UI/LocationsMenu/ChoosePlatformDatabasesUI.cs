@@ -209,7 +209,7 @@ public partial class ChoosePlatformDatabasesUI : Form
         if (SaveConnectionStrings())
         {
             //integrity checks passed
-            UserSettings.UseQuickStartSettings = true;
+            UserSettings.UseLocalFileSystem = true;
             RestartApplication();
         }
     }

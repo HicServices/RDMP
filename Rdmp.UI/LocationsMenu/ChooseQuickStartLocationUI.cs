@@ -74,7 +74,7 @@ public partial class ChooseQuickStartLocationUI : Form
         Controls.Add(label1);
         Controls.Add(btnConfirm);
         Controls.Add(tbQuickStartLocation);
-        Name = "ChooseQuickStartLocationUI";
+        Name = "Choose Local File Storage Location";
         ResumeLayout(false);
         PerformLayout();
     }
@@ -107,8 +107,8 @@ public partial class ChooseQuickStartLocationUI : Form
         if (isValid)
         {
             lblBadFilePath.Visible = false;
-            UserSettings.QuickStartLocation = tbQuickStartLocation.Text;
-            UserSettings.UseQuickStartSettings = true;
+            UserSettings.LocalFileSystemLocation = tbQuickStartLocation.Text;
+            UserSettings.UseLocalFileSystem = true;
             ApplicationRestarter.Restart();
         }
         else

@@ -27,16 +27,16 @@ public static class UserSettings
                                                               "Isolated Storage does not work in this environment...");
 
 
-    public static bool UseQuickStartSettings
+    public static bool UseLocalFileSystem
     {
-        get => AppSettings.GetValueOrDefault("UseQuickStartSettings", false);
-        set => AppSettings.AddOrUpdateValue("UseQuickStartSettings", value);
+        get => AppSettings.GetValueOrDefault("UseLocalFileSystem", false);
+        set => AppSettings.AddOrUpdateValue("UseLocalFileSystem", value);
     }
 
-    public static string QuickStartLocation 
+    public static string LocalFileSystemLocation 
     {
-        get => AppSettings.GetValueOrDefault("QuickStartLocation", "\\temp\\rdmp");
-        set => AppSettings.AddOrUpdateValue("QuickStartLocation", value);
+        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", "\\temp\\rdmp");
+        set => AppSettings.AddOrUpdateValue("LocalFileSystemLocation", value);
     }
 
     /// <summary>

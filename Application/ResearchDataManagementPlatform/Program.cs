@@ -56,9 +56,9 @@ internal static partial class Program
             ExceptionViewer.Show(ex);
             return -500;
         }
-        if(UserSettings.UseQuickStartSettings && !string.IsNullOrWhiteSpace(UserSettings.QuickStartLocation))
+        if(UserSettings.UseLocalFileSystem && !string.IsNullOrWhiteSpace(UserSettings.LocalFileSystemLocation))
         {
-            arg.Dir = UserSettings.QuickStartLocation;
+            arg.Dir = UserSettings.LocalFileSystemLocation;
         }
 
 
