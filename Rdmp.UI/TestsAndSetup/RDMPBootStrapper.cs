@@ -84,7 +84,13 @@ public class RDMPBootStrapper
 
             if (!string.IsNullOrWhiteSpace(ApplicationArguments.Dir))
             {
-                startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
+                try
+                {
+                    startup.RepositoryLocator = ApplicationArguments.GetRepositoryLocator();
+                }catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);//todo
+                }
             }
             else if (!string.IsNullOrWhiteSpace(_catalogueConnection) &&
                      !string.IsNullOrWhiteSpace(_dataExportConnection))

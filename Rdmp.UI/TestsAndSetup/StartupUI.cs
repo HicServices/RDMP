@@ -207,6 +207,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
+    private ChooseQuickStartLocationUI _chooseQuickstart;
     private bool _haveWarnedAboutOutOfDate;
 
     private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
@@ -363,7 +364,8 @@ public partial class StartupUI : Form, ICheckNotifier
 
     private void btnQuickStart_Click(object sender, EventArgs e)
     {
-        UserSettings.UseQuickStartSettings = true;
-        ApplicationRestarter.Restart();
+        DoNotContinue = true;
+        _chooseQuickstart = new ChooseQuickStartLocationUI();
+        _chooseQuickstart.ShowDialog();
     }
 }

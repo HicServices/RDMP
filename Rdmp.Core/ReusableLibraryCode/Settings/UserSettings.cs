@@ -35,7 +35,7 @@ public static class UserSettings
 
     public static string QuickStartLocation 
     {
-        get => AppSettings.GetValueOrDefault("QuickStartLocation", null);
+        get => AppSettings.GetValueOrDefault("QuickStartLocation", "\\temp\\rdmp");
         set => AppSettings.AddOrUpdateValue("QuickStartLocation", value);
     }
 
