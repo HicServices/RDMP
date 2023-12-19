@@ -1,6 +1,8 @@
 ﻿using Rdmp.Core.ReusableLibraryCode.Settings;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +25,8 @@ public partial class ChooseQuickStartLocationUI : Form
         tbQuickStartLocation = new TextBox();
         btnConfirm = new Button();
         label1 = new Label();
+        lblBadFilePath = new Label();
+        lblBadFilePath.Visible = false;
         SuspendLayout();
         // 
         // tbQuickStartLocation
@@ -31,7 +35,7 @@ public partial class ChooseQuickStartLocationUI : Form
         tbQuickStartLocation.Name = "tbQuickStartLocation";
         tbQuickStartLocation.Size = new System.Drawing.Size(386, 23);
         tbQuickStartLocation.TabIndex = 0;
-        tbQuickStartLocation.Text = UserSettings.QuickStartLocation;
+        tbQuickStartLocation.Text = "\\temp\\rdmp";
         // 
         // btnConfirm
         // 
@@ -53,9 +57,20 @@ public partial class ChooseQuickStartLocationUI : Form
         label1.Text = "Location To Store RDMP Data";
         label1.Click += label1_Click;
         // 
+        // lblBadFilePath
+        // 
+        lblBadFilePath.AutoSize = true;
+        lblBadFilePath.ForeColor = System.Drawing.Color.Red;
+        lblBadFilePath.Location = new System.Drawing.Point(210, 45);
+        lblBadFilePath.Name = "lblBadFilePath";
+        lblBadFilePath.Size = new System.Drawing.Size(90, 15);
+        lblBadFilePath.TabIndex = 4;
+        lblBadFilePath.Text = "Invalid File Path";
+        // 
         // ChooseQuickStartLocationUI
         // 
         ClientSize = new System.Drawing.Size(440, 142);
+        Controls.Add(lblBadFilePath);
         Controls.Add(label1);
         Controls.Add(btnConfirm);
         Controls.Add(tbQuickStartLocation);
@@ -74,9 +89,34 @@ public partial class ChooseQuickStartLocationUI : Form
 
     private void btnConfirm_Click(object sender, EventArgs e)
     {
-        //todo validate
-        UserSettings.QuickStartLocation = tbQuickStartLocation.Text;
-        UserSettings.UseQuickStartSettings = true;
-        ApplicationRestarter.Restart();
+        var isValid = false;
+        if(string.IsNullOrEmpty(tbQuickStartLocation.Text)) isValid = false;
+        else if (Directory.Exists(tbQuickStartLocation.Text)) isValid = true;
+        else
+        {
+            try
+            {
+                Directory.CreateDirectory(tbQuickStartLocation.Text);
+                isValid = true;
+            }
+            catch (Exception)
+            {
+                isValid = false;
+            }
+        }
+        if (isValid)
+        {
+            lblBadFilePath.Visible = false;
+            UserSettings.QuickStartLocation = tbQuickStartLocation.Text;
+            UserSettings.UseQuickStartSettings = true;
+            ApplicationRestarter.Restart();
+        }
+        else
+        {
+            lblBadFilePath.Visible = true;
+        }
+
     }
+
+    private Label lblBadFilePath;
 }
