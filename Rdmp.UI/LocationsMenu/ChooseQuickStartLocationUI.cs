@@ -18,24 +18,25 @@ public partial class ChooseQuickStartLocationUI : Form
         InitializeComponent();
     }
 
-    private TextBox tbQuickStartLocation;
+    private TextBox tbLocalFileSystemLocation;
 
     private void InitializeComponent()
     {
-        tbQuickStartLocation = new TextBox();
+        tbLocalFileSystemLocation = new TextBox();
         btnConfirm = new Button();
         label1 = new Label();
         lblBadFilePath = new Label();
         lblBadFilePath.Visible = false;
+        this.Text = "Choose Local File System Location";
         SuspendLayout();
         // 
-        // tbQuickStartLocation
+        // tbLocalFileSystemLocation
         // 
-        tbQuickStartLocation.Location = new System.Drawing.Point(42, 65);
-        tbQuickStartLocation.Name = "tbQuickStartLocation";
-        tbQuickStartLocation.Size = new System.Drawing.Size(386, 23);
-        tbQuickStartLocation.TabIndex = 0;
-        tbQuickStartLocation.Text = "\\temp\\rdmp";
+        tbLocalFileSystemLocation.Location = new System.Drawing.Point(42, 65);
+        tbLocalFileSystemLocation.Name = "tbLocalFileSystemLocation";
+        tbLocalFileSystemLocation.Size = new System.Drawing.Size(386, 23);
+        tbLocalFileSystemLocation.TabIndex = 0;
+        tbLocalFileSystemLocation.Text = "\\temp\\rdmp";
         // 
         // btnConfirm
         // 
@@ -73,7 +74,7 @@ public partial class ChooseQuickStartLocationUI : Form
         Controls.Add(lblBadFilePath);
         Controls.Add(label1);
         Controls.Add(btnConfirm);
-        Controls.Add(tbQuickStartLocation);
+        Controls.Add(tbLocalFileSystemLocation);
         Name = "Choose Local File Storage Location";
         ResumeLayout(false);
         PerformLayout();
@@ -90,13 +91,13 @@ public partial class ChooseQuickStartLocationUI : Form
     private void btnConfirm_Click(object sender, EventArgs e)
     {
         var isValid = false;
-        if(string.IsNullOrEmpty(tbQuickStartLocation.Text)) isValid = false;
-        else if (Directory.Exists(tbQuickStartLocation.Text)) isValid = true;
+        if(string.IsNullOrEmpty(tbLocalFileSystemLocation.Text)) isValid = false;
+        else if (Directory.Exists(tbLocalFileSystemLocation.Text)) isValid = true;
         else
         {
             try
             {
-                Directory.CreateDirectory(tbQuickStartLocation.Text);
+                Directory.CreateDirectory(tbLocalFileSystemLocation.Text);
                 isValid = true;
             }
             catch (Exception)
@@ -107,7 +108,7 @@ public partial class ChooseQuickStartLocationUI : Form
         if (isValid)
         {
             lblBadFilePath.Visible = false;
-            UserSettings.LocalFileSystemLocation = tbQuickStartLocation.Text;
+            UserSettings.LocalFileSystemLocation = tbLocalFileSystemLocation.Text;
             UserSettings.UseLocalFileSystem = true;
             ApplicationRestarter.Restart();
         }
