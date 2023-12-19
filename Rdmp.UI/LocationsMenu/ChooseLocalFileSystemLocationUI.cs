@@ -10,10 +10,10 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.LocationsMenu;
 
-public partial class ChooseQuickStartLocationUI : Form
+public partial class ChooseLocalFileSystemLocationUI : Form
 {
 
-    public ChooseQuickStartLocationUI()
+    public ChooseLocalFileSystemLocationUI()
     {
         InitializeComponent();
     }
