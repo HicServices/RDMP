@@ -75,6 +75,9 @@
             groupBox6 = new System.Windows.Forms.GroupBox();
             cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
+            label15 = new System.Windows.Forms.Label();
+            tbQuickstartLocation = new System.Windows.Forms.TextBox();
+            cbUseQuickstart = new System.Windows.Forms.CheckBox();
             cbAutoResizeColumns = new System.Windows.Forms.CheckBox();
             label12 = new System.Windows.Forms.Label();
             tbArchiveTriggerTimeout = new System.Windows.Forms.TextBox();
@@ -88,9 +91,6 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
-            cbUseQuickstart = new System.Windows.Forms.CheckBox();
-            tbQuickstartLocation = new System.Windows.Forms.TextBox();
-            label15 = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -598,6 +598,33 @@
             groupBox7.TabStop = false;
             groupBox7.Text = "Miscellaneous";
             // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new System.Drawing.Point(272, 232);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(53, 15);
+            label15.TabIndex = 28;
+            label15.Text = "Location";
+            // 
+            // tbQuickstartLocation
+            // 
+            tbQuickstartLocation.Location = new System.Drawing.Point(156, 228);
+            tbQuickstartLocation.Name = "tbQuickstartLocation";
+            tbQuickstartLocation.Size = new System.Drawing.Size(110, 23);
+            tbQuickstartLocation.TabIndex = 27;
+            tbQuickstartLocation.TextChanged += tbQuickStartLocation_TextChanged;
+            // 
+            // cbUseQuickstart
+            // 
+            cbUseQuickstart.AutoSize = true;
+            cbUseQuickstart.Location = new System.Drawing.Point(7, 232);
+            cbUseQuickstart.Name = "cbUseQuickstart";
+            cbUseQuickstart.Size = new System.Drawing.Size(138, 19);
+            cbUseQuickstart.TabIndex = 26;
+            cbUseQuickstart.Text = "Use Local File System";
+            cbUseQuickstart.UseVisualStyleBackColor = true;
+            // 
             // cbAutoResizeColumns
             // 
             cbAutoResizeColumns.AutoSize = true;
@@ -720,33 +747,6 @@
             label14.Size = new System.Drawing.Size(73, 15);
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
-            // 
-            // cbUseQuickstart
-            // 
-            cbUseQuickstart.AutoSize = true;
-            cbUseQuickstart.Location = new System.Drawing.Point(7, 232);
-            cbUseQuickstart.Name = "cbUseQuickstart";
-            cbUseQuickstart.Size = new System.Drawing.Size(102, 19);
-            cbUseQuickstart.TabIndex = 26;
-            cbUseQuickstart.Text = "Use Quickstart";
-            cbUseQuickstart.UseVisualStyleBackColor = true;
-            // 
-            // tbQuickstartLocation
-            // 
-            tbQuickstartLocation.Location = new System.Drawing.Point(133, 228);
-            tbQuickstartLocation.Name = "tbQuickstartLocation";
-            tbQuickstartLocation.Size = new System.Drawing.Size(110, 23);
-            tbQuickstartLocation.TabIndex = 27;
-            tbQuickstartLocation.TextChanged += tbQuickStartLocation_TextChanged;
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new System.Drawing.Point(244, 233);
-            label15.Name = "label15";
-            label15.Size = new System.Drawing.Size(110, 15);
-            label15.TabIndex = 28;
-            label15.Text = "Quickstart Location";
             // 
             // UserSettingsFileUI
             // 

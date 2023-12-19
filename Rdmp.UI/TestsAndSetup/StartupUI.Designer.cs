@@ -99,7 +99,7 @@ namespace Rdmp.UI.TestsAndSetup
             btnQuickStart.Name = "btnQuickStart";
             btnQuickStart.Size = new System.Drawing.Size(170, 27);
             btnQuickStart.TabIndex = 6;
-            btnQuickStart.Text = "Use Quickstart Settings";
+            btnQuickStart.Text = "Use Local File System";
             btnQuickStart.UseVisualStyleBackColor = true;
             btnQuickStart.Click += btnQuickStart_Click;
             // 
