@@ -33,6 +33,12 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("UseQuickStartSettings", value);
     }
 
+    public static string QuickStartLocation 
+    {
+        get => AppSettings.GetValueOrDefault("QuickStartLocation", null);
+        set => AppSettings.AddOrUpdateValue("QuickStartLocation", value);
+    }
+
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP
     /// </summary>

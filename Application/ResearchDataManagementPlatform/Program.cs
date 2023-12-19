@@ -56,10 +56,9 @@ internal static partial class Program
             ExceptionViewer.Show(ex);
             return -500;
         }
-        if(UserSettings.UseQuickStartSettings)
+        if(UserSettings.UseQuickStartSettings && !string.IsNullOrWhiteSpace(UserSettings.QuickStartLocation))
         {
-            arg.Dir = "\\temp\\rdmpDir";
-
+            arg.Dir = UserSettings.QuickStartLocation;
         }
 
 
