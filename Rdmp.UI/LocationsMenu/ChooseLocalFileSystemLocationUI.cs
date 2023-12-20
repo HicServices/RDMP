@@ -36,7 +36,7 @@ public partial class ChooseLocalFileSystemLocationUI : Form
         tbLocalFileSystemLocation.Name = "tbLocalFileSystemLocation";
         tbLocalFileSystemLocation.Size = new System.Drawing.Size(386, 23);
         tbLocalFileSystemLocation.TabIndex = 0;
-        tbLocalFileSystemLocation.Text = "\\temp\\rdmp";
+        tbLocalFileSystemLocation.Text = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp");
         // 
         // btnConfirm
         // 

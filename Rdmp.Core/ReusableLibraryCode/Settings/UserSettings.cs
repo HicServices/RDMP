@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -35,7 +36,7 @@ public static class UserSettings
 
     public static string LocalFileSystemLocation 
     {
-        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", "\\temp\\rdmp"); 
+        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp")); 
         set => AppSettings.AddOrUpdateValue("LocalFileSystemLocation", value);
     }
 
