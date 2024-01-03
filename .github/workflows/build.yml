@@ -276,7 +276,7 @@ jobs:
   production-upload:
     name: Production Upload
     runs-on: windows-latest
-    needs: ['bundle','tests']
+    needs: ['bundle','tests_db','tests_file_system']
     if: contains(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/cache/restore@v3
