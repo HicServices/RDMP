@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add command to dump current platform DB to directory
 - Reorder Process Task Enum order to restore old cached process tasks
+- Add quickstart instructions
+- Add ability to configure and use local file system storage in windows GUI
 
 ## [8.1.1] - 2023-12-01
 
