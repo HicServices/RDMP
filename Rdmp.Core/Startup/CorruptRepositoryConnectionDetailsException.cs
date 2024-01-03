@@ -29,6 +29,7 @@ public class CorruptRepositoryConnectionDetailsException : Exception
     {
     }
 
+    [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
     protected CorruptRepositoryConnectionDetailsException(SerializationInfo info, StreamingContext context) : base(info,
         context)
     {

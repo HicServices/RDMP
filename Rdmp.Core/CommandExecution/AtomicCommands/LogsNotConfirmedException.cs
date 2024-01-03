@@ -27,6 +27,7 @@ public class LogsNotConfirmedException : Exception
     {
     }
 
+    [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
     protected LogsNotConfirmedException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }
