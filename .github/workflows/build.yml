@@ -12,7 +12,7 @@ jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
   tests_db:
-    name: Run Tests
+    name: Run Database Tests
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -66,24 +66,15 @@ jobs:
           mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-core.lcov
-      # - name: Test with local file system
-      #   shell: bash
-      #   run:  |
-      #     echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
-      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      #     mv `find coverage -type f` fs-ui.lcov
-      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      #     mv `find coverage -type f` fs-core.lcov
       - uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.github_token }}
-          # files: ./fs-ui.lcov ./fs-core.lcov ./db-ui.lcov ./db-core.lcov
           files: ./db-ui.lcov ./db-core.lcov
           flag-name: unit tests
 
   
   tests_file_system:
-    name: Run Tests
+    name: Run File System Tests
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -129,14 +120,6 @@ jobs:
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
-      # - name: Test (DB)
-      #   shell: bash
-      #   run: |
-      #     rm -rf coverage
-      #     dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      #     mv `find coverage -type f` db-ui.lcov
-      #     dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
-      #     mv `find coverage -type f` db-core.lcov
       - name: Test with local file system
         shell: bash
         run:  |
@@ -148,7 +131,6 @@ jobs:
       - uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.github_token }}
-          # files: ./fs-ui.lcov ./fs-core.lcov ./db-ui.lcov ./db-core.lcov
           files: ./fs-ui.lcov ./fs-core.lcov
           flag-name: unit tests
 
