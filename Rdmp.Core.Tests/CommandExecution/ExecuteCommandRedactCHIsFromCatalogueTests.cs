@@ -60,7 +60,7 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
         var cmd = new ExecuteCommandRedactCHIsFromCatalogue(new ThrowImmediatelyActivator(RepositoryLocator), biochemistry, tempFileToCreate);
         Assert.DoesNotThrow(() => cmd.Execute());
         using var dt = new DataTable();
-        using (var findCmd = tbl.Database.Server.GetCommand($"select * from {tbl.GetRuntimeName()} where SampleType = 'F#########1'", con))
+        using var findCmd = tbl.Database.Server.GetCommand($"select * from {tbl.GetRuntimeName()} where SampleType = 'F#########1'", con);
         using var da = tbl.Database.Server.GetDataAdapter(findCmd);
         da.Fill(dt);
         Assert.That(dt.Rows.Count, Is.EqualTo(0));
