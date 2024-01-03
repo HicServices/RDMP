@@ -32,17 +32,12 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
         }
         var cmd = new ExecuteCommandRedactCHIsFromCatalogue(new ThrowImmediatelyActivator(RepositoryLocator), biochemistry, null);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var dt = new DataTable();
-        using (var con = tbl.Database.Server.GetConnection())
-        {
-            using (var findCmd = tbl.Database.Server.GetCommand($"select * from {tbl.GetRuntimeName()} where SampleType = 'F#########1'", con))
-            {
-                using var da = tbl.Database.Server.GetDataAdapter(findCmd);
-                da.Fill(dt);
-            }
-        }
+        using var dt = new DataTable();
+        using var con = tbl.Database.Server.GetConnection();
+        using var findCmd = tbl.Database.Server.GetCommand($"select * from {tbl.GetRuntimeName()} where SampleType = 'F#########1'", con);
+        using var da = tbl.Database.Server.GetDataAdapter(findCmd);
+        da.Fill(dt);
         Assert.That(dt.Rows.Count, Is.EqualTo(2));
-        dt.Dispose();
     }
 
     [Test]
@@ -69,7 +64,7 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
         File.WriteAllLines(tempFileToCreate, new string[] { "Biochemistry:", "- SampleType" });
         var cmd = new ExecuteCommandRedactCHIsFromCatalogue(new ThrowImmediatelyActivator(RepositoryLocator), biochemistry, tempFileToCreate);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var dt = new DataTable();
+        using var dt = new DataTable();
         using (var con = tbl.Database.Server.GetConnection())
         {
             using (var findCmd = tbl.Database.Server.GetCommand($"select * from {tbl.GetRuntimeName()} where SampleType = 'F#########1'", con))
@@ -79,6 +74,5 @@ internal class ExecuteCommandRedactCHIsFromCatalogueTests: DatabaseTests
             }
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(0));
-        dt.Dispose();
     }
 }
