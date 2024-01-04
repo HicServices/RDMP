@@ -241,8 +241,12 @@ public class Startup
     /// <param name="notifier"></param>
     private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
-                     .SelectMany(LoadModuleAssembly.GetContents))
+        var pluginsList = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rdmpplugins.txt");
+        var packageFiles = File.Exists(pluginsList)
+            ? File.ReadAllLines(pluginsList)
+                .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
+            : Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
+        foreach (var (name, body) in packageFiles.SelectMany(LoadModuleAssembly.GetContents))
             try
             {
                 AssemblyLoadContext.Default.LoadFromStream(body);
