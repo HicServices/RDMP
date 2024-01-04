@@ -5,10 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Runtime.Loader;
+using System.Xml.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using FAnsi.Implementation;
@@ -16,6 +19,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using NPOI.HPSF;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -26,6 +30,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup.Events;
+using TB.ComponentModel;
 
 namespace Rdmp.Core.Startup;
 
@@ -234,6 +239,68 @@ public class Startup
 
     #region MEF
 
+    private static int CompareVersions(string First, string Second)
+    {
+        var IntVersions = new List<int[]>
+    {
+        System.Array.ConvertAll(First.Split('.'), int.Parse),
+        System.Array.ConvertAll(Second.Split('.'), int.Parse)
+    };
+        var Cmp = IntVersions.First().Length.CompareTo(IntVersions.Last().Length);
+        if (Cmp == 0)
+            IntVersions = IntVersions.Select(v => { System.Array.Resize(ref v, IntVersions.Min(x => x.Length)); return v; }).ToList();
+        var StrVersions = IntVersions.ConvertAll(v => string.Join("", System.Array.ConvertAll(v,
+                            i => { return i.ToString($"D{IntVersions.Max(x => x.Max().ToString().Length)}"); })));
+        var CmpVersions = StrVersions.OrderByDescending(i => i).ToList();
+        return CmpVersions.First().Equals(CmpVersions.Last()) ? Cmp : CmpVersions.First().Equals(StrVersions.First()) ? 1 : -1;
+    }
+    private static List<string> PluginFiltering()
+    {
+        var pluginFiles = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
+        var pluginLookup = new Dictionary<string, Tuple<string, string>>();
+        foreach (var plugin in pluginFiles)
+        {
+            using ZipArchive zip = ZipFile.Open(plugin, ZipArchiveMode.Read);
+            foreach (ZipArchiveEntry entry in zip.Entries)
+            {
+                if (entry.Name == "plugin.nuspec")
+                {
+                    string tempFileName = Path.GetTempFileName();
+                    entry.ExtractToFile(tempFileName, true);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), tempFileName);
+                    XElement nuspec = XElement.Load(filePath);
+                    var x = (nuspec.Nodes().Where(el => ((XElement)el).Name.LocalName == "metadata").First() as XElement);
+                    var nodes = x.Nodes();
+                    var id = (nodes.Where(el => ((XElement)el).Name.LocalName == "id").First() as XElement).Value;
+                    var version = (nodes.Where(el => ((XElement)el).Name.LocalName == "version").First() as XElement).Value;
+                    if (pluginLookup.TryGetValue(id, out var val))
+                    {
+                        //have already found a version, do something
+                        if (CompareVersions(val.Item1, version) == -1)
+                        {
+                            //replace it
+                            pluginLookup.Remove(id);
+                            //remove old nupkg file
+                            File.Delete(val.Item2);
+                        }
+                        else if (CompareVersions(val.Item1, version) == 0)
+                        {
+                            //want to keep the most recently created file
+                            if (File.GetLastWriteTime(val.Item1) < File.GetLastWriteTime(version))
+                            {
+                                pluginLookup.Remove(id);
+                                //remove old nupkg file
+                                File.Delete(val.Item2);
+                            }
+                        }
+                    }
+                    pluginLookup.Add(id, Tuple.Create(version, plugin));
+                }
+            }
+        }
+        return pluginLookup.Values.Select(v => v.Item2).ToList();
+    }
+
     /// <summary>
     /// Load the plugins from the platform DB
     /// </summary>
@@ -241,7 +308,7 @@ public class Startup
     /// <param name="notifier"></param>
     private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        foreach (var (name, body) in Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg")
+        foreach (var (name, body) in PluginFiltering()
                      .SelectMany(LoadModuleAssembly.GetContents))
             try
             {
