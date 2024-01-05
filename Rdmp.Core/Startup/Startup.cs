@@ -115,6 +115,7 @@ public class Startup
 
         //only load data export manager if catalogue worked
         if (!foundCatalogue) return;
+
         LoadMEF(RepositoryLocator.CatalogueRepository, notifier);
 
         //find tier 2 databases
@@ -138,10 +139,10 @@ public class Startup
                     e));
         }
 
-        FindTier3Databases(RepositoryLocator.CatalogueRepository, notifier);
+        FindTier3Databases(notifier);
     }
 
-    private void FindTier3Databases(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
+    private void FindTier3Databases(ICheckNotifier notifier)
     {
         foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
             FindWithPatcher(patcher, notifier);
@@ -241,12 +242,7 @@ public class Startup
     /// <param name="notifier"></param>
     private static void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
     {
-        var pluginsList = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rdmpplugins.txt");
-        var packageFiles = File.Exists(pluginsList)
-            ? File.ReadAllLines(pluginsList)
-                .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
-            : Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
-        foreach (var (name, body) in packageFiles.SelectMany(LoadModuleAssembly.GetContents))
+        foreach (var (name, body) in LoadModuleAssembly.PluginFiles().SelectMany(LoadModuleAssembly.GetContents))
             try
             {
                 AssemblyLoadContext.Default.LoadFromStream(body);
