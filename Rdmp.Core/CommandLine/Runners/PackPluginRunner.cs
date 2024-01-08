@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Xml.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -23,13 +24,13 @@ namespace Rdmp.Core.CommandLine.Runners;
 /// <summary>
 /// Uploads a packed plugin (.nupkg) into a consumable plugin for RDMP
 /// </summary>
-public class PackPluginRunner : IRunner
+public sealed partial class PackPluginRunner : IRunner
 {
     private readonly PackOptions _packOpts;
     public const string PluginPackageSuffix = ".nupkg";
-    public const string PluginPackageManifest = ".nuspec";
+    private const string PluginPackageManifest = ".nuspec";
 
-    private static readonly Regex VersionSuffix = new("-.*$");
+    private static readonly Regex VersionSuffix = VersionSuffixRe();
 
     public PackPluginRunner(PackOptions packOpts)
     {
@@ -44,7 +45,7 @@ public class PackPluginRunner : IRunner
         if (!toCommit.Exists)
             throw new FileNotFoundException($"Could not find file '{toCommit}'");
 
-        if (toCommit.Extension.ToLowerInvariant() != PluginPackageSuffix)
+        if (!toCommit.Name.EndsWith(PluginPackageSuffix, StringComparison.OrdinalIgnoreCase))
             throw new NotSupportedException($"Plugins must be packaged as {PluginPackageSuffix}");
 
         //the version of the plugin e.g. MyPlugin.nupkg version 1.0.0.0
@@ -62,7 +63,7 @@ public class PackPluginRunner : IRunner
         //find the manifest that lists name, version etc
         using (var zf = ZipFile.OpenRead(toCommit.FullName))
         {
-            var manifests = zf.Entries.Where(e => e.FullName.EndsWith(PluginPackageManifest)).ToArray();
+            var manifests = zf.Entries.Where(static e => e.FullName.EndsWith(PluginPackageManifest, StringComparison.OrdinalIgnoreCase)).ToArray();
 
             if (manifests.Length != 1)
                 throw new Exception(
@@ -79,7 +80,7 @@ public class PackPluginRunner : IRunner
 
             var rdmpDependencyNode =
                 doc.Descendants(ns + "dependency")
-                    .FirstOrDefault(e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception(
+                    .FirstOrDefault(static e => e?.Attribute("id")?.Value == "HIC.RDMP.Plugin") ?? throw new Exception(
                     "Expected a single <dependency> tag with id = HIC.RDMP.Plugin (in order to determine plugin compatibility).  Ensure your nuspec file includes a dependency on this package.");
             rdmpDependencyVersion =
                 new Version(VersionSuffix.Replace(rdmpDependencyNode?.Attribute("version")?.Value ?? "", ""));
@@ -90,23 +91,11 @@ public class PackPluginRunner : IRunner
             throw new NotSupportedException(
                 $"Plugin version {pluginVersion} is incompatible with current running version of RDMP ({runningSoftwareVersion}).");
 
-        UploadFile(repositoryLocator, checkNotifier, toCommit, pluginVersion, rdmpDependencyVersion);
+        LoadModuleAssembly.UploadFile(checkNotifier, toCommit);
 
         return 0;
     }
 
-    private static void UploadFile(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ICheckNotifier checkNotifier, FileInfo toCommit, Version pluginVersion, Version rdmpDependencyVersion)
-    {
-        try
-        {
-            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, toCommit.Name), true);
-        }
-        catch (Exception e)
-        {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed copying plugin {toCommit.Name}",
-                CheckResult.Fail, e));
-            throw;
-        }
-    }
+    [GeneratedRegex("-.*$")]
+    private static partial Regex VersionSuffixRe();
 }
