@@ -100,14 +100,6 @@ False - Trigger an error reporting the missing table(s)
     {
         switch (HistoricalFetchDuration)
         {
-            //case HistoricalDurations.Today:
-            //    return $" WHERE CAST({RemoteTableDateColumn} as Date) = CAST(GETDATE() as DATE)";
-            //case HistoricalDurations.ThisWeek:
-            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE()) AND MONTH(CAST({RemoteTableDateColumn} as Date)) = MONTH(GETDATE())  AND WEEK(CAST({RemoteTableDateColumn} as Date),0) = WEEK(GETDATE(),0)";
-            //case HistoricalDurations.ThisMonth:
-            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE()) AND MONTH(CAST({RemoteTableDateColumn} as Date)) = MONTH(GETDATE())";
-            //case HistoricalDurations.ThisYear:
-            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE())";
             case HistoricalDurations.Past24Hours:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(DAY, -1, GETDATE())";
             case HistoricalDurations.Past7Days:
@@ -117,9 +109,9 @@ False - Trigger an error reporting the missing table(s)
             case HistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
             case HistoricalDurations.SinceLastUse:
-                return "";
+                return "";//TODO
             case HistoricalDurations.Custom:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST({CustomFetchDurationStartDate} as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST({CustomFetchDurationEndDate} as Date)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
             default:
                 return "";
         }
