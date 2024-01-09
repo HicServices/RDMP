@@ -109,13 +109,13 @@ False - Trigger an error reporting the missing table(s)
             //case HistoricalDurations.ThisYear:
             //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE())";
             case HistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(GETDATE(), INTERVAL -1 DAY)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(DAY, -1, GETDATE())";
             case HistoricalDurations.Past7Days:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 WEEK)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(WEEK, -1, GETDATE())";
             case HistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 MONTH)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(MONTH, -1, GETDATE())";
             case HistoricalDurations.PastYear:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 YEAR)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
             case HistoricalDurations.SinceLastUse:
                 return "";
             case HistoricalDurations.Custom:
