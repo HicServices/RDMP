@@ -54,14 +54,75 @@ False - Trigger an error reporting the missing table(s)
 ")]
     public bool IgnoreMissingTables { get; set; }
 
+
+    [DemandsInitialization("How far back to pull data from: Today, this week ,etc etc TODO")] //must use HistoricalDurationsEnum
+    public HistoricalDurations HistoricalFetchDuration { get; set; }
+
+    [DemandsInitialization("Which column in the remote table can be used to perform time-based data selection")]
+    public string RemoteTableDateColumn { get; set; }
+
+    [DemandsInitialization("Earliest date when using a custom fetch duration")]
+    public string CustomFetchDurationStartDate { get; set; }
+
+    [DemandsInitialization("Latest date when using a custom fetch duration")]
+    public string CustomFetchDurationEndDate { get; set; }
+
+    public enum HistoricalDurations
+    {
+        AllTime,
+        //Today,
+        //ThisWeek,
+        //ThisMonth,
+        //ThisYear,
+        Past24Hours,
+        Past7Days,
+        PastMonth,
+        PastYear,
+        SinceLastUse,
+        Custom
+
+    }
+
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
             throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
+
+        if(HistoricalFetchDuration is not HistoricalDurations.AllTime && RemoteTableDateColumn is null)
+            throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
+    }
+
+    private string sqlHistoricalDataFilter()
+    {
+        switch (HistoricalFetchDuration)
+        {
+            //case HistoricalDurations.Today:
+            //    return $" WHERE CAST({RemoteTableDateColumn} as Date) = CAST(GETDATE() as DATE)";
+            //case HistoricalDurations.ThisWeek:
+            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE()) AND MONTH(CAST({RemoteTableDateColumn} as Date)) = MONTH(GETDATE())  AND WEEK(CAST({RemoteTableDateColumn} as Date),0) = WEEK(GETDATE(),0)";
+            //case HistoricalDurations.ThisMonth:
+            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE()) AND MONTH(CAST({RemoteTableDateColumn} as Date)) = MONTH(GETDATE())";
+            //case HistoricalDurations.ThisYear:
+            //    return $" WHERE YEAR(CAST({RemoteTableDateColumn} as Date)) = YEAR(GETDATE())";
+            case HistoricalDurations.Past24Hours:
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(GETDATE(), INTERVAL -1 DAY)";
+            case HistoricalDurations.Past7Days:
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 WEEK)";
+            case HistoricalDurations.PastMonth:
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 MONTH)";
+            case HistoricalDurations.PastYear:
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > DATE_SUB(GETDATE(), INTERVAL 1 YEAR)";
+            case HistoricalDurations.SinceLastUse:
+                return "";
+            case HistoricalDurations.Custom:
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST({CustomFetchDurationStartDate} as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST({CustomFetchDurationEndDate} as Date)";
+            default:
+                return "";
+        }
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -104,11 +165,11 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter()}";
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)}";
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter()}";
             }
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
