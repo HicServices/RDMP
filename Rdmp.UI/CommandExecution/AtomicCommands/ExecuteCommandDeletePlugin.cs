@@ -11,11 +11,13 @@ using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System;
+
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandDeletePlugin : BasicUICommandExecution
+public sealed class ExecuteCommandDeletePlugin : BasicUICommandExecution
 {
     private readonly LoadModuleAssembly _assembly;
+
     public ExecuteCommandDeletePlugin(IActivateItems activator, LoadModuleAssembly assembly) : base(activator)
     {
         _assembly = assembly;
@@ -27,18 +29,16 @@ public class ExecuteCommandDeletePlugin : BasicUICommandExecution
     public override void Execute()
     {
         base.Execute();
-        if (YesNo($"Are you sure you want to delete {_assembly}?", "Delete Plugin"))
+        if (!YesNo($"Are you sure you want to delete {_assembly}?", "Delete Plugin")) return;
+
+        try
         {
             _assembly.Delete();
-            try
-            {
-                _assembly.Delete();
-                Show("Changes will take effect on restart");
-            }
-            catch (SystemException ex)
-            {
-                Show($"Could not delete the {_assembly} plugin.", ex);
-            }
+            Show("Changes will take effect on restart");
+        }
+        catch (SystemException ex)
+        {
+            Show($"Could not delete the {_assembly} plugin.", ex);
         }
     }
 }
