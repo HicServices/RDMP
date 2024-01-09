@@ -2,6 +2,6 @@
 <item>
     <version>8.1.2.0</version>
     <url>https://github.com/HicServices/RDMP/releases/download/v8.1.2/rdmp-8.1.2-client.zip</url>
-    <changelog>https://github.com/HicServices/RDMP/blob/main/CHANGELOG.md#17</changelog>
+    <changelog>https://github.com/HicServices/RDMP/blob/main/CHANGELOG.md#7</changelog>
     <mandatory>true</mandatory>
 </item>
