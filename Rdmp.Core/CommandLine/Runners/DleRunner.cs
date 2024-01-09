@@ -101,7 +101,15 @@ public class DleRunner : Runner
                         execution, databaseConfiguration);
                 }
 
+
                 var exitCode = dataLoadProcess.Run(token);
+
+                if (exitCode is ExitCodeType.Success)
+                {
+                    //Store the date of the last succesful load - TODO db migration
+                    loadMetadata.LastLoadTime = new DateTime();
+                    loadMetadata.SaveToDatabase();
+                }
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
                 return exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired ? 0 : (int)exitCode;

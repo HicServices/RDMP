@@ -55,6 +55,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private int? _overrideRawServerID;
     private bool _ignoreTrigger;
     private string _folder;
+    private DateTime? _lastLoadTime;
 
     /// <inheritdoc/>
     [AdjustableLocation]
@@ -127,6 +128,16 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
+
+    /// <summary>
+    /// Stores the last time the load was ran.
+    /// </summary>
+    public DateTime? LastLoadTime
+    {
+        get => _lastLoadTime;
+        set => SetField(ref _lastLoadTime, value);
+    }
+
     #endregion
 
 
@@ -173,7 +184,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         {
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
-            { "Folder", FolderHelper.Root }
+            { "Folder", FolderHelper.Root },
+            {"LastLoadtime", null }
         });
     }
 
@@ -189,6 +201,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
+        LastLoadTime = r["LastLoadTime"] is null?null:DateTime.Parse(r["LastLoadTime"].ToString());
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()

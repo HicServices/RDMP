@@ -70,10 +70,6 @@ False - Trigger an error reporting the missing table(s)
     public enum HistoricalDurations
     {
         AllTime,
-        //Today,
-        //ThisWeek,
-        //ThisMonth,
-        //ThisYear,
         Past24Hours,
         Past7Days,
         PastMonth,
@@ -96,7 +92,7 @@ False - Trigger an error reporting the missing table(s)
     {
     }
 
-    private string sqlHistoricalDataFilter()
+    private string sqlHistoricalDataFilter(ILoadMetadata loadMetadata)
     {
         switch (HistoricalFetchDuration)
         {
@@ -109,7 +105,8 @@ False - Trigger an error reporting the missing table(s)
             case HistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
             case HistoricalDurations.SinceLastUse:
-                return "";//TODO
+                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST({loadMetadata.LastLoadTime} as Date)";
+                return "";
             case HistoricalDurations.Custom:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
             default:
@@ -157,11 +154,11 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter()}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter(job.LoadMetadata)}";
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter()}";
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter(job.LoadMetadata)}";
             }
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
