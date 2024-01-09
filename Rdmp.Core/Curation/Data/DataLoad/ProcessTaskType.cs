@@ -43,5 +43,10 @@ public enum ProcessTaskType
     /// ProcessTask is to instantiate the IMutilateDataTables class Type specified in Path and hydrate its [DemandsInitialization] properties with values matching
     /// ProcessTaskArguments and run it in the specified load stage in an MutilateDataTablesRuntimeTask wrapper.
     /// </summary>
-    MutilateDataTable
+    MutilateDataTable,
+
+    /// <summary>
+    /// ProcessTask is to import a SQL backup file directly to the server
+    /// </summary>
+    SQLBakFile
 }
