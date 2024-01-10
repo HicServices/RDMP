@@ -167,13 +167,14 @@ jobs:
           ls Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/runtimes ./PublishWinForms
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/x64 ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/D3DCompiler_47_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/mongocrypt.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/Penlmc_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/PresentationNative_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/vcruntime140_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/WebView2Loader.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/wpfgfx_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/*.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/D3DCompiler_47_cor3.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/mongocrypt.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/Penlmc_cor3.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/PresentationNative_cor3.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/vcruntime140_cor3.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/WebView2Loader.dll ./PublishWinForms
+          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/wpfgfx_cor3.dll ./PublishWinForms
       - name: Install Plugins
         shell: bash
         run: |
