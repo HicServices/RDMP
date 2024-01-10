@@ -164,10 +164,8 @@ jobs:
       - name: Temporary Bundle of ddls for auto-updater
         shell: bash
         run: |
-          ls Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/runtimes ./PublishWinForms
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/x64 ./PublishWinForms
-          # cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/*.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/D3DCompiler_47_cor3.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/mongocrypt.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/PenImc_cor3.dll ./PublishWinForms
