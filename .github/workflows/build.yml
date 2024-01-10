@@ -158,9 +158,21 @@ jobs:
           echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
       - name: Package
         run: |
-          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+          dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal -p:IncludeNativeLibrariesForSelfExtract=true --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+      - name: Temporary Bundle of ddls for auto-updater
+        shell: bash
+        run: |
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/runtimes ./PublishWinForms
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/x64 ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/D3DCompiler_47_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/mongocrypt.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/Penlmc_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/PresentationNative_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/vcruntime140_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/WebView2Loader.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/wpfgfx_cor3.dll ./PublishWinForms
       - name: Install Plugins
         shell: bash
         run: |
@@ -179,12 +191,9 @@ jobs:
       - name: Sign & zip
         shell: bash
         run: |
-          # if [ ${{github.ref}} == 'refs/heads/develop' ] || [ ${{github.ref}} == 'refs/heads/main' ]
-          # then 
           dotnet tool install --global AzureSignTool 
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
-          # fi
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
