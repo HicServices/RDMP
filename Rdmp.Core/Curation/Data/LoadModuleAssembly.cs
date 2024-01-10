@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ICSharpCode.SharpZipLib.Zip;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data;
 
@@ -17,7 +18,12 @@ namespace Rdmp.Core.Curation.Data;
 /// </summary>
 public sealed class LoadModuleAssembly
 {
-    internal static readonly List<LoadModuleAssembly> Assemblies=new();
+    private static readonly bool IsWin = AppDomain.CurrentDomain.GetAssemblies()
+        .Any(static a => a.FullName?.StartsWith("Rdmp.UI", StringComparison.Ordinal) == true);
+
+    private static readonly string PluginsList = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "rdmpplugins.txt");
+
+    internal static readonly List<LoadModuleAssembly> Assemblies = [];
     private readonly FileInfo _file;
 
     private LoadModuleAssembly(FileInfo file)
@@ -26,26 +32,35 @@ public sealed class LoadModuleAssembly
     }
 
     /// <summary>
+    /// List the plugin files to load
+    /// </summary>
+    /// <returns></returns>
+    internal static IEnumerable<string> PluginFiles()
+    {
+        return File.Exists(PluginsList)
+            ? File.ReadAllLines(PluginsList)
+                .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
+            : Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.nupkg");
+    }
+
+    /// <summary>
     /// Unpack the plugin DLL files, excluding any Windows UI specific dlls when not running a Windows GUI
     /// </summary>
-    internal static IEnumerable<ValueTuple<string, MemoryStream>> GetContents(string path)
+    internal static IEnumerable<(string, MemoryStream)> GetContents(string path)
     {
         var info = new FileInfo(path);
         if (!info.Exists || info.Length < 100) yield break; // Ignore missing or empty files
 
         var pluginStream = info.OpenRead();
-        Assemblies.Add(new LoadModuleAssembly(info));
-
-        var isWin = AppDomain.CurrentDomain.GetAssemblies()
-            .Any(static a => a.FullName?.StartsWith("Rdmp.UI", StringComparison.Ordinal) == true);
-
         if (!pluginStream.CanSeek)
             throw new ArgumentException("Seek needed", nameof(path));
 
+        Assemblies.Add(new LoadModuleAssembly(info));
+
         using var zip = new ZipFile(pluginStream);
         foreach (var e in zip.Cast<ZipEntry>()
-                     .Where(static e => e.IsFile && e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-                     .Where(e => isWin || !e.Name.Contains("/windows/")))
+                     .Where(static e => e.IsFile && e.Name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) &&
+                                        (IsWin || !e.Name.Contains("/windows/"))))
         {
             using var s = zip.GetInputStream(e);
             using var ms2 = new MemoryStream();
@@ -59,15 +74,56 @@ public sealed class LoadModuleAssembly
     /// Copy the plugin nupkg to the given directory
     /// </summary>
     /// <param name="downloadDirectory"></param>
-    public string DownloadAssembly(DirectoryInfo downloadDirectory)
+    public void DownloadAssembly(DirectoryInfo downloadDirectory)
     {
         if (!downloadDirectory.Exists)
             downloadDirectory.Create();
-        var targetFile=Path.Combine(downloadDirectory.FullName, _file.Name);
-        _file.CopyTo(targetFile,true);
-        return targetFile;
+        var targetFile = Path.Combine(downloadDirectory.FullName, _file.Name);
+        _file.CopyTo(targetFile, true);
     }
 
-    public void Delete() => _file.Delete();
+    /// <summary>
+    /// Delete the plugin file from disk, and remove it from rdmpplugins.txt if in use
+    /// </summary>
+    public void Delete()
+    {
+        _file.Delete();
+        if (!File.Exists(PluginsList)) return;
+
+        var tmp = $"{PluginsList}.tmp";
+        File.WriteAllLines(tmp, File.ReadAllLines(PluginsList).Where(l => !l.Contains(_file.Name)));
+        File.Move(tmp, PluginsList, true);
+    }
+
     public override string ToString() => _file.Name;
+
+    public static void UploadFile(ICheckNotifier checkNotifier, FileInfo toCommit)
+    {
+        try
+        {
+            toCommit.CopyTo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, toCommit.Name), true);
+            if (!File.Exists(PluginsList)) return;
+
+            // Now the tricky bit: add this new file, and remove any other versions of the same
+            // e.g. adding DummyPlugin-1.2.3 should delete DummyPlugin-2.0 and DummyPlugin-1.0 if present
+            var list = File.ReadAllLines(PluginsList);
+            var tmp = $"{PluginsList}.tmp";
+
+            var versionPos = toCommit.Name.IndexOf('-');
+            if (versionPos != -1)
+            {
+                var stub = toCommit.Name[..(versionPos + 1)];
+                list = list.Where(l => !l.StartsWith(stub, StringComparison.OrdinalIgnoreCase)).ToArray();
+            }
+
+            File.WriteAllLines(tmp, list.Union([toCommit.Name]));
+            File.Move(tmp, PluginsList, true);
+        }
+        catch (Exception e)
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"Failed copying plugin {toCommit.Name}",
+                CheckResult.Fail, e));
+            throw;
+        }
+    }
 }
