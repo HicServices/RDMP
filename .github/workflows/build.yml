@@ -187,11 +187,11 @@ jobs:
           fi
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg rdmpplugins.txt | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg rdmpplugins.txt * | cmd)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
 
 
       - name: Install Perl dependencies
