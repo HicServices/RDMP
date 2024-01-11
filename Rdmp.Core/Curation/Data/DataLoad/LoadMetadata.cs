@@ -185,7 +185,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadtime", null }
+            {"LastLoadtime", new DateTime() }//should be null
         });
     }
 

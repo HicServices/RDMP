@@ -118,7 +118,6 @@ False - Trigger an error reporting the missing table(s)
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{startDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{endDate}' as Date)";
-
             default:
                 return "";
         }
@@ -203,6 +202,8 @@ False - Trigger an error reporting the missing table(s)
             job.OnNotify(this, new NotifyEventArgs(
                 source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
+
+            ForwardScanDateInTime = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
         }
 
         return ExitCodeType.Success;
