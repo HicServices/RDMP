@@ -67,6 +67,10 @@ False - Trigger an error reporting the missing table(s)
     [DemandsInitialization("Latest date when using a custom fetch duration")]
     public string CustomFetchDurationEndDate { get; set; }
 
+    public DateTime ForwardScanDateInTime { get; set; }
+    public int ForwardScanLookBackDays { get; set; } = 0;
+    public int ForwardScanLookForwardDays { get; set; } = 0;
+
     public enum HistoricalDurations
     {
         AllTime,
@@ -75,7 +79,8 @@ False - Trigger an error reporting the missing table(s)
         PastMonth,
         PastYear,
         SinceLastUse,
-        Custom
+        Custom,
+        ForwardScan
 
     }
 
@@ -109,6 +114,11 @@ False - Trigger an error reporting the missing table(s)
                 return "";
             case HistoricalDurations.Custom:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
+            case HistoricalDurations.ForwardScan:
+                var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
+                var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{startDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{endDate}' as Date)";
+
             default:
                 return "";
         }
