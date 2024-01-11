@@ -12,6 +12,7 @@ using NPOI.XWPF.UserModel;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Reports.ExtractionTime;
 
@@ -160,9 +161,15 @@ public class WordDataReleaseFileGenerator : DocXHelper
             Cohort.GetCountDistinctFromDatabase(CohortCountTimeoutInSeconds).ToString("N0"));
     }
 
+    [NotNull]
+    private string getDOI([NotNull] Curation.Data.Dataset ds)
+    {
+        return !string.IsNullOrWhiteSpace(ds.DigitalObjectIdentifier) ? $" (DOI: {ds.DigitalObjectIdentifier})" : "";
+    }
+
     private void CreateFileSummary(XWPFDocument document)
     {
-        var table = InsertTable(document, ExtractionResults.Length + 1, 5);
+        var table = InsertTable(document, ExtractionResults.Length + 1, 6);
 
         var tableLine = 0;
 
@@ -171,18 +178,23 @@ public class WordDataReleaseFileGenerator : DocXHelper
         SetTableCell(table, tableLine, 2, "Filename");
         SetTableCell(table, tableLine, 3, "Records");
         SetTableCell(table, tableLine, 4, "Unique Individuals");
+        SetTableCell(table, tableLine, 5, "Datasets");
         tableLine++;
 
         foreach (var result in ExtractionResults)
         {
             var filename = GetFileName(result);
-
+            var extractableDataset = _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID);
             SetTableCell(table, tableLine, 0,
-                _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID).ToString());
+              extractableDataset.ToString());
+            var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(static c => c.ColumnInfo).Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
+            var datasets = _repository.CatalogueRepository.GetAllObjects<Curation.Data.Dataset>().Where(d => linkedDatasets.Contains(d.ID)).ToList();
+            var datasetString = string.Join("",datasets.Select(ds=> $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}"));
             SetTableCell(table, tableLine, 1, result.FiltersUsed);
             SetTableCell(table, tableLine, 2, filename);
             SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));
             SetTableCell(table, tableLine, 4, result.DistinctReleaseIdentifiersEncountered.ToString("N0"));
+            SetTableCell(table, tableLine, 5, datasetString);
             tableLine++;
         }
     }

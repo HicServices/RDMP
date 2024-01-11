@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -40,6 +41,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         AssociatedCollection = RDMPCollection.Catalogue;
 
         ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
+
     }
 
     private bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
@@ -60,6 +62,26 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     public override void SetDatabaseObject(IActivateItems activator, CatalogueItem databaseObject)
     {
         _catalogueItem = databaseObject;
+        if (_catalogueItem != null)
+        {
+            var columnInfoDatasetValue  = _catalogueItem?.ColumnInfo?.Dataset_ID;
+            if (columnInfoDatasetValue != null)
+            {
+                lbDatasetValue.Visible = true;
+                lbDataset.Visible = true;
+                var dataset = _catalogueItem.CatalogueRepository.GetAllObjects<Dataset>()
+                    .FirstOrDefault(ds => ds.ID == columnInfoDatasetValue);
+                if (dataset != null)
+                {
+                    lbDatasetValue.Text = dataset.Name;
+                }
+            }
+            else
+            {
+                lbDatasetValue.Visible = false;
+                lbDataset.Visible = false;
+            }
+        }
 
         if (_scintillaDescription == null)
         {
@@ -73,7 +95,7 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
 
 
-        if (_catalogueItem.ExtractionInformation == null)
+        if (_catalogueItem?.ExtractionInformation == null)
             CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem),
                 "Make Extractable");
     }
@@ -95,6 +117,21 @@ public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     }
 
     public override string GetTabName() => $"{base.GetTabName()} ({_catalogueItem.Catalogue.Name})";
+
+    private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+    {
+
+    }
+
+    private void label1_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void splitContainer1_SplitterMoved(object sender, SplitterEventArgs e)
+    {
+
+    }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueItemUI_Design, UserControl>))]

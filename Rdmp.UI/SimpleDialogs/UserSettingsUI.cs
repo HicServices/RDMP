@@ -77,6 +77,7 @@ public partial class UserSettingsFileUI : Form
         tbCreateDatabaseTimeout.Text = UserSettings.CreateDatabaseTimeout.ToString();
         tbArchiveTriggerTimeout.Text = UserSettings.ArchiveTriggerTimeout.ToString();
         tbTooltipAppearDelay.Text = UserSettings.TooltipAppearDelay.ToString();
+        tbLocalFileSystemLocation.Text = UserSettings.LocalFileSystemLocation?.ToString();
 
         RegisterCheckbox(cbShowHomeOnStartup, nameof(UserSettings.ShowHomeOnStartup));
         RegisterCheckbox(cbEmphasiseOnTabChanged, nameof(UserSettings.EmphasiseOnTabChanged));
@@ -104,7 +105,7 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbExpandAllInCohortBuilder, nameof(UserSettings.ExpandAllInCohortBuilder));
         RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs,
             nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
-
+        RegisterCheckbox(cbUseLocalFileSystem, nameof(UserSettings.UseLocalFileSystem));
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -242,6 +243,11 @@ public partial class UserSettingsFileUI : Form
     private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)
     {
         if (int.TryParse(tbArchiveTriggerTimeout.Text, out var result)) UserSettings.ArchiveTriggerTimeout = result;
+    }
+
+    private void tbLocalFileSystemLocation_TextChanged(object sender, EventArgs e)
+    {
+        UserSettings.LocalFileSystemLocation = tbLocalFileSystemLocation.Text;
     }
 
     private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)

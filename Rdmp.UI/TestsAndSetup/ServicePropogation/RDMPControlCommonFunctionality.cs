@@ -396,7 +396,7 @@ public class RDMPControlCommonFunctionality
 
         if (!string.IsNullOrWhiteSpace(underMenu))
         {
-            if (!_addToMenuSubmenus.TryGetValue(underMenu, out ToolStripMenuItem stripMenuItem))
+            if (!_addToMenuSubmenus.TryGetValue(underMenu, out var stripMenuItem))
             {
                 stripMenuItem = new ToolStripMenuItem(underMenu);
                 _addToMenuSubmenus.Add(underMenu, stripMenuItem);

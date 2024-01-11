@@ -73,7 +73,7 @@ public partial class CreateHoldoutLookupUI : RDMPForm
         DialogResult = DialogResult.Cancel;
         Close();
     }
-    
+
     private void CohortHoldoutCreationRequestUI_Load(object sender, EventArgs e)
     {
         _target.Check(ragSmiley1);

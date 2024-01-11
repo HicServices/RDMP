@@ -29,6 +29,7 @@ public static class BackColorProvider
             RDMPCollection.Favourites => SystemColors.Control,
             RDMPCollection.Cohort => Color.FromArgb(210, 240, 255),
             RDMPCollection.DataLoad => Color.DarkGray,
+            RDMPCollection.Datasets => Color.PaleVioletRed,
             _ => throw new ArgumentOutOfRangeException(nameof(collection))
         };
     }

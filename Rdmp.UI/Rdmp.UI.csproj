@@ -111,6 +111,9 @@
     <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </Compile>
+    <Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

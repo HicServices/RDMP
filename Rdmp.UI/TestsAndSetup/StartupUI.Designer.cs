@@ -31,89 +31,98 @@ namespace Rdmp.UI.TestsAndSetup
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblProgress = new System.Windows.Forms.Label();
-            this.pbLoadProgress = new System.Windows.Forms.ProgressBar();
-            this.btnChoosePlatformDatabases = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new Rdmp.UI.ChecksUI.RAGSmiley();
-            this.pbDisconnected = new System.Windows.Forms.PictureBox();
-            ((System.ComponentModel.ISupportInitialize)(this.pbDisconnected)).BeginInit();
-            this.SuspendLayout();
+            lblProgress = new System.Windows.Forms.Label();
+            pbLoadProgress = new System.Windows.Forms.ProgressBar();
+            btnChoosePlatformDatabases = new System.Windows.Forms.Button();
+            ragSmiley1 = new RAGSmiley();
+            pbDisconnected = new System.Windows.Forms.PictureBox();
+            btnQuickStart = new System.Windows.Forms.Button();
+            ((System.ComponentModel.ISupportInitialize)pbDisconnected).BeginInit();
+            SuspendLayout();
             // 
             // lblProgress
             // 
-            this.lblProgress.AutoSize = true;
-            this.lblProgress.Location = new System.Drawing.Point(46, 40);
-            this.lblProgress.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblProgress.Name = "lblProgress";
-            this.lblProgress.Size = new System.Drawing.Size(65, 15);
-            this.lblProgress.TabIndex = 2;
-            this.lblProgress.Text = "lblProgress";
+            lblProgress.AutoSize = true;
+            lblProgress.Location = new System.Drawing.Point(46, 40);
+            lblProgress.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            lblProgress.Name = "lblProgress";
+            lblProgress.Size = new System.Drawing.Size(65, 15);
+            lblProgress.TabIndex = 2;
+            lblProgress.Text = "lblProgress";
             // 
             // pbLoadProgress
             // 
-            this.pbLoadProgress.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbLoadProgress.Location = new System.Drawing.Point(49, 18);
-            this.pbLoadProgress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbLoadProgress.Name = "pbLoadProgress";
-            this.pbLoadProgress.Size = new System.Drawing.Size(1056, 12);
-            this.pbLoadProgress.TabIndex = 1;
+            pbLoadProgress.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pbLoadProgress.Location = new System.Drawing.Point(49, 18);
+            pbLoadProgress.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbLoadProgress.Name = "pbLoadProgress";
+            pbLoadProgress.Size = new System.Drawing.Size(1056, 12);
+            pbLoadProgress.TabIndex = 1;
             // 
             // btnChoosePlatformDatabases
             // 
-            this.btnChoosePlatformDatabases.Location = new System.Drawing.Point(485, 62);
-            this.btnChoosePlatformDatabases.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.btnChoosePlatformDatabases.Name = "btnChoosePlatformDatabases";
-            this.btnChoosePlatformDatabases.Size = new System.Drawing.Size(170, 27);
-            this.btnChoosePlatformDatabases.TabIndex = 4;
-            this.btnChoosePlatformDatabases.Text = "Set Platform Databases...";
-            this.btnChoosePlatformDatabases.UseVisualStyleBackColor = true;
-            this.btnChoosePlatformDatabases.Click += new System.EventHandler(this.BtnChoosePlatformDatabases_Click);
+            btnChoosePlatformDatabases.Location = new System.Drawing.Point(422, 62);
+            btnChoosePlatformDatabases.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnChoosePlatformDatabases.Name = "btnChoosePlatformDatabases";
+            btnChoosePlatformDatabases.Size = new System.Drawing.Size(170, 27);
+            btnChoosePlatformDatabases.TabIndex = 4;
+            btnChoosePlatformDatabases.Text = "Set Platform Databases...";
+            btnChoosePlatformDatabases.UseVisualStyleBackColor = true;
+            btnChoosePlatformDatabases.Click += BtnChoosePlatformDatabases_Click;
             // 
             // ragSmiley1
             // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(9, 10);
-            this.ragSmiley1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(29, 29);
-            this.ragSmiley1.TabIndex = 3;
+            ragSmiley1.AlwaysShowHandCursor = false;
+            ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            ragSmiley1.Location = new System.Drawing.Point(9, 10);
+            ragSmiley1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
+            ragSmiley1.Name = "ragSmiley1";
+            ragSmiley1.Size = new System.Drawing.Size(29, 29);
+            ragSmiley1.TabIndex = 3;
             // 
             // pbDisconnected
             // 
-            this.pbDisconnected.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.pbDisconnected.Location = new System.Drawing.Point(8, 6);
-            this.pbDisconnected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.pbDisconnected.Name = "pbDisconnected";
-            this.pbDisconnected.Size = new System.Drawing.Size(34, 33);
-            this.pbDisconnected.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbDisconnected.TabIndex = 5;
-            this.pbDisconnected.TabStop = false;
-            this.pbDisconnected.Visible = false;
-            this.pbDisconnected.Click += new System.EventHandler(this.pbDisconnected_Click);
+            pbDisconnected.Cursor = System.Windows.Forms.Cursors.Hand;
+            pbDisconnected.Location = new System.Drawing.Point(8, 6);
+            pbDisconnected.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            pbDisconnected.Name = "pbDisconnected";
+            pbDisconnected.Size = new System.Drawing.Size(34, 33);
+            pbDisconnected.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            pbDisconnected.TabIndex = 5;
+            pbDisconnected.TabStop = false;
+            pbDisconnected.Visible = false;
+            pbDisconnected.Click += pbDisconnected_Click;
+            // 
+            // btnQuickStart
+            // 
+            btnQuickStart.Location = new System.Drawing.Point(599, 62);
+            btnQuickStart.Name = "btnQuickStart";
+            btnQuickStart.Size = new System.Drawing.Size(170, 27);
+            btnQuickStart.TabIndex = 6;
+            btnQuickStart.Text = "Use Local File System";
+            btnQuickStart.UseVisualStyleBackColor = true;
+            btnQuickStart.Click += btnLocalFileSystem_Click;
             // 
             // StartupUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1140, 95);
-            this.Controls.Add(this.pbDisconnected);
-            this.Controls.Add(this.btnChoosePlatformDatabases);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.lblProgress);
-            this.Controls.Add(this.pbLoadProgress);
-            this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.Name = "StartupUI";
-            this.Text = "Startup";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupUIMainForm_FormClosing);
-            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.StartupUIMainForm_KeyUp);
-            ((System.ComponentModel.ISupportInitialize)(this.pbDisconnected)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(1140, 95);
+            Controls.Add(btnQuickStart);
+            Controls.Add(pbDisconnected);
+            Controls.Add(btnChoosePlatformDatabases);
+            Controls.Add(ragSmiley1);
+            Controls.Add(lblProgress);
+            Controls.Add(pbLoadProgress);
+            KeyPreview = true;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "StartupUI";
+            Text = "Startup";
+            FormClosing += StartupUIMainForm_FormClosing;
+            KeyUp += StartupUIMainForm_KeyUp;
+            ((System.ComponentModel.ISupportInitialize)pbDisconnected).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -122,5 +131,6 @@ namespace Rdmp.UI.TestsAndSetup
         private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnChoosePlatformDatabases;
         private System.Windows.Forms.PictureBox pbDisconnected;
+        private System.Windows.Forms.Button btnQuickStart;
     }
 }

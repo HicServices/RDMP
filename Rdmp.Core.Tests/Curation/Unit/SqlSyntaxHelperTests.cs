@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Implementations.MicrosoftSQL;
-using NSubstitute;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.Curation.Unit;

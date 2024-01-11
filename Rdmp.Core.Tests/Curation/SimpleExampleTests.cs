@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using System.Linq;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;

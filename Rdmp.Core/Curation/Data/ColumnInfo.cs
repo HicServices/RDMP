@@ -297,6 +297,18 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         ClearAllInjections();
     }
 
+    private int? _datasetID;
+    /// <summary>
+    /// The ID of the dataset this column information came from
+    /// </summary>
+    [DoNotExtractProperty]
+    public int? Dataset_ID
+    {
+        get => _datasetID;
+        set => SetField(ref _datasetID, value);
+    }
+
+
     internal ColumnInfo(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
@@ -309,6 +321,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         Description = r["Description"].ToString();
         Collation = r["Collation"] as string;
         IgnoreInLoads = ObjectToNullableBool(r["IgnoreInLoads"]) ?? false;
+        if (r["Dataset_ID"] != DBNull.Value)
+            Dataset_ID = int.Parse(r["Dataset_ID"].ToString());
 
         //try to turn string value in database into enum value
         if (Enum.TryParse(r["Status"].ToString(), out ColumnStatus dbStatus))

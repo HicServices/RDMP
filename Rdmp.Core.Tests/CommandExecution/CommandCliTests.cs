@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using NSubstitute;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
@@ -31,18 +32,27 @@ public abstract class CommandCliTests : UnitTests
         {
             DisallowInput = true
         });
-        invoker.CommandImpossible += (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
+        invoker.CommandImpossible += static (s, c) => throw new Exception(c.Command.ReasonCommandImpossible);
 
         return invoker;
     }
 
-    protected IBasicActivateItems GetMockActivator()
+    private readonly Lazy<IBasicActivateItems> _mockActivator;
+
+    protected CommandCliTests()
+    {
+        _mockActivator = new Lazy<IBasicActivateItems>(MakeMockActivator, LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
+    private IBasicActivateItems MakeMockActivator()
     {
         var mock = Substitute.For<IBasicActivateItems>();
         mock.RepositoryLocator.Returns(RepositoryLocator);
         mock.GetDelegates().Returns(new List<CommandInvokerDelegate>());
         return mock;
     }
+
+    protected IBasicActivateItems GetMockActivator() => _mockActivator.Value;
 
     /// <summary>
     /// Runs the provided string which should start after the cmd e.g. the bit after rdmp cmd

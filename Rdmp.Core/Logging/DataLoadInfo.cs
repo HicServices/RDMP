@@ -134,7 +134,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
                 using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
                     lockQuery.ExecuteNonQuery();
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
-                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
+                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,LEFT(RTRIM(@eventType),50),LEFT(RTRIM(@source),100),LEFT(RTRIM(@description),8000),@time);",
                 con);
 
             DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);

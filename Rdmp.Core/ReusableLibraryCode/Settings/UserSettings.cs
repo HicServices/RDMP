@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -26,6 +27,18 @@ public static class UserSettings
                                                           throw new NotImplementedException(
                                                               "Isolated Storage does not work in this environment...");
 
+
+    public static bool UseLocalFileSystem
+    {
+        get => AppSettings.GetValueOrDefault("UseLocalFileSystem", false);
+        set => AppSettings.AddOrUpdateValue("UseLocalFileSystem", value);
+    }
+
+    public static string LocalFileSystemLocation 
+    {
+        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp")); 
+        set => AppSettings.AddOrUpdateValue("LocalFileSystemLocation", value);
+    }
 
     /// <summary>
     /// Show a Yes/No confirmation dialog box when closing RDMP

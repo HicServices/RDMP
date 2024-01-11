@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Logging;

@@ -7,7 +7,6 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;

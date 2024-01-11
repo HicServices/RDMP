@@ -104,7 +104,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                     OverrideCommandName = "Catalogue SQL/Data",
                     SuggestedCategory = View
                 };
-
                 yield return new ExecuteCommandAddNewCatalogueItem(_activator, c)
                 { Weight = -99.9f, SuggestedCategory = Add, OverrideCommandName = "New Catalogue Item" };
                 yield return new ExecuteCommandAddNewAggregateGraph(_activator, c)

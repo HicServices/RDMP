@@ -9,7 +9,6 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using NSubstitute;
 using NUnit.Framework;
-using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using Tests.Common;
