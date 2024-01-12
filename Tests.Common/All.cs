@@ -6,6 +6,7 @@
 
 using FAnsi;
 using NUnit.Framework;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 
 namespace Tests.Common;
 

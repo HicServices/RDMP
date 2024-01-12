@@ -152,7 +152,6 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         }
     }
 
-    //todo test with the each of the dates options
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
     [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Past24Hours)]
@@ -266,7 +265,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.SinceLastUse || duration == AttacherHistoricalDurations.Custom ? 2 : 3));
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.SinceLastUse || duration == AttacherHistoricalDurations.Custom || duration == AttacherHistoricalDurations.ForwardScan ? 2 : 3));
 
         dt = tbl.GetDataTable();
         VerifyRowExist(dt, "Cow", withinDate);
