@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2023
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
@@ -27,7 +26,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// Data load component for loading RAW tables with records read from a remote database server.
 /// Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
-public class RemoteDatabaseAttacher : Attacher, IPluginAttacher
+public class RemoteDatabaseAttacher : RemoteAttacher
 {
     public RemoteDatabaseAttacher() : base(true)
     {
@@ -54,44 +53,14 @@ False - Trigger an error reporting the missing table(s)
 ")]
     public bool IgnoreMissingTables { get; set; }
 
-
-    [DemandsInitialization("How far back to pull data from: Today, this week ,etc etc TODO")] //must use HistoricalDurationsEnum
-    public HistoricalDurations HistoricalFetchDuration { get; set; }
-
-    [DemandsInitialization("Which column in the remote table can be used to perform time-based data selection")]
-    public string RemoteTableDateColumn { get; set; }
-
-    [DemandsInitialization("Earliest date when using a custom fetch duration")]
-    public string CustomFetchDurationStartDate { get; set; }
-
-    [DemandsInitialization("Latest date when using a custom fetch duration")]
-    public string CustomFetchDurationEndDate { get; set; }
-
-    [DemandsInitialization("The Current Start Date for procedural fethching of historical data")]
-    public DateTime ForwardScanDateInTime { get; set; }
-    [DemandsInitialization("How many days the precedural fetching should look back ")]
-    public int ForwardScanLookBackDays { get; set; } = 0;
-    [DemandsInitialization("How many days the precedural fetching should look forward ")]
-    public int ForwardScanLookForwardDays { get; set; } = 0;
-
-    public enum HistoricalDurations
-    {
-        AllTime,
-        Past24Hours,
-        Past7Days,
-        PastMonth,
-        PastYear,
-        SinceLastUse,
-        Custom,
-        ForwardScan
-    }
+   
 
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
             throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
 
-        if(HistoricalFetchDuration is not HistoricalDurations.AllTime && RemoteTableDateColumn is null)
+        if(HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
             throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
@@ -99,31 +68,7 @@ False - Trigger an error reporting the missing table(s)
     {
     }
 
-    private string sqlHistoricalDataFilter(ILoadMetadata loadMetadata)
-    {
-        switch (HistoricalFetchDuration)
-        {
-            case HistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(DAY, -1, GETDATE())";
-            case HistoricalDurations.Past7Days:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(WEEK, -1, GETDATE())";
-            case HistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(MONTH, -1, GETDATE())";
-            case HistoricalDurations.PastYear:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
-            case HistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST({loadMetadata.LastLoadTime} as Date)";
-                return "";
-            case HistoricalDurations.Custom:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
-            case HistoricalDurations.ForwardScan:
-                var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
-                var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{startDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{endDate}' as Date)";
-            default:
-                return "";
-        }
-    }
+   
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
@@ -165,11 +110,11 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter(job.LoadMetadata)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata)}";
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {sqlHistoricalDataFilter(job.LoadMetadata)}";
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata)}";
             }
 
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
