@@ -67,8 +67,11 @@ False - Trigger an error reporting the missing table(s)
     [DemandsInitialization("Latest date when using a custom fetch duration")]
     public string CustomFetchDurationEndDate { get; set; }
 
+    [DemandsInitialization("The Current Start Date for procedural fethching of historical data")]
     public DateTime ForwardScanDateInTime { get; set; }
+    [DemandsInitialization("How many days the precedural fetching should look back ")]
     public int ForwardScanLookBackDays { get; set; } = 0;
+    [DemandsInitialization("How many days the precedural fetching should look forward ")]
     public int ForwardScanLookForwardDays { get; set; } = 0;
 
     public enum HistoricalDurations
@@ -81,7 +84,6 @@ False - Trigger an error reporting the missing table(s)
         SinceLastUse,
         Custom,
         ForwardScan
-
     }
 
     public override void Check(ICheckNotifier notifier)
@@ -203,7 +205,6 @@ False - Trigger an error reporting the missing table(s)
                 source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
 
-            ForwardScanDateInTime = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
         }
 
         return ExitCodeType.Success;

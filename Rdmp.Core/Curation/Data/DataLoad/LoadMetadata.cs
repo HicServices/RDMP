@@ -204,7 +204,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         var columns = Enumerable.Range(0, r.FieldCount).Select(r.GetName).ToList();
-        LastLoadTime = r["LastLoadTime"] is not null ? DateTime.Parse(r["LastLoadTime"].ToString()) : null;
+        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ?null: DateTime.Parse(r["LastLoadTime"].ToString());
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()

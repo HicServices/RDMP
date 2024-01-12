@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
@@ -18,6 +20,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -107,8 +110,27 @@ public class DleRunner : Runner
                 if (exitCode is ExitCodeType.Success)
                 {
                     //Store the date of the last succesful load - TODO db migration
-                    loadMetadata.LastLoadTime = new DateTime();
+                    loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
+                    List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName).ToList(); //todo need to do table attachers also
+                    if (processTasks.Count() > 0)
+                    {
+                        foreach (ProcessTask task in processTasks)
+                        {
+                            var arguments = task.GetAllArguments().Where(arg => arg.Name == "ForwardScanDateInTime" && arg.Value is not null);
+                            foreach (var argument in arguments)
+                            {
+                                //todo have to find max date in results
+                                var scanForwardDate = task.GetAllArguments().Where(a => a.Name == "ForwardScanLookForwardDays").First();
+                                var newdate = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value));
+                                var arg = (ProcessTaskArgument)argument;
+                                arg.Value = newdate.ToString();
+                                arg.SaveToDatabase();
+                            }
+                        }
+                    }
+                    //var ProcessTaskArgument forwardScanDateInTime = locator.CatalogueRepository.GetAllObjectsWhere<ProcessTaskArgument>("ProcessTask_ID",)
+
                 }
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
