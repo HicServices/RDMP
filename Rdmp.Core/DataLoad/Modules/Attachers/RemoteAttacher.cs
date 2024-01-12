@@ -54,10 +54,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case AttacherHistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
             case AttacherHistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST({loadMetadata.LastLoadTime} as Date)";
+                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST('{loadMetadata.LastLoadTime}' as Date)";
                 return "";
             case AttacherHistoricalDurations.Custom:
-                //todo if there is only one of the two dates
                 if(CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
                 {
                     //end only

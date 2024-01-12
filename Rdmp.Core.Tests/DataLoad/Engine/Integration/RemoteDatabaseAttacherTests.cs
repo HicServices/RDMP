@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using FAnsi;
+using MongoDB.Driver.Linq;
+using NPOI.SS.Formula.Functions;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -63,7 +65,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         lm.CreateNewLoggingTaskIfNotExists("amagad");
         var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-        var job = Substitute.For<IDataLoadJob>();
+        var job = NSubstitute.Substitute.For<IDataLoadJob>();
         job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
         job.LookupTablesToLoad.Returns(new List<ITableInfo>());
         job.DataLoadInfo.Returns(dli);
@@ -101,6 +103,179 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         externalServer.DeleteInDatabase();
     }
+
+
+
+    private static string Within(AttacherHistoricalDurations duration)
+    {
+        switch (duration)
+        {
+            case AttacherHistoricalDurations.Past24Hours:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.Past7Days:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.PastMonth:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.PastYear:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.SinceLastUse:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.Custom:
+                return DateTime.Now.AddDays(-1).ToString();
+            case AttacherHistoricalDurations.ForwardScan:
+                return DateTime.Now.AddDays(-4).ToString();
+            default:
+                return "fail";
+        }
+    }
+
+    private static string Outwith(AttacherHistoricalDurations duration)
+    {
+        switch (duration)
+        {
+            case AttacherHistoricalDurations.Past24Hours:
+                return DateTime.Now.AddHours(-25).ToString();
+            case AttacherHistoricalDurations.Past7Days:
+                return DateTime.Now.AddDays(-8).ToString();
+            case AttacherHistoricalDurations.PastMonth:
+                return DateTime.Now.AddMonths(-2).ToString();
+            case AttacherHistoricalDurations.PastYear:
+                return DateTime.Now.AddYears(-2).ToString();
+            case AttacherHistoricalDurations.SinceLastUse:
+                return DateTime.Now.AddDays(-2).ToString();
+            case AttacherHistoricalDurations.Custom:
+                return DateTime.Now.AddDays(-14).ToString();
+            case AttacherHistoricalDurations.ForwardScan:
+                return DateTime.Now.AddDays(-10).ToString();
+            default:
+                return "fail";
+        }
+    }
+
+    //todo test with the each of the dates options
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.ForwardScan)]
+    public void TestRemoteDatabaseAttacherWithDateFilter(DatabaseType dbType, Scenario scenario, AttacherHistoricalDurations duration)
+    {
+        var db = GetCleanedServer(dbType);
+
+        var dt = new DataTable();
+        dt.Columns.Add("animal");
+        dt.Columns.Add("date_seen");
+        var withinDate = Within(duration);
+        dt.Rows.Add("Cow", withinDate);
+        dt.Rows.Add("Crow", Outwith(duration));
+
+        var tbl = db.CreateTable("MyTable", dt);
+
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+        Import(tbl, out var ti, out _);
+        //Create a virtual RAW column
+        if (scenario is Scenario.MissingPreLoadDiscardedColumn or Scenario.MissingPreLoadDiscardedColumnButSelectStar)
+            new PreLoadDiscardedColumn(CatalogueRepository, ti, "MyMissingCol");
+
+        var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote", null);
+        externalServer.SetProperties(db);
+
+        var attacher = new RemoteDatabaseAttacher();
+        attacher.Initialize(null, db);
+        attacher.HistoricalFetchDuration = duration;
+        attacher.RemoteTableDateColumn = "date_seen";
+        attacher.LoadRawColumnsOnly = scenario is Scenario.AllRawColumns or Scenario.MissingPreLoadDiscardedColumn;
+        attacher.RemoteSource = externalServer;
+
+        if (duration == AttacherHistoricalDurations.Custom)
+        {
+            attacher.CustomFetchDurationStartDate = DateTime.Now.AddDays(-7);
+            attacher.CustomFetchDurationEndDate = DateTime.Now;
+        }
+
+        if (duration == AttacherHistoricalDurations.ForwardScan)
+        {
+            attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
+            attacher.ForwardScanLookBackDays = 14;
+            attacher.ForwardScanLookForwardDays = 7;
+        }
+
+
+        var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+        lm.CreateNewLoggingTaskIfNotExists("amagad");
+        var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
+
+        var job = NSubstitute.Substitute.For<IDataLoadJob>();
+        job.RegularTablesToLoad.Returns(new List<ITableInfo> { ti });
+        job.LookupTablesToLoad.Returns(new List<ITableInfo>());
+        job.DataLoadInfo.Returns(dli);
+
+        if (duration == AttacherHistoricalDurations.SinceLastUse)
+        {
+            job.LoadMetadata.LastLoadTime = DateTime.Now.AddDays(-1);// last used yesterday
+            job.LoadMetadata.SaveToDatabase();
+        }
+
+        switch (scenario)
+        {
+            case Scenario.AllRawColumns:
+                break;
+            case Scenario.AllColumns:
+                break;
+            case Scenario.MissingPreLoadDiscardedColumn:
+                var ex = Assert.Throws<PipelineCrashedException>(() =>
+                    attacher.Attach(job, new GracefulCancellationToken()));
+
+                Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Invalid column name 'MyMissingCol'."));
+                return;
+            case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(scenario));
+        }
+
+        attacher.Attach(job, new GracefulCancellationToken());
+
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.SinceLastUse || duration == AttacherHistoricalDurations.Custom ? 2 : 3));
+
+        dt = tbl.GetDataTable();
+        VerifyRowExist(dt, "Cow", withinDate);
+
+        attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+
+        externalServer.DeleteInDatabase();
+    }
+
 
     public enum Scenario
     {

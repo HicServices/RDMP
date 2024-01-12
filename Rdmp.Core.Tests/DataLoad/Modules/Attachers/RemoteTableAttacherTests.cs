@@ -206,4 +206,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             Assert.That(tbl2.GetRowCount(), Is.EqualTo(mismatchProgress ? 0 : 1));
         });
     }
+
+    //todo test with the each of the dates options
+
 }

@@ -116,7 +116,6 @@ False - Trigger an error reporting the missing table(s)
             {
                 sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata)}";
             }
-
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));
 
