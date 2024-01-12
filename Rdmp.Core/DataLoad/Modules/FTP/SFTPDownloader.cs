@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using FluentFTP;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -31,6 +32,11 @@ public class SFTPDownloader : FTPDownloader
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
         _connection = new Lazy<SftpClient>(SetupSftp,LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
+    public SFTPDownloader()
+    {
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     private SftpClient SetupSftp()
