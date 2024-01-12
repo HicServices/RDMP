@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -180,12 +181,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
+
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadtime", new DateTime() }//should be null
+            {"LastLoadTime", null }//should be null
         });
     }
 
@@ -201,7 +203,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
-        LastLoadTime = r["LastLoadTime"] is null?null:DateTime.Parse(r["LastLoadTime"].ToString());
+        var columns = Enumerable.Range(0, r.FieldCount).Select(r.GetName).ToList();
+        LastLoadTime = r["LastLoadTime"] is not null ? DateTime.Parse(r["LastLoadTime"].ToString()) : null;
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
