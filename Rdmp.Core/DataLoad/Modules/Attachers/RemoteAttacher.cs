@@ -40,6 +40,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     [DemandsInitialization("How many days the precedural fetching should look forward ")]
     public int ForwardScanLookForwardDays { get; set; } = 0;
 
+    [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
+    public bool ResetForwardScanToLatestSeenDatePostLoad { get; set; } = false; //todo figure out how to use this
+
 
     public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata)
     {
