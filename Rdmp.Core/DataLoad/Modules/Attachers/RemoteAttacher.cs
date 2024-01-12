@@ -17,8 +17,10 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// <summary>
 /// Root class to facilitate the Tabe and Database remote attachers.
 /// </summary>
-public class RemoteAttacher(bool requestsExternalDatabaseCreation) : Attacher(requestsExternalDatabaseCreation), IPluginAttacher
+public class RemoteAttacher : Attacher, IPluginAttacher
 {
+
+    public RemoteAttacher() : base(true) { }
     [DemandsInitialization("How far back to pull data from")]
     public AttacherHistoricalDurations HistoricalFetchDuration { get; set; }
 
@@ -26,10 +28,10 @@ public class RemoteAttacher(bool requestsExternalDatabaseCreation) : Attacher(re
     public string RemoteTableDateColumn { get; set; }
 
     [DemandsInitialization("Earliest date when using a custom fetch duration")]
-    public string CustomFetchDurationStartDate { get; set; }
+    public DateTime CustomFetchDurationStartDate { get; set; }
 
     [DemandsInitialization("Latest date when using a custom fetch duration")]
-    public string CustomFetchDurationEndDate { get; set; }
+    public DateTime CustomFetchDurationEndDate { get; set; }
 
     [DemandsInitialization("The Current Start Date for procedural fethching of historical data")]
     public DateTime ForwardScanDateInTime { get; set; }
@@ -55,8 +57,27 @@ public class RemoteAttacher(bool requestsExternalDatabaseCreation) : Attacher(re
                 if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST({loadMetadata.LastLoadTime} as Date)";
                 return "";
             case AttacherHistoricalDurations.Custom:
+                //todo if there is only one of the two dates
+                if(CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
+                {
+                    //end only
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
+
+                }
+                if (CustomFetchDurationStartDate != DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
+                {
+                    //start only
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date)";
+
+                }
+                if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
+                {
+                    //No Dates
+                    return "";
+                }
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
             case AttacherHistoricalDurations.ForwardScan:
+                if (ForwardScanDateInTime == DateTime.MinValue) return "";
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{startDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{endDate}' as Date)";

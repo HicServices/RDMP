@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public class RemoteDatabaseAttacher : RemoteAttacher
 {
-    public RemoteDatabaseAttacher() : base(true)
+    public RemoteDatabaseAttacher() : base()
     {
     }
 
