@@ -3,6 +3,7 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -44,22 +45,47 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     public int ForwardScanLookForwardDays { get; set; } = 0;
 
     [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
-    public bool SetForwardScanToLatestSeenDatePostLoad { get; set; } = false; //todo figure out how to use this
+    public bool SetForwardScanToLatestSeenDatePostLoad { get; set; } = false;
 
     public DateTime? MostRecentlySeenDate { get; set; }
 
-    public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata)
+
+
+    //if (syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)
+    private string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount, string date)
+    {
+        switch (dbType)
+        {
+            case DatabaseType.PostgreSql:
+                return $"DATEADD({addType},{amount},{date})";
+            case DatabaseType.Oracle:
+                //if (addType == "DAY") return $"DateAdd({date},, {amount})";
+                //if (addType == "WEEK") return $"DateAdd({date},,{amount})";
+                //if (addType == "MONTH") return $"DateAdd({date},,,, {amount})";
+                //if (addType == "YEAR") return $"DateAdd({date},, {amount})";
+                //return $"TO_DATE(TO_DATE({date}) + {amount})";
+                return "";
+            case DatabaseType.MicrosoftSQLServer:
+                return $"DATEADD({addType}, {amount}, {date})";
+            case DatabaseType.MySql:
+                return $"DATE_ADD({date}, INVERVAL {amount} {addType})";
+            default:
+                return $"DATEADD({addType}, {amount}, {date})";
+        }
+    }
+
+    public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata, IQuerySyntaxHelper syntaxHelper)
     {
         switch (HistoricalFetchDuration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(DAY, -1, GETDATE())";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType,"DAY","-1","GETDATE()")}";
             case AttacherHistoricalDurations.Past7Days:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(WEEK, -1, GETDATE())";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "WEEK", "-1", "GETDATE()")}";
             case AttacherHistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(MONTH, -1, GETDATE())";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "MONTH", "-1", "GETDATE()")}";
             case AttacherHistoricalDurations.PastYear:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > dateadd(YEAR, -1, GETDATE())";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "YEAR", "-1", "GETDATE()")}";
             case AttacherHistoricalDurations.SinceLastUse:
                 if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST('{loadMetadata.LastLoadTime}' as Date)";
                 return "";
@@ -94,7 +120,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, string table, IDataLoadJob job)
     {
-        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata)}";
+        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,syntaxFrom)}";
 
 
         using var con = _dbInfo.Server.GetConnection();
