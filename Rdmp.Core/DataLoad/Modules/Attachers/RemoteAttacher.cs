@@ -51,13 +51,12 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
 
 
-    //if (syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)
-    private string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount, string date)
+    private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount)
     {
         switch (dbType)
         {
             case DatabaseType.PostgreSql:
-                return $"DATEADD({addType},{amount},{date})";
+                return $"DATEADD({addType},{amount}, NOW())";
             case DatabaseType.Oracle:
                 //if (addType == "DAY") return $"DateAdd({date},, {amount})";
                 //if (addType == "WEEK") return $"DateAdd({date},,{amount})";
@@ -66,11 +65,11 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                 //return $"TO_DATE(TO_DATE({date}) + {amount})";
                 return "";
             case DatabaseType.MicrosoftSQLServer:
-                return $"DATEADD({addType}, {amount}, {date})";
+                return $"DATEADD({addType}, {amount}, GETDATE())";
             case DatabaseType.MySql:
-                return $"DATE_ADD({date}, INVERVAL {amount} {addType})";
+                return $"DATE_ADD(CURDATE(), INTERVAL {amount} {addType})";
             default:
-                return $"DATEADD({addType}, {amount}, {date})";
+                return $"DATEADD({addType}, {amount}, GETDATE())";
         }
     }
 
@@ -79,13 +78,13 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         switch (HistoricalFetchDuration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType,"DAY","-1","GETDATE()")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType,"DAY","-1")}";
             case AttacherHistoricalDurations.Past7Days:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "WEEK", "-1", "GETDATE()")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "WEEK", "-1")}";
             case AttacherHistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "MONTH", "-1", "GETDATE()")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "MONTH", "-1")}";
             case AttacherHistoricalDurations.PastYear:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "YEAR", "-1", "GETDATE()")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
                 if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST('{loadMetadata.LastLoadTime}' as Date)";
                 return "";
