@@ -58,12 +58,11 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case DatabaseType.PostgreSql:
                 return $"DATEADD({addType},{amount}, NOW())";
             case DatabaseType.Oracle:
-                //if (addType == "DAY") return $"DateAdd({date},, {amount})";
-                //if (addType == "WEEK") return $"DateAdd({date},,{amount})";
-                //if (addType == "MONTH") return $"DateAdd({date},,,, {amount})";
-                //if (addType == "YEAR") return $"DateAdd({date},, {amount})";
-                //return $"TO_DATE(TO_DATE({date}) + {amount})";
-                return "";
+                if (addType == "DAY") return $"DateAdd(DATE(),,{amount})";
+                if (addType == "WEEK") return $"DateAdd(DATE(),,{amount} *7)"; //todo does this work?
+                if (addType == "MONTH") return $"DateAdd(DATE(),,,{amount})";
+                if (addType == "YEAR") return $"DateAdd(DATE(),,,,{amount})";
+                return $"DateAdd(DATE(),,{amount})";
             case DatabaseType.MicrosoftSQLServer:
                 return $"DATEADD({addType}, {amount}, GETDATE())";
             case DatabaseType.MySql:
