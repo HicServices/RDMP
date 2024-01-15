@@ -260,7 +260,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         }
         attacher.HistoricalFetchDuration = duration;
 
-        RunAttachStageWithFilterJob(attacher, db,duration);
+        RunAttachStageWithFilterJob(attacher, db, duration);
     }
 
 
@@ -324,7 +324,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         var outwith = Outwith(duration);
         dt.Columns.Add("Col1");
         dt.Columns.Add("dateColumn");
-        dt.Rows.Add("fff",within);
+        dt.Rows.Add("fff", within);
         dt.Rows.Add("rrr", outwith);
 
         var tbl1 = db.CreateTable("table1", dt);
@@ -370,7 +370,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(tbl1.GetRowCount(), Is.EqualTo(2));
-            Assert.That(tbl2.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.SinceLastUse || duration == AttacherHistoricalDurations.Custom || duration == AttacherHistoricalDurations.ForwardScan?0:1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.ForwardScan ? 2 : 1));
         });
     }
 }
