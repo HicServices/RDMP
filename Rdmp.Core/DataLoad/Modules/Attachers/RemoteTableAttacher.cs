@@ -364,7 +364,7 @@ public class RemoteTableAttacher : RemoteAttacher
             : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,syntax)}";
 
         var scheduleMismatch = false;
-
+        Console.WriteLine(sql);
         //if there is a load progress
         if (Progress != null)
             try

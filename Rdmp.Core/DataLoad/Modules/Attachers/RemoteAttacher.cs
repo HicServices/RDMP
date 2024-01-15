@@ -50,6 +50,8 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     public DateTime? MostRecentlySeenDate { get; set; }
 
 
+    //TODO dbtype should be from table/db attacher not whatever the loadmetadata is doing
+
 
     private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount)
     {
@@ -72,6 +74,24 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         }
     }
 
+    private static string ConvertDateString(DatabaseType dbType, string dateString)
+    {
+        switch (dbType)
+        {
+            case DatabaseType.PostgreSql:
+                return $"to_date('{dateString}')";
+            case DatabaseType.Oracle:
+                return $"TO_DATE('{dateString}')";
+            case DatabaseType.MicrosoftSQLServer:
+                return $"convert(Date,'{dateString}',103)";
+            case DatabaseType.MySql:
+                return $"convert('{dateString}',Date)";
+            default:
+                return $"convert(Date,'{dateString}',103)";
+        }
+
+    }
+
     public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata, IQuerySyntaxHelper syntaxHelper)
     {
         switch (HistoricalFetchDuration)
@@ -85,19 +105,19 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case AttacherHistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > convert(Date,'{loadMetadata.LastLoadTime}',103)";
+                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > {ConvertDateString(syntaxHelper.DatabaseType,loadMetadata.LastLoadTime.ToString())}";
                 return "";
             case AttacherHistoricalDurations.Custom:
                 if(CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
                 {
                     //end only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{CustomFetchDurationEndDate}' ,103)";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(syntaxHelper.DatabaseType, CustomFetchDurationEndDate.ToString())}";
 
                 }
                 if (CustomFetchDurationStartDate != DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
                 {
                     //start only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{CustomFetchDurationStartDate}',103)";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(syntaxHelper.DatabaseType, CustomFetchDurationStartDate.ToString())}";
 
                 }
                 if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
@@ -105,12 +125,12 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                     //No Dates
                     return "";
                 }
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{CustomFetchDurationStartDate}',103) AND CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{CustomFetchDurationEndDate}',103)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(syntaxHelper.DatabaseType, CustomFetchDurationStartDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(syntaxHelper.DatabaseType, CustomFetchDurationEndDate.ToString())}";
             case AttacherHistoricalDurations.ForwardScan:
                 if (ForwardScanDateInTime == DateTime.MinValue) return "";
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{startDate}',103) AND CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{endDate}',103)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(syntaxHelper.DatabaseType, startDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(syntaxHelper.DatabaseType, endDate.ToString())}";
             default:
                 return "";
         }
@@ -146,9 +166,10 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        //if (SetForwardScanToLatestSeenDatePostLoad)
-        //{
-        //    ForwardScanDateInTime = MostRecentlySeenDate;
-        //}
+        if (SetForwardScanToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
+        {
+            //todo test this
+            ForwardScanDateInTime = (DateTime)MostRecentlySeenDate;
+        }
     }
 }
