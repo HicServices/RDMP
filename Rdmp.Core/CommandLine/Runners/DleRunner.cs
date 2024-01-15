@@ -122,11 +122,12 @@ public class DleRunner : Runner
                             {
                                 //todo have to find max date in results
                                 var scanForwardDate = arguments.Where(a => a.Name == "ForwardScanLookForwardDays").First();
-                                //if (arguments.Where(a => a.Name == "SetForwardScanToLatestSeenDatePostLoad").First().Value == "True")
-                                //{
+                                if (arguments.Where(a => a.Name == "SetForwardScanToLatestSeenDatePostLoad").First().Value == "True")
+                                {
+                                    //maybe it's an argument
                                 //    //find max date in the results
-
-                                //}
+                                    //scanForwardDate = task.
+                                }
 
                                 var arg = (ProcessTaskArgument)argument;
                                 arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
