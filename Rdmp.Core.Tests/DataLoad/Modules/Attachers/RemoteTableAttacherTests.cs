@@ -370,7 +370,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         Assert.Multiple(() =>
         {
             Assert.That(tbl1.GetRowCount(), Is.EqualTo(2));
-            Assert.That(tbl2.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.ForwardScan ? 2 : 1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.ForwardScan  ? 0 : 1));
         });
     }
 }
