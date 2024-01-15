@@ -294,10 +294,6 @@ public class RemoteTableAttacher : RemoteAttacher
             throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
-    }
-
     protected void CheckTablesExist(ICheckNotifier notifier)
     {
         try

@@ -85,19 +85,19 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case AttacherHistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(syntaxHelper.DatabaseType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > CAST('{loadMetadata.LastLoadTime}' as Date)";
+                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > convert(Date,'{loadMetadata.LastLoadTime}',103)";
                 return "";
             case AttacherHistoricalDurations.Custom:
                 if(CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
                 {
                     //end only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{CustomFetchDurationEndDate}' ,103)";
 
                 }
                 if (CustomFetchDurationStartDate != DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
                 {
                     //start only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date)";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{CustomFetchDurationStartDate}',103)";
 
                 }
                 if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
@@ -105,12 +105,12 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                     //No Dates
                     return "";
                 }
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{CustomFetchDurationStartDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{CustomFetchDurationEndDate}' as Date)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{CustomFetchDurationStartDate}',103) AND CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{CustomFetchDurationEndDate}',103)";
             case AttacherHistoricalDurations.ForwardScan:
                 if (ForwardScanDateInTime == DateTime.MinValue) return "";
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= CAST('{startDate}' as Date) AND CAST({RemoteTableDateColumn} as Date) <= CAST('{endDate}' as Date)";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= convert(Date,'{startDate}',103) AND CAST({RemoteTableDateColumn} as Date) <= convert(Date,'{endDate}',103)";
             default:
                 return "";
         }
@@ -146,6 +146,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        throw new NotImplementedException();
+        //if (SetForwardScanToLatestSeenDatePostLoad)
+        //{
+        //    ForwardScanDateInTime = MostRecentlySeenDate;
+        //}
     }
 }

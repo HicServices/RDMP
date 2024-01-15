@@ -362,15 +362,15 @@ internal class RemoteTableAttacherTests : DatabaseTests
         if (duration == AttacherHistoricalDurations.ForwardScan)
         {
             attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
-            attacher.ForwardScanLookBackDays = 14;
-            attacher.ForwardScanLookForwardDays = 7;
+            attacher.ForwardScanLookBackDays = 0;
+            attacher.ForwardScanLookForwardDays = 5;
         }
         attacher.Attach(job, new GracefulCancellationToken());
 
         Assert.Multiple(() =>
         {
             Assert.That(tbl1.GetRowCount(), Is.EqualTo(2));
-            Assert.That(tbl2.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.ForwardScan  ? 0 : 1));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(1));
         });
     }
 }

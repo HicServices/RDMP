@@ -65,12 +65,6 @@ False - Trigger an error reporting the missing table(s)
             throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
-    }
-
-
-
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         if (job == null)

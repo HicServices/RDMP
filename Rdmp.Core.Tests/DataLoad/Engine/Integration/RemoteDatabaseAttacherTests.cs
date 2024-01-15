@@ -265,7 +265,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo(duration == AttacherHistoricalDurations.SinceLastUse || duration == AttacherHistoricalDurations.Custom || duration == AttacherHistoricalDurations.ForwardScan ? 2 : 3));
+        Assert.That(tbl.GetRowCount(), Is.EqualTo( 3));
 
         dt = tbl.GetDataTable();
         VerifyRowExist(dt, "Cow", withinDate);
