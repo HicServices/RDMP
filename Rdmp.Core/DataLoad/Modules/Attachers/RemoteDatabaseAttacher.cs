@@ -103,7 +103,6 @@ False - Trigger an error reporting the missing table(s)
                 continue;
             }
 
-
             string sql;
             if (LoadRawColumnsOnly)
             {
