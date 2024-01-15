@@ -3,14 +3,17 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
+using System.Data;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
@@ -41,8 +44,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     public int ForwardScanLookForwardDays { get; set; } = 0;
 
     [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
-    public bool ResetForwardScanToLatestSeenDatePostLoad { get; set; } = false; //todo figure out how to use this
+    public bool SetForwardScanToLatestSeenDatePostLoad { get; set; } = false; //todo figure out how to use this
 
+    public DateTime? MostRecentlySeenDate { get; set; }
 
     public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata)
     {
@@ -86,6 +90,24 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             default:
                 return "";
         }
+    }
+
+    public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, string table, IDataLoadJob job)
+    {
+        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata)}";
+
+
+        using var con = _dbInfo.Server.GetConnection();
+        var dt = new DataTable();
+        using var cmd = _dbInfo.Server.GetCommand(maxDateSql, con);
+        cmd.CommandTimeout = 30000;
+        using var da = _dbInfo.Server.GetDataAdapter(cmd);
+        da.Fill(dt);
+        if (dt.Rows.Count > 0)
+        {
+            return DateTime.Parse(dt.Rows[0][0].ToString());
+        }
+        return null;
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)

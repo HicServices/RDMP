@@ -53,14 +53,15 @@ False - Trigger an error reporting the missing table(s)
 ")]
     public bool IgnoreMissingTables { get; set; }
 
-   
+
+
 
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
             throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
 
-        if(HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
+        if (HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
             throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
@@ -68,7 +69,7 @@ False - Trigger an error reporting the missing table(s)
     {
     }
 
-   
+
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
@@ -149,7 +150,14 @@ False - Trigger an error reporting the missing table(s)
                 source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
 
+            if (SetForwardScanToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
+            {
+                MostRecentlySeenDate = FindMostRecentDateInLoadedData(syntaxFrom, table, job);
+            }
+
         }
+
+
 
         return ExitCodeType.Success;
     }

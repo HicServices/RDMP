@@ -113,7 +113,7 @@ public class DleRunner : Runner
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
                     List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
-                    if (processTasks.Count() > 0)
+                    if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
                     {
                         foreach (ProcessTask task in processTasks)
                         {
@@ -122,6 +122,12 @@ public class DleRunner : Runner
                             {
                                 //todo have to find max date in results
                                 var scanForwardDate = arguments.Where(a => a.Name == "ForwardScanLookForwardDays").First();
+                                //if (arguments.Where(a => a.Name == "SetForwardScanToLatestSeenDatePostLoad").First().Value == "True")
+                                //{
+                                //    //find max date in the results
+
+                                //}
+
                                 var arg = (ProcessTaskArgument)argument;
                                 arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
                                 arg.SaveToDatabase();
