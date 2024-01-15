@@ -64,7 +64,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd), Is.EqualTo($" WHERE CAST(date as Date) > CAST({lmd.LastLoadTime} as Date)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd), Is.EqualTo($" WHERE CAST(date as Date) > CAST('{lmd.LastLoadTime}' as Date)"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse_NULL()
