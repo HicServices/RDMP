@@ -361,7 +361,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
-            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,syntax)}";
+            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,DatabaseType)}";
 
         var scheduleMismatch = false;
         Console.WriteLine(sql);
