@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using FAnsi;
 using FAnsi.Discovery;
 using NSubstitute;
@@ -363,6 +364,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
             attacher.ForwardScanLookBackDays = 0;
             attacher.ForwardScanLookForwardDays = 5;
+            attacher.Culture = CultureInfo.InvariantCulture;
         }
         attacher.Attach(job, new GracefulCancellationToken());
 

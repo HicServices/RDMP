@@ -50,8 +50,6 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     public DateTime? MostRecentlySeenDate { get; set; }
 
 
-    //TODO dbtype should be from table/db attacher not whatever the loadmetadata is doing
-
 
     private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount)
     {
