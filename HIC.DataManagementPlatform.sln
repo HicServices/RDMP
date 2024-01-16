@@ -74,6 +74,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B010
 		scripts\orphan_extractable_column.yaml = scripts\orphan_extractable_column.yaml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoadEngine", "DataLoadEngine", "{18196BAE-9348-444D-96AA-760A8BB11EEB}"
+	ProjectSection(SolutionItems) = preProject
+		RemoteAttachers.md = RemoteAttachers.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -312,6 +317,7 @@ Global
 		{550988FD-F1FA-41D8-BE0F-00B4DE47D320} = {28A15609-73F6-4840-94AF-9BD7E1B06B22}
 		{A6107DDC-8268-4902-A994-233B00480113} = {E277AD74-0AB8-4A8D-BA8A-4BE5408F12D2}
 		{BEEC317E-0984-4EA6-AF33-CBF37096E01B} = {AEDF99FB-885A-4243-8DFE-6A4E3F40D50D}
+		{18196BAE-9348-444D-96AA-760A8BB11EEB} = {BEEC317E-0984-4EA6-AF33-CBF37096E01B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1E44105-BBB9-4FF0-8838-6BB62AAA1DBC}

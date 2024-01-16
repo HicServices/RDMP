@@ -125,20 +125,20 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                     //No Dates
                     return "";
                 }
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(syntaxHelper.DatabaseType, CustomFetchDurationEndDate.ToString())}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString())}";
             case AttacherHistoricalDurations.ForwardScan:
                 if (ForwardScanDateInTime == DateTime.MinValue) return "";
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, startDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(syntaxHelper.DatabaseType, endDate.ToString())}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, startDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, endDate.ToString())}";
             default:
                 return "";
         }
     }
 
-    public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, string table, IDataLoadJob job)
+    public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
     {
-        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,syntaxFrom)}";
+        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,dbType)}";
 
 
         using var con = _dbInfo.Server.GetConnection();

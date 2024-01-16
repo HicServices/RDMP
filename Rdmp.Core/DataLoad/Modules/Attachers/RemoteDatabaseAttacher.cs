@@ -104,7 +104,7 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, syntaxFrom)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbFrom.Server.DatabaseType)}";
             }
             else
             {
@@ -145,7 +145,7 @@ False - Trigger an error reporting the missing table(s)
 
             if (SetForwardScanToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
             {
-                MostRecentlySeenDate = FindMostRecentDateInLoadedData(syntaxFrom, table, job);
+                MostRecentlySeenDate = FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType ,table, job);
             }
 
         }

@@ -458,7 +458,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         if (SetForwardScanToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
         {
-            MostRecentlySeenDate = FindMostRecentDateInLoadedData(rawSyntax, rawTableName, job);
+            MostRecentlySeenDate = FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
         }
 
 
