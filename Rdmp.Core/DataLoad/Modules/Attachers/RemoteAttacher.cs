@@ -81,11 +81,11 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case DatabaseType.Oracle:
                 return $"TO_DATE('{dateString}')";
             case DatabaseType.MicrosoftSQLServer:
-                return $"convert(Date,'{dateString}',103)";
+                return $"convert(Date,'{dateString}',101)";//need to use attacher culture or explicit date/time format
             case DatabaseType.MySql:
                 return $"convert('{dateString}',Date)";
             default:
-                return $"convert(Date,'{dateString}',103)";
+                return $"convert(Date,'{dateString}')";
         }
 
     }
