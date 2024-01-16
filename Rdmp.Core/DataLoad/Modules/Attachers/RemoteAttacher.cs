@@ -15,6 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Data;
+using System.Globalization;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
@@ -30,6 +31,10 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     [DemandsInitialization("Which column in the remote table can be used to perform time-based data selection")]
     public string RemoteTableDateColumn { get; set; }
+
+    [DemandsInitialization("The date format of the remote table")]
+    public string RemoteTableDateFormat { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";//"dd-MM-yyyy";
+
 
     [DemandsInitialization("Earliest date when using a custom fetch duration")]
     public DateTime CustomFetchDurationStartDate { get; set; }
@@ -51,7 +56,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
 
 
-    private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType,string addType, string amount)
+    private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType, string addType, string amount)
     {
         switch (dbType)
         {
@@ -72,7 +77,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         }
     }
 
-    private static string ConvertDateString(DatabaseType dbType, string dateString)
+    private string ConvertDateString(DatabaseType dbType, string dateString)
     {
         switch (dbType)
         {
@@ -81,7 +86,8 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case DatabaseType.Oracle:
                 return $"TO_DATE('{dateString}')";
             case DatabaseType.MicrosoftSQLServer:
-                return $"convert(Date,'{dateString}',101)";//need to use attacher culture or explicit date/time format
+                //var _date = DateTime.Parse(dateString, RemoteTableDateFormat.DateTimeFormat);
+                return $"convert(Date,'{dateString}')";//need to use attacher culture or explicit date/time format
             case DatabaseType.MySql:
                 return $"convert('{dateString}',Date)";
             default:
@@ -95,7 +101,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         switch (HistoricalFetchDuration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(dbType, "DAY","-1")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(dbType, "DAY", "-1")}";
             case AttacherHistoricalDurations.Past7Days:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(dbType, "WEEK", "-1")}";
             case AttacherHistoricalDurations.PastMonth:
@@ -103,19 +109,19 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case AttacherHistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) > {GetCorrectDateAddForDatabaseType(dbType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > {ConvertDateString(dbType, loadMetadata.LastLoadTime.ToString())}";
+                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as Date) > {ConvertDateString(dbType, loadMetadata.LastLoadTime.GetValueOrDefault().ToString(RemoteTableDateFormat))}";
                 return "";
             case AttacherHistoricalDurations.Custom:
-                if(CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
+                if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
                 {
                     //end only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString())}";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
 
                 }
                 if (CustomFetchDurationStartDate != DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
                 {
                     //start only
-                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString())}";
+                    return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))}";
 
                 }
                 if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
@@ -123,12 +129,12 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                     //No Dates
                     return "";
                 }
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString())}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
             case AttacherHistoricalDurations.ForwardScan:
                 if (ForwardScanDateInTime == DateTime.MinValue) return "";
                 var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
                 var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, startDate.ToString())} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, endDate.ToString())}";
+                return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, startDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, endDate.ToString(RemoteTableDateFormat))}";
             default:
                 return "";
         }
@@ -136,7 +142,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
     {
-        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,dbType)}";
+        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
 
 
         using var con = _dbInfo.Server.GetConnection();
