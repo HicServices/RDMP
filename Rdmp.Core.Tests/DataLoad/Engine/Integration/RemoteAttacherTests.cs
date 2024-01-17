@@ -127,11 +127,11 @@ public class RemoteAttacherTests
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.DeltaReading;
         attacher.DeltaReadingLookBackDays = 1;
         attacher.DeltaReadingLookForwardDays = 1;
-        attacher.DeltaReadingDateInTime = DateTime.Now;
+        attacher.DeltaReadingStartDate = DateTime.Now;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingDateInTime.AddDays(-attacher.DeltaReadingLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingDateInTime.AddDays(attacher.DeltaReadingLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReading_NoLookBack()
@@ -139,11 +139,11 @@ public class RemoteAttacherTests
         var attacher = new RemoteAttacher();
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.DeltaReading;
         attacher.DeltaReadingLookForwardDays = 1;
-        attacher.DeltaReadingDateInTime = DateTime.Now;
+        attacher.DeltaReadingStartDate = DateTime.Now;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingDateInTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingDateInTime.AddDays(attacher.DeltaReadingLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReading_NoLookForward()
@@ -151,11 +151,11 @@ public class RemoteAttacherTests
         var attacher = new RemoteAttacher();
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.DeltaReading;
         attacher.DeltaReadingLookBackDays = 1;
-        attacher.DeltaReadingDateInTime = DateTime.Now;
+        attacher.DeltaReadingStartDate = DateTime.Now;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingDateInTime.AddDays(-attacher.DeltaReadingLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingDateInTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReadingNoDates()

@@ -361,7 +361,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         }
         if (duration == AttacherHistoricalDurations.DeltaReading)
         {
-            attacher.DeltaReadingDateInTime = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingStartDate = DateTime.Now.AddDays(-7);
             attacher.DeltaReadingLookBackDays = 0;
             attacher.DeltaReadingLookForwardDays = 5;
         }
