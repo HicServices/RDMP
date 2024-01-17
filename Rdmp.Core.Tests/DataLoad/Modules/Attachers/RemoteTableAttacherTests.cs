@@ -232,10 +232,10 @@ internal class RemoteTableAttacherTests : DatabaseTests
     [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Custom)]
     [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Custom)]
     [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.DeltaReading)]
     public void TestRemoteTableAttacher_DateFilters(DatabaseType dbType, AttacherHistoricalDurations duration)
     {
         var db = GetCleanedServer(dbType);
@@ -280,7 +280,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
                 return DateTime.Now.AddHours(-1).ToString();
             case AttacherHistoricalDurations.Custom:
                 return DateTime.Now.AddDays(-1).ToString();
-            case AttacherHistoricalDurations.ForwardScan:
+            case AttacherHistoricalDurations.DeltaReading:
                 return DateTime.Now.AddDays(-4).ToString();
             default:
                 return "fail";
@@ -303,7 +303,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
                 return DateTime.Now.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Custom:
                 return DateTime.Now.AddDays(-14).ToString();
-            case AttacherHistoricalDurations.ForwardScan:
+            case AttacherHistoricalDurations.DeltaReading:
                 return DateTime.Now.AddDays(-10).ToString();
             default:
                 return "fail";
@@ -359,11 +359,11 @@ internal class RemoteTableAttacherTests : DatabaseTests
             attacher.CustomFetchDurationStartDate = DateTime.Now.AddDays(-7);
             attacher.CustomFetchDurationEndDate = DateTime.Now;
         }
-        if (duration == AttacherHistoricalDurations.ForwardScan)
+        if (duration == AttacherHistoricalDurations.DeltaReading)
         {
-            attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
-            attacher.ForwardScanLookBackDays = 0;
-            attacher.ForwardScanLookForwardDays = 5;
+            attacher.DeltaReadingDateInTime = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingLookBackDays = 0;
+            attacher.DeltaReadingLookForwardDays = 5;
         }
         attacher.Attach(job, new GracefulCancellationToken());
 

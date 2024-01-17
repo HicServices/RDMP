@@ -41,14 +41,14 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     public DateTime CustomFetchDurationEndDate { get; set; }
 
     [DemandsInitialization("The Current Start Date for procedural fethching of historical data")]
-    public DateTime ForwardScanDateInTime { get; set; }
+    public DateTime DeltaReadingStartDate { get; set; }
     [DemandsInitialization("How many days the precedural fetching should look back ")]
-    public int ForwardScanLookBackDays { get; set; } = 0;
+    public int DeltaReadingLookBackDays { get; set; } = 0;
     [DemandsInitialization("How many days the precedural fetching should look forward ")]
-    public int ForwardScanLookForwardDays { get; set; } = 0;
+    public int DeltaReadingLookForwardDays { get; set; } = 0;
 
     [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
-    public bool SetForwardScanToLatestSeenDatePostLoad { get; set; } = false;
+    public bool SetDeltaReadingToLatestSeenDatePostLoad { get; set; } = false;
 
     public DateTime? MostRecentlySeenDate { get; set; }
 
@@ -59,7 +59,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         switch (dbType)
         {
             case DatabaseType.PostgreSql:
-                return $"DATEADD({addType},{amount}, NOW())";
+                return $"(NOW() + interval '{amount} {addType}S')";
             case DatabaseType.Oracle:
                 if (addType == "DAY") return $"DateAdd(DATE(),,{amount})";
                 if (addType == "WEEK") return $"DateAdd(DATE(),,{amount} *7)"; //todo does this work?
@@ -80,7 +80,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         switch (dbType)
         {
             case DatabaseType.PostgreSql:
-                return $"to_date('{dateString}')";
+                return dateString;
             case DatabaseType.Oracle:
                 return $"TO_DATE('{dateString}')";
             case DatabaseType.MicrosoftSQLServer:
@@ -127,10 +127,10 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                     return "";
                 }
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
-            case AttacherHistoricalDurations.ForwardScan:
-                if (ForwardScanDateInTime == DateTime.MinValue) return "";
-                var startDate = ForwardScanDateInTime.AddDays(-ForwardScanLookBackDays);
-                var endDate = ForwardScanDateInTime.AddDays(ForwardScanLookForwardDays);
+            case AttacherHistoricalDurations.DeltaReading:
+                if (DeltaReadingStartDate == DateTime.MinValue) return "";
+                var startDate = DeltaReadingStartDate.AddDays(-DeltaReadingLookBackDays);
+                var endDate = DeltaReadingStartDate.AddDays(DeltaReadingLookForwardDays);
                 return $" WHERE CAST({RemoteTableDateColumn} as Date) >= {ConvertDateString(dbType, startDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as Date) <= {ConvertDateString(dbType, endDate.ToString(RemoteTableDateFormat))}";
             default:
                 return "";
@@ -167,10 +167,10 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (SetForwardScanToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
+        if (SetDeltaReadingToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
         {
             //todo test this
-            ForwardScanDateInTime = (DateTime)MostRecentlySeenDate;
+            DeltaReadingStartDate = (DateTime)MostRecentlySeenDate;
         }
     }
 }

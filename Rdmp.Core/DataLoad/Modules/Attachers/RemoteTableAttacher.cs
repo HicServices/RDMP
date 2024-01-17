@@ -456,7 +456,7 @@ public class RemoteTableAttacher : RemoteAttacher
             ProgressUpdateStrategy.AddAppropriateDisposeStep((ScheduledDataLoadJob)job, _dbInfo);
         }
 
-        if (SetForwardScanToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
+        if (SetDeltaReadingToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
         {
             MostRecentlySeenDate = FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
         }

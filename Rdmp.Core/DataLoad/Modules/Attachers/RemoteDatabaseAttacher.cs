@@ -143,7 +143,7 @@ False - Trigger an error reporting the missing table(s)
                 source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
 
-            if (SetForwardScanToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
+            if (SetDeltaReadingToLatestSeenDatePostLoad && source.TotalRowsRead > 0)
             {
                 MostRecentlySeenDate = FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType ,table, job);
             }

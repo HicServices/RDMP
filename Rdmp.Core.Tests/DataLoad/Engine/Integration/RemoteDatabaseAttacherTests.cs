@@ -122,7 +122,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
                 return DateTime.Now.AddHours(-1).ToString();
             case AttacherHistoricalDurations.Custom:
                 return DateTime.Now.AddDays(-1).ToString();
-            case AttacherHistoricalDurations.ForwardScan:
+            case AttacherHistoricalDurations.DeltaReading:
                 return DateTime.Now.AddDays(-4).ToString();
             default:
                 return "fail";
@@ -145,7 +145,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
                 return DateTime.Now.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Custom:
                 return DateTime.Now.AddDays(-14).ToString();
-            case AttacherHistoricalDurations.ForwardScan:
+            case AttacherHistoricalDurations.DeltaReading:
                 return DateTime.Now.AddDays(-10).ToString();
             default:
                 return "fail";
@@ -182,11 +182,11 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Custom)]
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Custom)]
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.ForwardScan)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.ForwardScan)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.DeltaReading)]
     public void TestRemoteDatabaseAttacherWithDateFilter(DatabaseType dbType, Scenario scenario, AttacherHistoricalDurations duration)
     {
         var db = GetCleanedServer(dbType);
@@ -222,11 +222,11 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
             attacher.CustomFetchDurationEndDate = DateTime.Now;
         }
 
-        if (duration == AttacherHistoricalDurations.ForwardScan)
+        if (duration == AttacherHistoricalDurations.DeltaReading)
         {
-            attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
-            attacher.ForwardScanLookBackDays = 0;
-            attacher.ForwardScanLookForwardDays = 5;
+            attacher.DeltaReadingDateInTime = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingLookBackDays = 0;
+            attacher.DeltaReadingLookForwardDays = 5;
         }
 
 

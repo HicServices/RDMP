@@ -118,11 +118,11 @@ public class DleRunner : Runner
                         foreach (ProcessTask task in processTasks)
                         {
                             var arguments = task.GetAllArguments();
-                            foreach (var argument in arguments.Where(arg => arg.Name == "ForwardScanDateInTime" && arg.Value is not null))
+                            foreach (var argument in arguments.Where(arg => arg.Name == "DeltaReadingDateInTime" && arg.Value is not null))
                             {
                                 //todo have to find max date in results
-                                var scanForwardDate = arguments.Where(a => a.Name == "ForwardScanLookForwardDays").First();
-                                if (arguments.Where(a => a.Name == "SetForwardScanToLatestSeenDatePostLoad").First().Value == "True")
+                                var scanForwardDate = arguments.Where(a => a.Name == "DeltaReadingLookForwardDays").First();
+                                if (arguments.Where(a => a.Name == "SetDeltaReadingToLatestSeenDatePostLoad").First().Value == "True")
                                 {
                                     //maybe it's an argument
                                 //    //find max date in the results

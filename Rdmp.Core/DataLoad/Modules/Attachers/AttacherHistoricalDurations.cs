@@ -9,5 +9,5 @@ public enum AttacherHistoricalDurations
     PastYear,
     SinceLastUse,
     Custom,
-    ForwardScan
+    DeltaReading
 }
