@@ -32,9 +32,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     [DemandsInitialization("Which column in the remote table can be used to perform time-based data selection")]
     public string RemoteTableDateColumn { get; set; }
 
-    [DemandsInitialization("The date format of the remote table")]
-    public string RemoteTableDateFormat { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";//"dd-MM-yyyy";
-
+    private readonly string RemoteTableDateFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
     [DemandsInitialization("Earliest date when using a custom fetch duration")]
     public DateTime CustomFetchDurationStartDate { get; set; }
@@ -86,8 +84,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case DatabaseType.Oracle:
                 return $"TO_DATE('{dateString}')";
             case DatabaseType.MicrosoftSQLServer:
-                //var _date = DateTime.Parse(dateString, RemoteTableDateFormat.DateTimeFormat);
-                return $"convert(Date,'{dateString}')";//need to use attacher culture or explicit date/time format
+                return $"convert(Date,'{dateString}')";
             case DatabaseType.MySql:
                 return $"convert('{dateString}',Date)";
             default:

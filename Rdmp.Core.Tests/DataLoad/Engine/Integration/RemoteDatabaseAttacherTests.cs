@@ -187,7 +187,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.ForwardScan)]
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.ForwardScan)]
     [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.ForwardScan)]
-       public void TestRemoteDatabaseAttacherWithDateFilter(DatabaseType dbType, Scenario scenario, AttacherHistoricalDurations duration)
+    public void TestRemoteDatabaseAttacherWithDateFilter(DatabaseType dbType, Scenario scenario, AttacherHistoricalDurations duration)
     {
         var db = GetCleanedServer(dbType);
 
@@ -225,8 +225,8 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         if (duration == AttacherHistoricalDurations.ForwardScan)
         {
             attacher.ForwardScanDateInTime = DateTime.Now.AddDays(-7);
-            attacher.ForwardScanLookBackDays = 14;
-            attacher.ForwardScanLookForwardDays = 7;
+            attacher.ForwardScanLookBackDays = 0;
+            attacher.ForwardScanLookForwardDays = 5;
         }
 
 
