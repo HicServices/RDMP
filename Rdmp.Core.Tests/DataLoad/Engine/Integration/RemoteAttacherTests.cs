@@ -65,7 +65,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > convert(Date,'{lmd.LastLoadTime}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > convert(Date,'{lmd.LastLoadTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse_NULL()
@@ -86,7 +86,7 @@ public class RemoteAttacherTests
         attacher.CustomFetchDurationEndDate = DateTime.Now;
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.CustomFetchDurationStartDate}',103) AND CAST(date as Date) <= convert(Date,'{attacher.CustomFetchDurationEndDate}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.CustomFetchDurationStartDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.CustomFetchDurationEndDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterCustomRangeNoStart()
@@ -97,7 +97,7 @@ public class RemoteAttacherTests
         attacher.CustomFetchDurationEndDate = DateTime.Now;
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) <= convert(Date,'{attacher.CustomFetchDurationEndDate}' ,103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) <= convert(Date,'{attacher.CustomFetchDurationEndDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterCustomRangeNoEnd()
@@ -108,7 +108,7 @@ public class RemoteAttacherTests
         attacher.CustomFetchDurationStartDate = DateTime.Now;
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.CustomFetchDurationStartDate}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.CustomFetchDurationStartDate.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterCustomRangeNoDates()
@@ -131,7 +131,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(-attacher.ForwardScanLookBackDays)}',103) AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(attacher.ForwardScanLookForwardDays)}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(-attacher.ForwardScanLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(attacher.ForwardScanLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterForwardScan_NoLookBack()
@@ -143,7 +143,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime}',103) AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(attacher.ForwardScanLookForwardDays)}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(attacher.ForwardScanLookForwardDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterForwardScan_NoLookForward()
@@ -155,7 +155,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(-attacher.ForwardScanLookBackDays)}',103) AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime}',103)"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.ForwardScanDateInTime.AddDays(-attacher.ForwardScanLookBackDays).ToString("yyyy-MM-dd HH:mm:ss.fff")}') AND CAST(date as Date) <= convert(Date,'{attacher.ForwardScanDateInTime.ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterForwardScanNoDates()
