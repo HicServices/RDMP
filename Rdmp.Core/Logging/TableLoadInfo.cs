@@ -68,6 +68,7 @@ public class TableLoadInfo : ITableLoadInfo
 
         IsLegacyLoggingSchema = md5Col.DataType.SQLType.Contains("binary");
 
+        RecordNewTableLoadInDatabase(parent, new string('0',300), sources, expectedInserts);
         RecordNewTableLoadInDatabase(parent, destinationTable, sources, expectedInserts);
 
         parent.AddTableLoad(this);

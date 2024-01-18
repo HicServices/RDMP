@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -116,17 +117,22 @@ public class DleRunner : Runner
                         foreach (ProcessTask task in processTasks)
                         {
                             var arguments = task.GetAllArguments();
-                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingDateInTime") && arg.Value is not null))
-                                {
-                                    var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
-                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
-                                {
-                                    //this may still be needed fi we can't use the dispose to update the date
-                                }
-
+                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
+                            {
+                                var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
                                 var arg = (ProcessTaskArgument)argument;
                                 arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
+                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
+                                {
+                                    var mostRecentValue = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).First().Value;
+                                    if (mostRecentValue is not null)
+                                    {
+                                        arg.Value = DateTime.Parse(mostRecentValue).ToString();
+                                    }
+                                }
                                 arg.SaveToDatabase();
+
+
                             }
                         }
                     }
@@ -148,10 +154,10 @@ public class DleRunner : Runner
     {
         var attacher = new RemoteAttacher();
         var properties = typeof(RemoteAttacher).GetProperties();
-        var foundProperty = properties.Where(p => p.Name == propertyName).First();
-        if(foundProperty is not null)
+        var foundProperties = properties.Where(p => p.Name == propertyName);
+        if (foundProperties.Count() > 0)
         {
-            return foundProperty.Name;
+            return foundProperties.First().Name;
         }
         throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
 

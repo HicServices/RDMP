@@ -16,11 +16,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Root class to facilitate the Tabe and Database remote attachers.
+/// Root class to facilitate the Table and Database remote attachers.
 /// </summary>
 public class RemoteAttacher : Attacher, IPluginAttacher
 {
@@ -50,6 +51,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
     public bool SetDeltaReadingToLatestSeenDatePostLoad { get; set; } = false;
 
+    [DemandsInitialization("Internal Value")]
     public DateTime? MostRecentlySeenDate { get; set; }
 
 
@@ -137,7 +139,39 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         }
     }
 
-    public DateTime? FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
+
+
+    private bool IsThisRemoteAttacher(IProcessTask task)
+    {
+        if (task.ProcessTaskType != ProcessTaskType.Attacher) return false;
+        try
+        {
+            if (HistoricalFetchDuration.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "HistoricalFetchDuration").First().Value) return false;
+            if (RemoteTableDateColumn.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "RemoteTableDateColumn").First().Value) return false;
+
+            if (CustomFetchDurationStartDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
+            if (CustomFetchDurationStartDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value == null) return false;
+            if (CustomFetchDurationStartDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value) != CustomFetchDurationStartDate) return false;
+
+            if (CustomFetchDurationEndDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
+            if (CustomFetchDurationEndDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationEndDate").First().Value == null) return false;
+            if (CustomFetchDurationEndDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationEndDate").First().Value) != CustomFetchDurationEndDate) return false;
+
+            if (DeltaReadingStartDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value != null) return false;
+            if (DeltaReadingStartDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value == null) return false;
+            if (DeltaReadingStartDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value) != DeltaReadingStartDate) return false;
+
+            if (DeltaReadingLookBackDays.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingLookBackDays").First().Value) return false;
+            if (DeltaReadingLookForwardDays.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingLookForwardDays").First().Value) return false;
+            if (SetDeltaReadingToLatestSeenDatePostLoad.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "SetDeltaReadingToLatestSeenDatePostLoad").First().Value) return false;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+        return true;
+    }
+    public void FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
     {
         string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
 
@@ -148,11 +182,19 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         cmd.CommandTimeout = 30000;
         using var da = _dbInfo.Server.GetDataAdapter(cmd);
         da.Fill(dt);
-        if (dt.Rows.Count > 0)
+        if (dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != "")
         {
-            return DateTime.Parse(dt.Rows[0][0].ToString());
+            MostRecentlySeenDate= DateTime.Parse(dt.Rows[0].ItemArray[0].ToString());
         }
-        return null;
+        else
+        {
+            MostRecentlySeenDate = null;
+        }
+        foreach (ProcessTask task in job.LoadMetadata.ProcessTasks.Where(pt => IsThisRemoteAttacher(pt)))
+        {
+            task.SetArgumentValue("MostRecentlySeenDate", MostRecentlySeenDate);
+            task.SaveToDatabase();
+        }
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -167,10 +209,11 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (SetDeltaReadingToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
-        {
-            //todo test this
-            DeltaReadingStartDate = (DateTime)MostRecentlySeenDate;
-        }
+        //if (SetDeltaReadingToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
+        //{
+        //    //todo test this
+        //    DeltaReadingStartDate = (DateTime)MostRecentlySeenDate;
+
+        //}
     }
 }
