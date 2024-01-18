@@ -34,12 +34,10 @@ namespace Rdmp.Core.CommandLine.Runners;
 public class DleRunner : Runner
 {
     private readonly DleOptions _options;
-
     public DleRunner(DleOptions options)
     {
         _options = options;
     }
-
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
@@ -109,7 +107,7 @@ public class DleRunner : Runner
 
                 if (exitCode is ExitCodeType.Success)
                 {
-                    //Store the date of the last succesful load
+                    //Store the date of the last successful load
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
                     List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
@@ -118,15 +116,12 @@ public class DleRunner : Runner
                         foreach (ProcessTask task in processTasks)
                         {
                             var arguments = task.GetAllArguments();
-                            foreach (var argument in arguments.Where(arg => arg.Name == "DeltaReadingDateInTime" && arg.Value is not null))
-                            {
-                                //todo have to find max date in results
-                                var scanForwardDate = arguments.Where(a => a.Name == "DeltaReadingLookForwardDays").First();
-                                if (arguments.Where(a => a.Name == "SetDeltaReadingToLatestSeenDatePostLoad").First().Value == "True")
+                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingDateInTime") && arg.Value is not null))
                                 {
-                                    //maybe it's an argument
-                                //    //find max date in the results
-                                    //scanForwardDate = task.
+                                    var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
+                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
+                                {
+                                    //this may still be needed fi we can't use the dispose to update the date
                                 }
 
                                 var arg = (ProcessTaskArgument)argument;
@@ -147,5 +142,18 @@ public class DleRunner : Runner
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private string RemoteAttacherPropertiesValidator(string propertyName)
+    {
+        var attacher = new RemoteAttacher();
+        var properties = typeof(RemoteAttacher).GetProperties();
+        var foundProperty = properties.Where(p => p.Name == propertyName).First();
+        if(foundProperty is not null)
+        {
+            return foundProperty.Name;
+        }
+        throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+
     }
 }

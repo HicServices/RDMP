@@ -187,7 +187,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadTime", null }//should be null
+            {"LastLoadTime", null }
         });
     }
 
@@ -261,7 +261,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+    /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogs loaded by the <see cref="LoadMetadata"/>
     /// </summary>
     /// <returns></returns>
     public string GetDistinctLoggingTask()

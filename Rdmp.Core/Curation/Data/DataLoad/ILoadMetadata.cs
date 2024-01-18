@@ -68,7 +68,7 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     DiscoveredServer GetDistinctLiveDatabaseServer();
 
     /// <summary>
-    /// 
+    /// Stores the most recent time the load was successfully ran
     /// </summary>
     DateTime? LastLoadTime { get; set; }
 }

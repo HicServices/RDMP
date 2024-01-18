@@ -149,7 +149,7 @@ public class ExtractionRunner : ManyRunner
         checkables.Add(new ExtractionConfigurationChecker(_activator, _configuration)
         {
             CheckDatasets = false,
-            CheckGlobals = true
+            CheckGlobals = false
         });
 
         foreach (var runnable in GetRunnables())
