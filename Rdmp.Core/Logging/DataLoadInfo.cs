@@ -183,8 +183,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
         DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, _isTest);
-        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
-        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName.Substring(Math.Max(0, _packageName.Length - 750)));
+        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount.Substring(Math.Max(0, _packageName.Length - 500)));
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
             _suggestedRollbackCommand ?? string.Empty);
 
