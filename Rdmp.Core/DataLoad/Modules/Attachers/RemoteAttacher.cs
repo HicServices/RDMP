@@ -64,7 +64,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
                 return $"cast((NOW() + interval '{amount} {addType}S') as Date)";
             case DatabaseType.Oracle:
                 if (addType == "DAY") return $"DateAdd(DATE(),,{amount})";
-                if (addType == "WEEK") return $"DateAdd(DATE(),,{amount} *7)"; //todo does this work?
+                if (addType == "WEEK") return $"DateAdd(DATE(),,{amount} *7)";
                 if (addType == "MONTH") return $"DateAdd(DATE(),,,{amount})";
                 if (addType == "YEAR") return $"DateAdd(DATE(),,,,{amount})";
                 return $"DateAdd(DATE(),,{amount})";
