@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reorder Process Task Enum order to restore old cached process tasks
 - Add quickstart instructions
 - Add ability to configure and use local file system storage in windows GUI
-- Add rdmpplguins.txt file to improve plugin experience
 - Truncate ProgressLog messages that would exceed database varchar limit
 
 ## [8.1.1] - 2023-12-01

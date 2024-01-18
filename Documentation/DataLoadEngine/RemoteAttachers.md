@@ -1,4 +1,3 @@
-
 # Remote Attachers
 The Data load enging within RDMP supports 2 methods for retreiving data from remote databases.
 
