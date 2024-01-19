@@ -87,7 +87,7 @@ public class TableLoadInfo : ITableLoadInfo
 
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
-        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
+        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable.Substring(Math.Max(0,destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
         DatabaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
 
