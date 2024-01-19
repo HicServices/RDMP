@@ -7,6 +7,8 @@
 using System;
 using System.Data;
 using System.Threading;
+using Amazon.Auth.AccessControlPolicy;
+using BadMedicine;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 
@@ -76,6 +78,7 @@ public class TableLoadInfo : ITableLoadInfo
     private void RecordNewTableLoadInDatabase(DataLoadInfo parent, string destinationTable, DataSource[] sources,
         int expectedInserts)
     {
+        bool useLocalFileSystem = true;
         using var con = DatabaseSettings.GetConnection();
         using var cmd = DatabaseSettings.GetCommand(
             "INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +
@@ -92,6 +95,7 @@ public class TableLoadInfo : ITableLoadInfo
 
         //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
         _id = int.Parse(cmd.ExecuteScalar().ToString());
+
 
         //keep a record of all data sources
         DataSources = sources;
@@ -125,6 +129,7 @@ public class TableLoadInfo : ITableLoadInfo
             }
 
             s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
+
         }
     }
 

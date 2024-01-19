@@ -322,16 +322,25 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        lock (_oLock)
+        bool useLocalFileSystem = true;
+        if (useLocalFileSystem)
         {
-            if (_logQueue is null || _logQueue.IsAddingCompleted)
-                LogInit();
-            if (_logQueue is null)
-                throw new InvalidOperationException("LogInit failed to create new worker");
-
-            _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
+            var logger = FileSystemLogger.Instance;
+            logger.LogEventToFile("ProgressLog", [ID, pevent, Source, Description]);
         }
-        lock (_logWaiter)
-            Monitor.Pulse(_logWaiter);
+        else
+        {
+            lock (_oLock)
+            {
+                if (_logQueue is null || _logQueue.IsAddingCompleted)
+                    LogInit();
+                if (_logQueue is null)
+                    throw new InvalidOperationException("LogInit failed to create new worker");
+
+                _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
+            }
+            lock (_logWaiter)
+                Monitor.Pulse(_logWaiter);
+        }
     }
 }
