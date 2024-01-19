@@ -184,14 +184,8 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         cmd.CommandTimeout = 30000;
         using var da = _dbInfo.Server.GetDataAdapter(cmd);
         da.Fill(dt);
-        if (dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != "")
-        {
-            MostRecentlySeenDate= DateTime.Parse(dt.Rows[0].ItemArray[0].ToString());
-        }
-        else
-        {
-            MostRecentlySeenDate = null;
-        }
+        MostRecentlySeenDate = dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != "" ? DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()) : null;
+        dt.Dispose();
         foreach (ProcessTask task in job.LoadMetadata.ProcessTasks.Where(pt => IsThisRemoteAttacher(pt)))
         {
             task.SetArgumentValue("MostRecentlySeenDate", MostRecentlySeenDate);
@@ -211,11 +205,5 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        //if (SetDeltaReadingToLatestSeenDatePostLoad && MostRecentlySeenDate is not null)
-        //{
-        //    //todo test this
-        //    DeltaReadingStartDate = (DateTime)MostRecentlySeenDate;
-
-        //}
     }
 }

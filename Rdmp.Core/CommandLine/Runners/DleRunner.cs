@@ -114,9 +114,8 @@ public class DleRunner : Runner
                     List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
                     if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
                     {
-                        foreach (ProcessTask task in processTasks)
+                        foreach (IEnumerable<Argument> arguments in processTasks.Select(task => task.GetAllArguments()))
                         {
-                            var arguments = task.GetAllArguments();
                             foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
                             {
                                 var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
@@ -131,8 +130,6 @@ public class DleRunner : Runner
                                     }
                                 }
                                 arg.SaveToDatabase();
-
-
                             }
                         }
                     }
@@ -152,10 +149,9 @@ public class DleRunner : Runner
 
     private string RemoteAttacherPropertiesValidator(string propertyName)
     {
-        var attacher = new RemoteAttacher();
         var properties = typeof(RemoteAttacher).GetProperties();
         var foundProperties = properties.Where(p => p.Name == propertyName);
-        if (foundProperties.Count() > 0)
+        if (foundProperties.Any())
         {
             return foundProperties.First().Name;
         }

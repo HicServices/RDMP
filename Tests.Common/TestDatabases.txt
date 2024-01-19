@@ -22,4 +22,4 @@ Oracle:
 #MySqlLowPrivilegeUsername:	minion
 #MySqlLowPrivilegePassword:	minionPass
 #OracleLowPrivilegeUsername:	minion
-#OracleLowPrivilegePassword:	minion
+#OracleLowPrivilegePassword:	minionPass
