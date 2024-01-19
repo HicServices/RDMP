@@ -28,7 +28,7 @@ public class RemoteAttacherTests
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.Past24Hours;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > DATEADD(DAY, -1, GETDATE())"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= DATEADD(DAY, -1, GETDATE())"));
     }
     [Test]
     public void TestRemoteAttacherParameterPast7Days()
@@ -37,7 +37,7 @@ public class RemoteAttacherTests
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.Past7Days;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > DATEADD(WEEK, -1, GETDATE())"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= DATEADD(WEEK, -1, GETDATE())"));
     }
     [Test]
     public void TestRemoteAttacherParameterPastMonth()
@@ -46,7 +46,7 @@ public class RemoteAttacherTests
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.PastMonth;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > DATEADD(MONTH, -1, GETDATE())"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= DATEADD(MONTH, -1, GETDATE())"));
     }
     [Test]
     public void TestRemoteAttacherParameterPastYear()
@@ -55,7 +55,7 @@ public class RemoteAttacherTests
         attacher.HistoricalFetchDuration = AttacherHistoricalDurations.PastYear;
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > DATEADD(YEAR, -1, GETDATE())"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= DATEADD(YEAR, -1, GETDATE())"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse()
@@ -65,7 +65,7 @@ public class RemoteAttacherTests
         attacher.RemoteTableDateColumn = "date";
         var lmd = new LoadMetadata();
         lmd.LastLoadTime = DateTime.Now;
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) > convert(Date,'{lmd.LastLoadTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, MicrosoftQuerySyntaxHelper.Instance.DatabaseType), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{lmd.LastLoadTime.GetValueOrDefault().ToString("yyyy-MM-dd HH:mm:ss.fff")}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse_NULL()

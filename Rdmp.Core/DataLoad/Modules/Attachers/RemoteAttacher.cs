@@ -106,7 +106,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case AttacherHistoricalDurations.Past7Days:
                 return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "WEEK", "-1")}";
             case AttacherHistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >={GetCorrectDateAddForDatabaseType(dbType, "MONTH", "-1")}";
+                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "MONTH", "-1")}";
             case AttacherHistoricalDurations.PastYear:
                 return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
