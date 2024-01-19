@@ -1,5 +1,7 @@
 ﻿using NLog;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using System;
+using System.IO;
 
 namespace Rdmp.Core.Logging;
 
@@ -15,9 +17,9 @@ public class FileSystemLogger
 
     private FileSystemLogger()
     {
-        var location = "C:\\temp\\logs\\";
+        var location = UserSettings.FileSystemLogLocation;
         var config = new NLog.Config.LoggingConfiguration();
-        var logfile = new NLog.Targets.FileTarget("ProgressLog") { FileName = $"{location}ProgressLog.log" };
+        var logfile = new NLog.Targets.FileTarget("ProgressLog") { FileName = Path.Combine(location,"ProgressLog.log"), ArchiveAboveSize= UserSettings.LogFileSizeLimit };
         config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
         NLog.LogManager.Configuration = config;
 

@@ -78,7 +78,6 @@ public class TableLoadInfo : ITableLoadInfo
     private void RecordNewTableLoadInDatabase(DataLoadInfo parent, string destinationTable, DataSource[] sources,
         int expectedInserts)
     {
-        bool useLocalFileSystem = true;
         using var con = DatabaseSettings.GetConnection();
         using var cmd = DatabaseSettings.GetCommand(
             "INSERT INTO TableLoadRun (startTime,dataLoadRunID,targetTable,expectedInserts,suggestedRollbackCommand) " +

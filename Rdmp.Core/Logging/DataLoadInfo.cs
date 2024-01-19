@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -322,7 +323,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        bool useLocalFileSystem = true;
+        bool useLocalFileSystem = UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null;
         if (useLocalFileSystem)
         {
             var logger = FileSystemLogger.Instance;
