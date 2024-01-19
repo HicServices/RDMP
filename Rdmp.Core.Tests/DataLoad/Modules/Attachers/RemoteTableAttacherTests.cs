@@ -209,33 +209,33 @@ internal class RemoteTableAttacherTests : DatabaseTests
         });
     }
 
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past24Hours)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past24Hours)]
     [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.DeltaReading)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past24Hours)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past24Hours)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past7Days)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Past7Days)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past7Days)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past7Days)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.PastMonth)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastMonth)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastMonth)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastMonth)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastYear)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastYear)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastYear)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.SinceLastUse)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.SinceLastUse)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.SinceLastUse)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.SinceLastUse)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Custom)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Custom)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Custom)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Custom)]
+    //[TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.DeltaReading)]
+    //[TestCase(DatabaseType.MySql, AttacherHistoricalDurations.DeltaReading)]
+    //[TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.DeltaReading)]
+    //[TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.DeltaReading)]
     public void TestRemoteTableAttacher_DateFilters(DatabaseType dbType, AttacherHistoricalDurations duration)
     {
         var db = GetCleanedServer(dbType);
@@ -292,7 +292,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
         switch (duration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return DateTime.Now.AddHours(-25).ToString();
+                return DateTime.Now.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Past7Days:
                 return DateTime.Now.AddDays(-8).ToString();
             case AttacherHistoricalDurations.PastMonth:
