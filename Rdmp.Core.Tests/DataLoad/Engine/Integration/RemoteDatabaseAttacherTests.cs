@@ -134,7 +134,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         switch (duration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return DateTime.Now.AddHours(-25).ToString();
+                return DateTime.Now.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Past7Days:
                 return DateTime.Now.AddDays(-8).ToString();
             case AttacherHistoricalDurations.PastMonth:
