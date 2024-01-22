@@ -299,7 +299,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
         {
             var logger = FileSystemLogger.Instance;
-            logger.LogEventToFile("FatalEror", [errorSource,errorDescription, statusID, ID]);
+            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.FatalError, [errorSource,errorDescription, statusID, ID]);
         }
         else
         {
@@ -334,7 +334,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
         if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
         {
             var logger = FileSystemLogger.Instance;
-            logger.LogEventToFile("ProgressLog", [ID, pevent, Source, Description]);
+            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.ProgressLog, [ID, pevent, Source, Description]);
         }
         else
         {

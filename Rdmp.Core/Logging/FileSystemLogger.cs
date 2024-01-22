@@ -24,12 +24,20 @@ public class FileSystemLogger
     public static FileSystemLogger Instance { get { return lazy.Value; } }
 
 
+    public enum AvailableLoggers
+    {
+        ProgressLog,
+        DataSource,
+        FatalError
+    }
+
+
 
     private FileSystemLogger()
     {
         var location = UserSettings.FileSystemLogLocation;
         var config = new NLog.Config.LoggingConfiguration();
-        string[] logs = { "ProgressLog", "DataSource", "FatalError" };
+        string[] logs = System.Enum.GetNames(typeof(AvailableLoggers));
         foreach (var log in logs){
             using var nLogEntry = new NLog.Targets.FileTarget(log) { FileName = Path.Combine(location, $"{log}.log"), ArchiveAboveSize = UserSettings.LogFileSizeLimit };
             config.AddRule(LogLevel.Info, LogLevel.Info, nLogEntry);
@@ -37,11 +45,10 @@ public class FileSystemLogger
         NLog.LogManager.Configuration = config;
     }
 
-
-    public void LogEventToFile(string logType, object[] logItems)
+    public void LogEventToFile(AvailableLoggers logType, object[] logItems)
     {
         var logMessage = $"{string.Join("|", Array.ConvertAll(logItems, item => item.ToString()))}";
-        var Logger = NLog.LogManager.GetLogger(logType);
+        var Logger = NLog.LogManager.GetLogger(Enum.GetName(typeof(AvailableLoggers), logType));
         Logger.Info(logMessage);
     }
 

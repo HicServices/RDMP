@@ -106,7 +106,7 @@ public class TableLoadInfo : ITableLoadInfo
             if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
             {
                 var logger = FileSystemLogger.Instance;
-                logger.LogEventToFile("DataSource", [s.Source,_id ,s.UnknownOriginDate ? "" : s.OriginDate]);
+                logger.LogEventToFile(FileSystemLogger.AvailableLoggers.DataSource, [s.Source,_id ,s.UnknownOriginDate ? "" : s.OriginDate]);
             }
             else
             {
