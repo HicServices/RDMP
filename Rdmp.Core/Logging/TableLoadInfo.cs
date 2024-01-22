@@ -11,6 +11,7 @@ using Amazon.Auth.AccessControlPolicy;
 using BadMedicine;
 using FAnsi.Connections;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -102,32 +103,41 @@ public class TableLoadInfo : ITableLoadInfo
         //for each of the sources, create them in the DataSource table
         foreach (var s in DataSources)
         {
-            using var cmdInsertDs = DatabaseSettings.GetCommand(
-                "INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
-                "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
-            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
-            DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
-            DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs,
-                s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
-
-            // old logging schema used binary[128] for the MD5 column
-            if (IsLegacyLoggingSchema)
+            if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
             {
-                var p = cmdInsertDs.CreateParameter();
-                p.DbType = DbType.Binary;
-                p.Size = 128;
-                p.Value = s.MD5 != null ? s.MD5 : DBNull.Value;
-                p.ParameterName = "@MD5";
-                cmdInsertDs.Parameters.Add(p);
+                var logger = FileSystemLogger.Instance;
+                logger.LogEventToFile("DataSource", [s.Source,_id ,s.UnknownOriginDate ? "" : s.OriginDate]);
             }
             else
             {
-                // now logging schema uses string for easier usability and FAnsiSql compatibility
-                DatabaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs,
-                    s.MD5 != null ? s.MD5 : DBNull.Value);
-            }
 
-            s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
+                using var cmdInsertDs = DatabaseSettings.GetCommand(
+                    "INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
+                    "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
+                DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
+                DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
+                DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs,
+                    s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
+
+                // old logging schema used binary[128] for the MD5 column
+                if (IsLegacyLoggingSchema)
+                {
+                    var p = cmdInsertDs.CreateParameter();
+                    p.DbType = DbType.Binary;
+                    p.Size = 128;
+                    p.Value = s.MD5 != null ? s.MD5 : DBNull.Value;
+                    p.ParameterName = "@MD5";
+                    cmdInsertDs.Parameters.Add(p);
+                }
+                else
+                {
+                    // now logging schema uses string for easier usability and FAnsiSql compatibility
+                    DatabaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs,
+                        s.MD5 != null ? s.MD5 : DBNull.Value);
+                }
+
+                s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
+            }
 
         }
     }

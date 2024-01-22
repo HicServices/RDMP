@@ -296,16 +296,24 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-        var cmdRecordFatalError = DatabaseSettings.GetCommand(
-            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
-            con);
-        DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
-        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
-        DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
-        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
+        if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
+        {
+            var logger = FileSystemLogger.Instance;
+            logger.LogEventToFile("FatalEror", [errorSource,errorDescription, statusID, ID]);
+        }
+        else
+        {
+            var cmdRecordFatalError = DatabaseSettings.GetCommand(
+                @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
+                con);
+            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+            DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
-        cmdRecordFatalError.ExecuteNonQuery();
+            cmdRecordFatalError.ExecuteNonQuery();
+        }
 
         //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
         if (!IsClosed)
@@ -323,8 +331,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        bool useLocalFileSystem = UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null;
-        if (useLocalFileSystem)
+        if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
         {
             var logger = FileSystemLogger.Instance;
             logger.LogEventToFile("ProgressLog", [ID, pevent, Source, Description]);
