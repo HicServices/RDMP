@@ -271,7 +271,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         VerifyRowExist(dt, "Cow", withinDate);
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
-
+        dt.Dispose();
         externalServer.DeleteInDatabase();
     }
 

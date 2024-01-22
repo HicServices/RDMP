@@ -179,13 +179,12 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
 
         using var con = _dbInfo.Server.GetConnection();
-        var dt = new DataTable();
+        using var dt = new DataTable();
         using var cmd = _dbInfo.Server.GetCommand(maxDateSql, con);
         cmd.CommandTimeout = 30000;
         using var da = _dbInfo.Server.GetDataAdapter(cmd);
         da.Fill(dt);
         MostRecentlySeenDate = dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != "" ? DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()) : null;
-        dt.Dispose();
         foreach (ProcessTask task in job.LoadMetadata.ProcessTasks.Where(pt => IsThisRemoteAttacher(pt)))
         {
             task.SetArgumentValue("MostRecentlySeenDate", MostRecentlySeenDate);
