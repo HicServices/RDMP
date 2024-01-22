@@ -296,7 +296,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-        if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
+        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
         {
             var logger = FileSystemLogger.Instance;
             logger.LogEventToFile("FatalEror", [errorSource,errorDescription, statusID, ID]);
@@ -331,7 +331,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
+        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
         {
             var logger = FileSystemLogger.Instance;
             logger.LogEventToFile("ProgressLog", [ID, pevent, Source, Description]);

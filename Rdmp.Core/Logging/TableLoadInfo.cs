@@ -103,7 +103,7 @@ public class TableLoadInfo : ITableLoadInfo
         //for each of the sources, create them in the DataSource table
         foreach (var s in DataSources)
         {
-            if (UserSettings.LogToFileSystem && UserSettings.FileSystemLogLocation is not null)
+            if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
             {
                 var logger = FileSystemLogger.Instance;
                 logger.LogEventToFile("DataSource", [s.Source,_id ,s.UnknownOriginDate ? "" : s.OriginDate]);
