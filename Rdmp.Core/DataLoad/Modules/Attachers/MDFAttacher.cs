@@ -62,8 +62,9 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     private MdfFileAttachLocations _locations;
 
-    private string GetFileNameFromMDF()
+    private void GetFileNames()
     {
+        if ((OverrideAttachLdfPath.EndsWith(".ldf") || string.IsNullOrWhiteSpace(OverrideAttachLdfPath)) && (OverrideAttachMdfPath.EndsWith(".mdf") || string.IsNullOrWhiteSpace(OverrideAttachMdfPath))) return;//don't need to fiddle with the paths
         // connect to master
         var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
         {
@@ -74,7 +75,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         using var con = new SqlConnection(builder.ConnectionString);
         con.Open();
         using var dt = new DataTable();
-        using (var cmd = DatabaseCommandHelper.GetCommand($"dbcc checkprimaryfile (N'{_locations.AttachMdfPath}' , 3)", con))
+        using (var cmd = DatabaseCommandHelper.GetCommand($"DBCC CHECKPRIMARYFILE (N'{_locations.AttachMdfPath}' , 3)", con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
             var sw = Stopwatch.StartNew();
@@ -83,35 +84,27 @@ public class MDFAttacher : Attacher, IPluginAttacher
             dt.EndLoadData();
         }
 
-        var _path = dt.Rows[0].ItemArray[3].ToString();
-        return Path.GetFileName(_path);
-    }
-
-    private string GetFileNameFromLDF()
-    {
-        // connect to master
-        var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
+        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf"))
         {
-            InitialCatalog = "master",
-            ConnectTimeout = 600
-        };
-
-        using var con = new SqlConnection(builder.ConnectionString);
-        con.Open();
-        using var dt = new DataTable();
-        using (var cmd = DatabaseCommandHelper.GetCommand($"dbcc checkprimaryfile (N'{_locations.AttachMdfPath}' , 3)", con))
-        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
-        {
-            var sw = Stopwatch.StartNew();
-            dt.BeginLoadData();
-            da.Fill(dt);
-            dt.EndLoadData();
+            var _path = dt.Rows[1].ItemArray[3].ToString();
+            _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar + _path;
         }
-
-        var _path = dt.Rows[1].ItemArray[3].ToString();
-        return Path.GetFileName(_path);
+        else
+        {
+            _locations.AttachLdfPath = OverrideAttachLdfPath;
+        }
+        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf"))
+        {
+            var _path = dt.Rows[0].ItemArray[3].ToString();
+            _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar + _path;
+        }
+        else
+        {
+            _locations.AttachMdfPath = OverrideAttachMdfPath;
+        }
     }
 
+    //todo make it work with the connection string option
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
@@ -121,29 +114,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         _locations =
             new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
 
-        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath))
-            if (OverrideAttachLdfPath.EndsWith(".ldf"))
-            {
-                _locations.AttachLdfPath = OverrideAttachLdfPath;
-            }
-            else
-            {
-                _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar +GetFileNameFromLDF();
-                //path supplied, grab the file name and dump it onto the path
-            }
-
-        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath))
-            if (OverrideAttachMdfPath.EndsWith(".mdf"))
-            {
-                _locations.AttachMdfPath = OverrideAttachMdfPath;
-            }
-            else
-            {
-                _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar +  GetFileNameFromMDF();
-                //path supplied, grab the file name and dump it onto the path
-            }
-
-
+        GetFileNames();
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Identified the MDF file:{_locations.OriginLocationMdf} and corresponding LDF file:{_locations.OriginLocationLdf}"));
