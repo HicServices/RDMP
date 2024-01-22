@@ -29,10 +29,12 @@ public class FileSystemLogger
     {
         var location = UserSettings.FileSystemLogLocation;
         var config = new NLog.Config.LoggingConfiguration();
-        var logfile = new NLog.Targets.FileTarget("ProgressLog") { FileName = Path.Combine(location,"ProgressLog.log"), ArchiveAboveSize= UserSettings.LogFileSizeLimit };
-        config.AddRule(LogLevel.Info, LogLevel.Info, logfile);
+        string[] logs = { "ProgressLog", "DataSource", "FatalError" };
+        foreach (var log in logs){
+            using var nLogEntry = new NLog.Targets.FileTarget(log) { FileName = Path.Combine(location, $"{log}.log"), ArchiveAboveSize = UserSettings.LogFileSizeLimit };
+            config.AddRule(LogLevel.Info, LogLevel.Info, nLogEntry);
+        }
         NLog.LogManager.Configuration = config;
-        logfile.Dispose();
     }
 
 
