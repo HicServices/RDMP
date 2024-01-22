@@ -5,13 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics.Distributions;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -58,6 +62,57 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     private MdfFileAttachLocations _locations;
 
+    private string GetFileNameFromMDF()
+    {
+        // connect to master
+        var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
+        {
+            InitialCatalog = "master",
+            ConnectTimeout = 600
+        };
+
+        using var con = new SqlConnection(builder.ConnectionString);
+        con.Open();
+        using var dt = new DataTable();
+        using (var cmd = DatabaseCommandHelper.GetCommand($"dbcc checkprimaryfile (N'{_locations.AttachMdfPath}' , 3)", con))
+        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+        {
+            var sw = Stopwatch.StartNew();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
+
+        var _path = dt.Rows[0].ItemArray[3].ToString();
+        return Path.GetFileName(_path);
+    }
+
+    private string GetFileNameFromLDF()
+    {
+        // connect to master
+        var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
+        {
+            InitialCatalog = "master",
+            ConnectTimeout = 600
+        };
+
+        using var con = new SqlConnection(builder.ConnectionString);
+        con.Open();
+        using var dt = new DataTable();
+        using (var cmd = DatabaseCommandHelper.GetCommand($"dbcc checkprimaryfile (N'{_locations.AttachMdfPath}' , 3)", con))
+        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+        {
+            var sw = Stopwatch.StartNew();
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
+
+        var _path = dt.Rows[1].ItemArray[3].ToString();
+        return Path.GetFileName(_path);
+    }
+
+
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         //The location of .mdf files from the perspective of the database server
@@ -66,11 +121,29 @@ public class MDFAttacher : Attacher, IPluginAttacher
         _locations =
             new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
 
-        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath))
-            _locations.AttachMdfPath = OverrideAttachMdfPath;
-
         if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath))
-            _locations.AttachLdfPath = OverrideAttachLdfPath;
+            if (OverrideAttachLdfPath.EndsWith(".ldf"))
+            {
+                _locations.AttachLdfPath = OverrideAttachLdfPath;
+            }
+            else
+            {
+                _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar +GetFileNameFromLDF();
+                //path supplied, grab the file name and dump it onto the path
+            }
+
+        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath))
+            if (OverrideAttachMdfPath.EndsWith(".mdf"))
+            {
+                _locations.AttachMdfPath = OverrideAttachMdfPath;
+            }
+            else
+            {
+                _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar +  GetFileNameFromMDF();
+                //path supplied, grab the file name and dump it onto the path
+            }
+
+
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Identified the MDF file:{_locations.OriginLocationMdf} and corresponding LDF file:{_locations.OriginLocationLdf}"));
