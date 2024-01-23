@@ -87,7 +87,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf"))
         {
             var _path = dt.Rows[1].ItemArray[3].ToString();
-            _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar + _path;
+            _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar + Path.GetFileName(_path);
         }
         else
         {
@@ -96,7 +96,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf"))
         {
             var _path = dt.Rows[0].ItemArray[3].ToString();
-            _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar + _path;
+            _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar + Path.GetFileName(_path);
         }
         else
         {
