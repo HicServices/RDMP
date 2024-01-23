@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -183,8 +184,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
         DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, _isTest);
-        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
-        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName.Substring(Math.Max(0, _packageName.Length - 750)));
+        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount.Substring(Math.Max(0, _packageName.Length - 500)));
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
             _suggestedRollbackCommand ?? string.Empty);
 
@@ -295,16 +296,24 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-        var cmdRecordFatalError = DatabaseSettings.GetCommand(
-            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
-            con);
-        DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
-        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
-        DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
-        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
+        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
+        {
+            var logger = FileSystemLogger.Instance;
+            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.FatalError, [errorSource,errorDescription, statusID, ID]);
+        }
+        else
+        {
+            var cmdRecordFatalError = DatabaseSettings.GetCommand(
+                @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
+                con);
+            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+            DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
-        cmdRecordFatalError.ExecuteNonQuery();
+            cmdRecordFatalError.ExecuteNonQuery();
+        }
 
         //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
         if (!IsClosed)
@@ -322,16 +331,24 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        lock (_oLock)
+        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
         {
-            if (_logQueue is null || _logQueue.IsAddingCompleted)
-                LogInit();
-            if (_logQueue is null)
-                throw new InvalidOperationException("LogInit failed to create new worker");
-
-            _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
+            var logger = FileSystemLogger.Instance;
+            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.ProgressLog, [ID, pevent, Source, Description]);
         }
-        lock (_logWaiter)
-            Monitor.Pulse(_logWaiter);
+        else
+        {
+            lock (_oLock)
+            {
+                if (_logQueue is null || _logQueue.IsAddingCompleted)
+                    LogInit();
+                if (_logQueue is null)
+                    throw new InvalidOperationException("LogInit failed to create new worker");
+
+                _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
+            }
+            lock (_logWaiter)
+                Monitor.Pulse(_logWaiter);
+        }
     }
 }
