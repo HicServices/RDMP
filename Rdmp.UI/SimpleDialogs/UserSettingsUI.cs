@@ -268,6 +268,8 @@ public partial class UserSettingsFileUI : Form
         Find(tbFind.Text);
     }
 
+    private void label16_Click(object sender, EventArgs e) { }
+
     private void Find(string text)
     {
         foreach (var cb in checkboxDictionary)
