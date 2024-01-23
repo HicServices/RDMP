@@ -39,16 +39,6 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         if (cata.Length == 1)
             _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        // if project specific only let them set to project specific
-        if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
-        {
-            // user is trying to set to Core
-            if (_category == ExtractionCategory.Core)
-                // surely they meant project specific!
-                _category = ExtractionCategory.ProjectSpecific;
-            else
-                SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
-        }
     }
 
     public override string GetCommandName() =>
@@ -72,10 +62,13 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         if (c == null)
             return;
 
-        // if project specific only let them set to project specific
-        if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
-            throw new Exception(
-                "All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
+        if (_isProjectSpecific && c == ExtractionCategory.Core)
+        {
+            // Don't allow project specific catalogue items to become core
+            c = ExtractionCategory.ProjectSpecific;
+            Show("Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
+        }
+        if(c == _category) return;//no commit needed
 
         if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
