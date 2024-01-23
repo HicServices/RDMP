@@ -39,7 +39,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Terminal.Gui" Version="1.14.1" />
+    <PackageReference Include="Terminal.Gui" Version="1.15.1" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="YamlDotNet" Version="13.7.1" />
   </ItemGroup>
