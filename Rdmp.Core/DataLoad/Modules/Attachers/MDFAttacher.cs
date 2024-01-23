@@ -64,7 +64,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     private void GetFileNames()
     {
-        if ((OverrideAttachLdfPath.EndsWith(".ldf") || string.IsNullOrWhiteSpace(OverrideAttachLdfPath)) && (OverrideAttachMdfPath.EndsWith(".mdf") || string.IsNullOrWhiteSpace(OverrideAttachMdfPath))) return;//don't need to fiddle with the paths
+        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) && (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf") )) return;//don't need to fiddle with the paths
         // connect to master
         var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
         {
