@@ -275,9 +275,4 @@ public partial class UserSettingsFileUI : Form
                              cb.Key.Text.Contains(text, StringComparison.CurrentCultureIgnoreCase) ||
                              cb.Value.Name.Contains(text, StringComparison.CurrentCultureIgnoreCase);
     }
-
-    private void label16_Click(object sender, EventArgs e)
-    {
-
-    }
 }
