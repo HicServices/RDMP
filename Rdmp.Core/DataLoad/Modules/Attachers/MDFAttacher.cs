@@ -45,7 +45,8 @@ public class MDFAttacher : Attacher, IPluginAttacher
     [DemandsInitialization(
         @"There are multiple ways to attach a mdf files to an SQL server, the first stage is always to copy the mdf and ldf files to the DATA directory of your server but after that it gets flexible.  
 1. AttachWithConnectionString attempts to do the attaching as part of connection by specifying the AttachDBFilename keyword in the connection string
-2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server")]
+2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server
+If you are attempting to attach an MDF file from a Linux machine to a Window machine, or  vice-versa, you will have to use the ExecuteCreateDatabaseForAttachSql to be able to handle the mismatched directory structure")]
     public MdfAttachStrategy AttachStrategy { get; set; }
 
     [DemandsInitialization(
@@ -64,8 +65,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     private void GetFileNames()
     {
-        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) && (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf") )) return;//don't need to fiddle with the paths
-        // connect to master
+        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) && (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf"))) return;//don't need to fiddle with the paths
         var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
         {
             InitialCatalog = "master",
@@ -103,8 +103,6 @@ public class MDFAttacher : Attacher, IPluginAttacher
             _locations.AttachMdfPath = OverrideAttachMdfPath;
         }
     }
-
-    //todo make it work with the connection string option
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
