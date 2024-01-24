@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -21,7 +20,6 @@ using Rdmp.UI.Versioning;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
-
 namespace Rdmp.UI.TestsAndSetup;
 
 /// <summary>
@@ -64,7 +62,7 @@ public partial class StartupUI : Form, ICheckNotifier
         try
         {
             return typeof(StartupUI).Assembly.CustomAttributes
-                .FirstOrDefault(a => a.AttributeType == typeof(AssemblyInformationalVersionAttribute))
+                .FirstOrDefault(a => a.AttributeType == typeof(System.Reflection.AssemblyInformationalVersionAttribute))
                 ?.ToString().Split('"')[1];
         }
         catch (Exception)
@@ -83,7 +81,7 @@ public partial class StartupUI : Form, ICheckNotifier
 
         if (InvokeRequired)
         {
-            Invoke(new System.Windows.Forms.MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
+            Invoke(new MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
             return;
         }
 
@@ -95,7 +93,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new System.Windows.Forms.MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
+            Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
             return;
         }
 
@@ -109,7 +107,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new System.Windows.Forms.MethodInvoker(StartupComplete));
+            Invoke(new MethodInvoker(StartupComplete));
             return;
         }
 
@@ -198,7 +196,7 @@ public partial class StartupUI : Form, ICheckNotifier
                     if (IsDisposed || !IsHandleCreated)
                         ExceptionViewer.Show(ex);
                     else
-                        Invoke(new System.Windows.Forms.MethodInvoker(() => ragSmiley1.Fatal(ex)));
+                        Invoke(new MethodInvoker(() => ragSmiley1.Fatal(ex)));
                 }
             }
         );
@@ -298,7 +296,7 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         if (InvokeRequired)
         {
-            Invoke(new System.Windows.Forms.MethodInvoker(() => OnCheckPerformed(args)));
+            Invoke(new MethodInvoker(() => OnCheckPerformed(args)));
             return false;
         }
 
