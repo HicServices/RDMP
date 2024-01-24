@@ -75,6 +75,7 @@
             groupBox6 = new System.Windows.Forms.GroupBox();
             cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
+            cbUseLogFiles = new System.Windows.Forms.CheckBox();
             label15 = new System.Windows.Forms.Label();
             tbLocalFileSystemLocation = new System.Windows.Forms.TextBox();
             cbUseLocalFileSystem = new System.Windows.Forms.CheckBox();
@@ -91,6 +92,8 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
+            tbLogLocation = new System.Windows.Forms.TextBox();
+            label16 = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -331,7 +334,7 @@
             // 
             groupBox1.Anchor = System.Windows.Forms.AnchorStyles.None;
             groupBox1.Controls.Add(olvErrorCodes);
-            groupBox1.Location = new System.Drawing.Point(3, 445);
+            groupBox1.Location = new System.Drawing.Point(3, 478);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(978, 249);
             groupBox1.TabIndex = 16;
@@ -514,7 +517,7 @@
             flowLayoutPanel1.Controls.Add(groupBox1);
             flowLayoutPanel1.Location = new System.Drawing.Point(13, 69);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new System.Drawing.Size(987, 671);
+            flowLayoutPanel1.Size = new System.Drawing.Size(1012, 671);
             flowLayoutPanel1.TabIndex = 24;
             // 
             // groupBox8
@@ -573,6 +576,9 @@
             // 
             // groupBox7
             // 
+            groupBox7.Controls.Add(label16);
+            groupBox7.Controls.Add(tbLogLocation);
+            groupBox7.Controls.Add(cbUseLogFiles);
             groupBox7.Controls.Add(label15);
             groupBox7.Controls.Add(tbLocalFileSystemLocation);
             groupBox7.Controls.Add(cbUseLocalFileSystem);
@@ -593,10 +599,20 @@
             groupBox7.Controls.Add(cbAlwaysJoinEverything);
             groupBox7.Location = new System.Drawing.Point(615, 174);
             groupBox7.Name = "groupBox7";
-            groupBox7.Size = new System.Drawing.Size(360, 265);
+            groupBox7.Size = new System.Drawing.Size(360, 298);
             groupBox7.TabIndex = 25;
             groupBox7.TabStop = false;
             groupBox7.Text = "Miscellaneous";
+            // 
+            // cbUseLogFiles
+            // 
+            cbUseLogFiles.AutoSize = true;
+            cbUseLogFiles.Location = new System.Drawing.Point(7, 257);
+            cbUseLogFiles.Name = "cbUseLogFiles";
+            cbUseLogFiles.Size = new System.Drawing.Size(94, 19);
+            cbUseLogFiles.TabIndex = 29;
+            cbUseLogFiles.Text = "Use Log Files";
+            cbUseLogFiles.UseVisualStyleBackColor = true;
             // 
             // label15
             // 
@@ -732,7 +748,7 @@
             // tbFind
             // 
             tbFind.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
-            tbFind.Location = new System.Drawing.Point(900, 13);
+            tbFind.Location = new System.Drawing.Point(925, 13);
             tbFind.Name = "tbFind";
             tbFind.Size = new System.Drawing.Size(100, 23);
             tbFind.TabIndex = 25;
@@ -742,17 +758,35 @@
             // 
             label14.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             label14.AutoSize = true;
-            label14.Location = new System.Drawing.Point(821, 16);
+            label14.Location = new System.Drawing.Point(846, 16);
             label14.Name = "label14";
             label14.Size = new System.Drawing.Size(73, 15);
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
+            // tbLogLocation
+            // 
+            tbLogLocation.Location = new System.Drawing.Point(156, 257);
+            tbLogLocation.Name = "tbLogLocation";
+            tbLogLocation.Size = new System.Drawing.Size(110, 23);
+            tbLogLocation.TabIndex = 30;
+            tbLogLocation.TextChanged += tbLogLocation_TextChanged;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new System.Drawing.Point(273, 261);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(53, 15);
+            label16.TabIndex = 31;
+            label16.Text = "Location";
+            label16.Click += label16_Click;
+            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1012, 758);
+            ClientSize = new System.Drawing.Size(1037, 758);
             Controls.Add(label14);
             Controls.Add(btnClearUserSettings);
             Controls.Add(tbFind);
@@ -850,5 +884,8 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbLocalFileSystemLocation;
         private System.Windows.Forms.CheckBox cbUseLocalFileSystem;
+        private System.Windows.Forms.CheckBox cbUseLogFiles;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.TextBox tbLogLocation;
     }
 }
