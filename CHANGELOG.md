@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Add ability to log to file instead of database
+- Add ability to use Extraction Category with Project Specific Catalogues
 
 ## [8.1.3] - 2024-01-15
 
