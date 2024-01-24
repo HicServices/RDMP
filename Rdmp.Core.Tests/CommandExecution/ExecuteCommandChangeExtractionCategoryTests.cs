@@ -21,17 +21,11 @@ namespace Rdmp.Core.Tests.CommandExecution;
 public class ExecuteCommandChangeExtractionCategoryTests : DatabaseTests
 {
     private Catalogue _cata1;
-    private Catalogue _cata2;
     private TableInfo _t1;
-    private TableInfo _t2;
     private ColumnInfo _c1;
-    private ColumnInfo _c2;
     private CatalogueItem _ci1;
-    private CatalogueItem _ci2;
-    private Project _project;
 
     private ExtractionInformation _extractionInfo1;
-    private ExtractionInformation _extractionInfo2;
 
     [Test]
     public void TestProjectSpecificCatalogueChangeToSuplemental()
@@ -69,7 +63,6 @@ public class ExecuteCommandChangeExtractionCategoryTests : DatabaseTests
 
         _ci1 = new CatalogueItem(CatalogueRepository, _cata1, "PrivateIdentifierA");
 
-
         _extractionInfo1 = new ExtractionInformation(CatalogueRepository, _ci1, _c1, _c1.ToString())
         {
             Order = 123,
@@ -81,7 +74,6 @@ public class ExecuteCommandChangeExtractionCategoryTests : DatabaseTests
         ExtractionInformation[] eid = { _extractionInfo1 };
         var cmd = new ExecuteCommandChangeExtractionCategory(new ThrowImmediatelyActivator(RepositoryLocator), eid, ExtractionCategory.Core);
         Assert.DoesNotThrow(() => cmd.Execute());
-        var x = CatalogueRepository.GetAllObjects<ExtractionInformation>();
         Assert.That(_extractionInfo1.ExtractionCategory, Is.EqualTo(ExtractionCategory.ProjectSpecific));
     }
 }

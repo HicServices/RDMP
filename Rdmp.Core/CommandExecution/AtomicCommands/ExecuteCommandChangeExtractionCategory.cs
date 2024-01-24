@@ -68,7 +68,6 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
             c = ExtractionCategory.ProjectSpecific;
             Show("Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
         }
-        //if (c == _category) return;//no commit needed
 
         if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
