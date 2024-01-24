@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Add ability to log to file instead of database
+- Upgrade RDMP to [.NET 8](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8)
 
 ## [8.1.3] - 2024-01-15
 
