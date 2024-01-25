@@ -34,24 +34,6 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("UseLocalFileSystem", value);
     }
 
-    public static bool LogToFileSystem
-    {
-        get => AppSettings.GetValueOrDefault("LogToFileSystem", false);
-        set => AppSettings.AddOrUpdateValue("LogToFileSystem", value);
-    }
-
-    public static long LogFileSizeLimit
-    {
-        get => AppSettings.GetValueOrDefault("LogFileSizeLimit", 1073741824);
-        set => AppSettings.AddOrUpdateValue("LogFileSizeLimit", value);
-    }
-
-    public static string FileSystemLogLocation
-    {
-        get => AppSettings.GetValueOrDefault("FileSystemLogLocation", null);
-        set => AppSettings.AddOrUpdateValue("FileSystemLogLocation", value);
-    }
-
     public static string LocalFileSystemLocation 
     {
         get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp")); 

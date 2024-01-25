@@ -75,7 +75,8 @@
             groupBox6 = new System.Windows.Forms.GroupBox();
             cbSkipCohortBuilderValidationOnCommit = new System.Windows.Forms.CheckBox();
             groupBox7 = new System.Windows.Forms.GroupBox();
-            cbUseLogFiles = new System.Windows.Forms.CheckBox();
+            label16 = new System.Windows.Forms.Label();
+            tbLogLocation = new System.Windows.Forms.TextBox();
             label15 = new System.Windows.Forms.Label();
             tbLocalFileSystemLocation = new System.Windows.Forms.TextBox();
             cbUseLocalFileSystem = new System.Windows.Forms.CheckBox();
@@ -92,8 +93,6 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
-            tbLogLocation = new System.Windows.Forms.TextBox();
-            label16 = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -578,7 +577,6 @@
             // 
             groupBox7.Controls.Add(label16);
             groupBox7.Controls.Add(tbLogLocation);
-            groupBox7.Controls.Add(cbUseLogFiles);
             groupBox7.Controls.Add(label15);
             groupBox7.Controls.Add(tbLocalFileSystemLocation);
             groupBox7.Controls.Add(cbUseLocalFileSystem);
@@ -604,15 +602,19 @@
             groupBox7.TabStop = false;
             groupBox7.Text = "Miscellaneous";
             // 
-            // cbUseLogFiles
+            // label16
             // 
-            cbUseLogFiles.AutoSize = true;
-            cbUseLogFiles.Location = new System.Drawing.Point(7, 257);
-            cbUseLogFiles.Name = "cbUseLogFiles";
-            cbUseLogFiles.Size = new System.Drawing.Size(94, 19);
-            cbUseLogFiles.TabIndex = 29;
-            cbUseLogFiles.Text = "Use Log Files";
-            cbUseLogFiles.UseVisualStyleBackColor = true;
+            label16.Location = new System.Drawing.Point(0, 0);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(100, 23);
+            label16.TabIndex = 0;
+            // 
+            // tbLogLocation
+            // 
+            tbLogLocation.Location = new System.Drawing.Point(0, 0);
+            tbLogLocation.Name = "tbLogLocation";
+            tbLogLocation.Size = new System.Drawing.Size(100, 23);
+            tbLogLocation.TabIndex = 1;
             // 
             // label15
             // 
@@ -764,24 +766,6 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
-            // tbLogLocation
-            // 
-            tbLogLocation.Location = new System.Drawing.Point(156, 257);
-            tbLogLocation.Name = "tbLogLocation";
-            tbLogLocation.Size = new System.Drawing.Size(110, 23);
-            tbLogLocation.TabIndex = 30;
-            tbLogLocation.TextChanged += tbLogLocation_TextChanged;
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new System.Drawing.Point(273, 261);
-            label16.Name = "label16";
-            label16.Size = new System.Drawing.Size(53, 15);
-            label16.TabIndex = 31;
-            label16.Text = "Location";
-            label16.Click += label16_Click;
-            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -884,7 +868,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.TextBox tbLocalFileSystemLocation;
         private System.Windows.Forms.CheckBox cbUseLocalFileSystem;
-        private System.Windows.Forms.CheckBox cbUseLogFiles;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox tbLogLocation;
     }
