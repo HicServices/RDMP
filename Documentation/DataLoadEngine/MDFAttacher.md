@@ -1,6 +1,6 @@
 # MDF Attacher
 
-The MDF attacher is used t for loading a detached database file into RAW.  
+The MDF attacher is used for loading a detached database file into RAW.  
 This attacher does not load RAW tables normally (like AnySeparatorFileAttacher etc) instead it specifies that it is itself going to act as RAW.
 Using this component requires that the computer running the data load has file system access to the RAW SQL Server data directory (and that the path is the same).
 

@@ -78,7 +78,6 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         using (var cmd = DatabaseCommandHelper.GetCommand($"DBCC CHECKPRIMARYFILE (N'{_locations.AttachMdfPath}' , 3)", con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
-            var sw = Stopwatch.StartNew();
             dt.BeginLoadData();
             da.Fill(dt);
             dt.EndLoadData();
