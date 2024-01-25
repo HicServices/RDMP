@@ -43,6 +43,12 @@ public class ExcelAttacher : FlatFileAttacher
         "By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
+    [DemandsInitialization("Row offset")]
+    public int rowOffset { get; set; } = 0;
+
+    [DemandsInitialization("Column offset")]
+    public char columnOffset { get; set; } = 'A';
+
     private bool _haveServedData = false;
 
     protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
@@ -60,7 +66,7 @@ public class ExcelAttacher : FlatFileAttacher
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to start processing {fileToLoad.FullName}"));
 
-        _dataTable = _hostedSource.GetChunk(listener, cancellationToken);
+        _dataTable = _hostedSource.GetChunk(listener, cancellationToken,rowOffset,char.ToUpper(columnOffset)-65);//would be 64, but we index from zero here
 
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
@@ -82,7 +88,7 @@ public class ExcelAttacher : FlatFileAttacher
         }
 
         //all data should now be exhausted
-        if (_hostedSource.GetChunk(listener, cancellationToken) != null)
+        if (_hostedSource.GetChunk(listener, cancellationToken,rowOffset, char.ToUpper(columnOffset) - 65) != null)//would be 64, but we index from zero here
             throw new Exception(
                 "Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
     }
