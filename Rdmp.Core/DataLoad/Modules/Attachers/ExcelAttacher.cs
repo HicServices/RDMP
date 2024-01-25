@@ -15,6 +15,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
@@ -43,13 +44,29 @@ public class ExcelAttacher : FlatFileAttacher
         "By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
-    [DemandsInitialization("Row offset")]
-    public int rowOffset { get; set; } = 0;
+    [DemandsInitialization("Which Row the data you want to read starts on. The First row is 1.")]
+    public int RowOffset { get; set; } = 0;//First row 1;
 
-    [DemandsInitialization("Column offset")]
-    public char columnOffset { get; set; } = 'A';
+    [DemandsInitialization("Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0 ")]
+    public char ColumnOffset { get; set; } = 'A';//A=0,B=1...
 
     private bool _haveServedData = false;
+
+
+    private int ConvertColumnOffsetToInt()
+    {
+        //what if it's a float?
+        if (char.IsNumber(ColumnOffset)) return int.Parse(ColumnOffset.ToString());
+        if (char.IsLetter(ColumnOffset)) return char.ToUpper(ColumnOffset) - 65;//would be 64, but we index from zero here
+        throw new Exception("Column offset is not a valid number or letter");
+    }
+
+
+    public override void Check(ICheckNotifier notifier)
+    {
+        ConvertColumnOffsetToInt();
+        base.Check(notifier);
+    }
 
     protected override void OpenFile(FileInfo fileToLoad, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -66,7 +83,8 @@ public class ExcelAttacher : FlatFileAttacher
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to start processing {fileToLoad.FullName}"));
 
-        _dataTable = _hostedSource.GetChunk(listener, cancellationToken,rowOffset,char.ToUpper(columnOffset)-65);//would be 64, but we index from zero here
+        var columnTranslation = ConvertColumnOffsetToInt();
+        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation);
 
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
@@ -88,7 +106,7 @@ public class ExcelAttacher : FlatFileAttacher
         }
 
         //all data should now be exhausted
-        if (_hostedSource.GetChunk(listener, cancellationToken,rowOffset, char.ToUpper(columnOffset) - 65) != null)//would be 64, but we index from zero here
+        if (_hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation) != null)
             throw new Exception(
                 "Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
     }
