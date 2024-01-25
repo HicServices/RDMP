@@ -86,7 +86,7 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf"))
         {
             var _path = dt.Rows[1].ItemArray[3].ToString();
-            _locations.AttachLdfPath = OverrideAttachLdfPath + Path.DirectorySeparatorChar + Path.GetFileName(_path);
+            _locations.AttachLdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachLdfPath, _path); 
         }
         else
         {
@@ -95,7 +95,7 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf"))
         {
             var _path = dt.Rows[0].ItemArray[3].ToString();
-            _locations.AttachMdfPath = OverrideAttachMdfPath + Path.DirectorySeparatorChar + Path.GetFileName(_path);
+            var _directorySeperator = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachMdfPath, _path);
         }
         else
         {
