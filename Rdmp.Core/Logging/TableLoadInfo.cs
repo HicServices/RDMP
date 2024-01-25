@@ -88,7 +88,7 @@ public class TableLoadInfo : ITableLoadInfo
 
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
-        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable.Substring(Math.Max(0,destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
+        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable.Substring(Math.Max(0, destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
         DatabaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
 
@@ -103,42 +103,32 @@ public class TableLoadInfo : ITableLoadInfo
         //for each of the sources, create them in the DataSource table
         foreach (var s in DataSources)
         {
-            if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
+            using var cmdInsertDs = DatabaseSettings.GetCommand(
+                "INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
+                "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
+            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
+            DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
+            DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs,
+                s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
+
+            // old logging schema used binary[128] for the MD5 column
+            if (IsLegacyLoggingSchema)
             {
-                var logger = FileSystemLogger.Instance;
-                logger.LogEventToFile(FileSystemLogger.AvailableLoggers.DataSource, [s.Source,_id ,s.UnknownOriginDate ? "" : s.OriginDate]);
+                var p = cmdInsertDs.CreateParameter();
+                p.DbType = DbType.Binary;
+                p.Size = 128;
+                p.Value = s.MD5 != null ? s.MD5 : DBNull.Value;
+                p.ParameterName = "@MD5";
+                cmdInsertDs.Parameters.Add(p);
             }
             else
             {
-
-                using var cmdInsertDs = DatabaseSettings.GetCommand(
-                    "INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
-                    "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
-                DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
-                DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
-                DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs,
-                    s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
-
-                // old logging schema used binary[128] for the MD5 column
-                if (IsLegacyLoggingSchema)
-                {
-                    var p = cmdInsertDs.CreateParameter();
-                    p.DbType = DbType.Binary;
-                    p.Size = 128;
-                    p.Value = s.MD5 != null ? s.MD5 : DBNull.Value;
-                    p.ParameterName = "@MD5";
-                    cmdInsertDs.Parameters.Add(p);
-                }
-                else
-                {
-                    // now logging schema uses string for easier usability and FAnsiSql compatibility
-                    DatabaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs,
-                        s.MD5 != null ? s.MD5 : DBNull.Value);
-                }
-
-                s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
+                // now logging schema uses string for easier usability and FAnsiSql compatibility
+                DatabaseSettings.AddParameterWithValueToCommand("@MD5", cmdInsertDs,
+                    s.MD5 != null ? s.MD5 : DBNull.Value);
             }
 
+            s.ID = int.Parse(cmdInsertDs.ExecuteScalar().ToString());
         }
     }
 
