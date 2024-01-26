@@ -44,10 +44,10 @@ public class ExcelAttacher : FlatFileAttacher
         "By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
-    [DemandsInitialization("Which Row the data you want to read starts on. The First row is 1.")]
+    [DemandsInitialization("Which Row the data you want to read starts on. Set this value to row containing the header information. The First row is 1.")]
     public int RowOffset { get; set; } = 0;//First row 1;
 
-    [DemandsInitialization("Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0 ")]
+    [DemandsInitialization("Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0. ")]
     public char ColumnOffset { get; set; } = 'A';//A=0,B=1...
 
     private bool _haveServedData = false;
