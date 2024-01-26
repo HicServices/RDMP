@@ -133,13 +133,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
         var nonBlankColumns = new Dictionary<int, DataColumn>();
 
-        //var startRow = 5;
-        //var startColumn = 2; //C - would have to do conversion
-
         while (rowEnumerator.MoveNext())
         {
             var row = (IRow)rowEnumerator.Current;
-            if (rowOffset - 1 > row.RowNum) continue;// for some reason the .RowNumber is 0 indexed
+            if (rowOffset - 1 > row.RowNum) continue;// .RowNumber is 0 indexed
            
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
             if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))

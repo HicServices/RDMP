@@ -102,7 +102,7 @@ public class ExcelAttacher : FlatFileAttacher
             else
                 for (var i = 0; i < replacementHeadersSplit.Length; i++)
                     _dataTable.Columns[i].ColumnName =
-                        replacementHeadersSplit[i]; //rename the columns to match the forced replacments
+                        replacementHeadersSplit[i]; //rename the columns to match the forced replacements
         }
 
         //all data should now be exhausted
