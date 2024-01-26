@@ -48,10 +48,10 @@ public class ExcelAttacherTests : DatabaseTests
         _parentDir = workingDir.CreateSubdirectory("ExcelAttacherTests");
         _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
 
-        var toCleanup = _parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TEST_EXCEL_ATTACHER"));
+        var toCleanup = _parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("EXCEL_ATTACHER"));
         toCleanup?.Delete(true);
 
-        _loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, "TEST_EXCEL_ATTACHER");
+        _loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, "EXCEL_ATTACHER");
 
         using var con = _database.Server.GetConnection();
         con.Open();
