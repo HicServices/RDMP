@@ -201,7 +201,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     {
         lock (_oLock)
         {
-            if (_logQueue?.IsAddingCompleted==false)
+            if (_logQueue?.IsAddingCompleted == false)
                 _logQueue.CompleteAdding();
             _logThread?.Join();
 
@@ -296,24 +296,16 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
 
-        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
-        {
-            var logger = FileSystemLogger.Instance;
-            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.FatalError, [errorSource,errorDescription, statusID, ID]);
-        }
-        else
-        {
-            var cmdRecordFatalError = DatabaseSettings.GetCommand(
-                @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
-                con);
-            DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
-            DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
-            DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
-            DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
-            DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
+        var cmdRecordFatalError = DatabaseSettings.GetCommand(
+            @"INSERT INTO FatalError (time,source,description,statusID,dataLoadRunID) VALUES (@time,@source,@description,@statusID,@dataLoadRunID);",
+            con);
+        DatabaseSettings.AddParameterWithValueToCommand("@time", cmdRecordFatalError, DateTime.Now);
+        DatabaseSettings.AddParameterWithValueToCommand("@source", cmdRecordFatalError, errorSource);
+        DatabaseSettings.AddParameterWithValueToCommand("@description", cmdRecordFatalError, errorDescription);
+        DatabaseSettings.AddParameterWithValueToCommand("@statusID", cmdRecordFatalError, statusID);
+        DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordFatalError, ID);
 
-            cmdRecordFatalError.ExecuteNonQuery();
-        }
+        cmdRecordFatalError.ExecuteNonQuery();
 
         //this might get called multiple times (many errors in rapid succession as the program crashes) but only close the dataLoadInfo once
         if (!IsClosed)
@@ -331,24 +323,16 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)
     {
-        if (UserSettings.LogToFileSystem && !string.IsNullOrWhiteSpace(UserSettings.FileSystemLogLocation))
+        lock (_oLock)
         {
-            var logger = FileSystemLogger.Instance;
-            logger.LogEventToFile(FileSystemLogger.AvailableLoggers.ProgressLog, [ID, pevent, Source, Description]);
-        }
-        else
-        {
-            lock (_oLock)
-            {
-                if (_logQueue is null || _logQueue.IsAddingCompleted)
-                    LogInit();
-                if (_logQueue is null)
-                    throw new InvalidOperationException("LogInit failed to create new worker");
+            if (_logQueue is null || _logQueue.IsAddingCompleted)
+                LogInit();
+            if (_logQueue is null)
+                throw new InvalidOperationException("LogInit failed to create new worker");
 
-                _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
-            }
-            lock (_logWaiter)
-                Monitor.Pulse(_logWaiter);
+            _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
         }
+        lock (_logWaiter)
+            Monitor.Pulse(_logWaiter);
     }
 }
