@@ -54,7 +54,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         if (_request is ExtractGlobalsCommand)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Request is for the extraction of Globals."));
+                new NotifyEventArgs(ProgressEventType.Debug, "Request is for the extraction of Globals."));
             OutputFile = _request.GetExtractionDirectory().FullName;
             return;
         }
@@ -73,7 +73,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
                 throw new ArgumentOutOfRangeException();
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
     }
 
@@ -86,7 +86,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             {
                 // if it is a batch resume then create a backup of the file as it looked at the start of the process
                 _backupFile = $"{_output.OutputFilename}.bak";
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating {_backupFile}"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Creating {_backupFile}"));
                 File.Copy(_output.OutputFilename, _backupFile, true);
             }
             else
@@ -145,7 +145,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 
         if (_backupFile != null && File.Exists(_backupFile))
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Deleting {_backupFile}"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Deleting {_backupFile}"));
             File.Delete(_backupFile);
         }
     }

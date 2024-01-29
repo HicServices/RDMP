@@ -46,7 +46,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
         if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
 
             var recordsDeleted = 0;
@@ -60,7 +60,7 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
                     recordsDeleted++;
                 }
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Deleted {recordsDeleted} old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
         }
 
@@ -113,12 +113,12 @@ public class BasicDataReleaseDestination : IPluginDataFlowComponent<ReleaseAudit
 
             if (ReleaseSettings.DeleteFilesOnSuccess)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Cleaning up..."));
                 ExtractionDirectory.CleanupExtractionDirectory(this, _project.ExtractionDirectory,
                     _configurationReleased, listener);
             }
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "All done!"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "All done!"));
         }
     }
 

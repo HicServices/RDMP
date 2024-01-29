@@ -45,7 +45,7 @@ public class UpdateProgressIfLoadsuccessful : IUpdateLoadProgress
             throw new DataLoadProgressUpdateException(
                 $"Cannot set DataLoadProgress to {DateToSetProgressTo} because it is less than the currently recorded progress:{progress.DataLoadProgress}");
 
-        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Updating DataLoadProgress of '{progress}' to {DateToSetProgressTo}"));
         progress.DataLoadProgress = DateToSetProgressTo;
 

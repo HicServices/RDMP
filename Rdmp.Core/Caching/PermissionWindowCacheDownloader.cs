@@ -79,7 +79,7 @@ public class PermissionWindowCacheDownloader
     public RetrievalResult RetryDownload(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
         _listener = listener;
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Retrying download: {(_permissionWindow == null ? "No permission window" : _permissionWindow.Name)}"));
 
         return IsDownloadRequired(listener)
@@ -98,7 +98,7 @@ public class PermissionWindowCacheDownloader
         if (_cacheProgressItems == null)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "No cache progress provided so nothing to download."));
             _retrievalResult = RetrievalResult.Complete;
             return false;

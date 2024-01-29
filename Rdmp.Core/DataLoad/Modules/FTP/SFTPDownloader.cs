@@ -74,7 +74,7 @@ public class SFTPDownloader : FTPDownloader
             try
             {
                 _connection.Value.DeleteFile(retrievedFiles);
-                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Deleted SFTP file {retrievedFiles} from SFTP server"));
             }
             catch (Exception e)

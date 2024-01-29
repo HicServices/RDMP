@@ -236,7 +236,7 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
 
             forker.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information,
-                    "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
+                    "CatalogueConstraintReport completed successfully and committed results to DQE server"));
         }
         catch (Exception e)
         {

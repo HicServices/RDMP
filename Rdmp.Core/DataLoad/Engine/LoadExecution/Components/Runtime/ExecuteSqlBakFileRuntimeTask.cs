@@ -84,7 +84,7 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         ALTER DATABASE {name} SET MULTI_USER;
         ";
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Executing script {Filepath} ( against {db})"));
 
         var executer = new ExecuteSqlInDleStage(job, _loadStage);

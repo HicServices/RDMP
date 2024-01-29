@@ -79,7 +79,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     {
         listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to lookup which server to interrogate for CohortIdentificationConfiguration {_cohortIdentificationConfiguration}"));
 
         if (_cohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
@@ -170,7 +170,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         if (ClearCohortIdentificationConfigurationCacheBeforeRunning)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Clearing Cohort Identifier Cache"));
+                new NotifyEventArgs(ProgressEventType.Debug, "Clearing Cohort Identifier Cache"));
 
             var cacheManager =
                 new CachedAggregateConfigurationResultsManager(_cohortIdentificationConfiguration.QueryCachingServer);
@@ -184,7 +184,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         {
             RunSubcontainers = false
         };
-        runner.PhaseChanged += (s, e) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        runner.PhaseChanged += (s, e) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"CohortCompilerRunner entered Phase '{runner.ExecutionPhase}'"));
         return runner.Run(_cancelGlobalOperations.Token);
     }

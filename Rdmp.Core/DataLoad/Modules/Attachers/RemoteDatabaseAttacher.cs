@@ -111,7 +111,7 @@ False - Trigger an error reporting the missing table(s)
                 sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)}";
             }
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));
 
             var source = new DbDataCommandDataFlowSource(sql, $"Fetch data from {dbFrom} to populate RAW table {table}",

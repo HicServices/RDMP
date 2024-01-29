@@ -120,7 +120,7 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         using var con = server.GetConnection();
         con.Open();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to execute SQL to determine the maximum date for data loaded:{ExecuteScalarSQL}"));
 
         using var cmd = server.GetCommand(ExecuteScalarSQL, con);

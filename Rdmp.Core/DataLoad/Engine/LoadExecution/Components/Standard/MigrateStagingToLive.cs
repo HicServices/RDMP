@@ -42,7 +42,7 @@ public class MigrateStagingToLive : DataLoadComponent
         var stagingDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Staging];
         var liveDbInfo = _databaseConfiguration.DeployInfo[LoadBubble.Live];
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Migrating '{stagingDbInfo}' to '{liveDbInfo}'"));
 
         var migrationConfig = new MigrationConfiguration(stagingDbInfo, LoadBubble.Staging, LoadBubble.Live,

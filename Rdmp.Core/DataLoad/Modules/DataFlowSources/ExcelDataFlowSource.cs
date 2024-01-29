@@ -143,7 +143,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
             if (nColumns == -1)
             {
                 nColumns = row.Cells.Count;
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
                 for (var i = 0; i < nColumns; i++)

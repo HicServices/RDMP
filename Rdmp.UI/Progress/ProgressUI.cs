@@ -55,6 +55,9 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     private Bitmap _fail;
     private Bitmap _failEx;
 
+    private bool _debugMode;
+
+
     public ProgressUI()
     {
         InitializeComponent();
@@ -156,6 +159,7 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
     private readonly object _oNotifyQueLock = new();
     private readonly List<ProgressUIEntry> _notificationQueue = new();
 
+
     public void Progress(object sender, ProgressEventArgs args)
     {
         lock (_oProgressQueueLock)
@@ -176,6 +180,12 @@ public partial class ProgressUI : UserControl, IDataLoadEventListener
 
     private void Notify(object sender, NotifyEventArgs notifyEventArgs)
     {
+        ProgressEventType[] optionallyLoggedTypes = { ProgressEventType.Debug, ProgressEventType.Trace };
+        if (!_debugMode && optionallyLoggedTypes.Contains(notifyEventArgs.ProgressEventType))
+        {
+            return;
+        }
+
         lock (_oNotifyQueLock)
         {
             _notificationQueue.Add(new ProgressUIEntry(sender, DateTime.Now, notifyEventArgs));

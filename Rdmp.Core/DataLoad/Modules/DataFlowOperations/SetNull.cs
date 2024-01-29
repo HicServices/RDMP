@@ -61,7 +61,7 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         listener.OnNotify(this,
-            new NotifyEventArgs(_changes > 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+            new NotifyEventArgs(_changes > 0 ? ProgressEventType.Warning : ProgressEventType.Debug,
                 $"Total SetNull operations for ColumnNameToFind '{ColumnNameToFind}' was {_changes}"));
     }
 

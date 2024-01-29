@@ -161,7 +161,7 @@ public abstract class CachedFileRetriever : ICachedDataProvider
             }
             else
             {
-                dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Archive identified:{job.Value.FullName}"));
 
                 // just copy the archives across

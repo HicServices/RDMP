@@ -107,14 +107,14 @@ public class DatabaseCloner : IDisposeAfterDataLoad
     private void AddColumnToTable(DiscoveredTable table, string desiredColumnName, string desiredColumnType,
         IDataLoadEventListener listener)
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Adding column '{desiredColumnName}' with datatype '{desiredColumnType}' to table '{table.GetFullyQualifiedName()}'"));
         table.AddColumn(desiredColumnName, desiredColumnType, true, 500);
     }
 
     private void DropColumnFromTable(DiscoveredTable table, string columnName, IDataLoadEventListener listener)
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Dropping column '{columnName}' from table '{table.GetFullyQualifiedName()}'"));
         var col = table.DiscoverColumn(columnName);
         table.DropColumn(col);

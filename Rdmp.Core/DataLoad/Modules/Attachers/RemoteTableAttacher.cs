@@ -389,7 +389,7 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
             return ExitCodeType.Success;
         }
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to execute SQL:{Environment.NewLine}{sql}"));
 
         var source = new DbDataCommandDataFlowSource(sql,

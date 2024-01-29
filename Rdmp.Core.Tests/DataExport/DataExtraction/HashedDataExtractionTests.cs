@@ -40,7 +40,7 @@ public class HashedDataExtractionTests : TestsRequiringAnExtractionConfiguration
 
         var messages =
             listener.EventsReceivedBySender.SelectMany(m => m.Value)
-                .Where(m => m.ProgressEventType == ProgressEventType.Information &&
+                .Where(m => m.ProgressEventType == ProgressEventType.Debug &&
                             m.Message.Contains("/*Decided on extraction SQL:*/"))
                 .ToArray();
 

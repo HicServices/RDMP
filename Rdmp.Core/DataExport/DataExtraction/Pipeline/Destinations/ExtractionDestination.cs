@@ -406,7 +406,7 @@ e.g. /$i/$a")]
     {
         var fetcher = new SupportingDocumentsFetcher(doc);
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Preparing to copy {doc} to directory {directory.FullName}"));
         try
         {
@@ -445,7 +445,7 @@ e.g. /$i/$a")]
     {
         try
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Preparing to extract Supporting SQL {sql} to directory {directory.FullName}"));
 
             var sw = new Stopwatch();
@@ -487,7 +487,7 @@ e.g. /$i/$a")]
             listener.OnProgress(this,
                 new ProgressEventArgs($"Extract {sql}", new ProgressMeasurement(sqlLinesWritten, ProgressType.Records),
                     sw.Elapsed));
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Extracted {sqlLinesWritten} records from SupportingSQL {sql} into directory {directory.FullName}"));
 
             return true;

@@ -51,9 +51,9 @@ public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
             RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetCurrentDatabase().GetRuntimeName();
         var beforeDatabaseType = RuntimeArguments.StageSpecificArguments.DbInfo.Server.DatabaseType;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to run Task '{ProcessTask.Name}'"));
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Attacher class is:{Attacher.GetType().FullName}"));
 
         try

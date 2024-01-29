@@ -82,13 +82,13 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         if (_doNotMigrate)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "Cohort and Data are on same server so no migration will occur"));
             return sql;
         }
 
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"Original (unhacked) SQL was {sql}", null));
+            new NotifyEventArgs(ProgressEventType.Debug, $"Original (unhacked) SQL was {sql}", null));
 
         //now replace database with tempdb
         var extractableCohort = Request.ExtractableCohort;
@@ -128,7 +128,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
 
         foreach (var r in replacementStrings)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Replacing '{r.Key}' with '{r.Value}'", null));
 
             if (!sql.Contains(r.Key))
@@ -139,7 +139,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         }
 
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"Adjusted (hacked) SQL was {sql}", null));
+            new NotifyEventArgs(ProgressEventType.Debug, $"Adjusted (hacked) SQL was {sql}", null));
 
         //replace [MyCohortDatabase].. with [tempdb].. (while dealing with Cohort..Cohort replacement correctly as well as 'Cohort.dbo.Cohort.Fish' correctly)
         return sql;
@@ -216,12 +216,12 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         SetServer();
 
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information,
+            new NotifyEventArgs(ProgressEventType.Debug,
                 "About to wait for Semaphore OneCrossServerExtractionAtATime to become available"));
         OneCrossServerExtractionAtATime.WaitOne(-1);
         _semaphoreObtained = true;
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, "Captured Semaphore OneCrossServerExtractionAtATime"));
+            new NotifyEventArgs(ProgressEventType.Debug, "Captured Semaphore OneCrossServerExtractionAtATime"));
 
         try
         {
@@ -312,19 +312,19 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information,
+            new NotifyEventArgs(ProgressEventType.Debug,
                 "About to release Semaphore OneCrossServerExtractionAtATime"));
         if (_semaphoreObtained)
             OneCrossServerExtractionAtATime.Release(1);
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, "Released Semaphore OneCrossServerExtractionAtATime"));
+            new NotifyEventArgs(ProgressEventType.Debug, "Released Semaphore OneCrossServerExtractionAtATime"));
 
         foreach (var table in tablesToCleanup)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, $"About to drop table '{table}'"));
+                new NotifyEventArgs(ProgressEventType.Debug, $"About to drop table '{table}'"));
             table.Drop();
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Dropped table '{table}'"));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Dropped table '{table}'"));
         }
 
         base.Dispose(listener, pipelineFailureExceptionIfAny);

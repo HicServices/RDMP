@@ -48,7 +48,7 @@ public class MigrationHost
             // This will eventually be provided by factory/externally based on LoadMetadata (only one strategy for now)
             _migrationStrategy = new OverwriteMigrationStrategy(managedConnectionToDestination);
             _migrationStrategy.TableMigrationCompleteHandler += (name, inserts, updates) =>
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Migrate table {name} from STAGING to {_destinationDbInfo.GetRuntimeName()}: {inserts} inserts, {updates} updates"));
 
             //migrate all tables (both lookups and live tables in the same way)

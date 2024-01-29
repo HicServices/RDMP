@@ -94,7 +94,7 @@ public class FTPDownloader : IPluginDataProvider
     {
         var files = GetFileList().ToArray();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Identified the following files on the FTP server:{string.Join(',',files)}"));
 
         var forLoadingContainedCachedFiles = false;
@@ -103,14 +103,14 @@ public class FTPDownloader : IPluginDataProvider
         {
             var action = GetSkipActionForFile(file, destination);
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"File {file} was evaluated as {action}"));
 
             switch (action)
             {
                 case SkipReason.DoNotSkip:
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, $"About to download {file}"));
+                        new NotifyEventArgs(ProgressEventType.Debug, $"About to download {file}"));
                     Download(file, destination);
                     break;
                 case SkipReason.InForLoading:

@@ -48,8 +48,8 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            new NotifyEventArgs(ProgressEventType.Debug, $"About to run Task '{ProcessTask.Name}'"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Mutilate class is{MutilateDataTables.GetType().FullName}"));
 
         try

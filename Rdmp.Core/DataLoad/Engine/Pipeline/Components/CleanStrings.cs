@@ -110,10 +110,10 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
             if (col.Data_type != null && col.Data_type.Contains("char"))
                 columnsToClean.Add(col.GetRuntimeName());
         if (columnsToClean.Any())
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Preparing to perform clean {columnsToClean.Count} string columns ({string.Join(",", columnsToClean)}) in table {target.GetRuntimeName()}"));
         else
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Skipping CleanString on table {target.GetRuntimeName()} because there are no String columns in the table"));
     }
 

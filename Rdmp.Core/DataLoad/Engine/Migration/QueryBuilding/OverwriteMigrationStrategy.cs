@@ -109,7 +109,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         var cmd = server.GetCommand(insertSql, _managedConnection);
         cmd.CommandTimeout = Timeout;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"INSERT query: {Environment.NewLine}{insertSql}"));
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -165,7 +165,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
                 columnsToMigrate.SourceTable,
                 sqlLines);
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Update query:{Environment.NewLine}{updateQuery}"));
 
             var updateCmd = server.GetCommand(updateQuery, _managedConnection);

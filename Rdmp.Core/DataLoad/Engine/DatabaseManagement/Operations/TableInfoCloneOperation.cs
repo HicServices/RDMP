@@ -109,7 +109,7 @@ public class TableInfoCloneOperation
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls,
             false /*False because we want to drop these columns entirely not just flip to int*/, newTable);
 
-        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
+        _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Creating table with SQL:{sql}"));
 
         using (var con = destDatabaseInfo.Server.GetConnection())
         {
@@ -139,7 +139,7 @@ public class TableInfoCloneOperation
                     c.IgnoreInLoads && c.GetRuntimeName(_copyToBubble.ToLoadStage()).Equals(colName)))
             {
                 _listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"{colName} will be dropped because it is marked IgnoreInLoads"));
                 drop = true;
             }
@@ -150,7 +150,7 @@ public class TableInfoCloneOperation
                 _hicDatabaseConfiguration.IgnoreColumns.IsMatch(colName))
             {
                 _listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"{colName} will be dropped because it is matches the global ignores pattern ({_hicDatabaseConfiguration.IgnoreColumns})"));
                 drop = true;
             }
@@ -164,7 +164,7 @@ public class TableInfoCloneOperation
             if (dilution != null)
             {
                 _listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"Altering diluted column {colName} to {dilution.Data_type}"));
                 column.DataType.AlterTypeTo(dilution.Data_type);
             }

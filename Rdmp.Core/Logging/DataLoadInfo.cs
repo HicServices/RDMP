@@ -318,7 +318,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         OnProgress,
         OnQueryCancel,
         OnTaskFailed,
-        OnWarning
+        OnWarning,
+        OnDebug
     }
 
     public void LogProgress(ProgressEventType pevent, string Source, string Description)

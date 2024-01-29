@@ -36,7 +36,7 @@ public class Coalescer : MatchingTablesMutilator
         var server = table.Database.Server;
 
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"About to run Coalesce on table {table}"));
+            new NotifyEventArgs(ProgressEventType.Debug, $"About to run Coalesce on table {table}"));
 
         var allCols = table.DiscoverColumns();
 
@@ -81,7 +81,7 @@ public class Coalescer : MatchingTablesMutilator
             }
         }
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Coalesce on table '{table}' completed ({affectedRows} rows affected)"));
     }
 

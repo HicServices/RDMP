@@ -152,7 +152,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             {
                 if (_request.IsBatchResume)
                 {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"Table {existing.GetFullyQualifiedName()} already exists but it IsBatchResume so no problem."));
                 }
                 else if (AlwaysDropExtractionTables)
@@ -254,7 +254,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 addedType.Collation = catItem.ColumnInfo.Collation;
 
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     $"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true" : "false")}) to match the source table"));
         }
 
@@ -381,11 +381,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     if (!tbl.DiscoverColumns().Any(p => p.IsPrimaryKey))
                     {
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
+                            new NotifyEventArgs(ProgressEventType.Debug,
                                 $"Making {tbl} distinct in case there are duplicate rows from bad batch resumes"));
                         tbl.MakeDistinct(50000000);
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, $"Finished distincting {tbl}"));
+                            new NotifyEventArgs(ProgressEventType.Debug, $"Finished distincting {tbl}"));
                     }
             }
         }
@@ -443,12 +443,12 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         IExtractionConfiguration configuration, IDataLoadEventListener listener, out int linesWritten,
         out string destinationDescription)
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to download SQL for global SupportingSQL {sqlTable.SQL}"));
         using var con = sqlTable.GetServer().GetConnection();
         con.Open();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Connection opened successfully, about to send SQL command {sqlTable.SQL}"));
 
         using var dt = new DataTable();
@@ -505,7 +505,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)
     {
         //tell user we are about to inspect it
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to open connection to {TargetDatabaseServer}"));
 
         var databaseName = GetDatabaseName();

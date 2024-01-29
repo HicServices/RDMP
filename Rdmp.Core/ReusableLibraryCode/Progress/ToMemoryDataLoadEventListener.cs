@@ -33,7 +33,6 @@ public class ToMemoryDataLoadEventListener : IDataLoadEventListener
         if (e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)
             throw e.Exception ?? new Exception(e.Message);
 
-
         if (!EventsReceivedBySender.ContainsKey(sender))
             EventsReceivedBySender.Add(sender, new List<NotifyEventArgs>());
 

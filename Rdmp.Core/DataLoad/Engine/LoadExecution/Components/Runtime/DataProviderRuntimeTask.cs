@@ -51,9 +51,9 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+            new NotifyEventArgs(ProgressEventType.Debug, $"About to run Task '{ProcessTask.Name}'"));
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to fetch data using class {Provider.GetType().FullName}"));
 
         return Provider.Fetch(job, cancellationToken);

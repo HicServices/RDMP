@@ -48,7 +48,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
         if (Request == null)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "The RequestProvider has no more requests to provide (RequestProvider.GetNext returned null)"));
             return null;
         }
@@ -62,7 +62,7 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
         if (cacheLagPeriod != null && cacheLagPeriod.TimeIsWithinPeriod(Request.End))
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "The Request is for a time within the Cache Lag Period. This means we are up-to-date and can stop now."));
             return null;
         }

@@ -62,7 +62,7 @@ public class TableVarcharMaxer : MatchingTablesMutilator
                 try
                 {
                     col.DataType.AlterTypeTo(DestinationType);
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"converted column {col} to {DestinationType}"));
                 }
                 catch (Exception e)

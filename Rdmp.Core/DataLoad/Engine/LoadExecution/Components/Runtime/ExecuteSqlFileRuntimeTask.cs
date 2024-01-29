@@ -65,7 +65,7 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
             throw new Exception($"Could not read the sql file at {Filepath}: {e}");
         }
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Executing script {Filepath} ( against {db})"));
         var executer = new ExecuteSqlInDleStage(job, _loadStage);
         return executer.Execute(commandText, db);

@@ -53,7 +53,7 @@ public class FileUnzipper : IPluginDataProvider
                 !ZipArchivePattern.IsMatch(fileInfo.Name)) continue;
             using var zipFile = ZipFile.Open(fileInfo.FullName, ZipArchiveMode.Read);
             //fire event telling user we found some files in the zip file
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, zipFile.Entries.Aggregate(
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, zipFile.Entries.Aggregate(
                 "Identified the following zip entries:", (s, n) =>
                     $"{n.Name},").TrimEnd(',')));
 

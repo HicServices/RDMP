@@ -81,7 +81,7 @@ public class PopulateRAW : CompositeDataLoadComponent
         if (!MustCreateRawDatabase()) return;
 
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information,
+            new NotifyEventArgs(ProgressEventType.Debug,
                 "Determined that we must create the RAW database tables..."));
 
         var cloner = new DatabaseCloner(_databaseConfiguration);

@@ -105,7 +105,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
                     if (runAgain)
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
+                            new NotifyEventArgs(ProgressEventType.Debug,
                                 $"Running pipeline again for next batch in ExtractionProgress"));
                 }
                 else
@@ -117,7 +117,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
                     if (runAgain)
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
+                            new NotifyEventArgs(ProgressEventType.Debug, $"Retrying pipeline"));
                 }
             } while (runAgain);
         }
@@ -148,7 +148,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
             progress.ProgressDate = extractDatasetCommand.BatchEnd.Value;
             progress.SaveToDatabase();
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     $"Saving batch extraction progress as {progress.ProgressDate}"));
 
             if (progress.MoreToFetch())

@@ -65,7 +65,7 @@ public class ImportFilesDataProvider : IPluginDataProvider
         foreach (var f in _files)
         {
             var to = Path.Combine(job.LoadDirectory.ForLoading.FullName, f.Name);
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Copying file {f.FullName} to directory {to}"));
             f.CopyTo(to, true);
         }
@@ -79,7 +79,7 @@ public class ImportFilesDataProvider : IPluginDataProvider
             if (DeleteFilesOnsuccessfulLoad)
                 foreach (var f in _files)
                 {
-                    postLoadEventsListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    postLoadEventsListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"About to delete {f.FullName}"));
                     f.Delete();
                 }

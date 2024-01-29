@@ -65,7 +65,7 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
         foreach (var f in job.LoadDirectory.ForLoading.GetFiles(ExcelFilePattern))
         {
             foundAtLeastOne = true;
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to process file {f.Name}"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"About to process file {f.Name}"));
             ProcessFile(f, job);
         }
 
@@ -97,7 +97,7 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
                 if (IsWorksheetNameMatch(sheet.SheetName))
                 {
                     job.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information,
+                        new NotifyEventArgs(ProgressEventType.Debug,
                             $"Started processing worksheet:{sheet.SheetName}"));
 
                     var newName = PrefixWithWorkbookName
@@ -115,12 +115,12 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
                     dt.SaveAsCsv(saveStream);
 
                     job.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, $"Saved worksheet as {newName}"));
+                        new NotifyEventArgs(ProgressEventType.Debug, $"Saved worksheet as {newName}"));
                 }
                 else
                 {
                     job.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information,
+                        new NotifyEventArgs(ProgressEventType.Debug,
                             $"Ignoring worksheet:{sheet.SheetName}"));
                 }
             }

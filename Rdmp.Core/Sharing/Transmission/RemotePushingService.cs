@@ -43,7 +43,7 @@ public class RemotePushingService
 
     public async void SendToAllRemotes<T>(T[] toSendAll, Action callback = null) where T : IMapsDirectlyToDatabaseTable
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Ready to send {toSendAll.Length} {typeof(T).Name} items to all remotes."));
         var done = new Dictionary<string, int>();
 

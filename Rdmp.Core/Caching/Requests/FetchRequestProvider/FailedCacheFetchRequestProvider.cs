@@ -42,10 +42,10 @@ public class FailedCacheFetchRequestProvider : ICacheFetchRequestProvider
         if (!_failuresToProvide.Any())
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "Getting next batch of request failures from database."));
             GetNextBatchFromDatabase();
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Fetched {_failuresToProvide.Count} failures from database."));
 
             // If there are still no failures in the queue then we're done

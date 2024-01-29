@@ -35,7 +35,7 @@ public class SingleJobExecution : IDataLoadExecution
     public ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         job.StartLogging();
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Starting load for {job.LoadMetadata.Name}"));
 
         try
@@ -81,7 +81,7 @@ public class SingleJobExecution : IDataLoadExecution
 
             TryDispose(ExitCodeType.Success, job);
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Completed job {job.JobID}"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Completed job {job.JobID}"));
 
             if (job.CrashAtEndMessages.Count > 0)
             {
@@ -103,8 +103,8 @@ public class SingleJobExecution : IDataLoadExecution
         catch (OperationCanceledException)
         {
             if (cancellationToken.IsAbortRequested)
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Job {job.JobID}cancelled in pipeline"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
+                    $"Job {job.JobID} cancelled in pipeline"));
 
             TryDispose(cancellationToken.IsAbortRequested ? ExitCodeType.Abort : ExitCodeType.Success, job);
             throw;
@@ -115,7 +115,7 @@ public class SingleJobExecution : IDataLoadExecution
     {
         try
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Disposing disposables..."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Disposing disposables..."));
             job.LoadCompletedSoDispose(exitCode, job);
             job.CloseLogging();
         }

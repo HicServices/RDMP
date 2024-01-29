@@ -72,6 +72,9 @@ public abstract class RDMPCommandLineOptions
         HelpText = "Do not check to see if platform databases are out of date or suggest patching them")]
     public bool SkipPatching { get; set; }
 
+    [Option("debug",Required =false, HelpText ="Enabled verbose debug logging")]
+    public bool DebugMode { get; set; }
+
     /// <summary>
     /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
     /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the

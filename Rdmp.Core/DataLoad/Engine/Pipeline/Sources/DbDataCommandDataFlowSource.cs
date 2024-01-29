@@ -62,7 +62,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
             _con = DatabaseCommandHelper.GetConnection(_builder);
             _con.Open();
 
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Running SQL:{Environment.NewLine}{Sql}"));
 
             cmd = DatabaseCommandHelper.GetCommand(Sql, _con);

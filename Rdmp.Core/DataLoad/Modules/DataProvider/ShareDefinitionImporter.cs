@@ -42,7 +42,7 @@ public class ShareDefinitionImporter : IPluginDataProvider
 
             foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
             {
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Found '{shareDefinitionFile.Name}'"));
                 using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))
                 {
@@ -50,7 +50,7 @@ public class ShareDefinitionImporter : IPluginDataProvider
                 }
 
                 imported++;
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Imported '{shareDefinitionFile.Name}' Successfully"));
             }
         }
@@ -61,7 +61,7 @@ public class ShareDefinitionImporter : IPluginDataProvider
         }
 
         job.OnNotify(this, new NotifyEventArgs(
-            imported == 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+            imported == 0 ? ProgressEventType.Warning : ProgressEventType.Debug,
             $"Imported {imported} ShareDefinition files"));
 
         return ExitCodeType.Success;

@@ -76,7 +76,7 @@ public abstract class CacheLayout : ICacheLayout
 
         var filename = $"{archiveDate.ToString(DateFormat)}.{ArchiveType.ToString().ToLower()}";
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Looking for a file called '{filename}' in '{loadCacheDirectory.FullName}'"));
 
         return new FileInfo(Path.Combine(loadCacheDirectory.FullName, filename));
@@ -111,7 +111,7 @@ public abstract class CacheLayout : ICacheLayout
 
             downloadDirectory.Create();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Created Download Directory:{downloadDirectory.FullName}"));
         }
 

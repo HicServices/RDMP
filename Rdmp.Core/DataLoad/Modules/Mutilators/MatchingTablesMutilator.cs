@@ -89,13 +89,13 @@ public abstract class MatchingTablesMutilator : IPluginMutilateDataTables
         }
         else
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"About to run {GetType()} mutilation on table {tbl}"));
             var sw = new Stopwatch();
             sw.Start();
             MutilateTable(job, tableInfo, tbl);
             sw.Stop();
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"{GetType()} mutilation on table {tbl} completed after {sw.ElapsedMilliseconds} ms"));
         }
     }

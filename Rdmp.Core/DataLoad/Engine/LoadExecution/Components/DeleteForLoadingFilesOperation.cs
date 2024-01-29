@@ -37,7 +37,7 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
             {
                 //just skip it but tell user you are skipping it
                 postLoadEventListener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         "No files found in ForLoading so not bothering to try and delete."));
                 return;
             }
@@ -53,7 +53,7 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
                 return;
             }
 
-            _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Deleting files in ForLoading ({LoadDirectory.ForLoading.FullName})"));
 
             if (archivingHandledByAttacher)

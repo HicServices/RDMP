@@ -82,7 +82,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         try
         {
             DataLoadEventListener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
+                new NotifyEventArgs(ProgressEventType.Debug, "Performing pre-execution checks"));
             var thrower = ThrowImmediatelyCheckNotifier.Quiet;
             _preExecutionChecker.Check(thrower);
         }

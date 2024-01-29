@@ -102,7 +102,7 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                 $"Found {matchesFound} aliased input values, resolved by adding {newRows.Count} additional duplicate rows to the dataset"));
         else
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"No Aliases found for identifiers in column {AliasColumnInInputDataTables}"));
 
         foreach (var newRow in newRows)

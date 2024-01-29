@@ -169,7 +169,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
 
                 // Recursively copy all files from input path to destination path
                 listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"Copying directory '{e.FullName}' to '{dest}'"));
                 CopyFolder(e.FullName, dest);
                 atLeastOne = true;
@@ -179,7 +179,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
             {
                 var dest = Path.Combine(destinationDirectory.FullName, f.Name);
                 listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
+                    new NotifyEventArgs(ProgressEventType.Debug, $"Copying file '{f.FullName}' to '{dest}'"));
                 File.Copy(f.FullName, dest, Overwrite);
                 atLeastOne = true;
             }
@@ -231,7 +231,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
 
                 // Recursively copy all files from input path to destination path
                 listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"Copying directory '{e.FullName}' to '{dest}'"));
                 CopyFolder(e.FullName, dest);
                 atLeastOne = true;
@@ -244,7 +244,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
                     f.Name.Replace(privateIdentifier.ToString(), releaseSub));
 
                 listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, $"Copying file '{f.FullName}' to '{dest}'"));
+                    new NotifyEventArgs(ProgressEventType.Debug, $"Copying file '{f.FullName}' to '{dest}'"));
                 File.Copy(f.FullName, dest, Overwrite);
                 atLeastOne = true;
             }

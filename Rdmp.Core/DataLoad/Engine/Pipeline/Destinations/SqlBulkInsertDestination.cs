@@ -134,7 +134,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         var insert = _table.BeginBulkInsert();
         insert.Timeout = Timeout;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"SqlBulkCopy to {_dbInfo.Server}, {_dbInfo.GetRuntimeName()}..{Table} initialised for {dt.Columns.Count} columns, with a timeout of {Timeout}.  First chunk received had rowcount of {dt.Rows.Count}"));
 
         return insert;
@@ -176,7 +176,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
                 new NotifyEventArgs(ProgressEventType.Warning, "Could not close connection to server", e));
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"SqlBulkCopy closed after writing {_recordsWritten} rows to the server.  Total time spent writing to server:{_timer.Elapsed}"));
     }
 

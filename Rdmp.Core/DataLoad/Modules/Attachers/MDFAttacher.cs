@@ -72,7 +72,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath))
             _locations.AttachLdfPath = OverrideAttachLdfPath;
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Identified the MDF file:{_locations.OriginLocationMdf} and corresponding LDF file:{_locations.OriginLocationLdf}"));
 
         AsyncCopyMDFFilesWithEvents(_locations.OriginLocationMdf, _locations.CopyToMdf, _locations.OriginLocationLdf,
@@ -102,7 +102,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
                 throw new Exception(
                     $"Database {_dbInfo.GetRuntimeName()} already exists on server {builder.DataSource}");
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"About to connect to master on {builder.DataSource}"));
             con.Open();
 
@@ -114,12 +114,12 @@ public class MDFAttacher : Attacher, IPluginAttacher
    FOR ATTACH;  ", con);
 
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"About to execute SQL: {cmd.CommandText}"));
 
             cmd.ExecuteNonQuery();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"SQL completed successfully: {cmd.CommandText}"));
 
             if (!_dbInfo.Exists())
@@ -250,7 +250,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         if (FilesSimilar(src, dest, job))
         {
             job.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, $"Files {src} and {dest} match, skipping copy"));
+                new NotifyEventArgs(ProgressEventType.Debug, $"Files {src} and {dest} match, skipping copy"));
         }
         else
         {
@@ -258,7 +258,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
                 job.OnNotify(this,
                     new NotifyEventArgs(ProgressEventType.Warning, "Overwriting existing database file '{dest}'"));
             File.Copy(src, dest, true);
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Copied {src} to {dest}"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Copied {src} to {dest}"));
         }
     }
 

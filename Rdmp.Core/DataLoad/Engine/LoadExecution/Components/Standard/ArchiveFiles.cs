@@ -47,7 +47,7 @@ public class ArchiveFiles : DataLoadComponent
             return ExitCodeType.Success;
         }
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Archiving to {destFile}"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Archiving to {destFile}"));
 
         if (File.Exists(destFile))
             throw new Exception($"Cannot archive files, {destFile} already exists");

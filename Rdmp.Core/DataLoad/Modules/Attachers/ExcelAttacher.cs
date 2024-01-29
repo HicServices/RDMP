@@ -57,7 +57,7 @@ public class ExcelAttacher : FlatFileAttacher
         };
 
         _hostedSource.PreInitialize(new FlatFileToLoad(fileToLoad), listener);
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to start processing {fileToLoad.FullName}"));
 
         _dataTable = _hostedSource.GetChunk(listener, cancellationToken);
@@ -68,7 +68,7 @@ public class ExcelAttacher : FlatFileAttacher
             var replacementHeadersSplit = ForceReplacementHeaders.Split(',')
                 .Select(h => string.IsNullOrWhiteSpace(h) ? h : h.Trim()).ToArray();
 
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
 
             if (replacementHeadersSplit.Length != _dataTable.Columns.Count)

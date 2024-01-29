@@ -141,7 +141,7 @@ public class TestCacheSource : CacheSource<TestCacheChunk>
         GracefulCancellationToken cancellationToken)
     {
         var c = new TestCacheChunk(Request.Start);
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"!!{request.Start:g}"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"!!{request.Start:g}"));
         return c;
     }
 

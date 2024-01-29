@@ -188,7 +188,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
             else
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Determined that the table name {TargetTableName} is unique at destination {_database}"));
             }
 
@@ -203,7 +203,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 else
                     _database.CreateTable(TargetTableName, toProcess, ExplicitTypes.ToArray(), true, adjuster);
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Created table {TargetTableName} successfully."));
             }
 
@@ -400,7 +400,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     _managedConnection.ManagedTransaction.AbandonAndCloseConnection();
 
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction rolled back successfully"));
+                        new NotifyEventArgs(ProgressEventType.Debug, "Transaction rolled back successfully"));
 
                     _bulkcopy?.Dispose();
                 }
@@ -411,7 +411,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     _bulkcopy?.Dispose();
 
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information, "Transaction committed successfully"));
+                        new NotifyEventArgs(ProgressEventType.Debug, "Transaction committed successfully"));
                 }
             }
         }

@@ -110,7 +110,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
 
         var inPlace = string.Equals(fromColumnName, toColumnName);
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to build mapping table"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "About to build mapping table"));
 
         if (!toProcess.Columns.Contains(fromColumnName))
             throw new Exception($"DataTable did not contain a field called '{fromColumnName}'");
@@ -127,11 +127,11 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
         if (_keyType == null)
             throw new Exception("Unable to determine key datatype for mapping table");
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Mapping table resulted in {_mappingTable.Count} unique possible input values"));
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Mapping table resulted in {_mappingTable.Sum(kvp => kvp.Value.Count)} unique possible output values"));
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Mapping table Key is of Type {_keyType}"));
 
         //add the new column (the output column).  Unless we are just updating the same input column

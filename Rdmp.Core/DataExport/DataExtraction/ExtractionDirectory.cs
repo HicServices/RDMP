@@ -122,7 +122,7 @@ public class ExtractionDirectory : IExtractionDirectory
 
         foreach (var fileInfo in filesToDelete)
         {
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Deleting: {fileInfo.FullName}"));
             try
             {
@@ -137,7 +137,7 @@ public class ExtractionDirectory : IExtractionDirectory
 
         foreach (var directoryInfo in directoriesToDelete)
         {
-            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(sender, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Recursively deleting folder: {directoryInfo.FullName}"));
             try
             {

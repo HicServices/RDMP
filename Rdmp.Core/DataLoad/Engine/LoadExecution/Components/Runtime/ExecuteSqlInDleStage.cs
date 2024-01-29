@@ -48,7 +48,7 @@ internal class ExecuteSqlInDleStage
 
             foreach (var section in performance)
                 _job.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
+                    new NotifyEventArgs(ProgressEventType.Debug,
                         $"Batch ending on line  \"{section.Key}\" finished after {section.Value.Elapsed}"));
         }
         catch (Exception e)

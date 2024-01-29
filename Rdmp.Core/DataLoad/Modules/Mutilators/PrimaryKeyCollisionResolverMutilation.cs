@@ -76,7 +76,7 @@ public class PrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
         if (cmdAreTherePrimaryKeyCollisions.ExecuteScalar().ToString().Equals("0"))
         {
             job.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "No primary key collisions detected"));
+                new NotifyEventArgs(ProgressEventType.Debug, "No primary key collisions detected"));
             return;
         }
 

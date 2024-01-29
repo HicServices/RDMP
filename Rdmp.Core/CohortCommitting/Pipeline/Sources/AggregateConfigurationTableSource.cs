@@ -67,7 +67,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
     private DataTable GetDataTable(int timeout, IDataLoadEventListener listener)
     {
-        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to lookup which server to interrogate for AggregateConfiguration '{AggregateConfiguration}'"));
 
         var server =
@@ -79,7 +79,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
         var sql = GetSQL();
 
-        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Connection opened, ready to send the following SQL (with Timeout {Timeout}s):{Environment.NewLine}{sql}"));
 
         var dt = new DataTable();
@@ -95,7 +95,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
 
         dt.TableName = TableName;
 
-        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener?.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"successfully read {dt.Rows.Count} rows from source"));
 
         dt.EndLoadData();

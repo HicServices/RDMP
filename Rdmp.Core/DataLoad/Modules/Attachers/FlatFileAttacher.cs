@@ -132,7 +132,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
             insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
 
         //bulk insert ito destination
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"About to open file {fileToLoad.FullName}"));
         OpenFile(fileToLoad, job, token);
 

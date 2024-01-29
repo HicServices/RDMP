@@ -392,7 +392,7 @@ public class FlatFileColumnCollection
             discarded.Append(row[i]);
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Skipped first line of file because there are forced replacement headers, we discarded: {discarded}"));
     }
 }

@@ -41,7 +41,7 @@ public class LoadFiles : CompositeDataLoadComponent
             if (Components.Any())
                 toReturn = base.Run(job, cancellationToken);
             else if (job.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                     $"Using existing files in '{job.LoadDirectory.ForLoading.FullName}', there are no GetFiles processes or DataProviders configured"));
             else
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
@@ -58,7 +58,7 @@ public class LoadFiles : CompositeDataLoadComponent
 
     public void DeleteAllFilesInForLoading(LoadDirectory directory, DataLoadJob job)
     {
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Deleting files in ForLoading ({directory.ForLoading.FullName})"));
         directory.ForLoading.EnumerateFiles().ToList().ForEach(info => info.Delete());
         directory.ForLoading.EnumerateDirectories().ToList().ForEach(info => info.Delete(true));

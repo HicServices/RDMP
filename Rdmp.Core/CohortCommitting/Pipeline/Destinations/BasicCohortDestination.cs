@@ -152,13 +152,13 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         var db = Request.NewCohortDefinition.LocationOfCohort.Discover();
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing upload"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Preparing upload"));
 
         using (var connection = db.Server.BeginNewTransactedConnection())
         {
             try
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Started Transaction"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Started Transaction"));
                 Request.PushToServer(connection);
 
                 if (Request.NewCohortDefinition.ID == null)
@@ -199,7 +199,7 @@ public class BasicCohortDestination : IPluginCohortDestination
             }
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Successfully uploaded {_cohortDictionary.Count} records"));
 
         var id = Request.ImportAsExtractableCohort(DeprecateOldCohortOnSuccess, MigrateUsages);
@@ -233,9 +233,9 @@ public class BasicCohortDestination : IPluginCohortDestination
 
         _fk = syntax.GetRuntimeName(Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField);
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"CohortCreationRequest spotted, we will look for columns {_privateIdentifier} and {_releaseIdentifier} (both of which must be in the pipeline before we will allow the cohort to be submitted)"));
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"id column in table {Request.NewCohortDefinition.LocationOfCohort.TableName} is {Request.NewCohortDefinition.LocationOfCohort.DefinitionTableForeignKeyField}"));
     }
 

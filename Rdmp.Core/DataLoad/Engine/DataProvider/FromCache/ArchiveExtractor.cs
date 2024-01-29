@@ -39,7 +39,7 @@ internal abstract class ArchiveExtractor : IArchivedFileExtractor
                 $"Unexpected job file extension -{job.Value.Extension} (expected {_extension})");
 
         //tell the UI/listener that we have identified the archive
-        dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        dataLoadJob.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Archive identified:{job.Value.FullName}"));
 
         try

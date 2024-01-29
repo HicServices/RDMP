@@ -67,19 +67,19 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
 
             case PrematureLoadEndCondition.NoRecordsInAnyTablesInDatabase:
                 {
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"About to inspect what tables have rows in them in database {_databaseInfo.GetRuntimeName()}"));
 
                     foreach (var t in _databaseInfo.DiscoverTables(false))
                     {
                         var rowCount = t.GetRowCount();
 
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                             $"Found table {t.GetRuntimeName()} with row count {rowCount}"));
 
                         if (rowCount > 0)
                         {
-                            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                                 $"Found at least 1 record in 1 table so condition {ConditionsToTerminateUnder} is not met.  Therefore returning Success so the load can continue normally."));
                             return ExitCodeType.Success;
                         }
@@ -95,7 +95,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
                     var dataLoadJob = job as IDataLoadJob ??
                                       throw new Exception(
                                           $"IDataLoadEventListener {job} was not an IDataLoadJob (very unexpected)");
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"About to check ForLoading directory for files, the directory is:{dataLoadJob.LoadDirectory.ForLoading.FullName}"));
 
                     var files = dataLoadJob.LoadDirectory.ForLoading.GetFiles();
@@ -107,7 +107,7 @@ public class PrematureLoadEnder : IPluginMutilateDataTables
                         return ExitCodeToReturnIfConditionMet;
                     }
 
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                         $"Found {files.Length} files in ForLoading so not terminating ({string.Join(",", files.Select(f => f.Name))})"));
 
                     //There were

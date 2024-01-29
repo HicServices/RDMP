@@ -38,7 +38,7 @@ public class ExecutableRuntimeTask : RuntimeTask
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, $"About to run Task '{ProcessTask.Name}'"));
+            new NotifyEventArgs(ProgressEventType.Debug, $"About to run Task '{ProcessTask.Name}'"));
 
         var info = new ProcessStartInfo
         {
@@ -70,8 +70,8 @@ public class ExecutableRuntimeTask : RuntimeTask
         var reader = _currentProcess.StandardError;
 
         job.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, "Executable has been started successfully"));
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Waiting for executable to complete"));
+            new NotifyEventArgs(ProgressEventType.Debug, "Executable has been started successfully"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Waiting for executable to complete"));
 
         try
         {
@@ -87,7 +87,7 @@ public class ExecutableRuntimeTask : RuntimeTask
         var exitCode = ParseExitCode(_currentProcess.ExitCode);
         job.OnNotify(this,
             new NotifyEventArgs(
-                exitCode != ExitCodeType.Error ? ProgressEventType.Information : ProgressEventType.Error,
+                exitCode != ExitCodeType.Error ? ProgressEventType.Debug : ProgressEventType.Error,
                 $"Executable has exited with state '{exitCode}'"));
 
         if (exitCode == ExitCodeType.Error)

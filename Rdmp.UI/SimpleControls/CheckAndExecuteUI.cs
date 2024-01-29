@@ -217,7 +217,7 @@ public partial class CheckAndExecuteUI : RDMPUserControl, IConsultableBeforeClos
                 new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
 
             loadProgressUI1.OnNotify(this, new NotifyEventArgs(
-                exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,
+                exitCode == 0 ? ProgressEventType.Debug : ProgressEventType.Error,
                 $"Exit code was {exitCode}"));
 
             return exitCode;

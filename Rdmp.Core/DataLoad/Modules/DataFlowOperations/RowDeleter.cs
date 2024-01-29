@@ -63,7 +63,7 @@ internal class RowDeleter : IPluginDataFlowComponent<DataTable>
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
         listener.OnNotify(this,
-            new NotifyEventArgs(_deleted > 0 ? ProgressEventType.Warning : ProgressEventType.Information,
+            new NotifyEventArgs(_deleted > 0 ? ProgressEventType.Warning : ProgressEventType.Debug,
                 $"Total RowDeleted operations for ColumnNameToFind '{ColumnNameToFind}' was {_deleted}"));
     }
 

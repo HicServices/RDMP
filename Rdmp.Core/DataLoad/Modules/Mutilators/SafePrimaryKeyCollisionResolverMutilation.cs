@@ -78,7 +78,7 @@ False - Delete the larger value")]
         cmd.CommandTimeout = Timeout;
 
         var affectedRows = cmd.ExecuteNonQuery();
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Deleted {affectedRows} rows"));
     }
 

@@ -133,13 +133,13 @@ public class CachingHost
                         {
                             listener.OnNotify(this,
                                 new NotifyEventArgs(ProgressEventType.Information,
-                                    "Download not permitted at this time so exitting"));
+                                    "Download not permitted at this time so exiting"));
 
                             return;
                         }
 
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
+                            new NotifyEventArgs(ProgressEventType.Debug,
                                 "Download not permitted at this time, sleeping for 60 seconds"));
 
                         // Sleep for a while, but keep one eye open for cancellation requests
@@ -168,7 +168,7 @@ public class CachingHost
         catch (OperationCanceledException)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                $"Cache download cancelled: {downloader}"));
+                $"Cache download canceled: {downloader}"));
         }
     }
 }

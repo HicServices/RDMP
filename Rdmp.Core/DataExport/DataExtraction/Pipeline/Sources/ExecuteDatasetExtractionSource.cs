@@ -255,7 +255,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         //data exhausted
         if (chunk == null)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Data exhausted after reading {_rowsRead} rows of data ({UniqueReleaseIdentifiersEncountered.Count} unique release identifiers seen)"));
             if (Request != null)
                 Request.CumulativeExtractionResults.DistinctReleaseIdentifiersEncountered =
@@ -435,11 +435,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         {
             //use hash joins!
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information, "Substituting JOIN for HASH JOIN"));
+                new NotifyEventArgs(ProgressEventType.Debug, "Substituting JOIN for HASH JOIN"));
             sql = sql.Replace(" JOIN ", " HASH JOIN ");
         }
 
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"/*Decided on extraction SQL:*/{Environment.NewLine}{sql}"));
 
         return sql;

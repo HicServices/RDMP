@@ -45,7 +45,6 @@ public class RDMPBootStrapper
     {
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
-
         //tell me when you blow up somewhere in the windows API instead of somewhere sensible
         Application.ThreadException += (s, e) =>
         {
