@@ -80,7 +80,7 @@ public class CachingHost
 
     private void RetrieveNewDataForCache(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Retrieving new data"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, "Retrieving new data"));
 
         var combinedToken = cancellationToken.CreateLinkedSource().Token;
 

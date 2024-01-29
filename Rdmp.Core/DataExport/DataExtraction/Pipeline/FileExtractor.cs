@@ -47,7 +47,7 @@ public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>, IPipe
         if (_command == null)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     $"Ignoring {GetType().Name} component because command is not ExtractGlobalsCommand"));
             return toProcess;
         }

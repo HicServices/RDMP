@@ -53,6 +53,8 @@ public class DataLoadJob : IDataLoadJob
 
     private string _loggingTask;
 
+    private bool _debugMode;
+
     public DataLoadJob(IRDMPPlatformRepositoryServiceLocator repositoryLocator, string description,
         ILogManager logManager, ILoadMetadata loadMetadata, ILoadDirectory directory, IDataLoadEventListener listener,
         HICDatabaseConfiguration configuration)
@@ -64,6 +66,7 @@ public class DataLoadJob : IDataLoadJob
         Configuration = configuration;
         _listener = listener;
         Description = description;
+        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any();
 
         var catalogues = LoadMetadata.GetAllCatalogues().ToList();
 
@@ -172,6 +175,11 @@ public class DataLoadJob : IDataLoadJob
             {
                 case ProgressEventType.Trace:
                 case ProgressEventType.Debug:
+                    if (_debugMode)
+                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnDebug,
+                         sender.GetType().Name, e.Message + (e.Exception != null
+                             ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
+                             : ""));
                     break;
                 case ProgressEventType.Information:
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation,

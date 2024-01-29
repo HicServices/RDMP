@@ -156,7 +156,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         using var attachConnection = new SqlConnection(builder.ConnectionString);
         try
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"About to attach file {_locations.AttachMdfPath} as a database to server {builder.DataSource}"));
             attachConnection.Open();
         }

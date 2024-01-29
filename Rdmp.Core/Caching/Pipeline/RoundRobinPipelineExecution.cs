@@ -25,7 +25,7 @@ public class RoundRobinPipelineExecution : IMultiPipelineEngineExecutionStrategy
         // Execute one pass through a pipeline before moving to the next. Continue until completion.
         var engineList = engines.ToList();
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Round robin executor has {engineList.Count} pipeline(s) to run."));
+            $"Round robin executor has {engineList.Count} pipeline{(engineList.Any() ? "s":null)} to run."));
 
         var allComplete = false;
         while (!allComplete)

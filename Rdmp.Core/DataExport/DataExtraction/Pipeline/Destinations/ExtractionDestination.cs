@@ -92,7 +92,7 @@ e.g. /$i/$a")]
         if (_request == ExtractDatasetCommand.EmptyCommand)
         {
             listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
+                new NotifyEventArgs(ProgressEventType.Debug,
                     "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out"));
             return;
         }
@@ -353,7 +353,7 @@ e.g. /$i/$a")]
         var sw = new Stopwatch();
         sw.Start();
 
-        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"About to extract lookup {lookup}"));
+        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"About to extract lookup {lookup}"));
 
         try
         {
@@ -487,7 +487,7 @@ e.g. /$i/$a")]
             listener.OnProgress(this,
                 new ProgressEventArgs($"Extract {sql}", new ProgressMeasurement(sqlLinesWritten, ProgressType.Records),
                     sw.Elapsed));
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
                 $"Extracted {sqlLinesWritten} records from SupportingSQL {sql} into directory {directory.FullName}"));
 
             return true;

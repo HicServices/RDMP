@@ -63,7 +63,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         if (pipelineFailureExceptionIfAny != null || !FreezeAfterSuccessfulImport) return;
 
         listener.OnNotify(this,
-            new NotifyEventArgs(ProgressEventType.Information, "Freezing CohortIdentificationConfiguration"));
+            new NotifyEventArgs(ProgressEventType.Debug, "Freezing CohortIdentificationConfiguration"));
         _cohortIdentificationConfiguration.Freeze();
     }
 
