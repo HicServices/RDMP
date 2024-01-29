@@ -27,7 +27,6 @@ public class ToMemoryDataLoadEventListener : IDataLoadEventListener
     {
         _throwOnErrorEvents = throwOnErrorEvents;
     }
-
     public void OnNotify(object sender, NotifyEventArgs e)
     {
         if (e.ProgressEventType == ProgressEventType.Error && _throwOnErrorEvents)

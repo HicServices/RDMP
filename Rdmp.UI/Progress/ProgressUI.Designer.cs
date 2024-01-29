@@ -32,7 +32,7 @@ namespace Rdmp.UI.Progress
         /// </summary>
         private void InitializeComponent()
         {
-            this._debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any() || false; //if there are no args then it returns null
+            this._debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();

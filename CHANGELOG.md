@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Update Excel Attacher to read data from arbitrary start points within sheets
+- Add debug mode to RDMP for more verbose loggings, see [Debug Mode](./Documentation/DebugMode.md) for more details
 
 ## [8.1.3] - 2024-01-15
 

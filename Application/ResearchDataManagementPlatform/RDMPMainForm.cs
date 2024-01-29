@@ -92,6 +92,8 @@ public partial class RDMPMainForm : RDMPForm
     private string _version;
     private string _connectedTo;
 
+    private string _debugMode;
+
     public void SetRepositoryLocator(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
         RepositoryLocator = repositoryLocator;
@@ -166,7 +168,7 @@ public partial class RDMPMainForm : RDMPForm
     public override string Text
     {
         get => base.Text;
-        set => base.Text = $"{value} v{_version} {_connectedTo}".Trim();
+        set => base.Text = $"{value} v{_version} {_connectedTo} {_debugMode}".Trim();
     }
 
     private void LoadFromXml(Stream stream)

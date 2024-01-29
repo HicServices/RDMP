@@ -28,7 +28,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class PayloadTest : DatabaseTests
 {
     public static object payload = new();
-    public static bool Success;
+    public static bool Success
 
     [Test]
     public void TestPayloadInjection()
@@ -82,7 +82,7 @@ public class PayloadTest : DatabaseTests
 
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug, $"Found Payload:{job.Payload}"));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found Payload:{job.Payload}"));
             Success = ReferenceEquals(payload, job.Payload);
 
             return ExitCodeType.OperationNotRequired;

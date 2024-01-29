@@ -487,7 +487,7 @@ e.g. /$i/$a")]
             listener.OnProgress(this,
                 new ProgressEventArgs($"Extract {sql}", new ProgressMeasurement(sqlLinesWritten, ProgressType.Records),
                     sw.Elapsed));
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"Extracted {sqlLinesWritten} records from SupportingSQL {sql} into directory {directory.FullName}"));
 
             return true;
