@@ -44,7 +44,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         _logManager = logManager;
         _loggingTask = loggingTask;
         _runDescription = runDescription;
-        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Count() > 0;
+        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any() || false; //if there are no args then it returns null
     }
 
     public ToLoggingDatabaseDataLoadEventListener(LogManager logManager, IDataLoadInfo dataLoadInfo)
@@ -52,7 +52,7 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         DataLoadInfo = dataLoadInfo;
         _logManager = logManager;
         _wasAlreadyOpen = true;
-        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Count() > 0;
+        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any() || false; //if there are no args then it returns null
     }
 
     public virtual void StartLogging()

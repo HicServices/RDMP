@@ -73,6 +73,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.queryCatalogue = new System.Windows.Forms.ToolStripMenuItem();
             this.queryDataExport = new System.Windows.Forms.ToolStripMenuItem();
             this.restartApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugApplicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.terminateProcessToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -350,6 +351,7 @@ namespace ResearchDataManagementPlatform.Menus
             this.openExeDirectoryToolStripMenuItem,
             this.queryToolStripMenuItem,
             this.restartApplicationToolStripMenuItem,
+            this.debugApplicationToolStripMenuItem,
             this.terminateProcessToolStripMenuItem});
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
@@ -441,6 +443,13 @@ namespace ResearchDataManagementPlatform.Menus
             this.restartApplicationToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.restartApplicationToolStripMenuItem.Text = "Restart Application";
             this.restartApplicationToolStripMenuItem.Click += new System.EventHandler(this.restartApplicationToolStripMenuItem_Click);
+            // 
+            // debugApplicationToolStripMenuItem
+            // 
+            this.debugApplicationToolStripMenuItem.Name = "debugApplicationToolStripMenuItem";
+            this.debugApplicationToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
+            this.debugApplicationToolStripMenuItem.Text = "Restart In Debug Mode";
+            this.debugApplicationToolStripMenuItem.Click += new System.EventHandler(this.debugApplicationToolStripMenuItem_Click);
             // 
             // terminateProcessToolStripMenuItem
             // 
@@ -583,6 +592,7 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newSessionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem restartApplicationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugApplicationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem lastCommandMonitorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem instancesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem launchAnotherInstanceToolStripMenuItem;

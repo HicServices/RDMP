@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -24,6 +25,22 @@ public static class ApplicationRestarter
         {
             RestartImpl();
         }
+    }
+
+
+    public static void RestartInDebugMode()
+    {
+        ProcessStartInfo startInfo = new ProcessStartInfo
+        {
+            FileName = Path.ChangeExtension(Application.ExecutablePath, "exe")
+        };
+        startInfo.FileName = Application.ExecutablePath;
+        Application.Exit();
+        var args = Environment.GetCommandLineArgs().Skip(1);
+        var newArgs = string.Join(" ", args.Where(x => x != @"/x").Select(x => @"""" + x + @""""));
+        newArgs += " --debug";
+        startInfo.Arguments = newArgs;
+        Process.Start(startInfo);
     }
 
     private static void RestartImpl()

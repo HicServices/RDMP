@@ -550,6 +550,16 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         ApplicationRestarter.Restart();
     }
 
+    private void debugApplicationToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (UserSettings.ConfirmApplicationExiting &&
+           Activator.Confirm("Restart Application?", "Confirm Restart") == false)
+            return;
+
+
+        ApplicationRestarter.RestartInDebugMode();
+    }
+
     private void lastCommandMonitorToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var lastCommand = new LastCommandUI();
