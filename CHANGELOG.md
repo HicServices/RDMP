@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- Add ability to log to file instead of database
+- Update Excel Attacher to read data from arbitrary start points within sheets
 
 ## [8.1.3] - 2024-01-15
 
