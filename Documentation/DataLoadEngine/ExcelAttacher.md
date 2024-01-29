@@ -1,6 +1,6 @@
 ## Excel Attacher
-The Excel attacher is a convenient way to load your data from .xlxs files into RDMP.
-It works out the box with a single-sheet workbooks.
+The Excel attacher is a convenient way to load your data from .xlsx files into RDMP.
+It works out of the box with a single-sheet workbook.
 
 ### Simple Example
 For example, the following Excel sheet would be transformed into a single database table with columns "COLUMN_1" and "COLUMN_2"

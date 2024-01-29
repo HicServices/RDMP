@@ -37,11 +37,9 @@ public class ExcelAttacherTests : DatabaseTests
     private string _filename;
 
 
-    [SetUp]
+    [OneTimeSetUp]
     protected void Setup()
     {
-       
-
         base.SetUp();
 
         var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
@@ -64,7 +62,7 @@ public class ExcelAttacherTests : DatabaseTests
         _table = _database.ExpectTable("ExcelAttacher");
     }
 
-    [TearDownAttribute]
+    [TearDown]
     public void CleanUp()
     {
         _workbook.Dispose();
@@ -162,8 +160,7 @@ public class ExcelAttacherTests : DatabaseTests
     {
         _workbook = new XSSFWorkbook();
         ISheet sheet = _workbook.CreateSheet("Sheet1");
-        IRow row = sheet.CreateRow(0);
-        row = sheet.CreateRow(1);
+        IRow row = sheet.CreateRow(1);
         row.CreateCell(1).SetCellValue("chi");
         row.CreateCell(2).SetCellValue("value");
         row = sheet.CreateRow(2);
@@ -206,8 +203,7 @@ public class ExcelAttacherTests : DatabaseTests
     {
         _workbook = new XSSFWorkbook();
         ISheet sheet = _workbook.CreateSheet("Sheet1");
-        IRow row = sheet.CreateRow(0);
-        row = sheet.CreateRow(1);
+        IRow row = sheet.CreateRow(1);
         row.CreateCell(1).SetCellValue("chi");
         row.CreateCell(2).SetCellValue("value");
         row = sheet.CreateRow(2);
@@ -224,7 +220,7 @@ public class ExcelAttacherTests : DatabaseTests
         attacher.Initialize(_loadDirectory, _database);
         attacher.FilePattern = "ExcelAttacher*";
         attacher.TableName = "ExcelAttacher";
-        attacher.ColumnOffset = '1';
+        attacher.ColumnOffset = "1";
         Assert.DoesNotThrow(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         var table = _database.ExpectTable("ExcelAttacher");
         Assert.That(table.Exists());
@@ -252,8 +248,7 @@ public class ExcelAttacherTests : DatabaseTests
     {
         _workbook = new XSSFWorkbook();
         ISheet sheet = _workbook.CreateSheet("Sheet1");
-        IRow row = sheet.CreateRow(0);
-        row = sheet.CreateRow(1);
+        IRow row = sheet.CreateRow(1);
         row.CreateCell(1).SetCellValue("chi");
         row.CreateCell(2).SetCellValue("value");
         row = sheet.CreateRow(2);
@@ -270,7 +265,7 @@ public class ExcelAttacherTests : DatabaseTests
         attacher.Initialize(_loadDirectory, _database);
         attacher.FilePattern = "ExcelAttacher*";
         attacher.TableName = "ExcelAttacher";
-        attacher.ColumnOffset = 'B';
+        attacher.ColumnOffset = "B";
         Assert.DoesNotThrow(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         var table = _database.ExpectTable("ExcelAttacher");
         Assert.That(table.Exists());
@@ -317,7 +312,7 @@ public class ExcelAttacherTests : DatabaseTests
         attacher.Initialize(_loadDirectory, _database);
         attacher.FilePattern = "ExcelAttacher*";
         attacher.TableName = "ExcelAttacher";
-        attacher.ColumnOffset = 'C';
+        attacher.ColumnOffset = "C";
         Assert.DoesNotThrow(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         var table = _database.ExpectTable("ExcelAttacher");
         Assert.That(table.Exists());
@@ -365,7 +360,7 @@ public class ExcelAttacherTests : DatabaseTests
         attacher.Initialize(_loadDirectory, _database);
         attacher.FilePattern = "ExcelAttacher*";
         attacher.TableName = "ExcelAttacher";
-        attacher.ColumnOffset = '2';
+        attacher.ColumnOffset = "2";
         Assert.DoesNotThrow(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         var table = _database.ExpectTable("ExcelAttacher");
         Assert.That(table.Exists());
@@ -418,7 +413,7 @@ public class ExcelAttacherTests : DatabaseTests
         attacher.Initialize(_loadDirectory, _database);
         attacher.FilePattern = "ExcelAttacher*";
         attacher.TableName = "ExcelAttacher";
-        attacher.ColumnOffset = '2';
+        attacher.ColumnOffset = "2";
         attacher.RowOffset = 2;
         Assert.DoesNotThrow(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
         var table = _database.ExpectTable("ExcelAttacher");
@@ -439,6 +434,41 @@ public class ExcelAttacherTests : DatabaseTests
             Assert.That(reader["value"], Is.EqualTo("some other value"));
         });
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
+    }
+
+    [Test]
+    public void Test_ExcelAttacherBadColumnOffset()
+    {
+        _workbook = new XSSFWorkbook();
+        ISheet sheet = _workbook.CreateSheet("Sheet1");
+        IRow row = sheet.CreateRow(0);
+        row.CreateCell(1).SetCellValue("junk_data");
+        row.CreateCell(2).SetCellValue("junk_data");
+        row.CreateCell(3).SetCellValue("junk_data");
+        row = sheet.CreateRow(1);
+
+        row.CreateCell(1).SetCellValue("junk_data");
+        row.CreateCell(2).SetCellValue("chi");
+        row.CreateCell(3).SetCellValue("value");
+        row = sheet.CreateRow(2);
+        row.CreateCell(1).SetCellValue("junk_data");
+        row.CreateCell(2).SetCellValue("1111111111");
+        row.CreateCell(3).SetCellValue("some value");
+        row = sheet.CreateRow(3);
+        row.CreateCell(1).SetCellValue("junk_data");
+        row.CreateCell(2).SetCellValue("2222222222");
+        row.CreateCell(3).SetCellValue("some other value");
+        _filename = Path.Combine(_loadDirectory.ForLoading.FullName, "ExcelAttacher.xlsx");
+        using var fs = new FileStream(_filename, FileMode.Create, FileAccess.Write);
+        _workbook.Write(fs);
+
+        var attacher = new ExcelAttacher();
+        attacher.Initialize(_loadDirectory, _database);
+        attacher.FilePattern = "ExcelAttacher*";
+        attacher.TableName = "ExcelAttacher";
+        attacher.ColumnOffset = "2.987";
+        attacher.RowOffset = 2;
+        Assert.Throws<Exception>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()),"test");
     }
 
 

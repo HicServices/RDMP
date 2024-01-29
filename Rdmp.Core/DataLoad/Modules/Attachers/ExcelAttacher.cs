@@ -48,16 +48,15 @@ public class ExcelAttacher : FlatFileAttacher
     public int RowOffset { get; set; } = 0;//First row 1;
 
     [DemandsInitialization("Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0. ")]
-    public char ColumnOffset { get; set; } = 'A';//A=0,B=1...
+    public string ColumnOffset { get; set; } = "A";//A=0,B=1...
 
     private bool _haveServedData = false;
 
 
     private int ConvertColumnOffsetToInt()
     {
-        //what if it's a float?
-        if (char.IsNumber(ColumnOffset)) return int.Parse(ColumnOffset.ToString());
-        if (char.IsLetter(ColumnOffset)) return char.ToUpper(ColumnOffset) - 65;//would be 64, but we index from zero here
+        if(int.TryParse(ColumnOffset,out var result)) return result;
+        if (ColumnOffset.Length == 1 && char.IsLetter(ColumnOffset[0])) return char.ToUpper(ColumnOffset[0]) - 65;//would be 64, but we index from zero here
         throw new Exception("Column offset is not a valid number or letter");
     }
 
