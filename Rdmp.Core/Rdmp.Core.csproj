@@ -298,7 +298,7 @@
     <PackageReference Include="CsvHelper" Version="30.0.3" />
     <PackageReference Include="Equ" Version="2.3.0" />
     <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
-    <PackageReference Include="FluentFTP" Version="49.0.1" />
+    <PackageReference Include="FluentFTP" Version="49.0.2" />
     <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
     <PackageReference Include="HIC.FAnsiSql" Version="3.1.1" />
     <PackageReference Include="LibArchive.Net" Version="0.1.4" />
