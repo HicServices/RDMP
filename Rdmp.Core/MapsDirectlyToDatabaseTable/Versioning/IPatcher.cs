@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
@@ -64,4 +65,12 @@ public interface IPatcher
     /// </summary>
     /// <returns></returns>
     SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db);
+
+
+    /// <summary>
+    /// Is a stub to allow plugins to perform any initialization work they may require
+    /// </summary>
+    void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator)
+    {
+    }
 }
