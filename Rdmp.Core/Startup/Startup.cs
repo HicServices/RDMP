@@ -211,7 +211,7 @@ public class Startup
 
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
-        patcher.Init();
+        patcher.Init(RepositoryLocator);
         var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
             .Where(eds => eds.WasCreatedBy(patcher));
 
