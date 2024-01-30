@@ -70,7 +70,5 @@ public interface IPatcher
     /// <summary>
     /// Is a stub to allow plugins to perform any initialization work they may require
     /// </summary>
-    void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator)
-    {
-    }
+    void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator);
 }
