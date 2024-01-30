@@ -62,7 +62,7 @@ public abstract partial class Patcher : IPatcher
             _ => $"/*{sql}*/"
         };
 
-    public override void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator) { }
+    public virtual void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator) { }
 
     public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {
