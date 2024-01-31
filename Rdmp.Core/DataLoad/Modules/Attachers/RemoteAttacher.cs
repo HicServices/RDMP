@@ -73,7 +73,7 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             case DatabaseType.MySql:
                 return $"DATE_ADD(CURDATE(), INTERVAL {amount} {addType})";
             default:
-                throw new OutOfMemoryException("Unknown Database Type");
+                throw new InvalidOperationException("Unknown Database Type");
         }
     }
 
