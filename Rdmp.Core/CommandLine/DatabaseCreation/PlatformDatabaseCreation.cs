@@ -70,7 +70,7 @@ public class PlatformDatabaseCreation
         foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
         {
             {
-                patcher.CreateRequiredPlatformDatabase(options);
+                patcher.CreateRequiredPlatformDatabase(options, repo);
             }
         }
     }

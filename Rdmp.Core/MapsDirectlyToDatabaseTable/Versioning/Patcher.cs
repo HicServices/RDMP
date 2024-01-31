@@ -63,7 +63,7 @@ public abstract partial class Patcher : IPatcher
             _ => $"/*{sql}*/"
         };
 
-    public virtual void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions options) { }
+    public virtual void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions options, IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator) { }
 
     public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {
