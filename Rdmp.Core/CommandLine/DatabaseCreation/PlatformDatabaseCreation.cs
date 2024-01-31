@@ -67,7 +67,8 @@ public class PlatformDatabaseCreation
             examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
 
-        foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound) {
+        foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound))
+        {
             {
                 patcher.CreateRequiredPlatformDatabase(options);
             }
