@@ -28,13 +28,14 @@ public class PlatformDatabaseCreation
     public const string DefaultDQEDatabaseName = "DQE";
     public const string DefaultLoggingDatabaseName = "Logging";
 
+    public PluginPatcherFoundHandler PluginPatcherFound = static delegate { };
 
-    private readonly PatcherManager _patcherManager = new();
+    private readonly PatcherManager _patcherManager = new PatcherManager();
     /// <summary>
     /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
     /// <param name="options"></param>
-    public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
+    public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
         DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
@@ -66,13 +67,11 @@ public class PlatformDatabaseCreation
             examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
 
-        //here
-        //foreach (var patcher in MEF.GetTypes<PluginPatcher>().Where(static type => type.IsPublic))
-        foreach(var patcher in _patcherManager.GetPatchers()) { }
-        {
-            patcher.CreateRequiredPlatformDatabase(options);
+        foreach (var patcher in _patcherManager.GetTier3Patchers(PluginPatcherFound) {
+            {
+                patcher.CreateRequiredPlatformDatabase(options);
+            }
         }
-        //CreateRequiredPlatformDatabase
     }
 
     private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher,
