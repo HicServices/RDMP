@@ -1,5 +1,5 @@
 # Remote Attachers
-The Data load engine within RDMP supports 2 methods for retrieving data from remote databases.
+The Data Load Engine within RDMP supports 2 methods for retrieving data from remote databases.
 
 The Remote Table Attacher facilitates pulling data from a specific table on a remote database.
 The Remote Database Attacher also facilitates pulling data from a remote database, but allows for more freedom when specifying what data is returned.

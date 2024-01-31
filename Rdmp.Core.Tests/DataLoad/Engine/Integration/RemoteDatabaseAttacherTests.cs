@@ -191,7 +191,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
     {
         var db = GetCleanedServer(dbType);
 
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("animal");
         dt.Columns.Add("date_seen");
         var withinDate = Within(duration);

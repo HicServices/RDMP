@@ -202,6 +202,7 @@ public partial class WideMessageBox : Form
             wmb.ShowDialog();
         else
             wmb.Show();
+        wmb.Focus();
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)
