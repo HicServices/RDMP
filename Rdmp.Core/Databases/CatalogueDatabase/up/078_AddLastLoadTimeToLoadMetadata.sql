@@ -1,7 +1,7 @@
 ﻿--Version:8.1.4
 --Description: Adds LastLoadTime to LoadMetadata table
  GO
-  if not exists (select 1 from sys.columns where name = 'LoadLastTime' and object_id = (select object_id from sys.tables where name = 'LoadMetadata'))
+if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaData' and COLUMN_NAME='LoadLastTime')
 BEGIN       
 ALTER TABLE LoadMetadata ADD LastLoadTime DATETIME NULL;
 END
