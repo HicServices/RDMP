@@ -289,7 +289,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             {
                 try
                 {
-                    PlatformDatabaseCreation.CreatePlatformDatabases(opts);
+                    var platformDatabaseCreation= new PlatformDatabaseCreation();
+                    platformDatabaseCreation.CreatePlatformDatabases(opts);
                     if (!opts.SkipPipelines)
                         PostFixPipelines(opts);
                 }
