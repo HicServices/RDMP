@@ -267,11 +267,10 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo( 3));
 
-        dt = tbl.GetDataTable();
-        VerifyRowExist(dt, "Cow", withinDate);
+        using var dt2 = tbl.GetDataTable();
+        VerifyRowExist(dt2, "Cow", withinDate);
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
-        dt.Dispose();
         externalServer.DeleteInDatabase();
     }
 

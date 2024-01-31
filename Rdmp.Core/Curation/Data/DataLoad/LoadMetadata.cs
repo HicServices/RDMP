@@ -10,7 +10,6 @@ using System.Data.Common;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
