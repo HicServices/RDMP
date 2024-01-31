@@ -240,7 +240,8 @@ public partial class DatabaseTests
             // then create them
             TestContext.Out.WriteLine($"Creating TEST databases on {mainDb.Server} using prefix {opts.Prefix}");
 
-            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
+            var platformDatabaseCreation = new PlatformDatabaseCreation();
+            platformDatabaseCreation.CreatePlatformDatabases(opts);
         }
 
         HaveTriedCreatingTestDatabases = true;

@@ -143,7 +143,8 @@ internal class Program
 
         try
         {
-            PlatformDatabaseCreation.CreatePlatformDatabases(opts);
+            var platformDatabaseCreation = new PlatformDatabaseCreation();
+            platformDatabaseCreation.CreatePlatformDatabases(opts);
         }
         catch (Exception e)
         {
