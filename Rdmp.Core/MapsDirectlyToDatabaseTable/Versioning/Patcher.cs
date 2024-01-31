@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -62,7 +63,7 @@ public abstract partial class Patcher : IPatcher
             _ => $"/*{sql}*/"
         };
 
-    public virtual void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator) { }
+    public virtual void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions options) { }
 
     public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {

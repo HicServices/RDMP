@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
@@ -70,5 +71,5 @@ public interface IPatcher
     /// <summary>
     /// Is a stub to allow plugins to perform any initialization work they may require
     /// </summary>
-    void Init(IRDMPPlatformRepositoryServiceLocator RepositoryLocator);
+    void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions creationOptions);
 }

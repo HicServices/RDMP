@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
@@ -12,6 +13,7 @@ using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.Startup.Events;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
@@ -26,6 +28,8 @@ public class PlatformDatabaseCreation
     public const string DefaultDQEDatabaseName = "DQE";
     public const string DefaultLoggingDatabaseName = "Logging";
 
+
+    private readonly PatcherManager _patcherManager = new();
     /// <summary>
     /// Creates new databases on the given server for RDMP platform databases
     /// </summary>
@@ -61,6 +65,14 @@ public class PlatformDatabaseCreation
 
             examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);
         }
+
+        //here
+        //foreach (var patcher in MEF.GetTypes<PluginPatcher>().Where(static type => type.IsPublic))
+        foreach(var patcher in _patcherManager.GetPatchers()) { }
+        {
+            patcher.CreateRequiredPlatformDatabase(options);
+        }
+        //CreateRequiredPlatformDatabase
     }
 
     private static SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher,
