@@ -39,6 +39,8 @@ public abstract partial class Patcher : IPatcher
 
     public string LegacyName { get; protected set; }
 
+    public bool RequiresPlatformDatabases { get; }
+
     protected Patcher(int tier, string resourceSubdirectory)
     {
         Tier = tier;
@@ -64,6 +66,7 @@ public abstract partial class Patcher : IPatcher
         };
 
     public virtual void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions options, IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator) { }
+
 
     public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
     {

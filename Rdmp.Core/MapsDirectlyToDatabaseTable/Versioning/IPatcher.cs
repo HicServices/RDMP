@@ -72,4 +72,6 @@ public interface IPatcher
     /// Is a stub to allow plugins to perform any initialization work they may require
     /// </summary>
     void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions creationOptions, IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator);
+
+    bool RequiresPlatformDatabases { get; }
 }

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -16,6 +17,10 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
+using MongoDB.Driver;
+using Newtonsoft.Json.Linq;
+using NPOI.SS.Formula.Functions;
+using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -209,10 +214,28 @@ public class Startup
         return true;
     }
 
+    private List<ExternalDatabaseServer> GetExternalDatabasesForPatcher(IPatcher patcher)
+    {
+        return RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            .Where(eds => eds.WasCreatedBy(patcher)).ToList();
+    }
+
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
-        var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-            .Where(eds => eds.WasCreatedBy(patcher));
+        var dbs = GetExternalDatabasesForPatcher(patcher);
+        if (!dbs.Any() && patcher.RequiresPlatformDatabases)
+        {
+            //get platform options
+            var options = new PlatformDatabaseCreationOptions();
+
+            var DQEServer = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.CreatedByAssembly == "RdmpCore/Databases.DataQualityEngineDiatabase").First();
+            options.ServerName = DQEServer.Server;
+            options.Username = DQEServer.Username;
+            options.Password = DQEServer.Password;
+
+            var repo = new PlatformDatabaseCreationRepositoryFinder(options);
+            patcher.CreateRequiredPlatformDatabase(options, repo);
+        }
 
         foreach (IExternalDatabaseServer server in dbs)
             try
