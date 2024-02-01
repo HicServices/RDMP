@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
+<<<<<<< HEAD
 - Allow arbitrary MDF files from foreign file systems to work with the MDF Attacher, see [MDFAttacher](Documentation\DataLoadEngine\MDFAttacher.md)
+=======
+- Update Excel Attacher to read data from arbitrary start points within sheets
+>>>>>>> 6e43a79e7205374d159f3f5b5f5015718201ec67
 
 ## [8.1.3] - 2024-01-15
 
