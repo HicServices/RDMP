@@ -152,41 +152,36 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
         }
     }
 
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Past24Hours)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Past7Days)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.PastMonth)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.PastYear)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.SinceLastUse)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.Custom)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllRawColumns, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.MySql, Scenario.AllRawColumns, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.AllColumns, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumn, AttacherHistoricalDurations.DeltaReading)]
-    [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar, AttacherHistoricalDurations.DeltaReading)]
+    private static Scenario[] Scenarios = {
+        Scenario.AllRawColumns,
+        Scenario.AllColumns,
+        Scenario.MissingPreLoadDiscardedColumn,
+        Scenario.MissingPreLoadDiscardedColumnButSelectStar
+    };
+    private static AttacherHistoricalDurations[] Durations = {
+        AttacherHistoricalDurations.Past24Hours,
+        AttacherHistoricalDurations.Past7Days,
+        AttacherHistoricalDurations.PastMonth,
+        AttacherHistoricalDurations.PastYear,
+        AttacherHistoricalDurations.Custom,
+        AttacherHistoricalDurations.DeltaReading
+    };
+
+    public static IEnumerable<object[]> GetAttacherCombinations()
+    {
+        foreach (var db in All.DatabaseTypes)
+        {
+            foreach (var sc in Scenarios)
+            {
+                foreach (var dur in Durations)
+                {
+                    yield return new object[] { db, sc, dur };
+                }
+            }
+        }
+    }
+
+    [TestCaseSource(nameof(GetAttacherCombinations))]
     public void TestRemoteDatabaseAttacherWithDateFilter(DatabaseType dbType, Scenario scenario, AttacherHistoricalDurations duration)
     {
         var db = GetCleanedServer(dbType);
@@ -244,28 +239,18 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
             job.LoadMetadata.LastLoadTime = DateTime.Now.AddDays(-1);// last used yesterday
             job.LoadMetadata.SaveToDatabase();
         }
-
-        switch (scenario)
+        if (scenario == Scenario.MissingPreLoadDiscardedColumn)
         {
-            case Scenario.AllRawColumns:
-                break;
-            case Scenario.AllColumns:
-                break;
-            case Scenario.MissingPreLoadDiscardedColumn:
-                var ex = Assert.Throws<PipelineCrashedException>(() =>
-                    attacher.Attach(job, new GracefulCancellationToken()));
+            var ex = Assert.Throws<PipelineCrashedException>(() =>
+                   attacher.Attach(job, new GracefulCancellationToken()));
 
-                Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Invalid column name 'MyMissingCol'."));
-                return;
-            case Scenario.MissingPreLoadDiscardedColumnButSelectStar:
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(scenario));
+            Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Invalid column name 'MyMissingCol'."));
+            return;
         }
 
         attacher.Attach(job, new GracefulCancellationToken());
 
-        Assert.That(tbl.GetRowCount(), Is.EqualTo( 3));
+        Assert.That(tbl.GetRowCount(), Is.EqualTo(3));
 
         using var dt2 = tbl.GetDataTable();
         VerifyRowExist(dt2, "Cow", withinDate);

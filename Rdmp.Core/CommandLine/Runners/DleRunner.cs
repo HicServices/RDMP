@@ -121,7 +121,7 @@ public class DleRunner : Runner
                                 arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
                                 if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
                                 {
-                                    var mostRecentValue = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).First().Value;
+                                    var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
                                     if (mostRecentValue is not null)
                                     {
                                         arg.Value = DateTime.Parse(mostRecentValue).ToString();
