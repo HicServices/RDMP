@@ -1,4 +1,5 @@
-﻿using ResearchDataManagementPlatform.Menus;
+﻿using Rdmp.Core.ReusableLibraryCode;
+using ResearchDataManagementPlatform.Menus;
 using System;
 using System.Linq;
 using WeifenLuo.WinFormsUI.Docking;
@@ -36,7 +37,7 @@ namespace ResearchDataManagementPlatform
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPMainForm));
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
             this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStripUI();
-            this._debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any() ? "(Debug Mode)" : "";
+            this._debugMode = DebugHelper.Instance.IsInDebugMode ? "(Debug Mode)" : "";
             this.SuspendLayout();
             // 
             // dockPanel1

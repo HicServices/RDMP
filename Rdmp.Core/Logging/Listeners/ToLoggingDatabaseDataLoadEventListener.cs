@@ -25,7 +25,6 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     private readonly LogManager _logManager;
     private readonly string _loggingTask;
     private readonly string _runDescription;
-    private bool _debugMode;
 
     /// <summary>
     /// true if we were passed an IDataLoadInfo that was created by someone else (in which case we shouldn't just arbitrarily close it at any point).
@@ -44,7 +43,6 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         _logManager = logManager;
         _loggingTask = loggingTask;
         _runDescription = runDescription;
-        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any();
     }
 
     public ToLoggingDatabaseDataLoadEventListener(LogManager logManager, IDataLoadInfo dataLoadInfo)
@@ -52,7 +50,6 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         DataLoadInfo = dataLoadInfo;
         _logManager = logManager;
         _wasAlreadyOpen = true;
-        _debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any();
     }
 
     public virtual void StartLogging()
@@ -87,9 +84,11 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         {
             case ProgressEventType.Trace:
             case ProgressEventType.Debug:
-                if (_debugMode)
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
                     DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnDebug, sender.ToString(),
                    EnsureMessageAValidLength(e.Message));
+                });
                 break;
             case ProgressEventType.Information:
                 DataLoadInfo?.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.ToString(),

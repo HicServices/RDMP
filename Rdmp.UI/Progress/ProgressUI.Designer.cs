@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.ReusableLibraryCode;
 using System;
 using System.Linq;
 
@@ -32,7 +33,7 @@ namespace Rdmp.UI.Progress
         /// </summary>
         private void InitializeComponent()
         {
-            this._debugMode = Environment.GetCommandLineArgs().Where(arg => arg == "--debug").Any();
+            this._debugMode = DebugHelper.Instance.IsInDebugMode;
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
