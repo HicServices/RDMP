@@ -220,18 +220,37 @@ public class Startup
             .Where(eds => eds.WasCreatedBy(patcher)).ToList();
     }
 
+    private string GetPrefix(ExternalDatabaseServer database)
+    {
+        switch (database.CreatedByAssembly)
+        {
+            case "Rdmp.Core/Databases.LoggingDatabase":
+                return database.Database.Split("Logging")[0];
+            case "Rdmp.Core/Databases.DataQualityEngineDatabase":
+                return database.Database.Split("DQE")[0];
+            default:
+                throw new Exception("Unknown Platform Database");
+        }
+    }
+
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
         var dbs = GetExternalDatabasesForPatcher(patcher);
-        if (!dbs.Any() && patcher.RequiresPlatformDatabases)
+         string[] PlatformDatabaseAssemblies =
         {
-            //get platform options
+            "Rdmp.Core/Databases.LoggingDatabase",
+            "Rdmp.Core/Databases.DataQualityEngineDatabase"
+        };
+        var platformDatabases = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(edb =>  PlatformDatabaseAssemblies.Contains(edb.CreatedByAssembly));
+        if (!dbs.Any() && patcher.RequiresPlatformDatabases && platformDatabases.Any())
+        {
             var options = new PlatformDatabaseCreationOptions();
 
-            var DQEServer = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.CreatedByAssembly == "RdmpCore/Databases.DataQualityEngineDiatabase").First();
-            options.ServerName = DQEServer.Server;
-            options.Username = DQEServer.Username;
-            options.Password = DQEServer.Password;
+            var server = platformDatabases.First();
+            options.ServerName = server.Server;
+            options.Username = server.Username;
+            options.Password = server.Password;
+            options.Prefix = GetPrefix(server);
 
             var repo = new PlatformDatabaseCreationRepositoryFinder(options);
             patcher.CreateRequiredPlatformDatabase(options, repo);
