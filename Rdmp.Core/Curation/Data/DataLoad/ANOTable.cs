@@ -345,9 +345,11 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         using (var cmd = server.GetCommand(sql, con))
         {
             cmd.Transaction = forceTransaction;
-
-            notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Decided appropriate create statement is:{cmd.CommandText}",
                 CheckResult.Success));
+            });
             try
             {
                 cmd.ExecuteNonQuery();
@@ -370,8 +372,11 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
             if (forceTransaction ==
                 null) //if there was no transaction then this has hit the LIVE ANO database and is for real, so save the ANOTable such that it is synchronized with reality
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Saving state because table has been pushed",
                     CheckResult.Success));
+                });
                 SaveToDatabase();
             }
         }

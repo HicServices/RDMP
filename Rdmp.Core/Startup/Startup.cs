@@ -71,9 +71,10 @@ public class Startup
     public void DoStartup(ICheckNotifier notifier)
     {
         var foundCatalogue = false;
-
-        notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies", CheckResult.Success));
+        });
         DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
 
         var cataloguePatcher = new CataloguePatcher();
@@ -164,9 +165,11 @@ public class Startup
 
         //check we can reach it
         var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
-        notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connecting to {db.GetRuntimeName()} on {db.Server.Name}",
             CheckResult.Success));
-
+        });
         //is it reachable
         try
         {
@@ -259,12 +262,17 @@ public class Startup
             }
 
         if (CatalogueRepository.SuppressHelpLoading) return;
-
-        notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+        });
         var sw = Stopwatch.StartNew();
         catalogueRepository.CommentStore.ReadComments("SourceCodeForSelfAwareness.zip");
         sw.Stop();
-        notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Help loading took:{sw.Elapsed}", CheckResult.Success));
+        });
     }
 
     #endregion

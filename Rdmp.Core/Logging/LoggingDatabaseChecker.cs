@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -109,8 +110,11 @@ public class LoggingDatabaseChecker : ICheckable
 
         if (found != null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found default dataset: {dataSetID}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found default dataset: {dataSetID}",
                 CheckResult.Success, null));
+            });
             return;
         }
 
@@ -138,9 +142,12 @@ public class LoggingDatabaseChecker : ICheckable
 
         if (lm.ListDataTasks().Contains(dataSetID))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found default DataLoadTask for '{dataSetID}'",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found default DataLoadTask for '{dataSetID}'",
                 CheckResult.Success,
                 null));
+            });
         }
         else
         {
@@ -170,8 +177,11 @@ public class LoggingDatabaseChecker : ICheckable
 
         if (!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values",
                 CheckResult.Success, null));
+            });
             return;
         }
 

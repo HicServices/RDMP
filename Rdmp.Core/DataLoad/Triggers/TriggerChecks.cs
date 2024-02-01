@@ -9,6 +9,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Triggers;
@@ -86,9 +87,12 @@ public class TriggerChecks : ICheckable
             }
 
         if (present)
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Trigger presence/intactness for table {_table} matched expected presence", CheckResult.Success,
                 null));
+            });
         else
             NotifyFail(null, notifier, implementer); //try creating it
     }

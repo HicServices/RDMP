@@ -12,6 +12,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
@@ -172,7 +173,10 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
                     $"Column is set to {Destination}  which means its value should be stored in the IdentifierDump but the parent table '{TableInfo}'  doesn't have a dump server configured",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Destination is ok", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Destination is ok", CheckResult.Success));
+            });
 
         if (
             //if column is not diluted (i.e. oblivion or dumped) then there shouldn't be any other columns with the same name
@@ -187,7 +191,10 @@ public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, I
                 new CheckEventArgs($"There are 2+ columns called '{GetRuntimeName(LoadStage.AdjustRaw)}' in this table",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Name is unique", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Name is unique", CheckResult.Success));
+            });
     }
 
     /// <inheritdoc/>

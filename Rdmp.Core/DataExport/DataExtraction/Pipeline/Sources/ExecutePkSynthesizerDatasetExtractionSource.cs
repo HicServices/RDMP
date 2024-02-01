@@ -15,6 +15,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -113,9 +114,12 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
             var columnInfoPrimaryKeys = GetColumnInfoPrimaryKeys().ToArray();
 
             if (columnInfoPrimaryKeys.Any())
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"PKSynthesizer:Found ColumnInfo(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", columnInfoPrimaryKeys.Select(c => c.Name))}",
                     CheckResult.Success));
+                });
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"PKSynthesizer:No ColumnInfo marked IsPrimaryKey in '{Request.SelectedDataSets}'",
@@ -123,9 +127,12 @@ public class ExecutePkSynthesizerDatasetExtractionSource : ExecuteDatasetExtract
         }
         else
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"PKSynthesizer:Found CatalogueItem(s) marked IsPrimaryKey in '{Request.SelectedDataSets}'{string.Join(",", cataloguePrimaryKeys.Select(c => c.GetRuntimeName()))}",
                 CheckResult.Success));
+            });
         }
     }
 

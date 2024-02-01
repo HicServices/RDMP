@@ -10,6 +10,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks;
@@ -82,9 +83,10 @@ public class MissingFieldsChecker : ICheckable
                 CheckResult.Fail, null));
             return;
         }
-
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found Table {type.Name}", CheckResult.Success, null));
+        });
 
         //get columns from underlying database table
         var columns = table.DiscoverColumns();

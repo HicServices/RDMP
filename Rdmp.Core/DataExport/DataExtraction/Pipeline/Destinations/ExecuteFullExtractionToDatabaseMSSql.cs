@@ -621,10 +621,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             }
             else
             {
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Database {database} does not exist on server... it will be created at runtime",
                         CheckResult.Success));
+                });
                 return;
             }
 
@@ -652,8 +655,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             }
             else
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Confirmed that database {database} is empty of tables",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Confirmed that database {database} is empty of tables",
                     CheckResult.Success));
+                });
             }
         }
         catch (Exception e)

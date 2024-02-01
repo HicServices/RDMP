@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation;
@@ -80,9 +81,12 @@ public class SupportingDocumentsFetcher
             var toCopy = document.GetFileName();
 
             if (toCopy is { Exists: true })
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs($"Found SupportingDocument {toCopy.Name} and it exists",
                         CheckResult.Success));
+                });
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(

@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -45,7 +46,7 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         using var fileInfo = new DataTable();
         using var con = (SqlConnection)db.Server.GetConnection();
         using (var cmd = new SqlCommand(fileOnlyCommand, con))
-          using (var da = new SqlDataAdapter(cmd))
+        using (var da = new SqlDataAdapter(cmd))
             da.Fill(fileInfo);
         var primaryFiles = fileInfo.Select("Type = 'D'");
         var logFiles = fileInfo.Select("Type = 'L'");
@@ -118,7 +119,10 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
                     $"File '{Filepath}' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
                     CheckResult.Warning));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Filepath}'",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Filepath}'",
                 CheckResult.Success));
+            });
     }
 }

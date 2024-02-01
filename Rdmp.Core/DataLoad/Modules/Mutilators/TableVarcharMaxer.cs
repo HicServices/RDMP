@@ -8,6 +8,7 @@ using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -46,7 +47,10 @@ public class TableVarcharMaxer : MatchingTablesMutilator
             try
             {
                 DbInfo.Server.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(DestinationType);
-                notifier.OnCheckPerformed(new CheckEventArgs("DestinationType is supported", CheckResult.Success));
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("DestinationType is supported", CheckResult.Success));
+                });
             }
             catch (Exception e)
             {

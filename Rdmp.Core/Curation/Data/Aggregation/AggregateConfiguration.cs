@@ -584,8 +584,11 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
         try
         {
             var qb = GetQueryBuilder();
-            notifier.OnCheckPerformed(new CheckEventArgs($"successfully generated Aggregate SQL:{qb.SQL}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"successfully generated Aggregate SQL:{qb.SQL}",
                 CheckResult.Success));
+            });
         }
         catch (Exception e)
         {

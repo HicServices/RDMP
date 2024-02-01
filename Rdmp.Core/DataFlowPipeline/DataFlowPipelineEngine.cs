@@ -13,6 +13,7 @@ using System.Threading;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -234,34 +235,36 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             return false;
         }
 
-        try {
-          foreach (var component in Components)
-          {
-              if (cancellationToken.IsAbortRequested) break;
+        try
+        {
+            foreach (var component in Components)
+            {
+                if (cancellationToken.IsAbortRequested) break;
 
-              currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-              if (completionUIAlerts is not null && currentChunk is DataTable dt)
-              {
-                  var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                  completionUIAlerts.Add(uiAlert);
-              }
-          }
+                currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+                if (completionUIAlerts is not null && currentChunk is DataTable dt)
+                {
+                    var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                    completionUIAlerts.Add(uiAlert);
+                }
+            }
 
-          if (cancellationToken.IsAbortRequested) return true;
+            if (cancellationToken.IsAbortRequested) return true;
 
-          Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+            Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
 
-          if (cancellationToken.IsAbortRequested) return true;
+            if (cancellationToken.IsAbortRequested) return true;
         }
-        finally {
-          //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
-          if (currentChunk is DataTable dt2)
-              dt2.Clear();
+        finally
+        {
+            //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
+            if (currentChunk is DataTable dt2)
+                dt2.Clear();
 
-          //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-          if (currentChunk is IDisposable junk)
-  #pragma warning disable
-              junk.Dispose();
+            //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
+            if (currentChunk is IDisposable junk)
+#pragma warning disable
+                junk.Dispose();
         }
 
         return true;
@@ -277,9 +280,12 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         {
             if (Source is ICheckable checkableSource)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Source component {checkableSource}",
                     CheckResult.Success));
+                });
                 checkableSource.Check(notifier);
             }
             else
@@ -293,8 +299,11 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             foreach (var component in Components)
                 if (component is ICheckable checkable)
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}",
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs($"About to start checking component {component}",
                         CheckResult.Success));
+                    });
                     checkable.Check(notifier);
                 }
                 else
@@ -307,9 +316,12 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
 
             if (Destination is ICheckable checkableDestination)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"About to start checking Destination component {checkableDestination}",
                     CheckResult.Success));
+                });
                 checkableDestination.Check(notifier);
             }
             else
@@ -328,8 +340,10 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                     CheckResult.Fail, e));
         }
 
-
-        notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components", CheckResult.Success));
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components", CheckResult.Success));
+        });
     }
 
     /// <inheritdoc/>

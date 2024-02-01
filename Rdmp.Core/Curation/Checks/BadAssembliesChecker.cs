@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks;
@@ -35,8 +36,10 @@ public class BadAssembliesChecker : ICheckable
 
         foreach (var t in MEF.GetAllTypes())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found Type {t}", CheckResult.Success, null));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found Type {t}", CheckResult.Success, null));
+            });
             if (typeof(ICheckable).IsAssignableFrom(t))
                 try
                 {

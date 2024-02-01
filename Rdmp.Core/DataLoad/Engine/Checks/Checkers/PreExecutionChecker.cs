@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -96,7 +97,10 @@ public class PreExecutionChecker : ICheckable
         }
         else
         {
-            _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
+            });
         }
     }
 
@@ -110,8 +114,11 @@ public class PreExecutionChecker : ICheckable
                     $"Table {table} in staging database '{stagingDbInfo.GetRuntimeName()}' is not empty on {stagingDbInfo.Server.Name}",
                     CheckResult.Fail));
             else
-                _notifier.OnCheckPerformed(new CheckEventArgs($"Staging database is empty ({stagingDbInfo})",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    _notifier.OnCheckPerformed(new CheckEventArgs($"Staging database is empty ({stagingDbInfo})",
                     CheckResult.Success, null));
+                });
     }
 
     // Check that the column infos from the catalogue match up with what is actually in the staging databases
@@ -181,15 +188,21 @@ public class PreExecutionChecker : ICheckable
         {
             foreach (var t in rawDbInfo.DiscoverTables(true))
             {
-                _notifier.OnCheckPerformed(new CheckEventArgs($"Dropping table {t.GetFullyQualifiedName()}...",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    _notifier.OnCheckPerformed(new CheckEventArgs($"Dropping table {t.GetFullyQualifiedName()}...",
                     CheckResult.Success));
+                });
                 t.Drop();
             }
 
             if (!persistentRaw)
             {
-                _notifier.OnCheckPerformed(new CheckEventArgs($"Finally dropping database{rawDbInfo}...",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    _notifier.OnCheckPerformed(new CheckEventArgs($"Finally dropping database{rawDbInfo}...",
                     CheckResult.Success));
+                });
                 rawDbInfo.Drop();
             }
         }

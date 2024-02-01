@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -98,7 +99,10 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
                     $"File '{Filepath}' does not exist! (the only time this would be legal is if you have an exe or a freaky plugin that creates this file)",
                     CheckResult.Warning));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Filepath}'",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Filepath}'",
                 CheckResult.Success));
+            });
     }
 }

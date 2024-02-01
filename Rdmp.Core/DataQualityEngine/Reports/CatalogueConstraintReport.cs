@@ -19,6 +19,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -289,8 +290,11 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
         try
         {
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(_catalogue.CatalogueRepository);
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found DQE reporting server {dqeRepository.DiscoveredServer.Name}", CheckResult.Success));
+            });
         }
         catch (Exception e)
         {
@@ -318,11 +322,12 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                 CheckResult.Fail));
             return;
         }
-
-        notifier.OnCheckPerformed(new CheckEventArgs(
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(
             $"Found ValidatorXML specified for the Catalogue {_catalogue}:{Environment.NewLine}{_catalogue.ValidatorXML}",
             CheckResult.Success));
-
+        });
         //the XML is legit
         try
         {
@@ -335,9 +340,10 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                 e));
             return;
         }
-
-        notifier.OnCheckPerformed(new CheckEventArgs("Deserialized validation XML successfully", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Deserialized validation XML successfully", CheckResult.Success));
+        });
         //there is a server
         try
         {
@@ -349,10 +355,11 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                 CheckResult.Fail, e));
             return;
         }
-
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found connection string for Catalogue {_catalogue}",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found connection string for Catalogue {_catalogue}",
             CheckResult.Success));
-
+        });
         //we can connect to the server
         try
         {
@@ -379,11 +386,12 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                         new CheckEventArgs(
                             $"The column name {column.IColumn.GetRuntimeName()} is duplicated in the SELECT command, column names must be unique!  Most likely you have 2+ columns with the same name (from different tables) or duplicate named CatalogueItem/Aliases for the same underlying ColumnInfo",
                             CheckResult.Fail));
-
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Query Builder decided the extraction SQL was:{Environment.NewLine}{_queryBuilder.SQL}",
                 CheckResult.Success));
-
+            });
             SetupAdditionalValidationRules(notifier);
         }
         catch (Exception e)
@@ -404,20 +412,25 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                         CheckResult.Fail));
             else
                 //there is that is good
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Found column in query builder columns which matches TargetProperty {itemValidator.TargetProperty}",
                         CheckResult.Success));
-
+                });
         _containsDataLoadID =
             _queryBuilder.SelectColumns.Any(
                 c => c.IColumn.GetRuntimeName().Equals(_dataLoadRunFieldName));
 
         if (_containsDataLoadID)
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found {_dataLoadRunFieldName} field in ExtractionInformation",
                     CheckResult.Success));
+            });
         else
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
@@ -435,10 +448,13 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
         else
         {
             _pivotCategory = _catalogue.PivotCategory_ExtractionInformation.GetRuntimeName();
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found time Pivot Category field {_pivotCategory} so we will be able to generate a categorised tesseract (evaluation, periodicity, consequence, pivot category)",
                     CheckResult.Success));
+            });
         }
 
         var tblValuedFunctions = _catalogue.GetTableInfoList(true).Where(t => t.IsTableValuedFunction).ToArray();
@@ -460,21 +476,26 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
             var periodicityExtractionInformation = _catalogue.TimeCoverage_ExtractionInformation;
 
             _timePeriodicityField = periodicityExtractionInformation.GetRuntimeName();
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found time coverage field {_timePeriodicityField}",
                     CheckResult.Success));
-
+            });
             if (!periodicityExtractionInformation.ColumnInfo.Data_type.ToLower().Contains("date"))
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Time periodicity field {_timePeriodicityField} was of type {periodicityExtractionInformation.ColumnInfo.Data_type} (expected the type name to contain the word 'date' - ignoring caps).  It is possible (but unlikely) that you have dealt with this by applying a transform to the underlying ColumnInfo as part of the ExtractionInformation, if so you can ignore this message.",
                         CheckResult.Warning));
             else
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Time periodicity field {_timePeriodicityField} is a legit date!",
                         CheckResult.Success));
+                });
         }
     }
 

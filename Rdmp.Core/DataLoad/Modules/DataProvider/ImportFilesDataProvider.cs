@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -49,9 +50,17 @@ public class ImportFilesDataProvider : IPluginDataProvider
                 "No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*",
                 CheckResult.Fail));
 
-        notifier.OnCheckPerformed(new DirectoryInfo(DirectoryPath).Exists
-            ? new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success)
-            : new CheckEventArgs($"Path {DirectoryPath} was not found", CheckResult.Fail));
+        if (new DirectoryInfo(DirectoryPath).Exists)
+        {
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success));
+            });
+        }
+        else
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Path {DirectoryPath} was not found", CheckResult.Fail));
+        }
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)

@@ -329,7 +329,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\" />
-    <Folder Include="ReusableLibraryCode\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="GlobalStrings.Designer.cs">

@@ -11,6 +11,7 @@ using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -86,9 +87,12 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
                 sw.Close();
                 sw.Dispose();
                 File.Delete(tempFilename);
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Confirmed could write to/delete from the overridden CacheDirectory: {CacheDirectory.FullName}",
                     CheckResult.Success));
+                });
             }
             catch (Exception e)
             {
@@ -99,10 +103,16 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
 
         // Check CacheLayout creation
         var cacheLayout = CreateCacheLayout();
-        notifier.OnCheckPerformed(cacheLayout == null
-            ? new CheckEventArgs(
-                "The CacheLayout object in CacheFilesystemDestination is not being constructed correctly",
-                CheckResult.Fail)
-            : new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
+        if (cacheLayout == null) notifier.OnCheckPerformed(new CheckEventArgs("The CacheLayout object in CacheFilesystemDestination is not being constructed correctly", CheckResult.Fail));
+        else
+        {
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("CacheLayout object in CacheFilesystemDestination is OK", CheckResult.Success));
+            });
+
+        }
+
     }
 }
+

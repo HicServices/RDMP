@@ -7,6 +7,7 @@
 using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
@@ -26,9 +27,11 @@ public class AnonymisationChecks : ICheckable
     public void Check(ICheckNotifier notifier)
     {
         //check ANO stuff is synchronized
-        notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success,
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Preparing to synchronize ANO configuration", CheckResult.Success,
             null));
-
+        });
         var synchronizer = new ANOTableInfoSynchronizer(_tableInfo);
 
         try

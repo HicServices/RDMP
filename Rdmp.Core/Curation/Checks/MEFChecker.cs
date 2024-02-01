@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks;
@@ -58,9 +59,12 @@ public class MEFChecker : ICheckable
 
         if (allTypes.Any(t => t.FullName.Equals(_classToFind)))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found MEF class {_classToFind}",
                 CheckResult.Success, null));
+            });
         }
         else
         {

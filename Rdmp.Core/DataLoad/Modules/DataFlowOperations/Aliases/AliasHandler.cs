@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -126,7 +127,10 @@ public class AliasHandler : IPluginDataFlowComponent<DataTable>
         try
         {
             var result = GenerateAliasTable(timeout);
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found {result.Count} aliases", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found {result.Count} aliases", CheckResult.Success));
+            });
         }
         catch (Exception e)
         {

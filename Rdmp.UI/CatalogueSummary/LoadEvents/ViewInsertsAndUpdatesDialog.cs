@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
@@ -110,10 +111,12 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
     private static TableInfo GetTableInfoFromConstructorArguments(ArchivalTableLoadInfo toAttemptToDisplay,
         List<TableInfo> potentialTableInfos, ICheckNotifier checkNotifier)
     {
-        checkNotifier.OnCheckPerformed(new CheckEventArgs(
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs(
             $"Table user is attempting to view updates/inserts for is called {toAttemptToDisplay.TargetTable}",
             CheckResult.Success));
-
+        });
         if (potentialTableInfos.Count == 0)
             throw new Exception("No potential tables were found");
 
@@ -124,15 +127,18 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
 
         var runtimeName = syntax.GetRuntimeName(toAttemptToDisplay.TargetTable);
-
-        checkNotifier.OnCheckPerformed(new CheckEventArgs($"The runtime name of the table is {runtimeName}",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs($"The runtime name of the table is {runtimeName}",
             CheckResult.Success));
-
-        checkNotifier.OnCheckPerformed(
+        });
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            checkNotifier.OnCheckPerformed(
             new CheckEventArgs(
                 $"The following TableInfos were given to us to pick from {string.Join(",", potentialTableInfos)}",
                 CheckResult.Success));
-
+        });
         var candidates = potentialTableInfos.Where(t => t.GetRuntimeName().Equals(runtimeName)).ToArray();
 
         if (!candidates.Any())
@@ -150,9 +156,10 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
                 CheckResult.Fail));
             return null;
         }
-
-        checkNotifier.OnCheckPerformed(new CheckEventArgs("Found the correct TableInfo!", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            checkNotifier.OnCheckPerformed(new CheckEventArgs("Found the correct TableInfo!", CheckResult.Success));
+        });
         return candidates.Single();
     }
 

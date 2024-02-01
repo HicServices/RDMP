@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Exceptions;
 
@@ -44,11 +45,13 @@ public class ClonedFilterChecker : ICheckable
     {
         if (_allegedParent == null)
         {
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Filter {_child} is not cloned from a Catalogue filter so does not need checking for synchronicity",
                     CheckResult.Success));
-
+            });
             return;
         }
 
@@ -72,9 +75,12 @@ public class ClonedFilterChecker : ICheckable
 
             //see if someone has been monkeying with the parent (or the child) in which case warn them about the disparity
             if (parent.WhereSQL.Equals(_child.WhereSQL))
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Filter {_child} has the same WhereSQL as parent",
                     CheckResult.Success));
+                });
             else
                 try
                 {

@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -238,11 +239,13 @@ public class RDMPContextMenuStrip : ContextMenuStrip
         {
             var timings = string.Join(Environment.NewLine,
                 performance.Select(kvp => $"{kvp.Key}:{kvp.Value.TotalMilliseconds}ms"));
-
-            _activator.GlobalErrorCheckNotifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Creating menu for '{forObject}' took {DateTime.Now.Subtract(start).Milliseconds}ms:{Environment.NewLine}{timings}",
                     CheckResult.Success));
+            });
         }
     }
 

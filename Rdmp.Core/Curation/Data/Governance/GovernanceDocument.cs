@@ -117,10 +117,13 @@ public class GovernanceDocument : DatabaseEntity, INamed
             var fileInfo = new FileInfo(URL);
 
             if (fileInfo.Exists)
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Found intact attachment file {fileInfo} with length {UsefulStuff.GetHumanReadableByteSize(fileInfo.Length)}",
                         CheckResult.Success));
+                });
             else
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(

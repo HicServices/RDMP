@@ -20,6 +20,7 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -67,9 +68,10 @@ public class SelectedDataSetsChecker : ICheckable
         var cohort = config.Cohort;
         var project = config.Project;
         const int timeout = 5;
-
-        notifier.OnCheckPerformed(new CheckEventArgs($"Inspecting dataset {ds}", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Inspecting dataset {ds}", CheckResult.Success));
+        });
         var selectedcols = new List<IColumn>(config.GetAllExtractableColumnsFor(ds));
 
         if (!selectedcols.Any())
@@ -145,8 +147,17 @@ public class SelectedDataSetsChecker : ICheckable
         var server = request.GetDistinctLiveDatabaseServer();
         var serverExists = server.Exists();
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Server {server} Exists:{serverExists}",
-            serverExists ? CheckResult.Success : CheckResult.Fail));
+        if (serverExists)
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Server {server} Exists: True",
+               CheckResult.Success));
+            });
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs($"Server {server} Exists: False",
+              CheckResult.Fail));
+
+
 
         var cohortServer = request.ExtractableCohort.ExternalCohortTable.Discover();
 
@@ -215,10 +226,13 @@ public class SelectedDataSetsChecker : ICheckable
                 {
                     cmd = server.GetCommand(request.QueryBuilder.SQL, con);
                     cmd.CommandTimeout = timeout;
-                    notifier.OnCheckPerformed(
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             $"/*About to send Request SQL :*/{Environment.NewLine}{request.QueryBuilder.SQL}",
                             CheckResult.Success));
+                    });
                 }
                 catch (QueryBuildingException e)
                 {
@@ -231,9 +245,12 @@ public class SelectedDataSetsChecker : ICheckable
                 {
                     using var r = cmd.ExecuteReader();
                     if (r.Read())
-                        notifier.OnCheckPerformed(new CheckEventArgs(
+                        DebugHelper.Instance.DoIfInDebugMode(() =>
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Read at least 1 row successfully from dataset {ds}",
                             CheckResult.Success));
+                        });
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Dataset {ds} is completely empty (when linked with the cohort). Extraction may fail if the Source does not allow empty extractions",

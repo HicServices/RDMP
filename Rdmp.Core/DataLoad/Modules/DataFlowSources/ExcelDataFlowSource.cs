@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -331,9 +332,12 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                         $"File extension {_fileToLoad.File} has an invalid extension:{_fileToLoad.File.Extension} (this class only accepts:{string.Join(",", acceptedFileExtensions)})",
                         CheckResult.Fail));
             else
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs($"File extension of file {_fileToLoad.File.Name} is acceptable",
                         CheckResult.Success));
+                });
         else
             notifier.OnCheckPerformed(
                 new CheckEventArgs(

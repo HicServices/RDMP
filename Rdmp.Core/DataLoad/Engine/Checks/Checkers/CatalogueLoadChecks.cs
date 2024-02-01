@@ -15,6 +15,7 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.DataLoad.Engine.Migration;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -60,8 +61,10 @@ internal class CatalogueLoadChecks : ICheckable
         //check each catalogue is sufficiently configured to perform a migration
         foreach (var catalogue in catalogueMetadatas)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found Catalogue:{catalogue}", CheckResult.Success, null));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found Catalogue:{catalogue}", CheckResult.Success, null));
+            });
             var tableInfos = catalogue.GetTableInfoList(true).Distinct().ToArray();
 
             if (tableInfos.Length == 0)
@@ -75,8 +78,11 @@ internal class CatalogueLoadChecks : ICheckable
         //check regular tables
         foreach (TableInfo regularTable in tablesFound)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"About To check configuration of TableInfo:{regularTable}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"About To check configuration of TableInfo:{regularTable}",
                 CheckResult.Success, null));
+            });
             CheckTableInfo(regularTable, notifier);
 
             //check anonymisation
@@ -164,8 +170,11 @@ internal class CatalogueLoadChecks : ICheckable
         //synchronize but refuse to apply all fixes, problems are instead added to problemList
         if (tableInfoSynchronizer.Synchronize(notifier))
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"TableInfo {tableInfo} passed Synchronization check",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"TableInfo {tableInfo} passed Synchronization check",
                 CheckResult.Success, null)); //passed synchronization
+            });
         }
         else
         {
@@ -230,9 +239,12 @@ internal class CatalogueLoadChecks : ICheckable
                         $"Mismatch between primary key defined in Catalogue {pksWeExpect[i]} and one found in live table {tableInfo.GetRuntimeName()}",
                         CheckResult.Fail, null));
                 else
-                    notifier.OnCheckPerformed(new CheckEventArgs(
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Found primary key {pksWeExpect[i]} in LIVE table {tableInfo.GetRuntimeName()}",
                         CheckResult.Success, null));
+                    });
     }
 
     private static void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier,
@@ -289,9 +301,12 @@ internal class CatalogueLoadChecks : ICheckable
             }
 
             if (passedColumnOrderCheck)
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Column order match confirmed between staging and live on table {tableName}", CheckResult.Success,
                     null));
+                });
         }
     }
 
@@ -304,8 +319,11 @@ internal class CatalogueLoadChecks : ICheckable
             {
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success, null));
+            });
         }
         catch (Exception e)
         {

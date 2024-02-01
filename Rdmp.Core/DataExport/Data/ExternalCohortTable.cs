@@ -265,9 +265,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             var cohortTable = DiscoverCohortTable();
             if (cohortTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
                     CheckResult.Success, null));
-
+                });
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
                 DiscoverDefinitionTableForeignKey();
@@ -282,9 +284,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
             if (foundCohortDefinitionTable.Exists())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
-
+                });
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
 
                 foreach (var requiredField in CohortDefinitionTable_RequiredFields)
@@ -308,9 +312,11 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         try
         {
             DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
-
-            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
                 null));
+            });
         }
         catch (Exception e)
         {
@@ -338,9 +344,12 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         var tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
         if (columns.Any(col => col.GetRuntimeName().Equals(tofind, StringComparison.CurrentCultureIgnoreCase)))
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found required field {tofind} in table {tableNameFullyQualified}",
                 CheckResult.Success, null));
+            });
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Could not find required field {tofind} in table {tableNameFullyQualified}(It had the following columns:{columns.Aggregate("", (s, n) => $"{s}{n},")})",

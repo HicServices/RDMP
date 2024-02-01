@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Checks;
@@ -54,9 +55,11 @@ public class ProjectChecker : ICheckable
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs($"About to check project {_project.Name} (ID={_project.ID})",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"About to check project {_project.Name} (ID={_project.ID})",
             CheckResult.Success));
-
+        });
         _extractionConfigurations = _project.ExtractionConfigurations;
 
         if (!_extractionConfigurations.Any())
@@ -87,9 +90,13 @@ public class ProjectChecker : ICheckable
         }
 
         //tell them whether it exists or not
-        notifier.OnCheckPerformed(new CheckEventArgs(
-            $"Project ExtractionDirectory ('{_project.ExtractionDirectory}') {(_projectDirectory.Exists ? "Exists" : "Does Not Exist")}",
-            _projectDirectory.Exists ? CheckResult.Success : CheckResult.Fail));
+        if (_projectDirectory.Exists)
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Project ExtractionDirectory ('{_project.ExtractionDirectory}') Exists", CheckResult.Success));
+            });
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs($"Project ExtractionDirectory ('{_project.ExtractionDirectory}') does not exist", CheckResult.Success));
 
         if (CheckConfigurations)
             foreach (var extractionConfiguration in _extractionConfigurations)

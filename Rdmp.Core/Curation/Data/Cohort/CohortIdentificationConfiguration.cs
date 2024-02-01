@@ -337,21 +337,24 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         {
             try
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository",
                     CheckResult.Success));
-
+                });
                 var clone = new CohortIdentificationConfiguration(cataRepo, $"{Name} (Clone)");
-
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Created clone configuration '{clone.Name}' with ID {clone.ID} called {clone}",
                     CheckResult.Success));
-
                 //clone the global parameters
                 foreach (var p in GetAllParameters())
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",
                         CheckResult.Success));
-                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+                    });
+                        var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
                     {
                         Comment = p.Comment,
                         Value = p.Value
@@ -368,10 +371,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 clone.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
                     .CloneEntireTreeRecursively(notifier, this, clone, parentToCloneJoinablesDictionary).ID;
                 clone.SaveToDatabase();
-
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs("Clone creation successful, about to commit Super Transaction",
                         CheckResult.Success));
+                });
                 cataRepo.EndTransaction(true);
                 notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully",
                     CheckResult.Success));

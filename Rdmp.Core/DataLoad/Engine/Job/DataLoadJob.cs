@@ -179,7 +179,7 @@ public class DataLoadJob : IDataLoadJob
                     sender.GetType().Name, e.Message + (e.Exception != null
                         ? $"Exception={ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true)}"
                         : ""));
-                    })
+                    });
                     break;
                 case ProgressEventType.Information:
                     DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation,

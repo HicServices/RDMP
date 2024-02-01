@@ -19,6 +19,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -214,7 +215,10 @@ public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, I
             try
             {
                 DataAccessPortal.ExpectServer(this, DataAccessContext.InternalDataProcessing).TestConnection();
-                notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Successfully connected to server", CheckResult.Success));
+                });
             }
             catch (Exception exception)
             {

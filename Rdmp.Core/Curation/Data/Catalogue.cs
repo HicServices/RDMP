@@ -519,7 +519,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-     public ExternalDatabaseServer LiveLoggingServer =>
+    public ExternalDatabaseServer LiveLoggingServer =>
        LiveLoggingServer_ID == null
                    ? null
                    : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
@@ -869,9 +869,11 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     $"Catalogue name {Name} (ID={ID}) does not follow naming conventions reason:{reason}",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Catalogue name {Name} follows naming conventions ",
                 CheckResult.Success));
-
+            });
         var tables = GetTableInfoList(true);
         foreach (var t in tables)
             t.Check(notifier);
@@ -893,12 +895,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             if (missingColumnInfos)
                 return;
-
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found {extractionInformations.Length} ExtractionInformation(s), preparing to validate SQL with QueryBuilder",
                     CheckResult.Success));
-
+            });
             var accessContext = DataAccessContext.InternalDataProcessing;
 
             try
@@ -918,8 +921,11 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     qb.AddColumnRange(extractionInformations);
 
                     sql = qb.SQL;
-                    notifier.OnCheckPerformed(new CheckEventArgs(
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Query Builder assembled the following SQL:{Environment.NewLine}{sql}", CheckResult.Success));
+                    });
                 }
                 catch (Exception e)
                 {
@@ -934,9 +940,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                     cmd.CommandTimeout = 10;
                     using var r = cmd.ExecuteReader();
                     if (r.Read())
-                        notifier.OnCheckPerformed(new CheckEventArgs(
+                        DebugHelper.Instance.DoIfInDebugMode(() =>
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
                             $"successfully read a row of data from the extraction SQL of Catalogue {this}",
                             CheckResult.Success));
+                        });
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"The query produced an empty result set for Catalogue{this}", CheckResult.Warning));

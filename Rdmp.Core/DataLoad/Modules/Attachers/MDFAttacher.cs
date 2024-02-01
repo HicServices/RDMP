@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -274,9 +275,11 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     public string FindDefaultSQLServerDatabaseDirectory(ICheckNotifier notifier)
     {
-        notifier.OnCheckPerformed(new CheckEventArgs("About to look up Sql Server DATA directory Path",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("About to look up Sql Server DATA directory Path",
             CheckResult.Success));
-
+        });
         try
         {
             //connect to master to run the data directory discovery SQL
@@ -287,10 +290,11 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
             using var connection = new SqlConnection(builder.ConnectionString);
             connection.Open();
-
-            notifier.OnCheckPerformed(new CheckEventArgs($"About to run:\r\n{GetDefaultSQLServerDatabaseDirectory}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"About to run:\r\n{GetDefaultSQLServerDatabaseDirectory}",
                 CheckResult.Success));
-
+            });
             using var cmd = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection);
             var result = cmd.ExecuteScalar() as string;
 
@@ -320,11 +324,15 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
 
         if (Directory.Exists(localSqlServerDataDirectory))
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found server DATA folder (that we will copy mdf/ldf files to at path:{localSqlServerDataDirectory}",
                     CheckResult.Success));
+            });
         else
+
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Proposed server DATA folder (that we will copy mdf/ldf files to) was not found, proposed path was:{localSqlServerDataDirectory}",

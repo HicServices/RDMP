@@ -320,9 +320,10 @@ public partial class ChoosePlatformDatabasesUI : Form
 
                 checksUI1.OnCheckPerformed(new CheckEventArgs(result, CheckResult.Success));
             }
-
-            checksUI1.OnCheckPerformed(new CheckEventArgs("Finished Creating Platform Databases", CheckResult.Success));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Finished Creating Platform Databases", CheckResult.Success));
+            });
             var cata = opts.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);
             var export = opts.GetBuilder(PlatformDatabaseCreation.DefaultDataExportDatabaseName);
 

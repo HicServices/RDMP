@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -199,9 +200,12 @@ public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
             {
                 File.Delete(Path.Combine(dbOutputFolder.FullName, $"{databaseName}.mdf"));
                 File.Delete(Path.Combine(dbOutputFolder.FullName, $"{databaseName}_log.ldf"));
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Cleaned non-empty existing db output folder folder: {dbOutputFolder.FullName}",
                     CheckResult.Success));
+                });
             }
             else
             {

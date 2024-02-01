@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -265,8 +266,11 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
         try
         {
             dataFlowPipelineEngine = Create(pipeline, new FromCheckNotifierToDataLoadEventListener(checkNotifier));
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("Pipeline successfully constructed in memory",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("Pipeline successfully constructed in memory",
                 CheckResult.Success));
+            });
         }
         catch (Exception exception)
         {
@@ -289,10 +293,13 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
             try
             {
                 dataFlowPipelineEngine.Initialize(initizationObjects);
-                checkNotifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    checkNotifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Pipeline successfully initialized with {initizationObjects.Length} initialization objects",
                         CheckResult.Success));
+                });
             }
             catch (Exception exception)
             {
@@ -302,8 +309,10 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
                         CheckResult.Fail,
                         exception));
             }
-
-            checkNotifier.OnCheckPerformed(new CheckEventArgs("About to check engine/components", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("About to check engine/components", CheckResult.Success));
+            });
             dataFlowPipelineEngine.Check(checkNotifier);
         }
     }

@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using LogManager = Rdmp.Core.Logging.LogManager;
 
@@ -130,8 +131,11 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         try
         {
             distinctLoggingTask = _loadMetadata.GetDistinctLoggingTask();
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"All Catalogues agreed on a single Logging Task:{distinctLoggingTask}", CheckResult.Success, null));
+            });
         }
         catch (Exception e)
         {
@@ -144,9 +148,11 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             var settings = _loadMetadata.GetDistinctLoggingDatabase();
             settings.TestConnection();
-            notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully",
                 CheckResult.Success, null));
-
+            });
 
             if (distinctLoggingTask != null)
             {
@@ -155,8 +161,11 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
                 if (dataTasks.Contains(distinctLoggingTask))
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs(
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Found Logging Task {distinctLoggingTask} in Logging database", CheckResult.Success, null));
+                    });
                 }
                 else
                 {
@@ -202,8 +211,10 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
 
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(proposedName);
-        notifier.OnCheckPerformed(new CheckEventArgs($"Created Logging Task '{proposedName}'", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Created Logging Task '{proposedName}'", CheckResult.Success));
+        });
         foreach (var catalogue in catalogues.Cast<Catalogue>())
         {
             catalogue.LiveLoggingServer_ID = loggingServer.ID;

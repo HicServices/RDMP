@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
@@ -86,8 +87,11 @@ public partial class PatchingUI : Form
             if (_repository != null)
             {
                 _repository.ClearUpdateCommandCache();
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success,
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success,
                     null));
+                });
             }
 
             checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Successful", CheckResult.Success, null));

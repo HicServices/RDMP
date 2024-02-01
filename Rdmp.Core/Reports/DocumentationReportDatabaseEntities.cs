@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -91,9 +92,10 @@ public class DocumentationReportDatabaseEntities : DocXHelper
                 {
                     continue;
                 }
-
-                notifier.OnCheckPerformed(new CheckEventArgs($"Found type {t}", CheckResult.Success));
-
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Found type {t}", CheckResult.Success));
+                });
                 var docs = _commentStore.GetTypeDocumentationIfExists(t, true, true);
 
                 if (docs == null)

@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -100,11 +101,13 @@ public class LoadProgressSummaryReport : ICheckable
 
         if (notifier != null)
             foreach (var catalogue in CataloguesWithDQERuns)
-                notifier.OnCheckPerformed(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(
                     new CheckEventArgs(
                         $"Found DQE Evaluations for Catalogue '{catalogue}'",
                         CheckResult.Success));
-
+                });
         using (var con = dqeRepository.GetConnection())
         {
             CataloguesPeriodictiyData = new DataTable();

@@ -11,6 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
@@ -158,8 +159,11 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
             notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expires before it begins!",
                 CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"GovernancePeriod {Name} expiry date is after the start date",
                 CheckResult.Success));
+            });
 
         foreach (var doc in GovernanceDocuments)
             doc.Check(notifier);

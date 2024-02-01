@@ -17,6 +17,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -399,8 +400,11 @@ This will not help you avoid bad data as the full file structure must still be r
     private static void ExpectFileExtension(ICheckNotifier notifier, string expectedExtension, string actualExtension)
     {
         if (expectedExtension.Equals(actualExtension))
-            notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"File extension matched expectations ({expectedExtension})",
                 CheckResult.Success));
+            });
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Unexpected file extension '{actualExtension}' (expected {expectedExtension}) ", CheckResult.Warning));

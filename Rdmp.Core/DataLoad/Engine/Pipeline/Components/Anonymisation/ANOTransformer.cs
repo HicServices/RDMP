@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -229,8 +230,11 @@ public class ANOTransformer
         try
         {
             if (database.DiscoverStoredprocedures().Any(p => p.Name.Equals(SubstitutionStoredProcedure)))
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"successfully found {SubstitutionStoredProcedure} on {database}", CheckResult.Success, null));
+                });
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Failed to find {SubstitutionStoredProcedure} on {database}", CheckResult.Fail, null));

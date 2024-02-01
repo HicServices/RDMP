@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -134,9 +135,11 @@ public class FileUnzipper : IPluginDataProvider
     public void Check(ICheckNotifier notifier)
     {
         if (ZipArchivePattern != null)
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found ZipArchivePattern {ZipArchivePattern}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Found ZipArchivePattern {ZipArchivePattern}",
                 CheckResult.Success));
-
+            });
         if (ZipEntryPattern != null)
             notifier.OnCheckPerformed(new CheckEventArgs($"Found ZipEntryPattern {ZipEntryPattern}",
                 CheckResult.Success));

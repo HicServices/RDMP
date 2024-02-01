@@ -23,6 +23,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -270,9 +271,12 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
             else
                 foreach (var expectedParameter in new[] { StartDateParameter, EndDateParameter })
                     if (RemoteSelectSQL.Contains(expectedParameter))
-                        notifier.OnCheckPerformed(new CheckEventArgs(
+                        DebugHelper.Instance.DoIfInDebugMode(() =>
+                        {
+                            notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Found {expectedParameter} in the RemoteSelectSQL",
                             CheckResult.Success, null));
+                        });
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Could not find any reference to parameter {expectedParameter} in the RemoteSelectSQL, how do you expect to respect the LoadProgress you have configured without a reference to this date?",
@@ -311,9 +315,12 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
             //user has just picked a table to copy exactly so we can precheck for it
             if (tables.Contains(RemoteTableName))
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"successfully found table {RemoteTableName} on server {_remoteDatabase.Server} on database {_remoteDatabase}",
                     CheckResult.Success, null));
+                });
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Could not find table called '{RemoteTableName}' on server {_remoteDatabase.Server} on database {_remoteDatabase}{Environment.NewLine}(The following tables were found:{string.Join(",", tables)})",

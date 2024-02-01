@@ -17,6 +17,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Sharing.Refactoring;
 
@@ -108,17 +109,21 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
         try
         {
             var joinInfos = GetJoinInfosRequiredCatalogue();
-            notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL successfully", CheckResult.Success));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Generated Catalogue SQL successfully", CheckResult.Success));
+            });
             foreach (var joinInfo in joinInfos)
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Found required JoinInfo '{joinInfo}' that will have to be migrated", CheckResult.Success));
 
             foreach (var lookup in GetLookupsRequiredCatalogue())
             {
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Found required Lookup '{lookup}' that will have to be migrated", CheckResult.Success));
-
+                });
                 //for each key involved in the lookup
                 foreach (var c in new[] { lookup.ForeignKey, lookup.PrimaryKey, lookup.Description })
                 {
@@ -169,14 +174,18 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
                     $"ExtractionInformation '{e}' is a not refactorable due to reason:{SelectSQLRefactorer.GetReasonNotRefactorable(e)}",
                     CheckResult.Fail));
 
-        notifier.OnCheckPerformed(new CheckEventArgs(
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(
             $"Preparing to evaluate {toMigrateTables.Length}' tables ({string.Join(",", toMigrateTables.Select(t => t.GetFullyQualifiedName()))})",
             CheckResult.Success));
-
+        });
         foreach (TableInfo tableInfo in toMigrateTables)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Evaluating TableInfo '{tableInfo}'", CheckResult.Success));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Evaluating TableInfo '{tableInfo}'", CheckResult.Success));
+            });
             if (TargetDatabase != null && TargetDatabase.ExpectTable(tableInfo.GetRuntimeName()).Exists())
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Table '{tableInfo}' already exists in Database '{TargetDatabase}'", CheckResult.Fail));

@@ -14,6 +14,7 @@ using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -285,9 +286,12 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
 
         if (!HasAtLeastOneColumnToStoreInDump)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"No columns require dumping from TableInfo {TableInfo} so checking is not needed", CheckResult.Success,
                 null));
+            });
             return;
         }
 
@@ -309,9 +313,12 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
         }
         else
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Confirmed absence of Table  {GetStagingRuntimeName()}(this will be created during load)",
                 CheckResult.Success, null));
+            });
         }
 
         //confirm that there is a ColumnInfo for every Dilute column
@@ -431,9 +438,12 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
             var procedures = dbInfo.DiscoverStoredprocedures();
 
             if (procedures.Any(p => p.Name.Equals(IdentifierDumpCreatorStoredprocedure)))
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Found stored procedure {IdentifierDumpCreatorStoredprocedure} on {dbInfo}", CheckResult.Success,
                     null));
+                });
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Connected successfully to server {dbInfo} but did not find the stored procedure {IdentifierDumpCreatorStoredprocedure} in the database (Possibly the ExternalDatabaseServer is not an IdentifierDump database?)",

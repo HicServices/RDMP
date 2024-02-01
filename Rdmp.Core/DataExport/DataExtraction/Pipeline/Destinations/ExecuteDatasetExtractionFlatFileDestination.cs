@@ -18,6 +18,7 @@ using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -53,8 +54,11 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     {
         if (_request is ExtractGlobalsCommand)
         {
-            listener.OnNotify(this,
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                listener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Debug, "Request is for the extraction of Globals."));
+            });
             OutputFile = _request.GetExtractionDirectory().FullName;
             return;
         }
@@ -72,9 +76,11 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
             default:
                 throw new ArgumentOutOfRangeException();
         }
-
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Debug,
             $"Setup data extraction destination as {OutputFile} (will not exist yet)"));
+        });
     }
 
     protected override void Open(DataTable toProcess, IDataLoadEventListener job,
@@ -224,8 +230,11 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
         try
         {
             var result = DateTime.Now.ToString(DateFormat);
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"DateFormat '{DateFormat}' is valid, dates will look like:{result}", CheckResult.Success));
+            });
         }
         catch (Exception e)
         {

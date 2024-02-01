@@ -17,6 +17,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline;
@@ -165,8 +166,10 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
                     $"Expected the cohort definition {NewCohortDefinition} to have a null ID - we are trying to create this, why would it already exist?",
                     CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that cohort ID is null", CheckResult.Success));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Confirmed that cohort ID is null", CheckResult.Success));
+            });
         if (Project.ProjectNumber == null)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Project {Project} does not have a ProjectNumber specified, it should have the same number as the CohortCreationRequest ({NewCohortDefinition.ProjectNumber})",
@@ -182,10 +185,12 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
             notifier.OnCheckPerformed(new CheckEventArgs($"Cohort failed novelness check:{matchDescription}",
                 CheckResult.Fail));
         else
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Confirmed that cohort {NewCohortDefinition} does not already exist",
                 CheckResult.Success));
-
+            });
         if (string.IsNullOrWhiteSpace(DescriptionForAuditLog))
             notifier.OnCheckPerformed(
                 new CheckEventArgs("User did not provide a description of the cohort for the AuditLog",

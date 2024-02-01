@@ -11,6 +11,7 @@ using FAnsi;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -107,8 +108,11 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
         {
             var accumulator = new ConnectionStringKeywordAccumulator(DatabaseType);
             accumulator.AddOrUpdateKeyword(Name, Value, ConnectionStringKeywordPriority.SystemDefaultLow);
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 "Integrity of keyword is ok according to ConnectionStringKeywordAccumulator", CheckResult.Success));
+            });
         }
         catch (Exception e)
         {

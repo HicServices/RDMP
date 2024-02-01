@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -233,13 +234,14 @@ public abstract class CachedFileRetriever : ICachedDataProvider
                 return;
             }
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Archive type is:{layout.ArchiveType}", CheckResult.Success));
-            notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat is:{layout.DateFormat}", CheckResult.Success));
-            notifier.OnCheckPerformed(new CheckEventArgs($"Granularity is:{layout.CacheFileGranularity}",
-                CheckResult.Success));
-
-            notifier.OnCheckPerformed(new CheckEventArgs($"CacheLayout is:{layout}", CheckResult.Success));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Archive type is:{layout.ArchiveType}", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"DateFormat is:{layout.DateFormat}", CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Granularity is:{layout.CacheFileGranularity}",
+                    CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs($"CacheLayout is:{layout}", CheckResult.Success));
+            });
             var filesFound = layout.CheckCacheFilesAvailability(new FromCheckNotifierToDataLoadEventListener(notifier));
 
             notifier.OnCheckPerformed(new CheckEventArgs($"Files Found In Cache:{filesFound}",

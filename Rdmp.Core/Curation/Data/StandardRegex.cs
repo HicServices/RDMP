@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data;
@@ -96,7 +97,10 @@ public class StandardRegex : DatabaseEntity, ICheckable
         try
         {
             _ = new Regex(Regex);
-            notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Regex is valid", CheckResult.Success));
+            });
         }
         catch (ArgumentException ex)
         {

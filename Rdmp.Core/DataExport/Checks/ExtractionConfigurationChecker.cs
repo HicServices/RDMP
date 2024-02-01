@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Checks;
@@ -60,9 +61,11 @@ public class ExtractionConfigurationChecker : ICheckable
     private void CheckReleaseConfiguration(ICheckNotifier notifier)
     {
         var projectDirectory = new DirectoryInfo(_config.Project.ExtractionDirectory);
-
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found Frozen/Released configuration '{_config}'",
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found Frozen/Released configuration '{_config}'",
             CheckResult.Success));
+        });
 
         foreach (var directoryInfo in projectDirectory.GetDirectories(
                      $"{ExtractionDirectory.GetExtractionDirectoryPrefix(_config)}*").ToArray())
@@ -107,8 +110,10 @@ public class ExtractionConfigurationChecker : ICheckable
     private void CheckInProgressConfiguration(ICheckNotifier notifier)
     {
         var repo = (IDataExportRepository)_config.Repository;
-        notifier.OnCheckPerformed(new CheckEventArgs($"Found configuration '{_config}'", CheckResult.Success));
-
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found configuration '{_config}'", CheckResult.Success));
+        });
         var datasets = _config.GetAllExtractableDataSets().ToArray();
 
         foreach (ExtractableDataSet dataSet in datasets)

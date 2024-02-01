@@ -15,6 +15,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -171,10 +172,13 @@ public class ExecutableRuntimeTask : RuntimeTask
 
         //the first argument in a parsed windows command will be bob.exe, make sure it exists
         if (File.Exists(exeParsed[0]))
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"Found file {exeParsed[0]} referenced by {ProcessTask.Name}",
                     CheckResult.Success));
+            });
         else
             notifier.OnCheckPerformed(
                 new CheckEventArgs(

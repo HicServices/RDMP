@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 
@@ -202,8 +203,11 @@ public class ColumnInfoANOPlan : ICheckable
             try
             {
                 var datatype = GetEndpointDataType();
-                notifier.OnCheckPerformed(new CheckEventArgs(
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Determined endpoint data type '{datatype}' for ColumnInfo '{ColumnInfo}'", CheckResult.Success));
+                });
             }
             catch (Exception e)
             {

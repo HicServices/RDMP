@@ -13,6 +13,7 @@ using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using TypeGuesser;
 
@@ -88,8 +89,11 @@ public class CreateNewCohortDatabaseWizard
 
         if (!_targetDatabase.Exists())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Did not find database {_targetDatabase} on server so creating it", CheckResult.Success));
+            });
             _targetDatabase.Create();
         }
 
@@ -139,8 +143,10 @@ public class CreateNewCohortDatabaseWizard
                 //foreign key between id and cohortDefinition_id
                 new Dictionary<DatabaseColumnRequest, DiscoveredColumn> { { foreignKey, idColumn } }, true);
 
-
-            notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
+            });
             var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort",
                 _targetDatabase.Server.DatabaseType)
             {
@@ -158,11 +164,15 @@ public class CreateNewCohortDatabaseWizard
             };
 
             pointer.SaveToDatabase();
-
-            notifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
                 "successfully created reference to cohort source in data export manager", CheckResult.Success));
-
-            notifier.OnCheckPerformed(new CheckEventArgs("About to run post creation checks", CheckResult.Success));
+            });
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("About to run post creation checks", CheckResult.Success));
+            });
             pointer.Check(notifier);
 
             notifier.OnCheckPerformed(new CheckEventArgs("Finished", CheckResult.Success));

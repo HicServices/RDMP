@@ -33,6 +33,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
@@ -73,18 +74,23 @@ public partial class ExampleDatasetsCreation
 
             AddKeywordIfSpecified(b.TrustServerCertificate, nameof(b.TrustServerCertificate), keywords);
         }
-
-        notifier.OnCheckPerformed(new CheckEventArgs($"About to create {db.GetRuntimeName()}", CheckResult.Success));
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"About to create {db.GetRuntimeName()}", CheckResult.Success));
+        });
         //create a new database for the datasets
         db.Create();
-
-        notifier.OnCheckPerformed(
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(
             new CheckEventArgs($"Successfully created {db.GetRuntimeName()}", CheckResult.Success));
-
+        });
         //fixed seed so everyone gets the same datasets
         var r = new Random(options.Seed);
-
-        notifier.OnCheckPerformed(new CheckEventArgs("Generating people", CheckResult.Success));
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Generating people", CheckResult.Success));
+        });
         //people
         var people = new PersonCollection();
         people.GeneratePeople(options.NumberOfPeople, r);
@@ -600,13 +606,19 @@ public partial class ExampleDatasetsCreation
                 if (string.Equals(dr[i] as string, "NULL", StringComparison.CurrentCultureIgnoreCase))
                     dr[i] = DBNull.Value;
 
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Uploading {dataset}", CheckResult.Success));
 
-        notifier.OnCheckPerformed(new CheckEventArgs($"Uploading {dataset}", CheckResult.Success));
+        });
         var tbl = db.CreateTable(dataset, dt, GetExplicitColumnDefinitions<T>());
 
         if (primaryKey.Length != 0)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Creating Primary Key {dataset}", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Creating Primary Key {dataset}", CheckResult.Success));
+            });
             var cols = primaryKey.Select(s => tbl.DiscoverColumn(s)).ToArray();
             tbl.CreatePrimaryKey(5000, cols);
         }

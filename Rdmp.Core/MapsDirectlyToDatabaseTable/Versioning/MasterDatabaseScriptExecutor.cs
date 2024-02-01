@@ -84,9 +84,11 @@ public class MasterDatabaseScriptExecutor
                 if (!Database.Exists())
                     throw new Exception(
                         "Create database failed without Exception! (It did not Exist after creation)");
-
-                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success,
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success,
                     null));
+                });
             }
 
             if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
@@ -121,11 +123,11 @@ public class MasterDatabaseScriptExecutor
 
 
             RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
-
-            notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
-
-            notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
-
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
+            });
             return true;
         }
         catch (Exception e)
@@ -206,8 +208,11 @@ public class MasterDatabaseScriptExecutor
     {
         if (!patches.Any())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching",
                 CheckResult.Success, null));
+            });
             return true;
         }
 
@@ -216,11 +221,15 @@ public class MasterDatabaseScriptExecutor
         if (backupDatabase && SupportsBackup(Database))
             try
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
-
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
+                });
                 Database.CreateBackup($"Full backup of {Database}");
-
-                notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
+                });
             }
             catch (Exception e)
             {
@@ -248,9 +257,11 @@ public class MasterDatabaseScriptExecutor
                         throw new Exception($"Failed to apply patch '{patch.Key}'", e);
                     }
 
-
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
                         null));
+                    });
                 }
                 else
                 {
@@ -259,9 +270,11 @@ public class MasterDatabaseScriptExecutor
             }
 
             SetVersion("Patching", maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Updated database version to {maxPatchVersion}",
                 CheckResult.Success));
-
+            });
             return true;
         }
         catch (Exception e)
@@ -333,10 +346,12 @@ public class MasterDatabaseScriptExecutor
                 else
                 {
                     //we found it and it was intact
-                    notifier.OnCheckPerformed(new CheckEventArgs(
+                    DebugHelper.Instance.DoIfInDebugMode(() =>
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",
                         CheckResult.Success, null));
-
+                    });
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
                 }
@@ -416,9 +431,11 @@ public class MasterDatabaseScriptExecutor
     public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
     {
         var initialPatch = patcher.GetInitialCreateScriptContents(Database);
-        notifier.OnCheckPerformed(
+        DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(
             new CheckEventArgs($"About to run:{Environment.NewLine}{initialPatch.EntireScript}", CheckResult.Success));
-
+        });
         CreateDatabase(initialPatch, notifier);
 
         //get everything in the /up/ folder that is .sql

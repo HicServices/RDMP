@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -118,8 +119,11 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         try
         {
             var _sql = GetSQL();
-            notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}",
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"successfully built extraction SQL:{_sql}",
                 CheckResult.Success));
+            });
         }
         catch (Exception e)
         {

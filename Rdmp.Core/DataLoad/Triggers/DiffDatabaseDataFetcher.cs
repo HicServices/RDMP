@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -66,19 +67,26 @@ public class DiffDatabaseDataFetcher
 
 
             if (database.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified database exists {database}",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified database exists {database}",
                     CheckResult.Success));
-
+                });
             var liveTable = _tableInfo.Discover(DataAccessContext.InternalDataProcessing);
             var archiveTable = database.ExpectTable($"{_tableInfo.GetRuntimeName()}_Archive", liveTable.Schema);
 
             if (liveTable.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified table exists {_tableInfo}",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified table exists {_tableInfo}",
                     CheckResult.Success));
-
+                });
             if (archiveTable.Exists())
-                checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified Archive table exists {archiveTable}",
+                DebugHelper.Instance.DoIfInDebugMode(() =>
+                {
+                    checkNotifier.OnCheckPerformed(new CheckEventArgs($"Verified Archive table exists {archiveTable}",
                     CheckResult.Success));
+                });
             else
                 checkNotifier.OnCheckPerformed(new CheckEventArgs(
                     $"Did not find an Archive table called {archiveTable}", CheckResult.Fail));
@@ -107,11 +115,12 @@ public class DiffDatabaseDataFetcher
                                       //but don't care about differences in these columns (e.g. the actual data load run id will obviously be different!)
                                       && !SpecialFieldNames.IsHicPrefixed(c)
                     )).ToArray();
-
-            checkNotifier.OnCheckPerformed(new CheckEventArgs(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(
                 $"Shared columns between the archive and the live table are {string.Join(",", _sharedColumns.Select(c => c.GetRuntimeName()))}",
                 CheckResult.Success));
-
+            });
             GetInsertData(server, database, checkNotifier);
             GetUpdatetData(server, database, checkNotifier);
         }

@@ -587,8 +587,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         if (GlobalsRequest != null)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(
-                "Request is for Globals, checking will not be carried out at source", CheckResult.Success));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(
+                    "Request is for Globals, checking will not be carried out at source", CheckResult.Success));
+            });
             return;
         }
 

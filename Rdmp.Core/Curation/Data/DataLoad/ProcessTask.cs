@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -256,10 +257,14 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
                 CheckResult.Fail));
             return;
         }
-
-        notifier.OnCheckPerformed(!File.Exists(Path)
-            ? new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail)
-            : new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
+        if (File.Exists(Path)) DebugHelper.Instance.DoIfInDebugMode(() =>
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found File '{Path}'", CheckResult.Success));
+        });
+        else
+            notifier.OnCheckPerformed(
+             new CheckEventArgs($"Could not find File '{Path}' for ProcessTask '{Name}'", CheckResult.Fail)
+            );
 
 
         var matchingPaths = Repository.GetAllObjects<ProcessTask>().Where(pt => pt.Path.Equals(Path));

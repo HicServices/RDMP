@@ -7,6 +7,7 @@
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
@@ -34,11 +35,13 @@ public class ANOTableInfoSynchronizer
         var columnInfosWithANOTransforms = _tableToSync.ColumnInfos.Where(c => c.ANOTable_ID != null).ToArray();
 
         if (!columnInfosWithANOTransforms.Any())
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     "There are no ANOTables configured for this table so skipping ANOTable checking",
                     CheckResult.Success));
-
+            });
         foreach (var columnInfoWithANOTransform in columnInfosWithANOTransforms)
         {
             var anoTable = columnInfoWithANOTransform.ANOTable;
@@ -47,11 +50,13 @@ public class ANOTableInfoSynchronizer
             if (!anoTable.GetRuntimeDataType(LoadStage.PostLoad).Equals(columnInfoWithANOTransform.Data_type))
                 throw new ANOConfigurationException(
                     $"Mismatch between anoTable.GetRuntimeDataType(LoadStage.PostLoad) = {anoTable.GetRuntimeDataType(LoadStage.PostLoad)} and column {columnInfoWithANOTransform} datatype = {columnInfoWithANOTransform.Data_type}");
-
-            notifier.OnCheckPerformed(
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                notifier.OnCheckPerformed(
                 new CheckEventArgs(
                     $"ANOTable {anoTable} has shared compatible datatype {columnInfoWithANOTransform.Data_type} with ColumnInfo {columnInfoWithANOTransform}",
                     CheckResult.Success));
+            });
         }
     }
 
