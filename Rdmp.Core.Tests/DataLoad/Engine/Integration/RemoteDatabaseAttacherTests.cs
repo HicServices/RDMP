@@ -244,7 +244,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
             var ex = Assert.Throws<PipelineCrashedException>(() =>
                    attacher.Attach(job, new GracefulCancellationToken()));
 
-            Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Invalid column name 'MyMissingCol'."));
+            Assert.That(ex.InnerException.InnerException.InnerException.Message, Is.EqualTo("Unknown column 'MyMissingCol' in 'field list'"));
             return;
         }
 
