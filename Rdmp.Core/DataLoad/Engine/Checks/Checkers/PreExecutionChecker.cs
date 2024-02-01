@@ -73,7 +73,10 @@ public class PreExecutionChecker : ICheckable
         }
         else
         {
-            _notifier.OnCheckPerformed(new CheckEventArgs($"{successMessage}: {dbInfo}", CheckResult.Success, null));
+            DebugHelper.Instance.DoIfInDebugMode(() =>
+            {
+                _notifier.OnCheckPerformed(new CheckEventArgs($"{successMessage}: {dbInfo}", CheckResult.Success, null));
+            });
         }
     }
 
