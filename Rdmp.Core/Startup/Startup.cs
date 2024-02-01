@@ -236,12 +236,12 @@ public class Startup
     private void FindWithPatcher(IPatcher patcher, ICheckNotifier notifier)
     {
         var dbs = GetExternalDatabasesForPatcher(patcher);
-         string[] PlatformDatabaseAssemblies =
-        {
+        string[] PlatformDatabaseAssemblies =
+       {
             "Rdmp.Core/Databases.LoggingDatabase",
             "Rdmp.Core/Databases.DataQualityEngineDatabase"
         };
-        var platformDatabases = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(edb =>  PlatformDatabaseAssemblies.Contains(edb.CreatedByAssembly));
+        var platformDatabases = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(edb => PlatformDatabaseAssemblies.Contains(edb.CreatedByAssembly));
         if (!dbs.Any() && patcher.RequiresPlatformDatabases && platformDatabases.Any())
         {
             var options = new PlatformDatabaseCreationOptions();
@@ -254,6 +254,14 @@ public class Startup
 
             var repo = new PlatformDatabaseCreationRepositoryFinder(options);
             patcher.CreateRequiredPlatformDatabase(options, repo);
+        }
+        else if (dbs.Any() && !PlatformDatabaseAssemblies.Contains(dbs[0].CreatedByAssembly))
+        {
+            var discoveredDatabase = dbs[0].Discover(DataAccessContext.InternalDataProcessing);
+            var executer = new MasterDatabaseScriptExecutor(discoveredDatabase);
+            var patches = patcher.GetAllPatchesInAssembly(discoveredDatabase);
+            executer.PatchDatabase(patches, notifier, p => true);
+            //exec
         }
 
         //todo need to be able to patch existing installs - path 0.0.2 not being installed
