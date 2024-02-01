@@ -39,7 +39,7 @@ public abstract partial class Patcher : IPatcher
 
     public string LegacyName { get; protected set; }
 
-    public bool RequiresPlatformDatabases { get; }
+    public bool RequiresPlatformDatabases { get; protected set; }
 
     protected Patcher(int tier, string resourceSubdirectory)
     {

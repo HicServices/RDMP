@@ -73,5 +73,5 @@ public interface IPatcher
     /// </summary>
     void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions creationOptions, IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator);
 
-    bool RequiresPlatformDatabases { get; }
+    bool RequiresPlatformDatabases { get; protected set; }
 }
