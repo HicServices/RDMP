@@ -256,6 +256,8 @@ public class Startup
             patcher.CreateRequiredPlatformDatabase(options, repo);
         }
 
+        //todo need to be able to patch existing installs - path 0.0.2 not being installed
+
         foreach (IExternalDatabaseServer server in dbs)
             try
             {
