@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
 using FAnsi.Discovery;
@@ -18,8 +17,6 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using MongoDB.Driver;
-using Newtonsoft.Json.Linq;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
@@ -257,14 +254,14 @@ public class Startup
         }
         else if (dbs.Any() && !PlatformDatabaseAssemblies.Contains(dbs[0].CreatedByAssembly))
         {
-            var discoveredDatabase = dbs[0].Discover(DataAccessContext.InternalDataProcessing);
-            var executer = new MasterDatabaseScriptExecutor(discoveredDatabase);
-            var patches = patcher.GetAllPatchesInAssembly(discoveredDatabase);
-            executer.PatchDatabase(patches, notifier, p => true);
-            //exec
+            foreach (var db in dbs)
+            {
+                var discoveredDatabase = db.Discover(DataAccessContext.InternalDataProcessing);
+                var executer = new MasterDatabaseScriptExecutor(discoveredDatabase);
+                var patches = patcher.GetAllPatchesInAssembly(discoveredDatabase);
+                executer.PatchDatabase(patches, notifier, p => true);
+            }
         }
-
-        //todo need to be able to patch existing installs - path 0.0.2 not being installed
 
         foreach (IExternalDatabaseServer server in dbs)
             try

@@ -73,5 +73,8 @@ public interface IPatcher
     /// </summary>
     void CreateRequiredPlatformDatabase(PlatformDatabaseCreationOptions creationOptions, IRDMPPlatformRepositoryServiceLocator repositoryServiceLocator);
 
+    /// <summary>
+    /// Flag to highlight that the plugin wants to make some platform databases
+    /// </summary>
     bool RequiresPlatformDatabases { get; set; }
 }
