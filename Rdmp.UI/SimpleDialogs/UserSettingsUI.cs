@@ -106,7 +106,6 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbUseAliasInsteadOfTransformInGroupByAggregateGraphs,
             nameof(UserSettings.UseAliasInsteadOfTransformInGroupByAggregateGraphs));
         RegisterCheckbox(cbUseLocalFileSystem, nameof(UserSettings.UseLocalFileSystem));
-        RegisterCheckbox(cbUseLogFiles, nameof(UserSettings.LogToFileSystem));
         AddTooltip(label7, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(tbCreateDatabaseTimeout, nameof(UserSettings.CreateDatabaseTimeout));
         AddTooltip(label13, nameof(UserSettings.ArchiveTriggerTimeout));
@@ -140,8 +139,6 @@ public partial class UserSettingsFileUI : Form
         ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
         tbHeatmapColours.Text = UserSettings.HeatMapColours;
-        tbLocalFileSystemLocation.Text = UserSettings.LocalFileSystemLocation;
-        tbLogLocation.Text = UserSettings.FileSystemLogLocation;
 
         _bLoaded = true;
 
@@ -253,11 +250,6 @@ public partial class UserSettingsFileUI : Form
         UserSettings.LocalFileSystemLocation = tbLocalFileSystemLocation.Text;
     }
 
-    private void tbLogLocation_TextChanged(object sender, EventArgs e)
-    {
-        UserSettings.FileSystemLogLocation = tbLogLocation.Text;    
-    }
-
     private void tbTooltipAppearDelay_TextChanged(object sender, EventArgs e)
     {
         if (int.TryParse(tbTooltipAppearDelay.Text, out var result)) UserSettings.TooltipAppearDelay = result;
@@ -267,8 +259,6 @@ public partial class UserSettingsFileUI : Form
     {
         Find(tbFind.Text);
     }
-
-    private void label16_Click(object sender, EventArgs e) { }
 
     private void Find(string text)
     {
