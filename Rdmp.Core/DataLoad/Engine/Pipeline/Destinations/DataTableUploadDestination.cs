@@ -65,6 +65,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
     public Type Adjuster { get; set; }
 
+    public bool AppendDataIfTableExists { get; set; }
+
     private CultureInfo _culture;
 
     [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
@@ -178,7 +180,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
-                    else
+                    else if(!AppendDataIfTableExists)
                         throw new Exception(
                             $"There is already a table called {TargetTableName} at the destination {_database}");
 

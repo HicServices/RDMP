@@ -82,6 +82,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         DefaultValue = true)]
     public bool MakeFinalTableDistinctWhenBatchResuming { get; set; } = true;
 
+
+    [DemandsInitialization("If this extraction has already been run, it will append any ned data into the database")]
+    public bool AppendDataIfTableExists { get; set; } = false;
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
@@ -192,6 +196,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
+        _destination.AppendDataIfTableExists = AppendDataIfTableExists;
 
         _destination.PreInitialize(_destinationDatabase, listener);
 
@@ -646,7 +651,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 }
 
                 // if the expected table exists and we are not doing a batch resume
-                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume)
+                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume && !AppendDataIfTableExists)
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase,
                         tableName, database));
             }

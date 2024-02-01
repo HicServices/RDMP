@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Update Excel Attacher to read data from arbitrary start points within sheets
+- Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](./Documentation/DataExtractions/ExecuteFullExtractionToDatabaseMSSql.md)
 
 ## [8.1.3] - 2024-01-15
 
