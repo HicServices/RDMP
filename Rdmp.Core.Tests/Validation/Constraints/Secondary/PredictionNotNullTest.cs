@@ -18,7 +18,7 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
-        Assert.IsNull(p.Validate("this is not null", otherCols, otherColsNames));
+        Assert.That(p.Validate("this is not null", otherCols, otherColsNames), Is.Null);
     }
 
     [Test]
@@ -27,7 +27,7 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { null };
         var otherColsNames = new string[] { "someColumn" };
-        Assert.NotNull(p.Validate("this is not null", otherCols, otherColsNames));
+        Assert.That(p.Validate("this is not null", otherCols, otherColsNames), Is.Not.Null);
     }
 
     [Test]
@@ -36,8 +36,7 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { "not null" };
         var otherColsNames = new string[] { "someColumn" };
-        StringAssert.StartsWith("Nullity did not match, when one value is null, the other mus",
-            p.Validate(null, otherCols, otherColsNames)?.Message);
+        Assert.That(p.Validate(null, otherCols, otherColsNames)?.Message, Does.StartWith("Nullity did not match, when one value is null, the other mus"));
     }
 
     [Test]
@@ -46,6 +45,6 @@ internal class PredictionNotNullTest
         var p = new Prediction(new ValuePredictsOtherValueNullity(), "someColumn");
         var otherCols = new object[] { null };
         var otherColsNames = new string[] { "someColumn" };
-        Assert.IsNull(p.Validate(null, otherCols, otherColsNames));
+        Assert.That(p.Validate(null, otherCols, otherColsNames), Is.Null);
     }
 }

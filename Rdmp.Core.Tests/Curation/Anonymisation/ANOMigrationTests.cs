@@ -116,9 +116,12 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
     [Order(1)]
     public void PKsAreCorrect()
     {
-        Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
-        Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
-        Assert.IsTrue(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
+        Assert.Multiple(() =>
+        {
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("AdmissionDate")).IsPrimaryKey);
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1")).IsPrimaryKey);
+            Assert.That(_columnInfos.Single(c => c.GetRuntimeName().Equals("CHI")).IsPrimaryKey);
+        });
     }
 
     [Test]
@@ -132,9 +135,8 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             converter.ConvertFullColumnInfo(s => true,
                 ThrowImmediatelyCheckNotifier.Quiet)); //say  yes to everything it proposes
 
-        StringAssert.IsMatch(
-            @"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Match(@"Could not perform transformation because column \[(.*)\]\.\[dbo\]\.\[.*\]\.\[Condition1\] is not droppable"));
     }
 
 

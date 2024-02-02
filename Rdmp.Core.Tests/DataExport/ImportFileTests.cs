@@ -70,16 +70,19 @@ public class ImportFileTests : DatabaseTests
             var tablesInDatabase = server.ExpectDatabase(databaseName).DiscoverTables(false);
 
             //there should be 1 table in this database
-            Assert.AreEqual(1, tablesInDatabase.Length);
+            Assert.That(tablesInDatabase, Has.Length.EqualTo(1));
 
-            //it should be called the same as the file loaded
-            Assert.AreEqual(Path.GetFileNameWithoutExtension(file), tablesInDatabase[0].GetRuntimeName());
+            Assert.Multiple(() =>
+            {
+                //it should be called the same as the file loaded
+                Assert.That(tablesInDatabase[0].GetRuntimeName(), Is.EqualTo(Path.GetFileNameWithoutExtension(file)));
 
-            Assert.AreEqual("varchar(7)", GetColumnType(database, tableName, "Name"));
-            Assert.AreEqual("varchar(13)", GetColumnType(database, tableName, "Surname"));
-            Assert.AreEqual("int", GetColumnType(database, tableName, "Age"));
-            Assert.AreEqual("decimal(3,2)", GetColumnType(database, tableName, "Healthiness"));
-            Assert.AreEqual("datetime2", GetColumnType(database, tableName, "DateOfImagining"));
+                Assert.That(GetColumnType(database, tableName, "Name"), Is.EqualTo("varchar(7)"));
+                Assert.That(GetColumnType(database, tableName, "Surname"), Is.EqualTo("varchar(13)"));
+                Assert.That(GetColumnType(database, tableName, "Age"), Is.EqualTo("int"));
+                Assert.That(GetColumnType(database, tableName, "Healthiness"), Is.EqualTo("decimal(3,2)"));
+                Assert.That(GetColumnType(database, tableName, "DateOfImagining"), Is.EqualTo("datetime2"));
+            });
 
             using (var con = (SqlConnection)server.GetConnection())
             {
@@ -90,23 +93,26 @@ public class ImportFileTests : DatabaseTests
                         $"Select * from {tablesInDatabase[0].GetRuntimeName()} WHERE Name='Frank'", con);
                 var r = cmdReadData.ExecuteReader();
 
-                //expected 1 record only
-                Assert.IsTrue(r.Read());
+                Assert.Multiple(() =>
+                {
+                    //expected 1 record only
+                    Assert.That(r.Read());
 
-                Assert.AreEqual("Frank", r["Name"]);
-                Assert.AreEqual("Mortus,M", r["Surname"]);
-                Assert.AreEqual(41, r["Age"]);
-                Assert.AreEqual(0.0f, r["Healthiness"]);
-                Assert.AreEqual(new DateTime(2005, 12, 1), r["DateOfImagining"]);
+                    Assert.That(r["Name"], Is.EqualTo("Frank"));
+                    Assert.That(r["Surname"], Is.EqualTo("Mortus,M"));
+                    Assert.That(r["Age"], Is.EqualTo(41));
+                    Assert.That(r["Healthiness"], Is.EqualTo(0.0f));
+                    Assert.That(r["DateOfImagining"], Is.EqualTo(new DateTime(2005, 12, 1)));
+                });
 
                 //and no more records
-                Assert.IsFalse(r.Read());
+                Assert.That(r.Read(), Is.False);
 
                 con.Close();
             }
 
             server.ExpectDatabase(databaseName).Drop();
-            Assert.IsFalse(server.ExpectDatabase(databaseName).Exists());
+            Assert.That(server.ExpectDatabase(databaseName).Exists(), Is.False);
         }
         finally
         {

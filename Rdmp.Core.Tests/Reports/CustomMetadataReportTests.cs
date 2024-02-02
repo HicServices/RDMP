@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using NSubstitute;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -97,8 +98,8 @@ internal class CustomMetadataReportTests : UnitTests
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"| Name | Desc|
-| ffff |  |", resultText.TrimEnd());
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"| Name | Desc|
+| ffff |  |").IgnoreCase);
     }
 
     [Test]
@@ -130,8 +131,8 @@ internal class CustomMetadataReportTests : UnitTests
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"| Name | Desc| Range |
-| ffff |  | Unknown |", resultText.TrimEnd());
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"| Name | Desc| Range |
+| ffff |  | Unknown |").IgnoreCase);
     }
 
     [Test]
@@ -180,9 +181,9 @@ internal class CustomMetadataReportTests : UnitTests
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(
-            @"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
-| ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 | mydate |", resultText.TrimEnd());
+        Assert.That(
+resultText.TrimEnd(), Is.EqualTo(@"| Name | Desc| StartYear | EndYear | StartMonth | EndMonth | StartDay | EndDay | Range | TimeField |
+| ffff |  | 2001 | 2002 | 02 | 04 | 01 | 03 | 2001-2002 | mydate |").IgnoreCase);
     }
 
     [TestCase(true)]
@@ -227,8 +228,8 @@ internal class CustomMetadataReportTests : UnitTests
             FileAssert.Exists(outFile);
             var resultText = File.ReadAllText(outFile);
 
-            StringAssert.AreEqualIgnoringCase(
-                @"<DataSet>
+            Assert.That(
+resultText.TrimEnd(), Is.EqualTo(@"<DataSet>
 <Name>Forest</Name>
 <Desc></Desc>
 <Email>me@g.com</Email>
@@ -237,7 +238,7 @@ internal class CustomMetadataReportTests : UnitTests
 <Name>Trees</Name>
 <Desc>trollolol</Desc>
 <Email></Email>
-</DataSet>", resultText.TrimEnd());
+</DataSet>").IgnoreCase);
         }
         else
         {
@@ -248,21 +249,21 @@ internal class CustomMetadataReportTests : UnitTests
             FileAssert.Exists(outFile2);
 
             var resultText1 = File.ReadAllText(outFile1);
-            StringAssert.AreEqualIgnoringCase(
-                @"<DataSet>
+            Assert.That(
+resultText1.Trim(), Is.EqualTo(@"<DataSet>
 <Name>Forest</Name>
 <Desc></Desc>
 <Email>me@g.com</Email>
-</DataSet>".Trim(), resultText1.Trim());
+</DataSet>".Trim()).IgnoreCase);
 
             var resultText2 = File.ReadAllText(outFile2);
 
-            StringAssert.AreEqualIgnoringCase(
-                @"<DataSet>
+            Assert.That(
+resultText2.Trim(), Is.EqualTo(@"<DataSet>
 <Name>Trees</Name>
 <Desc>trollolol</Desc>
 <Email></Email>
-</DataSet>".Trim(), resultText2.Trim());
+</DataSet>".Trim()).IgnoreCase);
         }
     }
 
@@ -313,11 +314,11 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## ffff
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"## ffff
 A cool dataset with interesting stuff
 | Column | Description |
 | Col1 | some info about column 1 |
-| Col2 | some info about column 2 |", resultText.TrimEnd());
+| Col2 | some info about column 2 |").IgnoreCase);
     }
 
     [Test]
@@ -351,7 +352,7 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## Demog
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"## Demog
 This is expensive dataset: $30 to use
 Price: $30
 | Column | Description |
@@ -363,7 +364,7 @@ A cool dataset with interesting stuff
 Price: $30
 | Column | Description |
 | Col1 | some info about column 1 |
-| Col2 | some info about column 2 |", resultText.TrimEnd());
+| Col2 | some info about column 2 |").IgnoreCase);
     }
 
     [Test]
@@ -393,8 +394,11 @@ $foreach CatalogueItem
             outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
-        Assert.AreEqual(4, ex.LineNumber);
-        Assert.AreEqual("Expected $end to match $foreach which started on line 4", ex.Message);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.LineNumber, Is.EqualTo(4));
+            Assert.That(ex.Message, Is.EqualTo("Expected $end to match $foreach which started on line 4"));
+        });
     }
 
     [Test]
@@ -428,8 +432,11 @@ $end");
             outDir, template, "$Name.md", false, null);
         var ex = Assert.Throws<CustomMetadataReportException>(cmd.Execute);
 
-        Assert.AreEqual(6, ex.LineNumber);
-        StringAssert.StartsWith("Error, encountered '$foreach CatalogueItem' on line 6", ex.Message);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.LineNumber, Is.EqualTo(6));
+            Assert.That(ex.Message, Does.StartWith("Error, encountered '$foreach CatalogueItem' on line 6"));
+        });
     }
 
     [Test]
@@ -437,18 +444,24 @@ $end");
     {
         var report = new CustomMetadataReport(RepositoryLocator);
 
-        //default is no substitution
-        Assert.IsNull(report.NewlineSubstitution);
+        Assert.Multiple(() =>
+        {
+            //default is no substitution
+            Assert.That(report.NewlineSubstitution, Is.Null);
 
-        Assert.IsNull(report.ReplaceNewlines(null));
+            Assert.That(report.ReplaceNewlines(null), Is.Null);
 
-        Assert.AreEqual("aa\r\nbb", report.ReplaceNewlines("aa\r\nbb"));
-        Assert.AreEqual("aa\nbb", report.ReplaceNewlines("aa\nbb"));
+            Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa\r\nbb"));
+            Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa\nbb"));
+        });
 
         report.NewlineSubstitution = "<br/>";
 
-        Assert.AreEqual("aa<br/>bb", report.ReplaceNewlines("aa\r\nbb"));
-        Assert.AreEqual("aa<br/>bb", report.ReplaceNewlines("aa\nbb"));
+        Assert.Multiple(() =>
+        {
+            Assert.That(report.ReplaceNewlines("aa\r\nbb"), Is.EqualTo("aa<br/>bb"));
+            Assert.That(report.ReplaceNewlines("aa\nbb"), Is.EqualTo("aa<br/>bb"));
+        });
     }
 
     [Test]
@@ -498,11 +511,11 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## ffff
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"## ffff
 A cool<br/>dataset with interesting stuff
 | Column | Description |
 | Col1 | some info about column 1 |
-| Col2 | some info<br/>about column 2 |", resultText.TrimEnd());
+| Col2 | some info<br/>about column 2 |").IgnoreCase);
     }
 
 
@@ -536,9 +549,9 @@ Description: $Description");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## ffff
+        Assert.That(resultText, Is.EqualTo(@"## ffff
 Server:
-Description: A cool dataset with interesting stuff", resultText);
+Description: A cool dataset with interesting stuff").IgnoreCase);
     }
 
 
@@ -577,9 +590,9 @@ Description: $Description");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## ffff
+        Assert.That(resultText, Is.EqualTo(@"## ffff
 Server: myserver
-Description: A cool dataset with interesting stuff", resultText);
+Description: A cool dataset with interesting stuff").IgnoreCase);
     }
 
     [Test]
@@ -619,7 +632,7 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 
 We love data here, see our datasets:
 
@@ -635,7 +648,7 @@ A cool dataset with interesting stuff
 Price: $30
 | Column | Description |
 | Col1 | some info about column 1 |
-| Col2 | some info about column 2 |", resultText.TrimEnd());
+| Col2 | some info about column 2 |").IgnoreCase);
     }
 
 
@@ -684,7 +697,7 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 
 We love data here, see our datasets:
 
@@ -697,7 +710,7 @@ Price: $30
 
 Price: $30
 | Column | Description | Datatype |
-| MyCataItem |  | datetime2 |", resultText.TrimEnd());
+| MyCataItem |  | datetime2 |").IgnoreCase);
     }
 
 
@@ -747,7 +760,7 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 
 We love data here, see our datasets:
 
@@ -762,7 +775,7 @@ Number of Records:
 Price: $30
 Number of Records:
 | Column | Description | Nullability |
-| Cata2Col1 |  |  |", resultText.TrimEnd());
+| Cata2Col1 |  |  |").IgnoreCase);
     }
 
 
@@ -837,7 +850,7 @@ $end");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 
 We love data here, see our datasets:
 
@@ -854,7 +867,7 @@ Price: $30
 Number of Records: 10
 | Column | Description | Nullability | Correct | Missing | Wrong | Invalid | Null (inclusive) | Total |
 | Cata2Col1 |  | 50% | 1 | 2 | 3 | 4 | 5 | 10 |
-Accurate as of : 01/01/0001 00:00:00", resultText.TrimEnd());
+Accurate as of : 01/01/0001 00:00:00").IgnoreCase);
     }
 
 
@@ -893,7 +906,7 @@ Get in touch with us at noreply@nobody.com");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"## Catalogue 'Demog'
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"## Catalogue 'Demog'
 This is expensive dataset: $30 to use
 Price: $30
 | Column | Description |
@@ -907,7 +920,7 @@ Price: $30
 | Col1 | some info about column 1 |
 | Col2 | some info about column 2 |
 
-Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
+Get in touch with us at noreply@nobody.com").IgnoreCase);
     }
 
     [Test]
@@ -949,7 +962,7 @@ Get in touch with us at noreply@nobody.com");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 
 We love data here, see our datasets:
 
@@ -967,7 +980,7 @@ Price: $30
 | Col1 | some info about column 1 |
 | Col2 | some info about column 2 |
 
-Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
+Get in touch with us at noreply@nobody.com").IgnoreCase);
     }
 
 
@@ -1019,7 +1032,7 @@ Get in touch with us at noreply@nobody.com");
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"# Welcome
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"# Welcome
 - [Background](#background)
 - [Datasets](#datasets)
    - [Demog](#Demog)
@@ -1045,7 +1058,7 @@ Price: $30
 | Col1 | some info about column 1 |
 | Col2 | some info about column 2 |
 
-Get in touch with us at noreply@nobody.com", resultText.TrimEnd());
+Get in touch with us at noreply@nobody.com").IgnoreCase);
     }
 
     [Test]
@@ -1074,8 +1087,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual("Unexpected '$foreach Catalogue' before the end of the last one on line 4", ex.Message);
-        Assert.AreEqual(4, ex.LineNumber);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Unexpected '$foreach Catalogue' before the end of the last one on line 4"));
+            Assert.That(ex.LineNumber, Is.EqualTo(4));
+        });
     }
 
     [Test]
@@ -1104,8 +1120,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block", ex.Message);
-        Assert.AreEqual(3, ex.LineNumber);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 3 while not in a $foreach Catalogue block"));
+            Assert.That(ex.LineNumber, Is.EqualTo(3));
+        });
     }
 
 
@@ -1136,8 +1155,11 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block", ex.Message);
-        Assert.AreEqual(5, ex.LineNumber);
+        Assert.Multiple(() =>
+        {
+            Assert.That(ex.Message, Is.EqualTo("Error, encountered '$end' on line 5 while not in a $foreach Catalogue block"));
+            Assert.That(ex.LineNumber, Is.EqualTo(5));
+        });
     }
 
     [Test]
@@ -1168,10 +1190,12 @@ some more text
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual(
-            "Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)",
-            ex.Message);
-        Assert.AreEqual(3, ex.LineNumber);
+        Assert.Multiple(() =>
+        {
+            Assert.That(
+                    ex.Message, Is.EqualTo("Error, Unexpected '$foreach CatalogueItem' on line 3.  Current section is plain text, '$foreach CatalogueItem' can only appear within a '$foreach Catalogue' block (you cannot mix and match top level loop elements)"));
+            Assert.That(ex.LineNumber, Is.EqualTo(3));
+        });
     }
 
     [Test]
@@ -1196,7 +1220,7 @@ $Comma";
             outDir, template, "Datasets.md", true, null);
         var ex = Assert.Throws<CustomMetadataReportException>(() => cmd.Execute());
 
-        Assert.AreEqual("Unexpected use of $Comma outside of an iteration ($foreach) block", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("Unexpected use of $Comma outside of an iteration ($foreach) block"));
     }
 
     [Test]
@@ -1238,7 +1262,7 @@ $end
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"[
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"[
   {
     ""Name"": ""Demog"",
     ""Columns"": [
@@ -1264,7 +1288,7 @@ $end
       }
     ]
   }
-]", resultText.TrimEnd());
+]").IgnoreCase);
     }
 
     [Test]
@@ -1306,7 +1330,7 @@ $end
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        StringAssert.AreEqualIgnoringCase(@"[
+        Assert.That(resultText.TrimEnd(), Is.EqualTo(@"[
   {
     ""Name"": ""Demog"",
     ""Columns"": [
@@ -1332,7 +1356,7 @@ $end
       }
     ]
   }
-]", resultText.TrimEnd());
+]").IgnoreCase);
     }
 
     [Test]
@@ -1423,7 +1447,7 @@ $DQE_StartYear";
         // this appears in a Catalogue description
         resultText = resultText.Replace("$30", "");
 
-        Assert.IsFalse(resultText.Contains('$'), $"Expected all template values to disappear but was {resultText}");
+        Assert.That(resultText, Does.Not.Contain('$'), $"Expected all template values to disappear but was {resultText}");
     }
 
 
@@ -1483,6 +1507,6 @@ $end";
         FileAssert.Exists(outFile);
         var resultText = File.ReadAllText(outFile);
 
-        Assert.IsFalse(resultText.Contains('$'), $"Expected all template values to disappear but was {resultText}");
+        Assert.That(resultText, Does.Not.Contain('$'), $"Expected all template values to disappear but was {resultText}");
     }
 }

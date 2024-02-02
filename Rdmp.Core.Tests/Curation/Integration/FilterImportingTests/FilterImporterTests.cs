@@ -148,13 +148,15 @@ public class FilterImporterTests : UnitTests
                 //factory should have been asked to create a new filter called "Space Odyssey" and a parameter with a declaration that matches the master filter SQL (i.e. 'AS int')
                 factory.Received(1).CreateNewFilter("Space Odyssey");
 
-                //The master filter parameters should have been copied to the child
-                Assert.AreEqual(constructedParameter.Comment, masterParameter.Comment);
-                Assert.AreEqual(constructedParameter.ParameterSQL,
-                    masterParameter
-                        .ParameterSQL); //We actually manually set this above because that's the contract with "CreateNewParameter"
-                Assert.AreEqual(constructedParameter.Value, masterParameter.Value);
-        }
+        Assert.Multiple(() =>
+        {
+            //The master filter parameters should have been copied to the child
+            Assert.That(masterParameter.Comment, Is.EqualTo(constructedParameter.Comment));
+            Assert.That(masterParameter
+                            .ParameterSQL, Is.EqualTo(constructedParameter.ParameterSQL)); //We actually manually set this above because that's the contract with "CreateNewParameter"
+            Assert.That(masterParameter.Value, Is.EqualTo(constructedParameter.Value));
+        });
+    }
 
         [Test]
         public void FilterCreated_ParametersRenamingDueToExistingParameterInScopeWithSameName()
@@ -242,7 +244,7 @@ public class FilterImporterTests : UnitTests
                 var filterCreator = new FilterImporter(factory, null);
                 filterCreator.ImportFilter(WhenIHaveA<AggregateFilterContainer>(), master, new[] { existing });
 
-                Assert.AreEqual("@hall2 = 'active'", constructed.WhereSQL);
+        Assert.That(constructed.WhereSQL, Is.EqualTo("@hall2 = 'active'"));
 
                 //Master filter should have been asked what its parameters are
                 master.Received(1).GetAllParameters();

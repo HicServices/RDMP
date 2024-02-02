@@ -72,7 +72,7 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
         fe.ExecuteForwardEngineering(cata);
 
         //Should now be 1 Catalogue with all the columns (tables will have to be joined to build the query though)
-        Assert.AreEqual(8, cata.GetAllExtractionInformation(ExtractionCategory.Core).Length);
+        Assert.That(cata.GetAllExtractionInformation(ExtractionCategory.Core), Has.Length.EqualTo(8));
 
         var ji = new JoinInfo(CatalogueRepository,
             rTi.ColumnInfos.Single(ci =>
@@ -107,8 +107,11 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
 
         var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, acPatIndex);
 
-        Assert.IsTrue(acPatIndex.IsCohortIdentificationAggregate);
-        Assert.IsTrue(acPatIndex.IsJoinablePatientIndexTable());
+        Assert.Multiple(() =>
+        {
+            Assert.That(acPatIndex.IsCohortIdentificationAggregate);
+            Assert.That(acPatIndex.IsJoinablePatientIndexTable());
+        });
 
         var compiler = new CohortCompiler(cic);
 
@@ -117,32 +120,38 @@ internal class CohortCompilerCacheJoinableTest : FromToDatabaseTests
         var cancellation = new System.Threading.CancellationToken();
         runner.Run(cancellation);
 
-        //they should not be executing and should be completed
-        Assert.IsFalse(compiler.Tasks.Any(t => t.Value.IsExecuting));
-        Assert.AreEqual(Phase.Finished, runner.ExecutionPhase);
+        Assert.Multiple(() =>
+        {
+            //they should not be executing and should be completed
+            Assert.That(compiler.Tasks.Any(t => t.Value.IsExecuting), Is.False);
+            Assert.That(runner.ExecutionPhase, Is.EqualTo(Phase.Finished));
+        });
 
         var manager = new CachedAggregateConfigurationResultsManager(edsCache);
 
         var cacheTableName = manager.GetLatestResultsTableUnsafe(acPatIndex, AggregateOperation.JoinableInceptionQuery);
 
-        Assert.IsNotNull(cacheTableName, "No results were cached!");
+        Assert.That(cacheTableName, Is.Not.Null, "No results were cached!");
 
         var cacheTable = To.ExpectTable(cacheTableName.GetRuntimeName());
 
-        //chi, Date and TestCode
-        Assert.AreEqual(3, cacheTable.DiscoverColumns().Length);
+        Assert.Multiple(() =>
+        {
+            //chi, Date and TestCode
+            Assert.That(cacheTable.DiscoverColumns(), Has.Length.EqualTo(3));
 
-        //healthboard should be a string
-        Assert.AreEqual(typeof(string), cacheTable.DiscoverColumn("Healthboard").DataType.GetCSharpDataType());
+            //healthboard should be a string
+            Assert.That(cacheTable.DiscoverColumn("Healthboard").DataType.GetCSharpDataType(), Is.EqualTo(typeof(string)));
 
-        /*  Query Cache contains this:
-         *
-Chi	Date	Healthboard
-0101010101	2001-01-01 00:00:00.0000000	T
-0202020202	2002-02-02 00:00:00.0000000	T
-*/
+            /*  Query Cache contains this:
+             *
+    Chi	Date	Healthboard
+    0101010101	2001-01-01 00:00:00.0000000	T
+    0202020202	2002-02-02 00:00:00.0000000	T
+    */
 
-        Assert.AreEqual(2, cacheTable.GetRowCount());
+            Assert.That(cacheTable.GetRowCount(), Is.EqualTo(2));
+        });
 
         //Now we could add a new AggregateConfiguration that uses the joinable!
     }

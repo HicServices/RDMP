@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -134,7 +135,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
                 using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
                     lockQuery.ExecuteNonQuery();
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
-                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,@eventType,@source,@description,@time);",
+                "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,LEFT(RTRIM(@eventType),50),LEFT(RTRIM(@source),100),LEFT(RTRIM(@description),8000),@time);",
                 con);
 
             DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmdRecordProgress, ID);
@@ -183,8 +184,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
         DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, _isTest);
-        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName);
-        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount);
+        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName.Substring(Math.Max(0, _packageName.Length - 750)));
+        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount.Substring(Math.Max(0, _packageName.Length - 500)));
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
             _suggestedRollbackCommand ?? string.Empty);
 
@@ -200,7 +201,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     {
         lock (_oLock)
         {
-            if (_logQueue?.IsAddingCompleted==false)
+            if (_logQueue?.IsAddingCompleted == false)
                 _logQueue.CompleteAdding();
             _logThread?.Join();
 

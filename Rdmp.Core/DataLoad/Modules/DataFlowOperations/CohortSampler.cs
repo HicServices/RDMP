@@ -98,11 +98,7 @@ public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequi
         // first order the values e.g. alphabetically so that even if the input is in a different order our
         // seeded random picks the same values.  Se test TestCohortSampler_Repeatability_OrderIrrelevant
         var sorted = uniques.OrderBy(u => u);
-
-#pragma warning disable SCS0005 // Weak random number generator.
         var chosen = sorted.OrderBy(v => r.Next()).Take(SampleSize).ToList();
-#pragma warning restore SCS0005 // Weak random number generator.
-
         if (chosen.Count < SampleSize && FailIfNotEnoughIdentifiers)
             throw new Exception(
                 $"Cohort only contains {chosen.Count} unique identifiers.  This is less than the requested sample size of {SampleSize} and {nameof(FailIfNotEnoughIdentifiers)} is true");

@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using FluentFTP;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -32,6 +32,11 @@ public class SFTPDownloader : FTPDownloader
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
         _connection = new Lazy<SftpClient>(SetupSftp,LazyThreadSafetyMode.ExecutionAndPublication);
+    }
+
+    public SFTPDownloader()
+    {
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     private SftpClient SetupSftp()

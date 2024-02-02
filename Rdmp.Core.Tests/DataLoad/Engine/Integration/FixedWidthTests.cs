@@ -26,7 +26,7 @@ public class FixedWidthTests : DatabaseTests
 
         File.WriteAllText(fileInfo.FullName, LoadDirectory.ExampleFixedWidthFormatFileContents);
 
-        Assert.IsTrue(fileInfo.Exists);
+        Assert.That(fileInfo.Exists);
 
         return new FixedWidthFormatFile(fileInfo);
     }
@@ -36,65 +36,84 @@ public class FixedWidthTests : DatabaseTests
     {
         var formatFile = CreateFormatFile();
 
-        Assert.AreEqual(8, formatFile.FormatColumns.Length);
+        Assert.That(formatFile.FormatColumns, Has.Length.EqualTo(8));
 
-        Assert.AreEqual("gmc", formatFile.FormatColumns[0].Field);
-        Assert.AreEqual(1, formatFile.FormatColumns[0].From);
-        Assert.AreEqual(7, formatFile.FormatColumns[0].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[0].To - formatFile.FormatColumns[0].From,
-            formatFile.FormatColumns[0].Size);
-        Assert.AreEqual(7, formatFile.FormatColumns[0].Size);
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[0].Field, Is.EqualTo("gmc"));
+            Assert.That(formatFile.FormatColumns[0].From, Is.EqualTo(1));
+            Assert.That(formatFile.FormatColumns[0].To, Is.EqualTo(7));
+            Assert.That(formatFile.FormatColumns[0].Size, Is.EqualTo(1 + formatFile.FormatColumns[0].To - formatFile.FormatColumns[0].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[0].Size, Is.EqualTo(7));
 
-        Assert.AreEqual("gp_code", formatFile.FormatColumns[1].Field);
-        Assert.AreEqual(8, formatFile.FormatColumns[1].From);
-        Assert.AreEqual(12, formatFile.FormatColumns[1].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[1].To - formatFile.FormatColumns[1].From,
-            formatFile.FormatColumns[1].Size);
-        Assert.AreEqual(5, formatFile.FormatColumns[1].Size);
+            Assert.That(formatFile.FormatColumns[1].Field, Is.EqualTo("gp_code"));
+            Assert.That(formatFile.FormatColumns[1].From, Is.EqualTo(8));
+            Assert.That(formatFile.FormatColumns[1].To, Is.EqualTo(12));
+            Assert.That(formatFile.FormatColumns[1].Size, Is.EqualTo(1 + formatFile.FormatColumns[1].To - formatFile.FormatColumns[1].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[1].Size, Is.EqualTo(5));
 
-        Assert.AreEqual("surname", formatFile.FormatColumns[2].Field);
-        Assert.AreEqual(13, formatFile.FormatColumns[2].From);
-        Assert.AreEqual(32, formatFile.FormatColumns[2].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[2].To - formatFile.FormatColumns[2].From,
-            formatFile.FormatColumns[2].Size);
-        Assert.AreEqual(20, formatFile.FormatColumns[2].Size);
+            Assert.That(formatFile.FormatColumns[2].Field, Is.EqualTo("surname"));
+            Assert.That(formatFile.FormatColumns[2].From, Is.EqualTo(13));
+            Assert.That(formatFile.FormatColumns[2].To, Is.EqualTo(32));
+            Assert.That(formatFile.FormatColumns[2].Size, Is.EqualTo(1 + formatFile.FormatColumns[2].To - formatFile.FormatColumns[2].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[2].Size, Is.EqualTo(20));
 
-        Assert.AreEqual("forename", formatFile.FormatColumns[3].Field);
-        Assert.AreEqual(33, formatFile.FormatColumns[3].From);
-        Assert.AreEqual(52, formatFile.FormatColumns[3].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[3].To - formatFile.FormatColumns[3].From,
-            formatFile.FormatColumns[3].Size);
-        Assert.AreEqual(20, formatFile.FormatColumns[3].Size);
+            Assert.That(formatFile.FormatColumns[3].Field, Is.EqualTo("forename"));
+            Assert.That(formatFile.FormatColumns[3].From, Is.EqualTo(33));
+            Assert.That(formatFile.FormatColumns[3].To, Is.EqualTo(52));
+            Assert.That(formatFile.FormatColumns[3].Size, Is.EqualTo(1 + formatFile.FormatColumns[3].To - formatFile.FormatColumns[3].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[3].Size, Is.EqualTo(20));
 
-        Assert.AreEqual("initials", formatFile.FormatColumns[4].Field);
-        Assert.AreEqual(53, formatFile.FormatColumns[4].From);
-        Assert.AreEqual(55, formatFile.FormatColumns[4].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[4].To - formatFile.FormatColumns[4].From,
-            formatFile.FormatColumns[4].Size);
-        Assert.AreEqual(3, formatFile.FormatColumns[4].Size);
+            Assert.That(formatFile.FormatColumns[4].Field, Is.EqualTo("initials"));
+            Assert.That(formatFile.FormatColumns[4].From, Is.EqualTo(53));
+            Assert.That(formatFile.FormatColumns[4].To, Is.EqualTo(55));
+            Assert.That(formatFile.FormatColumns[4].Size, Is.EqualTo(1 + formatFile.FormatColumns[4].To - formatFile.FormatColumns[4].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[4].Size, Is.EqualTo(3));
 
-        Assert.AreEqual("practice_code", formatFile.FormatColumns[5].Field);
-        Assert.AreEqual(56, formatFile.FormatColumns[5].From);
-        Assert.AreEqual(60, formatFile.FormatColumns[5].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[5].To - formatFile.FormatColumns[5].From,
-            formatFile.FormatColumns[5].Size);
-        Assert.AreEqual(5, formatFile.FormatColumns[5].Size);
+            Assert.That(formatFile.FormatColumns[5].Field, Is.EqualTo("practice_code"));
+            Assert.That(formatFile.FormatColumns[5].From, Is.EqualTo(56));
+            Assert.That(formatFile.FormatColumns[5].To, Is.EqualTo(60));
+            Assert.That(formatFile.FormatColumns[5].Size, Is.EqualTo(1 + formatFile.FormatColumns[5].To - formatFile.FormatColumns[5].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[5].Size, Is.EqualTo(5));
 
-        Assert.AreEqual("date_into_practice", formatFile.FormatColumns[6].Field);
-        Assert.AreEqual(61, formatFile.FormatColumns[6].From);
-        Assert.AreEqual(68, formatFile.FormatColumns[6].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[6].To - formatFile.FormatColumns[6].From,
-            formatFile.FormatColumns[6].Size);
-        Assert.AreEqual(8, formatFile.FormatColumns[6].Size);
-        Assert.AreEqual("yyyyMMdd", formatFile.FormatColumns[6].DateFormat);
+            Assert.That(formatFile.FormatColumns[6].Field, Is.EqualTo("date_into_practice"));
+            Assert.That(formatFile.FormatColumns[6].From, Is.EqualTo(61));
+            Assert.That(formatFile.FormatColumns[6].To, Is.EqualTo(68));
+            Assert.That(formatFile.FormatColumns[6].Size, Is.EqualTo(1 + formatFile.FormatColumns[6].To - formatFile.FormatColumns[6].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[6].Size, Is.EqualTo(8));
+            Assert.That(formatFile.FormatColumns[6].DateFormat, Is.EqualTo("yyyyMMdd"));
 
-        Assert.AreEqual("date_out_of_practice", formatFile.FormatColumns[7].Field);
-        Assert.AreEqual(69, formatFile.FormatColumns[7].From);
-        Assert.AreEqual(76, formatFile.FormatColumns[7].To);
-        Assert.AreEqual(1 + formatFile.FormatColumns[7].To - formatFile.FormatColumns[7].From,
-            formatFile.FormatColumns[7].Size);
-        Assert.AreEqual(8, formatFile.FormatColumns[7].Size);
-        Assert.AreEqual("yyyyMMdd", formatFile.FormatColumns[7].DateFormat);
+            Assert.That(formatFile.FormatColumns[7].Field, Is.EqualTo("date_out_of_practice"));
+            Assert.That(formatFile.FormatColumns[7].From, Is.EqualTo(69));
+            Assert.That(formatFile.FormatColumns[7].To, Is.EqualTo(76));
+            Assert.That(formatFile.FormatColumns[7].Size, Is.EqualTo(1 + formatFile.FormatColumns[7].To - formatFile.FormatColumns[7].From));
+        });
+        Assert.Multiple(() =>
+        {
+            Assert.That(formatFile.FormatColumns[7].Size, Is.EqualTo(8));
+            Assert.That(formatFile.FormatColumns[7].DateFormat, Is.EqualTo("yyyyMMdd"));
+        });
     }
 
     [Test]
@@ -113,15 +132,18 @@ public class FixedWidthTests : DatabaseTests
             streamWriter.Close();
 
             var dataTable = formatFile.GetDataTableFromFlatFile(new FileInfo(tempFileToCreate));
-            Assert.AreEqual(dataTable.Rows.Count, 2);
-            Assert.AreEqual("0026440", dataTable.Rows[0]["gmc"]);
-            Assert.AreEqual("99999", dataTable.Rows[0]["gp_code"]);
-            Assert.AreEqual("Akerman", dataTable.Rows[0]["surname"]);
-            Assert.AreEqual("Frank", dataTable.Rows[0]["forename"]);
-            Assert.AreEqual("FM", dataTable.Rows[0]["initials"]);
-            Assert.AreEqual("38051", dataTable.Rows[0]["practice_code"]);
-            Assert.AreEqual(new DateTime(2004, 4, 1), dataTable.Rows[0]["date_into_practice"]);
-            Assert.AreEqual(new DateTime(2009, 5, 1), dataTable.Rows[0]["date_out_of_practice"]);
+            Assert.That(dataTable.Rows, Has.Count.EqualTo(2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(dataTable.Rows[0]["gmc"], Is.EqualTo("0026440"));
+                Assert.That(dataTable.Rows[0]["gp_code"], Is.EqualTo("99999"));
+                Assert.That(dataTable.Rows[0]["surname"], Is.EqualTo("Akerman"));
+                Assert.That(dataTable.Rows[0]["forename"], Is.EqualTo("Frank"));
+                Assert.That(dataTable.Rows[0]["initials"], Is.EqualTo("FM"));
+                Assert.That(dataTable.Rows[0]["practice_code"], Is.EqualTo("38051"));
+                Assert.That(dataTable.Rows[0]["date_into_practice"], Is.EqualTo(new DateTime(2004, 4, 1)));
+                Assert.That(dataTable.Rows[0]["date_out_of_practice"], Is.EqualTo(new DateTime(2009, 5, 1)));
+            });
         }
         finally
         {
@@ -187,8 +209,11 @@ public class FixedWidthTests : DatabaseTests
 
         var table = db.ExpectTable("TestHeaderMatching_Compatible");
 
-        Assert.IsTrue(table.Exists());
-        Assert.AreEqual(0, table.GetRowCount());
+        Assert.Multiple(() =>
+        {
+            Assert.That(table.Exists());
+            Assert.That(table.GetRowCount(), Is.EqualTo(0));
+        });
         try
         {
             Regex errorRegex;
@@ -199,7 +224,7 @@ public class FixedWidthTests : DatabaseTests
                 //Success Case
                 case FixedWidthTestCase.CompatibleHeaders:
                     attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-                    Assert.AreEqual(2, table.GetRowCount());
+                    Assert.That(table.GetRowCount(), Is.EqualTo(2));
                     return; //Return
 
 
@@ -221,7 +246,7 @@ public class FixedWidthTests : DatabaseTests
             }
 
             //Assert the expected error result is the real one
-            Assert.IsTrue(errorRegex.IsMatch(ex.Message));
+            Assert.That(errorRegex.IsMatch(ex.Message));
         }
         finally
         {

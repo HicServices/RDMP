@@ -28,17 +28,17 @@ public class CommitInProgressTests : DatabaseTests
 
         var activator = new ThrowImmediatelyActivator(RepositoryLocator);
 
-        Assert.IsNull(start.TryFinish(activator), "No changes made to Catalogue so expected no commit");
+        Assert.That(start.TryFinish(activator), Is.Null, "No changes made to Catalogue so expected no commit");
 
         c.Name = "abadaba";
         c.IsDeprecated = true;
         c.SaveToDatabase();
 
         var commit = start.TryFinish(activator);
-        Assert.IsNotNull(commit);
+        Assert.That(commit, Is.Not.Null);
 
-        Assert.AreEqual(1, commit.Mementos.Length);
-        Assert.AreNotEqual(commit.Mementos[0].BeforeYaml, commit.Mementos[0].AfterYaml);
+        Assert.That(commit.Mementos, Has.Length.EqualTo(1));
+        Assert.That(commit.Mementos[0].AfterYaml, Is.Not.EqualTo(commit.Mementos[0].BeforeYaml));
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class CommitInProgressTests : DatabaseTests
     {
         var c = new Catalogue(CatalogueRepository, "Hey");
 
-        Assert.AreEqual(ChangeDescription.NoChanges, c.HasLocalChanges().Evaluation,
+        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
             "We just created this Catalogue, how can db copy be different?!");
 
         var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)
@@ -63,22 +63,22 @@ public class CommitInProgressTests : DatabaseTests
         c.Name = "abadaba";
         c.IsDeprecated = true;
 
-        Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, c.HasLocalChanges().Evaluation,
+        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent),
             "We have local changes");
 
         c.SaveToDatabase();
 
-        Assert.AreEqual(ChangeDescription.NoChanges, c.HasLocalChanges().Evaluation,
+        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
             "Should be saved inside the transaction");
 
         // abandon the commit
         start.Dispose();
 
-        Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, c.HasLocalChanges().Evaluation,
+        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent),
             "With transaction rolled back the Catalogue should now no longer match db state - i.e. be unsaved");
 
         c.RevertToDatabaseState();
 
-        Assert.AreEqual("Hey", c.Name);
+        Assert.That(c.Name, Is.EqualTo("Hey"));
     }
 }

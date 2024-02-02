@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.IO;
 using System.Runtime.InteropServices;
 using CommandLine;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup;
 using Rdmp.UI;
 using Rdmp.UI.SimpleDialogs;
@@ -56,6 +56,11 @@ internal static partial class Program
             ExceptionViewer.Show(ex);
             return -500;
         }
+        if(UserSettings.UseLocalFileSystem && !string.IsNullOrWhiteSpace(UserSettings.LocalFileSystemLocation))
+        {
+            arg.Dir = UserSettings.LocalFileSystemLocation;
+        }
+
 
         var bootStrapper =
             new RDMPBootStrapper(arg, locator =>

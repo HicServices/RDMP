@@ -19,7 +19,7 @@ internal class IHasSummaryTests : UnitTests
             try
             {
                 var text = obj.GetSummary(true, true);
-                Assert.IsNotNull(text);
+                Assert.That(text, Is.Not.Null);
             }
             catch (Exception ex)
             {

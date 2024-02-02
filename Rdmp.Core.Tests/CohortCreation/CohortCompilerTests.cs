@@ -28,13 +28,13 @@ public class CohortCompilerTests : CohortIdentificationTests
         {
             compiler.AddTask(aggregate1, null);
 
-            Assert.AreEqual(1, compiler.Tasks.Count);
+            Assert.That(compiler.Tasks, Has.Count.EqualTo(1));
 
             var oldTask = compiler.Tasks.First();
 
             //adding it again with the same SQL should result in it ignoring it
             compiler.AddTask(aggregate1, null);
-            Assert.AreEqual(1, compiler.Tasks.Count);
+            Assert.That(compiler.Tasks, Has.Count.EqualTo(1));
 
             //make a change to the SQL
             foreach (var d in aggregate1.AggregateDimensions)
@@ -47,14 +47,14 @@ public class CohortCompilerTests : CohortIdentificationTests
             var newAggregate1 = CatalogueRepository.GetObjectByID<AggregateConfiguration>(aggregate1.ID);
 
             compiler.AddTask(newAggregate1, null);
-            Assert.AreEqual(1, compiler.Tasks.Count); //should still be 1 task
+            Assert.That(compiler.Tasks, Has.Count.EqualTo(1)); //should still be 1 task
 
             // TN: Task was never asked to start so was still at NotScheduled so cancellation wouldn't actually happen
             //old task should have been asked to cancel
             //   Assert.IsTrue(oldTask.Key.CancellationToken.IsCancellationRequested);
 
-            Assert.AreNotSame(oldTask, compiler.Tasks.Single()); //new task should not be the same as the old one
-            Assert.IsFalse(compiler.Tasks.Single().Key.CancellationToken.IsCancellationRequested);
+            Assert.That(compiler.Tasks.Single(), Is.Not.EqualTo(oldTask)); //new task should not be the same as the old one
+            Assert.That(compiler.Tasks.Single().Key.CancellationToken.IsCancellationRequested, Is.False);
             //new task should not be cancelled} finally {
         }
         finally
@@ -71,25 +71,25 @@ public class CohortCompilerTests : CohortIdentificationTests
 
         compiler.AddTask(rootcontainer, null); //add the root container
 
-        Assert.AreEqual(1, compiler.Tasks.Count);
+        Assert.That(compiler.Tasks, Has.Count.EqualTo(1));
         var oldTask = compiler.Tasks.First();
 
         //adding it again with the same SQL should result in it ignoring it
         compiler.AddTask(rootcontainer, null);
-        Assert.AreEqual(1, compiler.Tasks.Count);
+        Assert.That(compiler.Tasks, Has.Count.EqualTo(1));
 
         //add another aggregate into the container
         rootcontainer.AddChild(aggregate2, 1);
 
         compiler.AddTask(rootcontainer, null);
-        Assert.AreEqual(1, compiler.Tasks.Count); //should still be 1 task
+        Assert.That(compiler.Tasks, Has.Count.EqualTo(1)); //should still be 1 task
 
         // TN: Task was never asked to start so was still at NotScheduled so cancellation wouldn't actually happen
         //old task should have been asked to cancel
         //Assert.IsTrue(oldTask.Key.CancellationToken.IsCancellationRequested);
-        Assert.AreNotSame(oldTask, compiler.Tasks.Single()); //new task should not be the same as the old one
-        Assert.IsFalse(compiler.Tasks.Single().Key.CancellationToken
-            .IsCancellationRequested); //new task should not be cancelled
+        Assert.That(compiler.Tasks.Single(), Is.Not.EqualTo(oldTask)); //new task should not be the same as the old one
+        Assert.That(compiler.Tasks.Single().Key.CancellationToken
+            .IsCancellationRequested, Is.False); //new task should not be cancelled
 
         rootcontainer.RemoveChild(aggregate1);
         rootcontainer.RemoveChild(aggregate2);
@@ -164,22 +164,19 @@ public class CohortCompilerTests : CohortIdentificationTests
             {
                 case TestCompilerAddAllTasksTestCase.CIC:
                     tasks = compiler.AddAllTasks(includeSubcontainers);
-                    Assert.AreEqual(joinable,
-                        tasks.OfType<JoinableTask>().Single().Joinable); //should be a single joinable
-                    Assert.AreEqual(includeSubcontainers ? 7 : 6,
-                        tasks.Count); //all joinables, aggregates and root container
+                    Assert.That(tasks.OfType<JoinableTask>().Single().Joinable, Is.EqualTo(joinable)); //should be a single joinable
+                    Assert.That(tasks, Has.Count.EqualTo(includeSubcontainers ? 7 : 6)); //all joinables, aggregates and root container
 
                     break;
                 case TestCompilerAddAllTasksTestCase.RootContainer:
                     tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(),
                         cohortIdentificationConfiguration.RootCohortAggregateContainer, includeSubcontainers);
-                    Assert.AreEqual(includeSubcontainers ? 6 : 5,
-                        tasks.Count); //all aggregates and root container (but not joinables)
+                    Assert.That(tasks, Has.Count.EqualTo(includeSubcontainers ? 6 : 5)); //all aggregates and root container (but not joinables)
                     break;
                 case TestCompilerAddAllTasksTestCase.Subcontainer:
                     tasks = compiler.AddTasksRecursively(Array.Empty<ISqlParameter>(), container1,
                         includeSubcontainers);
-                    Assert.AreEqual(includeSubcontainers ? 3 : 2, tasks.Count); //subcontainer and its aggregates
+                    Assert.That(tasks, Has.Count.EqualTo(includeSubcontainers ? 3 : 2)); //subcontainer and its aggregates
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(testCase));

@@ -68,19 +68,22 @@ public class EndToEndDLECacheTest : TestsRequiringADle
 
         RunDLE(timeoutInMilliseconds);
 
-        Assert.AreEqual(10, RowsNow - RowsBefore);
+        Assert.Multiple(() =>
+        {
+            Assert.That(RowsNow - RowsBefore, Is.EqualTo(10));
 
-        Assert.AreEqual(0, LoadDirectory.Cache.GetFiles().Length);
-        Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Length);
-        Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Length);
+            Assert.That(LoadDirectory.Cache.GetFiles(), Is.Empty);
+            Assert.That(LoadDirectory.ForLoading.GetFiles(), Is.Empty);
+            Assert.That(LoadDirectory.ForArchiving.GetFiles(), Has.Length.EqualTo(1));
+        });
 
         var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
-        Assert.AreEqual(".zip", archiveFile.Extension);
+        Assert.That(archiveFile.Extension, Is.EqualTo(".zip"));
 
 
         //load progress should be updated to the largest date in the cache (2001-01-09)
         lp.RevertToDatabaseState();
-        Assert.AreEqual(lp.DataLoadProgress, new DateTime(2001, 01, 09));
+        Assert.That(new DateTime(2001, 01, 09), Is.EqualTo(lp.DataLoadProgress));
 
         cp.DeleteInDatabase();
         lp.DeleteInDatabase();

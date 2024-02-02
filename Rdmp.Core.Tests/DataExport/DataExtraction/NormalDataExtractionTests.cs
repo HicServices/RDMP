@@ -10,7 +10,6 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataExtraction;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.QueryBuilding;
 using Tests.Common.Scenarios;
@@ -26,17 +25,20 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
         _catalogue.SaveToDatabase();
         _request.DatasetBundle.DataSet.RevertToDatabaseState();
 
-        Assert.AreEqual(1, _request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier));
+        Assert.That(_request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier), Is.EqualTo(1));
 
         Execute(out _, out var result);
 
         var r = (ExecuteDatasetExtractionFlatFileDestination)result;
 
-        //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
-        Assert.AreEqual($@"ReleaseID,Name,DateOfBirth
-{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01", File.ReadAllText(r.OutputFile).Trim());
+        Assert.Multiple(() =>
+        {
+            //this should be what is in the file, the private identifier and the 1 that was put into the table in the first place (see parent class for the test data setup)
+            Assert.That(File.ReadAllText(r.OutputFile).Trim(), Is.EqualTo($@"ReleaseID,Name,DateOfBirth
+{_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()]},Dave,2001-01-01"));
 
-        Assert.AreEqual(1, _request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution));
+            Assert.That(_request.QueryBuilder.SelectColumns.Count(c => c.IColumn is ReleaseIdentifierSubstitution), Is.EqualTo(1));
+        });
         File.Delete(r.OutputFile);
     }
 
@@ -48,7 +50,7 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
         try
         {
             _catalogue.Name = "Fish;#:::FishFish";
-            Assert.IsFalse(Catalogue.IsAcceptableName(_catalogue.Name));
+            Assert.That(Catalogue.IsAcceptableName(_catalogue.Name), Is.False);
             _catalogue.SaveToDatabase();
             _extractableDataSet.RevertToDatabaseState();
 
@@ -61,9 +63,8 @@ public class NormalDataExtractionTests : TestsRequiringAnExtractionConfiguration
                 var dir = extractionDirectory.GetDirectoryForDataset(_extractableDataSet);
             });
 
-            Assert.AreEqual(
-                "Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'",
-                ex.Message);
+            Assert.That(
+                ex.Message, Is.EqualTo("Cannot extract dataset Fish;#:::FishFish because it points at Catalogue with an invalid name, name is invalid because:The following invalid characters were found:'#'"));
         }
         finally
         {

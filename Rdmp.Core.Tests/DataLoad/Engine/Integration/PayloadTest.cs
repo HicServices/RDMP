@@ -70,7 +70,7 @@ public class PayloadTest : DatabaseTests
 
         procedure.Run(new GracefulCancellationToken(), payload);
 
-        Assert.IsTrue(Success, "Expected IAttacher to detect Payload and set this property to true");
+        Assert.That(Success, "Expected IAttacher to detect Payload and set this property to true");
     }
 
 

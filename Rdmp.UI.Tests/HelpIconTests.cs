@@ -17,7 +17,7 @@ internal class HelpIconTests
         var hi = new HelpIcon();
         hi.SetHelpText(null, null);
         hi.SetHelpText("", "");
-        Assert.IsNull(hi.HoverText);
+        Assert.That(hi.HoverText, Is.Null);
     }
 
     [Test]
@@ -29,6 +29,6 @@ internal class HelpIconTests
         const string testLongString =
             "kdsfldsfjsdafdfjsdafldsafadsfksdafjdfjdsfasdjfdsjfsdfldsjfkdsfkdsfksdafjdfsdaf;sdafsdafadsflsdafksdfjadslfjdsflsdjfldsfksadkfadkfasdfadsjfasdsdfladsfjsdjfkdflsdfksdfkadsfladsfj";
         hi.SetHelpText(null, testLongString);
-        Assert.AreEqual(HelpIcon.MaxHoverTextLength, hi.HoverText.Length);
+        Assert.That(hi.HoverText, Has.Length.EqualTo(HelpIcon.MaxHoverTextLength));
     }
 }

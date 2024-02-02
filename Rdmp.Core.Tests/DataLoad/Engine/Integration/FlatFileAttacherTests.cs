@@ -108,10 +108,9 @@ public class FlatFileAttacherTests : DatabaseTests
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
 
-            Assert.IsNotNull(ex.InnerException);
-            StringAssert.StartsWith(
-                "Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does",
-                ex.InnerException.Message);
+            Assert.That(ex.InnerException, Is.Not.Null);
+            Assert.That(
+                ex.InnerException.Message, Does.StartWith("Your separator does not appear in the headers line of your file (bob.csv) but the separator ',' does"));
             return;
         }
 
@@ -119,7 +118,7 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
         var table = _database.ExpectTable("Bob");
-        Assert.IsTrue(table.Exists());
+        Assert.That(table.Exists());
 
         table.DiscoverColumn("name");
         table.DiscoverColumn("name2");
@@ -128,17 +127,26 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob", r["name"]);
-            Assert.AreEqual("Munchousain", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Franky", r["name"]);
-            Assert.AreEqual("Hollyw9ood", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Manny2", r["name"]);
-            Assert.AreEqual("Ok", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Manny2"));
+                Assert.That(r["name2"], Is.EqualTo("Ok"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -172,7 +180,7 @@ public class FlatFileAttacherTests : DatabaseTests
         var table = _database.ExpectTable("Bob");
         table.Truncate();
 
-        Assert.IsTrue(table.Exists());
+        Assert.That(table.Exists());
         table.DiscoverColumn("name");
         var name2 = table.DiscoverColumn("name2");
         name2.DataType.AlterTypeTo("datetime2");
@@ -184,13 +192,19 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob", r["name"]);
-            Assert.AreEqual(new DateTime(2001, 01, 13), r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo(new DateTime(2001, 01, 13)));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Franky", r["name"]);
-            Assert.AreEqual(new DateTime(2002, 01, 13), r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo(new DateTime(2002, 01, 13)));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -219,19 +233,25 @@ public class FlatFileAttacherTests : DatabaseTests
         attacher.ForceHeaders = "name\tname2";
 
         var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2 from Bob", con).ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Face", r["name"]);
-            Assert.AreEqual("Basher", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Face"));
+                Assert.That(r["name2"], Is.EqualTo("Basher"));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Candy", r["name"]);
-            Assert.AreEqual("Crusher", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Candy"));
+                Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -268,27 +288,32 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             var ex = Assert.Throws<FlatFileLoadException>(() =>
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-            Assert.AreEqual("AddFilenameColumnNamed is set to 'FilePath' but the column did not exist in RAW",
-                ex.InnerException.Message);
+            Assert.That(ex.InnerException.Message, Is.EqualTo("AddFilenameColumnNamed is set to 'FilePath' but the column did not exist in RAW"));
             return;
         }
 
 
         var exitCode = attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
             var r = _database.Server.GetCommand("Select name,name2,FilePath from Bob", con).ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Face", r["name"]);
-            Assert.AreEqual("Basher", r["name2"]);
-            Assert.AreEqual(filename, r["FilePath"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Face"));
+                Assert.That(r["name2"], Is.EqualTo("Basher"));
+                Assert.That(r["FilePath"], Is.EqualTo(filename));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Candy", r["name"]);
-            Assert.AreEqual("Crusher", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Candy"));
+                Assert.That(r["name2"], Is.EqualTo("Crusher"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -331,20 +356,26 @@ public class FlatFileAttacherTests : DatabaseTests
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, namer), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
             var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
                 .ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob", r["name"]);
-            Assert.AreEqual("Munchousain", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Franky", r["name"]);
-            Assert.AreEqual("Hollyw9ood", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -380,20 +411,26 @@ public class FlatFileAttacherTests : DatabaseTests
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
             var r = _database.Server.GetCommand($"Select name,name2 from {_table.GetRuntimeName()}", con)
                 .ExecuteReader();
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Bob", r["name"]);
-            Assert.AreEqual("Munchousain", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Bob"));
+                Assert.That(r["name2"], Is.EqualTo("Munchousain"));
+            });
 
-            Assert.IsTrue(r.Read());
-            Assert.AreEqual("Franky", r["name"]);
-            Assert.AreEqual("Hollyw9ood", r["name2"]);
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Franky"));
+                Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
+            });
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
@@ -449,11 +486,11 @@ public class FlatFileAttacherTests : DatabaseTests
         var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null), ti);
 
         var exitCode = attacher.Attach(job, new GracefulCancellationToken());
-        Assert.AreEqual(ExitCodeType.Success, exitCode);
+        Assert.That(exitCode, Is.EqualTo(ExitCodeType.Success));
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        Assert.AreEqual(new DateTime(2001, 1, 27), tbl.GetDataTable().Rows[0][0]);
+        Assert.That(tbl.GetDataTable().Rows[0][0], Is.EqualTo(new DateTime(2001, 1, 27)));
 
         File.Delete(filename);
         tbl.Drop();
@@ -477,8 +514,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         var ex = Assert.Throws<Exception>(() => source.Attach(job, new GracefulCancellationToken()));
 
-        StringAssert.IsMatch(
-            "FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Match("FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'"));
     }
 }

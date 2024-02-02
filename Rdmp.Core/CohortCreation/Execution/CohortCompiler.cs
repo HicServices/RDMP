@@ -20,6 +20,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -346,31 +347,23 @@ public class CohortCompiler
         return task;
     }
 
-    public void LaunchSingleTask(ICompileable compileable, int timeout, bool cacheOnCompletion)
+    internal void LaunchSingleTask([NotNull] ICompileable compileable, int timeout, bool cacheOnCompletion)
     {
-        if (!Tasks.ContainsKey(compileable))
+        if (!Tasks.TryGetValue(compileable, out var taskExecution))
             throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
         if (compileable.State != CompilationState.NotScheduled)
             throw new ArgumentException(
                 $"Task must be in state NotScheduled but was {compileable.State}.  Crash message is:{compileable.CrashMessage?.ToString() ?? "null"}");
 
-        KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
-    }
-
-    public void LaunchScheduledTasksAsync(int timeout, bool cacheOnCompletion)
-    {
-        foreach (var kvp in Tasks)
-            if (kvp.Key.State == CompilationState.NotScheduled)
-                KickOff(kvp.Key, kvp.Value, timeout, cacheOnCompletion);
+        KickOff(compileable, taskExecution, timeout, cacheOnCompletion);
     }
 
     private void KickOff(ICompileable task, CohortIdentificationTaskExecution execution, int timeout,
         bool cacheOnCompletion)
     {
         task.State = CompilationState.Scheduled;
-        task.Stopwatch = new Stopwatch();
-        task.Stopwatch.Start();
+        task.Stopwatch = Stopwatch.StartNew();
 
         var t = new Thread(() => DoTaskAsync(task, execution, timeout, cacheOnCompletion));
         Threads.Add(t);

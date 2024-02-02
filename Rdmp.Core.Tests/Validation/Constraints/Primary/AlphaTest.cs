@@ -31,7 +31,7 @@ internal class AlphaTest : ValidationTests
     [TestCase("A1 ")]
     public void Validate_Invalid_ThrowsException(string code)
     {
-        Assert.NotNull(_alpha.Validate(code));
+        Assert.That(_alpha.Validate(code), Is.Not.Null);
     }
 
     [TestCase(null)]
@@ -43,7 +43,7 @@ internal class AlphaTest : ValidationTests
     [TestCase("AAAAAA")]
     public void Validate_Valid_Success(string code)
     {
-        Assert.IsNull(_alpha.Validate(code));
+        Assert.That(_alpha.Validate(code), Is.Null);
     }
 
     [Test]
@@ -51,7 +51,7 @@ internal class AlphaTest : ValidationTests
     {
         var result = _alpha.Validate("9");
 
-        Assert.NotNull(result.SourceConstraint);
-        Assert.AreEqual(typeof(Alpha), result.SourceConstraint.GetType());
+        Assert.That(result.SourceConstraint, Is.Not.Null);
+        Assert.That(result.SourceConstraint.GetType(), Is.EqualTo(typeof(Alpha)));
     }
 }

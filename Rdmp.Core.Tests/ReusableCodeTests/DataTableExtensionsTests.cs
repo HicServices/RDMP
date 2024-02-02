@@ -29,10 +29,11 @@ internal class DataTableExtensionsTests
 
         var answer = File.ReadAllText(path);
 
-        Assert.AreEqual(answer,
-            @"Phrase,Car
-""omg,why me!"",Ferrari
-");
+        Assert.That(answer, Is.EqualTo("""
+                                       Phrase,Car
+                                       "omg,why me!",Ferrari
+
+                                       """));
     }
 
     [Test]
@@ -50,10 +51,11 @@ internal class DataTableExtensionsTests
 
         var answer = File.ReadAllText(path);
 
-        Assert.AreEqual(answer,
-            @"Phrase,Car
-""omg,""""why"""" me!"",Ferrari
-");
+        Assert.That(answer, Is.EqualTo("""
+                    Phrase,Car
+                    "omg,""why"" me!",Ferrari
+
+                    """));
     }
 
 
@@ -72,9 +74,10 @@ internal class DataTableExtensionsTests
 
         var answer = File.ReadAllText(path);
 
-        Assert.AreEqual(answer,
-            @"Phrase,Car
-""""""omg,why me!"""""",Ferrari
-");
+        Assert.That(answer, Is.EqualTo(""""
+                    Phrase,Car
+                    """omg,why me!""",Ferrari
+
+                    """"));
     }
 }

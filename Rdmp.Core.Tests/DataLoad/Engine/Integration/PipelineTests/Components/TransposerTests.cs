@@ -39,9 +39,8 @@ public class TransposerTests
         transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
         var ex = Assert.Throws<NotSupportedException>(() =>
             transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
-        Assert.AreEqual(
-            "Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable",
-            ex.Message);
+        Assert.That(
+            ex.Message, Is.EqualTo("Error, we received multiple batches, Transposer only works when all the data arrives in a single DataTable"));
     }
 
     [Test]
@@ -51,7 +50,7 @@ public class TransposerTests
         var ex = Assert.Throws<NotSupportedException>(() =>
             transposer.ProcessPipelineData(new DataTable(), new ThrowImmediatelyDataLoadJob(),
                 new GracefulCancellationToken()));
-        Assert.AreEqual("DataTable toProcess had 0 rows and 0 columns, thus it cannot be transposed", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo("DataTable toProcess had 0 rows and 0 columns, thus it cannot be transposed"));
     }
 
 
@@ -74,11 +73,11 @@ public class TransposerTests
         expectedResult.Rows.Add("Gateau", "40", "33", "5");
 
         for (var i = 0; i < actual.Columns.Count; i++)
-            Assert.AreEqual(expectedResult.Columns[i].ColumnName, actual.Columns[i].ColumnName);
+            Assert.That(actual.Columns[i].ColumnName, Is.EqualTo(expectedResult.Columns[i].ColumnName));
 
         for (var i = 0; i < expectedResult.Rows.Count; i++)
         for (var j = 0; j < actual.Columns.Count; j++)
-            Assert.AreEqual(expectedResult.Rows[i][j], actual.Rows[i][j]);
+                Assert.That(actual.Rows[i][j], Is.EqualTo(expectedResult.Rows[i][j]));
     }
 
     [Test]
@@ -93,7 +92,7 @@ public class TransposerTests
         var actual =
             transposer.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 
-        Assert.IsTrue(actual.Columns.Contains("_32GramMax"));
+        Assert.That(actual.Columns.Contains("_32GramMax"));
 
         dt.Rows.Remove(dr);
     }

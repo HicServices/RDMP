@@ -37,6 +37,6 @@ internal class TableInfoCloneOperationTests : DatabaseTests
 
         var tbl2 = tbl.Database.ExpectTable($"{tbl.GetRuntimeName()}_copy");
 
-        Assert.IsTrue(tbl2.Exists());
+        Assert.That(tbl2.Exists());
     }
 }

@@ -42,7 +42,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
     {
         var solutionDir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
         while (solutionDir?.GetFiles("*.sln").Any() != true) solutionDir = solutionDir?.Parent;
-        Assert.IsNotNull(solutionDir, "Failed to find {0} in any parent directories", SolutionName);
+        Assert.That(solutionDir, Is.Not.Null, $"Failed to find {SolutionName} in any parent directories");
 
         var sln = new VisualStudioSolutionFile(solutionDir, solutionDir.GetFiles(SolutionName).Single());
 
@@ -68,7 +68,7 @@ public class EvaluateNamespacesAndSolutionFoldersTests : DatabaseTests
                     break;
             }
 
-        Assert.AreEqual(0, _errors.Count);
+        Assert.That(_errors, Is.Empty);
         //      DependenciesEvaluation dependencies = new DependenciesEvaluation();
         //      dependencies.FindProblems(sln);
 
@@ -240,9 +240,7 @@ public class CopyrightHeaderEvaluator
                 suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
         }
 
-        Assert.AreEqual(0, suggestedNewFileContents.Count, "The following files did not contain copyright:{0}{1}",
-            Environment.NewLine,
-            string.Join(Environment.NewLine, suggestedNewFileContents.Keys.Select(Path.GetFileName)));
+        Assert.That(suggestedNewFileContents, Is.Empty, $"The following files did not contain copyright:{Environment.NewLine}{string.Join(Environment.NewLine, suggestedNewFileContents.Keys.Select(Path.GetFileName))}");
 
         //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
@@ -289,8 +287,11 @@ public partial class AutoCommentsEvaluator
                             var whitespace = m.Groups[1].Value;
                             var member = m.Groups[3].Value;
 
-                            Assert.IsTrue(string.IsNullOrWhiteSpace(whitespace));
-                            Assert.IsNotNull(t);
+                            Assert.Multiple(() =>
+                            {
+                                Assert.That(string.IsNullOrWhiteSpace(whitespace));
+                                Assert.That(t, Is.Not.Null);
+                            });
 
                             if (t.GetProperty($"{member}_ID") != null)
                             {
@@ -370,7 +371,7 @@ public partial class AutoCommentsEvaluator
         foreach (var suggestedNewFileContent in suggestedNewFileContents)
             File.WriteAllText(suggestedNewFileContent.Key, suggestedNewFileContent.Value);
 
-        Assert.IsEmpty(suggestedNewFileContents);
+        Assert.That(suggestedNewFileContents, Is.Empty);
     }
 
     private static string GetUniqueTypeName(string typename)

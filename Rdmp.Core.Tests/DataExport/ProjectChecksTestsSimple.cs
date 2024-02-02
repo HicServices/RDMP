@@ -29,7 +29,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
             var ex = Assert.Throws<Exception>(() =>
                 new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(
                     ThrowImmediatelyCheckNotifier.Quiet));
-            Assert.AreEqual("Project does not have any ExtractionConfigurations yet", ex?.Message);
+            Assert.That(ex?.Message, Is.EqualTo("Project does not have any ExtractionConfigurations yet"));
         }
         finally
         {
@@ -42,7 +42,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         var p = GetProjectWithConfig(out var config);
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.AreEqual("Project does not have an ExtractionDirectory", ex?.Message);
+        Assert.That(ex?.Message, Is.EqualTo("Project does not have an ExtractionDirectory"));
     }
 
     [Test]
@@ -55,7 +55,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.IsTrue(Regex.IsMatch(ex.Message, @"Project ExtractionDirectory .* Does Not Exist"));
+        Assert.That(Regex.IsMatch(ex.Message, @"Project ExtractionDirectory .* Does Not Exist"));
     }
 
     [Test]
@@ -65,7 +65,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
         p.ExtractionDirectory = @"C:\|||";
 
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.AreEqual(@"Project ExtractionDirectory ('C:\|||') Does Not Exist", ex.Message);
+        Assert.That(ex.Message, Is.EqualTo(@"Project ExtractionDirectory ('C:\|||') Does Not Exist"));
     }
 
     [Test]
@@ -84,16 +84,22 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         try
         {
-            //remnant exists
-            Assert.IsTrue(dir.Exists);
-            Assert.IsTrue(remnantDir.Exists);
+            Assert.Multiple(() =>
+            {
+                //remnant exists
+                Assert.That(dir.Exists);
+                Assert.That(remnantDir.Exists);
+            });
 
             //resolve accepting deletion
             new ProjectChecker(new ThrowImmediatelyActivator(RepositoryLocator), p).Check(new AcceptAllCheckNotifier());
 
-            //boom remnant doesnt exist anymore (but parent does obviously)
-            Assert.IsTrue(dir.Exists);
-            Assert.IsFalse(Directory.Exists(remnantDir.FullName)); //cant use .Exists for some reason, c# caches answer?
+            Assert.Multiple(() =>
+            {
+                //boom remnant doesn't exist anymore (but parent does obviously)
+                Assert.That(dir.Exists);
+                Assert.That(Directory.Exists(remnantDir.FullName), Is.False); //cant use .Exists for some reason, c# caches answer?
+            });
         }
         finally
         {
@@ -124,7 +130,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
             var notifier = new ToMemoryCheckNotifier();
             RunTestWithCleanup(p, config, notifier);
 
-            Assert.IsTrue(notifier.Messages.Any(
+            Assert.That(notifier.Messages.Any(
                 m => m.Result == CheckResult.Fail &&
                      Regex.IsMatch(m.Message,
                          @"Found non-empty folder .* which is left over extracted folder after data release \(First file found was '.*[/\\]DMPTestCatalogue[/\\]Lookups[/\\]Text.txt' but there may be others\)")));
@@ -140,8 +146,7 @@ public class ProjectChecksTestsSimple : DatabaseTests
     {
         var p = GetProjectWithConfigDirectory(out var config, out _);
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",
-            ex.Message);
+        Assert.That(ex.Message, Does.StartWith("There are no datasets selected for open configuration 'New ExtractionConfiguration"));
     }
 
 
@@ -151,9 +156,8 @@ public class ProjectChecksTestsSimple : DatabaseTests
         var p = GetProjectWithConfigDirectory(out var config, out _);
         p.ProjectNumber = null;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        StringAssert.Contains(
-            "Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the ",
-            ex.Message);
+        Assert.That(
+            ex.Message, Does.Contain("Project does not have a Project Number, this is a number which is meaningful to you (as opposed to ID which is the "));
     }
 
     private void RunTestWithCleanup(Project p, ExtractionConfiguration config, ICheckNotifier notifier = null)

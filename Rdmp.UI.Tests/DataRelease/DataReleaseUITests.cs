@@ -18,7 +18,7 @@ public class DataReleaseUITests : UITests
     {
         var o = WhenIHaveA<Project>();
         var ui = AndLaunch<DataReleaseUI>(o);
-        Assert.IsNotNull(ui);
+        Assert.That(ui, Is.Not.Null);
         AssertNoErrors(ExpectedErrorType.Any);
     }
 }

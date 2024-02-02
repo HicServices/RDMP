@@ -233,7 +233,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             LookupCreationStage.DragAPrimaryKey => 2,
             LookupCreationStage.DragAForeignKey => 3,
             LookupCreationStage.DragADescription => 4,
-            _ => throw new ArgumentOutOfRangeException()
+            _ => throw new InvalidOperationException()
         };
 
         DrawArrows(e.Graphics);

@@ -31,7 +31,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
         finder.ThrowIfDeleteDisallowed(null);
 
         //this guy should be a usual suspect!
-        Assert.IsTrue(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
+        Assert.That(finder.TheUsualSuspects.Any(s => s.Type == typeof(ReferentialIntegrityConstraint)));
 
         var testXML =
             @"<?xml version=""1.0"" encoding=""utf-16""?>
@@ -50,7 +50,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
   </ItemValidators>
 </Validator>";
 
-        Assert.IsTrue(finder.TheUsualSuspects.Select(suspect => string.Format(suspect.Pattern, 10029))
+        Assert.That(finder.TheUsualSuspects.Select(suspect => string.Format(suspect.Pattern, 10029))
             .Any(pattern => Regex.IsMatch(testXML, pattern, RegexOptions.Singleline)));
     }
 
@@ -66,10 +66,10 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
             var worked = Validator.LoadFromXml(testData.catalogue.ValidatorXML);
 
             //notice that it is the ID of the referenced column that is maintained not the name of it! that is because we need to use a data access portal to get the contents of the column which might be in a different table (and normally would be)
-            Assert.IsFalse(testData.catalogue.ValidatorXML.Contains("previous_address_L2"));
-            Assert.IsTrue(testData.catalogue.ValidatorXML.Contains(l2ColumnInfo.ID.ToString()));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Not.Contain("previous_address_L2"));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Contain(l2ColumnInfo.ID.ToString()));
 
-            Assert.IsTrue(testData.catalogue.ValidatorXML.Contains("previous_address_L1"));
+            Assert.That(testData.catalogue.ValidatorXML, Does.Contain("previous_address_L1"));
 
             //we expect the validation XML to find the reference
             var finder = new ValidationXMLObscureDependencyFinder(RepositoryLocator);
@@ -77,7 +77,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
             //and explode
             Assert.Throws<ValidationXmlDependencyException>(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
 
-            Assert.AreEqual(0, finder.CataloguesWithBrokenValidationXml.Count);
+            Assert.That(finder.CataloguesWithBrokenValidationXml, Is.Empty);
 
             //now clear the validation XML
             testData.catalogue.ValidatorXML =
@@ -86,7 +86,7 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
 
             //column info should be deleteable but only because we got ourselves onto the forbidlist
             Assert.DoesNotThrow(() => finder.ThrowIfDeleteDisallowed(l2ColumnInfo));
-            Assert.AreEqual(1, finder.CataloguesWithBrokenValidationXml.Count);
+            Assert.That(finder.CataloguesWithBrokenValidationXml, Has.Count.EqualTo(1));
 
             testData.catalogue.ValidatorXML = "";
             testData.catalogue.SaveToDatabase();
@@ -145,9 +145,8 @@ public class ValidationXMLObscureDependencyFinderTests : DatabaseTests
         startup.DoStartup(IgnoreAllErrorsCheckNotifier.Instance);
 
         //there should not be any replication! and doubling SetUp!
-        Assert.AreEqual(numberAfterFirstRun,
-            ((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
-            .OtherDependencyFinders.Count);
+        Assert.That(((CatalogueObscureDependencyFinder)CatalogueRepository.ObscureDependencyFinder)
+            .OtherDependencyFinders, Has.Count.EqualTo(numberAfterFirstRun));
     }
 
     #region setup test data with some validation rule

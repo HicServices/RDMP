@@ -61,10 +61,13 @@ public class PackageListIsCorrectTests
         undocumented.AppendJoin(Environment.NewLine, undocumentedPackages);
 
         var unusedPackages = packagesMarkdown.Except(usedPackages).ToArray();
-        Assert.IsEmpty(unusedPackages,
-            $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
-        Assert.Zero(undocumentedPackages.Count,
-            $"One or more packages not documented in PACKAGES.md. Recommended addition:{Environment.NewLine}{undocumented}");
+        Assert.Multiple(() =>
+        {
+            Assert.That(unusedPackages, Is.Empty,
+                    $"The following packages are listed in PACKAGES.md but are not used in any csproj file: {string.Join(", ", unusedPackages)}");
+            Assert.That(undocumentedPackages, Is.Empty,
+                $"One or more packages not documented in PACKAGES.md. Recommended addition:{Environment.NewLine}{undocumented}");
+        });
     }
 
     /// <summary>
@@ -92,7 +95,7 @@ public class PackageListIsCorrectTests
         var root = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         while (!root.EnumerateFiles("*.sln", SearchOption.TopDirectoryOnly).Any() && root.Parent != null)
             root = root.Parent;
-        Assert.IsNotNull(root.Parent, "Could not find root of repository");
+        Assert.That(root.Parent, Is.Not.Null, "Could not find root of repository");
         return root;
     }
 
@@ -115,7 +118,7 @@ public class PackageListIsCorrectTests
     private static string GetPackagesMarkdown(DirectoryInfo root)
     {
         var path = root.EnumerateFiles("packages.md", EnumerationOptions).Select(f => f.FullName).SingleOrDefault();
-        Assert.IsNotNull(path, "Could not find packages.md");
+        Assert.That(path, Is.Not.Null, "Could not find packages.md");
         return path;
     }
 }

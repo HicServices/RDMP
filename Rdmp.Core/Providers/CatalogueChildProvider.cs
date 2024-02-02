@@ -63,6 +63,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     //Catalogue side of things
     public Catalogue[] AllCatalogues { get; set; }
+    public Curation.Data.Dataset[] AllDatasets { get; set; }
     public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
     public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -138,6 +139,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
     public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+
+    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
@@ -240,6 +243,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         AllCatalogues = GetAllObjects<Catalogue>(repository);
         AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+
+        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
@@ -375,6 +380,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
         AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+
+
+        DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
+        AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
         ReportProgress("Build Catalogue Folder Root");
 
@@ -602,7 +611,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-
     private void AddChildren(AllPermissionWindowsNode allPermissionWindowsNode)
     {
         var descendancy = new DescendancyList(allPermissionWindowsNode);
@@ -824,6 +832,22 @@ public class CatalogueChildProvider : ICoreChildProvider
         );
     }
 
+    private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
+    {
+        foreach (var child in folder.ChildFolders)
+            //add subfolder children
+            AddChildren(child, descendancy.Add(child));
+
+        //add loads in folder
+        foreach (var ds in folder.ChildObjects) AddChildren(ds, descendancy.Add(ds));
+
+        // Children are the folders + objects
+        AddToDictionaries(new HashSet<object>(
+                folder.ChildFolders.Cast<object>()
+                    .Union(folder.ChildObjects)), descendancy
+        );
+    }
+
     private void AddChildren(FolderNode<CohortIdentificationConfiguration> folder, DescendancyList descendancy)
     {
         foreach (var child in folder.ChildFolders)
@@ -839,6 +863,13 @@ public class CatalogueChildProvider : ICoreChildProvider
                     .Union(folder.ChildObjects)), descendancy
         );
     }
+
+    private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
+    {
+        var childObjects = new List<object>();
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
+    }
+
 
     #region Load Metadata
 
@@ -1487,19 +1518,18 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            //if we don't have a record of any children in the child dictionary for the parent model object
-            if (!_childDictionary.ContainsKey(model))
+            //if we have a record of any children in the child dictionary for the parent model object
+            if (_childDictionary.TryGetValue(model,out var cached))
+                return cached.OrderBy(static o => o.ToString()).ToArray();
+
+            return model switch
             {
                 //if they want the children of a Pipeline (which we don't track) just serve the components
-                if (model is Pipeline p) return p.PipelineComponents.ToArray();
+                Pipeline p => p.PipelineComponents.ToArray(),
                 //if they want the children of a PipelineComponent (which we don't track) just serve the arguments
-                if (model is PipelineComponent pc) return pc.PipelineComponentArguments.ToArray();
-
-                return Array.Empty<object>(); //return none
-            }
-
-
-            return _childDictionary[model].OrderBy(o => o.ToString()).ToArray();
+                PipelineComponent pc => pc.PipelineComponentArguments.ToArray(),
+                _ => Array.Empty<object>()
+            };
         }
     }
 
