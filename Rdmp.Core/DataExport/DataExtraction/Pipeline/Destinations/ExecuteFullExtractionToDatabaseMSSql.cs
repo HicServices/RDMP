@@ -83,7 +83,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     public bool MakeFinalTableDistinctWhenBatchResuming { get; set; } = true;
 
 
-    [DemandsInitialization("If this extraction has already been run, it will append any ned data into the database")]
+    [DemandsInitialization("If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.")]
     public bool AppendDataIfTableExists { get; set; } = false;
 
     private DiscoveredDatabase _destinationDatabase;
@@ -650,7 +650,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     return;
                 }
 
-                // if the expected table exists and we are not doing a batch resume
+                // if the expected table exists and we are not doing a batch resume or allowing data appending
                 if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume && !AppendDataIfTableExists)
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase,
                         tableName, database));

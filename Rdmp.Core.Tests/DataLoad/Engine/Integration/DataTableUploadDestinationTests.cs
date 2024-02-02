@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -877,6 +877,84 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             Assert.That(tbl.Exists());
             Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
+        }
+
+        db.Drop();
+    }
+
+
+
+    [Test]
+    public void MySqlTest_ReextractTheSameData()
+    {
+        var token = new GracefulCancellationToken();
+
+        var db = GetCleanedServer(DatabaseType.MySql);
+
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+
+        var dt = new DataTable();
+        dt.Columns.Add("mystringcol", typeof(string));
+        dt.Columns.Add("mynum", typeof(string));
+        dt.Columns.Add("mydate", typeof(string));
+        dt.Columns.Add("myLegitDateTime", typeof(DateTime));
+        dt.Columns.Add("mynullcol", typeof(string));
+
+
+        //drop the millisecond part
+        var now = DateTime.Now;
+        now = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
+        dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now, null });
+        dt.TableName = "DataTableUploadDestinationTests";
+
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        var tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
             Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
         });
 
