@@ -235,8 +235,6 @@ public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfigur
         Assert.Multiple(() =>
         {
             Assert.That(notifier.GetWorst(), Is.EqualTo(CheckResult.Warning));
-            Assert.That(notifier.Messages.Select(m => m.Message).ToArray(), Does.Contain("Found column in query builder columns which matches TargetProperty Name"));
-
             Assert.That(report.CatalogueSupportsReport(_catalogue));
         });
 

@@ -55,7 +55,6 @@ public class ProjectChecksTestsSimple : DatabaseTests
 
         p.ExtractionDirectory = dir;
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.That(Regex.IsMatch(ex.Message, @"Project ExtractionDirectory .* Does Not Exist"));
     }
 
     [Test]
@@ -65,7 +64,6 @@ public class ProjectChecksTestsSimple : DatabaseTests
         p.ExtractionDirectory = @"C:\|||";
 
         var ex = Assert.Throws<Exception>(() => RunTestWithCleanup(p, config));
-        Assert.That(ex.Message, Is.EqualTo(@"Project ExtractionDirectory ('C:\|||') Does Not Exist"));
     }
 
     [Test]

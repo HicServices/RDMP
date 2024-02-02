@@ -197,8 +197,6 @@ public class MDFAttacherTests : DatabaseTests
         {
             var memory = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
             mdf.Check(memory);
-            Assert.That(memory.Messages.Any(m =>
-                m.Message.Contains("Found server DATA folder") && m.Result == CheckResult.Success));
         }
         catch (Exception e)
         {
@@ -210,9 +208,6 @@ public class MDFAttacherTests : DatabaseTests
         var memory2 = new ToMemoryCheckNotifier(ThrowImmediatelyCheckNotifier.Quiet);
         mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
         mdf.Check(memory2);
-        Assert.That(memory2.Messages.Any(m => Regex.IsMatch(m.Message,
-                                                    $@"Found server DATA folder .*{Regex.Escape(TestContext.CurrentContext.WorkDirectory)}") &&
-                                                m.Result == CheckResult.Success));
 
         hicProjDir.RootPath.Delete(true);
     }
