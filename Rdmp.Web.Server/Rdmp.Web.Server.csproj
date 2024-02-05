@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
     <SpaRoot>..\Rdmp.React.UI</SpaRoot>
-    <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
-    <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <SpaProxyLaunchCommand>npm run web-dev</SpaProxyLaunchCommand>
+    <SpaProxyServerUrl>https://localhost:8888</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
