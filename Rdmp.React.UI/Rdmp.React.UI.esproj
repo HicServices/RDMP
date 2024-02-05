@@ -1,4 +1,3 @@
-
 <Project Sdk="Microsoft.VisualStudio.JavaScript.Sdk/0.5.128-alpha">
   <PropertyGroup>
     <StartupCommand>npm run dev</StartupCommand>
@@ -9,4 +8,7 @@
     <!-- Folder where production build objects will be placed -->
     <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="src\yyy.esproj" />
+  </ItemGroup>
 </Project>
