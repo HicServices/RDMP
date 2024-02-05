@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Rdmp.Core.CommandExecution;
 
-namespace ReactUI.Server.Controllers
+namespace Rdmp.Web.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

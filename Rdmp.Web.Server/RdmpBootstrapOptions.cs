@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using global::Rdmp.Core.CommandLine.Options;
-namespace ReactUI.Server;
+namespace Rdmp.Web.Server;
 
 /// <summary>
 /// Defines the command line arguments of ResearchDataManagementPlatform.exe when run from the command line / shortcut

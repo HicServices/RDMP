@@ -1,4 +1,4 @@
-namespace ReactUI.Server
+namespace Rdmp.Web.Server
 {
     public class WeatherForecast
     {

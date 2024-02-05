@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Rdmp.Core.Curation.Data;
-using ReactUI.Server.Models;
+using Rdmp.Web.Server.Models;
 
-namespace ReactUI.Server.Controllers
+namespace Rdmp.Web.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]

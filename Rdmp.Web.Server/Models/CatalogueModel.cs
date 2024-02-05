@@ -1,6 +1,6 @@
 ﻿using Rdmp.Core.Curation.Data;
 
-namespace ReactUI.Server.Models
+namespace Rdmp.Web.Server.Models
 {
     public class CatalogueModel
     {

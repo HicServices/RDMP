@@ -76,7 +76,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B010
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Rdmp.React.UI", "Rdmp.React.UI\Rdmp.React.UI.esproj", "{3637CEBA-908D-4A5E-B1BB-20B2AB647B65}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactUI.Server", "ReactUI.Server\ReactUI.Server.csproj", "{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rdmp.Web.Server", "Rdmp.Web.Server\Rdmp.Web.Server.csproj", "{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

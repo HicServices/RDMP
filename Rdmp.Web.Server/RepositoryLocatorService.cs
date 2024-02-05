@@ -1,4 +1,4 @@
-﻿namespace ReactUI.Server;
+﻿namespace Rdmp.Web.Server;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;

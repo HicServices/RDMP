@@ -2,11 +2,11 @@
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using ReactUI.Server.Models;
+using Rdmp.Web.Server.Models;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace ReactUI.Server.Controllers
+namespace Rdmp.Web.Server.Controllers
 {
     [ApiController]
     [Route("[controller]")]
