@@ -76,6 +76,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{B010
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Rdmp.React.UI", "Rdmp.React.UI\Rdmp.React.UI.esproj", "{3637CEBA-908D-4A5E-B1BB-20B2AB647B65}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReactUI.Server", "ReactUI.Server\ReactUI.Server.csproj", "{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -354,6 +356,38 @@ Global
 		{3637CEBA-908D-4A5E-B1BB-20B2AB647B65}.Test|x86.ActiveCfg = Release|Any CPU
 		{3637CEBA-908D-4A5E-B1BB-20B2AB647B65}.Test|x86.Build.0 = Release|Any CPU
 		{3637CEBA-908D-4A5E-B1BB-20B2AB647B65}.Test|x86.Deploy.0 = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|x64.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Debug|x86.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|Any CPU.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|x64.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|x64.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|x86.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Development|x86.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|x64.ActiveCfg = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|x64.Build.0 = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|x86.ActiveCfg = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Release|x86.Build.0 = Release|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|Any CPU.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|Mixed Platforms.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|x64.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|x64.Build.0 = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|x86.ActiveCfg = Debug|Any CPU
+		{F3F1A261-3E29-43A3-A4D8-272D38F8AAFC}.Test|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

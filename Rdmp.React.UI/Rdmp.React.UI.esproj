@@ -9,6 +9,6 @@
     <PublishAssetsDirectory>$(MSBuildProjectDirectory)\dist</PublishAssetsDirectory>
   </PropertyGroup>
   <ItemGroup>
-    <None Include="src\yyy.esproj" />
+    <Folder Include="src\" />
   </ItemGroup>
 </Project>
