@@ -22,7 +22,6 @@
 		<ProjectReference Include="..\Rdmp.React.UI\Rdmp.React.UI.esproj" >
 			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
 		</ProjectReference>
-		  <ProjectReference Include="..\Rdmp.React.UI\Rdmp.React.UI.esproj">
-</ItemGroup>
+	</ItemGroup>
 
 </Project>
