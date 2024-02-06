@@ -13,6 +13,7 @@ using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories;
 
@@ -31,7 +32,7 @@ internal class LoadStageNodeMenu : RDMPContextMenuStrip
         AddMenu<IDataProvider>("Add Cached Data Provider", t => typeof(ICachedDataProvider).IsAssignableFrom(t));
         AddMenu<IDataProvider>("Add Data Provider", t => !typeof(ICachedDataProvider).IsAssignableFrom(t));
 
-        AddMenu<IAttacher>("Add Attacher");
+        AddMenu<IAttacher>("Add Attacher", t=> !typeof(RemoteAttacher).IsAssignableTo(t) );
         AddMenu<IMutilateDataTables>("Add Mutilator");
     }
 

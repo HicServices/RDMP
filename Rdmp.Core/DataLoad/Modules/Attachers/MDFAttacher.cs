@@ -5,13 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics.Distributions;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -41,7 +45,8 @@ public class MDFAttacher : Attacher, IPluginAttacher
     [DemandsInitialization(
         @"There are multiple ways to attach a mdf files to an SQL server, the first stage is always to copy the mdf and ldf files to the DATA directory of your server but after that it gets flexible.  
 1. AttachWithConnectionString attempts to do the attaching as part of connection by specifying the AttachDBFilename keyword in the connection string
-2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server")]
+2. ExecuteCreateDatabaseForAttachSql attempts to connect to 'master' and execute CREATE DATABASE sql with the FILENAME property set to your mdf file in the DATA directory of your database server
+If you are attempting to attach an MDF file from a Linux machine to a Window machine, or  vice-versa, you will have to use the ExecuteCreateDatabaseForAttachSql to be able to handle the mismatched directory structure")]
     public MdfAttachStrategy AttachStrategy { get; set; }
 
     [DemandsInitialization(
@@ -58,6 +63,46 @@ public class MDFAttacher : Attacher, IPluginAttacher
 
     private MdfFileAttachLocations _locations;
 
+    private void GetFileNames()
+    {
+        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) && (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf"))) return;//don't need to fiddle with the paths
+        var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
+        {
+            InitialCatalog = "master",
+            ConnectTimeout = 600
+        };
+
+        using var con = new SqlConnection(builder.ConnectionString);
+        con.Open();
+        using var dt = new DataTable();
+        using (var cmd = DatabaseCommandHelper.GetCommand($"DBCC CHECKPRIMARYFILE (N'{_locations.AttachMdfPath}' , 3)", con))
+        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+        {
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
+
+        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf", StringComparison.OrdinalIgnoreCase))
+        {
+            var _path = dt.Rows[1].ItemArray[3].ToString();
+            _locations.AttachLdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachLdfPath, _path); 
+        }
+        else
+        {
+            _locations.AttachLdfPath = OverrideAttachLdfPath;
+        }
+        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf", StringComparison.OrdinalIgnoreCase))
+        {
+            var _path = dt.Rows[0].ItemArray[3].ToString();
+            _locations.AttachMdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachMdfPath, _path);
+        }
+        else
+        {
+            _locations.AttachMdfPath = OverrideAttachMdfPath;
+        }
+    }
+
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
         //The location of .mdf files from the perspective of the database server
@@ -66,11 +111,7 @@ public class MDFAttacher : Attacher, IPluginAttacher
         _locations =
             new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
 
-        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath))
-            _locations.AttachMdfPath = OverrideAttachMdfPath;
-
-        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath))
-            _locations.AttachLdfPath = OverrideAttachLdfPath;
+        GetFileNames();
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Identified the MDF file:{_locations.OriginLocationMdf} and corresponding LDF file:{_locations.OriginLocationLdf}"));
