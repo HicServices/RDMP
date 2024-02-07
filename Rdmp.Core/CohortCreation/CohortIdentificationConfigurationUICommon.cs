@@ -158,12 +158,12 @@ public class CohortIdentificationConfigurationUICommon
         RecreateAllTasks();
     }
 
-    private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
+    private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o, int? userDefinedTimeout)
     {
         switch (operation)
         {
             case Operation.Execute:
-                StartThisTaskOnly(o);
+                StartThisTaskOnly(o, userDefinedTimeout);
                 break;
             case Operation.Cancel:
                 Cancel(o);
@@ -178,7 +178,7 @@ public class CohortIdentificationConfigurationUICommon
         }
     }
 
-    private void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
+    private void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer, int? userDefinedTimeout)
     {
         var task = Compiler.AddTask(configOrContainer, _globals);
         if (task.State == CompilationState.Crashed)
@@ -195,7 +195,7 @@ public class CohortIdentificationConfigurationUICommon
         task = Compiler.AddTask(configOrContainer, _globals);
 
         //Task is now in state NotScheduled, so we can start it
-        Compiler.LaunchSingleTask(task, Timeout, true);
+        Compiler.LaunchSingleTask(task, userDefinedTimeout ?? Timeout, true);
     }
 
     public void Cancel(IMapsDirectlyToDatabaseTable o)
@@ -329,7 +329,8 @@ public class CohortIdentificationConfigurationUICommon
     /// the appropriate message to the user
     /// </summary>
     /// <param name="o"></param>
-    public void ExecuteOrCancel(object o)
+    /// <param name="userDefinedTimeout"></param>
+    public void ExecuteOrCancel(object o, int? userDefinedTimeout)
     {
         Task.Run(() =>
         {
@@ -340,13 +341,13 @@ public class CohortIdentificationConfigurationUICommon
                         var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
                         if (joinable != null)
-                            OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                            OrderActivity(GetNextOperation(GetState(joinable)), joinable, userDefinedTimeout);
                         else
-                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate, userDefinedTimeout);
                         break;
                     }
                 case CohortAggregateContainer container:
-                    OrderActivity(GetNextOperation(GetState(container)), container);
+                    OrderActivity(GetNextOperation(GetState(container)), container, userDefinedTimeout);
                     break;
             }
         });

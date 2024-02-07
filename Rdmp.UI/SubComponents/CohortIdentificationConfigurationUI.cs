@@ -286,7 +286,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
-        Common.ExecuteOrCancel(e.Model);
+        Common.ExecuteOrCancel(e.Model, _timeoutControls.Timeout);
     }
 
     public void StartAll()
