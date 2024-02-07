@@ -293,7 +293,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         lblExecuteAllPhase.Enabled = true;
 
-        Common.StartAll(RebuildClearCacheCommand, RunnerOnPhaseChanged);
+        Common.StartAll(RebuildClearCacheCommand, RunnerOnPhaseChanged, _timeoutControls.Timeout);
     }
 
     private void RunnerOnPhaseChanged(object sender, EventArgs eventArgs)

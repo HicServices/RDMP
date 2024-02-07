@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.CommandExecution;
@@ -351,7 +352,7 @@ public class CohortIdentificationConfigurationUICommon
         });
     }
 
-    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged)
+    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged, int? userDefinedTimeout)
     {
         //only allow starting all if we are not mid execution already
         if (IsExecutingGlobalOperations())
@@ -360,7 +361,7 @@ public class CohortIdentificationConfigurationUICommon
         _cancelGlobalOperations = new CancellationTokenSource();
 
 
-        Runner = new CohortCompilerRunner(Compiler, Timeout);
+        Runner = new CohortCompilerRunner(Compiler, userDefinedTimeout ?? Timeout);
         Runner.PhaseChanged += onRunnerPhaseChanged;
         Task.Run(() =>
         {
