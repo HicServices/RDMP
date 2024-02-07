@@ -13,7 +13,6 @@ using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MathNet.Numerics;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -490,17 +489,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _datasetStartDate, value);
     }
 
-    //private int? _loadMetadataId;
-
-    ///// <inheritdoc/>
-    //[DoNotExtractProperty]
-    //[Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
-    //public int? LoadMetadata_ID
-    //{
-    //    get => _loadMetadataId;
-    //    set => SetField(ref _loadMetadataId, value);
-    //}
-
     #endregion
 
     #region Relationships
@@ -512,7 +500,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     [NoMappingToDatabase]
     public LoadMetadata[] LoadMetadata => _knownLoadMetadatas?.Value ?? [];
-    //public LoadMetadata LoadMetadata => LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
+
+    //LoadMetadata[] ICatalogue.LoadMetadata => _knownLoadMetadatas?.Value ?? [];
+
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -540,7 +530,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             ? null
             : Repository.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
 
-    LoadMetadata[] ICatalogue.LoadMetadata { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     #endregion
 
@@ -720,9 +709,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        //if (r["LoadMetadata_ID"] != DBNull.Value)
-        //    LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
-
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();

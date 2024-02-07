@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
         Catalogue catalogue = null) : base(activator)
     {
         _availableCatalogues =
-            activator.CoreChildProvider.AllCatalogues.ToArray();//.Where(c => c.LoadMetadata_ID == null).ToArray();
+            activator.CoreChildProvider.AllCatalogues.ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no Catalogues that are not associated with another Load already");
@@ -60,7 +60,6 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
 
             lmd.EnsureLoggingWorksFor(_catalogue);
 
-            //_catalogue.LoadMetadata_ID = lmd.ID;
             lmd.Catalogue_ID = _catalogue.ID;
             _catalogue.SaveToDatabase();
 

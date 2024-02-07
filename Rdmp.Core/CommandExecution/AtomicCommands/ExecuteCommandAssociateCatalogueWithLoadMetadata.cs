@@ -100,7 +100,6 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             }
 
             //associate them
-            //cata.LoadMetadata_ID = _loadMetadata.ID;
             _loadMetadata.Catalogue_ID = cata.ID;
             _loadMetadata.SaveToDatabase();
             cata.SaveToDatabase();

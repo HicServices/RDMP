@@ -298,8 +298,7 @@ public class ForwardEngineerANOCatalogueEngine
                 LoadMetadata = new LoadMetadata(_catalogueRepository, $"Anonymising {NewCatalogue}");
                 LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
 
-                //NewCatalogue.LoadMetadata_ID = LoadMetadata.ID;
-                NewCatalogue.LoadMetadata = [LoadMetadata];
+                NewCatalogue.LoadMetadata.Append(LoadMetadata);
                 NewCatalogue.SaveToDatabase();
 
                 if (_planManager.DateColumn != null)
