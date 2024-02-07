@@ -49,13 +49,6 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// </summary>
     IOrderedEnumerable<IProcessTask> ProcessTasks { get; }
 
-    /// <summary>
-    /// Returns all datasets this load is responsible for supplying data to.  This determines which <see cref="TableInfo"/> are
-    /// available during RAW=>STAGING=>LIVE migration (the super set of all tables underlying all catalogues).
-    /// 
-    /// <para>See also <see cref="ICatalogue.LoadMetadata_ID"/></para>
-    /// </summary>
-    /// <returns></returns>
     IEnumerable<ICatalogue> GetAllCatalogues();
 
 
@@ -70,4 +63,6 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// Stores the most recent time the load was successfully ran
     /// </summary>
     DateTime? LastLoadTime { get; set; }
+
+    int? Catalogue_ID { get; set; }
 }

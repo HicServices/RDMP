@@ -22,7 +22,7 @@ public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadM
 
     public void DeleteInDatabase()
     {
-        ObjectBeingUsed.LoadMetadata_ID = null;
+        //ObjectBeingUsed.LoadMetadata_ID = null;
         ObjectBeingUsed.SaveToDatabase();
     }
 

@@ -42,7 +42,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     {
         _loadMetadata = loadMetadata;
 
-        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null)
+        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues//.Where(c => c.LoadMetadata_ID == null)
             .ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
@@ -100,7 +100,9 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             }
 
             //associate them
-            cata.LoadMetadata_ID = _loadMetadata.ID;
+            //cata.LoadMetadata_ID = _loadMetadata.ID;
+            _loadMetadata.Catalogue_ID = cata.ID;
+            _loadMetadata.SaveToDatabase();
             cata.SaveToDatabase();
         }
 

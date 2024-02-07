@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Menus.MenuItems;
 
@@ -79,18 +80,21 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, catalogue, null /*pick at runtime*/)
         { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
-        if (catalogue.LoadMetadata_ID != null)
+        if (catalogue.LoadMetadata.Length > 0)
         {
-            if (catalogue.LoadMetadata.LocationOfFlatFiles == null) return;
-            try
+            foreach (LoadMetadata lmd in catalogue.LoadMetadata)
             {
-                var dirReal = new DirectoryInfo(catalogue.LoadMetadata.LocationOfFlatFiles);
-                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
-                { OverrideCommandName = "Open Load Directory" });
-            }
-            catch (Exception)
-            {
-                // if the directory name is bad or corrupt
+                if (lmd.LocationOfFlatFiles == null) return;
+                try
+                {
+                    var dirReal = new DirectoryInfo(lmd.LocationOfFlatFiles);
+                    Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
+                    { OverrideCommandName = "Open Load Directory" });
+                }
+                catch (Exception)
+                {
+                    // if the directory name is bad or corrupt
+                }
             }
         }
     }

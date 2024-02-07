@@ -264,8 +264,11 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            yield return new ExecuteCommandShow(_activator, catalogue.LoadMetadata_ID, typeof(LoadMetadata))
-            { OverrideCommandName = "Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+            foreach (LoadMetadata lmd in catalogue.LoadMetadata)
+            {
+                yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
+                { OverrideCommandName = "Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+            }
 
             if (_activator.CoreChildProvider is DataExportChildProvider exp)
             {

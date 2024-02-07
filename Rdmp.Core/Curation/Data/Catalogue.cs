@@ -13,6 +13,7 @@ using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MathNet.Numerics;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -88,6 +89,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     private int? _liveLoggingServerID;
 
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
+    private Lazy<LoadMetadata[]> _knownLoadMetadatas = new Lazy<LoadMetadata[]> { };
 
 
     /// <inheritdoc/>
@@ -488,16 +490,16 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _datasetStartDate, value);
     }
 
-    private int? _loadMetadataId;
+    //private int? _loadMetadataId;
 
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
-    public int? LoadMetadata_ID
-    {
-        get => _loadMetadataId;
-        set => SetField(ref _loadMetadataId, value);
-    }
+    ///// <inheritdoc/>
+    //[DoNotExtractProperty]
+    //[Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
+    //public int? LoadMetadata_ID
+    //{
+    //    get => _loadMetadataId;
+    //    set => SetField(ref _loadMetadataId, value);
+    //}
 
     #endregion
 
@@ -509,8 +511,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata =>
-        LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
+    public LoadMetadata[] LoadMetadata => _knownLoadMetadatas.Value ?? [];
+    //public LoadMetadata LoadMetadata => LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -537,6 +539,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         PivotCategory_ExtractionInformation_ID == null
             ? null
             : Repository.GetObjectByID<ExtractionInformation>(PivotCategory_ExtractionInformation_ID.Value);
+
+    LoadMetadata[] ICatalogue.LoadMetadata { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     #endregion
 
@@ -693,6 +697,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
+
+        _knownLoadMetadatas = new Lazy<LoadMetadata[]>(repository.GetAllObjects<LoadMetadata>().Where(lmd => lmd.Catalogue_ID == ID).ToArray());
         //if there is a default logging server
         if (LiveLoggingServer_ID == null)
         {
@@ -714,8 +720,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if (r["LoadMetadata_ID"] != DBNull.Value)
-            LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
+        //if (r["LoadMetadata_ID"] != DBNull.Value)
+        //    LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
 
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
@@ -1069,7 +1075,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// </summary>
     public void HardDisassociateLoadMetadata()
     {
-        _loadMetadataId = null;
+        //_loadMetadataId = null;
     }
 
     /// <summary>
@@ -1094,8 +1100,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
         iDependOn.AddRange(CatalogueItems);
 
-        if (LoadMetadata != null)
-            iDependOn.Add(LoadMetadata);
+        if (LoadMetadata.Length >0 )
+            foreach(LoadMetadata lmd in LoadMetadata)
+                iDependOn.Add(lmd);
 
         return iDependOn.ToArray();
     }
@@ -1176,12 +1183,18 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         _knownCatalogueItems = new Lazy<CatalogueItem[]>(instance);
     }
 
+    public void InjectKnown(LoadMetadata[] instance)
+    {
+        _knownLoadMetadatas = new Lazy<LoadMetadata[]>(instance);
+    }
+
     /// <summary>
     /// Cleares the cached answer of <see cref="GetExtractabilityStatus"/>
     /// </summary>
     public void ClearAllInjections()
     {
         _extractabilityStatus = null;
+        _knownLoadMetadatas = null;
         _knownCatalogueItems =
             new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem, Catalogue>(this));
     }

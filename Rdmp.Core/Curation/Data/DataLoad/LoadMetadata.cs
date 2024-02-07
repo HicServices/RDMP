@@ -56,6 +56,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private bool _ignoreTrigger;
     private string _folder;
     private DateTime? _lastLoadTime;
+    private int? _catalogueID;
 
     /// <inheritdoc/>
     [AdjustableLocation]
@@ -63,6 +64,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         get => _locationOfFlatFiles;
         set => SetField(ref _locationOfFlatFiles, value);
+    }
+
+
+    public int? Catalogue_ID
+    {
+        get => _catalogueID;
+        set => SetField(ref _catalogueID, value);
     }
 
     /// <summary>
@@ -173,7 +181,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <summary>
     /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
     /// 
-    /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadata_ID"/> on some of your datasets</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -224,6 +231,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     /// <inheritdoc/>
     public override string ToString() => Name;
+
 
     /// <inheritdoc/>
     public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
