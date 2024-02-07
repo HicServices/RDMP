@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
@@ -18,6 +19,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -31,12 +33,10 @@ namespace Rdmp.Core.CommandLine.Runners;
 public class DleRunner : Runner
 {
     private readonly DleOptions _options;
-
     public DleRunner(DleOptions options)
     {
         _options = options;
     }
-
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
@@ -101,7 +101,37 @@ public class DleRunner : Runner
                         execution, databaseConfiguration);
                 }
 
+
                 var exitCode = dataLoadProcess.Run(token);
+
+                if (exitCode is ExitCodeType.Success)
+                {
+                    //Store the date of the last successful load
+                    loadMetadata.LastLoadTime = DateTime.Now;
+                    loadMetadata.SaveToDatabase();
+                    List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
+                    if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
+                    {
+                        foreach (IEnumerable<Argument> arguments in processTasks.Select(task => task.GetAllArguments()))
+                        {
+                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
+                            {
+                                var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
+                                var arg = (ProcessTaskArgument)argument;
+                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
+                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
+                                {
+                                    var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
+                                    if (mostRecentValue is not null)
+                                    {
+                                        arg.Value = DateTime.Parse(mostRecentValue).ToString();
+                                    }
+                                }
+                                arg.SaveToDatabase();
+                            }
+                        }
+                    }
+                }
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
                 return exitCode is ExitCodeType.Success or ExitCodeType.OperationNotRequired ? 0 : (int)exitCode;
@@ -113,5 +143,17 @@ public class DleRunner : Runner
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+
+    private string RemoteAttacherPropertiesValidator(string propertyName)
+    {
+        var properties = typeof(RemoteAttacher).GetProperties();
+        var foundProperties = properties.Where(p => p.Name == propertyName);
+        if (foundProperties.Any())
+        {
+            return foundProperties.First().Name;
+        }
+        throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+
     }
 }
