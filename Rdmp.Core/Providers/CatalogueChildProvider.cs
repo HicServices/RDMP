@@ -989,8 +989,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var chilObjects = new HashSet<object>();
 
-        var usedCatalogues = AllCatalogues
-            .Where(c => c.LoadMetadata.Select(lmd => lmd.ID).ToArray().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID)).ToList();
+        var usedCataloguesIDs = AllCatalogues.Select(c => c.ID).Where(i => i == allCataloguesUsedByLoadMetadataNode.LoadMetadata.Catalogue_ID);
+        var usedCatalogues = AllCatalogues.Where(c => usedCataloguesIDs.Contains(c.ID)).ToList();
 
 
         foreach (var catalogue in usedCatalogues)

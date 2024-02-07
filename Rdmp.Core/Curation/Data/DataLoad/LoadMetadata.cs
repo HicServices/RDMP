@@ -210,6 +210,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ?null: DateTime.Parse(r["LastLoadTime"].ToString());
+        Catalogue_ID = ObjectToNullableInt(r["Catalogue_ID"]);
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()

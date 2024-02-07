@@ -511,7 +511,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public LoadMetadata[] LoadMetadata => _knownLoadMetadatas.Value ?? [];
+    public LoadMetadata[] LoadMetadata => _knownLoadMetadatas?.Value ?? [];
     //public LoadMetadata LoadMetadata => LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int) LoadMetadata_ID);
 
     /// <inheritdoc/>
