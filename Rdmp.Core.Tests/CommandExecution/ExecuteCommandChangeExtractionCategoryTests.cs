@@ -8,14 +8,7 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Repositories;
-using System.Linq;
 using Tests.Common;
-using NSubstitute;
-using NSubstitute.Extensions;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Curation.Data.Aggregation;
-using static Org.BouncyCastle.Math.EC.ECCurve;
 namespace Rdmp.Core.Tests.CommandExecution;
 
 public class ExecuteCommandChangeExtractionCategoryTests : DatabaseTests
