@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
+using NPOI.OpenXmlFormats.Dml.Chart;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -125,7 +126,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         if (toProcess == null)
             return null;
-
+        var pkColumns = toProcess.PrimaryKey;
         RemoveInvalidCharactersInSchema(toProcess);
 
         IDatabaseColumnRequestAdjuster adjuster = null;
@@ -180,7 +181,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
-                    else if(!AppendDataIfTableExists)
+                    else if (!AppendDataIfTableExists)
                         throw new Exception(
                             $"There is already a table called {TargetTableName} at the destination {_database}");
 
@@ -222,8 +223,47 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             //push the data
             swTimeSpentWriting.Start();
+            //there is no pks for some reason
+            if (pkColumns.Length > 0) //assumes columns are the same
+            {
+                //drop any pk clashes
+                var existingData = _discoveredTable.GetDataTable();
+                var rowsToDelete = new List<DataRow>();
+                foreach (DataRow row in toProcess.Rows)
+                {
+                   
+                    foreach (DataColumn pkCol in pkColumns)
+                    {
+                        var val = row[pkCol.ColumnName];
+                        var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName] == val); //todo this wasn't matching anything
+                        if (clash)
+                        {
+                            rowsToDelete.Add(row);
+                            break;
+                        }
+                    }
+                }
+                foreach (DataRow row in rowsToDelete)
+                {
+                    toProcess.Rows.Remove(row);
+                }
+                if (toProcess.Rows.Count == 0) return null;
+            }
 
-            _affectedRows += _bulkcopy.Upload(toProcess);
+            foreach (DataRow row in toProcess.Rows)
+            {
+                _affectedRows += _bulkcopy.Upload(toProcess);
+                //using var dt = toProcess.Clone();
+                //dt.Rows.Add(row.ItemArray);
+                //try
+                //{
+                //    _affectedRows += _bulkcopy.Upload(dt);
+                //}
+                //catch (Exception ex)
+                //{
+                //    Console.WriteLine(ex.Message);
+                //}
+            }
 
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,

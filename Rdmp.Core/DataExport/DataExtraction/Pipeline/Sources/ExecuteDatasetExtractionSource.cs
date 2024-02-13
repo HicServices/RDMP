@@ -340,6 +340,21 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
+        bool includePrimaryKeys = true;
+        if (includePrimaryKeys)
+        {
+            var pks = new List<DataColumn>();
+            foreach (ExtractableColumn column in Request.ColumnsToExtract)
+            {
+                if (column.ColumnInfo.IsPrimaryKey)
+                {
+                    var name = column.CatalogueExtractionInformation.ToString();
+                    var pk = chunk.Columns[name];
+                    pks.Add(chunk.Columns[name]);
+                }
+            }
+            chunk.PrimaryKey = pks.ToArray();
+        }
 
         return chunk;
     }
