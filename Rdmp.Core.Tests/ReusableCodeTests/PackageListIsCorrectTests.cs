@@ -24,9 +24,10 @@ public class PackageListIsCorrectTests
         { RecurseSubdirectories = true, MatchCasing = MatchCasing.CaseInsensitive, IgnoreInaccessible = true };
 
     //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-    private static readonly Regex RPackageRef =
-        new(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""",
+    private static readonly Regex RPackageRefNoVersion =
+        new(@"<PackageReference\s+Include=""(.*)""",
             RegexOptions.IgnoreCase | RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
 
     // | Org.SomePackage |
     //
@@ -53,7 +54,9 @@ public class PackageListIsCorrectTests
             .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Extract the named packages from csproj files
-        var usedPackages = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRef.Matches(s))
+        var x = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s));
+        Console.WriteLine(x);
+        var usedPackages = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s))
             .Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Then subtract those listed in PACKAGES.md (should be empty)
