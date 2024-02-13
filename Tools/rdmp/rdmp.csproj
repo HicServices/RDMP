@@ -39,9 +39,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Terminal.Gui" Version="1.15.1" />
+    <PackageReference Include="Terminal.Gui"/>
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="15.1.1" />
+    <PackageReference Include="YamlDotNet"/>
   </ItemGroup>
     <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
