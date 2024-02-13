@@ -295,9 +295,6 @@
 		<EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
 		<EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
 	</ItemGroup>
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" Version="2.9.1" />
 		<PackageReference Include="CsvHelper" Version="30.0.1" />
