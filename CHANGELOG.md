@@ -4,10 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.1.4] - Unreleased
+## [8.1.4] - 2024-02-19
 
 ## Changed
 
+- Add ability to use Extraction Category with Project Specific Catalogues
 - Allow arbitrary MDF files from foreign file systems to work with the MDF Attacher, see [MDFAttacher](Documentation\DataLoadEngine\MDFAttacher.md)
 - Update Excel Attacher to read data from arbitrary start points within sheets
 - Add Time based filtering of remote table and database attachers
