@@ -1320,6 +1320,11 @@ REFERENCES [dbo].[ExternalDatabaseServer] ([ID])
 GO
 ALTER TABLE [dbo].[TableInfo] CHECK CONSTRAINT [FK_TableInfo_ExternalDatabaseServer]
 GO
+alter table RDMP_Catalogue.dbo.LoadMetadata
+ADD Catalogue_ID integer NULL
+CONSTRAINT fkCatalogueID FOREIGN KEY(Catalogue_ID)
+REFERENCES RDMP_CATALOGUE.dbo.Catalogue(id)
+GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Table ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'ID'
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'‘SMR01’ for example' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'Acronym'
