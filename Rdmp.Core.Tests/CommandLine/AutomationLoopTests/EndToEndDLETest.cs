@@ -48,11 +48,11 @@ public class EndToEndDLETest : TestsRequiringADle
         {
             LocationOfFlatFiles = LoadDirectory.RootPath.FullName
         };
+        lmd.Catalogue_ID = cata.ID;
         lmd.SaveToDatabase();
 
         CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());
 
-        cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
 
         Assert.That(tbl.GetRowCount(), Is.EqualTo(0));

@@ -23,7 +23,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = cata2.ID;
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
@@ -41,7 +41,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = cata2.ID;
 
         cata1.LoggingDataTask = "OMG YEAGH";
 
@@ -60,7 +60,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = cata2.ID;
 
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
@@ -87,7 +87,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();
 
-        cata2.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = cata2.ID;
 
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = null;

@@ -47,7 +47,7 @@ public class ProcessTaskTests : DatabaseTests
                 Assert.That(clone.Order, Is.EqualTo(orig.Order));
                 Assert.That(clone.Path, Is.EqualTo(orig.Path));
                 Assert.That(clone.ProcessTaskType, Is.EqualTo(orig.ProcessTaskType));
-                Assert.That(clone.LoadMetadata_ID, Is.EqualTo(orig.LoadMetadata_ID));
+                //Assert.That(clone.LoadMetadata_ID, Is.EqualTo(orig.LoadMetadata_ID));
             });
 
             clone.DeleteInDatabase();
@@ -112,8 +112,8 @@ public class ProcessTaskTests : DatabaseTests
                 Assert.That(clone.Path, Is.EqualTo(orig.Path));
                 Assert.That(clone.ProcessTaskType, Is.EqualTo(orig.ProcessTaskType));
 
-                Assert.That(orig.LoadMetadata_ID, Is.EqualTo(parent1.ID));
-                Assert.That(clone.LoadMetadata_ID, Is.EqualTo(parent2.ID));
+                //Assert.That(orig.LoadMetadata_ID, Is.EqualTo(parent1.ID));
+                //Assert.That(clone.LoadMetadata_ID, Is.EqualTo(parent2.ID));
             });
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

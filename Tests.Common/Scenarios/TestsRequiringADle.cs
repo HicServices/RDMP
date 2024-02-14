@@ -67,11 +67,12 @@ public class TestsRequiringADle : TestsRequiringA
         {
             LocationOfFlatFiles = LoadDirectory.RootPath.FullName
         };
+        TestLoadMetadata.Catalogue_ID = TestCatalogue.ID;
         TestLoadMetadata.SaveToDatabase();
 
 
         //make the load load the table
-        TestCatalogue.LoadMetadata_ID = TestLoadMetadata.ID;
+
         TestCatalogue.SaveToDatabase();
 
         CreateFlatFileAttacher(TestLoadMetadata, "*.csv", TestCatalogue.GetTableInfoList(false).Single(), ",");

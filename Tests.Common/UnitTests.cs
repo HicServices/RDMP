@@ -177,7 +177,7 @@ public class UnitTests
             ti.SaveToDatabase();
 
             var lmd = new LoadMetadata(repository, "MyLoad");
-            cata.LoadMetadata_ID = lmd.ID;
+            lmd.Catalogue_ID = cata.ID;
             cata.SaveToDatabase();
             return (T)(object)lmd;
         }

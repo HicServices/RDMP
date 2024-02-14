@@ -1,4 +1,4 @@
-﻿--Version:8.1.4
+﻿--Version:8.1.5
 --Description: Adds FK reference to a catalogue in a LoadMetadata
 GO
 if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaData' and COLUMN_NAME='Catalouge_ID')

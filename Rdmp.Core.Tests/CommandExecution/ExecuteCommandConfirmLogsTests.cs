@@ -24,10 +24,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "GGG"
         };
         cata.SaveToDatabase();
+        lmd.Catalogue_ID = cata.ID;
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("GGG");
@@ -45,10 +45,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
+        lmd.Catalogue_ID = cata.ID;
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
@@ -70,10 +70,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
+        lmd.Catalogue_ID = cata.ID;
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
@@ -93,10 +93,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
+        lmd.Catalogue_ID = cata.ID;
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
@@ -116,10 +116,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
+        lmd.Catalogue_ID = cata.ID;
 
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
@@ -144,18 +144,18 @@ ex.Message, Does.Match("Latest logged activity for MyLmd is .*.  This is older t
         var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd1.ID,
             LoggingDataTask = "B"
         };
         cata.SaveToDatabase();
+        lmd1.Catalogue_ID = cata.ID;
 
         var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata2 = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd2.ID,
             LoggingDataTask = "A"
         };
         cata2.SaveToDatabase();
+        lmd2.Catalogue_ID = cata2.ID;
 
         var lp1 = new LoadProgress(CatalogueRepository, lmd1);
         var lp2 = new LoadProgress(CatalogueRepository, lmd2);

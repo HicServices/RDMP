@@ -36,8 +36,7 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
 
         Assert.Multiple(() =>
         {
-            Assert.That(cata1.LoadMetadata_ID, Is.EqualTo(lmd.ID));
-            Assert.That(cata2.LoadMetadata, Is.Null);
+            Assert.That(lmd.Catalogue_ID, Is.EqualTo(cata1.ID));
         });
     }
 }

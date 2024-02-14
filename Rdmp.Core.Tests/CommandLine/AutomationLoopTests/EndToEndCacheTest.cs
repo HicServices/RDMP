@@ -56,7 +56,7 @@ public class EndToEndCacheTest : DatabaseTests
 
         _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
         {
-            LoadMetadata_ID = _lmd.ID
+
         };
         _cata.SaveToDatabase();
 

@@ -20,6 +20,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Repositories;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -264,10 +265,10 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            foreach (LoadMetadata lmd in catalogue.LoadMetadata)
+            foreach (LoadMetadata lmd in catalogue.Repository.GetAllObjects<LoadMetadata>().Where(l => l.Catalogue_ID == catalogue.ID ))
             {
                 yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
-                { OverrideCommandName = "Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+                { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
 
             if (_activator.CoreChildProvider is DataExportChildProvider exp)

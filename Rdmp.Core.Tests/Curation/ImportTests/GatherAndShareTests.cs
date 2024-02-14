@@ -175,7 +175,7 @@ public class GatherAndShareTests : DatabaseTests
         Assert.That(gObj.Children, Has.Count.EqualTo(2)); //both cata items
 
         var lmd = new LoadMetadata(CatalogueRepository);
-        cata.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = cata.ID;
         cata.SaveToDatabase();
 
         //get the share definition
@@ -197,7 +197,6 @@ public class GatherAndShareTests : DatabaseTests
         //make a local change
         cata.Name = "fishfish";
         cata.SubjectNumbers = "123";
-        cata.LoadMetadata_ID = null;
         cata.Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         cata.SaveToDatabase();
 
@@ -229,7 +228,6 @@ public class GatherAndShareTests : DatabaseTests
             //import the defined properties but not name
             Assert.That(cata.Name, Is.EqualTo("fishfish"));
             Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
-            Assert.That(cata.LoadMetadata_ID, Is.Null);
         });
         cata.SaveToDatabase();
 

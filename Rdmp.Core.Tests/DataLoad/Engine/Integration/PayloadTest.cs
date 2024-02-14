@@ -46,8 +46,7 @@ public class PayloadTest : DatabaseTests
         lmd.SaveToDatabase();
 
         MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
-
-        b.catalogue.LoadMetadata_ID = lmd.ID;
+        lmd.Catalogue_ID = b.catalogue.ID;
         b.catalogue.LoggingDataTask = "TestPayloadInjection";
         b.catalogue.SaveToDatabase();
 
