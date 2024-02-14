@@ -7,6 +7,7 @@ alter table LoadMetadata
 ADD Catalogue_ID integer NULL
 CONSTRAINT fkCatalogueID FOREIGN KEY(Catalogue_ID)
 REFERENCES Catalogue(id)
+ON DELETE SET NULL
 END
 GO
 if exists (select count(*) from RDMP_Catalogue.dbo.LoadMetadata where Catalogue_ID is null) --todo not sure this is correct

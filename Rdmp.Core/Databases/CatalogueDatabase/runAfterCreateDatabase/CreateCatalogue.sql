@@ -1324,6 +1324,7 @@ alter table [dbo].[LoadMetadata]
 ADD [Catalogue_ID] integer NULL
 CONSTRAINT [fkCatalogueID] FOREIGN KEY([Catalogue_ID])
 REFERENCES [dbo].[Catalogue]([id])
+ON DELETE SET NULL
 alter table Catalogue
 DROP CONSTRAINT FK_Catalogue_LoadMetadata
 alter table Catalogue
