@@ -1324,6 +1324,10 @@ alter table [dbo].[LoadMetadata]
 ADD [Catalogue_ID] integer NULL
 CONSTRAINT [fkCatalogueID] FOREIGN KEY([Catalogue_ID])
 REFERENCES [dbo].[Catalogue]([id])
+alter table Catalogue
+DROP CONSTRAINT FK_Catalogue_LoadMetadata
+alter table Catalogue
+DROP COLUMN LoadMetadata_ID
 GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Table ID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Catalogue', @level2type=N'COLUMN',@level2name=N'ID'
 GO
