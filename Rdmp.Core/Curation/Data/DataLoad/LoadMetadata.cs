@@ -235,7 +235,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
 
     /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
+    public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjects<Catalogue>().Where(c => c.ID == Catalogue_ID);
+    //public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
 
     /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
