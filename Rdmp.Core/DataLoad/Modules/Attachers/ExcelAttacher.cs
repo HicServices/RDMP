@@ -55,7 +55,7 @@ public class ExcelAttacher : FlatFileAttacher
 
     private int ConvertColumnOffsetToInt()
     {
-        if(int.TryParse(ColumnOffset,out var result)) return result;
+        if (int.TryParse(ColumnOffset, out var result)) return result;
         if (ColumnOffset.Length == 1 && char.IsLetter(ColumnOffset[0])) return char.ToUpper(ColumnOffset[0]) - 65;//would be 64, but we index from zero here
         throw new Exception("Column offset is not a valid number or letter");
     }
@@ -83,26 +83,23 @@ public class ExcelAttacher : FlatFileAttacher
             $"About to start processing {fileToLoad.FullName}"));
 
         var columnTranslation = ConvertColumnOffsetToInt();
-        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation);
 
+        string[] replacementHeadersSplit = { };
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
-            //split headers by , (and trim leading/trailing whitespace).
-            var replacementHeadersSplit = ForceReplacementHeaders.Split(',')
+            replacementHeadersSplit = ForceReplacementHeaders.Split(',')
                 .Select(h => string.IsNullOrWhiteSpace(h) ? h : h.Trim()).ToArray();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
-
-            if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Error,
-                        $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
-            else
-                for (var i = 0; i < replacementHeadersSplit.Length; i++)
-                    _dataTable.Columns[i].ColumnName =
-                        replacementHeadersSplit[i]; //rename the columns to match the forced replacements
         }
+
+        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation, replacementHeadersSplit);
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
+        if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
+            listener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Error,
+                    $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
+
+
 
         //all data should now be exhausted
         if (_hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation) != null)

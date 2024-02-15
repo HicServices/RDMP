@@ -54,9 +54,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
 
-    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0)
+    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
-        dataReadFromFile ??= GetAllData(listener, cancellationToken,rowOffset,columnOffset);
+        dataReadFromFile ??= GetAllData(listener, cancellationToken, rowOffset, columnOffset, replacementHeadersSplit);
 
         if (haveDispatchedDataTable)
             return null;
@@ -66,7 +66,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return dataReadFromFile;
     }
 
-    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset=0, int columnOffset=0)
+    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -88,7 +88,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
                 throw new FlatFileLoadException(
                     $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
-            toReturn = GetAllData(worksheet, listener, rowOffset,columnOffset);
+            toReturn = GetAllData(worksheet, listener, rowOffset, columnOffset, replacementHeadersSplit);
 
             //set the table name the file name
             toReturn.TableName =
@@ -122,8 +122,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <param name="listener"></param>
     /// <param name="rowOffset"></param>
     /// <param name="columnOffset"></param>
+    /// <param name="replacementHeadersSplit"></param>
     /// <returns></returns>
-    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset=0, int columnOffset =0)
+    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
@@ -137,7 +138,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         {
             var row = (IRow)rowEnumerator.Current;
             if (rowOffset - 1 > row.RowNum) continue;// .RowNumber is 0 indexed
-           
+
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
             if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
                 continue;
@@ -155,13 +156,20 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     var cell = row.Cells[i];
                     if (cell.ColumnIndex < columnOffset) continue;
                     string h;
-                    try
+                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Length > 0 && replacementHeadersSplit.Length == nColumns)
                     {
-                        h = cell.StringCellValue;
+                        h = replacementHeadersSplit[i];
                     }
-                    catch (Exception)
+                    else
                     {
-                        h = cell.NumericCellValue.ToString();
+                        try
+                        {
+                            h = cell.StringCellValue;
+                        }
+                        catch (Exception)
+                        {
+                            h = cell.NumericCellValue.ToString();
+                        }
                     }
                     if (string.IsNullOrWhiteSpace(h))
                         continue;
