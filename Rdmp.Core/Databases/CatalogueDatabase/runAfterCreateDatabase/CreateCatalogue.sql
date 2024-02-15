@@ -1,4 +1,5 @@
-﻿--Version:1.0.0.0
+﻿
+--Version:1.0.0.0
 --Description:Initial Creation Script
 --So we can use it in a DEFAULT constraint
 CREATE FUNCTION [dbo].[GetDefaultExternalServerIDFor]
@@ -909,6 +910,18 @@ CREATE TABLE [dbo].Dataset(
 	[DigitalObjectIdentifier] [varchar](256) NULL,
 	[Source] [varchar](256) NULL,
 	CONSTRAINT [PK_Dataset] PRIMARY KEY CLUSTERED
+(
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[LoadMetadataID] [int] NOT NULL,
+	[CatalogueID] [int] NOT NULL,
+	FOREIGN KEY ([LoadMetadataID]) REFERENCES [dbo].[LoadMetadata](ID),
+	FOREIGN KEY ([CatalogueID]) REFERENCES [dbo].[Catalogue](ID),
+	CONSTRAINT [PK_LoadMetadataCatalogueLinkage] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
