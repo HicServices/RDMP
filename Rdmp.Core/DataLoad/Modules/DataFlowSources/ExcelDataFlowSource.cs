@@ -152,7 +152,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
             
-                if (replacementHeadersSplit.Length != nColumns)
+                if (replacementHeadersSplit is not null && replacementHeadersSplit.Length != nColumns)
                     listener.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error,
                             $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {nColumns} (there must be the same number of replacement headers as headers in the excel file)"));
@@ -172,7 +172,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     {
                         h = cell.NumericCellValue.ToString();
                     }
-                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Length > 0 && replacementHeadersSplit.Length == nColumns)
+                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
+                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
                     {
                         originalHeaders[i] = h;
                         h = replacementHeadersSplit[i];
@@ -182,8 +183,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                     nonBlankColumns.Add(cell.ColumnIndex, toReturn.Columns.Add(h));
                 }
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
+                if(replacementHeadersSplit is not null && replacementHeadersSplit.Any())
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
 
                 continue;
             }
