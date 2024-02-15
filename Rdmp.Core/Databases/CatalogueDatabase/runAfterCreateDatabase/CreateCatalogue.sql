@@ -927,6 +927,12 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+ALTER TABLE [dbo].[Catalogue]
+DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
+GO
+ALTER TABLE [dbo].[Catalogue]
+DROP column LoadMetadata_ID
+GO
 ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
 GO
 ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID]) REFERENCES [dbo].[Dataset] ([ID]) ON DELETE CASCADE ON UPDATE CASCADE

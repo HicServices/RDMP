@@ -488,17 +488,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _datasetStartDate, value);
     }
 
-    private int? _loadMetadataId;
-
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
-    public int? LoadMetadata_ID
-    {
-        get => _loadMetadataId;
-        set => SetField(ref _loadMetadataId, value);
-    }
-
     #endregion
 
     #region Relationships
@@ -509,8 +498,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata =>
-        LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
+    public LoadMetadata[] LoadMetadatas()
+    {
+        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID",ID).Select(l => l.LoadMetatdataID);
+
+        return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
+    }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]

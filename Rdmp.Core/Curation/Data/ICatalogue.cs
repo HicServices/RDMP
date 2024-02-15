@@ -42,11 +42,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     ICatalogueRepository CatalogueRepository { get; }
 
     /// <summary>
-    /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
-    /// </summary>
-    int? LoadMetadata_ID { get; set; }
-
-    /// <summary>
     /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue.
     /// <seealso cref="LogManager"/>
     /// </summary>

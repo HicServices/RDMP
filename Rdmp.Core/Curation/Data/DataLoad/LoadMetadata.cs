@@ -226,7 +226,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
+    public IEnumerable<ICatalogue> GetAllCatalogues() {
+        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
+        return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
+    }
 
     /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
