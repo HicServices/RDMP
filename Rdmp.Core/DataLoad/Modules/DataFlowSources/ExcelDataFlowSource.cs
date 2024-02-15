@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using ExcelNumberFormat;
 using FAnsi.Discovery;
@@ -150,32 +151,39 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
+            
+                if (replacementHeadersSplit.Length != nColumns)
+                    listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Error,
+                            $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {nColumns} (there must be the same number of replacement headers as headers in the excel file)"));
+
+                string[] originalHeaders = new string[nColumns];
                 for (var i = 0; i < nColumns; i++)
                 {
                     //if the cell header is blank
                     var cell = row.Cells[i];
                     if (cell.ColumnIndex < columnOffset) continue;
                     string h;
+                    try
+                    {
+                        h = cell.StringCellValue;
+                    }
+                    catch (Exception)
+                    {
+                        h = cell.NumericCellValue.ToString();
+                    }
                     if (replacementHeadersSplit is not null && replacementHeadersSplit.Length > 0 && replacementHeadersSplit.Length == nColumns)
                     {
+                        originalHeaders[i] = h;
                         h = replacementHeadersSplit[i];
-                    }
-                    else
-                    {
-                        try
-                        {
-                            h = cell.StringCellValue;
-                        }
-                        catch (Exception)
-                        {
-                            h = cell.NumericCellValue.ToString();
-                        }
                     }
                     if (string.IsNullOrWhiteSpace(h))
                         continue;
 
                     nonBlankColumns.Add(cell.ColumnIndex, toReturn.Columns.Add(h));
                 }
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
 
                 continue;
             }
@@ -211,6 +219,24 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
 
         return toReturn;
+    }
+
+    private static string GenerateASCIIArtOfSubstitutions(string[] headers,
+      string[] replacements)
+    {
+        var sb = new StringBuilder("");
+
+        var max = Math.Max(replacements.Length, headers.Length);
+
+        for (var i = 0; i < max; i++)
+        {
+            var replacement = i >= replacements.Length ? "???" : replacements[i];
+            var original = i >= headers.Length ? "???" : headers[i];
+
+            sb.Append($"{Environment.NewLine}[{i}]{original}>>>{replacement}");
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>

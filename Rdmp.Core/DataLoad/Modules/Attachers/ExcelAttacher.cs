@@ -93,37 +93,11 @@ public class ExcelAttacher : FlatFileAttacher
         }
 
         _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation, replacementHeadersSplit);
-        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
-        if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
-            listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Error,
-                    $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
-
-
-
+      
         //all data should now be exhausted
         if (_hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation) != null)
             throw new Exception(
                 "Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
-    }
-
-    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit,
-        DataColumnCollection columns)
-    {
-        var sb = new StringBuilder("");
-
-        var max = Math.Max(replacementHeadersSplit.Length, columns.Count);
-
-        for (var i = 0; i < max; i++)
-        {
-            var replacement = i >= replacementHeadersSplit.Length ? "???" : replacementHeadersSplit[i];
-            var original = i >= columns.Count ? "???" : columns[i].ColumnName;
-
-            sb.Append($"{Environment.NewLine}[{i}]{original}>>>{replacement}");
-        }
-
-        return sb.ToString();
     }
 
     protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize,
