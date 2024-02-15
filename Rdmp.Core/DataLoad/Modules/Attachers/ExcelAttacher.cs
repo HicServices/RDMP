@@ -55,6 +55,7 @@ public class ExcelAttacher : FlatFileAttacher
 
     private int ConvertColumnOffsetToInt()
     {
+        if (ColumnOffset is null) return 0;
         if(int.TryParse(ColumnOffset,out var result)) return result;
         if (ColumnOffset.Length == 1 && char.IsLetter(ColumnOffset[0])) return char.ToUpper(ColumnOffset[0]) - 65;//would be 64, but we index from zero here
         throw new Exception("Column offset is not a valid number or letter");
