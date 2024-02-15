@@ -173,10 +173,11 @@ public class GatherAndShareTests : DatabaseTests
         //gather the objects depending on Catalogue as a tree
         var gObj = Gatherer.GatherDependencies(cata);
         Assert.That(gObj.Children, Has.Count.EqualTo(2)); //both cata items
+        cata.SaveToDatabase();
 
         var lmd = new LoadMetadata(CatalogueRepository);
         lmd.Catalogue_ID = cata.ID;
-        cata.SaveToDatabase();
+        lmd.SaveToDatabase();
 
         //get the share definition
         var shareManager = new ShareManager(RepositoryLocator);

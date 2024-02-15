@@ -60,7 +60,7 @@ public class UnitTests
         "DQEGraphAnnotation",
         "Evaluation",
         "WindowLayout",
-        "Dataset"
+        "Dataset",
     });
 
 
@@ -175,10 +175,13 @@ public class UnitTests
             ti.Server = "localhost";
             ti.Database = "mydb";
             ti.SaveToDatabase();
-
-            var lmd = new LoadMetadata(repository, "MyLoad");
-            lmd.Catalogue_ID = cata.ID;
             cata.SaveToDatabase();
+
+            var lmd = new LoadMetadata(repository, "MyLoad")
+            {
+                Catalogue_ID = cata.ID
+            };
+            lmd.SaveToDatabase();
             return (T)(object)lmd;
         }
 
