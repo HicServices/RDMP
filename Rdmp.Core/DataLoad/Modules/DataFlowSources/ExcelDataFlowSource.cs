@@ -152,7 +152,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
             
-                if (replacementHeadersSplit is not null && replacementHeadersSplit.Length != nColumns)
+                if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length != nColumns)
                     listener.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error,
                             $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {nColumns} (there must be the same number of replacement headers as headers in the excel file)"));
