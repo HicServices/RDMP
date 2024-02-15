@@ -66,6 +66,8 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
             lmd.Folder = Folder;
             lmd.SaveToDatabase();
 
+            var lmdLinkage = new LoadMetadataCatalogueLinkage(_catalogue.CatalogueRepository, lmd, _catalogue);
+            lmdLinkage.SaveToDatabase();
             Publish(lmd);
 
             Activate(lmd);

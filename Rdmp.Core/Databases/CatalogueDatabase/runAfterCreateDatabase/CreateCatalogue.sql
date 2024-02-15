@@ -919,8 +919,8 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[LoadMetadataID] [int] NOT NULL,
 	[CatalogueID] [int] NOT NULL,
-	FOREIGN KEY ([LoadMetadataID]) REFERENCES [dbo].[LoadMetadata](ID),
-	FOREIGN KEY ([CatalogueID]) REFERENCES [dbo].[Catalogue](ID),
+	FOREIGN KEY ([LoadMetadataID]) REFERENCES [dbo].[LoadMetadata](ID) ON DELETE CASCADE,
+	FOREIGN KEY ([CatalogueID]) REFERENCES [dbo].[Catalogue](ID) ON DELETE CASCADE,
 	CONSTRAINT [PK_LoadMetadataCatalogueLinkage] PRIMARY KEY CLUSTERED
 (
 	[ID] ASC
