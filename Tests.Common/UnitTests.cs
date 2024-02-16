@@ -571,6 +571,14 @@ public class UnitTests
             return (T)(object)new Memento(repository, commit, MementoType.Add, cata, null, "placeholder");
         }
 
+        if(typeof(T) == typeof(LoadMetadataCatalogueLinkage))
+        {
+            var cata = WhenIHaveA<Catalogue>(repository);
+
+            var lmd = WhenIHaveA<LoadMetadata>(repository);
+
+            return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd,cata);
+        }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
