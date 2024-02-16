@@ -55,7 +55,6 @@ public class PackageListIsCorrectTests
 
         // Extract the named packages from csproj files
         var x = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s)).ToList();
-        Console.WriteLine(x);
         var usedPackages = x.Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Then subtract those listed in PACKAGES.md (should be empty)
