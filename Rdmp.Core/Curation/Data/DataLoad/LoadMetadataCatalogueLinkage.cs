@@ -15,12 +15,10 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
 
     public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
     {
-        LoadMetatdataID = loadMetadata.ID;
-        CatalogueID = catalogue.ID;
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"LoadMetadataID", LoadMetatdataID},
-            {"CatalogueID", CatalogueID }
+            {"LoadMetadataID",  loadMetadata.ID},
+            {"CatalogueID",  catalogue.ID }
         });
     }
 
