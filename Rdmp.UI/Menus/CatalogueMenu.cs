@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -79,18 +80,21 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, catalogue, null /*pick at runtime*/)
         { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
-        if (catalogue.LoadMetadata_ID != null)
+        if (!catalogue.LoadMetadatas().Any())
         {
-            if (catalogue.LoadMetadata.LocationOfFlatFiles == null) return;
-            try
+            foreach (var lmd in catalogue.LoadMetadatas())
             {
-                var dirReal = new DirectoryInfo(catalogue.LoadMetadata.LocationOfFlatFiles);
-                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
-                { OverrideCommandName = "Open Load Directory" });
-            }
-            catch (Exception)
-            {
-                // if the directory name is bad or corrupt
+                if (lmd.LocationOfFlatFiles == null) return;
+                try
+                {
+                    var dirReal = new DirectoryInfo(lmd.LocationOfFlatFiles);
+                    Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
+                    { OverrideCommandName = "Open Load Directory" });
+                }
+                catch (Exception)
+                {
+                    // if the directory name is bad or corrupt
+                }
             }
         }
     }

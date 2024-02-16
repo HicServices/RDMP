@@ -13,7 +13,7 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     private int _LoadMetadataID;
     private int _CatalogueID;
 
-    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, LoadMetadata loadMetadata, Catalogue catalogue)
+    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
     {
         LoadMetatdataID = loadMetadata.ID;
         CatalogueID = catalogue.ID;

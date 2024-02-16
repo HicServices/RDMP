@@ -497,7 +497,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
 
     /// <inheritdoc/>
-    [NoMappingToDatabase]
     public LoadMetadata[] LoadMetadatas()
     {
         var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID",ID).Select(l => l.LoadMetatdataID);
@@ -707,8 +706,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if (r["LoadMetadata_ID"] != DBNull.Value)
-            LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
+        //if (r["LoadMetadata_ID"] != DBNull.Value)
+        //    LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
 
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
@@ -1054,16 +1053,16 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         };
     }
 
-    /// <summary>
-    /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
-    /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if
-    /// you are cloning a catalogue and dropping the LoadMetadata then you won't be saving the dropped state to the original database ( you will be saving it
-    /// to the clone database so it won't be a problem).
-    /// </summary>
-    public void HardDisassociateLoadMetadata()
-    {
-        _loadMetadataId = null;
-    }
+    ///// <summary>
+    ///// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
+    ///// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if
+    ///// you are cloning a catalogue and dropping the LoadMetadata then you won't be saving the dropped state to the original database ( you will be saving it
+    ///// to the clone database so it won't be a problem).
+    ///// </summary>
+    //public void HardDisassociateLoadMetadata()
+    //{
+    //    _load = null;
+    //}
 
     /// <summary>
     /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / its LoadMetadata (if it has one).  This will throw if no
@@ -1086,9 +1085,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         var iDependOn = new List<IHasDependencies>();
 
         iDependOn.AddRange(CatalogueItems);
-
-        if (LoadMetadata != null)
-            iDependOn.Add(LoadMetadata);
+        var lmdList = LoadMetadatas();
+        if (lmdList.Length > 0)
+            foreach (var lmd in lmdList)
+            {
+                iDependOn.Add(lmd);
+            }
 
         return iDependOn.ToArray();
     }

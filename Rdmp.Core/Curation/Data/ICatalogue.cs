@@ -115,9 +115,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// <inheritdoc cref="PivotCategory_ExtractionInformation_ID"/>
     ExtractionInformation PivotCategory_ExtractionInformation { get; }
 
-    /// <inheritdoc cref="LoadMetadata_ID"/>
-    LoadMetadata LoadMetadata { get; }
-
     /// <inheritdoc cref="CatalogueItem"/>
     CatalogueItem[] CatalogueItems { get; }
 
