@@ -16,6 +16,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		deadlinksconfig.json = deadlinksconfig.json
 		directory.build.props = directory.build.props
 		.github\workflows\links.yml = .github\workflows\links.yml
+		Directory.Packages.props = Directory.Packages.props
 		NoteForNewDevelopers.md = NoteForNewDevelopers.md
 		Documentation\CodeTutorials\Packages.md = Documentation\CodeTutorials\Packages.md
 		rdmp-client.xml = rdmp-client.xml
