@@ -71,7 +71,11 @@ public class Gatherer
     {
         //Share the LoadMetadata
         var root = new GatheredObject(loadMetadata);
-
+        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        foreach (var link in linkage)
+        {
+            root.Children.Add(new GatheredObject(link));
+        }
         //and the catalogues behind the load
         foreach (var cata in loadMetadata.GetAllCatalogues())
             root.Children.Add(GatherDependencies(cata));

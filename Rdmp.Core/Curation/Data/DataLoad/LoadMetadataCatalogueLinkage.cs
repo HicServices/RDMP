@@ -34,6 +34,12 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         set => SetField(ref _CatalogueID, value);
     }
 
+    /// <summary>
+    /// Creates a lin kbetween a cataloguer and a data load 
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="loadMetadata"></param>
+    /// <param name="catalogue"></param>
     public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
