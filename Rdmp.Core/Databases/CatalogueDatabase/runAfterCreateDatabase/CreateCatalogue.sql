@@ -268,7 +268,7 @@ CREATE TABLE [dbo].[Catalogue](
 	[JIRATicket] [varchar](20) NULL,
 	[DatasetStartDate] [datetime] NULL,
 	[IsDeprecated] [bit] NOT NULL,
-	[LoadMetadata_ID] [int] NULL,
+	--[LoadMetadata_ID] [int] NULL,
 	[IsInternalDataset] [bit] NOT NULL,
 	[LiveLoggingServer_ID] [int] NULL,
 	[TestLoggingServer_ID] [int] NULL,
@@ -929,9 +929,9 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 --GO
 --ALTER TABLE [dbo].[Catalogue]
 --DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
-GO
-ALTER TABLE [dbo].[Catalogue]
-DROP column LoadMetadata_ID
+--GO
+--ALTER TABLE [dbo].[Catalogue]
+--DROP column LoadMetadata_ID
 GO
 ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
 GO
