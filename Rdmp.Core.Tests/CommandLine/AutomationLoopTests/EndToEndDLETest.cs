@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 
@@ -52,9 +53,9 @@ public class EndToEndDLETest : TestsRequiringADle
 
         CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());
 
-        cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         Assert.That(tbl.GetRowCount(), Is.EqualTo(0));
 
         RunDLE(lmd, 30000, true);

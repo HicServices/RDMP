@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Threading;
 using Tests.Common;
 
@@ -24,11 +25,12 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
+            //LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "GGG"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("GGG");
 
@@ -45,11 +47,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -70,11 +72,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
 
@@ -93,11 +95,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -116,11 +118,11 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -144,19 +146,19 @@ ex.Message, Does.Match("Latest logged activity for MyLmd is .*.  This is older t
         var lmd1 = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd1.ID,
             LoggingDataTask = "B"
         };
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd1, cata);
+        linkage.SaveToDatabase();
         var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata2 = new Catalogue(CatalogueRepository, "myCata")
         {
-            LoadMetadata_ID = lmd2.ID,
             LoggingDataTask = "A"
         };
         cata2.SaveToDatabase();
-
+        var linkage2 = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd2, cata2);
+        linkage2.SaveToDatabase();
         var lp1 = new LoadProgress(CatalogueRepository, lmd1);
         var lp2 = new LoadProgress(CatalogueRepository, lmd2);
 

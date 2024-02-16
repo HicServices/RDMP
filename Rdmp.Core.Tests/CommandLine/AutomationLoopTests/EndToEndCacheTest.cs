@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -56,9 +57,11 @@ public class EndToEndCacheTest : DatabaseTests
 
         _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
         {
-            LoadMetadata_ID = _lmd.ID
         };
         _cata.SaveToDatabase();
+
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, _lmd, _cata);
+        linkage.SaveToDatabase();
 
         _lp = new LoadProgress(CatalogueRepository, _lmd);
         _cp = new CacheProgress(CatalogueRepository, _lp);

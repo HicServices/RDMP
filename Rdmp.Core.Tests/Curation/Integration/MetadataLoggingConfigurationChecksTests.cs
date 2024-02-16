@@ -12,6 +12,7 @@ using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using System.Linq;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Tests.Common;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
@@ -23,8 +24,8 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
+        linkage.SaveToDatabase();
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
@@ -41,8 +42,8 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
+        linkage.SaveToDatabase();
         cata1.LoggingDataTask = "OMG YEAGH";
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
@@ -60,8 +61,8 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
+        linkage.SaveToDatabase();
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
         cata2.LoggingDataTask = "OMG YEAGH";
@@ -87,8 +88,8 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();
 
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
+        linkage.SaveToDatabase();
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = null;
         cata2.LoggingDataTask = "OMG YEAGH";

@@ -81,10 +81,10 @@ public class HICPipelineTests : DatabaseTests
             Catalogue = new Catalogue(repository, "HICLoadPipelineTests")
             {
                 LoggingDataTask = "Test",
-                LoadMetadata_ID = LoadMetadata.ID
             };
             Catalogue.SaveToDatabase();
-
+            var linkage = new LoadMetadataCatalogueLinkage(repository, LoadMetadata, Catalogue);
+            linkage.SaveToDatabase();
             var catalogueItem = new CatalogueItem(repository, Catalogue, "Test");
             catalogueItem.SetColumnInfo(ColumnInfo);
 

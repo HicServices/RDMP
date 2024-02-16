@@ -84,9 +84,9 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
             new FixedStagingDatabaseNamer(toTbl.Database.GetRuntimeName(), fromTbl.Database.GetRuntimeName()));
 
         var lmd = new LoadMetadata(CatalogueRepository);
-        cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
 
         //set SetUp a logging task
