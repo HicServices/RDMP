@@ -926,9 +926,9 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Catalogue]
-DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
+--GO
+--ALTER TABLE [dbo].[Catalogue]
+--DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
 GO
 ALTER TABLE [dbo].[Catalogue]
 DROP column LoadMetadata_ID
@@ -1161,11 +1161,11 @@ REFERENCES [dbo].[ExtractionInformation] ([ID])
 ON DELETE SET NULL
 GO
 ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_ExtractionInformation]
-GO
-ALTER TABLE [dbo].[Catalogue]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_LoadMetadata] FOREIGN KEY([LoadMetadata_ID])
-REFERENCES [dbo].[LoadMetadata] ([ID])
-GO
-ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_LoadMetadata]
+--GO
+--ALTER TABLE [dbo].[Catalogue]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_LoadMetadata] FOREIGN KEY([LoadMetadata_ID])
+--REFERENCES [dbo].[LoadMetadata] ([ID])
+--GO
+--ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_LoadMetadata]
 GO
 ALTER TABLE [dbo].[CatalogueItem]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_Items_Data_Catalogue] FOREIGN KEY([Catalogue_ID])
 REFERENCES [dbo].[Catalogue] ([ID])
