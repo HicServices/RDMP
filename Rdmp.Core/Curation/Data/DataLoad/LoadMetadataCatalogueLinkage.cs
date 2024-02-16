@@ -13,7 +13,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <inheritdoc cref="ILoadMetadataCatalogueLinkage"/>
-public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalogueLinkage
+public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalogueLinkage, IMasqueradeAs
 {
 
     private int _LoadMetadataID;
@@ -50,5 +50,8 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         CatalogueID = int.Parse(r["CatalogueID"].ToString());
     }
 
-
+    public object MasqueradingAs()
+    {
+        return LoadMetadataID;
+    }
 }
