@@ -14,6 +14,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Spectre.Console;
 
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
@@ -71,11 +72,6 @@ public class Gatherer
     {
         //Share the LoadMetadata
         var root = new GatheredObject(loadMetadata);
-        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
-        foreach (var link in linkage)
-        {
-            root.Children.Add(new GatheredObject(link));
-        }
         //and the catalogues behind the load
         foreach (var cata in loadMetadata.GetAllCatalogues())
             root.Children.Add(GatherDependencies(cata));
@@ -91,6 +87,13 @@ public class Gatherer
                 var ga = new GatheredObject(a);
                 gpt.Children.Add(ga);
             }
+        }
+
+        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        foreach (var link in linkage)
+        {
+            var glcl = new GatheredObject(link);
+            root.Children.Add(glcl);
         }
 
         return root;

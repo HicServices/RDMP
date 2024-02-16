@@ -4,7 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
 
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -34,8 +37,10 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         set => SetField(ref _CatalogueID, value);
     }
 
+    public LoadMetadataCatalogueLinkage() { }
+
     /// <summary>
-    /// Creates a lin kbetween a cataloguer and a data load 
+    /// Creates a link between a catalogue and a data load 
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="loadMetadata"></param>
@@ -54,5 +59,10 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
     {
         LoadMetadataID = int.Parse(r["LoadMetadataID"].ToString());
         CatalogueID = int.Parse(r["CatalogueID"].ToString());
+    }
+
+    internal LoadMetadataCatalogueLinkage(ShareManager shareManager, ShareDefinition shareDefinition)
+    {
+        shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 }
