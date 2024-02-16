@@ -54,10 +54,9 @@ public class PackageListIsCorrectTests
             .ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Extract the named packages from csproj files
-        var x = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s));
+        var x = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s)).ToList();
         Console.WriteLine(x);
-        var usedPackages = GetCsprojFiles(root).Select(File.ReadAllText).SelectMany(s => RPackageRefNoVersion.Matches(s))
-            .Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
+        var usedPackages = x.Select(m => m.Groups[1].Value).ToHashSet(StringComparer.InvariantCultureIgnoreCase);
 
         // Then subtract those listed in PACKAGES.md (should be empty)
         var undocumentedPackages = usedPackages.Except(packagesMarkdown).Select(BuildRecommendedMarkdownLine).ToList();
