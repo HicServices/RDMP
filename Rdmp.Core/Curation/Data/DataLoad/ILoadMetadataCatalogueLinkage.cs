@@ -18,7 +18,7 @@ public interface ILoadMetadataCatalogueLinkage: IMapsDirectlyToDatabaseTable
     /// </summary>
     ICatalogueRepository CatalogueRepository { get; }
 
-    int LoadMetatdataID{ get; }
+    int LoadMetadataID{ get; }
     int CatalogueID { get; }
 
 }
