@@ -268,7 +268,7 @@ CREATE TABLE [dbo].[Catalogue](
 	[JIRATicket] [varchar](20) NULL,
 	[DatasetStartDate] [datetime] NULL,
 	[IsDeprecated] [bit] NOT NULL,
-	--[LoadMetadata_ID] [int] NULL,
+	[LoadMetadata_ID] [int] NULL,
 	[IsInternalDataset] [bit] NOT NULL,
 	[LiveLoggingServer_ID] [int] NULL,
 	[TestLoggingServer_ID] [int] NULL,
@@ -1161,11 +1161,11 @@ REFERENCES [dbo].[ExtractionInformation] ([ID])
 ON DELETE SET NULL
 GO
 ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_ExtractionInformation]
---GO
---ALTER TABLE [dbo].[Catalogue]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_LoadMetadata] FOREIGN KEY([LoadMetadata_ID])
---REFERENCES [dbo].[LoadMetadata] ([ID])
---GO
---ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_LoadMetadata]
+GO
+ALTER TABLE [dbo].[Catalogue]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_LoadMetadata] FOREIGN KEY([LoadMetadata_ID])
+REFERENCES [dbo].[LoadMetadata] ([ID])
+GO
+ALTER TABLE [dbo].[Catalogue] CHECK CONSTRAINT [FK_Catalogue_LoadMetadata]
 GO
 ALTER TABLE [dbo].[CatalogueItem]  WITH CHECK ADD  CONSTRAINT [FK_Catalogue_Items_Data_Catalogue] FOREIGN KEY([Catalogue_ID])
 REFERENCES [dbo].[Catalogue] ([ID])
