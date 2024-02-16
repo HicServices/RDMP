@@ -16,8 +16,8 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 END
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
-insert into RDMP_Catalogue.dbo.LoadMetadataCatalogueLinkage(CatalogueID, LoadMetadataID)
-select ID as CatalogueID, LoadMetadata_ID from RDMP_Catalogue.dbo.Catalogue
+insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
+select ID as CatalogueID, LoadMetadata_ID from [dbo].[Catalogue]
 where LoadMetadata_ID is not null
 END
 
