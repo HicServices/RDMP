@@ -21,7 +21,7 @@ select ID as CatalogueID, LoadMetadata_ID from [dbo].[Catalogue]
 where LoadMetadata_ID is not null
 END
 
-if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+if exists (select 1 from INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS  where CONSTRAINT_NAME ='[FK_Catalogue_LoadMetadata]')
 BEGIN
 ALTER TABLE [dbo].[Catalogue]
 DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
