@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -242,8 +243,8 @@ public class LogManager : ILogManager
 
         using var cmd = Server.GetCommand(sql, conn);
         Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
-        Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID);
-        Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName);
+        Server.AddParameterWithValueToCommand("@dataSetID", cmd, dataSetID.Substring(Math.Max(0, dataSetID.Length - 1000)));
+        Server.AddParameterWithValueToCommand("@username", cmd, Environment.UserName.Substring(Math.Max(0, Environment.UserName.Length - 500)));
 
         cmd.ExecuteNonQuery();
     }
@@ -256,7 +257,7 @@ public class LogManager : ILogManager
             const string sql = "INSERT INTO DataSet (dataSetID,name) VALUES (@datasetName,@datasetName)";
 
             using var cmd = Server.GetCommand(sql, conn);
-            Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName);
+            Server.AddParameterWithValueToCommand("@datasetName", cmd, datasetName.Substring(Math.Max(0, datasetName.Length - 150)));
             cmd.ExecuteNonQuery();
         }
     }

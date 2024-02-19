@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -55,6 +55,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private int? _overrideRawServerID;
     private bool _ignoreTrigger;
     private string _folder;
+    private DateTime? _lastLoadTime;
 
     /// <inheritdoc/>
     [AdjustableLocation]
@@ -127,6 +128,16 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _folder, FolderHelper.Adjust(value));
     }
 
+
+    /// <summary>
+    /// Stores the last time the load was ran.
+    /// </summary>
+    public DateTime? LastLoadTime
+    {
+        get => _lastLoadTime;
+        set => SetField(ref _lastLoadTime, value);
+    }
+
     #endregion
 
 
@@ -169,11 +180,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public LoadMetadata(ICatalogueRepository repository, string name = null)
     {
         name ??= $"NewLoadMetadata{Guid.NewGuid()}";
+
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
-            { "Folder", FolderHelper.Root }
+            { "Folder", FolderHelper.Root },
+            {"LastLoadTime", null }
         });
     }
 
@@ -189,6 +202,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
+        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ?null: DateTime.Parse(r["LastLoadTime"].ToString());
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()

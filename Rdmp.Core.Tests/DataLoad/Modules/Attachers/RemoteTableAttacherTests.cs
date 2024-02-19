@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using FAnsi;
 using FAnsi.Discovery;
 using NSubstitute;
@@ -24,6 +25,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using TypeGuesser;
+using static Rdmp.Core.Tests.DataLoad.Engine.Integration.RemoteDatabaseAttacherTests;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers;
 
@@ -204,6 +206,171 @@ internal class RemoteTableAttacherTests : DatabaseTests
         {
             Assert.That(tbl1.GetRowCount(), Is.EqualTo(3));
             Assert.That(tbl2.GetRowCount(), Is.EqualTo(mismatchProgress ? 0 : 1));
+        });
+    }
+
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past24Hours)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Past7Days)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastMonth)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.PastYear)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.SinceLastUse)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.Custom)]
+    [TestCase(DatabaseType.MicrosoftSQLServer, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.MySql, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.Oracle, AttacherHistoricalDurations.DeltaReading)]
+    [TestCase(DatabaseType.PostgreSql, AttacherHistoricalDurations.DeltaReading)]
+    public void TestRemoteTableAttacher_DateFilters(DatabaseType dbType, AttacherHistoricalDurations duration)
+    {
+        var db = GetCleanedServer(dbType);
+
+        var attacher = new RemoteTableAttacher
+        {
+            //where to go for data
+            RemoteServer = db.Server.Name,
+            RemoteDatabaseName = db.GetRuntimeName(),
+            DatabaseType = db.Server.DatabaseType
+        };
+
+        if (db.Server.ExplicitUsernameIfAny != null)
+        {
+            var creds = new DataAccessCredentials(CatalogueRepository)
+            {
+                Username = db.Server.ExplicitUsernameIfAny,
+                Password = db.Server.ExplicitPasswordIfAny
+            };
+            creds.SaveToDatabase();
+            attacher.RemoteTableAccessCredentials = creds;
+        }
+        attacher.HistoricalFetchDuration = duration;
+
+        RunAttachStageWithFilterJob(attacher, db, duration);
+    }
+
+
+    private static string Within(AttacherHistoricalDurations duration)
+    {
+        switch (duration)
+        {
+            case AttacherHistoricalDurations.Past24Hours:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.Past7Days:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.PastMonth:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.PastYear:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.SinceLastUse:
+                return DateTime.Now.AddHours(-1).ToString();
+            case AttacherHistoricalDurations.Custom:
+                return DateTime.Now.AddDays(-1).ToString();
+            case AttacherHistoricalDurations.DeltaReading:
+                return DateTime.Now.AddDays(-4).ToString();
+            default:
+                return "fail";
+        }
+    }
+
+    private static string Outwith(AttacherHistoricalDurations duration)
+    {
+        switch (duration)
+        {
+            case AttacherHistoricalDurations.Past24Hours:
+                return DateTime.Now.AddDays(-2).ToString();
+            case AttacherHistoricalDurations.Past7Days:
+                return DateTime.Now.AddDays(-8).ToString();
+            case AttacherHistoricalDurations.PastMonth:
+                return DateTime.Now.AddMonths(-2).ToString();
+            case AttacherHistoricalDurations.PastYear:
+                return DateTime.Now.AddYears(-2).ToString();
+            case AttacherHistoricalDurations.SinceLastUse:
+                return DateTime.Now.AddDays(-2).ToString();
+            case AttacherHistoricalDurations.Custom:
+                return DateTime.Now.AddDays(-14).ToString();
+            case AttacherHistoricalDurations.DeltaReading:
+                return DateTime.Now.AddDays(-10).ToString();
+            default:
+                return "fail";
+        }
+    }
+    private void RunAttachStageWithFilterJob(RemoteTableAttacher attacher, DiscoveredDatabase db, AttacherHistoricalDurations duration)
+    {
+        //the table to get data from
+        attacher.RemoteTableName = "table1";
+        attacher.RAWTableName = "table2";
+        attacher.RemoteTableDateColumn = "dateColumn";
+        attacher.Check(ThrowImmediatelyCheckNotifier.Quiet);
+
+        attacher.Initialize(null, db);
+
+        using var dt = new DataTable();
+        var within = Within(duration);
+        var outwith = Outwith(duration);
+        dt.Columns.Add("Col1");
+        dt.Columns.Add("dateColumn");
+        dt.Rows.Add("fff", within);
+        dt.Rows.Add("rrr", outwith);
+
+        var tbl1 = db.CreateTable("table1", dt);
+        var tbl2 = db.CreateTable("table2",
+            new[] { new DatabaseColumnRequest("Col1", new DatabaseTypeRequest(typeof(string), 5)), new DatabaseColumnRequest("dateColumn", new DatabaseTypeRequest(typeof(string), 100)) });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(0));
+        });
+
+        var logManager = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+
+        var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl2);
+        lmd.CatalogueRepository.Returns(CatalogueRepository);
+        logManager.CreateNewLoggingTaskIfNotExists(lmd.GetDistinctLoggingTask());
+
+        var dbConfiguration = new HICDatabaseConfiguration(lmd,
+            RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, "table2"));
+
+        var job = new DataLoadJob(RepositoryLocator, "test job", logManager, lmd, new TestLoadDirectory(),
+            ThrowImmediatelyDataLoadEventListener.Quiet, dbConfiguration);
+        job.StartLogging();
+        if (duration == AttacherHistoricalDurations.SinceLastUse)
+        {
+            job.LoadMetadata.LastLoadTime = DateTime.Now.AddDays(-1);// last used yesterday
+            job.LoadMetadata.SaveToDatabase();
+        }
+        if (duration == AttacherHistoricalDurations.Custom)
+        {
+            attacher.CustomFetchDurationStartDate = DateTime.Now.AddDays(-7);
+            attacher.CustomFetchDurationEndDate = DateTime.Now;
+        }
+        if (duration == AttacherHistoricalDurations.DeltaReading)
+        {
+            attacher.DeltaReadingStartDate = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingLookBackDays = 0;
+            attacher.DeltaReadingLookForwardDays = 5;
+        }
+        attacher.Attach(job, new GracefulCancellationToken());
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl1.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl2.GetRowCount(), Is.EqualTo(1));
         });
     }
 }
