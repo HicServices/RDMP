@@ -15,14 +15,16 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 ) ON [PRIMARY]
 END
 
-if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
-BEGIN
-	insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
+Declare @MigrateLinkageSQL varchar(max) = '
+    insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
 	select ID as CatalogueID, LoadMetadata_ID
 	from [dbo].[Catalogue]
-	where LoadMetadata_ID is not null
+	where LoadMetadata_ID is not null'
+if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+BEGIN
+EXEC(@MigrateLinkageSQL)
 END
-GO
+
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
 IF (OBJECT_ID('FK_Catalogue_LoadMetadata') IS NOT NULL)
