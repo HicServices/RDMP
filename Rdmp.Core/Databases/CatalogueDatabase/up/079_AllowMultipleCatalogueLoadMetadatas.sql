@@ -22,7 +22,7 @@ BEGIN
 	from [dbo].[Catalogue]
 	where LoadMetadata_ID is not null
 END
-
+GO
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
 IF (OBJECT_ID('FK_Catalogue_LoadMetadata') IS NOT NULL)
