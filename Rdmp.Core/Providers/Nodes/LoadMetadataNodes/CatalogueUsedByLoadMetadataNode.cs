@@ -23,11 +23,7 @@ public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadM
 
     public void DeleteInDatabase()
     {
-        var linkage = ObjectBeingUsed.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ObjectBeingUsed.ID);
-        foreach (var linkageLink in linkage)
-        {
-            linkageLink.DeleteInDatabase();
-        }
+        User.UnlinkFromCatalogue(ObjectBeingUsed);
     }
 
     public string GetDeleteMessage() => $"remove Catalogue '{ObjectBeingUsed}' from Load";

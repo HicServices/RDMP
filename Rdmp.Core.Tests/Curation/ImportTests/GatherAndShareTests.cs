@@ -199,7 +199,7 @@ public class GatherAndShareTests : DatabaseTests
         cata.SubjectNumbers = "123";
         cata.Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         cata.SaveToDatabase();
-        linkage.DeleteInDatabase();
+        lmd.UnlinkFromCatalogue(cata);
         lmd.DeleteInDatabase();
 
         //import the saved copy
