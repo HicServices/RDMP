@@ -41,7 +41,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        lmd.LinkToCatalogue(cata2)
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
@@ -59,7 +59,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        lmd.LinkToCatalogue(cata2)
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
         cata2.LoggingDataTask = "OMG YEAGH";
