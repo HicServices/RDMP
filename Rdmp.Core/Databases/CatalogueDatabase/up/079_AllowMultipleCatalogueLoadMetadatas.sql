@@ -14,14 +14,17 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
 END
+
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
-insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
-select ID as CatalogueID, LoadMetadata_ID from [dbo].[Catalogue]
-where LoadMetadata_ID is not null
+	insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
+	select ID as CatalogueID, LoadMetadata_ID
+	from [dbo].[Catalogue]
+	where LoadMetadata_ID is not null
 END
-BEGIN
+
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+BEGIN
 IF (OBJECT_ID('FK_Catalogue_LoadMetadata') IS NOT NULL)
   ALTER TABLE [dbo].[Catalogue]
   DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
@@ -29,6 +32,6 @@ END
 
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
-ALTER TABLE [dbo].[Catalogue]
-DROP column LoadMetadata_ID
+	ALTER TABLE [dbo].[Catalogue]
+	DROP column LoadMetadata_ID
 END

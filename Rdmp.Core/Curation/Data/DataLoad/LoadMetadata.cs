@@ -215,6 +215,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         linkage.SaveToDatabase();
     }
 
+    public void UnlinkFromCatalogue(ICatalogue catalogue)
+    {
+        foreach(var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
+        {
+            l.DeleteInDatabase();
+        }
+    }
+
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
