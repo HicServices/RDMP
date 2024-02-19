@@ -26,15 +26,14 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
 
     public ExecuteCommandCreateNewLoadMetadata(IBasicActivateItems activator,
         [DemandsInitialization(
-            "Which Catalogue does this load.  Catalogues must not be associated with an existing load")]
+            "Which Catalogue does this load.")]
         Catalogue catalogue = null) : base(activator)
     {
-        //TODO check this is correct
         _availableCatalogues =
             activator.CoreChildProvider.AllCatalogues.ToArray();
 
         if (!_availableCatalogues.Any())
-            SetImpossible("There are no Catalogues that are not associated with another Load already");
+            SetImpossible("There are no available Catalogues");
 
         if (catalogue != null) SetTarget(catalogue);
 
