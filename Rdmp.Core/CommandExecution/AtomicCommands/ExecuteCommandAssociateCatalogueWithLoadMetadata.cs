@@ -100,8 +100,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             }
             cata.SaveToDatabase();
             //associate them
-            var lmdLinkage = new LoadMetadataCatalogueLinkage(cata.CatalogueRepository, _loadMetadata, cata);
-            lmdLinkage.SaveToDatabase();
+            _loadMetadata.LinkToCatalogue(cata);
         }
 
         Publish(_loadMetadata);

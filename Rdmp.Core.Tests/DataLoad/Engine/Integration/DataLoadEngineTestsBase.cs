@@ -94,8 +94,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         cata.LoggingDataTask = lmd.Name;
         Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null); //catalogue should have one of these because of system defaults
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         return ti;
     }
 }

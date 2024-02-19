@@ -179,8 +179,7 @@ public class UnitTests
             var lmd = new LoadMetadata(repository, "MyLoad");
             lmd.SaveToDatabase();
             cata.SaveToDatabase();
-            var linkage = new LoadMetadataCatalogueLinkage(repository, lmd, cata);
-            linkage.SaveToDatabase();
+            lmd.LinkToCatalogue(cata);
             return (T)(object)lmd;
         }
 

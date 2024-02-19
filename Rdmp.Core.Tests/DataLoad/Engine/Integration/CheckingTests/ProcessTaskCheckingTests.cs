@@ -50,8 +50,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         var col = new ColumnInfo(CatalogueRepository, "col", "bit", t);
         ci.SetColumnInfo(col);
         c.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, _lmd, c);
-        linkage.SaveToDatabase();
+        _lmd.LinkToCatalogue(c);
         _task = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles);
         _checker = new ProcessTaskChecks(_lmd);
     }

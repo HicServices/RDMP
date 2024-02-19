@@ -25,12 +25,10 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
         var lmd = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata = new Catalogue(CatalogueRepository, "myCata")
         {
-            //LoadMetadata_ID = lmd.ID,
             LoggingDataTask = "GGG"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("GGG");
 
@@ -50,8 +48,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -75,8 +72,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
 
@@ -98,8 +94,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -121,8 +116,7 @@ internal class ExecuteCommandConfirmLogsTests : DatabaseTests
             LoggingDataTask = "FFF"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var lm = new LogManager(lmd.GetDistinctLoggingDatabase());
         lm.CreateNewLoggingTaskIfNotExists("FFF");
         var logEntry = lm.CreateDataLoadInfo("FFF", "pack o' cards", "going down gambling", null, true);
@@ -149,8 +143,7 @@ ex.Message, Does.Match("Latest logged activity for MyLmd is .*.  This is older t
             LoggingDataTask = "B"
         };
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd1, cata);
-        linkage.SaveToDatabase();
+        lmd1.LinkToCatalogue(cata);
         var lmd2 = new LoadMetadata(CatalogueRepository, "MyLmd");
         var cata2 = new Catalogue(CatalogueRepository, "myCata")
         {

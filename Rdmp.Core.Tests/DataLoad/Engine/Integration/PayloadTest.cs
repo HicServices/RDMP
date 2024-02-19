@@ -49,8 +49,7 @@ public class PayloadTest : DatabaseTests
 
         b.catalogue.LoggingDataTask = "TestPayloadInjection";
         b.catalogue.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, b.catalogue);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(b.catalogue);
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 

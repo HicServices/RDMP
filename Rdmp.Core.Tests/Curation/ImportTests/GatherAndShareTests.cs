@@ -228,7 +228,7 @@ public class GatherAndShareTests : DatabaseTests
             //import the defined properties but not name
             Assert.That(cata.Name, Is.EqualTo("fishfish"));
             Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
-            //Assert.That(cata.LoadMetadata_ID, Is.Null);
+            Assert.That(cata.LoadMetadatas(), Is.Empty);
         });
         cata.SaveToDatabase();
 

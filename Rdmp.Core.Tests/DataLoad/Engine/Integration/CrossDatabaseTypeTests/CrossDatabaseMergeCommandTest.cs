@@ -85,8 +85,7 @@ public class CrossDatabaseMergeCommandTest : FromToDatabaseTests
 
         var lmd = new LoadMetadata(CatalogueRepository);
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
 
         //set SetUp a logging task

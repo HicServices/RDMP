@@ -298,8 +298,7 @@ public class ForwardEngineerANOCatalogueEngine
                 LoadMetadata = new LoadMetadata(_catalogueRepository, $"Anonymising {NewCatalogue}");
                 LoadMetadata.EnsureLoggingWorksFor(NewCatalogue);
                 NewCatalogue.SaveToDatabase();
-                var lmdLinkage = new LoadMetadataCatalogueLinkage(_catalogueRepository, LoadMetadata, NewCatalogue);
-                lmdLinkage.SaveToDatabase();
+                LoadMetadata.LinkToCatalogue(NewCatalogue);
                 if (_planManager.DateColumn != null)
                 {
                     LoadProgressIfAny = new LoadProgress(_catalogueRepository, LoadMetadata)

@@ -83,8 +83,7 @@ public class HICPipelineTests : DatabaseTests
                 LoggingDataTask = "Test",
             };
             Catalogue.SaveToDatabase();
-            var linkage = new LoadMetadataCatalogueLinkage(repository, LoadMetadata, Catalogue);
-            linkage.SaveToDatabase();
+            LoadMetadata.LinkToCatalogue(Catalogue);
             var catalogueItem = new CatalogueItem(repository, Catalogue, "Test");
             catalogueItem.SetColumnInfo(ColumnInfo);
 

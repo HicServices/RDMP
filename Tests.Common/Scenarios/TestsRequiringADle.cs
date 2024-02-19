@@ -71,10 +71,8 @@ public class TestsRequiringADle : TestsRequiringA
 
 
         //make the load load the table
-        //TestCatalogue.LoadMetadata_ID = TestLoadMetadata.ID;
         TestCatalogue.SaveToDatabase();
-        var TestLinkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, TestLoadMetadata, TestCatalogue);
-        TestLinkage.SaveToDatabase();
+        TestLoadMetadata.LinkToCatalogue(TestCatalogue);
         CreateFlatFileAttacher(TestLoadMetadata, "*.csv", TestCatalogue.GetTableInfoList(false).Single(), ",");
 
         //Get DleRunner to run pre load checks (includes trigger creation etc)

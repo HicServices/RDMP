@@ -24,8 +24,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata2);
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
@@ -42,8 +41,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata2)
         cata1.LoggingDataTask = "OMG YEAGH";
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
@@ -61,8 +59,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata2)
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
         cata2.LoggingDataTask = "OMG YEAGH";
@@ -88,8 +85,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();
 
-        var linkage = new LoadMetadataCatalogueLinkage(cata2.CatalogueRepository, lmd, cata2);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = null;
         cata2.LoggingDataTask = "OMG YEAGH";

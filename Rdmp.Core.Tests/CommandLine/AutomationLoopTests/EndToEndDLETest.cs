@@ -54,8 +54,7 @@ public class EndToEndDLETest : TestsRequiringADle
         CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());
 
         cata.SaveToDatabase();
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
-        linkage.SaveToDatabase();
+        lmd.LinkToCatalogue(cata);
         Assert.That(tbl.GetRowCount(), Is.EqualTo(0));
 
         RunDLE(lmd, 30000, true);

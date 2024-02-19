@@ -31,7 +31,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
     {
         //TODO check this is correct
         _availableCatalogues =
-            activator.CoreChildProvider.AllCatalogues.ToArray();//.Where(c => c.LoadMetadata_ID == null).ToArray();
+            activator.CoreChildProvider.AllCatalogues.ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no Catalogues that are not associated with another Load already");
@@ -66,8 +66,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
             lmd.Folder = Folder;
             lmd.SaveToDatabase();
 
-            var lmdLinkage = new LoadMetadataCatalogueLinkage(_catalogue.CatalogueRepository, lmd, _catalogue);
-            lmdLinkage.SaveToDatabase();
+            lmd.LinkToCatalogue(_catalogue);
             Publish(lmd);
 
             Activate(lmd);
