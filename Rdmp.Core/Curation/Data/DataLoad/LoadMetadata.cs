@@ -210,6 +210,11 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
+    public void LinkToCatalogue(Catalogue catalogue) {
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository,this,catalogue);
+        linkage.SaveToDatabase();
+    }
+
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
