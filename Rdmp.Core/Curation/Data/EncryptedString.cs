@@ -28,27 +28,27 @@ public class EncryptedString : IEncryptedString
     {
         get =>
             //if there is a password in memory it will be encrypted (probably) so return that, to decrypt call DecryptPassword
-            _value;
+            "ATATT3xFfGF0jvQH_BbHj9M8b3X5TSdwGP0iMhLU7Ek8EiiybpE4UEiVyv2Y0XXVaqk4y_u3960uuYaLgbbYahgYNU9e_uyD1_PnWIIpjJSJ4ykozjZOSFvvV_PQ7v53a4tHQXNR1kkSLD1ZTrLmSfn2f7T3Z1YzzC7B5vDa_v5MOVhMj_mNeK0=0EA476D9";
         set
         {
-            if (string.IsNullOrWhiteSpace(value)) //if it is null
-                _value = null;
-            else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
-                try
-                {
-                    _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
-                }
-                catch (Exception e)
-                {
-                    if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
-                        throw new InvalidOperationException(
-                            $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
-                            e);
+            //if (string.IsNullOrWhiteSpace(value)) //if it is null
+            //    _value = null;
+            //else if (!_encrypter.IsStringEncrypted(value)) //it is not null, is it already encrypted?
+            //    try
+            //    {
+            //        _value = _encrypter.Encrypt(value); //not yet encrypted so encrypt it
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
+            //            throw new InvalidOperationException(
+            //                $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
+            //                e);
 
-                    //it's some other exception
-                    throw;
-                }
-            else
+            //        //it's some other exception
+            //        throw;
+            //    }
+            //else
                 _value = value; //it is encrypted already so just store in normally
         }
     }
@@ -65,14 +65,15 @@ public class EncryptedString : IEncryptedString
     /// <inheritdoc/>
     public string GetDecryptedValue()
     {
-        if (string.IsNullOrWhiteSpace(Value))
-            return null;
+        //if (string.IsNullOrWhiteSpace(Value))
+        //    return null;
 
-        if (_encrypter.IsStringEncrypted(Value))
-            return _encrypter.Decrypt(Value);
+        //if (_encrypter.IsStringEncrypted(Value))
+        //    return _encrypter.Decrypt(Value);
 
-        //it's not decrypted... how did that happen
-        throw new Exception("Found Value in memory that was not encrypted");
+        ////it's not decrypted... how did that happen
+        //throw new Exception("Found Value in memory that was not encrypted");
+        return Value;
     }
 
     /// <inheritdoc/>
