@@ -157,12 +157,13 @@ internal class ConsoleMainWindow
 
         Application.RootMouseEvent = OnRootMouseEvent;
 
+
+
+
         _treeView.ObjectActivationButton = _rightClick;
-        _treeView.ObjectActivated += _treeView_ObjectActivated;
         _treeView.KeyPress += treeView_KeyPress;
         _treeView.SelectionChanged += _treeView_SelectionChanged;
         _treeView.AspectGetter = AspectGetter;
-
         var statusBar = new StatusBar(new StatusItem[]
         {
             new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
@@ -363,6 +364,10 @@ internal class ConsoleMainWindow
         {
             switch (obj.KeyEvent.Key)
             {
+                case Key.Enter:
+                    _treeView_ObjectActivated(null);
+                    obj.Handled = true;
+                    break;
                 case Key.DeleteChar:
                     var many = _treeView.GetAllSelectedObjects().ToArray();
                     obj.Handled = true;
