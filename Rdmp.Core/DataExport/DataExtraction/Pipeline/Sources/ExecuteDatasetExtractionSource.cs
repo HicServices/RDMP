@@ -317,10 +317,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentBuckettingDates.Stop();
 
         _timeSpentCalculatingDISTINCT.Start();
+        var pks = new List<DataColumn>();
+
         //record unique release identifiers found
         if (includesReleaseIdentifier)
-            foreach (var idx in _extractionIdentifiersidx)
+            foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
+                pks.Add(chunk.Columns[idx]);
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
@@ -340,21 +343,17 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
-        bool includePrimaryKeys = true;
-        if (includePrimaryKeys)
+        foreach (ExtractableColumn column in Request.ColumnsToExtract)
         {
-            var pks = new List<DataColumn>();
-            foreach (ExtractableColumn column in Request.ColumnsToExtract)
+            //if (column.ColumnInfo.IsPrimaryKey)
+            if (column.CatalogueExtractionInformation.IsPrimaryKey)
             {
-                if (column.ColumnInfo.IsPrimaryKey)
-                {
-                    var name = column.CatalogueExtractionInformation.ToString();
-                    var pk = chunk.Columns[name];
-                    pks.Add(chunk.Columns[name]);
-                }
+                var name = column.CatalogueExtractionInformation.ToString();
+                var pk = chunk.Columns[name];
+                pks.Add(chunk.Columns[name]);
             }
-            chunk.PrimaryKey = pks.ToArray();
         }
+        chunk.PrimaryKey = pks.ToArray();
 
         return chunk;
     }
