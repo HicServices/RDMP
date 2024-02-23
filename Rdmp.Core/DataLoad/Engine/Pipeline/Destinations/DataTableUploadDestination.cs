@@ -227,15 +227,16 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (pkColumns.Length > 0) //assumes columns are the same
             {
                 //drop any pk clashes
-                var existingData = _discoveredTable.GetDataTable();
+                var existingData = _discoveredTable.GetDataTable(); //this is empty
                 var rowsToDelete = new List<DataRow>();
+
                 foreach (DataRow row in toProcess.Rows)
                 {
                    
                     foreach (DataColumn pkCol in pkColumns)
                     {
                         var val = row[pkCol.ColumnName];
-                        var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName] == val); //todo this wasn't matching anything
+                        var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
                         if (clash)
                         {
                             rowsToDelete.Add(row);
