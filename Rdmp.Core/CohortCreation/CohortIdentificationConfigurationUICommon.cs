@@ -1,4 +1,4 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -157,12 +157,12 @@ public class CohortIdentificationConfigurationUICommon
         RecreateAllTasks();
     }
 
-    private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o)
+    private void OrderActivity(Operation operation, IMapsDirectlyToDatabaseTable o, int? userDefinedTimeout)
     {
         switch (operation)
         {
             case Operation.Execute:
-                StartThisTaskOnly(o);
+                StartThisTaskOnly(o, userDefinedTimeout);
                 break;
             case Operation.Cancel:
                 Cancel(o);
@@ -177,7 +177,7 @@ public class CohortIdentificationConfigurationUICommon
         }
     }
 
-    private void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
+    private void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer, int? userDefinedTimeout)
     {
         var task = Compiler.AddTask(configOrContainer, _globals);
         if (task.State == CompilationState.Crashed)
@@ -194,7 +194,7 @@ public class CohortIdentificationConfigurationUICommon
         task = Compiler.AddTask(configOrContainer, _globals);
 
         //Task is now in state NotScheduled, so we can start it
-        Compiler.LaunchSingleTask(task, Timeout, true);
+        Compiler.LaunchSingleTask(task, userDefinedTimeout ?? Timeout, true);
     }
 
     public void Cancel(IMapsDirectlyToDatabaseTable o)
@@ -328,7 +328,8 @@ public class CohortIdentificationConfigurationUICommon
     /// the appropriate message to the user
     /// </summary>
     /// <param name="o"></param>
-    public void ExecuteOrCancel(object o)
+    /// <param name="userDefinedTimeout"></param>
+    public void ExecuteOrCancel(object o, int? userDefinedTimeout)
     {
         Task.Run(() =>
         {
@@ -339,19 +340,19 @@ public class CohortIdentificationConfigurationUICommon
                         var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
                         if (joinable != null)
-                            OrderActivity(GetNextOperation(GetState(joinable)), joinable);
+                            OrderActivity(GetNextOperation(GetState(joinable)), joinable, userDefinedTimeout);
                         else
-                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate);
+                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate, userDefinedTimeout);
                         break;
                     }
                 case CohortAggregateContainer container:
-                    OrderActivity(GetNextOperation(GetState(container)), container);
+                    OrderActivity(GetNextOperation(GetState(container)), container, userDefinedTimeout);
                     break;
             }
         });
     }
 
-    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged)
+    public void StartAll(Action afterDelegate, EventHandler onRunnerPhaseChanged, int? userDefinedTimeout)
     {
         //only allow starting all if we are not mid execution already
         if (IsExecutingGlobalOperations())
@@ -360,7 +361,7 @@ public class CohortIdentificationConfigurationUICommon
         _cancelGlobalOperations = new CancellationTokenSource();
 
 
-        Runner = new CohortCompilerRunner(Compiler, Timeout);
+        Runner = new CohortCompilerRunner(Compiler, userDefinedTimeout ?? Timeout);
         Runner.PhaseChanged += onRunnerPhaseChanged;
         Task.Run(() =>
         {
