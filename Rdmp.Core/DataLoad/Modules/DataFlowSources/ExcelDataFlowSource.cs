@@ -173,7 +173,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                         h = cell.NumericCellValue.ToString();
                     }
                     if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
-                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
                     {
                         originalHeaders[i] = h;
                         h = replacementHeadersSplit[i];
