@@ -21,7 +21,7 @@
 		<PackageVersion Include="NPOI" Version="2.6.2"/>
 		<PackageVersion Include="NLog" Version="5.2.8"/>
 		<PackageVersion Include="SixLabors.ImageSharp" Version="3.1.2"/>
-		<PackageVersion Include="SixLabors.ImageSharp.Drawing" Version="2.1.0"/>
+		<PackageVersion Include="SixLabors.ImageSharp.Drawing" Version="2.1.1"/>
 		<PackageVersion Include="Spectre.Console" Version="0.48.0"/>
 		<PackageVersion Include="SSH.NET" Version="2023.0.1"/>
 		<PackageVersion Include="Terminal.Gui" Version="1.15.1"/>
