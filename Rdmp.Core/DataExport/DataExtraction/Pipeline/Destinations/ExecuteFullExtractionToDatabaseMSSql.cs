@@ -86,6 +86,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.")]
     public bool AppendDataIfTableExists { get; set; } = false;
 
+    [DemandsInitialization("If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
+    public bool IncludeTimeStamp { get; set; } = false;
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
@@ -197,7 +200,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
-
+        _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.PreInitialize(_destinationDatabase, listener);
 
         return _destination;

@@ -68,6 +68,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
     public bool AppendDataIfTableExists { get; set; }
 
+    public bool IncludeTimeStamp { get; set; }
+
     private CultureInfo _culture;
 
     [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
@@ -106,6 +108,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private bool _firstTime = true;
     private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
+    private readonly string _extractionTimeStamp = "extraction_timestamp";
 
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
@@ -155,6 +158,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
 
         StartAuditIfExists(TargetTableName);
+
+        if (IncludeTimeStamp)
+        {
+            AddTimeStampToExtractionData(toProcess);
+        }
 
         if (_loggingDatabaseListener != null)
             listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
@@ -214,6 +222,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
 
             _firstTime = false;
+        }
+
+
+        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any()) {
+            _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)),true,30000);
         }
 
         try
@@ -322,6 +335,17 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
     }
 
+
+    private void AddTimeStampToExtractionData(DataTable toProcess)
+    {
+        var timeStamp = DateTime.Now;
+        toProcess.Columns.Add(_extractionTimeStamp);
+        foreach(DataRow row in toProcess.Rows)
+        {
+            row[_extractionTimeStamp] = timeStamp;
+        }
+    }
+
     private static void EnsureTableHasDataInIt(DataTable toProcess)
     {
         if (toProcess.Columns.Count == 0)
@@ -362,6 +386,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         //see if any have changed
         foreach (DataColumn column in toProcess.Columns)
         {
+            //todo what happens if I try to extract a column called "extraction_timestamp"?"
+            if(column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
+            {
+                continue; //skip intenrally generated columns
+            }
             //get what is required for the current batch and the current type that is configured in the live table
             var oldSqlType = oldTypes[column.ColumnName];
             var newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
