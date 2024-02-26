@@ -13,13 +13,3 @@ updates:
   reviewers:
     - jas88
     - jfriel
-  ignore:
-  - dependency-name: NPOI
-    versions:
-    - ">= 2.5.1.a"
-  - dependency-name: NPOI
-    versions:
-    - ">= 2.5.a"
-  - dependency-name: System.Resources.Extensions
-    versions:
-    - "> 4.6.0"
