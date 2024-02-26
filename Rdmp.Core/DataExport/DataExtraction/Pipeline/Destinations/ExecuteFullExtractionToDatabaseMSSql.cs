@@ -216,7 +216,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //for every extractable column in the Catalogue
         foreach (var extractionInformation in datasetCommand.ColumnsToExtract.OfType<ExtractableColumn>()
                      .Select(ec =>
-                         ec.CatalogueExtractionInformation)) //.GetAllExtractionInformation(ExtractionCategory.Any))
+                         ec.CatalogueExtractionInformation))
         {
             if (extractionInformation == null)
                 continue;

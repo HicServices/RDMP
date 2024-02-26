@@ -5,17 +5,24 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
@@ -211,9 +218,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
             .ToList();
+
         var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
         var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+        var argumentAppendDataIfTableExists = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
 
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
         argumentServer.SetValue(_extractionServer);
@@ -222,6 +231,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         argumentDbNamePattern.SaveToDatabase();
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
+        argumentAppendDataIfTableExists.SetValue(true);
+        argumentAppendDataIfTableExists.SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component);
 
         var component2 = new PipelineComponent(CatalogueRepository, _pipeline,
@@ -239,4 +250,109 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
 
         return _pipeline;
     }
+
+
+    [Test]
+    public void ReExtraction_NoKeys()
+    {
+        DiscoveredDatabase dbToExtractTo = null;
+
+        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
+        _columnToTransform = _columnInfos.Single(c =>
+            c.GetRuntimeName().Equals("DateOfBirth", StringComparison.CurrentCultureIgnoreCase));
+
+        var transform = $"YEAR({_columnToTransform.Name})";
+
+
+        if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+            .All(ei => ei.GetRuntimeName() != "YearOfBirth"))
+        {
+            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform)
+            {
+                Alias = "YearOfBirth",
+                ExtractionCategory = ExtractionCategory.Core
+            };
+            ei.SaveToDatabase();
+
+            //make it part of the ExtractionConfiguration
+            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
+                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
+            {
+                Alias = ei.Alias
+            };
+            newColumn.SaveToDatabase();
+
+            _extractableColumns.Add(newColumn);
+        }
+
+        CreateLookupsEtc();
+
+        try
+        {
+            _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
+            _configuration.SaveToDatabase();
+
+            var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
+            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
+            if (dbToExtractTo.Exists())
+                dbToExtractTo.Drop();
+
+            ExecuteRunner();
+            var tbl = Database.DiscoverTables(false).Where(t => t.GetRuntimeName() == "z_fff").First();
+            tbl.Insert(new Dictionary<string, object>
+        {
+            { "C", "A" },
+            { "D", "O" },
+        });
+            var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
+            {
+                Command = CommandLineActivity.run,
+                ExtractionConfiguration = _configuration.ID.ToString(),
+                ExtractGlobals = true,
+                Pipeline = _pipeline.ID.ToString()
+            });
+
+            var returnCode = runner.Run(
+                RepositoryLocator,
+                ThrowImmediatelyDataLoadEventListener.Quiet,
+                ThrowImmediatelyCheckNotifier.Quiet,
+                new GracefulCancellationToken());
+
+            Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
+
+            var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
+            Assert.That(destinationTable.Exists());
+
+            var dt = destinationTable.GetDataTable();
+
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+            Assert.Multiple(() =>
+            {
+                Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
+                Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
+
+                Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
+                Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
+            });
+
+            AssertLookupsEtcExist(dbToExtractTo);
+        }
+        finally
+        {
+            if (dbToExtractTo?.Exists() == true)
+                dbToExtractTo.Drop();
+
+            _pipeline?.DeleteInDatabase();
+        }
+    }
+
+    [Test]
+    public void ReExtraction_ExtractionKeys() { }
+
+    [Test]
+    public void ReExtraction_CatalogueKeys() { }
+
+    [Test]
+    public void ReExtraction_CatalogueKeysAndExtractionKeys() { }
 }
