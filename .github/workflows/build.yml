@@ -204,7 +204,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.28.0
+        uses: shogo82148/actions-setup-perl@v1.29.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
@@ -284,7 +284,7 @@ jobs:
       - name: Upload Nuget packages
         run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.7.0
+        uses: svenstaro/upload-release-action@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
