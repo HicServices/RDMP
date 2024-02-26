@@ -225,8 +225,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
 
 
-        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any()) {
-            _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)),true,30000);
+        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
+        {
+            _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
 
         try
@@ -245,7 +246,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                 foreach (DataRow row in toProcess.Rows)
                 {
-                   
+
                     foreach (DataColumn pkCol in pkColumns)
                     {
                         var val = row[pkCol.ColumnName];
@@ -264,20 +265,20 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 if (toProcess.Rows.Count == 0) return null;
             }
 
-            foreach (DataRow row in toProcess.Rows)
-            {
-                _affectedRows += _bulkcopy.Upload(toProcess);
-                //using var dt = toProcess.Clone();
-                //dt.Rows.Add(row.ItemArray);
-                //try
-                //{
-                //    _affectedRows += _bulkcopy.Upload(dt);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Console.WriteLine(ex.Message);
-                //}
-            }
+            //foreach (DataRow row in toProcess.Rows)
+            //{
+            _affectedRows += 1; _bulkcopy.Upload(toProcess);
+            //using var dt = toProcess.Clone();
+            //dt.Rows.Add(row.ItemArray);
+            //try
+            //{
+            //    _affectedRows += _bulkcopy.Upload(dt);
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine(ex.Message);
+            //}
+            //}
 
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,
@@ -340,7 +341,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         var timeStamp = DateTime.Now;
         toProcess.Columns.Add(_extractionTimeStamp);
-        foreach(DataRow row in toProcess.Rows)
+        foreach (DataRow row in toProcess.Rows)
         {
             row[_extractionTimeStamp] = timeStamp;
         }
@@ -387,7 +388,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         foreach (DataColumn column in toProcess.Columns)
         {
             //todo what happens if I try to extract a column called "extraction_timestamp"?"
-            if(column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
+            if (column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
             {
                 continue; //skip intenrally generated columns
             }
