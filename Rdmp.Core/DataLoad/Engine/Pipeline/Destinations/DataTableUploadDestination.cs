@@ -238,10 +238,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             //push the data
             swTimeSpentWriting.Start();
             //there is no pks for some reason
-            if (pkColumns.Length > 0) //assumes columns are the same
+            if (AppendDataIfTableExists && pkColumns.Length > 0) //assumes columns are the same
             {
                 //drop any pk clashes
-                var existingData = _discoveredTable.GetDataTable(); //this is empty
+                var existingData = _discoveredTable.GetDataTable();
                 var rowsToDelete = new List<DataRow>();
 
                 foreach (DataRow row in toProcess.Rows)
@@ -265,20 +265,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 if (toProcess.Rows.Count == 0) return null;
             }
 
-            //foreach (DataRow row in toProcess.Rows)
-            //{
-            _affectedRows += 1; _bulkcopy.Upload(toProcess);
-            //using var dt = toProcess.Clone();
-            //dt.Rows.Add(row.ItemArray);
-            //try
-            //{
-            //    _affectedRows += _bulkcopy.Upload(dt);
-            //}
-            //catch (Exception ex)
-            //{
-            //    Console.WriteLine(ex.Message);
-            //}
-            //}
+            _affectedRows += _bulkcopy.Upload(toProcess);
 
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,
