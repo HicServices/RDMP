@@ -7,8 +7,11 @@
 using System;
 using System.Data;
 using System.Threading;
+using Amazon.Auth.AccessControlPolicy;
+using BadMedicine;
 using FAnsi.Connections;
 using FAnsi.Discovery;
+using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -85,13 +88,14 @@ public class TableLoadInfo : ITableLoadInfo
 
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
-        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable);
+        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable.Substring(Math.Max(0, destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
         DatabaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
 
 
         //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
         _id = int.Parse(cmd.ExecuteScalar().ToString());
+
 
         //keep a record of all data sources
         DataSources = sources;

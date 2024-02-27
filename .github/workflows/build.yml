@@ -11,25 +11,22 @@ env:
 jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
-  super-lint:
-    # Name the Job
-    name: Build, test, package and sign release
-    # Set the type of machine to run on
+  tests_db:
+    name: Run Database Tests
     runs-on: windows-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Determine RDMP build version
-        id: version
+      - name: Populate Databases.yaml
         shell: bash
-        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
-      - name: Check output
-        run: echo ${{ steps.version.outputs.rdmpversion }}
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4.0.0
-        with:
-          dotnet-version: 6.0.x
+        run: |
+          cat > ./Tools/rdmp/Databases.yaml << EOF
+          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
+          EOF
+      - name: Build
+        run: |
+          dotnet build --configuration Release --verbosity minimal
       - name: Install MS SQL 2019 Express LocalDB
         uses: crazy-max/ghaction-chocolatey@v3
         with:
@@ -45,34 +42,16 @@ jobs:
           mysql-version: '8.0'
           root-password: 'YourStrong!Passw0rd'
           auto-start: true
-      - name: Populate Databases.yaml 
-        shell: bash
-        run: |
-            find ./Tools/rdmp/Databases.yaml -type f -exec sed -i 's/RDMP_/TEST_/g' {} \;
-      - name: BundleSource
-        shell: bash
-        run: |
-          mkdir -p Tools/BundleUpSourceIntoZip/output
-          rm -f Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip
-          echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
-          perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
-          echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
       - name: Build
         run: dotnet build --configuration Release --verbosity minimal
+      - name: Initialise RDMP
+        run: |
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
       - name: Create MySql Logging, DQE and Cohort Building Cache Db
         run: |
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
           dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
-      - name: Initialise RDMP
-        run: dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
-      - name: Populate Databases.yaml
-        shell: bash
-        run: |
-          cat > ./Tools/rdmp/Databases.yaml << EOF
-          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
-          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
-          EOF
       - name: Run integration test scripts
         run: |
             dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
@@ -87,6 +66,60 @@ jobs:
           mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-core.lcov
+      - uses: coverallsapp/github-action@v2.2.3
+        with:
+          github-token: ${{ secrets.github_token }}
+          files: ./db-ui.lcov ./db-core.lcov
+          flag-name: unit tests
+
+  
+  tests_file_system:
+    name: Run File System Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Populate Databases.yaml
+        shell: bash
+        run: |
+          cat > ./Tools/rdmp/Databases.yaml << EOF
+          CatalogueConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_Catalogue;Trusted_Connection=True;TrustServerCertificate=true;
+          DataExportConnectionString: Server=(localdb)\MSSQLLocalDB;Database=TEST_DataExport;Trusted_Connection=True;TrustServerCertificate=true;
+          EOF
+      - name: Build
+        run: |
+          dotnet build --configuration Release --verbosity minimal
+      - name: Install MS SQL 2019 Express LocalDB
+        uses: crazy-max/ghaction-chocolatey@v3
+        with:
+          args: install -r sqllocaldb --no-progress
+      - name: Initialise LocalDB
+        shell: bash
+        run: |
+          SqlLocalDB.exe create MSSQLLocalDB -s
+          sqlcmd -l 180 -S '(localdb)\MSSQLLocalDB' -Q "SELECT @@VERSION;"
+          sed -i'' -e 's/localhost/\(localdb\)\\MSSQLLocalDB/' Tests.Common/TestDatabases.txt
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: '8.0'
+          root-password: 'YourStrong!Passw0rd'
+          auto-start: true
+      - name: Build
+        run: dotnet build --configuration Release --verbosity minimal
+      - name: Initialise RDMP
+        run: |
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- install --createdatabasetimeout 180 "(localdb)\MSSQLLocalDB" TEST_ -e
+      - name: Create MySql Logging, DQE and Cohort Building Cache Db
+        run: |
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver LiveLoggingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_logging2" --dir ~/rdmp/rdmp-yaml/
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver DQE "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_dqe" --dir ~/rdmp/rdmp-yaml/
+          dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- createnewexternaldatabaseserver CohortIdentificationQueryCachingServer_ID "DatabaseType:MySQL:Server=127.0.0.1;Uid=root;Pwd=YourStrong!Passw0rd;Database=rdmp_cache" --dir ~/rdmp/rdmp-yaml/
+      - name: Run integration test scripts
+        run: |
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_list_destroy_catalogue.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_cohort.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/create_dataload.yaml 
+            dotnet run -c Release --no-build --project Tools/rdmp/rdmp.csproj -- -f ./scripts/orphan_extractable_column.yaml 
       - name: Test with local file system
         shell: bash
         run:  |
@@ -95,37 +128,67 @@ jobs:
           mv `find coverage -type f` fs-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2.2.3
+      - uses: coverallsapp/github-action@v2.2.3
         with:
           github-token: ${{ secrets.github_token }}
-          files: ./db-ui.lcov ./db-core.lcov ./fs-ui.lcov ./fs-core.lcov
+          files: ./fs-ui.lcov ./fs-core.lcov
           flag-name: unit tests
 
+  bundle:
+    name: Bundle Build
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Determine RDMP build version
+        id: version
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4.0.0
+        with:
+          dotnet-version: 7.0.x
+      - name: BundleSource
+        shell: bash
+        run: |
+          mkdir -p Tools/BundleUpSourceIntoZip/output
+          rm -f Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip
+          echo "dir /s/b *.cs *.xml > srcbitsa.txt" | cmd
+          perl -pe '$_=reverse' < srcbitsa.txt | sort -t'\' -k1,1 -u | perl -pe '$_=reverse' > srcbits.txt
+          echo 7z a -mx=9 Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip @srcbits.txt | cmd
       - name: Package
         run: |
           dotnet publish Application/ResearchDataManagementPlatform/ResearchDataManagementPlatform.csproj -r win-x64 --self-contained -c Release -o PublishWinForms -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
-          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:IncludeNativeLibrariesForSelfExtract=true --verbosity minimal --nologo
+          dotnet publish Tools/rdmp/rdmp.csproj -r win-x64 --self-contained -c Release -o PublishWindows -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal -p:IncludeNativeLibrariesForSelfExtract=true --nologo
           dotnet publish Tools/rdmp/rdmp.csproj -r linux-x64 --self-contained -c Release -o PublishLinux -p:GenerateDocumentationFile=false -p:PublishSingleFile=true -p:PublishReadyToRun=true --verbosity minimal --nologo
+      - name: Temporary Bundle of ddls for auto-updater
+        shell: bash
+        run: |
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/runtimes ./PublishWinForms
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/x64 ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/D3DCompiler_47_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/mongocrypt.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/PenImc_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/PresentationNative_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/vcruntime140_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/WebView2Loader.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/wpfgfx_cor3.dll ./PublishWinForms
       - name: Install Plugins
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         shell: bash
         run: |
           for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest https://api.github.com/repos/HICServices/HicPlugin/releases/latest https://api.github.com/repos/HICServices/RdmpExtensions/releases/latest
           do
             PluginName="$(cut -d/ -f6 <<< $plugin)"
             NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
-            echo $NAME
             curl -OL  $NAME
-            for platform in PublishWindows PublishLinux PublishWinForms
-            do
-              cp *.nupkg $platform
-            done
-            rm *.nupkg
           done
-
-      - name: Sign
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
+          ls *.nupkg > rdmpplugins.txt
+          for platform in PublishWindows PublishLinux PublishWinForms
+          do
+            cp rdmpplugins.txt *.nupkg $platform
+          done
+          rm rdmpplugins.txt *.nupkg
+      - name: Sign & zip
         shell: bash
         run: |
           dotnet tool install --global AzureSignTool 
@@ -133,21 +196,19 @@ jobs:
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
           mkdir -p dist
           cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
-          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip rdmp.exe NLog.config *.yaml *.nupkg | cmd)
+          (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
           echo 7z a dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux | cmd
-          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip ResearchDataManagementPlatform.exe *.nupkg | cmd)
+          (cd PublishWinForms ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-client.zip . | cmd)
 
 
       - name: Install Perl dependencies
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
-        uses: shogo82148/actions-setup-perl@v1.27.0
+        uses: shogo82148/actions-setup-perl@v1.29.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
       - name: Fix execute permissions
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         shell: perl {0}
         run: |
           use strict;
@@ -179,11 +240,9 @@ jobs:
           $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
           $zip->overwriteAs($zipname);
       - name: Compress tar
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         run: |
           7z a -txz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar.xz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
           rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
-
       - name: Build Nuget packages
         if: contains(github.ref, 'refs/tags/v')
         shell: bash
@@ -192,28 +251,43 @@ jobs:
           do
           dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
           done
-
-      - name: Upload Nuget packages
-        if: contains(github.ref, 'refs/tags/v')
-        run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
-
       - name: Calculate SHA256SUMS
-        if: contains(github.ref, 'refs/tags/v')
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
-
       - name: Archive production artifacts
-        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         uses: actions/upload-artifact@v4
         with:
           name: dist
           path: |
             dist
+      - name: Cache Build
+        id: cache-build
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundled
+
+  production-upload:
+    name: Production Upload
+    runs-on: windows-latest
+    needs: ['bundle','tests_db','tests_file_system']
+    if: contains(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/cache/restore@v4
+        id: restore-build
+        with:
+          path: ${{ github.workspace }}/
+          key: ${{ github.sha }}-your-cache-key-bundled
+      - name: Determine RDMP build version
+        id: version
+        shell: bash
+        run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
+      - name: Upload Nuget packages
+        run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.7.0
-        if: contains(github.ref, 'refs/tags/v')
+        uses: svenstaro/upload-release-action@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*
           tag: ${{ github.ref }}
           overwrite: true
-          file_glob: true
+          file_glob: true 

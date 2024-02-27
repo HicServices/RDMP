@@ -1,382 +1,384 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <PackageId>HIC.RDMP.Plugin</PackageId>
-    <version>$(version)</version>
-    <title>HIC.RDMP.Plugin</title>
-    <authors>Health Informatics Centre, University of Dundee</authors>
-    <owners>Health Informatics Centre, University of Dundee</owners>
-    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
-    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
-    <iconUrl>
-      https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <description>Core package for plugin development</description>
-    <copyright>Copyright 2018-2019</copyright>
-
-    <TargetFramework>net8.0</TargetFramework>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <TargetFramework>net8.0</TargetFramework>
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-    <NoWarn>1701;1702;CS1591;SCS0018</NoWarn>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SGenTypes>Rdmp.Core.DataLoad.Modules.DataProvider.WebServiceConfiguration</SGenTypes>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
-    <Compile Remove="Startup\PluginManagement\**" />
-    <EmbeddedResource Remove="Databases\CatalogueDatabase\up\views\**" />
-    <EmbeddedResource Remove="Startup\PluginManagement\**" />
-    <None Remove="Databases\CatalogueDatabase\up\views\**" />
-    <None Remove="Startup\PluginManagement\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Curation\KeywordHelp.txt" />
-    <None Remove="Databases\ANOStoreDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <None Remove="Databases\CatalogueDatabase\runAfterCreateDatabase\CreateCatalogue.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\002_AddAlternativeCacheLocationToLoadSchedule.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\003_AddPipelineEntities.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\004_AllowCustomCredentialsToOverrideTrustedSecurityInTableInfos.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\005_IncreaseWidthOfExternalDatabaseServerPasswordFieldToSupportEncryption.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\006_FixNamingOfServerAndDatabaseInTableInfo.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\007_RemoveRawDataSourceFromLoadMetadata.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\008_AddColdStorageToCatalogue.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\009_AddDestinationIDIntoPipelines.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\010_AddSourceIDIntoPipelines.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\011_AddPermissionWindowTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\012_AddCacheProgressTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\013_AddIsDisabledColumnToLoadSchedule.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\014_ChangeSupportingSQLToUseExternalDatabaseServer.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\015_AddIsGlobalToSupportingDocuments.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\016_AddPipelineContextFieldToCacheProgressAndFixConstraints.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\017_FixPermissionWindowTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\018_AddPermissionWindowForeignKeyToCacheProgress.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\019_AddDescriptionFiledToPipelines.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\020_AddNameAndDescriptionToPermissionWindow.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\021_TicketingSystemAbstraction.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\022_NewSystemDiagram_1.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\023_RefactoringANOTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\024_AddCacheFetchFailureTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\025_RequireThatANOTableSuffixBeUnique.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\026_PdbFilesIntoDlls.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\027_CohortManagerSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\028_VariousImprovements.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\029_GlobalParamsInCohortManager.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\030_CleanUpCacheProgressTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\031_CleanUpAndRenameLoadScheduleTable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\032_MakePermissionWindowsLockable.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\033_MakeTableInfoProperlyAwareOfItselfDatabaseType.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\034_GovernancePeriodsWithAttachments.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\035_AggregateConfigurationsCanReferenceParentForFilters.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\036_AddPivotCategoryExtractionInformation.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\037_StandardisedValidationRegexes.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\038_TableValuedFunctionParameters.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\039_QueryCachingSupportInCohortIdentification.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\040_DroppingOldColumnsInMetadataNotNeededAnymore.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\041_AllowPasswordEncryptionKeyOnLogicalDrive.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\042_AllowHAVINGStatementsInAggregates.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\043_PluginsNowHandledAsDistinctEntities.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\044_AutomationServerSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\045_FixMaxParameterLengths.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\046_ServerTypesAndCohortJoinTables.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\047_GlobalTimeoutsAndDropRedundantColumns.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\048_FixingLengthOnPasswordColumnsAndCascadeColumnInfoDelets.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\049_AddCacheLoadDelay.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\050_FreezingCohortIdentificationConfigurations.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\051_PreventMultipleCatalogueItemRelationships.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\052_StandardiseLockableNamesOfPermissionWindow.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\053_SimplifyCaching.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\054_PreventMultipleExtractionInformationPerCatalogueItem.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\055_FavouritesAndNamedContainersAndTopX.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\056_DashboardLayoutSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\057_MakeLoadProgressINamed.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\058_RemoteRDMP.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\059_ObjectSharing.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\060_MappedDataPathForExternalDbServer.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\061_CacheProgess INamed.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\061_NoMoreAutomationServer.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\062_ObjectReferenceSupportCatalogue.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\063_PluginNameAndVersionMustBeUnique.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\071_RowVer.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
-    <None Remove="Databases\CatalogueDatabase\up\075_Memento.sql" />
-	  <None Remove="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
-	  <None Remove="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
-	  <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
-    <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
-    <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
-    <None Remove="Databases\DataExportDatabase\up\003_PreventDoubleAddingCatalogueIdx.sql" />
-    <None Remove="Databases\DataExportDatabase\up\004_TicketingSystemAbstraction.sql" />
-    <None Remove="Databases\DataExportDatabase\up\005_ParentFilterIDRecording.sql" />
-    <None Remove="Databases\DataExportDatabase\up\006_AllowLongerValuedConfigurationProperties.sql" />
-    <None Remove="Databases\DataExportDatabase\up\007_PreventAccidentalCohortDeletion.sql" />
-    <None Remove="Databases\DataExportDatabase\up\008_AllowDeletingProjectsWithConfiguredDataUsers.sql" />
-    <None Remove="Databases\DataExportDatabase\up\009_FixMaxLengthOnSqlParameters.sql" />
-    <None Remove="Databases\DataExportDatabase\up\010_FixPasswordColumnWidth.sql" />
-    <None Remove="Databases\DataExportDatabase\up\011_AddDescriptionFieldToCohort.sql" />
-    <None Remove="Databases\DataExportDatabase\up\012_AddNameToExtractionConfiguration.sql" />
-    <None Remove="Databases\DataExportDatabase\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
-    <None Remove="Databases\DataExportDatabase\up\014_AssociateCicsWithProjects.sql" />
-    <None Remove="Databases\DataExportDatabase\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
-    <None Remove="Databases\DataExportDatabase\up\016_CustomDataRefactoring.sql" />
-    <None Remove="Databases\DataExportDatabase\up\017_NewSupplementalExtractionresults.sql" />
-    <None Remove="Databases\DataExportDatabase\up\018_ObjectReferenceSupportDataExport.sql" />
-    <None Remove="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
-    <None Remove="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
-    <None Remove="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
-    <None Remove="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
-    <None Remove="Databases\DataExportDatabase\up\022_RowVer.sql" />
-    <None Remove="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
-    <None Remove="Databases\DataExportDatabase\up\024_AddExtractionProgressTable.sql" />
-    <None Remove="Databases\DataExportDatabase\up\025_AddExtractionProgressRetry.sql" />
-    <None Remove="Databases\DataExportDatabase\up\025_AddFolders.sql" />
-    <None Remove="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <None Remove="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
-    <None Remove="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
-    <None Remove="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
-    <None Remove="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
-    <None Remove="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <None Remove="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
-    <None Remove="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
-    <None Remove="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
-    <None Remove="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
-    <None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <None Remove="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
-    <None Remove="Validation\readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Validation\readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Databases\ANOStoreDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\runAfterCreateDatabase\CreateCatalogue.sql">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\002_AddAlternativeCacheLocationToLoadSchedule.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\003_AddPipelineEntities.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\004_AllowCustomCredentialsToOverrideTrustedSecurityInTableInfos.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\005_IncreaseWidthOfExternalDatabaseServerPasswordFieldToSupportEncryption.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\006_FixNamingOfServerAndDatabaseInTableInfo.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\007_RemoveRawDataSourceFromLoadMetadata.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\008_AddColdStorageToCatalogue.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\009_AddDestinationIDIntoPipelines.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\010_AddSourceIDIntoPipelines.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\011_AddPermissionWindowTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\012_AddCacheProgressTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\013_AddIsDisabledColumnToLoadSchedule.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\014_ChangeSupportingSQLToUseExternalDatabaseServer.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\015_AddIsGlobalToSupportingDocuments.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\016_AddPipelineContextFieldToCacheProgressAndFixConstraints.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\017_FixPermissionWindowTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\018_AddPermissionWindowForeignKeyToCacheProgress.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\019_AddDescriptionFiledToPipelines.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\020_AddNameAndDescriptionToPermissionWindow.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\021_TicketingSystemAbstraction.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\022_NewSystemDiagram_1.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\023_RefactoringANOTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\024_AddCacheFetchFailureTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\025_RequireThatANOTableSuffixBeUnique.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\026_PdbFilesIntoDlls.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\027_CohortManagerSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\028_VariousImprovements.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\029_GlobalParamsInCohortManager.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\030_CleanUpCacheProgressTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\031_CleanUpAndRenameLoadScheduleTable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\032_MakePermissionWindowsLockable.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\033_MakeTableInfoProperlyAwareOfItselfDatabaseType.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\034_GovernancePeriodsWithAttachments.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\035_AggregateConfigurationsCanReferenceParentForFilters.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\036_AddPivotCategoryExtractionInformation.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\037_StandardisedValidationRegexes.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\038_TableValuedFunctionParameters.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\039_QueryCachingSupportInCohortIdentification.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\040_DroppingOldColumnsInMetadataNotNeededAnymore.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\041_AllowPasswordEncryptionKeyOnLogicalDrive.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\042_AllowHAVINGStatementsInAggregates.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\043_PluginsNowHandledAsDistinctEntities.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\044_AutomationServerSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\045_FixMaxParameterLengths.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\046_ServerTypesAndCohortJoinTables.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\047_GlobalTimeoutsAndDropRedundantColumns.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\048_FixingLengthOnPasswordColumnsAndCascadeColumnInfoDelets.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\049_AddCacheLoadDelay.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\050_FreezingCohortIdentificationConfigurations.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\051_PreventMultipleCatalogueItemRelationships.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\052_StandardiseLockableNamesOfPermissionWindow.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\053_SimplifyCaching.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\054_PreventMultipleExtractionInformationPerCatalogueItem.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\055_FavouritesAndNamedContainersAndTopX.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\056_DashboardLayoutSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\057_MakeLoadProgressINamed.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\058_RemoteRDMP.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\059_ObjectSharing.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\060_MappedDataPathForExternalDbServer.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\061_CacheProgess INamed.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\061_NoMoreAutomationServer.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\062_ObjectReferenceSupportCatalogue.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\063_PluginNameAndVersionMustBeUnique.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
-	  <EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
-	  <EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
-	  <EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\071_RowVer.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
-    <EmbeddedResource Include="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\003_PreventDoubleAddingCatalogueIdx.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\004_TicketingSystemAbstraction.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\005_ParentFilterIDRecording.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\006_AllowLongerValuedConfigurationProperties.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\007_PreventAccidentalCohortDeletion.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\008_AllowDeletingProjectsWithConfiguredDataUsers.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\009_FixMaxLengthOnSqlParameters.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\010_FixPasswordColumnWidth.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\011_AddDescriptionFieldToCohort.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\012_AddNameToExtractionConfiguration.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\014_AssociateCicsWithProjects.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\016_CustomDataRefactoring.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\017_NewSupplementalExtractionresults.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\018_ObjectReferenceSupportDataExport.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\025_AddExtractionProgressRetry.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\024_AddExtractionProgressTable.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\022_RowVer.sql" />
-    <EmbeddedResource Include="Databases\DataExportDatabase\up\025_AddFolders.sql" />
-    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
-    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
-    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
-    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
-    <EmbeddedResource Include="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <EmbeddedResource Include="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
-    <EmbeddedResource Include="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
-    <EmbeddedResource Include="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
-    <EmbeddedResource Include="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
-    <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="2.9.1" />
-    <PackageReference Include="CsvHelper" Version="30.0.1" />
-    <PackageReference Include="Equ" Version="2.3.0" />
-    <PackageReference Include="ExcelNumberFormat" Version="1.1.0" />
-    <PackageReference Include="FluentFTP" Version="49.0.1" />
-    <PackageReference Include="HIC.BadMedicine" Version="1.1.2" />
-    <PackageReference Include="HIC.FAnsiSql" Version="3.1.1" />
-    <PackageReference Include="LibArchive.Net" Version="0.1.4" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.2" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="NPOI" Version="2.6.2" />
-    <PackageReference Include="NLog" Version="5.2.8" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.0" />
-    <PackageReference Include="Spectre.Console" Version="0.48.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
-    <PackageReference Include="SSH.NET" Version="2023.0.1" />
-    <PackageReference Include="Terminal.Gui" Version="1.14.1" />
-    <PackageReference Include="YamlDotNet" Version="13.7.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Curation\KeywordHelp.txt">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="ReusableLibraryCode\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="GlobalStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>GlobalStrings.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Icons\IconProvision\ChecksAndProgressIcons.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Icons\IconProvision\Images.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Images.resx</DependentUpon>
-    </Compile>
-    <Compile Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.Designer.cs">
-      <DependentUpon>DatabaseProviderIcons.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="GlobalStrings.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>GlobalStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="GlobalStrings.zh-Hans.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
-      <Generator></Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Icons\IconProvision\ChecksAndProgressIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>ChecksAndProgressIcons.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Icons\IconProvision\Images.resx">
-      <SubType>Designer</SubType>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>Images.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.resx">
-      <SubType>Designer</SubType>
-      <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
-      <Generator>PublicResXFileCodeGenerator</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<PackageId>HIC.RDMP.Plugin</PackageId>
+		<version>$(version)</version>
+		<title>HIC.RDMP.Plugin</title>
+		<authors>Health Informatics Centre, University of Dundee</authors>
+		<owners>Health Informatics Centre, University of Dundee</owners>
+		<licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+		<projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+		<iconUrl>
+			https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png
+		</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<description>Core package for plugin development</description>
+		<copyright>Copyright 2018-2019</copyright>
+		<TargetFramework>net7.0</TargetFramework>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<TargetFramework>net7.0</TargetFramework>
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<NoWarn>1701;1702;CS1591;SCS0018</NoWarn>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<NoWarn>$(NoWarn);NU5104</NoWarn>
+	</PropertyGroup>
+	<PropertyGroup>
+		<SGenTypes>Rdmp.Core.DataLoad.Modules.DataProvider.WebServiceConfiguration</SGenTypes>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="Databases\CatalogueDatabase\up\views\**" />
+		<Compile Remove="Startup\PluginManagement\**" />
+		<EmbeddedResource Remove="Databases\CatalogueDatabase\up\views\**" />
+		<EmbeddedResource Remove="Startup\PluginManagement\**" />
+		<None Remove="Databases\CatalogueDatabase\up\views\**" />
+		<None Remove="Startup\PluginManagement\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Remove="Curation\KeywordHelp.txt" />
+		<None Remove="Databases\ANOStoreDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<None Remove="Databases\CatalogueDatabase\runAfterCreateDatabase\CreateCatalogue.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\002_AddAlternativeCacheLocationToLoadSchedule.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\003_AddPipelineEntities.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\004_AllowCustomCredentialsToOverrideTrustedSecurityInTableInfos.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\005_IncreaseWidthOfExternalDatabaseServerPasswordFieldToSupportEncryption.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\006_FixNamingOfServerAndDatabaseInTableInfo.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\007_RemoveRawDataSourceFromLoadMetadata.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\008_AddColdStorageToCatalogue.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\009_AddDestinationIDIntoPipelines.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\010_AddSourceIDIntoPipelines.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\011_AddPermissionWindowTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\012_AddCacheProgressTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\013_AddIsDisabledColumnToLoadSchedule.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\014_ChangeSupportingSQLToUseExternalDatabaseServer.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\015_AddIsGlobalToSupportingDocuments.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\016_AddPipelineContextFieldToCacheProgressAndFixConstraints.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\017_FixPermissionWindowTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\018_AddPermissionWindowForeignKeyToCacheProgress.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\019_AddDescriptionFiledToPipelines.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\020_AddNameAndDescriptionToPermissionWindow.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\021_TicketingSystemAbstraction.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\022_NewSystemDiagram_1.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\023_RefactoringANOTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\024_AddCacheFetchFailureTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\025_RequireThatANOTableSuffixBeUnique.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\026_PdbFilesIntoDlls.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\027_CohortManagerSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\028_VariousImprovements.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\029_GlobalParamsInCohortManager.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\030_CleanUpCacheProgressTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\031_CleanUpAndRenameLoadScheduleTable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\032_MakePermissionWindowsLockable.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\033_MakeTableInfoProperlyAwareOfItselfDatabaseType.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\034_GovernancePeriodsWithAttachments.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\035_AggregateConfigurationsCanReferenceParentForFilters.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\036_AddPivotCategoryExtractionInformation.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\037_StandardisedValidationRegexes.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\038_TableValuedFunctionParameters.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\039_QueryCachingSupportInCohortIdentification.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\040_DroppingOldColumnsInMetadataNotNeededAnymore.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\041_AllowPasswordEncryptionKeyOnLogicalDrive.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\042_AllowHAVINGStatementsInAggregates.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\043_PluginsNowHandledAsDistinctEntities.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\044_AutomationServerSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\045_FixMaxParameterLengths.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\046_ServerTypesAndCohortJoinTables.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\047_GlobalTimeoutsAndDropRedundantColumns.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\048_FixingLengthOnPasswordColumnsAndCascadeColumnInfoDelets.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\049_AddCacheLoadDelay.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\050_FreezingCohortIdentificationConfigurations.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\051_PreventMultipleCatalogueItemRelationships.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\052_StandardiseLockableNamesOfPermissionWindow.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\053_SimplifyCaching.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\054_PreventMultipleExtractionInformationPerCatalogueItem.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\055_FavouritesAndNamedContainersAndTopX.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\056_DashboardLayoutSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\057_MakeLoadProgressINamed.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\058_RemoteRDMP.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\059_ObjectSharing.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\060_MappedDataPathForExternalDbServer.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\061_CacheProgess INamed.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\061_NoMoreAutomationServer.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\062_ObjectReferenceSupportCatalogue.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\063_PluginNameAndVersionMustBeUnique.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\071_RowVer.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\075_Memento.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
+		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
+		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
+		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
+		<None Remove="Databases\DataExportDatabase\up\003_PreventDoubleAddingCatalogueIdx.sql" />
+		<None Remove="Databases\DataExportDatabase\up\004_TicketingSystemAbstraction.sql" />
+		<None Remove="Databases\DataExportDatabase\up\005_ParentFilterIDRecording.sql" />
+		<None Remove="Databases\DataExportDatabase\up\006_AllowLongerValuedConfigurationProperties.sql" />
+		<None Remove="Databases\DataExportDatabase\up\007_PreventAccidentalCohortDeletion.sql" />
+		<None Remove="Databases\DataExportDatabase\up\008_AllowDeletingProjectsWithConfiguredDataUsers.sql" />
+		<None Remove="Databases\DataExportDatabase\up\009_FixMaxLengthOnSqlParameters.sql" />
+		<None Remove="Databases\DataExportDatabase\up\010_FixPasswordColumnWidth.sql" />
+		<None Remove="Databases\DataExportDatabase\up\011_AddDescriptionFieldToCohort.sql" />
+		<None Remove="Databases\DataExportDatabase\up\012_AddNameToExtractionConfiguration.sql" />
+		<None Remove="Databases\DataExportDatabase\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
+		<None Remove="Databases\DataExportDatabase\up\014_AssociateCicsWithProjects.sql" />
+		<None Remove="Databases\DataExportDatabase\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
+		<None Remove="Databases\DataExportDatabase\up\016_CustomDataRefactoring.sql" />
+		<None Remove="Databases\DataExportDatabase\up\017_NewSupplementalExtractionresults.sql" />
+		<None Remove="Databases\DataExportDatabase\up\018_ObjectReferenceSupportDataExport.sql" />
+		<None Remove="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
+		<None Remove="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
+		<None Remove="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
+		<None Remove="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
+		<None Remove="Databases\DataExportDatabase\up\022_RowVer.sql" />
+		<None Remove="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
+		<None Remove="Databases\DataExportDatabase\up\024_AddExtractionProgressTable.sql" />
+		<None Remove="Databases\DataExportDatabase\up\025_AddExtractionProgressRetry.sql" />
+		<None Remove="Databases\DataExportDatabase\up\025_AddFolders.sql" />
+		<None Remove="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<None Remove="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
+		<None Remove="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
+		<None Remove="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
+		<None Remove="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
+		<None Remove="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<None Remove="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
+		<None Remove="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
+		<None Remove="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
+		<None Remove="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
+		<None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<None Remove="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
+		<None Remove="Validation\readme.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Validation\readme.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Databases\ANOStoreDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\runAfterCreateDatabase\CreateCatalogue.sql">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\002_AddAlternativeCacheLocationToLoadSchedule.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\003_AddPipelineEntities.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\004_AllowCustomCredentialsToOverrideTrustedSecurityInTableInfos.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\005_IncreaseWidthOfExternalDatabaseServerPasswordFieldToSupportEncryption.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\006_FixNamingOfServerAndDatabaseInTableInfo.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\007_RemoveRawDataSourceFromLoadMetadata.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\008_AddColdStorageToCatalogue.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\009_AddDestinationIDIntoPipelines.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\010_AddSourceIDIntoPipelines.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\011_AddPermissionWindowTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\012_AddCacheProgressTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\013_AddIsDisabledColumnToLoadSchedule.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\014_ChangeSupportingSQLToUseExternalDatabaseServer.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\015_AddIsGlobalToSupportingDocuments.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\016_AddPipelineContextFieldToCacheProgressAndFixConstraints.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\017_FixPermissionWindowTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\018_AddPermissionWindowForeignKeyToCacheProgress.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\019_AddDescriptionFiledToPipelines.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\020_AddNameAndDescriptionToPermissionWindow.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\021_TicketingSystemAbstraction.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\022_NewSystemDiagram_1.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\023_RefactoringANOTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\024_AddCacheFetchFailureTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\025_RequireThatANOTableSuffixBeUnique.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\026_PdbFilesIntoDlls.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\027_CohortManagerSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\028_VariousImprovements.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\029_GlobalParamsInCohortManager.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\030_CleanUpCacheProgressTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\031_CleanUpAndRenameLoadScheduleTable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\032_MakePermissionWindowsLockable.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\033_MakeTableInfoProperlyAwareOfItselfDatabaseType.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\034_GovernancePeriodsWithAttachments.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\035_AggregateConfigurationsCanReferenceParentForFilters.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\036_AddPivotCategoryExtractionInformation.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\037_StandardisedValidationRegexes.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\038_TableValuedFunctionParameters.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\039_QueryCachingSupportInCohortIdentification.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\040_DroppingOldColumnsInMetadataNotNeededAnymore.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\041_AllowPasswordEncryptionKeyOnLogicalDrive.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\042_AllowHAVINGStatementsInAggregates.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\043_PluginsNowHandledAsDistinctEntities.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\044_AutomationServerSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\045_FixMaxParameterLengths.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\046_ServerTypesAndCohortJoinTables.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\047_GlobalTimeoutsAndDropRedundantColumns.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\048_FixingLengthOnPasswordColumnsAndCascadeColumnInfoDelets.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\049_AddCacheLoadDelay.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\050_FreezingCohortIdentificationConfigurations.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\051_PreventMultipleCatalogueItemRelationships.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\052_StandardiseLockableNamesOfPermissionWindow.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\053_SimplifyCaching.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\054_PreventMultipleExtractionInformationPerCatalogueItem.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\055_FavouritesAndNamedContainersAndTopX.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\056_DashboardLayoutSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\057_MakeLoadProgressINamed.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\058_RemoteRDMP.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\059_ObjectSharing.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\060_MappedDataPathForExternalDbServer.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\061_CacheProgess INamed.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\061_NoMoreAutomationServer.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\062_ObjectReferenceSupportCatalogue.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\063_PluginNameAndVersionMustBeUnique.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql"/>
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\072_ExtendedProperties.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\071_RowVer.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\003_PreventDoubleAddingCatalogueIdx.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\004_TicketingSystemAbstraction.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\005_ParentFilterIDRecording.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\006_AllowLongerValuedConfigurationProperties.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\007_PreventAccidentalCohortDeletion.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\008_AllowDeletingProjectsWithConfiguredDataUsers.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\009_FixMaxLengthOnSqlParameters.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\010_FixPasswordColumnWidth.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\011_AddDescriptionFieldToCohort.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\012_AddNameToExtractionConfiguration.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\013_AddExtractionPipelineIDToExtractionConfiguration.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\014_AssociateCicsWithProjects.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\015_AddedPropertiesToCumulativeExtractionResult.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\016_CustomDataRefactoring.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\017_NewSupplementalExtractionresults.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\018_ObjectReferenceSupportDataExport.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\025_AddExtractionProgressRetry.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\024_AddExtractionProgressTable.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\023_ExtractableColumnMaxSize.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\022_RowVer.sql" />
+		<EmbeddedResource Include="Databases\DataExportDatabase\up\025_AddFolders.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
+		<EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
+		<EmbeddedResource Include="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<EmbeddedResource Include="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
+		<EmbeddedResource Include="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
+		<EmbeddedResource Include="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
+		<EmbeddedResource Include="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
+		<EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
+		<EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CommandLineParser" />
+		<PackageReference Include="CsvHelper" />
+		<PackageReference Include="Equ" />
+		<PackageReference Include="ExcelNumberFormat" />
+		<PackageReference Include="FluentFTP" />
+		<PackageReference Include="HIC.BadMedicine"/>
+		<PackageReference Include="HIC.FAnsiSql" />
+		<PackageReference Include="LibArchive.Net"/>
+		<PackageReference Include="Microsoft.SourceLink.GitHub">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.XmlSerializer.Generator"/>
+		<PackageReference Include="MongoDB.Driver"/>
+		<PackageReference Include="Newtonsoft.Json"/>
+		<PackageReference Include="NPOI"/>
+		<PackageReference Include="NLog"/>
+		<PackageReference Include="SixLabors.ImageSharp"  />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing"  />
+		<PackageReference Include="Spectre.Console" />
+		<PackageReference Include="System.Resources.Extensions"  />
+		<PackageReference Include="SSH.NET"  />
+		<PackageReference Include="Terminal.Gui"  />
+		<PackageReference Include="YamlDotNet" />
+	</ItemGroup>
+	<ItemGroup>
+		<DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Curation\KeywordHelp.txt">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Resources\" />
+		<Folder Include="ReusableLibraryCode\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="GlobalStrings.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>GlobalStrings.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Icons\IconProvision\ChecksAndProgressIcons.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Icons\IconProvision\Images.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Images.resx</DependentUpon>
+		</Compile>
+		<Compile Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.Designer.cs">
+			<DependentUpon>DatabaseProviderIcons.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="GlobalStrings.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>GlobalStrings.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="GlobalStrings.zh-Hans.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
+			<Generator></Generator>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Icons\IconProvision\ChecksAndProgressIcons.resx">
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>ChecksAndProgressIcons.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Icons\IconProvision\Images.resx">
+			<SubType>Designer</SubType>
+			<Generator>PublicResXFileCodeGenerator</Generator>
+			<LastGenOutput>Images.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="ReusableLibraryCode\Icons\DatabaseProviderIcons.resx">
+			<SubType>Designer</SubType>
+			<LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
+			<Generator>PublicResXFileCodeGenerator</Generator>
+		</EmbeddedResource>
+	</ItemGroup>
 </Project>

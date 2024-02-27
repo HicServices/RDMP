@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
 /// those files.
 /// </summary>
-public partial class ExecuteCommandPrunePlugin : BasicCommandExecution
+public sealed partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
     private string _file;
 

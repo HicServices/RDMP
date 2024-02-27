@@ -42,16 +42,16 @@
     <EmbeddedResource Include="en_GB.dic" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+    <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="ObjectListView.Repack.NET6Plus" Version="2.9.4" />
-    <PackageReference Include="Scintilla.NET" Version="5.3.2.9" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
-    <PackageReference Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
-    <PackageReference Include="WeCantSpell.Hunspell" Version="4.1.0" />
+    <PackageReference Include="ObjectListView.Repack.NET6Plus" />
+    <PackageReference Include="Scintilla.NET" />
+    <PackageReference Include="System.Resources.Extensions"/>
+    <PackageReference Include="VPKSoft.ScintillaLexers.NET"/>
+    <PackageReference Include="WeCantSpell.Hunspell"/>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />

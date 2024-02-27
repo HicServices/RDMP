@@ -917,7 +917,8 @@ GO
 ALTER TABLE [dbo].[ColumnInfo] ADD Dataset_ID [int] NULL
 GO
 ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN KEY([Dataset_ID]) REFERENCES [dbo].[Dataset] ([ID]) ON DELETE CASCADE ON UPDATE CASCADE
-
+GO
+ALTER TABLE [dbo].[LoadMetadata] ADD LastLoadTime [datetime] NULL;
 GO
 SET ANSI_PADDING OFF
 GO

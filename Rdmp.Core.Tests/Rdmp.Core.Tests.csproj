@@ -65,22 +65,22 @@
         <EmbeddedResource Include="DataLoad\Engine\Unit\TestFile\OddFormats.xls" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0">
+        <PackageReference Include="coverlet.collector">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-        <PackageReference Include="NSubstitute" Version="5.1.0" />
-        <PackageReference Include="NUnit" Version="4.0.1" />
-        <PackageReference Include="NUnit.Analyzers" Version="3.10.0">
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NSubstitute"/>
+        <PackageReference Include="NUnit"/>
+        <PackageReference Include="NUnit.Analyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NUnit3TestAdapter" Version="4.5.0">
+        <PackageReference Include="NUnit3TestAdapter">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
+        <PackageReference Include="NunitXml.TestLogger"/>
     </ItemGroup>
     <ItemGroup>
         <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />

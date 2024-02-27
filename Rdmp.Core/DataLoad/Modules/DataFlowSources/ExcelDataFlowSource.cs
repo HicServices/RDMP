@@ -54,9 +54,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
 
-    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0)
     {
-        dataReadFromFile ??= GetAllData(listener, cancellationToken);
+        dataReadFromFile ??= GetAllData(listener, cancellationToken,rowOffset,columnOffset);
 
         if (haveDispatchedDataTable)
             return null;
@@ -66,7 +66,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return dataReadFromFile;
     }
 
-    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset=0, int columnOffset=0)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -88,7 +88,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
                 throw new FlatFileLoadException(
                     $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
-            toReturn = GetAllData(worksheet, listener);
+            toReturn = GetAllData(worksheet, listener, rowOffset,columnOffset);
 
             //set the table name the file name
             toReturn.TableName =
@@ -120,8 +120,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// </summary>
     /// <param name="worksheet"></param>
     /// <param name="listener"></param>
+    /// <param name="rowOffset"></param>
+    /// <param name="columnOffset"></param>
     /// <returns></returns>
-    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener)
+    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset=0, int columnOffset =0)
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
@@ -134,7 +136,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         while (rowEnumerator.MoveNext())
         {
             var row = (IRow)rowEnumerator.Current;
-
+            if (rowOffset - 1 > row.RowNum) continue;// .RowNumber is 0 indexed
+           
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
             if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
                 continue;
@@ -150,7 +153,16 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 {
                     //if the cell header is blank
                     var cell = row.Cells[i];
-                    var h = cell.StringCellValue;
+                    if (cell.ColumnIndex < columnOffset) continue;
+                    string h;
+                    try
+                    {
+                        h = cell.StringCellValue;
+                    }
+                    catch (Exception)
+                    {
+                        h = cell.NumericCellValue.ToString();
+                    }
                     if (string.IsNullOrWhiteSpace(h))
                         continue;
 
@@ -365,5 +377,10 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     public void PreInitialize(FlatFileToLoad value, IDataLoadEventListener listener)
     {
         _fileToLoad = value;
+    }
+
+    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        return GetChunk(listener, cancellationToken, 0, 0);
     }
 }

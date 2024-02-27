@@ -4,7 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.1.2] - Unreleased
+## [8.1.4] - 2024-02-19
+
+## Changed
+
+- Add ability to use Extraction Category with Project Specific Catalogues
+- Allow arbitrary MDF files from foreign file systems to work with the MDF Attacher, see [MDFAttacher](Documentation\DataLoadEngine\MDFAttacher.md)
+- Update Excel Attacher to read data from arbitrary start points within sheets
+- Add Time based filtering of remote table and database attachers
+
+## [8.1.3] - 2024-01-15
+
+### Changed
+
+- Fixed Upgrade path issue for RDMP version 8.0.X
+- Fix excessive selection on local file storage settings
+- Fix to SMTP Data Load module crashing
+
+## [8.1.2] - 2024-01-09
 
 ### Changed
 
@@ -12,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reorder Process Task Enum order to restore old cached process tasks
 - Add quickstart instructions
 - Add ability to configure and use local file system storage in windows GUI
+- Truncate ProgressLog messages that would exceed database varchar limit
 
 ## [8.1.1] - 2023-12-01
 

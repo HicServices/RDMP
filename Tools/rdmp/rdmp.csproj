@@ -1,52 +1,50 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <ProjectGuid>{A6107DDC-8268-4902-A994-233B00480113}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <AssemblyTitle>rdmp</AssemblyTitle>
-    <Product>rdmp</Product>
-    <Copyright>Copyright ©  2019</Copyright>
-    <StartupObject></StartupObject>
-    <RootNamespace>Rdmp.Core</RootNamespace>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <PublishSingleFile>true</PublishSingleFile>
-    <ServerGarbageCollection>true</ServerGarbageCollection>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="CommandLine\ColorSettings.yaml" />
-    <None Remove="Databases.yaml" />
-    <None Remove="NLog.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip" Link="SourceCodeForSelfAwareness.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="ColorSettings.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Databases.yaml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Terminal.Gui" Version="1.14.1" />
-    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="YamlDotNet" Version="13.7.1" />
-  </ItemGroup>
-    <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
-    <ItemGroup>
-      <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
-    </ItemGroup>
+	<PropertyGroup>
+		<ProjectGuid>{A6107DDC-8268-4902-A994-233B00480113}</ProjectGuid>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<AssemblyTitle>rdmp</AssemblyTitle>
+		<Product>rdmp</Product>
+		<Copyright>Copyright ©  2019</Copyright>
+		<StartupObject></StartupObject>
+		<RootNamespace>Rdmp.Core</RootNamespace>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<PublishSingleFile>true</PublishSingleFile>
+		<ServerGarbageCollection>true</ServerGarbageCollection>
+		<TargetFramework>net7.0</TargetFramework>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="CommandLine\ColorSettings.yaml" />
+		<None Remove="Databases.yaml" />
+		<None Remove="NLog.config" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="..\BundleUpSourceIntoZip\output\SourceCodeForSelfAwareness.zip" Link="SourceCodeForSelfAwareness.zip">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="ColorSettings.yaml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Databases.yaml">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="NLog.config">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
+		<PackageReference Include="Terminal.Gui" />
+		<PackageReference Include="System.Threading.ThreadPool" />
+		<PackageReference Include="YamlDotNet" />
+	</ItemGroup>
 </Project>
