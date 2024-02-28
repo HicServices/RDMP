@@ -99,7 +99,7 @@ public class FlatFileAttacherTests : DatabaseTests
         if (overrideHeaders)
         {
             attacher.ForceHeaders = "name,name2";
-            attacher.ForceHeadersReplacesFirstLineInFile = true;
+            attacher.ForceHeadersReplacesFirstLineInFile = true
         }
 
         //Case when you are using the wrong separator
@@ -130,6 +130,13 @@ public class FlatFileAttacherTests : DatabaseTests
             Assert.Multiple(() =>
             {
                 Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Manny2"));
+                Assert.That(r["name2"], Is.EqualTo("Ok"));
+            });
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
                 Assert.That(r["name"], Is.EqualTo("Bob"));
                 Assert.That(r["name2"], Is.EqualTo("Munchousain"));
             });
@@ -141,12 +148,7 @@ public class FlatFileAttacherTests : DatabaseTests
                 Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
             });
 
-            Assert.Multiple(() =>
-            {
-                Assert.That(r.Read());
-                Assert.That(r["name"], Is.EqualTo("Manny2"));
-                Assert.That(r["name2"], Is.EqualTo("Ok"));
-            });
+        
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
