@@ -99,7 +99,7 @@ public class FlatFileAttacherTests : DatabaseTests
         if (overrideHeaders)
         {
             attacher.ForceHeaders = "name,name2";
-            attacher.ForceHeadersReplacesFirstLineInFile = true
+            attacher.ForceHeadersReplacesFirstLineInFile = true;
         }
 
         //Case when you are using the wrong separator
