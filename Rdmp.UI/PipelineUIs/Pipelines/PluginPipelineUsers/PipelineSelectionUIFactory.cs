@@ -23,7 +23,7 @@ public class PipelineSelectionUIFactory
     private readonly ICatalogueRepository _repository;
     private readonly IPipelineUser _user;
     private readonly IPipelineUseCase _useCase;
-    private IExtractionConfiguration _extractionCurationConfiguration;
+    private readonly IExtractionConfiguration _extractionCurationConfiguration;
 
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
 

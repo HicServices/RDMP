@@ -30,7 +30,7 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event EventHandler PipelineChanged;
     private IPipeline _previousSelection;
 
-    private IExtractionConfiguration _extractionConfiguration;
+    private readonly IExtractionConfiguration _extractionConfiguration;
 
     private ToolTip tt = new();
 
