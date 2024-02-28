@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.ItemActivation;
@@ -29,6 +30,8 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     public event EventHandler PipelineChanged;
     private IPipeline _previousSelection;
 
+    private IExtractionConfiguration _extractionConfiguration;
+
     private ToolTip tt = new();
 
     private const string ShowAll = "Show All/Incompatible Pipelines";
@@ -42,7 +45,14 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             _pipeline = value;
 
             if (ddPipelines != null)
+            {
+                if (_extractionConfiguration is not null && value is not null)
+                {
+                    _extractionConfiguration.DefaultPipeline_ID = value.ID;
+                    _extractionConfiguration.SaveToDatabase();
+                }
                 ddPipelines.SelectedItem = value;
+            }
         }
     }
 
@@ -70,8 +80,20 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
         if (showAll)
             ddPipelines.Items.AddRange(allPipelines.Where(o => !_useCase.IsAllowable(o)).ToArray());
 
+        if(_extractionConfiguration is not null)
+        {
+            var toReselect = ddPipelines.Items.OfType<Pipeline>().SingleOrDefault(p => p.ID == _extractionConfiguration.DefaultPipeline_ID);
+
+            //if we can reselect the users previously selected one
+            if (toReselect != null)
+            {
+                ddPipelines.SelectedItem = toReselect;
+                return;
+            }
+        }
+
         //reselect if it is still there
-        if (ddPipelines.SelectedItem is Pipeline before)
+        else if (ddPipelines.SelectedItem is Pipeline before)
         {
             var toReselect = ddPipelines.Items.OfType<Pipeline>().SingleOrDefault(p => p.ID == before.ID);
 
@@ -89,11 +111,12 @@ public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
             : "<<None>>";
     }
 
-    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository)
+    public PipelineSelectionUI(IActivateItems activator, IPipelineUseCase useCase, ICatalogueRepository repository, IExtractionConfiguration extractionConfiguration=null)
     {
         _activator = activator;
         _useCase = useCase;
         _repository = repository;
+        _extractionConfiguration=extractionConfiguration;
         InitializeComponent();
 
         if (LicenseManager.UsageMode == LicenseUsageMode.Designtime) //don't connect to database in design mode
