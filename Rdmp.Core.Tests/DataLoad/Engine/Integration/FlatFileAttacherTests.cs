@@ -127,12 +127,6 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
-            Assert.Multiple(() =>
-            {
-                Assert.That(r.Read());
-                Assert.That(r["name"], Is.EqualTo("Manny2"));
-                Assert.That(r["name2"], Is.EqualTo("Ok"));
-            });
 
             Assert.Multiple(() =>
             {
@@ -148,7 +142,14 @@ public class FlatFileAttacherTests : DatabaseTests
                 Assert.That(r["name2"], Is.EqualTo("Hollyw9ood"));
             });
 
-        
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That(r["name"], Is.EqualTo("Manny2"));
+                Assert.That(r["name2"], Is.EqualTo("Ok"));
+            });
+
+
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
