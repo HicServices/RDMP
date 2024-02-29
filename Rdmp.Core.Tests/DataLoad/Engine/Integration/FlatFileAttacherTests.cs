@@ -126,7 +126,7 @@ public class FlatFileAttacherTests : DatabaseTests
         using (var con = _database.Server.GetConnection())
         {
             con.Open();
-            var r = _database.Server.GetCommand("Select * from Bob", con).ExecuteReader();
+            var r = _database.Server.GetCommand("Select * from Bob order by name", con).ExecuteReader();
             Assert.Multiple(() =>
             {
                 Assert.That(r.Read());
