@@ -1,431 +1,435 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <PackageId>HIC.RDMP.Plugin.UI</PackageId>
-    <id>HIC.RDMP.Plugin.UI</id>
-    <version>$(version)</version>
-    <title>HIC.RDMP.Plugin.UI</title>
-    <authors>Health Informatics Centre, University of Dundee</authors>
-    <owners>Health Informatics Centre, University of Dundee</owners>
-    <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
-    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
-    <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
-    <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>UI package for plugin development</description>
-    <copyright>Copyright 2018-2019</copyright>
-    <ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
-    <TargetFramework>net7.0-windows7.0</TargetFramework>
-    <Copyright>Copyright ©  2019</Copyright>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <EnableWindowsTargeting>true</EnableWindowsTargeting>
-	<NoWarn>1701;1702;CS1591;NU1701;CA1416</NoWarn>
-    
-    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-    <DebugType>embedded</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <UseWindowsForms>true</UseWindowsForms>
-  </PropertyGroup>
-  <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="en_GB.aff" />
-    <None Remove="en_GB.dic" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="en_GB.aff" />
-    <EmbeddedResource Include="en_GB.dic" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="HIC.System.Windows.Forms.DataVisualization" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="ObjectListView.Repack.NET6Plus" />
-    <PackageReference Include="Scintilla.NET" />
-    <PackageReference Include="System.Resources.Extensions"/>
-    <PackageReference Include="VPKSoft.ScintillaLexers.NET"/>
-    <PackageReference Include="WeCantSpell.Hunspell"/>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Update="ChecksUI\ChecksUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ChecksUI\ChecksUI.Designer.cs">
-      <DependentUpon>ChecksUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ChecksUI\PopupChecksUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="ChecksUI\PopupChecksUI.Designer.cs">
-      <DependentUpon>PopupChecksUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ChecksUI\RAGSmiley.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ChecksUI\RAGSmiley.Designer.cs">
-      <DependentUpon>RAGSmiley.cs</DependentUpon>
-    </Compile>
-    <Compile Update="ChecksUI\RAGSmileyToolStrip.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Collections\CatalogueCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
-      <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Collections\FavouritesCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\FavouritesCollectionUI.Designer.cs">
-      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Collections\LoadMetadataCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\LoadMetadataCollectionUI.Designer.cs">
-      <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Collections\RDMPCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\TableInfoCollectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Collections\TableInfoCollectionUI.Designer.cs">
-      <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
-      <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
-    </Compile>
-    <Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleControls\DatabaseTypeUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
-      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\DataTableViewerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\DataTableViewerUI.Designer.cs">
-      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
-      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleControls\HeatmapUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\HeatmapUI.Designer.cs">
-      <DependentUpon>HeatmapUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleControls\KeyboardReminder.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\KeyboardReminder.Designer.cs">
-      <DependentUpon>KeyboardReminder.cs</DependentUpon>
-    </Compile>
-    <Compile Update="LinkLabels\PathLinkLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="Performance\PerformanceCounterResultsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
-      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Progress\ProgressBarsUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Progress\ProgressBarsUI.Designer.cs">
-      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Progress\ProgressUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Progress\ProgressUI.Designer.cs">
-      <DependentUpon>ProgressUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="RichTextBoxEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\ServerDatabaseTableSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
-      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.Designer.cs">
-      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\UserSettingsUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\UserSettingsUI.Designer.cs">
-      <DependentUpon>UserSettingsUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleControls\HelpIcon.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleControls\HelpIcon.Designer.cs">
-      <DependentUpon>HelpIcon.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\ExceptionViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.Designer.cs">
-      <DependentUpon>SetSQLDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.Designer.cs">
-      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.Designer.cs">
-      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\ViewSourceCodeDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\ViewSourceCodeDialog.Designer.cs">
-      <SubType>Form</SubType>
-      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\WideMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
-      <DependentUpon>WideMessageBox.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SuggestComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Update="TransparentHelpSystem\HelpBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\TypeTextOrCancelDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\TypeTextOrCancelDialog.Designer.cs">
-      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
-    </Compile>
-    <Compile Update="UserControl1.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs" />
-    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs" />
-    <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs" />
-    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs" />
-    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs" />
-    <Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="TestsAndSetup\StartupUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs" />
-    <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs" />
-    <Compile Update="Logging\LoggingTabUI.cs" />
-    <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="UserControl1.Designer.cs">
-      <DependentUpon>UserControl1.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs" />
-    <Compile Update="Validation\ValidationSetupUI.cs" />
-    <Compile Update="SimpleDialogs\WaitUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
-      <SubType>Form</SubType>
-    </Compile>    
-    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs" />
-    <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-      <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs" />
-    <Compile Update="Versioning/PatchingUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Versioning/PatchingUI.Designer.cs">
-      <DependentUpon>PatchingUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="SimpleDialogs\YesNoYesToAllDialog.cs">
-      <SubType>Form</SubType>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="ChecksUI\ChecksUI.resx">
-      <DependentUpon>ChecksUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ChecksUI\PopupChecksUI.resx">
-      <DependentUpon>PopupChecksUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ChecksUI\RAGSmiley.resx">
-      <DependentUpon>RAGSmiley.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="CohortUI\ExtractableCohortUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
-      <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
-      <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\LoadMetadataCollectionUI.resx">
-      <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Collections\TableInfoCollectionUI.resx">
-      <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
-      <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleControls\DatabaseTypeUI.resx">
-      <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\DataTableViewerUI.resx">
-      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.resx">
-      <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleControls\HeatmapUI.resx">
-      <DependentUpon>HeatmapUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleControls\KeyboardReminder.resx">
-      <DependentUpon>KeyboardReminder.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Performance\PerformanceCounterResultsUI.resx">
-      <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Progress\ProgressBarsUI.resx">
-      <DependentUpon>ProgressBarsUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Progress\ProgressUI.resx">
-      <DependentUpon>ProgressUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="ProjectUI\ExecuteExtractionUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleControls\ServerDatabaseTableSelector.resx">
-      <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.resx">
-      <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\UserSettingsUI.resx">
-      <DependentUpon>UserSettingsUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleControls\HelpIcon.resx">
-      <DependentUpon>HelpIcon.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\ExceptionViewer.resx">
-      <DependentUpon>ExceptionViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\Reports\GenerateTestDataUI.resx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SetSQLDialog.resx">
-      <DependentUpon>SetSQLDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.resx">
-      <DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.resx">
-      <DependentUpon>SQLPreviewWindow.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\ViewSourceCodeDialog.resx">
-      <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\WideMessageBox.resx">
-      <DependentUpon>WideMessageBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="SimpleDialogs\TypeTextOrCancelDialog.resx">
-      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="PluginChildProvision\" />
-  </ItemGroup>
+	<PropertyGroup>
+		<PackageId>HIC.RDMP.Plugin.UI</PackageId>
+		<id>HIC.RDMP.Plugin.UI</id>
+		<version>$(version)</version>
+		<title>HIC.RDMP.Plugin.UI</title>
+		<authors>Health Informatics Centre, University of Dundee</authors>
+		<owners>Health Informatics Centre, University of Dundee</owners>
+		<licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
+		<projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+		<iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>UI package for plugin development</description>
+		<copyright>Copyright 2018-2019</copyright>
+		<ProjectGuid>60721bce-e328-45cf-b6d2-b627364fbbfa</ProjectGuid>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Copyright>Copyright ©  2019</Copyright>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
+		<NoWarn>1701;1702;CS1591;NU1701;CA1416</NoWarn>
+
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<DebugType>embedded</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+		<UseWindowsForms>true</UseWindowsForms>
+		<SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+		<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+		<NoWarn>$(NoWarn);SYSLIB0011</NoWarn>
+		<GenerateResourceWarnOnBinaryFormatterUse>false</GenerateResourceWarnOnBinaryFormatterUse>
+	</PropertyGroup>
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="en_GB.aff" />
+		<None Remove="en_GB.dic" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="en_GB.aff" />
+		<EmbeddedResource Include="en_GB.dic" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HIC.System.Windows.Forms.DataVisualization" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
+		<PackageReference Include="Scintilla.NET" />
+		<PackageReference Include="System.Resources.Extensions"/>
+		<PackageReference Include="VPKSoft.ScintillaLexers.NET"/>
+		<PackageReference Include="WeCantSpell.Hunspell"/>
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="ChecksUI\ChecksUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="ChecksUI\ChecksUI.Designer.cs">
+			<DependentUpon>ChecksUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="ChecksUI\PopupChecksUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="ChecksUI\PopupChecksUI.Designer.cs">
+			<DependentUpon>PopupChecksUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="ChecksUI\RAGSmiley.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="ChecksUI\RAGSmiley.Designer.cs">
+			<DependentUpon>RAGSmiley.cs</DependentUpon>
+		</Compile>
+		<Compile Update="ChecksUI\RAGSmileyToolStrip.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="Collections\CatalogueCollectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
+			<DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Collections\FavouritesCollectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Collections\FavouritesCollectionUI.Designer.cs">
+			<DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Collections\LoadMetadataCollectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Collections\LoadMetadataCollectionUI.Designer.cs">
+			<DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Collections\RDMPCollectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Collections\TableInfoCollectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Collections\TableInfoCollectionUI.Designer.cs">
+			<DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
+			<DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
+		</Compile>
+		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Properties\Resources.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>Resources.resx</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleControls\DatabaseTypeUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
+			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\DataTableViewerUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\DataTableViewerUI.Designer.cs">
+			<DependentUpon>DataTableViewerUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
+			<DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleControls\HeatmapUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\HeatmapUI.Designer.cs">
+			<DependentUpon>HeatmapUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleControls\KeyboardReminder.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\KeyboardReminder.Designer.cs">
+			<DependentUpon>KeyboardReminder.cs</DependentUpon>
+		</Compile>
+		<Compile Update="LinkLabels\PathLinkLabel.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="Performance\PerformanceCounterResultsUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
+			<DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Progress\ProgressBarsUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Progress\ProgressBarsUI.Designer.cs">
+			<DependentUpon>ProgressBarsUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="Progress\ProgressUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="Progress\ProgressUI.Designer.cs">
+			<DependentUpon>ProgressUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="RichTextBoxEx.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\ServerDatabaseTableSelector.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
+			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.Designer.cs">
+			<DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\UserSettingsUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\UserSettingsUI.Designer.cs">
+			<DependentUpon>UserSettingsUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleControls\HelpIcon.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleControls\HelpIcon.Designer.cs">
+			<DependentUpon>HelpIcon.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\ExceptionViewer.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SetSQLDialog.Designer.cs">
+			<DependentUpon>SetSQLDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.Designer.cs">
+			<DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.Designer.cs">
+			<DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\ViewSourceCodeDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\ViewSourceCodeDialog.Designer.cs">
+			<SubType>Form</SubType>
+			<DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\WideMessageBox.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
+			<DependentUpon>WideMessageBox.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SuggestComboBox.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Update="TransparentHelpSystem\HelpBox.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\TypeTextOrCancelDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\TypeTextOrCancelDialog.Designer.cs">
+			<DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
+		</Compile>
+		<Compile Update="UserControl1.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs" />
+		<Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs" />
+		<Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs" />
+		<Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs" />
+		<Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs" />
+		<Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="TestsAndSetup\StartupUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs" />
+		<Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs" />
+		<Compile Update="Logging\LoggingTabUI.cs" />
+		<Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="UserControl1.Designer.cs">
+			<DependentUpon>UserControl1.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs" />
+		<Compile Update="Validation\ValidationSetupUI.cs" />
+		<Compile Update="SimpleDialogs\WaitUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs" />
+		<Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs" />
+		<Compile Update="Versioning/PatchingUI.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Update="Versioning/PatchingUI.Designer.cs">
+			<DependentUpon>PatchingUI.cs</DependentUpon>
+		</Compile>
+		<Compile Update="SimpleDialogs\YesNoYesToAllDialog.cs">
+			<SubType>Form</SubType>
+		</Compile>
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Update="ChecksUI\ChecksUI.resx">
+			<DependentUpon>ChecksUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="ChecksUI\PopupChecksUI.resx">
+			<DependentUpon>PopupChecksUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="ChecksUI\RAGSmiley.resx">
+			<DependentUpon>RAGSmiley.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="CohortUI\ExtractableCohortUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
+			<DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
+			<DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Collections\LoadMetadataCollectionUI.resx">
+			<DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Collections\TableInfoCollectionUI.resx">
+			<DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
+			<DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Properties\Resources.resx">
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleControls\DatabaseTypeUI.resx">
+			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\DataTableViewerUI.resx">
+			<DependentUpon>DataTableViewerUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.resx">
+			<DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleControls\HeatmapUI.resx">
+			<DependentUpon>HeatmapUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleControls\KeyboardReminder.resx">
+			<DependentUpon>KeyboardReminder.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Performance\PerformanceCounterResultsUI.resx">
+			<DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Progress\ProgressBarsUI.resx">
+			<DependentUpon>ProgressBarsUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="Progress\ProgressUI.resx">
+			<DependentUpon>ProgressUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="ProjectUI\ExecuteExtractionUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleControls\ServerDatabaseTableSelector.resx">
+			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.resx">
+			<DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\UserSettingsUI.resx">
+			<DependentUpon>UserSettingsUI.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleControls\HelpIcon.resx">
+			<DependentUpon>HelpIcon.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\ExceptionViewer.resx">
+			<DependentUpon>ExceptionViewer.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\Reports\GenerateTestDataUI.resx">
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\SqlDialogs\SetSQLDialog.resx">
+			<DependentUpon>SetSQLDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLBeforeAndAfterViewer.resx">
+			<DependentUpon>SQLBeforeAndAfterViewer.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\SqlDialogs\SQLPreviewWindow.resx">
+			<DependentUpon>SQLPreviewWindow.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\ViewSourceCodeDialog.resx">
+			<DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\WideMessageBox.resx">
+			<DependentUpon>WideMessageBox.cs</DependentUpon>
+		</EmbeddedResource>
+		<EmbeddedResource Update="SimpleDialogs\TypeTextOrCancelDialog.resx">
+			<DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="PluginChildProvision\" />
+	</ItemGroup>
 </Project>
