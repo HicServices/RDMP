@@ -42,5 +42,5 @@
 | Autoupdater.NET.Official | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
 | ConsoleControl | [GitHub](https://github.com/dwmkerr/consolecontrol)  | MIT | Runs RDMP cli subprocesses|
 | Terminal.Gui                            | [GitHub](https://github.com/gui-cs/Terminal.Gui)                           | [MIT](https://opensource.org/licenses/MIT)                                                     | Console user-interface|
-
+| Microsoft.Data.SqlClient | [GitHub](https://github.com/dotnet/SqlClient) | [MIT](https://opensource.org/licenses/MIT)  | Microsoft SqlClient Data Provider for SQL Server |
 [DBMS]: ./Glossary.md#DBMS
