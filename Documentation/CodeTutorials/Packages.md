@@ -21,7 +21,6 @@
 | [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
 | [FAM FAM FAM Icons](https://web.archive.org/web/20070824000227/http://www.famfamfam.com/lab/icons/silk/) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
-| CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | LibArchive.Net | [GitHub](https://github.com/jas88/libarchive.net) | [BSD](https://opensource.org/license/bsd-2-clause/) | Access archive formats without the LZMA bugs of SharpCompress | |

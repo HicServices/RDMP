@@ -297,7 +297,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" />
-		<PackageReference Include="CsvHelper" />
 		<PackageReference Include="Equ" />
 		<PackageReference Include="ExcelNumberFormat" />
 		<PackageReference Include="FluentFTP" />

@@ -4,7 +4,6 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="CommandLineParser" Version="2.9.1"/>
-		<PackageVersion Include="CsvHelper" Version="30.0.1"/>
 		<PackageVersion Include="Equ" Version="2.3.0"/>
 		<PackageVersion Include="ExcelNumberFormat" Version="1.1.0"/>
 		<PackageVersion Include="FluentFTP" Version="49.0.2"/>
