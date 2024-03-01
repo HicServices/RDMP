@@ -68,6 +68,10 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void LoadFile()
     {
+        if(_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile)
+        {
+            return;
+        }
         _bLoading = true;
         try
         {
