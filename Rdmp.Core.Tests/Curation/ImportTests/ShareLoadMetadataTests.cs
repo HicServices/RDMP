@@ -58,7 +58,6 @@ public class ShareLoadMetadataTests : UnitTests
 
             Assert.That(lmd2.Name, Is.EqualTo(lmd1.Name));
             Assert.That(cata2.Name, Is.EqualTo(cata1.Name));
-            Assert.That(true, Is.EqualTo(true));
         });
     }
 
