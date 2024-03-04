@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using ExcelNumberFormat;
 using FAnsi.Discovery;
@@ -54,9 +55,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
 
-    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0)
+    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
-        dataReadFromFile ??= GetAllData(listener, cancellationToken,rowOffset,columnOffset);
+        dataReadFromFile ??= GetAllData(listener, cancellationToken, rowOffset, columnOffset, replacementHeadersSplit);
 
         if (haveDispatchedDataTable)
             return null;
@@ -66,7 +67,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return dataReadFromFile;
     }
 
-    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset=0, int columnOffset=0)
+    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -88,7 +89,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 (string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName)) ??
                 throw new FlatFileLoadException(
                     $"The Excel sheet '{WorkSheetName}' was not found in workbook '{_fileToLoad.File.Name}'");
-            toReturn = GetAllData(worksheet, listener, rowOffset,columnOffset);
+            toReturn = GetAllData(worksheet, listener, rowOffset, columnOffset, replacementHeadersSplit);
 
             //set the table name the file name
             toReturn.TableName =
@@ -122,8 +123,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <param name="listener"></param>
     /// <param name="rowOffset"></param>
     /// <param name="columnOffset"></param>
+    /// <param name="replacementHeadersSplit"></param>
     /// <returns></returns>
-    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset=0, int columnOffset =0)
+    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
@@ -137,7 +139,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         {
             var row = (IRow)rowEnumerator.Current;
             if (rowOffset - 1 > row.RowNum) continue;// .RowNumber is 0 indexed
-           
+
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
             if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
                 continue;
@@ -149,6 +151,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
+            
+                if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length != nColumns)
+                    listener.OnNotify(this,
+                        new NotifyEventArgs(ProgressEventType.Error,
+                            $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {nColumns} (there must be the same number of replacement headers as headers in the excel file)"));
+
+                string[] originalHeaders = new string[nColumns];
                 for (var i = 0; i < nColumns; i++)
                 {
                     //if the cell header is blank
@@ -163,11 +172,19 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     {
                         h = cell.NumericCellValue.ToString();
                     }
+                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
+                    {
+                        originalHeaders[i] = h;
+                        h = replacementHeadersSplit[i];
+                    }
                     if (string.IsNullOrWhiteSpace(h))
                         continue;
 
                     nonBlankColumns.Add(cell.ColumnIndex, toReturn.Columns.Add(h));
                 }
+                if(replacementHeadersSplit is not null && replacementHeadersSplit.Any())
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                    $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
 
                 continue;
             }
@@ -203,6 +220,24 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
 
         return toReturn;
+    }
+
+    private static string GenerateASCIIArtOfSubstitutions(string[] headers,
+      string[] replacements)
+    {
+        var sb = new StringBuilder("");
+
+        var max = Math.Max(replacements.Length, headers.Length);
+
+        for (var i = 0; i < max; i++)
+        {
+            var replacement = i >= replacements.Length ? "???" : replacements[i];
+            var original = i >= headers.Length ? "???" : headers[i];
+
+            sb.Append($"{Environment.NewLine}[{i}]{original}>>>{replacement}");
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>

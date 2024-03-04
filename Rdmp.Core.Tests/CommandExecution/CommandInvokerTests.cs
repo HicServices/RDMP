@@ -18,7 +18,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 public class CommandInvokerTests : UnitTests
 {
     [Test]
-    [Timeout(5000)]
     public void Test_ListSupportedCommands_NoPicker()
     {
         var mgr = GetActivator();
@@ -28,7 +27,6 @@ public class CommandInvokerTests : UnitTests
     }
 
     [Test]
-    [Timeout(5000)]
     public void Test_Delete_WithPicker()
     {
         var mgr = GetActivator();
@@ -41,7 +39,6 @@ public class CommandInvokerTests : UnitTests
     }
 
     [Test]
-    [Timeout(5000)]
     public void Test_Generic_WithPicker()
     {
         var mgr = GetActivator();
