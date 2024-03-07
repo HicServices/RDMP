@@ -237,7 +237,7 @@ public partial class UserSettingsFileUI : Form
 
     private void tbCreateDatabaseTimeout_TextChanged(object sender, EventArgs e)
     {
-        if (int.TryParse(tbCreateDatabaseTimeout.Text, out var result)) UserSettings.CreateDatabaseTimeout = result;
+        //if (int.TryParse(tbCreateDatabaseTimeout.Text, out var result)) UserSettings.CreateDatabaseTimeout = result;
     }
 
     private void tbArchiveTriggerTimeout_TextChanged(object sender, EventArgs e)

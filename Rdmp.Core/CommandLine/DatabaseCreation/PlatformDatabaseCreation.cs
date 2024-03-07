@@ -32,7 +32,8 @@ public class PlatformDatabaseCreation
     /// <param name="options"></param>
     public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
     {
-        DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
+        //TODO this needs to be updated in fansisql
+        //DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = options.CreateDatabaseTimeout;
 
         Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
         Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);

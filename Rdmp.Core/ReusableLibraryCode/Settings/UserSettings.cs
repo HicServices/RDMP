@@ -139,8 +139,9 @@ public static class UserSettings
     public static int CreateDatabaseTimeout
     {
         get => AppSettings.GetValueOrDefault("CreateDatabaseTimeout", 30);
-        set => AppSettings.AddOrUpdateValue("CreateDatabaseTimeout",
-            DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value, 30));
+        //TODO this needs to be updated in fansisql
+        //set => AppSettings.AddOrUpdateValue("CreateDatabaseTimeout",
+        //     DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = Math.Max(value, 30));
     }
 
     /// <summary>

@@ -519,7 +519,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-     public ExternalDatabaseServer LiveLoggingServer =>
+    public ExternalDatabaseServer LiveLoggingServer =>
        LiveLoggingServer_ID == null
                    ? null
                    : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
@@ -1212,10 +1212,11 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var f = new QuerySyntaxHelperFactory();
+
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
             $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return f.Create(type);
+
+        return QuerySyntaxHelperFactory.Create(type);
     }
 
     #region Static Methods

@@ -74,7 +74,8 @@ public class Startup
 
         notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies", CheckResult.Success));
 
-        DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
+        //TODO this needs to be updated in fansisql
+        //DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds = UserSettings.CreateDatabaseTimeout;
 
         var cataloguePatcher = new CataloguePatcher();
 
