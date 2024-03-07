@@ -6,6 +6,7 @@
 
 using System;
 using FAnsi.Discovery;
+using FAnsi.Implementations.MicrosoftSQL;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Databases;

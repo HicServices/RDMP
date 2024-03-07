@@ -127,8 +127,8 @@ public partial class ConsoleGuiUserSettings
 
     private void tbCreateDatabaseTimeout_TextChanged(ustring s)
     {
-        if (int.TryParse(tbCreateDatabaseTimeout.Text.ToString(), out var result))
-            UserSettings.CreateDatabaseTimeout = result;
+        //if (int.TryParse(tbCreateDatabaseTimeout.Text.ToString(), out var result))
+        //    UserSettings.CreateDatabaseTimeout = result;
     }
 
     private void tbArchiveTriggerTimeout_TextChanged(ustring s)
