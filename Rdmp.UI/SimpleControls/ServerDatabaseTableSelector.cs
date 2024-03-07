@@ -110,6 +110,8 @@ public partial class ServerDatabaseTableSelector : UserControl
     private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
+        builder["Timeout"] = 30000;
+
         var database = (string)((object[])e.Argument)[1];
 
         var discoveredDatabase = new DiscoveredServer(builder).ExpectDatabase(database);
@@ -165,7 +167,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     private void UpdateDatabaseListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-
+        builder["Timeout"] = 30000;
         ResetState();
 
         _workerRefreshDatabasesToken = new CancellationTokenSource();
