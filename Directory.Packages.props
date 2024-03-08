@@ -1,7 +1,4 @@
 <Project>
-	<PropertyGroup>
-		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-	</PropertyGroup>
 	<ItemGroup>
 		<PackageVersion Include="CommandLineParser" Version="2.9.1"/>
 		<PackageVersion Include="Equ" Version="2.3.0"/>
