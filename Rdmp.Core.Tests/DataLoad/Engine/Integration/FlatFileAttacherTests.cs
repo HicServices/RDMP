@@ -127,7 +127,6 @@ public class FlatFileAttacherTests : DatabaseTests
         {
             con.Open();
             var r = _database.Server.GetCommand("Select * from Bob order by name", con).ExecuteReader();
-
             Assert.Multiple(() =>
             {
                 Assert.That(r.Read());
@@ -327,7 +326,9 @@ public class FlatFileAttacherTests : DatabaseTests
 
     [TestCase(true)]
     [TestCase(false)]
-    public void TestTableInfo(bool usenamer)
+#pragma warning disable VSSpell001 // Spell Check
+    public void TestTableInfo(bool username)
+#pragma warning restore VSSpell001 // Spell Check
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
         var sw = new StreamWriter(filename);
@@ -350,7 +351,7 @@ public class FlatFileAttacherTests : DatabaseTests
 
         INameDatabasesAndTablesDuringLoads namer = null;
 
-        if (usenamer)
+        if (username)
         {
             _table.Rename("AAA");
             namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(_database, "AAA");
