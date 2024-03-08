@@ -60,6 +60,12 @@ public partial class ServerDatabaseTableSelector : UserControl
         set => tbPassword.Text = value;
     }
 
+    public string Timeout
+    {
+        get => tbTimeout.Text;
+        set => tbTimeout.Text = value;
+    }
+
     private string TableValuedFunction => cbxTableValueFunctions.Text;
 
     public event Action SelectionChanged;
@@ -110,7 +116,14 @@ public partial class ServerDatabaseTableSelector : UserControl
     private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-        //builder["Timeout"] = 30000;
+        if (!string.IsNullOrWhiteSpace(Timeout))
+        {
+
+            if (int.TryParse(Timeout, out var _timeout))
+            {
+                builder["Timeout"] = _timeout;
+            }
+        }
 
         var database = (string)((object[])e.Argument)[1];
 
@@ -546,5 +559,10 @@ public partial class ServerDatabaseTableSelector : UserControl
             {
                 _activator.ShowException("Error decrypting password", ex);
             }
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
     }
 }
