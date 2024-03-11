@@ -1,5 +1,4 @@
-﻿
---Version:1.0.0.0
+﻿--Version:1.1.0.0
 --Description:Initial Creation Script
 --So we can use it in a DEFAULT constraint
 CREATE FUNCTION [dbo].[GetDefaultExternalServerIDFor]

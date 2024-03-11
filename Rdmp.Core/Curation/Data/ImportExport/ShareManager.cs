@@ -336,7 +336,7 @@ public class ShareManager
                 if (instance.GetType() == typeof(LoadMetadataCatalogueLinkage))
                 {
                     //find most recent lmd and all catalogues since, then link them
-                    var latestLMD = created.OfType<LoadMetadata>().Last();
+                    var latestLMD = created.OfType<LoadMetadata>().LastOrDefault();
                     if (latestLMD != null)
                     {
                         var index = created.IndexOf(latestLMD);
@@ -344,6 +344,7 @@ public class ShareManager
                         foreach (var catalogue in cataloguesToLink)
                         {
                             latestLMD.LinkToCatalogue(catalogue);
+                        }
                         }
                         continue;
                     }
