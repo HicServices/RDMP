@@ -1212,10 +1212,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var f = new QuerySyntaxHelperFactory();
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
             $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return f.Create(type);
+        return QuerySyntaxHelperFactory.Create(type);
     }
 
     #region Static Methods

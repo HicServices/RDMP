@@ -303,7 +303,6 @@
 		<PackageReference Include="HIC.BadMedicine" />
 		<PackageReference Include="HIC.FAnsiSql" />
 		<PackageReference Include="LibArchive.Net" />
-		<PackageReference Include="Microsoft.Data.SqlClient" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
