@@ -344,7 +344,7 @@ public class ShareManager
                         foreach (var catalogue in cataloguesToLink)
                         {
                             latestLMD.LinkToCatalogue(catalogue);
-                        }
+
                         }
                         continue;
                     }
