@@ -2,7 +2,7 @@
 --Description: Adds linking table to allow for multiple load metadatas per catalogue
 if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetadataCatalogueLinkage')
 BEGIN
-CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
+CREATE TABLE [dbo].[LoadMetadataCatalogueLinkage](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[LoadMetadataID] [int] NOT NULL,
 	[CatalogueID] [int] NOT NULL,
@@ -13,16 +13,16 @@ CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+CREATE INDEX LoadMetadataCatalogueLinkage_Index
+ON [dbo].[LoadMetadataCatalogueLinkage] ([LoadMetadataID],[CatalogueID])
 END
 
-Declare @MigrateLinkageSQL varchar(max) = '
-    insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
-	select ID as CatalogueID, LoadMetadata_ID
-	from [dbo].[Catalogue]
-	where LoadMetadata_ID is not null'
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
-EXEC(@MigrateLinkageSQL)
+insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
+	select ID as CatalogueID, LoadMetadata_ID
+	from [dbo].[Catalogue]
+	where LoadMetadata_ID is not null
 END
 
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
