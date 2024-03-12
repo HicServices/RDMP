@@ -147,8 +147,6 @@ public class FlatFileAttacherTests : DatabaseTests
                 Assert.That(r["name"], Is.EqualTo("Manny2"));
                 Assert.That(r["name2"], Is.EqualTo("Ok"));
             });
-
-
         }
 
         attacher.LoadCompletedSoDispose(ExitCodeType.Success, ThrowImmediatelyDataLoadEventListener.Quiet);
