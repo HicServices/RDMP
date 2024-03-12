@@ -19,8 +19,8 @@ END
 
 if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
 BEGIN
-insert into [dbo].[LoadMetadataCatalogueLinkage](CatalogueID, LoadMetadataID)
-	select ID as CatalogueID, LoadMetadata_ID
+insert into [dbo].[LoadMetadataCatalogueLinkage]([CatalogueID], [LoadMetadataID])
+	select ID as CatalogueID, LoadMetadata_ID as LoadMetadataID
 	from [dbo].[Catalogue]
 	where LoadMetadata_ID is not null
 END
