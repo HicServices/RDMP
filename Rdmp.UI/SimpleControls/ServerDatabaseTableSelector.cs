@@ -116,13 +116,9 @@ public partial class ServerDatabaseTableSelector : UserControl
     private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-        if (!string.IsNullOrWhiteSpace(Timeout))
+        if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout))
         {
-
-            if (int.TryParse(Timeout, out var _timeout))
-            {
-                builder["Timeout"] = _timeout;
-            }
+            builder["Timeout"] = _timeout;
         }
 
         var database = (string)((object[])e.Argument)[1];
