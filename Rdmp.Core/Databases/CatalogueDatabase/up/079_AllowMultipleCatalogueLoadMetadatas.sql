@@ -17,22 +17,22 @@ CREATE INDEX LoadMetadataCatalogueLinkage_Index
 ON [dbo].[LoadMetadataCatalogueLinkage] ([LoadMetadataID],[CatalogueID])
 END
 
-if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+IF COL_LENGTH('dbo.Catalogue','LoadMetadata_ID') IS NOT NULL
 BEGIN
 insert into [dbo].[LoadMetadataCatalogueLinkage]([CatalogueID], [LoadMetadataID])
 	select ID as CatalogueID, LoadMetadata_ID as LoadMetadataID
 	from [dbo].[Catalogue]
 	where LoadMetadata_ID is not null
 END
-
-if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+GO
+IF COL_LENGTH('dbo.Catalogue','LoadMetadata_ID') IS NOT NULL
 BEGIN
 IF (OBJECT_ID('FK_Catalogue_LoadMetadata') IS NOT NULL)
   ALTER TABLE [dbo].[Catalogue]
   DROP CONSTRAINT [FK_Catalogue_LoadMetadata]
 END
 
-if exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Catalogue' and COLUMN_NAME='LoadMetadata_ID')
+IF COL_LENGTH('dbo.Catalogue','LoadMetadata_ID') IS NOT NULL
 BEGIN
 	ALTER TABLE [dbo].[Catalogue]
 	DROP column LoadMetadata_ID
