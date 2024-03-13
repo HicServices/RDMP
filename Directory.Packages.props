@@ -5,7 +5,7 @@
 		<PackageVersion Include="ExcelNumberFormat" Version="1.1.0"/>
 		<PackageVersion Include="FluentFTP" Version="49.0.2"/>
 		<PackageVersion Include="HIC.BadMedicine" Version="1.2.0"/>
-		<PackageVersion Include="HIC.FAnsiSql" Version="3.2.1"/>
+		<PackageVersion Include="HIC.FAnsiSql" Version="3.2.2"/>
 		<PackageVersion Include="LibArchive.Net" Version="0.1.4"/>
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
