@@ -42,15 +42,13 @@ public partial class GenerateTestDataUI : RDMPForm
     {
         InitializeComponent();
 
-        var dataGeneratorFactory = new DataGeneratorFactory();
-
         var yLoc = 0;
 
-        foreach (var t in dataGeneratorFactory.GetAvailableGenerators())
+        foreach (var t in DataGeneratorFactory.GetAvailableGenerators())
         {
             var ui = new DataGeneratorUI
             {
-                Generator = dataGeneratorFactory.Create(t, new Random()),
+                Generator = DataGeneratorFactory.Create(t.Type, new Random()),
                 Location = new Point(0, yLoc)
             };
             yLoc += ui.Height;
@@ -143,9 +141,9 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void btnGenerate_Click(object sender, EventArgs e)
     {
-        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui => ui.Generate).ToArray();
+        var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(static ui => ui.Generate).ToArray();
 
-        if (!uis.Any())
+        if (uis.Length == 0)
         {
             MessageBox.Show("At least one dataset must be selected");
             return;
@@ -206,11 +204,8 @@ public partial class GenerateTestDataUI : RDMPForm
         //tell form it is running
         Executing.Add(current);
 
-        var dataGeneratorFactory = new DataGeneratorFactory();
-
         //reset the current generator to use the seed provided
-        current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(), r);
-
+        current.Generator = DataGeneratorFactory.Create(current.Generator.GetType(), r);
 
         current.BeginGeneration(identifiers, _extractDirectory);
 
@@ -227,7 +222,7 @@ public partial class GenerateTestDataUI : RDMPForm
 
     private void AnnounceIfComplete()
     {
-        if (!Executing.Any())
+        if (Executing.Count == 0)
         {
             MessageBox.Show("Finished generating test data");
             Close();
