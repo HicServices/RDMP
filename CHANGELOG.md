@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.1.5] = Unreleases
 
 ## Changed
-
-- Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](./Documentation/DataExtractions/ExecuteFullExtractionToDatabaseMSSql.md)
+ 
+- Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
 
 
 ## [8.1.4] - 2024-02-19
