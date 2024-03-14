@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using NPOI.OpenXmlFormats.Dml.Chart;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -377,7 +376,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             //todo what happens if I try to extract a column called "extraction_timestamp"?"
             if (column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
             {
-                continue; //skip intenrally generated columns
+                continue; //skip internally generated columns
             }
             //get what is required for the current batch and the current type that is configured in the live table
             var oldSqlType = oldTypes[column.ColumnName];
