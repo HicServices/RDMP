@@ -373,7 +373,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         //see if any have changed
         foreach (DataColumn column in toProcess.Columns)
         {
-            //todo what happens if I try to extract a column called "extraction_timestamp"?"
             if (column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
             {
                 continue; //skip internally generated columns

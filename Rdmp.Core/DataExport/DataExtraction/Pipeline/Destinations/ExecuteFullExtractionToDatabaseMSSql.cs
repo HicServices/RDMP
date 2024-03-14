@@ -257,11 +257,6 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
             var addedType = _destination.AddExplicitWriteType(columnName, destinationType);
             addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
 
-            if (addedType.IsPrimaryKey)
-            {
-                Console.WriteLine("'a'");
-            }
-
             //if user wants to copy collation types and the destination server is the same type as the origin server
             if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType)
                 addedType.Collation = catItem.ColumnInfo.Collation;
