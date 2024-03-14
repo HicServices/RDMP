@@ -32,19 +32,18 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
         _numberOfRecords = numberOfRecords;
         _toFile = toFile;
 
-        var dataGeneratorFactory = new DataGeneratorFactory();
-        var match = dataGeneratorFactory.GetAvailableGenerators().FirstOrDefault(g =>
-            g.Name.Contains(datasetName, StringComparison.InvariantCultureIgnoreCase));
+        var match = DataGeneratorFactory.GetAvailableGenerators().Cast<DataGeneratorFactory.GeneratorType?>().FirstOrDefault(g =>
+            g?.Type.FullName?.Contains(datasetName, StringComparison.InvariantCultureIgnoreCase) == true);
 
-        if (match == null)
+        if (match is null)
         {
             SetImpossible(
-                $"Unknown dataset '{datasetName}'.  Known datasets are:{Environment.NewLine}{string.Join(Environment.NewLine, dataGeneratorFactory.GetAvailableGenerators().Select(g => g.Name).ToArray())}");
+                $"Unknown dataset '{datasetName}'.  Known datasets are:{Environment.NewLine}{string.Join(Environment.NewLine, DataGeneratorFactory.GetAvailableGenerators().Select(static g => g.Type.FullName).ToArray())}");
             return;
         }
 
         _r = new Random(seed);
-        _generator = dataGeneratorFactory.Create(match, _r);
+        _generator = DataGeneratorFactory.Create(match.Value.Type, _r);
     }
 
     public override void Execute()

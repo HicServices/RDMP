@@ -14,10 +14,10 @@
 		<PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
 		<description>Core package for plugin development</description>
 		<copyright>Copyright 2018-2019</copyright>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<TargetFramework>net7.0</TargetFramework>
+		<TargetFramework>net8.0</TargetFramework>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
 		<NoWarn>1701;1702;CS1591;SCS0018</NoWarn>
 		<DebugType>embedded</DebugType>
@@ -244,7 +244,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
-		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql"/>
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
@@ -297,28 +297,27 @@
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="CommandLineParser" />
-		<PackageReference Include="CsvHelper" />
 		<PackageReference Include="Equ" />
 		<PackageReference Include="ExcelNumberFormat" />
 		<PackageReference Include="FluentFTP" />
-		<PackageReference Include="HIC.BadMedicine"/>
+		<PackageReference Include="HIC.BadMedicine" />
 		<PackageReference Include="HIC.FAnsiSql" />
-		<PackageReference Include="LibArchive.Net"/>
+		<PackageReference Include="LibArchive.Net" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.XmlSerializer.Generator"/>
-		<PackageReference Include="MongoDB.Driver"/>
-		<PackageReference Include="Newtonsoft.Json"/>
-		<PackageReference Include="NPOI"/>
-		<PackageReference Include="NLog"/>
-		<PackageReference Include="SixLabors.ImageSharp"  />
-		<PackageReference Include="SixLabors.ImageSharp.Drawing"  />
+		<PackageReference Include="Microsoft.XmlSerializer.Generator" />
+		<PackageReference Include="MongoDB.Driver" />
+		<PackageReference Include="Newtonsoft.Json" />
+		<PackageReference Include="NPOI" />
+		<PackageReference Include="NLog" />
+		<PackageReference Include="SixLabors.ImageSharp" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Spectre.Console" />
-		<PackageReference Include="System.Resources.Extensions"  />
-		<PackageReference Include="SSH.NET"  />
-		<PackageReference Include="Terminal.Gui"  />
+		<PackageReference Include="System.Resources.Extensions" />
+		<PackageReference Include="SSH.NET" />
+		<PackageReference Include="Terminal.Gui" />
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
