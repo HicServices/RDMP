@@ -915,7 +915,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         destination.PreInitialize(db, toConsole);
         destination.AllowResizingColumnsAtUploadTime = true;
 
-        var dt = new DataTable();
+        using var dt = new DataTable();
         dt.Columns.Add("mystringcol", typeof(string));
         dt.Columns.Add("mynum", typeof(string));
         dt.Columns.Add("mydate", typeof(string));
