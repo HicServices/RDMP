@@ -19,3 +19,7 @@ This component has several configurable options that are detailed below
 | Date Format                                     | The date format to output all datetime fields in e.g. dd/MM/yyyy for uk format yyyy-MM-dd for something more machine processable, see https://msdn.microsoft.com/en-us/library/8kb3ddd4(v=vs.110).aspx                                                                                                                                                                        |
 | Clean Extraction Folder Before Extraction       | If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder                                                                                                                                                                                                        |
 | Extraction Subdirectory Pattern                 | Overrides the extraction sub directory of datasets as they are extracted          $c - Configuration Name (e.g. 'Cases')          $i - Configuration ID (e.g. 459)          $d - Dataset name (e.g. 'Prescribing')          $a - Dataset acronym (e.g. 'Presc')          $n - Dataset ID (e.g. 459)  e.g. /$i/$a                                                              |
+
+[Project]: ../CodeTutorials/Glossary.md#Project
+[ExtractionProgress]: ../CodeTutorials/Glossary.md#ExtractionProgress
+[Catalogue]: ../CodeTutorials/Glossary.md#Catalogue
