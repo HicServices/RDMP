@@ -588,10 +588,8 @@ public partial class ExampleDatasetsCreation
         notifier.OnCheckPerformed(new CheckEventArgs($"Generating {numberOfRecords} records for {dataset}",
             CheckResult.Success));
 
-        var factory = new DataGeneratorFactory();
-
         //half a million biochemistry results
-        var biochem = factory.Create(typeof(T), r);
+        var biochem = DataGeneratorFactory.Create(typeof(T), r);
         var dt = biochem.GetDataTable(people, numberOfRecords);
 
         //prune "nulls"
@@ -647,15 +645,14 @@ public partial class ExampleDatasetsCreation
         forwardEngineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         //get descriptions of the columns from BadMedicine
-        var desc = new Descriptions();
-        cata.Description = Trim(desc.Get(cata.Name));
+        cata.Description = Trim(Descriptions.Get(cata.Name));
         if (cata.Description != null)
         {
             cata.SaveToDatabase();
 
             foreach (var ci in cata.CatalogueItems)
             {
-                var ciDescription = Trim(desc.Get(cata.Name, ci.Name));
+                var ciDescription = Trim(Descriptions.Get(cata.Name, ci.Name));
                 if (ciDescription != null)
                 {
                     ci.Description = ciDescription;
