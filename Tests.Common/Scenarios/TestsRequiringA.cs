@@ -43,8 +43,7 @@ public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequ
     protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, PersonCollection people, int rows, Random r)
         where T : IDataGenerator
     {
-        var f = new DataGeneratorFactory();
-        var instance = f.Create<T>(r);
+        var instance = DataGeneratorFactory.Create<T>(r);
 
         var dt = instance.GetDataTable(people, rows);
 

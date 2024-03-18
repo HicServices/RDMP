@@ -94,9 +94,8 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         var extractableCohort = Request.ExtractableCohort;
         var extractableCohortSource = extractableCohort.ExternalCohortTable;
 
-        var syntaxHelperFactory = new QuerySyntaxHelperFactory();
-        var sourceSyntax = syntaxHelperFactory.Create(extractableCohortSource.DatabaseType);
-        var destinationSyntax = syntaxHelperFactory.Create(_server.DatabaseType);
+        var sourceSyntax = QuerySyntaxHelperFactory.Create(extractableCohortSource.DatabaseType);
+        var destinationSyntax = QuerySyntaxHelperFactory.Create(_server.DatabaseType);
 
         //To replace (in this order)
         //Cohort database.table.privateId

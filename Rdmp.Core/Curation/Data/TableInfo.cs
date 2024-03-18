@@ -412,7 +412,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
-        _cachedSyntaxHelpers.GetOrAdd(DatabaseType, new QuerySyntaxHelperFactory().Create(DatabaseType));
+        _cachedSyntaxHelpers.GetOrAdd(DatabaseType, QuerySyntaxHelperFactory.Create(DatabaseType));
 
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo[] instance)
