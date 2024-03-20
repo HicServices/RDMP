@@ -59,6 +59,10 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     {
         tbCreateNew.Enabled = rbCreateNew.Checked;
         tbUseExisting.Enabled = rbUseExisting.Checked;
+        tbForLoadingPath.Enabled = rbChooseYourOwn.Checked;
+        tbForArchivingPath.Enabled = rbChooseYourOwn.Checked;
+        tbExecutablesPath.Enabled = rbChooseYourOwn.Checked;
+        tbCachePath.Enabled = rbChooseYourOwn.Checked;
         btnOk.Enabled = true;
     }
 
@@ -119,6 +123,42 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                     Close();
                 }
             }
+        if (rbChooseYourOwn.Checked)
+        {
+            var hasError = false;
+            lblForLoadingError.Visible = false;
+            lblForArchivingError.Visible = false;
+            lblExecutablesError.Visible = false;
+            lblCacheError.Visible = false;
+
+            if (string.IsNullOrWhiteSpace(tbForLoadingPath.Text))
+            {
+                lblForLoadingError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbForArchivingPath.Text))
+            {
+                lblForArchivingError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbExecutablesPath.Text))
+            {
+                lblExecutablesError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbCachePath.Text))
+            {
+                lblCacheError.Visible = true;
+                hasError = true;
+            }
+            if (hasError) return;
+            var dir = new LoadDirectory(tbForLoadingPath.Text, tbForArchivingPath.Text, tbExecutablesPath.Text, tbCachePath.Text);
+            //Result = dir.RootPath.FullName;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -149,6 +189,63 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
         }
     }
 
+    private void btnBrowseForLoading_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbForLoadingPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForArchiving_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbForArchivingPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForExecutables_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbExecutablesPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForCache_Click(object sender, EventArgs e)
+    {
+        var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbCachePath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+
     private void tbUseExisting_TextChanged(object sender, EventArgs e)
     {
         lblDataIsReservedWordExisting.Visible = _endsWithDataFolder.IsMatch(tbUseExisting.Text);
@@ -157,5 +254,22 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void tbCreateNew_TextChanged(object sender, EventArgs e)
     {
         lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
+    }
+
+    //TODO make the labels recheck on tb update
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label7_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label8_Click(object sender, EventArgs e)
+    {
+
     }
 }

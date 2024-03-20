@@ -73,6 +73,17 @@ public class LoadDirectory : ILoadDirectory
         Cache = FindFolderInPath(DataPath, "Cache");
     }
 
+    public LoadDirectory(string ForLoadingPath, string ForArchivingPath, string ExecutablesPathString, string cachePath)
+    {
+        if (string.IsNullOrWhiteSpace(ForLoadingPath) || string.IsNullOrWhiteSpace(ForArchivingPath) || string.IsNullOrWhiteSpace(ExecutablesPathString))
+            throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Extractables:{ExecutablesPath}");
+        //have not set root path
+        ForLoading = new DirectoryInfo(ForLoadingPath);
+        ForArchiving = new DirectoryInfo(ForArchivingPath);
+        ExecutablesPath =new DirectoryInfo(ExecutablesPathString);
+        Cache = new DirectoryInfo(cachePath);
+    }
+
     private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>
         path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
 
