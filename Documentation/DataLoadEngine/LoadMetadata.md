@@ -21,7 +21,7 @@ The Cache folder is used for the RDMP caching engine (long running fetching task
 ## Using Different Locations for each Load Metadata Directory
 N.B. This is an advanced feature and should be used with caution.
 
-![Load Metadata Config](./Images/LoadMetadata.PNG)
+![Load Metadata Config](./Images/lmdConfig.PNG)
 
 
 Some users may with to store their archives, for example, in a nother location or disk.
