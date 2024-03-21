@@ -41,4 +41,30 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
             Assert.That(lmd.LocationOfFlatFiles, Is.EqualTo(root));
         });
     }
+
+    [Test]
+    public void TestCreateNewDataLoadDirectory_WithSplitLoadMetadata()
+    {
+        var root = Path.Combine(TestContext.CurrentContext.WorkDirectory, "def");
+        if (Directory.Exists(root)) Directory.Delete(root, true);
+        var lmd = WhenIHaveA<LoadMetadata>();
+
+        Assert.That(lmd.LocationOfFlatFiles, Is.Null);
+        Assert.That(lmd.LocationOfForLoadingDirectory, Is.Null);
+        Assert.That(lmd.LocationOfForArchivingDirectory, Is.Null);
+        Assert.That(lmd.LocationOfExecutablesDirectory, Is.Null);
+        Assert.That(lmd.LocationOfCacheDirectory, Is.Null);
+
+        Run("CreateNewSplitDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root, root, root, root);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(lmd.LocationOfFlatFiles, Is.Null);
+            Assert.That(lmd.LocationOfForLoadingDirectory, Is.EqualTo(root));
+            Assert.That(lmd.LocationOfForArchivingDirectory, Is.EqualTo(root));
+            Assert.That(lmd.LocationOfExecutablesDirectory, Is.EqualTo(root));
+            Assert.That(lmd.LocationOfCacheDirectory, Is.EqualTo(root));
+
+        });
+    }
 }

@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
@@ -38,8 +39,16 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
     protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
-        var LoadDirectory = new LoadDirectory(string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) ? LoadMetadata.LocationOfFlatFiles : LoadMetadata.LocationOfForLoadingDirectory);
-        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
+        LoadDirectory loadDirectory;
+        if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles))
+        {
+            loadDirectory = new LoadDirectory(LoadMetadata.LocationOfForLoadingDirectory, LoadMetadata.LocationOfForArchivingDirectory,LoadMetadata.LocationOfExecutablesDirectory,LoadMetadata.LocationOfCacheDirectory);
+        }
+        else
+        {
+            loadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
+        }
+        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, loadDirectory,
             listener, configuration)
         {
             LoadProgress = _loadProgress,
