@@ -60,6 +60,9 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
             tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
             rbChooseYourOwn.Checked = true;
+            rbCreateNew.Checked = false;
+            rbUseExisting.Checked = false;
+            rb_CheckedChanged(null, null);
         }
     }
 
@@ -76,7 +79,8 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void tbUseExisting_Leave(object sender, EventArgs e)
     {
-        CheckExistingProjectDirectory();
+        if(rbUseExisting.Checked)
+            CheckExistingProjectDirectory();
     }
 
     private void CheckExistingProjectDirectory()
@@ -104,7 +108,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 if (!dir.Exists)
                     dir.Create();
 
-                ResultDirectory = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name);//.RootPath.FullName;
+                ResultDirectory = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name);
 
                 DialogResult = DialogResult.OK;
                 Close();
@@ -118,7 +122,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             try
             {
                 var dir = new LoadDirectory(tbUseExisting.Text);
-                ResultDirectory = dir;//.RootPath.FullName;
+                ResultDirectory = dir;
                 DialogResult = DialogResult.OK;
                 Close();
             }
