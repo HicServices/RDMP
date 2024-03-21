@@ -26,7 +26,7 @@ public class LoadArgsDictionary
 
     public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
     {
-        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles) && string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
             throw new Exception(
                 $@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {loadMetadata.Name}");
 
@@ -43,6 +43,6 @@ public class LoadArgsDictionary
         return
             new StageArgs(loadStage,
                 _dbDeployInfo[loadStage.ToLoadBubble()]
-                , new LoadDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' })));
+                , new LoadDirectory((string.IsNullOrWhiteSpace(_loadMetadata.LocationOfFlatFiles) ? _loadMetadata.LocationOfFlatFiles : _loadMetadata.LocationOfForLoadingDirectory).TrimEnd(new[] { '\\' })));
     }
 }

@@ -33,7 +33,8 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// <summary>
     /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
-    public string Result { get; private set; }
+    //public string Result { get; private set; }
+    public LoadDirectory ResultDirectory {get; private set;}
 
     private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
@@ -52,6 +53,13 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
         {
             tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
             CheckExistingProjectDirectory();
+        } else if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
+        {
+            tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
+            tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
+            tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
+            tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
+            rbChooseYourOwn.Checked = true;
         }
     }
 
@@ -96,7 +104,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 if (!dir.Exists)
                     dir.Create();
 
-                Result = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name).RootPath.FullName;
+                ResultDirectory = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name);//.RootPath.FullName;
 
                 DialogResult = DialogResult.OK;
                 Close();
@@ -110,7 +118,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             try
             {
                 var dir = new LoadDirectory(tbUseExisting.Text);
-                Result = dir.RootPath.FullName;
+                ResultDirectory = dir;//.RootPath.FullName;
                 DialogResult = DialogResult.OK;
                 Close();
             }
@@ -118,7 +126,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             {
                 if (Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})", "Invalid Path"))
                 {
-                    Result = tbUseExisting.Text;
+                    ResultDirectory = new LoadDirectory(tbUseExisting.Text);
                     DialogResult = DialogResult.OK;
                     Close();
                 }
@@ -153,7 +161,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             }
             if (hasError) return;
             var dir = new LoadDirectory(tbForLoadingPath.Text, tbForArchivingPath.Text, tbExecutablesPath.Text, tbCachePath.Text);
-            //Result = dir.RootPath.FullName;
+            ResultDirectory = dir;
             DialogResult = DialogResult.OK;
             Close();
         }
@@ -256,7 +264,26 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
         lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
     }
 
-    //TODO make the labels recheck on tb update
+    private void tbForLoadingPath_TextChanged(object sender, EventArgs e)
+    {
+        lblForLoadingError.Visible = string.IsNullOrWhiteSpace(tbForLoadingPath.Text);
+    }
+
+    private void tbForArchivingPath_TextChanged(object sender, EventArgs e)
+    {
+        lblForArchivingError.Visible = string.IsNullOrWhiteSpace(tbForArchivingPath.Text);
+    }
+
+    private void tbCachePath_TextChanged(object sender, EventArgs e)
+    {
+        lblCacheError.Visible = string.IsNullOrWhiteSpace(tbCachePath.Text);
+    }
+
+    private void tbExecutablesPath_TextChanged(object sender, EventArgs e)
+    {
+        lblExecutablesError.Visible = string.IsNullOrWhiteSpace(tbExecutablesPath.Text);
+    }
+
 
     private void label3_Click(object sender, EventArgs e)
     {

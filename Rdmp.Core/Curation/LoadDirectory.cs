@@ -51,12 +51,15 @@ public class LoadDirectory : ILoadDirectory
     /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
     /// </summary>
     /// <param name="rootPath"></param>
-    public LoadDirectory(string rootPath)
+    /// <param name="validate"></param>
+    public LoadDirectory(string rootPath, bool validate=true)
     {
         if (string.IsNullOrWhiteSpace(rootPath))
             throw new Exception("Root path was blank, there is no LoadDirectory path specified?");
 
         RootPath = new DirectoryInfo(rootPath);
+
+        if (!validate) return;
 
         if (RootPath.Name.Equals("Data", StringComparison.CurrentCultureIgnoreCase))
             throw new ArgumentException("LoadDirectory should be passed the root folder, not the Data folder");
@@ -66,7 +69,6 @@ public class LoadDirectory : ILoadDirectory
         if (!DataPath.Exists)
             throw new DirectoryNotFoundException(
                 $"Could not find directory '{DataPath.FullName}', every LoadDirectory must have a Data folder, the root folder was:{RootPath}");
-
         ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
         ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
         ExecutablesPath = FindFolderInPathOrThrow(RootPath, "Executables");
@@ -77,7 +79,6 @@ public class LoadDirectory : ILoadDirectory
     {
         if (string.IsNullOrWhiteSpace(ForLoadingPath) || string.IsNullOrWhiteSpace(ForArchivingPath) || string.IsNullOrWhiteSpace(ExecutablesPathString))
             throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Extractables:{ExecutablesPath}");
-        //have not set root path
         ForLoading = new DirectoryInfo(ForLoadingPath);
         ForArchiving = new DirectoryInfo(ForArchivingPath);
         ExecutablesPath =new DirectoryInfo(ExecutablesPathString);

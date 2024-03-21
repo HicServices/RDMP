@@ -34,6 +34,12 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// </summary>
     string LocationOfFlatFiles { get; set; }
 
+    string LocationOfForLoadingDirectory { get; set; }
+    string LocationOfForArchivingDirectory { get; set; }
+    string LocationOfExecutablesDirectory { get; set; }
+    string LocationOfCacheDirectory { get; set; }
+
+
     /// <summary>
     /// Set to true to ignore the requirement for live tables to need the backup archive trigger
     /// </summary>

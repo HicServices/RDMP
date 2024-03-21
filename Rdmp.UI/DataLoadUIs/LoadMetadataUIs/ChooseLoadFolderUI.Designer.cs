@@ -271,6 +271,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             tbForLoadingPath.Name = "tbForLoadingPath";
             tbForLoadingPath.Size = new System.Drawing.Size(709, 23);
             tbForLoadingPath.TabIndex = 9;
+            tbForLoadingPath.TextChanged += tbForLoadingPath_TextChanged;
             // 
             // btnBrowseForArchiving
             // 
@@ -302,6 +303,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             tbForArchivingPath.Name = "tbForArchivingPath";
             tbForArchivingPath.Size = new System.Drawing.Size(709, 23);
             tbForArchivingPath.TabIndex = 12;
+            tbForArchivingPath.TextChanged += tbForArchivingPath_TextChanged;
             // 
             // btnBrowseExecutables
             // 
@@ -333,6 +335,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             tbExecutablesPath.Name = "tbExecutablesPath";
             tbExecutablesPath.Size = new System.Drawing.Size(709, 23);
             tbExecutablesPath.TabIndex = 15;
+            tbExecutablesPath.TextChanged += tbExecutablesPath_TextChanged;
             // 
             // btnBrowseCache
             // 
@@ -364,6 +367,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
             tbCachePath.Name = "tbCachePath";
             tbCachePath.Size = new System.Drawing.Size(709, 23);
             tbCachePath.TabIndex = 18;
+            tbCachePath.TextChanged += tbCachePath_TextChanged;
             // 
             // lblForLoadingError
             // 

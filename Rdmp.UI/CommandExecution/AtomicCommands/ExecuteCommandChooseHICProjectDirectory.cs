@@ -35,7 +35,21 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
-            _loadMetadata.LocationOfFlatFiles = dialog.Result;
+            if (dialog.ResultDirectory.RootPath != null)
+            {
+                _loadMetadata.LocationOfFlatFiles = dialog.ResultDirectory.RootPath.FullName;
+            }
+            else if (dialog.ResultDirectory.ForLoading != null &&
+                dialog.ResultDirectory.ForArchiving != null &&
+                dialog.ResultDirectory.ExecutablesPath != null &&
+                dialog.ResultDirectory.Cache != null)
+            {
+                _loadMetadata.LocationOfFlatFiles = null;
+                _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.ForLoading.FullName;
+                _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.ForArchiving.FullName;
+                _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.ExecutablesPath.FullName;
+                _loadMetadata.LocationOfCacheDirectory = dialog.ResultDirectory.Cache.FullName;
+            }
             _loadMetadata.SaveToDatabase();
             Publish(_loadMetadata);
         }
