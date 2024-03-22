@@ -197,7 +197,7 @@ public partial class WideMessageBox : Form
     {
         var wmb = new WideMessageBox(new WideMessageBoxArgs(title, message, environmentDotStackTrace, keywordNotToAdd,
             theme));
-
+        wmb.TopMost = true;
         if (isModalDialog)
             wmb.ShowDialog();
         else
