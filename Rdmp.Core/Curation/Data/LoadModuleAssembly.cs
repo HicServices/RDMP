@@ -33,6 +33,18 @@ public sealed class LoadModuleAssembly
     }
 
 
+    private static bool IsReleaseCandidcate(string filename)
+    {
+        return filename.Split('.')[^2].Contains("-rc");
+    }
+
+    private static int GetReleaseCandidateId(string filename)
+    {
+        //expects the rc to be something like My.Plugin.3.0.0-rc2
+        int.TryParse(filename.Split("-rc")[1].Split('.')[0], out var result);
+        return result;
+    }
+
     private static Dictionary<string, string> HandlePluginVersioning()
     {
         var PluginVersionLookup = new Dictionary<string, string>();
@@ -62,6 +74,30 @@ public sealed class LoadModuleAssembly
                             //this version is the latest version
                             PluginVersionLookup[name] = version;
                             PluginPathLookup[name] = pluginFile;
+                        }
+                        if(result == 0)
+                        {
+                            //check for RC in the name
+                            var currentIsReleaseCandidate = IsReleaseCandidcate(PluginPathLookup[name]);
+                            var newIsReleaseCandidate = IsReleaseCandidcate(pluginFile);
+                            if(newIsReleaseCandidate && currentIsReleaseCandidate)
+                            {
+                                var newIsLatest = GetReleaseCandidateId(pluginFile) > GetReleaseCandidateId(PluginPathLookup[name]);
+                                if (newIsLatest)
+                                {
+                                    PluginVersionLookup[name] = version;
+                                    PluginPathLookup[name] = pluginFile;
+                                }
+                                //pick the newest one
+                            } else if (newIsReleaseCandidate)
+                            {
+                                //new version is the latest
+                                PluginVersionLookup[name] = version;
+                                PluginPathLookup[name] = pluginFile;
+                            }
+
+
+
                         }
                     }
                     else
