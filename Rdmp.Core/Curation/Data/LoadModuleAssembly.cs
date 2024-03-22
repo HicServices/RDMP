@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml;
 using ICSharpCode.SharpZipLib.Zip;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
@@ -31,12 +32,69 @@ public sealed class LoadModuleAssembly
         _file = file;
     }
 
+
+    private static Dictionary<string, string> HandlePluginVersioning()
+    {
+        var PluginVersionLookup = new Dictionary<string, string>();
+        var PluginPathLookup = new Dictionary<string, string>();
+        var pluginFiles = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp");
+        foreach (var pluginFile in pluginFiles)
+        {
+            using (FileStream fs = new FileStream(pluginFile, FileMode.Open))
+            using (ZipFile zip = new ZipFile(fs))
+            {
+               foreach(ZipEntry ze in zip) {
+                    if (ze.Name.Contains(".nuspec"))
+                    {
+                        using (StreamReader sr = new StreamReader(zip.GetInputStream(ze.ZipFileIndex)))
+                        {
+                            var content = sr.ReadToEnd();
+                            var xmlDoc = new XmlDocument();
+                            xmlDoc.LoadXml(content);
+
+                            var name = xmlDoc.GetElementsByTagName("id").Item(0).InnerText;
+                            var version = xmlDoc.GetElementsByTagName("version").Item(0).InnerText;
+                            if (PluginVersionLookup.TryGetValue(name, out var currentVersion))
+                            {
+                                //already found a version
+                                var result = new Version(currentVersion).CompareTo(new Version(version));
+                                if (result < 0)
+                                {
+                                    //this version is the latest version
+                                    PluginVersionLookup[name] = version;
+                                    PluginPathLookup[name] = pluginFile;
+                                }
+                            }
+                            else
+                            {
+                                PluginVersionLookup[name] = version;
+                                PluginPathLookup[name] = pluginFile;
+                            }
+                        }
+                        break;
+                    }
+                    
+                }
+            }
+
+        }
+
+        return PluginPathLookup;
+    }
+
     /// <summary>
     /// List the plugin files to load
     /// </summary>
     /// <returns></returns>
     internal static IEnumerable<string> PluginFiles()
     {
+        if (Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp").Count() > 0)
+        {
+            //use the modern .RDMP plugins
+            var plugins = HandlePluginVersioning();
+            return plugins.Values.ToArray();
+
+        }
         return File.Exists(PluginsList)
             ? File.ReadAllLines(PluginsList)
                 .Select(static name => Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name))
