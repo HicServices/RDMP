@@ -40,41 +40,38 @@ public sealed class LoadModuleAssembly
         var pluginFiles = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp");
         foreach (var pluginFile in pluginFiles)
         {
-            using (FileStream fs = new FileStream(pluginFile, FileMode.Open))
-            using (ZipFile zip = new ZipFile(fs))
+            using FileStream fs = new(pluginFile, FileMode.Open);
+            using ZipFile zip = new(fs);
+            foreach (ZipEntry ze in zip)
             {
-               foreach(ZipEntry ze in zip) {
-                    if (ze.Name.Contains(".nuspec"))
-                    {
-                        using (StreamReader sr = new StreamReader(zip.GetInputStream(ze.ZipFileIndex)))
-                        {
-                            var content = sr.ReadToEnd();
-                            var xmlDoc = new XmlDocument();
-                            xmlDoc.LoadXml(content);
+                if (ze.Name.Contains(".nuspec"))
+                {
+                    using StreamReader sr = new StreamReader(zip.GetInputStream(ze.ZipFileIndex));
+                    var content = sr.ReadToEnd();
+                    var xmlDoc = new XmlDocument();
+                    xmlDoc.LoadXml(content);
 
-                            var name = xmlDoc.GetElementsByTagName("id").Item(0).InnerText;
-                            var version = xmlDoc.GetElementsByTagName("version").Item(0).InnerText;
-                            if (PluginVersionLookup.TryGetValue(name, out var currentVersion))
-                            {
-                                //already found a version
-                                var result = new Version(currentVersion).CompareTo(new Version(version));
-                                if (result < 0)
-                                {
-                                    //this version is the latest version
-                                    PluginVersionLookup[name] = version;
-                                    PluginPathLookup[name] = pluginFile;
-                                }
-                            }
-                            else
-                            {
-                                PluginVersionLookup[name] = version;
-                                PluginPathLookup[name] = pluginFile;
-                            }
+                    var name = xmlDoc.GetElementsByTagName("id").Item(0).InnerText;
+                    var version = xmlDoc.GetElementsByTagName("version").Item(0).InnerText;
+                    if (PluginVersionLookup.TryGetValue(name, out var currentVersion))
+                    {
+                        //already found a version
+                        var result = new Version(currentVersion).CompareTo(new Version(version));
+                        if (result < 0)
+                        {
+                            //this version is the latest version
+                            PluginVersionLookup[name] = version;
+                            PluginPathLookup[name] = pluginFile;
                         }
-                        break;
                     }
-                    
+                    else
+                    {
+                        PluginVersionLookup[name] = version;
+                        PluginPathLookup[name] = pluginFile;
+                    }
+                    break;
                 }
+
             }
 
         }
