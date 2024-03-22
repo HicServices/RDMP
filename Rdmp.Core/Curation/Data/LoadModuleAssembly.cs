@@ -94,9 +94,6 @@ public sealed class LoadModuleAssembly
                                 PluginVersionLookup[name] = version;
                                 PluginPathLookup[name] = pluginFile;
                             }
-
-
-
                         }
                     }
                     else

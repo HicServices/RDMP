@@ -18,7 +18,6 @@ public sealed class ExecuteCommandDeletePlugin : BasicUICommandExecution
 {
     private readonly LoadModuleAssembly _assembly;
 
-
     public ExecuteCommandDeletePlugin(IActivateItems activator, LoadModuleAssembly assembly) : base(activator)
     {
         _assembly = assembly;
