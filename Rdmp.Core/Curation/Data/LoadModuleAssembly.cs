@@ -82,13 +82,13 @@ public sealed class LoadModuleAssembly
                             var newIsReleaseCandidate = IsReleaseCandidcate(pluginFile);
                             if(newIsReleaseCandidate && currentIsReleaseCandidate)
                             {
+                                //could this use the archive file creation date instead of trying to parse from the file name??
                                 var newIsLatest = GetReleaseCandidateId(pluginFile) > GetReleaseCandidateId(PluginPathLookup[name]);
                                 if (newIsLatest)
                                 {
                                     PluginVersionLookup[name] = version;
                                     PluginPathLookup[name] = pluginFile;
                                 }
-                                //pick the newest one
                             } else if (newIsReleaseCandidate)
                             {
                                 //new version is the latest
