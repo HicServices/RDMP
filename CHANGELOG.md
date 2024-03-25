@@ -7,8 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.1.5] - Unreleased
 
 ## Changed
-
 - Add timeout override to remote table selectors
+- Extractions now remember the last used pipeline
 
 ## [8.1.4] - 2024-02-19
 
