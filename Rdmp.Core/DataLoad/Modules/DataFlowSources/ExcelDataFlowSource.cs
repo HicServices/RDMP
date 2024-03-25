@@ -151,7 +151,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
-            
+
                 if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length != nColumns)
                     listener.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error,
@@ -182,7 +182,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                     nonBlankColumns.Add(cell.ColumnIndex, toReturn.Columns.Add(h));
                 }
-                if(replacementHeadersSplit is not null && replacementHeadersSplit.Any())
+                if (replacementHeadersSplit is not null && replacementHeadersSplit.Any())
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
 
@@ -270,13 +270,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                 var format = cell.CellStyle.GetDataFormatString();
 
                 if (IsDateWithoutTime(format))
-                    return cell.DateCellValue.ToString("yyyy-MM-dd");
+                    return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("yyyy-MM-dd") : null;
 
                 if (IsDateWithTime(format))
-                    return cell.DateCellValue.ToString("yyyy-MM-dd HH:mm:ss");
+                    return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("yyyy-MM-dd HH:mm:ss") : null;
 
                 if (IsTimeWithoutDate(format))
-                    return cell.DateCellValue.ToString("HH:mm:ss");
+                    return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("HH:mm:ss") : null;
 
                 return new NumberFormat(format).Format(
                     IsDateFormat(format) ? cell.DateCellValue : cell.NumericCellValue, CultureInfo.InvariantCulture);
