@@ -269,8 +269,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
                 var format = cell.CellStyle.GetDataFormatString();
 
-                var x = cell.DateCellValue;
-
                 if (IsDateWithoutTime(format))
                     return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("yyyy-MM-dd") : null;
 
