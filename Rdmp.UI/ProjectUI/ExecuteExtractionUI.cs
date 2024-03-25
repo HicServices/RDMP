@@ -301,7 +301,6 @@ public partial class ExecuteExtractionUI : ExecuteExtractionUI_Design
             _pipelineSelectionUI1.CollapseToSingleLineMode();
 
 
-            //here
             //if the configuration has a default then use that pipeline
             if (_extractionConfiguration.DefaultPipeline_ID != null)
                 _pipelineSelectionUI1.Pipeline = _extractionConfiguration.DefaultPipeline;
