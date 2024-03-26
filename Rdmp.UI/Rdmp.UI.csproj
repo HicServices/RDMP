@@ -53,9 +53,9 @@
 		</PackageReference>
 		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
 		<PackageReference Include="Scintilla.NET" />
-		<PackageReference Include="System.Resources.Extensions"/>
-		<PackageReference Include="VPKSoft.ScintillaLexers.NET"/>
-		<PackageReference Include="WeCantSpell.Hunspell"/>
+		<PackageReference Include="System.Resources.Extensions" />
+		<PackageReference Include="VPKSoft.ScintillaLexers.NET" />
+		<PackageReference Include="WeCantSpell.Hunspell" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
@@ -115,6 +115,7 @@
 		<Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
 			<DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
 		</Compile>
+		<Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlBakFileProcessTaskUI.cs" />
 		<Compile Update="PieCharts\CatalogueToDatasetLinkagePieChart.cs">
 			<SubType>UserControl</SubType>
 		</Compile>
