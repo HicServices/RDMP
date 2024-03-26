@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Text.Json;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
@@ -30,13 +32,11 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 /// 
 /// <para>You should avoid modifying Live tables directly with SQL since it circumvents the 'no duplication', 'RAW->STAGING->LIVE super transaction' model of RDMP.</para>
 /// </summary>
-public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
+public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISaveableUI
 {
-    private Scintilla _scintilla;
     private ProcessTask _processTask;
-    private AutoCompleteProviderWin _autoComplete;
 
-    public SqlProcessTaskUI()
+    public SqlBakFileProcessTaskUI()
     {
         InitializeComponent();
         AssociatedCollection = RDMPCollection.DataLoad;
@@ -47,11 +47,18 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         base.SetDatabaseObject(activator, databaseObject);
         _processTask = databaseObject;
 
-        LoadFile();
-
         loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
         loadStageIconUI1.Left = tbID.Right + 2;
-
+        if (!string.IsNullOrWhiteSpace(databaseObject.SerialisableConfiguration))
+        {
+            var config = JsonSerializer.Deserialize<Dictionary<string, string>>(databaseObject.SerialisableConfiguration);
+            config.TryGetValue("PrimaryFilePhysicalName", out var primary);
+            if (primary is not null)
+                tbPrimaryFile.Text = primary;
+            config.TryGetValue("LogFilePhysicalName", out var log);
+            if (log is not null)
+                tbLogFile.Text = log;
+        }
         CommonFunctionality.AddChecks(_processTask);
     }
 
@@ -64,72 +71,26 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
         Bind(tbPath, "Text", "Path", p => p.Path);
     }
 
-    private bool _bLoading;
-
-    private void LoadFile()
+    private void tbPrimary_TextChanged(object sender, EventArgs e)
     {
-        if (_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile)
-        {
-            return;
-        }
-        _bLoading = true;
-        try
-        {
-            if (_scintilla == null)
-            {
-                var factory = new ScintillaTextEditorFactory();
-                _scintilla = factory.Create(new RDMPCombineableFactory());
-                groupBox1.Controls.Add(_scintilla);
-                _scintilla.SavePointLeft += ScintillaOnSavePointLeft;
-                ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
-            }
-
-            SetupAutocomplete();
-
-            try
-            {
-                _scintilla.Text = File.ReadAllText(_processTask.Path);
-                _scintilla.SetSavePoint();
-            }
-            catch (Exception e)
-            {
-                CommonFunctionality.Fatal($"Could not open file {_processTask.Path}", e);
-            }
-        }
-        finally
-        {
-            _bLoading = false;
-        }
+        var config = new Dictionary<string, string>();
+        if (_processTask.SerialisableConfiguration is not null)
+            config = JsonSerializer.Deserialize<Dictionary<string, string>>(_processTask.SerialisableConfiguration);
+        config["PrimaryFilePhysicalName"] = tbPrimaryFile.Text;
+        _processTask.SerialisableConfiguration = JsonSerializer.Serialize(config);
     }
 
-
-    private void SetupAutocomplete()
+    private void tbLog_TextChanged(object sender, EventArgs e)
     {
-        //if there's an old one dispose it
-        if (_autoComplete == null)
-            _autoComplete = new AutoCompleteProviderWin(_processTask.LoadMetadata.GetQuerySyntaxHelper());
-        else
-            _autoComplete.Clear();
-
-        foreach (var table in _processTask.LoadMetadata.GetDistinctTableInfoList(false))
-            _autoComplete.Add(table, _processTask.LoadStage);
-
-        _autoComplete.RegisterForEvents(_scintilla);
-    }
-
-    private bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
-    {
-        File.WriteAllText(_processTask.Path, _scintilla.Text);
-        _scintilla.SetSavePoint();
-
-        return true;
+        var config = new Dictionary<string, string>();
+        if (_processTask.SerialisableConfiguration is not null)
+            config = JsonSerializer.Deserialize<Dictionary<string, string>>(_processTask.SerialisableConfiguration);
+        config["LogFilePhysicalName"] = tbLogFile.Text;
+        _processTask.SerialisableConfiguration = JsonSerializer.Serialize(config);
     }
 
     private void ScintillaOnSavePointLeft(object sender, EventArgs eventArgs)
     {
-        if (_bLoading)
-            return;
-
         ObjectSaverButton1.Enable(true);
     }
 
@@ -137,7 +98,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
     {
         var ofd = new OpenFileDialog
         {
-            Filter = _processTask.ProcessTaskType == ProcessTaskType.SQLBakFile ? "BAK Files |*.bak" : "Sql Files|*.sql",
+            Filter = "BAK Files |*.bak",
             CheckFileExists = true
         };
 
@@ -159,15 +120,20 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
                 _processTask.Name = _processTask.Name.Replace(oldFileName, Path.GetFileName(ofd.FileName));
 
             _processTask.Path = ofd.FileName;
+            //_processTask.SerialisableConfiguration = _SerialisableConfiguration;
             _processTask.SaveToDatabase();
-            
+
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_processTask));
-            LoadFile();
         }
+    }
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
     }
 }
 
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlProcessTaskUI_Design, UserControl>))]
-public abstract class SqlProcessTaskUI_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<SqlBakFileProcessTask_Design, UserControl>))]
+public abstract class SqlBakFileProcessTask_Design : RDMPSingleDatabaseObjectControl<ProcessTask>
 {
 }

@@ -44,7 +44,9 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     private LoadStage _loadStage;
     private ProcessTaskType _processTaskType;
     private bool _isDisabled;
-
+#nullable enable
+    private string? _SerialisableConfiguration;
+#nullable disable
     /// <summary>
     /// The load the process task exists as part of
     /// </summary>
@@ -108,6 +110,16 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         set => SetField(ref _isDisabled, value);
     }
 
+
+    /// <inheritdoc/>
+#nullable enable
+    public string? SerialisableConfiguration
+    {
+        get => _SerialisableConfiguration;
+        set => SetField(ref _SerialisableConfiguration, value);
+    }
+#nullable disable
+
     #endregion
 
     #region Relationships
@@ -150,7 +162,30 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
-            { "Order", order }
+            { "Order", order },
+        });
+    }
+
+    /// <summary>
+    /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
+    /// </summary>
+    /// <param name="repository"></param>
+    /// <param name="parent"></param>
+    /// <param name="stage"></param>
+    /// <param name="serialisableConfiguration"></param>
+    public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
+    {
+        var order =
+            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+
+        repository.InsertAndHydrate(this, new Dictionary<string, object>
+        {
+            { "LoadMetadata_ID", parent.ID },
+            { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
+            { "LoadStage", stage },
+            { "Name", $"New Process{Guid.NewGuid()}" },
+            { "Order", order },
+            {"SerialisableConfiguration", serialisableConfiguration}
         });
     }
 
@@ -177,6 +212,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
+        SerialisableConfiguration = r["SerialisableConfiguration"].ToString();
     }
 
     internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
