@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 - Add timeout override to remote table selectors
 - Extractions now remember the last used pipeline
+- Allow for custom .bak file physical locations during data loads
 
 ## [8.1.4] - 2024-02-19
 
