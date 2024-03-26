@@ -768,6 +768,7 @@ CREATE TABLE [dbo].[ProcessTask](
 	[RelatesSolelyToCatalogue_ID] [int] NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[IsDisabled] [bit] NOT NULL,
+	[SerialisableConfiguration] [varchar](max),
  CONSTRAINT [PK_ProcessTask] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [8.1.5] - Unreleased
 
-## Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
+## Changed
+- Add timeout override to remote table selectors
+- Extractions now remember the last used pipeline
+- Allow for custom .bak file physical locations during data loads
+- Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
+
 
 ## [8.1.4] - 2024-02-19
 
