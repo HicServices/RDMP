@@ -1,9 +1,0 @@
-﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
-  <Package Name="Research Data Management Platform" Manufacturer="HIC, University of Dundee" Version="1.0.0.0" UpgradeCode="e11b413c-ae94-405a-a0f4-c721179d81ea">
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeError)" />
-
-    <Feature Id="Main">
-      <ComponentGroupRef Id="AppComponents" />
-    </Feature>
-  </Package>
-</Wix>
