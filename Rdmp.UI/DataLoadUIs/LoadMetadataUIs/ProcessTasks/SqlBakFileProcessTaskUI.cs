@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2024-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -11,17 +11,12 @@ using System.IO;
 using System.Text.Json;
 using System.Windows.Forms;
 using Rdmp.Core;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.AutoComplete;
-using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
-using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ScintillaNET;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
@@ -89,11 +84,6 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
         _processTask.SerialisableConfiguration = JsonSerializer.Serialize(config);
     }
 
-    private void ScintillaOnSavePointLeft(object sender, EventArgs eventArgs)
-    {
-        ObjectSaverButton1.Enable(true);
-    }
-
     private void btnBrowse_Click(object sender, EventArgs e)
     {
         var ofd = new OpenFileDialog
@@ -120,7 +110,6 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
                 _processTask.Name = _processTask.Name.Replace(oldFileName, Path.GetFileName(ofd.FileName));
 
             _processTask.Path = ofd.FileName;
-            //_processTask.SerialisableConfiguration = _SerialisableConfiguration;
             _processTask.SaveToDatabase();
 
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_processTask));

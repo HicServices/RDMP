@@ -95,13 +95,6 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         MOVE '{logFile["LogicalName"]}' TO '{LogFilePhysicalName}' ,  NOUNLOAD,  REPLACE,  STATS = 5;
         ALTER DATABASE {name} SET MULTI_USER;
         ";
-        //var restoreCommand = @$"
-        //use master;
-        //ALTER DATABASE {name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-        //RESTORE DATABASE {name}
-        //FROM DISK = '{Filepath}'
-        //ALTER DATABASE {name} SET MULTI_USER;
-        //";
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"Executing script {Filepath} ( against {db})"));

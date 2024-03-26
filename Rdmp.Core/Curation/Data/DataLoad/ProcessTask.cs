@@ -212,7 +212,8 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
-        SerialisableConfiguration = r["SerialisableConfiguration"].ToString();
+        if(r["SerialisableConfiguration"] is not null)
+            SerialisableConfiguration = r["SerialisableConfiguration"].ToString();
     }
 
     internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
