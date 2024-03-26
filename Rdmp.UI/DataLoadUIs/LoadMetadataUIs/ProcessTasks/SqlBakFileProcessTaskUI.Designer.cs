@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {
-    partial class SqlProcessTaskUI
+    partial class SqlBakFileProcessTaskUI
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            groupBox1 = new System.Windows.Forms.GroupBox();
             btnBrowse = new System.Windows.Forms.Button();
             lblID = new System.Windows.Forms.Label();
             tbID = new System.Windows.Forms.TextBox();
@@ -38,20 +37,12 @@
             label1 = new System.Windows.Forms.Label();
             tbPath = new System.Windows.Forms.TextBox();
             loadStageIconUI1 = new LoadStageIconUI();
+            tbPrimaryFile = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
+            tbLogFile = new System.Windows.Forms.TextBox();
+            label4 = new System.Windows.Forms.Label();
             panel1.SuspendLayout();
             SuspendLayout();
-            // 
-            // groupBox1
-            // 
-            groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
-            groupBox1.Location = new System.Drawing.Point(4, 68);
-            groupBox1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            groupBox1.Size = new System.Drawing.Size(1036, 740);
-            groupBox1.TabIndex = 0;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Editor";
             // 
             // btnBrowse
             // 
@@ -85,11 +76,14 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(tbLogFile);
+            panel1.Controls.Add(label4);
+            panel1.Controls.Add(tbPrimaryFile);
+            panel1.Controls.Add(label3);
             panel1.Controls.Add(tbName);
             panel1.Controls.Add(label2);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(tbPath);
-            panel1.Controls.Add(groupBox1);
             panel1.Controls.Add(loadStageIconUI1);
             panel1.Controls.Add(tbID);
             panel1.Controls.Add(btnBrowse);
@@ -147,13 +141,52 @@
             loadStageIconUI1.Size = new System.Drawing.Size(271, 22);
             loadStageIconUI1.TabIndex = 8;
             // 
-            // SqlProcessTaskUI
+            // tbPrimaryFile
+            // 
+            tbPrimaryFile.Location = new System.Drawing.Point(223, 79);
+            tbPrimaryFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbPrimaryFile.Name = "tbPrimaryFile";
+            tbPrimaryFile.Size = new System.Drawing.Size(405, 23);
+            tbPrimaryFile.TabIndex = 13;
+            tbPrimaryFile.TextChanged += tbPrimary_TextChanged;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(7, 79);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(208, 15);
+            label3.TabIndex = 12;
+            label3.Text = "Primary File Physical Name (optional):";
+            label3.Click += label3_Click;
+            // 
+            // tbLogFile
+            // 
+            tbLogFile.Location = new System.Drawing.Point(223, 108);
+            tbLogFile.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tbLogFile.Name = "tbLogFile";
+            tbLogFile.Size = new System.Drawing.Size(405, 23);
+            tbLogFile.TabIndex = 15;
+            tbLogFile.TextChanged += tbLog_TextChanged;
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(28, 108);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(187, 15);
+            label4.TabIndex = 14;
+            label4.Text = "Log File Physical Name (optional):";
+            // 
+            // SqlBakFileProcessTaskUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(panel1);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            Name = "SqlProcessTaskUI";
+            Name = "SqlBakFileProcessTaskUI";
             Size = new System.Drawing.Size(1043, 811);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -161,8 +194,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Label lblID;
         private System.Windows.Forms.TextBox tbID;
@@ -172,5 +203,9 @@
         private System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tbLogFile;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox tbPrimaryFile;
+        private System.Windows.Forms.Label label3;
     }
 }
