@@ -86,7 +86,7 @@ public partial class SqlBakFileProcessTaskUI : SqlBakFileProcessTask_Design, ISa
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog
+        using var ofd = new OpenFileDialog
         {
             Filter = "BAK Files |*.bak",
             CheckFileExists = true
