@@ -7,6 +7,7 @@
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
@@ -22,14 +23,16 @@ public class PipelineSelectionUIFactory
     private readonly ICatalogueRepository _repository;
     private readonly IPipelineUser _user;
     private readonly IPipelineUseCase _useCase;
+    private readonly IExtractionConfiguration _extractionCurationConfiguration;
 
     private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
-    public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
+    public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase, IExtractionConfiguration extractionConfiguration = null)
     {
         _repository = repository;
         _user = user;
         _useCase = useCase;
+        _extractionCurationConfiguration = extractionConfiguration;
     }
 
     public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement,
@@ -46,7 +49,7 @@ public class PipelineSelectionUIFactory
         Control containerControl = null)
     {
         //setup getter as an event handler for the selection ui
-        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _repository);
+        _pipelineSelectionUIInstance = new PipelineSelectionUI(activator, _useCase, _repository, _extractionCurationConfiguration);
 
         if (_user != null)
         {
