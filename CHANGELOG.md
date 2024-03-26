@@ -5,16 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [8.1.5] - Unreleased
-<<<<<<< HEAD
-- Add ability to have multiple data loads for a single catalogue
-||||||| bb1357279
-=======
 
 ## Changed
 - Add timeout override to remote table selectors
 - Extractions now remember the last used pipeline
 - Allow for custom .bak file physical locations during data loads
->>>>>>> dd818a1db3ebb59c442ffaee2b2b06ba7ac29adb
+- Add ability to have multiple data loads for a single catalogue
+
 
 ## [8.1.4] - 2024-02-19
 
