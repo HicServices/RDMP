@@ -48,6 +48,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     #region Database Properties
 
     private string _locationOfFlatFiles;
+    private string _locationOfForLoadingDirectory;
+    private string _locationOfForArchivingDirectory;
+    private string _locationOfExecutablesDirectory;
+    private string _locationOfCacheDirectory;
     private string _anonymisationEngineClass;
     private string _name;
     private string _description;
@@ -63,6 +67,29 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         get => _locationOfFlatFiles;
         set => SetField(ref _locationOfFlatFiles, value);
+    }
+
+    public string LocationOfForLoadingDirectory
+    {
+        get => _locationOfForLoadingDirectory;
+        set => SetField(ref _locationOfForLoadingDirectory, value);
+    }
+
+    public string LocationOfForArchivingDirectory
+    {
+        get => _locationOfForArchivingDirectory;
+        set => SetField(ref _locationOfForArchivingDirectory, value);
+    }
+
+    public string LocationOfExecutablesDirectory
+    {
+        get => _locationOfExecutablesDirectory;
+        set => SetField(ref _locationOfExecutablesDirectory, value);
+    }
+    public string LocationOfCacheDirectory
+    {
+        get => _locationOfCacheDirectory;
+        set => SetField(ref _locationOfCacheDirectory, value);
     }
 
     /// <summary>
@@ -194,6 +221,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         : base(repository, r)
     {
         LocationOfFlatFiles = r["LocationOfFlatFiles"].ToString();
+        LocationOfForLoadingDirectory = r["LocationOfForLoadingDirectory"].ToString();
+        LocationOfForArchivingDirectory = r["LocationOfForArchivingDirectory"].ToString();
+        LocationOfExecutablesDirectory = r["LocationOfExecutablesDirectory"].ToString();
+        LocationOfCacheDirectory = r["LocationOfCacheDirectory"].ToString();
         Name = r["Name"] as string;
         AnonymisationEngineClass = r["AnonymisationEngineClass"].ToString();
         Name = r["Name"].ToString();

@@ -19,11 +19,11 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles);
+    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) && string.IsNullOrWhiteSpace(LoadMetadata.LocationOfForLoadingDirectory);
 
 
     public override string ToString() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
-        ? "???"
+        ? string.IsNullOrWhiteSpace(LoadMetadata.LocationOfForLoadingDirectory) ? "???" : "Custom"
         : LoadMetadata.LocationOfFlatFiles;
 
     public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)

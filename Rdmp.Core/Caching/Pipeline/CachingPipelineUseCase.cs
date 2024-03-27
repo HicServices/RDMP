@@ -68,7 +68,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         // Get the LoadDirectory for the engine initialization
         var lmd = _cacheProgress.LoadProgress.LoadMetadata;
 
-        if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles) && string.IsNullOrWhiteSpace(lmd.LocationOfForLoadingDirectory))
         {
             if (throwIfNoPipeline)
                 throw new Exception(
@@ -76,7 +76,8 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         }
         else
         {
-            AddInitializationObject(new LoadDirectory(lmd.LocationOfFlatFiles));
+
+            AddInitializationObject(new LoadDirectory(string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles) ? lmd.LocationOfForLoadingDirectory : lmd.LocationOfFlatFiles));
         }
 
         AddInitializationObject(_providerIfAny);

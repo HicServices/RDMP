@@ -26,7 +26,7 @@ public class LoadArgsDictionary
 
     public LoadArgsDictionary(ILoadMetadata loadMetadata, StandardDatabaseHelper dbDeployInfo)
     {
-        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles) && string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
             throw new Exception(
                 $@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {loadMetadata.Name}");
 
@@ -40,9 +40,22 @@ public class LoadArgsDictionary
 
     protected IStageArgs CreateLoadArgs(LoadStage loadStage)
     {
+        var loadDirectoryPath = !string.IsNullOrWhiteSpace(_loadMetadata.LocationOfFlatFiles) ? _loadMetadata.LocationOfFlatFiles : _loadMetadata.LocationOfForLoadingDirectory;
+        if (string.IsNullOrWhiteSpace(_loadMetadata.LocationOfFlatFiles))
+        {
+            return new StageArgs(loadStage,
+                _dbDeployInfo[loadStage.ToLoadBubble()]
+                , new LoadDirectory(
+                    _loadMetadata.LocationOfForLoadingDirectory.TrimEnd(new[] { '\\' }),
+                    _loadMetadata.LocationOfForArchivingDirectory.TrimEnd(new[] { '\\' }),
+                    _loadMetadata.LocationOfExecutablesDirectory.TrimEnd(new[] { '\\' }),
+                    _loadMetadata.LocationOfCacheDirectory.TrimEnd(new[] { '\\' })
+                )
+            );
+        }
         return
             new StageArgs(loadStage,
                 _dbDeployInfo[loadStage.ToLoadBubble()]
-                , new LoadDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' })));
+                , new LoadDirectory((loadDirectoryPath).TrimEnd(new[] { '\\' })));
     }
 }
