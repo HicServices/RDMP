@@ -343,11 +343,9 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
-        foreach (ExtractableColumn column in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey))
+        foreach (string name in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey).Select(column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()))
         {
-            var name = column.CatalogueExtractionInformation.ToString();
             pks.Add(chunk.Columns[name]);
-
         }
         chunk.PrimaryKey = pks.ToArray();
 

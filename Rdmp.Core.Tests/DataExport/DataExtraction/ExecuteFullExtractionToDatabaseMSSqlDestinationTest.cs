@@ -5,26 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
-using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.ReusableLibraryCode.Checks;
-using Rdmp.Core.ReusableLibraryCode.Progress;
-using Rdmp.Core.Tests.CommandExecution;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
