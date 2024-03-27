@@ -14,7 +14,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
-using Spectre.Console;
 
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
