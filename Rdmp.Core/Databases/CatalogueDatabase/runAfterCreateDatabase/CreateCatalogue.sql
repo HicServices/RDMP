@@ -913,6 +913,7 @@ CREATE TABLE [dbo].Dataset(
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
+
 GO
 CREATE TABLE [dbo].LoadMetadataCatalogueLinkage(
 	[ID] [int] IDENTITY(1,1) NOT NULL,
@@ -932,8 +933,31 @@ ALTER TABLE [dbo].[ColumnInfo] ADD CONSTRAINT [FK_Column_Info_Dataset] FOREIGN K
 GO
 ALTER TABLE [dbo].[LoadMetadata] ADD LastLoadTime [datetime] NULL;
 GO
+/****** Object:  RedactedCHI [dbo].[RedactedCHI]    Script Date: 29/11/2023 14:16:46 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_PADDING ON
+GO
+CREATE TABLE [dbo].RedactedCHI(
+	[ID] [int] IDENTITY(1,1) NOT NULL,
+	[PotentialCHI] [varchar](500) NOT NULL,
+	ReplacementIndex[int] NOT NULL,
+	TableName[nvarchar](500) NOT NULL,
+	PKValue[nvarchar](500) NOT NULL,
+	PKColumnName[nvarchar](500) NOT NULL,
+	ColumnName[nvarchar](500) NOT NULL,
+ CONSTRAINT [PK_RedactedCHI] PRIMARY KEY CLUSTERED 
+ (
+	[ID] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
 SET ANSI_PADDING OFF
 GO
+
 ALTER TABLE [dbo].[ANOTable] ADD  CONSTRAINT [DF_ANOTable_SoftwareVersion]  DEFAULT ([dbo].[GetSoftwareVersion]()) FOR [SoftwareVersion]
 GO
 ALTER TABLE [dbo].[AggregateConfiguration] ADD  CONSTRAINT [DF_AggregateConfiguration_dtCreated]  DEFAULT (getdate()) FOR [dtCreated]
