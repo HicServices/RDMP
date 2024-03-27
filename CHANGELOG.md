@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add timeout override to remote table selectors
 - Extractions now remember the last used pipeline
 - Allow for custom .bak file physical locations during data loads
+- Add ability to have multiple data loads for a single catalogue
+
 
 ## [8.1.4] - 2024-02-19
 

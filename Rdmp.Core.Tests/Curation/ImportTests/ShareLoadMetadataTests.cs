@@ -44,8 +44,8 @@ public class ShareLoadMetadataTests : UnitTests
     public void GatherAndShare_LoadMetadata_WithCatalogue()
     {
         //create an object
-        LoadMetadata lmd1;
-        var lmd2 = ShareToNewRepository(lmd1 = WhenIHaveA<LoadMetadata>());
+        LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
+        var lmd2 = ShareToNewRepository(lmd1);
 
         var cata1 = lmd1.GetAllCatalogues().Single();
         var cata2 = lmd2.GetAllCatalogues().Single();

@@ -42,8 +42,8 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     {
         _loadMetadata = loadMetadata;
 
-        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => c.LoadMetadata_ID == null)
-            .ToArray();
+        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
+        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
@@ -98,10 +98,9 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
                     cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
                 }
             }
-
-            //associate them
-            cata.LoadMetadata_ID = _loadMetadata.ID;
             cata.SaveToDatabase();
+            //associate them
+            _loadMetadata.LinkToCatalogue(cata);
         }
 
         Publish(_loadMetadata);
