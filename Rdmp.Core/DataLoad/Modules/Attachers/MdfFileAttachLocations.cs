@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using MathNet.Numerics.Statistics;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
@@ -48,23 +49,8 @@ internal class MdfFileAttachLocations
 
         CopyToMdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationMdf));
         CopyToLdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationLdf));
-
-        if (databaseDirectoryFromPerspectiveOfDatabaseServer.Contains('/'))
-        {
-            // Unix-style paths
-            AttachMdfPath =
-                $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationMdf)}";
-            AttachLdfPath =
-                $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('/')}/{Path.GetFileName(OriginLocationLdf)}";
-        }
-        else
-        {
-            // DOS-style paths
-            AttachMdfPath =
-                $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationMdf)}";
-            AttachLdfPath =
-                $"{databaseDirectoryFromPerspectiveOfDatabaseServer.TrimEnd('\\')}\\{Path.GetFileName(OriginLocationLdf)}";
-        }
+        AttachMdfPath = MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer, OriginLocationMdf);
+        AttachLdfPath = MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer, OriginLocationLdf);
     }
 
     public string OriginLocationMdf { get; set; }
@@ -75,4 +61,18 @@ internal class MdfFileAttachLocations
 
     public string AttachMdfPath { get; set; }
     public string AttachLdfPath { get; set; }
+
+
+    private static char GetCorrectDirectorySeparatorCharBasedOnString(string partialPath)
+    {
+        bool containUnixStyle = partialPath.Contains('/');
+        bool containsNTFSStyle = partialPath.Contains('\\');
+        if (containUnixStyle && containsNTFSStyle) throw new Exception("Override partial path contains both '/' and '\\', unable to correctly guess which file system is in use ");
+        return containUnixStyle ? '/' : '\\';
+    }
+
+    public static string MergeDirectoryAndFileUsingAssumedDirectorySeparator(string directory, string file) {
+        var directorySeparator = GetCorrectDirectorySeparatorCharBasedOnString(directory);
+        return directory.TrimEnd(directorySeparator) + directorySeparator + Path.GetFileName(file);
+    }
 }

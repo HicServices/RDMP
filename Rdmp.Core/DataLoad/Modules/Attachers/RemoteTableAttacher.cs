@@ -34,11 +34,11 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
 /// and inserts the results of the query into RAW.
 /// </summary>
-public class RemoteTableAttacher : Attacher, IPluginAttacher
+public class RemoteTableAttacher : RemoteAttacher
 {
     private const string FutureLoadMessage = "Cannot load data from the future";
 
-    public RemoteTableAttacher() : base(true)
+    public RemoteTableAttacher() : base()
     {
     }
 
@@ -289,10 +289,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"{nameof(RAWTableName)}('{RAWTableName}') will be ignored because {nameof(RAWTableToLoad)} has been set",
                 CheckResult.Warning));
-    }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
+        if (HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
+            throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
     protected void CheckTablesExist(ICheckNotifier notifier)
@@ -362,10 +361,9 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
 
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
-            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}";
+            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,DatabaseType)}";
 
         var scheduleMismatch = false;
-
         //if there is a load progress
         if (Progress != null)
             try
@@ -455,6 +453,11 @@ public class RemoteTableAttacher : Attacher, IPluginAttacher
                 throw new Exception("ProgressUpdateStrategy is null but there is a Progress");
 
             ProgressUpdateStrategy.AddAppropriateDisposeStep((ScheduledDataLoadJob)job, _dbInfo);
+        }
+
+        if (SetDeltaReadingToLatestSeenDatePostLoad)
+        {
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
         }
 
 

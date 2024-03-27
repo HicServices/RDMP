@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2023
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
@@ -27,9 +26,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// Data load component for loading RAW tables with records read from a remote database server.
 /// Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
-public class RemoteDatabaseAttacher : Attacher, IPluginAttacher
+public class RemoteDatabaseAttacher : RemoteAttacher
 {
-    public RemoteDatabaseAttacher() : base(true)
+    public RemoteDatabaseAttacher() : base()
     {
     }
 
@@ -54,14 +53,16 @@ False - Trigger an error reporting the missing table(s)
 ")]
     public bool IgnoreMissingTables { get; set; }
 
+
+
+
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
             throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
-    }
 
-    public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
-    {
+        if (HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
+            throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -96,7 +97,6 @@ False - Trigger an error reporting the missing table(s)
                 continue;
             }
 
-
             string sql;
             if (LoadRawColumnsOnly)
             {
@@ -104,13 +104,12 @@ False - Trigger an error reporting the missing table(s)
                     ? tableInfo.GetColumnsAtStage(LoadStage.AdjustRaw)
                     : tableInfo.ColumnInfos;
                 sql =
-                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)}";
+                    $"SELECT {string.Join(",", rawColumns.Select(c => syntaxFrom.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))))} FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbFrom.Server.DatabaseType)}";
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)}";
+                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,RemoteSource.DatabaseType)}";
             }
-
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));
 
@@ -143,7 +142,15 @@ False - Trigger an error reporting the missing table(s)
             job.OnNotify(this, new NotifyEventArgs(
                 source.TotalRowsRead > 0 ? ProgressEventType.Information : ProgressEventType.Warning,
                 $"Finished after reading {source.TotalRowsRead} rows"));
+
+            if (SetDeltaReadingToLatestSeenDatePostLoad)
+            {
+                FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType ,table, job);
+            }
+
         }
+
+
 
         return ExitCodeType.Success;
     }

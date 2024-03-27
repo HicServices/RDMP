@@ -131,7 +131,7 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable
     /// Returns an appropriately typed <see cref="IQuerySyntaxHelper"/> depending on the DatabaseType of the Catalogue that it relates to.
     /// </summary>
     /// <returns></returns>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => new QuerySyntaxHelperFactory().Create(GetDatabaseType());
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => QuerySyntaxHelperFactory.Create(GetDatabaseType());
 
     private DatabaseType? _cachedDatabaseTypeAnswer;
 

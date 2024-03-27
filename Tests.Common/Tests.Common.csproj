@@ -3,7 +3,7 @@
         <PackageId>HIC.RDMP.Plugin.Test</PackageId>
         <version>$(version)</version>
         <title>HIC.RDMP.Plugin.Test</title>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <authors>Health Informatics Centre, University of Dundee</authors>
         <owners>Health Informatics Centre, University of Dundee</owners>
         <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
@@ -36,12 +36,12 @@
         <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
+        <PackageReference Include="Microsoft.SourceLink.GitHub">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="NSubstitute" Version="5.1.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-        <PackageReference Include="NUnit" Version="4.0.1" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="NUnit" />
     </ItemGroup>
 </Project>

@@ -68,6 +68,10 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void LoadFile()
     {
+        if (_processTask.ProcessTaskType == ProcessTaskType.SQLBakFile)
+        {
+            return;
+        }
         _bLoading = true;
         try
         {
@@ -133,7 +137,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
     {
         var ofd = new OpenFileDialog
         {
-            Filter = "Sql Files|*.sql",
+            Filter = _processTask.ProcessTaskType == ProcessTaskType.SQLBakFile ? "BAK Files |*.bak" : "Sql Files|*.sql",
             CheckFileExists = true
         };
 
@@ -156,6 +160,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
             _processTask.Path = ofd.FileName;
             _processTask.SaveToDatabase();
+            
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_processTask));
             LoadFile();
         }

@@ -286,14 +286,14 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void tlvCic_ButtonClick(object sender, CellClickEventArgs e)
     {
-        Common.ExecuteOrCancel(e.Model);
+        Common.ExecuteOrCancel(e.Model, _timeoutControls.Timeout);
     }
 
     public void StartAll()
     {
         lblExecuteAllPhase.Enabled = true;
 
-        Common.StartAll(RebuildClearCacheCommand, RunnerOnPhaseChanged);
+        Common.StartAll(RebuildClearCacheCommand, RunnerOnPhaseChanged, _timeoutControls.Timeout);
     }
 
     private void RunnerOnPhaseChanged(object sender, EventArgs eventArgs)
