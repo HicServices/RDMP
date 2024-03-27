@@ -27,7 +27,7 @@ namespace Rdmp.Core.CommandLine.Runners;
 public sealed partial class PackPluginRunner : IRunner
 {
     private readonly PackOptions _packOpts;
-    public const string PluginPackageSuffix = ".nupkg";
+    public const string PluginPackageSuffix = ".rdmp";
     private const string PluginPackageManifest = ".nuspec";
 
     private static readonly Regex VersionSuffix = VersionSuffixRe();
