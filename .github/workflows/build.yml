@@ -195,7 +195,6 @@ jobs:
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
           mkdir -p dist
-          cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
