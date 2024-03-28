@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extractions now remember the last used pipeline
 - Allow for custom .bak file physical locations during data loads
 - Add ability to have multiple data loads for a single catalogue
+- Allow for Project Specific Catalogues to have multiple extraction identifiers
 
 
 ## [8.1.4] - 2024-02-19
