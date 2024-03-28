@@ -77,7 +77,7 @@ public class UnitTests
     /// <returns></returns>
     protected IBasicActivateItems GetActivator(IRDMPPlatformRepositoryServiceLocator locator = null) =>
         new ConsoleInputManager(locator ?? RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
-            { DisallowInput = true };
+        { DisallowInput = true };
 
     /// <summary>
     /// Override to do stuff before your first instance is constructed
@@ -177,8 +177,9 @@ public class UnitTests
             ti.SaveToDatabase();
 
             var lmd = new LoadMetadata(repository, "MyLoad");
-            cata.LoadMetadata_ID = lmd.ID;
+            lmd.SaveToDatabase();
             cata.SaveToDatabase();
+            lmd.LinkToCatalogue(cata);
             return (T)(object)lmd;
         }
 
@@ -199,14 +200,14 @@ public class UnitTests
         {
             var layout = WhenIHaveA<DashboardLayout>(repository);
             return (T)(object)Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "")
-                { ControlType = "GoodBadCataloguePieChart" });
+            { ControlType = "GoodBadCataloguePieChart" });
         }
 
         if (typeof(T) == typeof(DashboardObjectUse))
         {
             var layout = WhenIHaveA<DashboardLayout>(repository);
             var control = Save(new DashboardControl(repository, layout, typeof(int), 0, 0, 100, 100, "")
-                { ControlType = "GoodBadCataloguePieChart" });
+            { ControlType = "GoodBadCataloguePieChart" });
             var use = new DashboardObjectUse(repository, control, WhenIHaveA<Catalogue>(repository));
             return (T)(object)use;
         }
@@ -569,6 +570,14 @@ public class UnitTests
             return (T)(object)new Memento(repository, commit, MementoType.Add, cata, null, "placeholder");
         }
 
+        if(typeof(T) == typeof(LoadMetadataCatalogueLinkage))
+        {
+            var cata = WhenIHaveA<Catalogue>(repository);
+
+            var lmd = WhenIHaveA<LoadMetadata>(repository);
+
+            return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd,cata);
+        }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
@@ -724,7 +733,7 @@ public class UnitTests
             dbValue = dbValue as string == string.Empty ? null : dbValue;
 
             //all other properties should be legit
-            Assert.That(memValue,Is.EqualTo(dbValue), $"{memObj.GetType().Name} Property {property.Name} differed Memory='{memValue}' and Db='{dbValue}'");
+            Assert.That(memValue, Is.EqualTo(dbValue), $"{memObj.GetType().Name} Property {property.Name} differed Memory='{memValue}' and Db='{dbValue}'");
         }
     }
 
@@ -734,7 +743,7 @@ public class UnitTests
         var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
         var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
 
-        Assert.That(memObjectsArr.Length==dbObjectsArr.Length);
+        Assert.That(memObjectsArr.Length == dbObjectsArr.Length);
 
         for (var i = 0; i < memObjectsArr.Length; i++)
             AssertAreEqual(memObjectsArr[i], dbObjectsArr[i], firstIteration);
