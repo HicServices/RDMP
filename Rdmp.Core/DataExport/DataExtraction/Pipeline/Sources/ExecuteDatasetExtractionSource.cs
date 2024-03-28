@@ -317,10 +317,13 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         _timeSpentBuckettingDates.Stop();
 
         _timeSpentCalculatingDISTINCT.Start();
+        var pks = new List<DataColumn>();
+
         //record unique release identifiers found
         if (includesReleaseIdentifier)
-            foreach (var idx in _extractionIdentifiersidx)
+            foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
+                pks.Add(chunk.Columns[idx]);
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
@@ -340,6 +343,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
             }
 
         _timeSpentCalculatingDISTINCT.Stop();
+        foreach (string name in Request.ColumnsToExtract.Where(c => ((ExtractableColumn)(c)).CatalogueExtractionInformation.IsPrimaryKey).Select(column => ((ExtractableColumn)column).CatalogueExtractionInformation.ToString()))
+        {
+            pks.Add(chunk.Columns[name]);
+        }
+        chunk.PrimaryKey = pks.ToArray();
 
         return chunk;
     }

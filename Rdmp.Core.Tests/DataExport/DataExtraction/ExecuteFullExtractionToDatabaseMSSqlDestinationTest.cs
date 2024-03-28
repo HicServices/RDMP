@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -211,9 +211,11 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
             .ToList();
+
         var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
         var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
+        var argumentAppendDataIfTableExists = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
 
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
         argumentServer.SetValue(_extractionServer);
@@ -222,6 +224,8 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         argumentDbNamePattern.SaveToDatabase();
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
+        argumentAppendDataIfTableExists.SetValue(true);
+        argumentAppendDataIfTableExists.SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component);
 
         var component2 = new PipelineComponent(CatalogueRepository, _pipeline,

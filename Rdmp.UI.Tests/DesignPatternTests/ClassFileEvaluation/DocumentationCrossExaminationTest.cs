@@ -511,6 +511,7 @@ internal class DocumentationCrossExaminationTest
                             relPath = $"./{relPath}";
 
                         var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+                        var markdownLink = $"[{match.Value}]({relPath}#{match.Value})";
 
                         //if it has spaces on either side
                         if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
@@ -524,7 +525,7 @@ internal class DocumentationCrossExaminationTest
                         allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
 
                         //if it is a novel occurrence
-                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
+                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine) && !allLines.Contains(markdownLink) && !suggestedLinks.ContainsValue(markdownLink))
                         {
                             suggestedLinks.Add(match.Value, suggestedLine);
                             problems.Add(
