@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add ability to have multiple data loads for a single catalogue
 - Allow for Project Specific Catalogues to have multiple extraction identifiers
 - Fix issue with notification popups being inaccessable when RDMP is minimised
+- Allow for Catalogues with Non-Core extraction categories to be made Project specific
 - Bump coverlet.collector from 6.0.0 to 6.0.1
 - Bump svenstaro/upload-release-action from 2.7.0 to 2.9.0 
 - Bump Autoupdater.NET.Official from 1.8.4 to 1.8.5 
