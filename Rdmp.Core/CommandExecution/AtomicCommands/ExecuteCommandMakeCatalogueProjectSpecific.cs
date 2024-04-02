@@ -115,9 +115,5 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (ei.Count(e => e.IsExtractionIdentifier) < 1)
             SetImpossible("Catalogue must have at least 1 IsExtractionIdentifier column");
 
-        if (ei.Any(e =>
-                e.ExtractionCategory != ExtractionCategory.Core &&
-                e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
-            SetImpossible("All existing ExtractionInformations must be ExtractionCategory.Core");
     }
 }
