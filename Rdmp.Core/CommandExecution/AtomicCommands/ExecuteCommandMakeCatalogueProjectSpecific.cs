@@ -59,7 +59,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
                 $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
 
         eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
         {
             ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             ei.SaveToDatabase();
