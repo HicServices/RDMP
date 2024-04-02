@@ -86,7 +86,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 "age varchar(50),"
             };
 
-            if(createIdentity)
+            if (createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -900,9 +900,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
     }
 
 
-
     [Test]
-    public void MySqlTest_ReextractTheSameData()
+    public void MySqlTest_ReextractTheSameDataWithNoPKs()
     {
         var token = new GracefulCancellationToken();
 
@@ -921,7 +920,6 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt.Columns.Add("mydate", typeof(string));
         dt.Columns.Add("myLegitDateTime", typeof(DateTime));
         dt.Columns.Add("mynullcol", typeof(string));
-
 
         //drop the millisecond part
         var now = DateTime.Now;
@@ -967,6 +965,182 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             {
                 Assert.That(r.Read());
                 Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
+        }
+
+        db.Drop();
+    }
+
+    [Test]
+    public void MySqlTest_ReextractTheSameData()
+    {
+        var token = new GracefulCancellationToken();
+
+        var db = GetCleanedServer(DatabaseType.MySql);
+
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+
+        using var dt = new DataTable();
+        dt.Columns.Add("mystringcol", typeof(string));
+        dt.Columns.Add("mynum", typeof(string));
+        dt.Columns.Add("mydate", typeof(string));
+        dt.Columns.Add("myLegitDateTime", typeof(DateTime));
+        dt.Columns.Add("mynullcol", typeof(string));
+        dt.PrimaryKey = new DataColumn[]
+        {
+            new DataColumn("mystringcol")
+        };
+
+        //drop the millisecond part
+        var now = DateTime.Now;
+        now = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
+        dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now, null });
+        dt.TableName = "DataTableUploadDestinationTests";
+
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        var tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
+        }
+
+        db.Drop();
+    }
+
+    [Test]
+    public void MySqlTest_ReextractWithNewData()
+    {
+        var token = new GracefulCancellationToken();
+
+        var db = GetCleanedServer(DatabaseType.MySql);
+
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+
+        using var dt = new DataTable();
+        dt.Columns.Add("mystringcol", typeof(string));
+        dt.Columns.Add("mynum", typeof(string));
+        dt.Columns.Add("mydate", typeof(string));
+        dt.Columns.Add("myLegitDateTime", typeof(DateTime));
+        dt.Columns.Add("mynullcol", typeof(string));
+
+
+        //drop the millisecond part
+        var now = DateTime.Now;
+        now = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+
+        dt.Rows.Add(new object[] { "Anhoy there \"mates\"", "999", "2001-01-01", now, null });
+        dt.TableName = "DataTableUploadDestinationTests";
+
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        var tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(1));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        dt.Rows.Add(new object[] { "This is the second entry", "999", "2001-01-01", now, null });
+
+
+        destination = new DataTableUploadDestination();
+        destination.AppendDataIfTableExists = true;
+        destination.PreInitialize(db, toConsole);
+        destination.AllowResizingColumnsAtUploadTime = true;
+        destination.ProcessPipelineData(dt, toConsole, token);
+
+        destination.Dispose(toConsole, null);
+
+        tbl = db.ExpectTable("DataTableUploadDestinationTests");
+        Assert.Multiple(() =>
+        {
+            Assert.That(tbl.Exists());
+            Assert.That(tbl.GetRowCount(), Is.EqualTo(2));
+            Assert.That(tbl.DiscoverColumn("mynum").DataType.SQLType, Is.EqualTo("int"));
+        });
+
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            var r = db.Server.GetCommand(tbl.GetTopXSql(10), con).ExecuteReader();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("Anhoy there \"mates\""));
+                Assert.That((int)r["mynum"], Is.EqualTo(999));
+                Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
+                Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
+                Assert.That(r["mynullcol"], Is.EqualTo(DBNull.Value));
+            });
+            Assert.Multiple(() =>
+            {
+                Assert.That(r.Read());
+                Assert.That((string)r["mystringcol"], Is.EqualTo("This is the second entry"));
                 Assert.That((int)r["mynum"], Is.EqualTo(999));
                 Assert.That((DateTime)r["mydate"], Is.EqualTo(new DateTime(2001, 1, 1)));
                 Assert.That((DateTime)r["myLegitDateTime"], Is.EqualTo(now));
