@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow for custom .bak file physical locations during data loads
 - Add ability to have multiple data loads for a single catalogue
 - Allow for Project Specific Catalogues to have multiple extraction identifiers
+- Allow for Catalogues with Non-Core extraction categories to be made Project specific
 
 
 ## [8.1.4] - 2024-02-19
