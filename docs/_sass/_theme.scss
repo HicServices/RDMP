@@ -1,4 +1,28 @@
 // Structural elements
+
+#research-data-managment-platform {
+  color: $bodyColour;
+}
+
+.article h1 {
+  display:none;
+}
+
+.article {
+  display:flex;
+  flex-direction:column;
+}
+
+p {
+  margin-left:auto;
+  margin-right:auto;
+}
+
+#features {
+  margin-left:auto;
+  margin-right:auto;
+}
+
 body {
   background: $backgroundColour;
   color: $bodyColour;
