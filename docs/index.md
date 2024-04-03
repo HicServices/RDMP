@@ -10,11 +10,12 @@ excerpt: "Research Data Management Platform (RDMP) is an open source application
 
 ## Features
 
-- Reproducable and Reusable Cohort Discovery
-- Modular Data Ingestion Pipelines
-- Data Quality Analysis tools
-- Data Anonymisation
-- Reusable Extraction Pipelines
+- Effortlessly curate and manage your data through RDMP's modular data pipelining suite
+- Efficiently integrate with external metadata catalogues to promote your work from one simple interface.
+- RDMP Simplifies the the cohort discovery experience, allowing you to discover even the most complex of cohorts with ease
+- Streamline the anonimisation and extraction of data from your datasets, allowing you to configure them one and run again and again.
+
+
  
 
 {% include button.html text="Download RDMP" icon="github" link="https://github.com/HicServices/RDMP/releases/latest" color="#0366d6" %} {% include button.html text="Get In Touch ✉️" link="mailto:rdmp-support@dundee.ac.uk" color="#f68140" %}
