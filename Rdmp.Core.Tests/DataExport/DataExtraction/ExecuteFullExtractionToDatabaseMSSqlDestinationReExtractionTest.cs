@@ -12,6 +12,7 @@ using System.Linq;
 using Amazon.Runtime.Internal.Transform;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
+using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
@@ -36,10 +37,10 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
     private const string _expectedTableName = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest_TestTable";
     private ColumnInfo _columnToTransform;
     private Pipeline _pipeline;
-    private DiscoveredTable tbl;
-    private SupportingSQLTable sql;
+    DiscoveredTable tbl;
+    SupportingSQLTable sql;
 
-    //[Test]
+    [Test]
     public void SQLServerDestinationReExtraction()
     {
         DiscoveredDatabase dbToExtractTo = null;
@@ -102,7 +103,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
                 new GracefulCancellationToken());
 
             Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
-          
+
             returnCode = runner.Run(
                RepositoryLocator,
                ThrowImmediatelyDataLoadEventListener.Quiet,
@@ -139,128 +140,128 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
     }
 
     //[Test]
-    public void SQLServerDestinationReExtractionwithNewData()
-    {
-        DiscoveredDatabase dbToExtractTo = null;
+    //    public void SQLServerDestinationReExtractionwithNewData()
+    //    {
+    //        DiscoveredDatabase dbToExtractTo = null;
 
-        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
-        _columnToTransform = _columnInfos.Single(c =>
-            c.GetRuntimeName().Equals("DateOfBirth", StringComparison.CurrentCultureIgnoreCase));
+    //        var ci = new CatalogueItem(CatalogueRepository, _catalogue, "YearOfBirth");
+    //        _columnToTransform = _columnInfos.Single(c =>
+    //            c.GetRuntimeName().Equals("DateOfBirth", StringComparison.CurrentCultureIgnoreCase));
 
-        var transform = $"YEAR({_columnToTransform.Name})";
+    //        var transform = $"YEAR({_columnToTransform.Name})";
 
 
-        if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
-            .All(ei => ei.GetRuntimeName() != "YearOfBirth"))
-        {
-            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform)
-            {
-                Alias = "YearOfBirth",
-                ExtractionCategory = ExtractionCategory.Core
-            };
-            ei.SaveToDatabase();
+    //        if (_catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+    //            .All(ei => ei.GetRuntimeName() != "YearOfBirth"))
+    //        {
+    //            var ei = new ExtractionInformation(CatalogueRepository, ci, _columnToTransform, transform)
+    //            {
+    //                Alias = "YearOfBirth",
+    //                ExtractionCategory = ExtractionCategory.Core
+    //            };
+    //            ei.SaveToDatabase();
 
-            //make it part of the ExtractionConfiguration
-            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
-                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
-            {
-                Alias = ei.Alias
-            };
-            newColumn.SaveToDatabase();
+    //            //make it part of the ExtractionConfiguration
+    //            var newColumn = new ExtractableColumn(DataExportRepository, _selectedDataSet.ExtractableDataSet,
+    //                (ExtractionConfiguration)_selectedDataSet.ExtractionConfiguration, ei, 0, ei.SelectSQL)
+    //            {
+    //                Alias = ei.Alias
+    //            };
+    //            newColumn.SaveToDatabase();
 
-            _extractableColumns.Add(newColumn);
-        }
+    //            _extractableColumns.Add(newColumn);
+    //        }
 
-        CreateLookupsEtc();
+    //        CreateLookupsEtc();
 
-        try
-        {
-            _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
-            _configuration.SaveToDatabase();
+    //        try
+    //        {
+    //            _configuration.Name = "ExecuteFullExtractionToDatabaseMSSqlDestinationTest";
+    //            _configuration.SaveToDatabase();
 
-            var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
-            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
-            if (dbToExtractTo.Exists())
-                dbToExtractTo.Drop();
+    //            var dbname = TestDatabaseNames.GetConsistentName($"{_project.Name}_{_project.ProjectNumber}");
+    //            dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
+    //            if (dbToExtractTo.Exists())
+    //                dbToExtractTo.Drop();
 
-            //ExecuteRunner();
-            var pipeline = SetupPipeline();
+    //            //ExecuteRunner();
+    //            var pipeline = SetupPipeline();
 
-            var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
-            {
-                Command = CommandLineActivity.run,
-                ExtractionConfiguration = _configuration.ID.ToString(),
-                ExtractGlobals = true,
-                Pipeline = pipeline.ID.ToString()
-            });
+    //            var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
+    //            {
+    //                Command = CommandLineActivity.run,
+    //                ExtractionConfiguration = _configuration.ID.ToString(),
+    //                ExtractGlobals = true,
+    //                Pipeline = pipeline.ID.ToString()
+    //            });
 
-            var returnCode = runner.Run(
-                RepositoryLocator,
-                ThrowImmediatelyDataLoadEventListener.Quiet,
-                ThrowImmediatelyCheckNotifier.Quiet,
-                new GracefulCancellationToken());
+    //            var returnCode = runner.Run(
+    //                RepositoryLocator,
+    //                ThrowImmediatelyDataLoadEventListener.Quiet,
+    //                ThrowImmediatelyCheckNotifier.Quiet,
+    //                new GracefulCancellationToken());
 
-            Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
-            tbl.Insert(new Dictionary<string, object>
-            {
-                { "chi","1111111111"},
-                {"Healthboard","T"},
-                {"SampleDate", new DateTime(2001, 1, 2) },
-                {"SampleType","Blood"},
-                {"TestCode","1234"},
-                {"Result",1},
-                {"Labnumber","1"},
-                {"QuantityUnit","ml"},
-                {"ReadCodeValue","1"},
-                {"ArithmeticComparator","="},
-                {"Interpretation","!"},
-                {"RangeHighValue",1},
-                {"RangeLowValue",1}
-            });
-            sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
-            sql.SaveToDatabase();
-            runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
-            {
-                Command = CommandLineActivity.run,
-                ExtractionConfiguration = _configuration.ID.ToString(),
-                ExtractGlobals = true,
-                Pipeline = pipeline.ID.ToString()
-            });
+    //            Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
+    //            tbl.Insert(new Dictionary<string, object>
+    //            {
+    //                { "chi","1111111111"},
+    //                {"Healthboard","T"},
+    //                {"SampleDate", new DateTime(2001, 1, 2) },
+    //                {"SampleType","Blood"},
+    //                {"TestCode","1234"},
+    //                {"Result",1},
+    //                {"Labnumber","1"},
+    //                {"QuantityUnit","ml"},
+    //                {"ReadCodeValue","1"},
+    //                {"ArithmeticComparator","="},
+    //                {"Interpretation","!"},
+    //                {"RangeHighValue",1},
+    //                {"RangeLowValue",1}
+    //            });
+    //            sql.SQL = $"SELECT * FROM {tbl.GetFullyQualifiedName()}";
+    //            sql.SaveToDatabase();
+    //            runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
+    //            {
+    //                Command = CommandLineActivity.run,
+    //                ExtractionConfiguration = _configuration.ID.ToString(),
+    //                ExtractGlobals = true,
+    //                Pipeline = pipeline.ID.ToString()
+    //            });
 
-            returnCode = runner.Run(
-               RepositoryLocator,
-               ThrowImmediatelyDataLoadEventListener.Quiet,
-               ThrowImmediatelyCheckNotifier.Quiet,
-               new GracefulCancellationToken());
+    //            returnCode = runner.Run(
+    //               RepositoryLocator,
+    //               ThrowImmediatelyDataLoadEventListener.Quiet,
+    //               ThrowImmediatelyCheckNotifier.Quiet,
+    //               new GracefulCancellationToken());
 
-            Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
+    //            Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
-            var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
-            Assert.That(destinationTable.Exists());
+    //            var destinationTable = dbToExtractTo.ExpectTable(_expectedTableName);
+    //            Assert.That(destinationTable.Exists());
 
-            var dt = destinationTable.GetDataTable();
+    //            var dt = destinationTable.GetDataTable();
 
-            Assert.That(dt.Rows, Has.Count.EqualTo(2));
-            Assert.Multiple(() =>
-            {
-                Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
-                Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
-                Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
+    //            Assert.That(dt.Rows, Has.Count.EqualTo(2));
+    //            Assert.Multiple(() =>
+    //            {
+    //                Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
+    //                Assert.That(dt.Rows[0]["DateOfBirth"], Is.EqualTo(new DateTime(2001, 1, 1)));
+    //                Assert.That(dt.Rows[0]["YearOfBirth"], Is.EqualTo(2001));
 
-                Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
-                Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
-            });
+    //                Assert.That(destinationTable.DiscoverColumn("DateOfBirth").DataType.SQLType, Is.EqualTo(_columnToTransform.Data_type));
+    //                Assert.That(destinationTable.DiscoverColumn("YearOfBirth").DataType.SQLType, Is.EqualTo("int"));
+    //            });
 
-            AssertLookupsEtcExist(dbToExtractTo);
-        }
-        finally
-        {
-            if (dbToExtractTo?.Exists() == true)
-                dbToExtractTo.Drop();
+    //            AssertLookupsEtcExist(dbToExtractTo);
+    //        }
+    //        finally
+    //        {
+    //            if (dbToExtractTo?.Exists() == true)
+    //                dbToExtractTo.Drop();
 
-            _pipeline?.DeleteInDatabase();
-        }
-    }
+    //            _pipeline?.DeleteInDatabase();
+    //        }
+    //    }
 
     private static void AssertLookupsEtcExist(DiscoveredDatabase dbToExtractTo)
     {
