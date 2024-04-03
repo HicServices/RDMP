@@ -47,5 +47,8 @@ public enum ExtractionCategory
     /// </summary>
     Any,
 
+    /// <summary>
+    /// Value used for improved UI experience, will be set to null when executed
+    /// </summary>
     NotExtractable
 }
