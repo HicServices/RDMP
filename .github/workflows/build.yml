@@ -243,7 +243,7 @@ jobs:
           7z a -txz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar.xz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
           rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
       - name: Build Nuget packages
-        # if: contains(github.ref, 'refs/tags/v')
+        if: contains(github.ref, 'refs/tags/v')
         shell: bash
         run: |
           for i in Rdmp.Core/Rdmp.Core.csproj Rdmp.UI/Rdmp.UI.csproj Tests.Common/Tests.Common.csproj
