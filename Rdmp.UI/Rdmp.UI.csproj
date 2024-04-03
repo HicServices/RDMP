@@ -51,11 +51,15 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.XmlSerializer.Generator" />
 		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
 		<PackageReference Include="Scintilla.NET" />
 		<PackageReference Include="System.Resources.Extensions" />
 		<PackageReference Include="VPKSoft.ScintillaLexers.NET" />
 		<PackageReference Include="WeCantSpell.Hunspell" />
+	</ItemGroup>
+	<ItemGroup>
+		<DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
