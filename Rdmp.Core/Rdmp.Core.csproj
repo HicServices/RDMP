@@ -15,7 +15,6 @@
 		<description>Core package for plugin development</description>
 		<copyright>Copyright 2018-2019</copyright>
 		<TargetFramework>net8.0</TargetFramework>
-		<SGenUseProxyTypes>false</SGenUseProxyTypes>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
