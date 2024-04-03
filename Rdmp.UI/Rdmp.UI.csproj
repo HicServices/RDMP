@@ -51,7 +51,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.XmlSerializer.Generator" />
 		<PackageReference Include="ObjectListView.Repack.NET6Plus" />
 		<PackageReference Include="Scintilla.NET" />
 		<PackageReference Include="System.Resources.Extensions" />
