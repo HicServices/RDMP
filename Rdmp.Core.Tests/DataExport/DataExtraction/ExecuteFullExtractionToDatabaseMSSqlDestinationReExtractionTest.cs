@@ -85,7 +85,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
             if (dbToExtractTo.Exists())
                 dbToExtractTo.Drop();
 
-            //ExecuteRunner();
             var pipeline = SetupPipeline();
 
             var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
@@ -104,6 +103,42 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
 
             Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
+            var entry = tbl.GetDataTable(1).Rows[0].ItemArray;
+
+            tbl.Insert(new Dictionary<string, object>
+                {
+                    { "chi",entry[0]},
+                    {"Healthboard",entry[1]},
+                    {"SampleDate", entry[2] },
+                    {"SampleType",entry[3]},
+                    {"TestCode",entry[4]},
+                    {"Result",entry[5]},
+                    {"Labnumber",entry[6]},
+                    {"QuantityUnit",entry[7]},
+                    {"ReadCodeValue",entry[8]},
+                    {"ArithmeticComparator",entry[9] },
+                    {"Interpretation",entry[10]},
+                    {"RangeHighValue",entry[11]},
+                    {"RangeLowValue",entry[12]}
+                });
+
+            //tbl.Insert(new Dictionary<string, object>
+            //    {
+            //        { "chi","1111111111"},
+            //        {"Healthboard","T"},
+            //        {"SampleDate", new DateTime(2001, 1, 2) },
+            //        {"SampleType","Blood"},
+            //        {"TestCode","1234"},
+            //        {"Result",1},
+            //        {"Labnumber","1"},
+            //        {"QuantityUnit","ml"},
+            //        {"ReadCodeValue","1"},
+            //        {"ArithmeticComparator","="},
+            //        {"Interpretation","!"},
+            //        {"RangeHighValue",1},
+            //        {"RangeLowValue",1}
+            //    });
+            pipeline = SetupPipeline();
             returnCode = runner.Run(
                RepositoryLocator,
                ThrowImmediatelyDataLoadEventListener.Quiet,
@@ -117,7 +152,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
 
             var dt = destinationTable.GetDataTable();
 
-            Assert.That(dt.Rows, Has.Count.EqualTo(1));
+            Assert.That(dt.Rows, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(dt.Rows[0]["ReleaseID"], Is.EqualTo(_cohortKeysGenerated[_cohortKeysGenerated.Keys.First()].Trim()));
