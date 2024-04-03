@@ -95,10 +95,10 @@ encoding: utf-8 # Make sure the encoding is right
 lang: en-GB # Set the site language
 title: "HIC Services" # Site name or title, also used in jekyll-seo-tag
 logo: "/assets/logos/main.png" # Site logo, also used in jekyll-seo-tag
-description: "Alembic is a starting point for Jekyll projects. Rather than starting from scratch, this boilerplate is designed to get the ball rolling immediately" # Site description and default description, also used in jekyll-seo-tag
+description: "Research Data Management Platform (RDMP) is an open source application for the loading, linking, anonymisation and extraction of datasets for reaearch purposes." # Site description and default description, also used in jekyll-seo-tag
 # url: "" # Site url, also used in jekyll-seo-tag
 baseurl: ""
-repo: "https://github.com/daviddarnes/alembic"
+repo: "https://github.com/hicservices/RDMP"
 email: "rdmp-support@dundee.ac.uk"
 # disqus: "alembic-1" # Blog post comments, uncomment the option and set the site ID from your Disqus account
 # date_format: "%-d %B %Y" # Blog post date formatting using placeholder formatting
@@ -137,8 +137,8 @@ navigation_header:
 #   url: https://github.com/daviddarnes/alembic
 
 navigation_footer:
-- title: Created by David Darnes
-  url: https://darn.es
+- title: Created by HIC Services
+  url: https://dundee.ac.uk/hic
 
 social_links: # Appears in sidebar. Set the urls then uncomment and comment out as desired
   Twitter: https://twitter.com/dataonamission
@@ -158,5 +158,5 @@ fonts:
   preconnect_urls:
     - https://fonts.gstatic.com
   font_urls:
-    - https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap
+    - https://fonts.googleapis.com/css2?family=Reddit+Mono:wght@200..900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap
 theme: alembic-jekyll-theme
