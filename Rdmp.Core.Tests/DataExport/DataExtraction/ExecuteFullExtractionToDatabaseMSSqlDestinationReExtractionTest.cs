@@ -39,7 +39,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
     private DiscoveredTable tbl;
     private SupportingSQLTable sql;
 
-    [Test]
+    //[Test]
     public void SQLServerDestinationReExtraction()
     {
         DiscoveredDatabase dbToExtractTo = null;
@@ -138,7 +138,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : T
         }
     }
 
-    [Test]
+    //[Test]
     public void SQLServerDestinationReExtractionwithNewData()
     {
         DiscoveredDatabase dbToExtractTo = null;

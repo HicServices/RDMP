@@ -211,11 +211,9 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
             .ToList();
-
         var argumentServer = destinationArguments.Single(a => a.Name == "TargetDatabaseServer");
         var argumentDbNamePattern = destinationArguments.Single(a => a.Name == "DatabaseNamingPattern");
         var argumentTblNamePattern = destinationArguments.Single(a => a.Name == "TableNamingPattern");
-        var argumentAppendDataIfTableExists = destinationArguments.Single(a => a.Name == "AppendDataIfTableExists");
 
         Assert.That(argumentServer.Name, Is.EqualTo("TargetDatabaseServer"));
         argumentServer.SetValue(_extractionServer);
@@ -224,8 +222,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest : TestsRequirin
         argumentDbNamePattern.SaveToDatabase();
         argumentTblNamePattern.SetValue("$c_$d");
         argumentTblNamePattern.SaveToDatabase();
-        argumentAppendDataIfTableExists.SetValue(true);
-        argumentAppendDataIfTableExists.SaveToDatabase();
         AdjustPipelineComponentDelegate?.Invoke(component);
 
         var component2 = new PipelineComponent(CatalogueRepository, _pipeline,
