@@ -58,9 +58,6 @@
 		<PackageReference Include="WeCantSpell.Hunspell" />
 	</ItemGroup>
 	<ItemGroup>
-		<DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
-	</ItemGroup>
-	<ItemGroup>
 		<ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
 	</ItemGroup>
 	<ItemGroup>

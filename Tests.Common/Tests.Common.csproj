@@ -44,7 +44,4 @@
         <PackageReference Include="Microsoft.NET.Test.Sdk" />
         <PackageReference Include="NUnit" />
     </ItemGroup>
-	<ItemGroup>
-		<DotNetCliToolReference Include="Microsoft.XmlSerializer.Generator" Version="8.0.0" />
-	</ItemGroup>
 </Project>
