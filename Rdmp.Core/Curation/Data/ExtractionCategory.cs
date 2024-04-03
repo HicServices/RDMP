@@ -45,5 +45,7 @@ public enum ExtractionCategory
     /// <summary>
     /// Value can only be used for fetching ExtractionInformations.  This means that all will be returned.  You cannot set a column to have an ExtractionCategory of Any
     /// </summary>
-    Any
+    Any,
+
+    NotExtractable
 }
