@@ -25,8 +25,11 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
     public override string ToString()
     {
         var directory = LoadMetadata.GetRootDirectory();
-        if (directory == null) 
+        if (directory == null)
+        {
+            if (LoadMetadata.LocationOfForLoadingDirectory == null) return "No Load Metadata Set";
             return "Custom";
+        }
         return directory.ToString();
     }
 

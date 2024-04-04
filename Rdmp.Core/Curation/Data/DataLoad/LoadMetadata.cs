@@ -62,14 +62,19 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private DateTime? _lastLoadTime;
 
 
+    public string DefaultForLoadingPath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}ForLoading";
+    public string DefaultForArchivingPath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}ForArchiving";
+    public string DefaultExecutablesPath = $"${Path.DirectorySeparatorChar}Executables";
+    public string DefaultCachePath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}Cache";
+
     public DirectoryInfo GetRootDirectory()
     {
         if (!string.IsNullOrWhiteSpace(_locationOfForLoadingDirectory) && !string.IsNullOrWhiteSpace(_locationOfForArchivingDirectory) && !string.IsNullOrWhiteSpace(_locationOfExecutablesDirectory) && !string.IsNullOrWhiteSpace(_locationOfCacheDirectory))
         {
-            var forLoadingRoot = _locationOfForLoadingDirectory.Replace("ForLoading", "");
-            var forArchivingRoot = _locationOfForArchivingDirectory.Replace("ForArchiving", "");
-            var forExecutablesRoot = _locationOfExecutablesDirectory.Replace("Executables", "");
-            var forCacheRoot = _locationOfCacheDirectory.Replace("Cache", "");
+            var forLoadingRoot = _locationOfForLoadingDirectory.Replace(DefaultForLoadingPath, "");
+            var forArchivingRoot = _locationOfForArchivingDirectory.Replace(DefaultForArchivingPath, "");
+            var forExecutablesRoot = _locationOfExecutablesDirectory.Replace(DefaultExecutablesPath, "");
+            var forCacheRoot = _locationOfCacheDirectory.Replace(DefaultCachePath, "");
             if (forLoadingRoot == forArchivingRoot && forExecutablesRoot == forCacheRoot && forArchivingRoot == forExecutablesRoot)
             {
                 return new DirectoryInfo(forLoadingRoot);
