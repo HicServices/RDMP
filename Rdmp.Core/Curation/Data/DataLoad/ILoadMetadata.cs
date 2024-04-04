@@ -59,7 +59,6 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// Returns all datasets this load is responsible for supplying data to.  This determines which <see cref="TableInfo"/> are
     /// available during RAW=>STAGING=>LIVE migration (the super set of all tables underlying all catalogues).
     /// 
-    /// <para>See also <see cref="ICatalogue.LoadMetadata_ID"/></para>
     /// </summary>
     /// <returns></returns>
     IEnumerable<ICatalogue> GetAllCatalogues();

@@ -22,8 +22,8 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
 
         Assert.Multiple(() =>
         {
-            Assert.That(cata1.LoadMetadata, Is.Null);
-            Assert.That(cata2.LoadMetadata, Is.Null);
+            Assert.That(cata1.LoadMetadatas(), Is.Empty);
+            Assert.That(cata2.LoadMetadatas(), Is.Empty);
         });
 
         var lmd = new LoadMetadata(RepositoryLocator.CatalogueRepository, "mylmd");
@@ -36,8 +36,8 @@ internal class TestExecuteCommandAssociateCatalogueWithLoadMetadata : CommandCli
 
         Assert.Multiple(() =>
         {
-            Assert.That(cata1.LoadMetadata_ID, Is.EqualTo(lmd.ID));
-            Assert.That(cata2.LoadMetadata, Is.Null);
+            Assert.That(cata1.LoadMetadatas()[0].ID, Is.EqualTo(lmd.ID));
+            Assert.That(cata2.LoadMetadatas(), Is.Empty);
         });
     }
 }

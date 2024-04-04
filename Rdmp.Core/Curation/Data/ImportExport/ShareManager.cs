@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -318,8 +319,8 @@ public class ShareManager
         bool deleteExisting)
     {
         var created = new List<IMapsDirectlyToDatabaseTable>();
-
         foreach (var sd in toImport)
+
             try
             {
                 if (deleteExisting)
@@ -331,13 +332,29 @@ public class ShareManager
                 var instance = (IMapsDirectlyToDatabaseTable)ObjectConstructor.ConstructIfPossible(sd.Type, this, sd) ??
                                throw new ObjectLacksCompatibleConstructorException(
                                    $"Could not find a ShareManager constructor for '{sd.Type}'");
+                if (instance.GetType() == typeof(LoadMetadataCatalogueLinkage))
+                {
+                    //find most recent lmd and all catalogues since, then link them
+                    var latestLMD = created.OfType<LoadMetadata>().LastOrDefault();
+                    if (latestLMD != null)
+                    {
+                        var index = created.IndexOf(latestLMD);
+                        var cataloguesToLink = created.Skip(index).OfType<Catalogue>();
+                        foreach (var catalogue in cataloguesToLink)
+                        {
+                            latestLMD.LinkToCatalogue(catalogue);
+
+                        }
+                        continue;
+                    }
+                }
                 created.Add(instance);
+
             }
             catch (Exception e)
             {
                 throw new Exception($"Error constructing {sd.Type}", e);
             }
-
         return created;
     }
 
@@ -446,7 +463,7 @@ public class ShareManager
             //copy all the values out of the share definition / database copy
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
                 //don't update any ID columns or any with relationships on UPDATE
-                if (propertiesDictionary.TryGetValue(prop.Name,out var value) && finder.GetAttribute(prop) == null)
+                if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
                 {
                     SetValue(prop, value, toCreate);
                 }

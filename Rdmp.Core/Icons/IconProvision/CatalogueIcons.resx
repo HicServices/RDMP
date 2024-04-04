@@ -538,9 +538,6 @@
   <data name="PipelineComponentArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\PipelineComponentArgument.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="AggregateContinuousDateAxis" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\AggregateContinuousDateAxis.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="AggregateTopX" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AggregateTopX.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -753,5 +750,11 @@
   </data>
   <data name="Dataset" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Dataset.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AggregateContinuousDateAxis" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AggregateContinuousDateAxis.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="LoadMetadataCatalogueLinkage" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\LoadMetadataCatalogueLinkage.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

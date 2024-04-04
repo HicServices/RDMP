@@ -200,7 +200,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <summary>
     /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
     /// 
-    /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadata_ID"/> on some of your datasets</para>
+    /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadatas"/> on some of your datasets</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -241,6 +241,19 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
+    public void LinkToCatalogue(ICatalogue catalogue) {
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository,this,catalogue);
+        linkage.SaveToDatabase();
+    }
+
+    public void UnlinkFromCatalogue(ICatalogue catalogue)
+    {
+        foreach(var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
+        {
+            l.DeleteInDatabase();
+        }
+    }
+
     /// <inheritdoc/>
     public override void DeleteInDatabase()
     {
@@ -257,7 +270,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues() => Repository.GetAllObjectsWithParent<Catalogue>(this);
+    public IEnumerable<ICatalogue> GetAllCatalogues() {
+        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
+        return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
+    }
 
     /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
