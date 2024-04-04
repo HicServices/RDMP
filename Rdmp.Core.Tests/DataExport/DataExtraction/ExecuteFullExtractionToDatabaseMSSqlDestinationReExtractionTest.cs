@@ -76,11 +76,17 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
 
         // find the excel loading pipeline
         var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+
+        if (pipe is null)
+        {
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+        }
 
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
@@ -193,7 +199,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         ec.SaveToDatabase();
 
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 1");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -210,7 +216,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
             Password = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExplicitPasswordIfAny
         };
         _extractionServer.SaveToDatabase();
-        
+
         argumentServer.SetValue(_extractionServer);
         argumentServer.SaveToDatabase();
         argumentDbNamePattern.SetValue($"{TestDatabaseNames.Prefix}$p_$n");
@@ -254,7 +260,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
-    
+
 
         var destinationTable = dbToExtractTo.ExpectTable("ext1_bob");
         Assert.That(destinationTable.Exists());
@@ -298,12 +304,16 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
 
         // find the excel loading pipeline
         var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
-
+        if (pipe is null)
+        {
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+        }
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
             new ThrowImmediatelyActivator(RepositoryLocator),
@@ -415,7 +425,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         ec.SaveToDatabase();
 
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 2");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
@@ -557,11 +567,18 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         // Create the 'out of the box' RDMP pipelines (which includes an excel bulk importer pipeline)
         var creator = new CataloguePipelinesAndReferencesCreation(
             RepositoryLocator, UnitTestLoggingConnectionString, DataQualityEngineConnectionString);
-        creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+
 
         // find the excel loading pipeline
         var pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
             .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+
+        if (pipe is null)
+        {
+            creator.CreatePipelines(new PlatformDatabaseCreationOptions { });
+            pipe = CatalogueRepository.GetAllObjects<Pipeline>().OrderByDescending(p => p.ID)
+            .FirstOrDefault(p => p.Name.Contains("BULK INSERT: CSV Import File (automated column-type detection)"));
+        }
 
         // run an import of the file using the pipeline
         var cmd = new ExecuteCommandCreateNewCatalogueByImportingFile(
