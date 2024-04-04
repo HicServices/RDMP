@@ -35,7 +35,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         try
         {
-            _loadDirectory = new LoadDirectory(string.IsNullOrWhiteSpace(_loadMetadata.LocationOfFlatFiles) ? _loadMetadata.LocationOfFlatFiles : _loadMetadata.LocationOfForLoadingDirectory);
+            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfForLoadingDirectory);
         }
         catch (Exception)
         {

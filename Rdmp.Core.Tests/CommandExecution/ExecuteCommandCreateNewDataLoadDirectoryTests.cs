@@ -31,14 +31,17 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
         if (Directory.Exists(root)) Directory.Delete(root, true);
         var lmd = WhenIHaveA<LoadMetadata>();
 
-        Assert.That(lmd.LocationOfFlatFiles, Is.Null);
+        Assert.That(lmd.LocationOfForLoadingDirectory, Is.Null);
 
         Run("CreateNewDataLoadDirectory", $"LoadMetadata:{lmd.ID}", root);
 
         Assert.Multiple(() =>
         {
             Assert.That(Directory.Exists(root));
-            Assert.That(lmd.LocationOfFlatFiles, Is.EqualTo(root));
+            Assert.That(lmd.LocationOfForLoadingDirectory, Is.EqualTo($"{root}/ForLoading"));
+            Assert.That(lmd.LocationOfForArchivingDirectory, Is.EqualTo($"{root}/ForArchiving"));
+            Assert.That(lmd.LocationOfExecutablesDirectory, Is.EqualTo($"{root}/Executables"));
+            Assert.That(lmd.LocationOfCacheDirectory, Is.EqualTo($"{root}/Cache"));
         });
     }
 
@@ -49,7 +52,6 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
         if (Directory.Exists(root)) Directory.Delete(root, true);
         var lmd = WhenIHaveA<LoadMetadata>();
 
-        Assert.That(lmd.LocationOfFlatFiles, Is.Null);
         Assert.That(lmd.LocationOfForLoadingDirectory, Is.Null);
         Assert.That(lmd.LocationOfForArchivingDirectory, Is.Null);
         Assert.That(lmd.LocationOfExecutablesDirectory, Is.Null);

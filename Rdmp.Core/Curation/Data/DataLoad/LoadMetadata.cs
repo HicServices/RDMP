@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -47,7 +48,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 {
     #region Database Properties
 
-    private string _locationOfFlatFiles;
     private string _locationOfForLoadingDirectory;
     private string _locationOfForArchivingDirectory;
     private string _locationOfExecutablesDirectory;
@@ -61,31 +61,45 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
 
-    /// <inheritdoc/>
-    [AdjustableLocation]
-    public string LocationOfFlatFiles
+
+    public DirectoryInfo GetRootDirectory()
     {
-        get => _locationOfFlatFiles;
-        set => SetField(ref _locationOfFlatFiles, value);
+        if (!string.IsNullOrWhiteSpace(_locationOfForLoadingDirectory) && !string.IsNullOrWhiteSpace(_locationOfForArchivingDirectory) && !string.IsNullOrWhiteSpace(_locationOfExecutablesDirectory) && !string.IsNullOrWhiteSpace(_locationOfCacheDirectory))
+        {
+            var forLoadingRoot = _locationOfForLoadingDirectory.Replace("ForLoading", "");
+            var forArchivingRoot = _locationOfForArchivingDirectory.Replace("ForArchiving", "");
+            var forExecutablesRoot = _locationOfExecutablesDirectory.Replace("Executables", "");
+            var forCacheRoot = _locationOfCacheDirectory.Replace("Cache", "");
+            if (forLoadingRoot == forArchivingRoot && forExecutablesRoot == forCacheRoot && forArchivingRoot == forExecutablesRoot)
+            {
+                return new DirectoryInfo(forLoadingRoot);
+            }
+        }
+        return null;
     }
 
+    ///  <inheritdoc/>
     public string LocationOfForLoadingDirectory
     {
         get => _locationOfForLoadingDirectory;
         set => SetField(ref _locationOfForLoadingDirectory, value);
     }
 
+    ///  <inheritdoc/>
     public string LocationOfForArchivingDirectory
     {
         get => _locationOfForArchivingDirectory;
         set => SetField(ref _locationOfForArchivingDirectory, value);
     }
 
+    ///  <inheritdoc/>
     public string LocationOfExecutablesDirectory
     {
         get => _locationOfExecutablesDirectory;
         set => SetField(ref _locationOfExecutablesDirectory, value);
     }
+
+    ///  <inheritdoc/>
     public string LocationOfCacheDirectory
     {
         get => _locationOfCacheDirectory;
@@ -220,7 +234,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     internal LoadMetadata(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        LocationOfFlatFiles = r["LocationOfFlatFiles"].ToString();
         LocationOfForLoadingDirectory = r["LocationOfForLoadingDirectory"].ToString();
         LocationOfForArchivingDirectory = r["LocationOfForArchivingDirectory"].ToString();
         LocationOfExecutablesDirectory = r["LocationOfExecutablesDirectory"].ToString();
@@ -233,7 +246,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
-        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ?null: DateTime.Parse(r["LastLoadTime"].ToString());
+        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
@@ -241,14 +254,15 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    public void LinkToCatalogue(ICatalogue catalogue) {
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository,this,catalogue);
+    public void LinkToCatalogue(ICatalogue catalogue)
+    {
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
         linkage.SaveToDatabase();
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach(var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
+        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
         {
             l.DeleteInDatabase();
         }
@@ -270,7 +284,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public override string ToString() => Name;
 
     /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues() {
+    public IEnumerable<ICatalogue> GetAllCatalogues()
+    {
         var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
         return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
     }

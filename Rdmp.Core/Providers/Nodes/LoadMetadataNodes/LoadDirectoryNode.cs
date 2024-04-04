@@ -19,16 +19,18 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) && string.IsNullOrWhiteSpace(LoadMetadata.LocationOfForLoadingDirectory);
+    public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfForLoadingDirectory);
 
 
-    public override string ToString() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
-        ? string.IsNullOrWhiteSpace(LoadMetadata.LocationOfForLoadingDirectory) ? "???" : "Custom"
-        : LoadMetadata.LocationOfFlatFiles;
+    public override string ToString()
+    {
+        var directory = LoadMetadata.GetRootDirectory();
+        if (directory == null) 
+            return "Custom";
+        return directory.ToString();
+    }
 
-    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
-        ? null
-        : new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
+    public DirectoryInfo GetDirectoryInfoIfAny() => LoadMetadata.GetRootDirectory();
 
     protected bool Equals(LoadDirectoryNode other) => Equals(LoadMetadata, other.LoadMetadata);
 
