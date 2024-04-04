@@ -40,14 +40,9 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
         IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
         LoadDirectory loadDirectory;
-        if (string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles))
-        {
-            loadDirectory = new LoadDirectory(LoadMetadata.LocationOfForLoadingDirectory, LoadMetadata.LocationOfForArchivingDirectory,LoadMetadata.LocationOfExecutablesDirectory,LoadMetadata.LocationOfCacheDirectory);
-        }
-        else
-        {
-            loadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        }
+
+        loadDirectory = new LoadDirectory(LoadMetadata.LocationOfForLoadingDirectory, LoadMetadata.LocationOfForArchivingDirectory, LoadMetadata.LocationOfExecutablesDirectory, LoadMetadata.LocationOfCacheDirectory);
+
         return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, loadDirectory,
             listener, configuration)
         {

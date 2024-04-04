@@ -61,7 +61,6 @@ internal class ExecuteCommandCreateNewDataLoadDirectoryTests : CommandCliTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(lmd.LocationOfFlatFiles, Is.Null);
             Assert.That(lmd.LocationOfForLoadingDirectory, Is.EqualTo(root));
             Assert.That(lmd.LocationOfForArchivingDirectory, Is.EqualTo(root));
             Assert.That(lmd.LocationOfExecutablesDirectory, Is.EqualTo(root));

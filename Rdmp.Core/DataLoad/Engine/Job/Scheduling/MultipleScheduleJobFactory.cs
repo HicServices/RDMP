@@ -61,7 +61,7 @@ public class MultipleScheduleJobFactory : ScheduledJobFactory
         if (!datesToRetrieve.Any())
             return null;
 
-        var LoadDirectory = new LoadDirectory(string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles) ? LoadMetadata.LocationOfFlatFiles : LoadMetadata.LocationOfForLoadingDirectory);
+        var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfForLoadingDirectory);
         var job = new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
             listener, configuration)
         {

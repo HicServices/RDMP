@@ -49,12 +49,12 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
         helpIcon1.SetHelpText("Location Of Flat Files", help);
 
-        if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
-        {
-            tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
-            CheckExistingProjectDirectory();
-        } else if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
-        {
+        //if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        //{
+        //    tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
+        //    CheckExistingProjectDirectory();
+        //} else if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
+        //{
             tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
             tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
             tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
@@ -63,7 +63,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             rbCreateNew.Checked = false;
             rbUseExisting.Checked = false;
             rb_CheckedChanged(null, null);
-        }
+        //}
     }
 
     private void rb_CheckedChanged(object sender, EventArgs e)

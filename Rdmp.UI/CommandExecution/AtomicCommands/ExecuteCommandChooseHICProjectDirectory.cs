@@ -37,14 +37,17 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         {
             if (dialog.ResultDirectory.RootPath != null)
             {
-                _loadMetadata.LocationOfFlatFiles = dialog.ResultDirectory.RootPath.FullName;
+                //todo check these are correct
+                _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.RootPath.FullName +"/ForLoading";
+                _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.RootPath.FullName + "ForArchiving";
+                _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.RootPath.FullName + "/Executables";
+                _loadMetadata.LocationOfCacheDirectory = dialog.ResultDirectory.RootPath.FullName + "/Cache";
             }
             else if (dialog.ResultDirectory.ForLoading != null &&
                 dialog.ResultDirectory.ForArchiving != null &&
                 dialog.ResultDirectory.ExecutablesPath != null &&
                 dialog.ResultDirectory.Cache != null)
             {
-                _loadMetadata.LocationOfFlatFiles = null;
                 _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.ForLoading.FullName;
                 _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.ForArchiving.FullName;
                 _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.ExecutablesPath.FullName;
