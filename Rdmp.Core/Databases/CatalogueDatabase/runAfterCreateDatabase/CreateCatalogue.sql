@@ -574,7 +574,6 @@ SET ANSI_PADDING ON
 GO
 CREATE TABLE [dbo].[LoadMetadata](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[LocationOfFlatFiles] [varchar](3000) NULL,
 	LocationOfForLoadingDirectory [varchar](3000) NULL,
 	LocationOfForArchivingDirectory [varchar](3000) NULL,
 	LocationOfExecutablesDirectory [varchar](3000) NULL,
