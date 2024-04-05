@@ -258,15 +258,18 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     foreach (DataColumn pkCol in pkColumns)
                     {
                         bool clash = false;
-                        if (pkCol.ColumnName == "ReleaseId" && _externalCohortTable is not null)
+                        var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..-1];
+                        var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..-1];
+                        if (pkCol.ColumnName == releaseIdentifierField && _externalCohortTable is not null)
                         {
                             //use cohort to find cohort table
                             DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
                             var lookupDT = cohortTable.GetDataTable();
-                            var releaseIdIndex = lookupDT.Columns.IndexOf(pkCol.ColumnName);
+                            var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
+                            var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
                             var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
-                            var originalValue = foundRow.ItemArray[0];//todo make better
-                            var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[0].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());//todo don't use [0] index
+                            var originalValue = foundRow.ItemArray[privateIdIndex];
+                            var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
                             clash = existingData.AsEnumerable().Any(r => existingIDsforReleaseID.Contains(r[pkCol.ColumnName].ToString()));
                         }
                         else
