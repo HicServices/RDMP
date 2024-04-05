@@ -77,7 +77,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         else
         {
 
-            AddInitializationObject(new LoadDirectory(lmd.LocationOfForLoadingDirectory));
+            AddInitializationObject(new LoadDirectory(lmd.LocationOfForLoadingDirectory,lmd.LocationOfForArchivingDirectory,lmd.LocationOfExecutablesDirectory,lmd.LocationOfCacheDirectory));
         }
 
         AddInitializationObject(_providerIfAny);
