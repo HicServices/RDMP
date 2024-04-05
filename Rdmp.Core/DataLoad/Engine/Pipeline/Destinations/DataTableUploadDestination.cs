@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
+using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -258,20 +259,23 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     foreach (DataColumn pkCol in pkColumns)
                     {
                         bool clash = false;
-                        var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..-1];
-                        var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..-1];
-                        if (pkCol.ColumnName == releaseIdentifierField && _externalCohortTable is not null)
+                        if (_externalCohortTable is not null && pkCol.ColumnName == _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1])
                         {
                             // If it's a cohort release identifier
                             // look up the original value and check we've not already extected the same value under a different release ID
+                            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];
+                            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];
                             DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
                             var lookupDT = cohortTable.GetDataTable();
                             var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
                             var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
                             var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
-                            var originalValue = foundRow.ItemArray[privateIdIndex];
-                            var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
-                            clash = existingData.AsEnumerable().Any(r => existingIDsforReleaseID.Contains(r[pkCol.ColumnName].ToString()));
+                            if (foundRow is not null)
+                            {
+                                var originalValue = foundRow.ItemArray[privateIdIndex];
+                                var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
+                                clash = existingData.AsEnumerable().Any(r => existingIDsforReleaseID.Contains(r[pkCol.ColumnName].ToString()));
+                            }
                         }
                         else
                         {

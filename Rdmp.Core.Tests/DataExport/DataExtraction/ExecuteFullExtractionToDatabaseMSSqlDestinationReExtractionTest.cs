@@ -229,7 +229,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var dbToExtractTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbname);
         if (dbToExtractTo.Exists())
             dbToExtractTo.Drop();
-
+        dbToExtractTo.Create();
         var runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
         {
             Command = CommandLineActivity.run,
@@ -950,7 +950,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         ec.SaveToDatabase();
 
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
