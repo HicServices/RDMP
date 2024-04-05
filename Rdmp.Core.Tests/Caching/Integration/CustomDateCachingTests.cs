@@ -61,10 +61,10 @@ public class CustomDateCachingTests : DatabaseTests
                 true);
 
         var lmd = Substitute.For<ILoadMetadata>();
-        lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName , ((LoadMetadata)lmd).DefaultForLoadingPath);
-        lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName , ((LoadMetadata)lmd).DefaultForArchivingPath);
-        lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName , ((LoadMetadata)lmd).DefaultExecutablesPath);
-        lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName , ((LoadMetadata)lmd).DefaultCachePath);
+        lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName , Path.Combine("Data", "ForLoading"));
+        lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName , Path.Combine("Data", "ForArchiving"));
+        lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName ,"Executables");
+        lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName , Path.Combine("Data", "Cache"));
 
         var loadProgress = Substitute.For<ILoadProgress>();
         loadProgress.OriginDate.Returns(new DateTime(2001, 01, 01));
