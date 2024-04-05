@@ -16,7 +16,6 @@ using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using Terminal.Gui;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests;
