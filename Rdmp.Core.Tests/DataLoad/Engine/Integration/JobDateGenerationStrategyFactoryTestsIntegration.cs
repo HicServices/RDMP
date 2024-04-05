@@ -200,7 +200,8 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
         _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
         _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
-        _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath; _lmd.SaveToDatabase();
+        _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath;
+        _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
         pipeAssembler.ConfigureCacheProgressToUseThePipeline(_cp);
