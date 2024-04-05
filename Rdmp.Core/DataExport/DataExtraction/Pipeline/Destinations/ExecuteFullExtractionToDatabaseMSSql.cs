@@ -193,7 +193,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     "Failed to inspect destination for already existing datatables", e));
         }
 
-        _destination = new DataTableUploadDestination();
+        _destination = new DataTableUploadDestination(((IExtractDatasetCommand)_request).ExtractableCohort.ExternalCohortTable);
 
         PrimeDestinationTypesBasedOnCatalogueTypes(listener, toProcess);
 
@@ -265,6 +265,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 new NotifyEventArgs(ProgressEventType.Information,
                     $"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true" : "false")}) to match the source table"));
         }
+
 
         foreach (var sub in datasetCommand.QueryBuilder.SelectColumns.Select(static sc => sc.IColumn)
                      .OfType<ReleaseIdentifierSubstitution>())

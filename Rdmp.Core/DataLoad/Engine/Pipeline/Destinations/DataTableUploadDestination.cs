@@ -15,6 +15,7 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Logging;
@@ -109,6 +110,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private DiscoveredTable _discoveredTable;
     private readonly string _extractionTimeStamp = "extraction_timestamp";
 
+    private IExternalCohortTable _externalCohortTable;
+
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
 
@@ -121,6 +124,12 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public DataTableUploadDestination()
     {
         ExplicitTypes = new List<DatabaseColumnRequest>();
+    }
+
+    public DataTableUploadDestination(IExternalCohortTable externalCohortTable)
+    {
+        ExplicitTypes = new List<DatabaseColumnRequest>();
+        _externalCohortTable = externalCohortTable;
     }
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
@@ -248,21 +257,29 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                     foreach (DataColumn pkCol in pkColumns)
                     {
-
-                        //if it is a release identifier, check the real value
-                        if (pkCol.ColumnName == "ReleaseID")
+                        bool clash = false;
+                        if (pkCol.ColumnName == "ReleaseId" && _externalCohortTable is not null)
                         {
-                            //look up actual value iN COHORT table, grab matching chi relaseIds and see if they exist already
+                            //use cohort to find cohort table
+                            DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
+                            var lookupDT = cohortTable.GetDataTable();
+                            var releaseIdIndex = lookupDT.Columns.IndexOf(pkCol.ColumnName);
+                            var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
+                            var originalValue = foundRow.ItemArray[0];//todo make better
+                            var otherMatchingReleaseIds = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[0] == originalValue);//todo don't use [0] index
+                            var existingReleaseIds = otherMatchingReleaseIds.Select(r => r.ItemArray[releaseIdIndex]).Where(rid => rid.ToString() != row[pkCol.ColumnName].ToString()).Distinct().ToArray();
+                            clash = existingReleaseIds.AsEnumerable().Any(r => r.ToString() == row[pkCol.ColumnName].ToString());
+                            //todo this isn;t adding the new entry... to check
                         }
                         else
                         {
                             var val = row[pkCol.ColumnName];
-                            var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
-                            if (clash)
-                            {
-                                rowsToDelete.Add(row);
-                                break;
-                            }
+                            clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
+                        }
+                        if (clash)
+                        {
+                            rowsToDelete.Add(row);
+                            break;
                         }
                     }
                 }
