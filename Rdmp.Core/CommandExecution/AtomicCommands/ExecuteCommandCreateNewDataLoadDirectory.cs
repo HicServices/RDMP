@@ -29,7 +29,7 @@ public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
 
     public ExecuteCommandCreateNewDataLoadDirectory(IBasicActivateItems activator,
         [DemandsInitialization(
-            "Optional load for which you are creating the folder structure.  Will have its LocationOfFlatFiles set to the new dir if passed")]
+            "Optional load for which you are creating the folder structure.  Will have its directory locations set to the new dir if passed")]
         LoadMetadata load,
         [DemandsInitialization("The directory to create new load folders in.")]
         DirectoryInfo dir) : base(activator)

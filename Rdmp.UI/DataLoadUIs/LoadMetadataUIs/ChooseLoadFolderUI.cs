@@ -34,7 +34,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
     //public string Result { get; private set; }
-    public LoadDirectory ResultDirectory {get; private set;}
+    public LoadDirectory ResultDirectory { get; private set; }
 
     private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
@@ -49,21 +49,14 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
         helpIcon1.SetHelpText("Location Of Flat Files", help);
 
-        //if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
-        //{
-        //    tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
-        //    CheckExistingProjectDirectory();
-        //} else if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfForLoadingDirectory))
-        //{
-            tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
-            tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
-            tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
-            tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
-            rbChooseYourOwn.Checked = true;
-            rbCreateNew.Checked = false;
-            rbUseExisting.Checked = false;
-            rb_CheckedChanged(null, null);
-        //}
+        tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
+        tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
+        tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
+        tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
+        rbChooseYourOwn.Checked = true;
+        rbCreateNew.Checked = false;
+        rbUseExisting.Checked = false;
+        rb_CheckedChanged(null, null);
     }
 
     private void rb_CheckedChanged(object sender, EventArgs e)
@@ -79,7 +72,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
 
     private void tbUseExisting_Leave(object sender, EventArgs e)
     {
-        if(rbUseExisting.Checked)
+        if (rbUseExisting.Checked)
             CheckExistingProjectDirectory();
     }
 

@@ -44,7 +44,7 @@ public class ExecuteCommandCreateNewSplitDataLoadDirectory : BasicCommandExecuti
 
     public ExecuteCommandCreateNewSplitDataLoadDirectory(IBasicActivateItems activator,
         [DemandsInitialization(
-            "Optional load for which you are creating the folder structure.  Will have its LocationOfFlatFiles set to the new dir if passed")]
+            "Optional load for which you are creating the folder structure.  Will have its directory locations set to the new dir if passed")]
         LoadMetadata load,
         [DemandsInitialization("The directory to create new loads in.")]
         DirectoryInfo forLoadingDir,
