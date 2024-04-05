@@ -248,12 +248,21 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
                     foreach (DataColumn pkCol in pkColumns)
                     {
-                        var val = row[pkCol.ColumnName];
-                        var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
-                        if (clash)
+
+                        //if it is a release identifier, check the real value
+                        if (pkCol.ColumnName == "ReleaseID")
                         {
-                            rowsToDelete.Add(row);
-                            break;
+                            //look up actual value iN COHORT table, grab matching chi relaseIds and see if they exist already
+                        }
+                        else
+                        {
+                            var val = row[pkCol.ColumnName];
+                            var clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
+                            if (clash)
+                            {
+                                rowsToDelete.Add(row);
+                                break;
+                            }
                         }
                     }
                 }
