@@ -266,9 +266,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             var releaseIdIndex = lookupDT.Columns.IndexOf(pkCol.ColumnName);
                             var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
                             var originalValue = foundRow.ItemArray[0];//todo make better
-                            var otherMatchingReleaseIds = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[0] == originalValue);//todo don't use [0] index
-                            var existingReleaseIds = otherMatchingReleaseIds.Select(r => r.ItemArray[releaseIdIndex]).Where(rid => rid.ToString() != row[pkCol.ColumnName].ToString()).Distinct().ToArray();
-                            clash = existingReleaseIds.AsEnumerable().Any(r => r.ToString() == row[pkCol.ColumnName].ToString());
+                            var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[0] == originalValue).Select(s => s.ItemArray[releaseIdIndex].ToString());//todo don't use [0] index
+                            //var existingReleaseIds = otherMatchingReleaseIds.Select(r => r.ItemArray[releaseIdIndex]).Where(rid => rid.ToString() != row[pkCol.ColumnName].ToString()).Distinct().ToArray();
+                            clash = existingData.AsEnumerable().Any(r => existingIDsforReleaseID.Contains(r[pkCol.ColumnName].ToString()));
+                            var x = 1 + 1;
+                            Console.WriteLine(x);
                             //todo this isn;t adding the new entry... to check
                         }
                         else
