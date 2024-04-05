@@ -25,10 +25,10 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
-            loadMetadata.LocationOfForLoadingDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultForLoadingPath;
-            loadMetadata.LocationOfForArchivingDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultForArchivingPath;
-            loadMetadata.LocationOfExecutablesDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultExecutablesPath;
-            loadMetadata.LocationOfCacheDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultCachePath;
+            loadMetadata.LocationOfForLoadingDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForLoadingPath;
+            loadMetadata.LocationOfForArchivingDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForArchivingPath;
+            loadMetadata.LocationOfExecutablesDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultExecutablesPath;
+            loadMetadata.LocationOfCacheDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultCachePath;
             loadMetadata.SaveToDatabase();
 
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);

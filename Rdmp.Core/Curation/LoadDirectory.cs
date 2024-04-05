@@ -75,14 +75,14 @@ public class LoadDirectory : ILoadDirectory
         Cache = FindFolderInPath(DataPath, "Cache");
     }
 
-    public LoadDirectory(string ForLoadingPath, string ForArchivingPath, string ExecutablesPathString, string cachePath)
+    public LoadDirectory(string ForLoadingPath, string ForArchivingPath, string ExecutablesPathString, string CachePath)
     {
-        if (string.IsNullOrWhiteSpace(ForLoadingPath) || string.IsNullOrWhiteSpace(ForArchivingPath) || string.IsNullOrWhiteSpace(ExecutablesPathString))
-            throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Extractables:{ExecutablesPath}");
+        if (string.IsNullOrWhiteSpace(ForLoadingPath) || string.IsNullOrWhiteSpace(ForArchivingPath) || string.IsNullOrWhiteSpace(ExecutablesPathString) || string.IsNullOrWhiteSpace(CachePath))
+            throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Cache: {CachePath}. Extractables:{ExecutablesPath}");
         ForLoading = new DirectoryInfo(ForLoadingPath);
         ForArchiving = new DirectoryInfo(ForArchivingPath);
         ExecutablesPath =new DirectoryInfo(ExecutablesPathString);
-        Cache = new DirectoryInfo(cachePath);
+        Cache = new DirectoryInfo(CachePath);
     }
 
     private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>

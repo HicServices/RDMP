@@ -206,6 +206,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             tbForLoadingPath.Text = fbd.SelectedPath;
             CheckExistingProjectDirectory();
         }
+        fbd.Dispose();
     }
 
     private void btnBrowseForArchiving_Click(object sender, EventArgs e)
@@ -220,6 +221,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             tbForArchivingPath.Text = fbd.SelectedPath;
             CheckExistingProjectDirectory();
         }
+        fbd.Dispose();
     }
 
     private void btnBrowseForExecutables_Click(object sender, EventArgs e)
@@ -234,6 +236,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             tbExecutablesPath.Text = fbd.SelectedPath;
             CheckExistingProjectDirectory();
         }
+        fbd.Dispose();
     }
 
     private void btnBrowseForCache_Click(object sender, EventArgs e)
@@ -248,6 +251,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             tbCachePath.Text = fbd.SelectedPath;
             CheckExistingProjectDirectory();
         }
+        fbd.Dispose();
     }
 
 
