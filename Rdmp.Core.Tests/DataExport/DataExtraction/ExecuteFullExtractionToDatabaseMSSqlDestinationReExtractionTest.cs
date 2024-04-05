@@ -159,7 +159,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                         Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
                         Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
                         PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseID",
+                        ReleaseIdentifierField = "ReleaseId",
                         DefinitionTableForeignKeyField = "cohortDefinition_id"
                     };
 
@@ -385,7 +385,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                         Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
                         Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
                         PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseID",
+                        ReleaseIdentifierField = "ReleaseId",
                         DefinitionTableForeignKeyField = "cohortDefinition_id"
                     };
 
@@ -656,7 +656,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                         Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
                         Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
                         PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseID",
+                        ReleaseIdentifierField = "ReleaseId",
                         DefinitionTableForeignKeyField = "cohortDefinition_id"
                     };
 
@@ -924,7 +924,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                         Username = _cohortDatabase.Server.ExplicitUsernameIfAny,
                         Password = _cohortDatabase.Server.ExplicitPasswordIfAny,
                         PrivateIdentifierField = "chi",
-                        ReleaseIdentifierField = "ReleaseID",
+                        ReleaseIdentifierField = "ReleaseId",
                         DefinitionTableForeignKeyField = "cohortDefinition_id"
                     };
 
