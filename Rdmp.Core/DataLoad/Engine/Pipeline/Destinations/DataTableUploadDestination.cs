@@ -110,7 +110,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private DiscoveredTable _discoveredTable;
     private readonly string _extractionTimeStamp = "extraction_timestamp";
 
-    private IExternalCohortTable _externalCohortTable;
+    private readonly IExternalCohortTable _externalCohortTable;
 
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
@@ -262,7 +262,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..-1];
                         if (pkCol.ColumnName == releaseIdentifierField && _externalCohortTable is not null)
                         {
-                            //use cohort to find cohort table
+                            // If it's a cohort release identifier
+                            // look up the original value and check we've not already extected the same value under a different release ID
                             DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
                             var lookupDT = cohortTable.GetDataTable();
                             var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
