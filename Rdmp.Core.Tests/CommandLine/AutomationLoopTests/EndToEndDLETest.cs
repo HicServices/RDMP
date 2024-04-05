@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
+using System.IO;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 
@@ -45,10 +46,10 @@ public class EndToEndDLETest : TestsRequiringADle
 
         var cata = Import(tbl);
         var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
-        lmd.LocationOfForLoadingDirectory = LoadDirectory.RootPath.FullName + lmd.DefaultForLoadingPath;
-        lmd.LocationOfForArchivingDirectory = LoadDirectory.RootPath.FullName + lmd.DefaultForArchivingPath;
-        lmd.LocationOfExecutablesDirectory = LoadDirectory.RootPath.FullName + lmd.DefaultExecutablesPath;
-        lmd.LocationOfCacheDirectory = LoadDirectory.RootPath.FullName + lmd.DefaultCachePath;
+        lmd.LocationOfForLoadingDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultForLoadingPath);
+        lmd.LocationOfForArchivingDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultForArchivingPath);
+        lmd.LocationOfExecutablesDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultExecutablesPath);
+        lmd.LocationOfCacheDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultCachePath);
         lmd.SaveToDatabase();
 
         CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());

@@ -41,10 +41,10 @@ public class PayloadTest : DatabaseTests
         var filePath = LoadDirectory
                 .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true)
                 .RootPath.FullName;
-        lmd.LocationOfForLoadingDirectory = filePath + lmd.DefaultForLoadingPath;
-        lmd.LocationOfForArchivingDirectory = filePath + lmd.DefaultForArchivingPath;
-        lmd.LocationOfExecutablesDirectory = filePath + lmd.DefaultExecutablesPath;
-        lmd.LocationOfCacheDirectory = filePath + lmd.DefaultCachePath;
+        lmd.LocationOfForLoadingDirectory = Path.Combine(filePath , lmd.DefaultForLoadingPath);
+        lmd.LocationOfForArchivingDirectory = Path.Combine(filePath , lmd.DefaultForArchivingPath);
+        lmd.LocationOfExecutablesDirectory = Path.Combine(filePath , lmd.DefaultExecutablesPath);
+        lmd.LocationOfCacheDirectory = Path.Combine(filePath , lmd.DefaultCachePath);
         lmd.SaveToDatabase();
 
         MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));

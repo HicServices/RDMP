@@ -73,10 +73,10 @@ public class HICPipelineTests : DatabaseTests
             ColumnInfo.SaveToDatabase();
 
             LoadMetadata = new LoadMetadata(repository, "HICLoadPipelineTests");
-            LoadMetadata.LocationOfForLoadingDirectory = directory.RootPath.FullName + LoadMetadata.DefaultForLoadingPath;
-            LoadMetadata.LocationOfForArchivingDirectory = directory.RootPath.FullName + LoadMetadata.DefaultForArchivingPath;
-            LoadMetadata.LocationOfExecutablesDirectory = directory.RootPath.FullName + LoadMetadata.DefaultExecutablesPath;
-            LoadMetadata.LocationOfCacheDirectory = directory.RootPath.FullName + LoadMetadata.DefaultCachePath;
+            LoadMetadata.LocationOfForLoadingDirectory = Path.Combine(directory.RootPath.FullName, LoadMetadata.DefaultForLoadingPath);
+            LoadMetadata.LocationOfForArchivingDirectory = Path.Combine(directory.RootPath.FullName, LoadMetadata.DefaultForArchivingPath);
+            LoadMetadata.LocationOfExecutablesDirectory = Path.Combine(directory.RootPath.FullName, LoadMetadata.DefaultExecutablesPath);
+            LoadMetadata.LocationOfCacheDirectory = Path.Combine(directory.RootPath.FullName, LoadMetadata.DefaultCachePath);
             LoadMetadata.SaveToDatabase();
 
             Catalogue = new Catalogue(repository, "HICLoadPipelineTests")

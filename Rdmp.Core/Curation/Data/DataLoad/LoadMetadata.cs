@@ -62,10 +62,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private DateTime? _lastLoadTime;
 
 
-    public string DefaultForLoadingPath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}ForLoading";
-    public string DefaultForArchivingPath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}ForArchiving";
-    public string DefaultExecutablesPath = $"${Path.DirectorySeparatorChar}Executables";
-    public string DefaultCachePath = $"{Path.DirectorySeparatorChar}Data${Path.DirectorySeparatorChar}Cache";
+    public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
+    public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
+    public string DefaultExecutablesPath = "Executables";
+    public string DefaultCachePath = Path.Combine("Data", "Cache");
 
     public DirectoryInfo GetRootDirectory()
     {

@@ -67,10 +67,10 @@ public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
         // if we have a load then update the path to this location we just created
         if (LoadMetadata != null)
         {
-            LoadMetadata.LocationOfForLoadingDirectory = loadDir.RootPath.FullName +LoadMetadata.DefaultForLoadingPath;
-            LoadMetadata.LocationOfForArchivingDirectory = loadDir.RootPath.FullName + LoadMetadata.DefaultForArchivingPath;
-            LoadMetadata.LocationOfExecutablesDirectory = loadDir.RootPath.FullName + LoadMetadata.DefaultExecutablesPath;
-            LoadMetadata.LocationOfCacheDirectory = loadDir.RootPath.FullName + LoadMetadata.DefaultCachePath;
+            LoadMetadata.LocationOfForLoadingDirectory = Path.Combine(loadDir.RootPath.FullName ,LoadMetadata.DefaultForLoadingPath);
+            LoadMetadata.LocationOfForArchivingDirectory = Path.Combine(loadDir.RootPath.FullName, LoadMetadata.DefaultForArchivingPath);
+            LoadMetadata.LocationOfExecutablesDirectory = Path.Combine(loadDir.RootPath.FullName , LoadMetadata.DefaultExecutablesPath);
+            LoadMetadata.LocationOfCacheDirectory = Path.Combine(loadDir.RootPath.FullName , LoadMetadata.DefaultCachePath);
             LoadMetadata.SaveToDatabase();
             Publish(LoadMetadata);
         }

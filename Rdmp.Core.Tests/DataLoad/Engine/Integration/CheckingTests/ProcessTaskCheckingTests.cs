@@ -37,10 +37,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _dir.Create();
 
         var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
-        _lmd.LocationOfForLoadingDirectory = hicdir.RootPath.FullName + _lmd.DefaultForLoadingPath;
-        _lmd.LocationOfForArchivingDirectory = hicdir.RootPath.FullName + _lmd.DefaultForArchivingPath;
-        _lmd.LocationOfExecutablesDirectory = hicdir.RootPath.FullName + _lmd.DefaultExecutablesPath;
-        _lmd.LocationOfCacheDirectory = hicdir.RootPath.FullName + _lmd.DefaultCachePath;
+        _lmd.LocationOfForLoadingDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultForLoadingPath);
+        _lmd.LocationOfForArchivingDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultForArchivingPath);
+        _lmd.LocationOfExecutablesDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultExecutablesPath);
+        _lmd.LocationOfCacheDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultCachePath);
         _lmd.SaveToDatabase();
 
         var c = new Catalogue(CatalogueRepository, "c");
@@ -132,10 +132,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
                 "DelMeProjDir", true);
         try
         {
-            _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
-            _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
-            _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
-            _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath;
+            _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
+            _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
+            _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
+            _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
             _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
@@ -162,10 +162,11 @@ public class ProcessTaskCheckingTests : DatabaseTests
                 "DelMeProjDir", true);
         try
         {
-            _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
-            _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
-            _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
-            _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath; _task.ProcessTaskType = ProcessTaskType.Attacher;
+            _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
+            _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
+            _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
+            _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
+            _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
             _task.SaveToDatabase();

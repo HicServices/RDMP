@@ -70,10 +70,10 @@ public class LoadProgressUnitTests : UnitTests
             "LoadProgress_JobFactory_NoDates", true);
 
         var lmd = lp.LoadMetadata;
-        lmd.LocationOfForLoadingDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultForLoadingPath;
-        lmd.LocationOfForArchivingDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultForArchivingPath;
-        lmd.LocationOfExecutablesDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultExecutablesPath;
-        lmd.LocationOfCacheDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultCachePath;
+        lmd.LocationOfForLoadingDirectory = Path.Combine(dir.RootPath.FullName , ((LoadMetadata)lmd).DefaultForLoadingPath);
+        lmd.LocationOfForArchivingDirectory = Path.Combine(dir.RootPath.FullName , ((LoadMetadata)lmd).DefaultForArchivingPath);
+        lmd.LocationOfExecutablesDirectory = Path.Combine(dir.RootPath.FullName , ((LoadMetadata)lmd).DefaultExecutablesPath);
+        lmd.LocationOfCacheDirectory = Path.Combine(dir.RootPath.FullName , ((LoadMetadata)lmd).DefaultCachePath);
 
         foreach (var cata in lmd.GetAllCatalogues())
         {

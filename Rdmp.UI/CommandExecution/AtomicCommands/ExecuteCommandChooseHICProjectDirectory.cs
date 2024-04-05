@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -38,10 +39,10 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
             if (dialog.ResultDirectory.RootPath != null)
             {
                 //todo check these are correct & make it work with linux
-                _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.RootPath.FullName + _loadMetadata.DefaultForLoadingPath;
-                _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.RootPath.FullName + _loadMetadata.DefaultForArchivingPath;
-                _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.RootPath.FullName + _loadMetadata.DefaultExecutablesPath;
-                _loadMetadata.LocationOfCacheDirectory = dialog.ResultDirectory.RootPath.FullName + _loadMetadata.DefaultCachePath;
+                _loadMetadata.LocationOfForLoadingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForLoadingPath);
+                _loadMetadata.LocationOfForArchivingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForArchivingPath);
+                _loadMetadata.LocationOfExecutablesDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultExecutablesPath);
+                _loadMetadata.LocationOfCacheDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultCachePath);
             }
             else if (dialog.ResultDirectory.ForLoading != null &&
                 dialog.ResultDirectory.ForArchiving != null &&

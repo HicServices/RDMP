@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.IO;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -25,17 +26,17 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
-            loadMetadata.LocationOfForLoadingDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForLoadingPath;
-            loadMetadata.LocationOfForArchivingDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForArchivingPath;
-            loadMetadata.LocationOfExecutablesDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultExecutablesPath;
-            loadMetadata.LocationOfCacheDirectory = TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultCachePath;
+            loadMetadata.LocationOfForLoadingDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForLoadingPath);
+            loadMetadata.LocationOfForArchivingDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForArchivingPath);
+            loadMetadata.LocationOfExecutablesDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultExecutablesPath);
+            loadMetadata.LocationOfCacheDirectory = Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultCachePath);
             loadMetadata.SaveToDatabase();
 
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
-            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForLoadingPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForLoadingDirectory));
-            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForArchivingPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForArchivingDirectory));
-            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultExecutablesPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfExecutablesDirectory));
-            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultCachePath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfCacheDirectory));
+            Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForLoadingPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForLoadingDirectory));
+            Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultForArchivingPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForArchivingDirectory));
+            Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultExecutablesPath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfExecutablesDirectory));
+            Assert.That(Path.Combine(TestContext.CurrentContext.TestDirectory, loadMetadata.DefaultCachePath), Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfCacheDirectory));
         }
         finally
         {
