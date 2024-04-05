@@ -14,6 +14,7 @@ using System.IO;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
@@ -69,7 +70,10 @@ public class LoadProgressUnitTests : UnitTests
             "LoadProgress_JobFactory_NoDates", true);
 
         var lmd = lp.LoadMetadata;
-        lmd.LocationOfFlatFiles = dir.RootPath.FullName;
+        lmd.LocationOfForLoadingDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultForLoadingPath;
+        lmd.LocationOfForArchivingDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultForArchivingPath;
+        lmd.LocationOfExecutablesDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultExecutablesPath;
+        lmd.LocationOfCacheDirectory = dir.RootPath.FullName + ((LoadMetadata)lmd).DefaultCachePath;
 
         foreach (var cata in lmd.GetAllCatalogues())
         {

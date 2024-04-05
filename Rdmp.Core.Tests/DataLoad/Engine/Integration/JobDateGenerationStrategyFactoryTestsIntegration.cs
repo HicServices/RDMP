@@ -127,7 +127,10 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+        _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+        _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+        _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+        _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath;
         _lmd.SaveToDatabase();
         try
         {
@@ -154,8 +157,10 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
-        _lmd.SaveToDatabase();
+        _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+        _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+        _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+        _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath; _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
         pipeAssembler.ConfigureCacheProgressToUseThePipeline(_cp);
@@ -192,8 +197,10 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
                 true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
-        _lmd.SaveToDatabase();
+        _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+        _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+        _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+        _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath; _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
         pipeAssembler.ConfigureCacheProgressToUseThePipeline(_cp);

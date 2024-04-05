@@ -16,6 +16,7 @@ using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Terminal.Gui;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests;
@@ -36,7 +37,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _dir.Create();
 
         var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
-        _lmd.LocationOfFlatFiles = hicdir.RootPath.FullName;
+        _lmd.LocationOfForLoadingDirectory = hicdir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+        _lmd.LocationOfForArchivingDirectory = hicdir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+        _lmd.LocationOfExecutablesDirectory = hicdir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+        _lmd.LocationOfCacheDirectory = hicdir.RootPath.FullName + _lmd.DefaultCachePath;
         _lmd.SaveToDatabase();
 
         var c = new Catalogue(CatalogueRepository, "c");
@@ -104,7 +108,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
     [Test]
     public void MEFCompatibleType_NoProjectDirectory()
     {
-        _lmd.LocationOfFlatFiles = null;
+        _lmd.LocationOfForLoadingDirectory = null;
+        _lmd.LocationOfForArchivingDirectory = null;
+        _lmd.LocationOfExecutablesDirectory = null;
+        _lmd.LocationOfCacheDirectory = null;
         _lmd.SaveToDatabase();
 
         _task.ProcessTaskType = ProcessTaskType.Attacher;
@@ -114,7 +121,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _task.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
 
         var ex = Assert.Throws<Exception>(() => _checker.Check(ThrowImmediatelyCheckNotifier.QuietPicky));
-        Assert.That(ex.InnerException.Message, Is.EqualTo($@"No Project Directory (LocationOfFlatFiles) has been configured on LoadMetadata {_lmd.Name}"));
+        Assert.That(ex.InnerException.Message, Is.EqualTo($@"No Project Directory has been configured on LoadMetadata {_lmd.Name}"));
     }
 
     [Test]
@@ -125,7 +132,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
                 "DelMeProjDir", true);
         try
         {
-            _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+            _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+            _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+            _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+            _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath;
             _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
@@ -152,8 +162,10 @@ public class ProcessTaskCheckingTests : DatabaseTests
                 "DelMeProjDir", true);
         try
         {
-            _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
-            _task.ProcessTaskType = ProcessTaskType.Attacher;
+            _lmd.LocationOfForLoadingDirectory = projDir.RootPath.FullName + _lmd.DefaultForLoadingPath;
+            _lmd.LocationOfForArchivingDirectory = projDir.RootPath.FullName + _lmd.DefaultForArchivingPath;
+            _lmd.LocationOfExecutablesDirectory = projDir.RootPath.FullName + _lmd.DefaultExecutablesPath;
+            _lmd.LocationOfCacheDirectory = projDir.RootPath.FullName + _lmd.DefaultCachePath; _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
             _task.SaveToDatabase();

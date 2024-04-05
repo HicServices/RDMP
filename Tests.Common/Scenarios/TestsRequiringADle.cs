@@ -63,10 +63,12 @@ public class TestsRequiringADle : TestsRequiringA
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
 
-        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue")
-        {
-            LocationOfFlatFiles = LoadDirectory.RootPath.FullName
-        };
+        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue");
+        TestLoadMetadata.LocationOfForLoadingDirectory = LoadDirectory.RootPath.FullName + TestLoadMetadata.DefaultForLoadingPath;
+        TestLoadMetadata.LocationOfForArchivingDirectory = LoadDirectory.RootPath.FullName + TestLoadMetadata.DefaultForArchivingPath;
+        TestLoadMetadata.LocationOfExecutablesDirectory = LoadDirectory.RootPath.FullName + TestLoadMetadata.DefaultExecutablesPath;
+        TestLoadMetadata.LocationOfCacheDirectory = LoadDirectory.RootPath.FullName + TestLoadMetadata.DefaultCachePath;
+
         TestLoadMetadata.SaveToDatabase();
 
 

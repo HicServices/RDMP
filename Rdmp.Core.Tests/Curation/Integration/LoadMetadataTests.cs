@@ -6,6 +6,7 @@
 
 using System;
 using NUnit.Framework;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
@@ -24,11 +25,17 @@ public class LoadMetadataTests : DatabaseTests
 
         try
         {
-            loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
+            loadMetadata.LocationOfForLoadingDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultForLoadingPath;
+            loadMetadata.LocationOfForArchivingDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultForArchivingPath;
+            loadMetadata.LocationOfExecutablesDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultExecutablesPath;
+            loadMetadata.LocationOfCacheDirectory = TestContext.CurrentContext.TestDirectory + ((LoadMetadata)loadMetadata).DefaultCachePath;
             loadMetadata.SaveToDatabase();
 
             var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
-            Assert.That(TestContext.CurrentContext.TestDirectory, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfFlatFiles));
+            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForLoadingPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForLoadingDirectory));
+            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultForArchivingPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfForArchivingDirectory));
+            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultExecutablesPath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfExecutablesDirectory));
+            Assert.That(TestContext.CurrentContext.TestDirectory + loadMetadata.DefaultCachePath, Is.EqualTo(loadMetadataWithIdAfterwards.LocationOfCacheDirectory));
         }
         finally
         {

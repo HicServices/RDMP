@@ -72,7 +72,10 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         var projectDirectory =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 "MyLoadDir", true);
-        lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
+        lmd.LocationOfForLoadingDirectory = projectDirectory.RootPath.FullName + lmd.DefaultForLoadingPath;
+        lmd.LocationOfForArchivingDirectory = projectDirectory.RootPath.FullName + lmd.DefaultForArchivingPath;
+        lmd.LocationOfExecutablesDirectory = projectDirectory.RootPath.FullName + lmd.DefaultExecutablesPath;
+        lmd.LocationOfCacheDirectory = projectDirectory.RootPath.FullName + lmd.DefaultCachePath;
         lmd.SaveToDatabase();
 
         return projectDirectory;
