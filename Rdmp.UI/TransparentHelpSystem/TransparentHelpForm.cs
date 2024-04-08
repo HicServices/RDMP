@@ -22,9 +22,9 @@ public partial class TransparentHelpForm : Form
     private readonly Control _host;
     private Control _highlight;
 
-    [LibraryImport("user32.dll", SetLastError = true)]
+    [DllImport("user32.dll", SetLastError = true)]
     [return: MarshalAs(UnmanagedType.Bool)]
-    private static partial bool ShowWindow(IntPtr hWnd, int nCmdShow);
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
     private const uint SW_SHOWNOACTIVATE = 4;
     private const uint WM_NCHITTEST = 0x0084;

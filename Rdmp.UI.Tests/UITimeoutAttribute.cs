@@ -42,14 +42,14 @@ internal partial class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
             _timeout = timeout;
         }
 
-        [LibraryImport("user32.dll")]
-        private static partial IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [LibraryImport("user32.dll")]
-        private static partial IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
 
         private string YesNoDialog = "#32770";
 
