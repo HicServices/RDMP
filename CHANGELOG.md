@@ -44,8 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump HIC.BadMedicine from 1.2.0 to 1.2.1 
 - Bump NPOI from 2.6.2 to 2.7.0 
 
->>>>>>> 72851208fc5be9e1979f15d5649efa0f1b6838fe
-
 ## [8.1.4] - 2024-02-19
 
 ## Changed
