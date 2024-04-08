@@ -164,15 +164,15 @@ jobs:
       - name: Temporary Bundle of ddls for auto-updater
         shell: bash
         run: |
-          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/runtimes ./PublishWinForms
-          cp -r Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/x64 ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/D3DCompiler_47_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/mongocrypt.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/PenImc_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/PresentationNative_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/vcruntime140_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/WebView2Loader.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net7.0-windows/win-x64/wpfgfx_cor3.dll ./PublishWinForms
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/runtimes ./PublishWinForms
+          cp -r Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/x64 ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/D3DCompiler_47_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/mongocrypt.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/PenImc_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/PresentationNative_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/vcruntime140_cor3.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/WebView2Loader.dll ./PublishWinForms
+          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/wpfgfx_cor3.dll ./PublishWinForms
       - name: Install Plugins
         shell: bash
         run: |
@@ -195,7 +195,6 @@ jobs:
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWindows/rdmp.exe
           AzureSignTool sign -kvu "${{ secrets.AZURE_KEY_VAULT_URI }}" -kvi "${{ secrets.AZURE_CLIENT_ID }}" -kvt "${{ secrets.AZURE_TENANT_ID }}" -kvs "${{ secrets.AZURE_CLIENT_SECRET }}" -kvc ${{ secrets.AZURE_CERT_NAME }} -tr http://timestamp.digicert.com -v PublishWinForms/ResearchDataManagementPlatform.exe
           mkdir -p dist
-          cmd /c wix\\build.cmd ${{ steps.version.outputs.rdmpversion }}
           (cd PublishWindows ; echo 7z a -mx=9 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-win-x64.zip . | cmd)
           (cd PublishLinux ; echo 7z a -mx=0 ../dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.zip . | cmd)
           mv PublishLinux rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux
@@ -204,7 +203,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.28.0
+        uses: shogo82148/actions-setup-perl@v1.29.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
@@ -287,7 +286,7 @@ jobs:
       - name: Upload Nuget packages
         run: dotnet nuget push HIC.RDMP.Plugin*${{ steps.version.outputs.rdmpversion }}.nupkg -s https://api.nuget.org/v3/index.json --skip-duplicate -k ${{ secrets.NUGET_KEY }}
       - name: Upload binaries to release
-        uses: svenstaro/upload-release-action@2.7.0
+        uses: svenstaro/upload-release-action@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: dist/*

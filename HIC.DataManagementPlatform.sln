@@ -2,11 +2,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E42F0D5F-79D5-4322-BE3F-F52DCAAED2C3}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\packages.config = .nuget\packages.config
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "Tests.Common\Tests.Common.csproj", "{CA13A431-7FB6-4BCE-8521-42D130934311}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AEDF99FB-885A-4243-8DFE-6A4E3F40D50D}"
@@ -14,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.github\workflows\build.yml = .github\workflows\build.yml
 		CHANGELOG.md = CHANGELOG.md
 		deadlinksconfig.json = deadlinksconfig.json
-		directory.build.props = directory.build.props
+		Directory.Build.props = Directory.Build.props
 		.github\workflows\links.yml = .github\workflows\links.yml
 		Directory.Packages.props = Directory.Packages.props
 		NoteForNewDevelopers.md = NoteForNewDevelopers.md

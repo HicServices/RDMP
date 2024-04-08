@@ -488,17 +488,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _datasetStartDate, value);
     }
 
-    private int? _loadMetadataId;
-
-    /// <inheritdoc/>
-    [DoNotExtractProperty]
-    [Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
-    public int? LoadMetadata_ID
-    {
-        get => _loadMetadataId;
-        set => SetField(ref _loadMetadataId, value);
-    }
-
     #endregion
 
     #region Relationships
@@ -508,9 +497,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
 
     /// <inheritdoc/>
-    [NoMappingToDatabase]
-    public LoadMetadata LoadMetadata =>
-        LoadMetadata_ID == null ? null : Repository.GetObjectByID<LoadMetadata>((int)LoadMetadata_ID);
+    public LoadMetadata[] LoadMetadatas()
+    {
+        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID",ID).Select(l => l.LoadMetadataID);
+
+        return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
+    }
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
@@ -714,8 +706,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-        if (r["LoadMetadata_ID"] != DBNull.Value)
-            LoadMetadata_ID = int.Parse(r["LoadMetadata_ID"].ToString());
 
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
@@ -1062,17 +1052,6 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Use to set LoadMetadata to null without first performing Disassociation checks.  This should only be used for in-memory operations such as cloning
-    /// This (if saved to the original database it was read from) could create orphans - load stages that relate to the disassociated catalogue.  But if
-    /// you are cloning a catalogue and dropping the LoadMetadata then you won't be saving the dropped state to the original database ( you will be saving it
-    /// to the clone database so it won't be a problem).
-    /// </summary>
-    public void HardDisassociateLoadMetadata()
-    {
-        _loadMetadataId = null;
-    }
-
-    /// <summary>
     /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / its LoadMetadata (if it has one).  This will throw if no
     /// logging server has been configured.
     /// </summary>
@@ -1093,9 +1072,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         var iDependOn = new List<IHasDependencies>();
 
         iDependOn.AddRange(CatalogueItems);
-
-        if (LoadMetadata != null)
-            iDependOn.Add(LoadMetadata);
+        var lmdList = LoadMetadatas();
+        if (lmdList.Length > 0)
+            foreach (var lmd in lmdList)
+            {
+                iDependOn.Add(lmd);
+            }
 
         return iDependOn.ToArray();
     }
@@ -1212,10 +1194,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <returns></returns>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var f = new QuerySyntaxHelperFactory();
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
             $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return f.Create(type);
+        return QuerySyntaxHelperFactory.Create(type);
     }
 
     #region Static Methods

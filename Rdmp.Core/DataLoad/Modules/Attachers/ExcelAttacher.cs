@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -84,49 +83,20 @@ public class ExcelAttacher : FlatFileAttacher
             $"About to start processing {fileToLoad.FullName}"));
 
         var columnTranslation = ConvertColumnOffsetToInt();
-        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation);
 
+        string[] replacementHeadersSplit = { };
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
         {
-            //split headers by , (and trim leading/trailing whitespace).
-            var replacementHeadersSplit = ForceReplacementHeaders.Split(',')
+            replacementHeadersSplit = ForceReplacementHeaders.Split(',')
                 .Select(h => string.IsNullOrWhiteSpace(h) ? h : h.Trim()).ToArray();
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(replacementHeadersSplit, _dataTable.Columns)}"));
-
-            if (replacementHeadersSplit.Length != _dataTable.Columns.Count)
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Error,
-                        $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {_dataTable.Columns.Count} (there must be the same number of replacement headers as headers in the excel file)"));
-            else
-                for (var i = 0; i < replacementHeadersSplit.Length; i++)
-                    _dataTable.Columns[i].ColumnName =
-                        replacementHeadersSplit[i]; //rename the columns to match the forced replacements
         }
 
+        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation, replacementHeadersSplit);
+      
         //all data should now be exhausted
         if (_hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation) != null)
             throw new Exception(
                 "Hosted source served more than 1 chunk, expected all the data to be read from the Excel file in one go");
-    }
-
-    private static string GenerateASCIIArtOfSubstitutions(string[] replacementHeadersSplit,
-        DataColumnCollection columns)
-    {
-        var sb = new StringBuilder("");
-
-        var max = Math.Max(replacementHeadersSplit.Length, columns.Count);
-
-        for (var i = 0; i < max; i++)
-        {
-            var replacement = i >= replacementHeadersSplit.Length ? "???" : replacementHeadersSplit[i];
-            var original = i >= columns.Count ? "???" : columns[i].ColumnName;
-
-            sb.Append($"{Environment.NewLine}[{i}]{original}>>>{replacement}");
-        }
-
-        return sb.ToString();
     }
 
     protected override int IterativelyBatchLoadDataIntoDataTable(DataTable loadTarget, int maxBatchSize,

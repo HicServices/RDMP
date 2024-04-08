@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using Microsoft.Data.SqlClient;
@@ -14,6 +15,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using System.Text.Json;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
@@ -25,12 +27,20 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
     public string Filepath;
     private readonly IProcessTask _task;
 
+    public string PrimaryFilePhysicalName;
+    public string LogFilePhysicalName;
     private LoadStage _loadStage;
 
     public ExecuteSqlBakFileRuntimeTask(IProcessTask task, RuntimeArgumentCollection args) : base(task, args)
     {
         _task = task;
         Filepath = task.Path;
+        if (!string.IsNullOrWhiteSpace(task.SerialisableConfiguration))
+        {
+            var config = JsonSerializer.Deserialize<Dictionary<string, string>>(task.SerialisableConfiguration);
+            config.TryGetValue("PrimaryFilePhysicalName", out PrimaryFilePhysicalName);
+            config.TryGetValue("LogFilePhysicalName", out LogFilePhysicalName);
+        }
     }
 
     public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -45,7 +55,7 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         using var fileInfo = new DataTable();
         using var con = (SqlConnection)db.Server.GetConnection();
         using (var cmd = new SqlCommand(fileOnlyCommand, con))
-          using (var da = new SqlDataAdapter(cmd))
+        using (var da = new SqlDataAdapter(cmd))
             da.Fill(fileInfo);
         var primaryFiles = fileInfo.Select("Type = 'D'");
         var logFiles = fileInfo.Select("Type = 'L'");
@@ -58,18 +68,20 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
 
         var primaryFile = primaryFiles[0];
         var logFile = logFiles[0];
-        var primaryFilePhysicalName = primaryFile["PhysicalName"].ToString();
-        var logFilePhysicalName = logFile["PhysicalName"].ToString();
+        if (string.IsNullOrWhiteSpace(PrimaryFilePhysicalName))
+            PrimaryFilePhysicalName = primaryFile["PhysicalName"].ToString();
+        if (string.IsNullOrWhiteSpace(LogFilePhysicalName))
+            LogFilePhysicalName = logFile["PhysicalName"].ToString();
 
-        if (File.Exists(primaryFilePhysicalName) || File.Exists(logFilePhysicalName))
+        if (File.Exists(PrimaryFilePhysicalName) || File.Exists(LogFilePhysicalName))
         {
             var timestamp = DateTime.Now.Millisecond.ToString();
-            var primaryFileName = primaryFilePhysicalName[..^4];
-            var primaryFileExtension = primaryFilePhysicalName[^4..];
-            primaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtension}";
-            var logFileName = logFilePhysicalName[..^4];
-            var logFileExtension = logFilePhysicalName[^4..];
-            logFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtension}";
+            var primaryFileName = PrimaryFilePhysicalName[..^4];
+            var primaryFileExtension = PrimaryFilePhysicalName[^4..];
+            PrimaryFilePhysicalName = $"{primaryFileName}_{timestamp}{primaryFileExtension}";
+            var logFileName = LogFilePhysicalName[..^4];
+            var logFileExtension = LogFilePhysicalName[^4..];
+            LogFilePhysicalName = $"{logFileName}_{timestamp}{logFileExtension}";
         }
 
         var name = db.ToString();
@@ -79,8 +91,8 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         ALTER DATABASE {name} SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
         RESTORE DATABASE {name}
         FROM DISK = '{Filepath}'
-        WITH MOVE '{primaryFile["LogicalName"]}' TO '{primaryFilePhysicalName}',
-        MOVE '{logFile["LogicalName"]}' TO '{logFilePhysicalName}' ,  NOUNLOAD,  REPLACE,  STATS = 5;
+        WITH MOVE '{primaryFile["LogicalName"]}' TO '{PrimaryFilePhysicalName}',
+        MOVE '{logFile["LogicalName"]}' TO '{LogFilePhysicalName}' ,  NOUNLOAD,  REPLACE,  STATS = 5;
         ALTER DATABASE {name} SET MULTI_USER;
         ";
 

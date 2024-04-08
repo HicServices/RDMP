@@ -11,17 +11,5 @@ updates:
   open-pull-requests-limit: 10
   target-branch: develop
   reviewers:
-  - jas88
-  ignore:
-  - dependency-name: NPOI
-    versions:
-    - ">= 2.5.1.a"
-    - "< 2.5.2"
-  - dependency-name: NPOI
-    versions:
-    - ">= 2.5.a"
-    - "< 2.6"
-  - dependency-name: System.Resources.Extensions
-    versions:
-    - "> 4.6.0"
-    - "< 5"
+    - jas88
+    - jfriel

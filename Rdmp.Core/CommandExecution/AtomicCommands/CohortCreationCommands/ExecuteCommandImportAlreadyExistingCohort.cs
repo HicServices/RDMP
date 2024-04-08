@@ -61,9 +61,10 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         // the cohorts in the database
         var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c => c.ID.HasValue).ToArray();
 
+
         // the ones we already know about
         var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjects<ExtractableCohort>().Select(c => c.OriginID));
+            .GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ect.ID).Select(c => c.OriginID));
 
         // new ones we don't know about yet
         available = available.Where(c => !existing.Contains(c.ID.Value)).ToArray();
