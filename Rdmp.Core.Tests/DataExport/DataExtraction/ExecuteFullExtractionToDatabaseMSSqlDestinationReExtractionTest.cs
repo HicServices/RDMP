@@ -540,7 +540,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(3));
+        Assert.That(dt.Rows, Has.Count.EqualTo(2)); //The release ID is a PK, so won't extract the same relase ID twice
     }
 
     [Test]
