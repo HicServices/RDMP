@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -175,9 +175,9 @@ public class GatherAndShareTests : DatabaseTests
         Assert.That(gObj.Children, Has.Count.EqualTo(2)); //both cata items
 
         var lmd = new LoadMetadata(CatalogueRepository);
-        cata.LoadMetadata_ID = lmd.ID;
         cata.SaveToDatabase();
-
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
+        linkage.SaveToDatabase();
         //get the share definition
         var shareManager = new ShareManager(RepositoryLocator);
         var shareDefinition = gObj.ToShareDefinitionWithChildren(shareManager);
@@ -197,10 +197,9 @@ public class GatherAndShareTests : DatabaseTests
         //make a local change
         cata.Name = "fishfish";
         cata.SubjectNumbers = "123";
-        cata.LoadMetadata_ID = null;
         cata.Periodicity = Catalogue.CataloguePeriodicity.Unknown;
         cata.SaveToDatabase();
-
+        lmd.UnlinkFromCatalogue(cata);
         lmd.DeleteInDatabase();
 
         //import the saved copy
@@ -229,7 +228,7 @@ public class GatherAndShareTests : DatabaseTests
             //import the defined properties but not name
             Assert.That(cata.Name, Is.EqualTo("fishfish"));
             Assert.That(cata.Periodicity, Is.EqualTo(Catalogue.CataloguePeriodicity.BiMonthly)); //reset this though
-            Assert.That(cata.LoadMetadata_ID, Is.Null);
+            Assert.That(cata.LoadMetadatas(), Is.Empty);
         });
         cata.SaveToDatabase();
 
