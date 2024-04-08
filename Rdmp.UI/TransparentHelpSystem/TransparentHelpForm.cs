@@ -22,7 +22,7 @@ public partial class TransparentHelpForm : Form
     private readonly Control _host;
     private Control _highlight;
 
-    [DllImport("user32.dll", SetLastError = true)]
+    [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     [return: MarshalAs(UnmanagedType.Bool)]
     private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 

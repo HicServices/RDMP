@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Rdmp.UI;
@@ -47,8 +46,6 @@ public partial class RichTextBoxEx : RichTextBox
         public byte bRevAuthor;
         public byte bReserved1;
     }
-
-    //private static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
     [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
     private static extern IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
