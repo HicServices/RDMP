@@ -104,7 +104,7 @@ public partial class RDMPMainForm : RDMPForm
         _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
         _windowManager = new WindowManager(_theme, this, _refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
-        SetItemActivator(_windowManager.ActivateItems);
+        SetItemActivator(_windowManager.ActivateItems.Value);
 
         _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
 
@@ -268,7 +268,7 @@ public partial class RDMPMainForm : RDMPForm
                               PersistenceDecisionFactory.ShouldCreateObjectCollection(persiststring, RepositoryLocator);
 
             if (instruction != null)
-                return _windowManager.ActivateItems.Activate(instruction, _windowManager.ActivateItems);
+                return _windowManager.ActivateItems.Value.Activate(instruction, _windowManager.ActivateItems.Value);
         }
         catch (Exception e)
         {

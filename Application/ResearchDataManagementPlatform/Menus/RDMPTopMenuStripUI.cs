@@ -255,7 +255,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     public void SetWindowManager(WindowManager windowManager)
     {
-        SetItemActivator(windowManager.ActivateItems);
+        SetItemActivator(windowManager.ActivateItems.Value);
 
         _windowManager = windowManager;
         _atomicCommandUIFactory = new AtomicCommandUIFactory(Activator);
@@ -397,7 +397,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void runToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var dialog = new RunUI(_windowManager.ActivateItems);
+        var dialog = new RunUI(_windowManager.ActivateItems.Value);
         dialog.Show();
     }
 

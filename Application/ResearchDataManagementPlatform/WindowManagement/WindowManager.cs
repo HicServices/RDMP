@@ -53,7 +53,7 @@ public class WindowManager
     /// </summary>
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
-    public ActivateItems ActivateItems;
+    public Lazy<ActivateItems> ActivateItems;
     private readonly WindowFactory _windowFactory;
 
     public event RDMPCollectionCreatedEventHandler CollectionCreated;
@@ -65,8 +65,7 @@ public class WindowManager
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
     {
         _windowFactory = new WindowFactory(repositoryLocator, this);
-        ActivateItems = new ActivateItems(theme, refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this,
-            globalErrorCheckNotifier);
+        ActivateItems = new Lazy< ActivateItems>(()=> new ActivateItems(theme, refreshBus, mainDockPanel, repositoryLocator, _windowFactory, this,globalErrorCheckNotifier));
 
         GlobalExceptionHandler.Instance.Handler = e =>
             globalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
@@ -76,9 +75,9 @@ public class WindowManager
         MainForm = mainForm;
         RepositoryLocator = repositoryLocator;
 
-        Navigation = new NavigationTrack<INavigation>(c => c.IsAlive, c => c.Activate(ActivateItems));
+        Navigation = new NavigationTrack<INavigation>(c => c.IsAlive, c => c.Activate(ActivateItems.Value));
         mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
-        ActivateItems.Emphasise += RecordEmphasis;
+        //ActivateItems.Value.Emphasise += RecordEmphasis;
     }
 
     private void RecordEmphasis(object sender, EmphasiseEventArgs args)
@@ -159,7 +158,7 @@ public class WindowManager
 
         toReturn.DockState = position;
 
-        collection.SetItemActivator(ActivateItems);
+        collection.SetItemActivator(ActivateItems.Value);
 
         CollectionCreated?.Invoke(this, new RDMPCollectionCreatedEventHandlerArgs(collectionToCreate));
 
@@ -177,7 +176,7 @@ public class WindowManager
         Image<Rgba32> image)
     {
         var content =
-            _windowFactory.Create(ActivateItems, control, label, image,
+            _windowFactory.Create(ActivateItems.Value, control, label, image,
                 collection); //these are collections so are not tracked with a window tracker.
         content.Closed += (s, e) => content_Closed(collection);
 
@@ -269,7 +268,7 @@ public class WindowManager
 
     public RDMPCollection GetCollectionForRootObject(object root)
     {
-        if (FavouritesCollectionUI.IsRootObject(ActivateItems, root))
+        if (FavouritesCollectionUI.IsRootObject(ActivateItems.Value, root))
             return RDMPCollection.Favourites;
 
         if (CatalogueCollectionUI.IsRootObject(root))
@@ -297,9 +296,9 @@ public class WindowManager
     {
         if (_home == null)
         {
-            _home = new HomeUI(ActivateItems);
+            _home = new HomeUI(ActivateItems.Value);
 
-            _homeContent = _windowFactory.Create(ActivateItems, _home, "Home",
+            _homeContent = _windowFactory.Create(ActivateItems.Value, _home, "Home",
                 Image.Load<Rgba32>(FamFamFamIcons.application_home));
             _homeContent.Closed += (s, e) => _home = null;
             _homeContent.Show(_mainDockPanel, DockState.Document);
@@ -459,7 +458,7 @@ public class WindowManager
         {
             Navigation.Current.Close();
 
-            Navigation.Current?.Activate(ActivateItems);
+            Navigation.Current?.Activate(ActivateItems.Value);
         }
         finally
         {

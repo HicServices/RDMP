@@ -79,10 +79,10 @@ public partial class RDMPTaskBarUI : UserControl
 
         SetupToolTipText();
 
-        _manager.ActivateItems.Theme.ApplyTo(toolStrip1);
+        _manager.ActivateItems.Value.Theme.ApplyTo(toolStrip1);
 
         // if we don't support commit system then disable the task bar button for it
-        if (!_manager.ActivateItems.RepositoryLocator.CatalogueRepository.SupportsCommits)
+        if (!_manager.ActivateItems.Value.RepositoryLocator.CatalogueRepository.SupportsCommits)
         {
             cbCommits.Enabled = false;
             cbCommits.Text = "Repository does not support commits";
@@ -115,7 +115,7 @@ public partial class RDMPTaskBarUI : UserControl
         }
         catch (Exception e)
         {
-            _manager.ActivateItems.GlobalErrorCheckNotifier.OnCheckPerformed(
+            _manager.ActivateItems.Value.GlobalErrorCheckNotifier.OnCheckPerformed(
                 new CheckEventArgs("Failed to setup tool tips", CheckResult.Fail, e));
         }
     }
@@ -208,7 +208,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         if (cbx.SelectedItem is INamed toOpen)
         {
-            var cmd = new ExecuteCommandActivate(_manager.ActivateItems, toOpen);
+            var cmd = new ExecuteCommandActivate(_manager.ActivateItems.Value, toOpen);
             cmd.Execute();
         }
 
@@ -236,7 +236,7 @@ public partial class RDMPTaskBarUI : UserControl
         {
             var layout = new WindowLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText, xml);
 
-            var cmd = new ExecuteCommandActivate(_manager.ActivateItems, layout);
+            var cmd = new ExecuteCommandActivate(_manager.ActivateItems.Value, layout);
             cmd.Execute();
 
             ReCreateDropDowns();
@@ -259,7 +259,7 @@ public partial class RDMPTaskBarUI : UserControl
 
         if (cbx.SelectedItem is IDeleteable d)
         {
-            _manager.ActivateItems.DeleteWithConfirmation(d);
+            _manager.ActivateItems.Value.DeleteWithConfirmation(d);
             ReCreateDropDowns();
         }
     }
