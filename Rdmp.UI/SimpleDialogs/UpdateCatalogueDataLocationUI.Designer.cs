@@ -38,8 +38,10 @@
             lblFilter = new System.Windows.Forms.Label();
             tbFilter = new System.Windows.Forms.TextBox();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
-            tbCurrentLocation = new System.Windows.Forms.TextBox();
             lbl1 = new System.Windows.Forms.Label();
+            tbCurrentLocation = new System.Windows.Forms.TextBox();
+            serverDatabaseTableSelector1 = new SimpleControls.ServerDatabaseTableSelector();
+            label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)tlvDatasets).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -54,7 +56,7 @@
             helpIcon1.BackColor = System.Drawing.Color.Transparent;
             helpIcon1.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon1.BackgroundImage");
             helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            helpIcon1.Location = new System.Drawing.Point(1446, 9);
+            helpIcon1.Location = new System.Drawing.Point(1445, 9);
             helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             helpIcon1.MaximumSize = new System.Drawing.Size(26, 25);
             helpIcon1.MinimumSize = new System.Drawing.Size(26, 25);
@@ -143,6 +145,8 @@
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(label1);
+            splitContainer1.Panel2.Controls.Add(serverDatabaseTableSelector1);
             splitContainer1.Panel2.Controls.Add(lbl1);
             splitContainer1.Panel2.Controls.Add(tbCurrentLocation);
             splitContainer1.Panel2.Controls.Add(helpIcon1);
@@ -150,6 +154,16 @@
             splitContainer1.SplitterDistance = 346;
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 30;
+            // 
+            // lbl1
+            // 
+            lbl1.AutoSize = true;
+            lbl1.Location = new System.Drawing.Point(30, 33);
+            lbl1.Name = "lbl1";
+            lbl1.Size = new System.Drawing.Size(126, 15);
+            lbl1.TabIndex = 34;
+            lbl1.Text = "Current Data Location:";
+            lbl1.Click += label1_Click;
             // 
             // tbCurrentLocation
             // 
@@ -159,15 +173,31 @@
             tbCurrentLocation.Size = new System.Drawing.Size(460, 23);
             tbCurrentLocation.TabIndex = 33;
             // 
-            // lbl1
+            // serverDatabaseTableSelector1
             // 
-            lbl1.AutoSize = true;
-            lbl1.Location = new System.Drawing.Point(30, 33);
-            lbl1.Name = "lbl1";
-            lbl1.Size = new System.Drawing.Size(123, 15);
-            lbl1.TabIndex = 34;
-            lbl1.Text = "Current Data Location";
-            lbl1.Click += label1_Click;
+            serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
+            serverDatabaseTableSelector1.AutoSize = true;
+            serverDatabaseTableSelector1.Database = "";
+            serverDatabaseTableSelector1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
+            serverDatabaseTableSelector1.Location = new System.Drawing.Point(21, 98);
+            serverDatabaseTableSelector1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
+            serverDatabaseTableSelector1.Password = "";
+            serverDatabaseTableSelector1.Server = "";
+            serverDatabaseTableSelector1.Size = new System.Drawing.Size(727, 218);
+            serverDatabaseTableSelector1.TabIndex = 35;
+            serverDatabaseTableSelector1.Timeout = "";
+            serverDatabaseTableSelector1.Username = "";
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(30, 80);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(110, 15);
+            label1.TabIndex = 36;
+            label1.Text = "New Data Location:";
+            label1.Click += label1_Click_1;
             // 
             // UpdateCatalogueDataLocationUI
             // 
@@ -200,5 +230,7 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label lbl1;
         private System.Windows.Forms.TextBox tbCurrentLocation;
+        private System.Windows.Forms.Label label1;
+        private SimpleControls.ServerDatabaseTableSelector serverDatabaseTableSelector1;
     }
 }
