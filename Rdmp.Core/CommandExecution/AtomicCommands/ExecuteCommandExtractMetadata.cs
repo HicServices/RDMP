@@ -59,7 +59,7 @@ public class ExecuteCommandExtractMetadata : BasicCommandExecution
 
         var catas = _catalogues ?? BasicActivator
             .SelectMany("Which catalogues do you want to extract metadata for", typeof(Catalogue),
-                BasicActivator.CoreChildProvider.AllCatalogues);
+                BasicActivator.CoreChildProvider.AllCatalogues.Value);
 
         if (catas == null || !catas.Any())
             return;

@@ -372,7 +372,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public bool IsLookupTable(ICoreChildProvider childProvider)
     {
         // we are a lookup if
-        var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Select(l => l.Description_ID));
+        var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Value.Select(l => l.Description_ID));
         return ColumnInfos.Any(c => lookupDescriptionColumnInfoIds.Contains(c.ID));
     }
 

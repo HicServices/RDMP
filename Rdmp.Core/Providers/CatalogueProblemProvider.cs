@@ -43,20 +43,20 @@ public class CatalogueProblemProvider : ProblemProvider
         _childProvider = childProvider;
 
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
-        var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
+        var orphans = _childProvider.AllCatalogueItems.Value.Where(ci => ci.ColumnInfo_ID == null);
 
         //now identify those which have an ExtractionInformation (that's a problem! they are extractable but orphaned)
         _orphanCatalogueItems = new HashSet<int>(
-            orphans.Where(o => _childProvider.AllExtractionInformations.Any(ei => ei.CatalogueItem_ID == o.ID))
+            orphans.Where(o => _childProvider.AllExtractionInformations.Value.Any(ei => ei.CatalogueItem_ID == o.ID))
 
                 //store just the ID for performance
                 .Select(i => i.ID));
 
         _usedJoinables = new HashSet<int>(
-            childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
+            childProvider.AllJoinableCohortAggregateConfigurationUse.Value.Select(
                 ju => ju.JoinableCohortAggregateConfiguration_ID));
 
-        _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
+        _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Value.Where(j =>
             !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
             !string.IsNullOrWhiteSpace(j.ForeignKey.Collation) &&
 
@@ -158,9 +158,9 @@ public class CatalogueProblemProvider : ProblemProvider
         var expiredCatalogueIds = new HashSet<int>();
 
         //Get all expired Catalogue IDs
-        foreach (var kvp in _childProvider.GovernanceCoverage)
+        foreach (var kvp in _childProvider.GovernanceCoverage.Value)
         {
-            var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+            var gp = _childProvider.AllGovernancePeriods.Value.Single(g => g.ID == kvp.Key);
 
             if (gp.IsExpired())
                 foreach (var i in kvp.Value)
@@ -168,16 +168,16 @@ public class CatalogueProblemProvider : ProblemProvider
         }
 
         //Throw out any covered by a not expired one
-        foreach (var kvp in _childProvider.GovernanceCoverage)
+        foreach (var kvp in _childProvider.GovernanceCoverage.Value)
         {
-            var gp = _childProvider.AllGovernancePeriods.Single(g => g.ID == kvp.Key);
+            var gp = _childProvider.AllGovernancePeriods.Value.Single(g => g.ID == kvp.Key);
 
             if (!gp.IsExpired())
                 foreach (var i in kvp.Value)
                     expiredCatalogueIds.Remove(i);
         }
 
-        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id])
+        var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary.Value[id])
             .Where(c => !c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/).ToArray();
 
         if (expiredCatalogues.Any())
@@ -264,7 +264,7 @@ public class CatalogueProblemProvider : ProblemProvider
             return "Child order is ambiguous, show the Order column and reorder contents";
 
         //check if we're looking at a root container
-        if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
+        if (_childProvider.AllCohortIdentificationConfigurations.Value.Any(c =>
                 c.RootCohortAggregateContainer_ID == container.ID))
         {
             //if it's a root container

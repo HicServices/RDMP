@@ -31,7 +31,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
     {
         var allConfigurations = activator.CoreChildProvider.AllCohortIdentificationConfigurations;
 
-        if (!allConfigurations.Any())
+        if (!allConfigurations.Value.Any())
             SetImpossible(
                 "You do not have any CohortIdentificationConfigurations yet, you can create them through the 'Cohorts Identification Toolbox' accessible through Window=>Cohort Identification");
 

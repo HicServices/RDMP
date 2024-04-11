@@ -30,7 +30,7 @@ public class ExecuteCommandCreateNewLoadMetadata : BasicCommandExecution, IAtomi
         Catalogue catalogue = null) : base(activator)
     {
         _availableCatalogues =
-            activator.CoreChildProvider.AllCatalogues.ToArray();
+            activator.CoreChildProvider.AllCatalogues.Value.ToArray();
 
         if (!_availableCatalogues.Any())
             SetImpossible("There are no available Catalogues");

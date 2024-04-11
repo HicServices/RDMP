@@ -24,7 +24,7 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
     {
         _loadMetadata = loadMetadata;
         _available =
-            activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
+            activator.CoreChildProvider.AllExternalServers.Value.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
                 .ToArray();
 
         if (!_available.Any())

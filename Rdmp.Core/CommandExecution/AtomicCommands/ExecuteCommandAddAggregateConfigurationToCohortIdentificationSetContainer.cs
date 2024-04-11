@@ -80,7 +80,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         if (offerCohortAggregates)
         {
             _available = BasicActivator.CoreChildProvider.AllAggregateConfigurations
-                .Where(c => c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
+                .Value.Where(c => c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
 
             if (_available.Length == 0) SetImpossible("You do not currently have any cohort sets");
         }

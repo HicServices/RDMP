@@ -97,7 +97,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 OverrideIcon = GetImage(RDMPConcept.TableInfo)
             };
             yield return new ExecuteCommandShow(_activator,
-                () => _activator.CoreChildProvider.AllCatalogueItems.Where(catItem =>
+                () => _activator.CoreChildProvider.AllCatalogueItems.Value.Where(catItem =>
                     catItem.ColumnInfo_ID == columnInfo.ID))
             {
                 OverrideCommandName = "Catalogue Item(s)",
@@ -240,7 +240,7 @@ public class GoToCommandFactory : CommandFactoryBase
         if (Is(forObject, out TableInfo tableInfo))
             yield return new ExecuteCommandShow(_activator,
                 () => tableInfo.ColumnInfos.SelectMany(c =>
-                    _activator.CoreChildProvider.AllCatalogueItems.Where(catItem => catItem.ColumnInfo_ID == c.ID)
+                    _activator.CoreChildProvider.AllCatalogueItems.Value.Where(catItem => catItem.ColumnInfo_ID == c.ID)
                         .Select(catItem => catItem.Catalogue)).Distinct())
             {
                 OverrideCommandName = "Catalogue(s)",
@@ -314,7 +314,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 () =>
                     _activator
                         .CoreChildProvider
-                        .AllAggregateConfigurations.Where(ac =>
+                        .AllAggregateConfigurations.Value.Where(ac =>
                             ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
                         .Select(ac => ac.GetCohortIdentificationConfigurationIfAny())
                         .Where(cataCic => cataCic != null)
@@ -326,7 +326,7 @@ public class GoToCommandFactory : CommandFactoryBase
 
 
             yield return new ExecuteCommandShow(_activator,
-                () => _activator.CoreChildProvider.AllGovernancePeriods.Where(p =>
+                () => _activator.CoreChildProvider.AllGovernancePeriods.Value.Where(p =>
                     p.GovernedCatalogues.Contains(catalogue)))
             {
                 OverrideCommandName = "Governance",

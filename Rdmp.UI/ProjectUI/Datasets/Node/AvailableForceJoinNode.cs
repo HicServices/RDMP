@@ -67,7 +67,7 @@ internal class AvailableForceJoinNode : IMasqueradeAs
         foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
                      .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
             foundJoinInfos.AddRange(
-                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins, mycols,
+                TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins.Value, mycols,
                     theirCols));
 
         JoinInfos = foundJoinInfos.ToArray();

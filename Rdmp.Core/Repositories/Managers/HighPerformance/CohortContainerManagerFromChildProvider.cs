@@ -56,7 +56,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
                 _contents.Add(currentParentId, new List<IOrderable>());
 
             _contents[currentParentId]
-                .Add(childProvider.AllCohortAggregateContainers.Single(c => c.ID == currentChildId));
+                .Add(childProvider.AllCohortAggregateContainers.Value.Single(c => c.ID == currentChildId));
         }
 
         r.Close();
@@ -80,7 +80,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
             try
             {
-                config = childProvider.AllAggregateConfigurations.Single(a => a.ID == currentChildId);
+                config = childProvider.AllAggregateConfigurations.Value.Single(a => a.ID == currentChildId);
             }
             catch (Exception)
             {

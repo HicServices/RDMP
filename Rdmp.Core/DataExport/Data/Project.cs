@@ -206,7 +206,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     {
         return childProvider is DataExportChildProvider dx
             ? dx.ExtractableDataSets.Where(eds => eds.Project_ID == ID)
-                .Select(e => dx.AllCataloguesDictionary[e.Catalogue_ID])
+                .Select(e => dx.AllCataloguesDictionary.Value[e.Catalogue_ID])
                 .SelectMany(cata => cata.GetAllExtractionInformation(c)).ToArray()
             : GetAllProjectCatalogueColumns(c);
     }

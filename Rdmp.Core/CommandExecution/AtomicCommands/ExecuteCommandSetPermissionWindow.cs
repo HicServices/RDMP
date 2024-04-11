@@ -25,7 +25,7 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
         _cacheProgress = cacheProgress;
         _window = null;
 
-        if (!activator.CoreChildProvider.AllPermissionWindows.Any())
+        if (!activator.CoreChildProvider.AllPermissionWindows.Value.Any())
             SetImpossible("There are no PermissionWindows created yet");
     }
 

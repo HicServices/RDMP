@@ -29,7 +29,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
 
     public override void Execute()
     {
-        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] { _toPopulate }).ToList();
+        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Value.Except(new[] { _toPopulate }).ToList();
 
         string initialSearchText = null;
 

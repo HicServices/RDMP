@@ -90,7 +90,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
             {
                 TaskDescription = "Select which column the new CatalogueItem will describe/extract",
                 WindowTitle = "Choose underlying Column"
-            }, BasicActivator.CoreChildProvider.AllColumnInfos);
+            }, BasicActivator.CoreChildProvider.AllColumnInfos.Value);
 
             if (columnInfo == null)
                 return;

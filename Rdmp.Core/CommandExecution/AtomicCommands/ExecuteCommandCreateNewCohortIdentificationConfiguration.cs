@@ -53,7 +53,7 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
     public ExecuteCommandCreateNewCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
     {
-        if (!activator.CoreChildProvider.AllCatalogues.Any())
+        if (!activator.CoreChildProvider.AllCatalogues.Value.Any())
             SetImpossible("There are no datasets loaded yet into RDMP");
 
         UseTripleDotSuffix = true;

@@ -32,7 +32,7 @@ public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecuti
         var other = Other;
 
         if (other == null)
-            if (!SelectOne(BasicActivator.CoreChildProvider.AllCatalogues, out other))
+            if (!SelectOne(BasicActivator.CoreChildProvider.AllCatalogues.Value, out other))
                 return;
 
         foreach (var ci in ToPopulate.CatalogueItems)

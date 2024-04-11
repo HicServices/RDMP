@@ -33,7 +33,7 @@ internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
                 _activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph).ImageToBitmap());
 
             var availableGraphs = _activator.CoreChildProvider.AllAggregateConfigurations
-                .Where(g => !g.IsCohortIdentificationAggregate).ToArray();
+                .Value.Where(g => !g.IsCohortIdentificationAggregate).ToArray();
             var allCatalogues = _activator.CoreChildProvider.AllCatalogues;
 
             if (availableGraphs.Any())

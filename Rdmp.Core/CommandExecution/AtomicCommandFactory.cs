@@ -352,7 +352,7 @@ public class AtomicCommandFactory : CommandFactoryBase
                     new ANOStorePatcher(), PermissableDefaults.ANOStore)
             { OverrideCommandName = "Create ANOStore Database" };
 
-            yield return new ExecuteCommandExportObjectsToFile(_activator, _activator.CoreChildProvider.AllANOTables);
+            yield return new ExecuteCommandExportObjectsToFile(_activator, _activator.CoreChildProvider.AllANOTables.Value);
         }
 
         if (Is(o, out AllCataloguesUsedByLoadMetadataNode aculmd))

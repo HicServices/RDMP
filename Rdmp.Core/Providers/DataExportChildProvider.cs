@@ -118,7 +118,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         ExtractableDataSets = GetAllObjects<ExtractableDataSet>(dataExportRepository);
 
         //This means that the ToString method in ExtractableDataSet doesn't need to go lookup catalogue info
-        var catalogueIdDict = AllCatalogues.ToDictionaryEx(c => c.ID, c2 => c2);
+        var catalogueIdDict = AllCatalogues.Value.ToDictionaryEx(c => c.ID, c2 => c2);
         foreach (var ds in ExtractableDataSets)
             if (catalogueIdDict.TryGetValue(ds.Catalogue_ID, out var cata))
                 ds.InjectKnown(cata);
@@ -183,7 +183,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         var cataToEds = new Dictionary<int, ExtractableDataSet>(ExtractableDataSets.ToDictionary(k => k.Catalogue_ID));
 
         //inject extractability into Catalogues
-        foreach (var catalogue in AllCatalogues)
+        foreach (var catalogue in AllCatalogues.Value)
             catalogue.InjectKnown(cataToEds.TryGetValue(catalogue.ID, out var result)
                 ? result.GetCatalogueExtractabilityStatus()
                 : new CatalogueExtractabilityStatus(false, false));
@@ -362,7 +362,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         foreach (var association in AllProjectAssociatedCics.Where(assoc =>
                      assoc.Project_ID == projectCiCsNode.Project.ID))
         {
-            var matchingCic = AllCohortIdentificationConfigurations.SingleOrDefault(cic =>
+            var matchingCic = AllCohortIdentificationConfigurations.Value.SingleOrDefault(cic =>
                 cic.ID == association.CohortIdentificationConfiguration_ID);
 
             if (matchingCic == null)
@@ -752,7 +752,7 @@ public class DataExportChildProvider : CatalogueChildProvider
                 }
                 else
                 {
-                    if (AllExtractionInformationsDictionary.TryGetValue(c.CatalogueExtractionInformation_ID.Value,
+                    if (AllExtractionInformationsDictionary.Value.TryGetValue(c.CatalogueExtractionInformation_ID.Value,
                             out var ei))
                         c.InjectKnown(ei);
                 }

@@ -25,7 +25,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
     public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IBasicActivateItems activator) :
         base(activator)
     {
-        if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
+        if (!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Value.Any())
             SetImpossible("There are no Cohort Identification Configurations yet");
 
         _existingAssociations = BasicActivator.RepositoryLocator.DataExportRepository

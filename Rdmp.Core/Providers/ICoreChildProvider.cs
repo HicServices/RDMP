@@ -33,34 +33,36 @@ namespace Rdmp.Core.Providers;
 /// </summary>
 public interface ICoreChildProvider : IChildProvider
 {
-    JoinInfo[] AllJoinInfos { get; }
-    LoadMetadata[] AllLoadMetadatas { get; }
-    TableInfoServerNode[] AllServers { get; }
-    TableInfo[] AllTableInfos { get; }
-    Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; }
-    CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
-    CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
-    JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
-    JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+    Lazy<JoinInfo[]> AllJoinInfos { get; }
+    Lazy<LoadMetadata[]> AllLoadMetadatas { get; }
+    Lazy<TableInfoServerNode[]> AllServers { get; }
+    Lazy<TableInfo[]> AllTableInfos { get; }
+    Lazy<Dictionary<int, List<ColumnInfo>>> TableInfosToColumnInfos { get; }
+    Lazy<CohortIdentificationConfiguration[]> AllCohortIdentificationConfigurations { get; }
+    Lazy<CohortAggregateContainer[]> AllCohortAggregateContainers { get; set; }
+    Lazy<JoinableCohortAggregateConfiguration[]> AllJoinables { get; set; }
+    Lazy<JoinableCohortAggregateConfigurationUse[]> AllJoinUses { get; set; }
 
-    FolderNode<Catalogue> CatalogueRootFolder { get; }
-    FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
-    FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
-    FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
+    Lazy<FolderNode<Catalogue>> CatalogueRootFolder { get; }
+    Lazy<FolderNode<Curation.Data.Dataset>> DatasetRootFolder { get; }
+    Lazy<FolderNode<LoadMetadata>> LoadMetadataRootFolder { get; }
+    Lazy<FolderNode<CohortIdentificationConfiguration>> CohortIdentificationConfigurationRootFolder { get; }
 
-    Catalogue[] AllCatalogues { get; }
-    Curation.Data.Dataset[] AllDatasets { get; }
-    Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
+    Lazy<Catalogue[]> AllCatalogues { get; }
+    Lazy<Curation.Data.Dataset[]> AllDatasets { get; }
+    Lazy<Dictionary<int, Catalogue>> AllCataloguesDictionary { get; }
 
-    ExternalDatabaseServer[] AllExternalServers { get; }
+    Lazy<ExternalDatabaseServer[]> AllExternalServers { get; }
 
-    AllANOTablesNode AllANOTablesNode { get; }
-    ANOTable[] AllANOTables { get; }
-    AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; }
-    AllServersNode AllServersNode { get; }
-    ColumnInfo[] AllColumnInfos { get; }
-    Lookup[] AllLookups { get; }
-    AllExternalServersNode AllExternalServersNode { get; }
+    Lazy<AllANOTablesNode> AllANOTablesNode { get; }
+    Lazy<ANOTable[]> AllANOTables { get; }
+    Lazy<AllDataAccessCredentialsNode> AllDataAccessCredentialsNode { get; }
+    Lazy<AllServersNode> AllServersNode { get; }
+
+    Lazy<ColumnInfo[]> AllColumnInfos { get; }
+
+    Lazy<Lookup[]> AllLookups { get; }
+    Lazy<AllExternalServersNode> AllExternalServersNode { get; }
     DescendancyList GetDescendancyListIfAnyFor(object model);
 
     /// <summary>
@@ -71,43 +73,43 @@ public interface ICoreChildProvider : IChildProvider
     /// <returns></returns>
     object GetRootObjectOrSelf(object model);
 
-    PermissionWindow[] AllPermissionWindows { get; }
-    IEnumerable<CatalogueItem> AllCatalogueItems { get; }
-    Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; }
-    AggregateConfiguration[] AllAggregateConfigurations { get; }
-    AllRDMPRemotesNode AllRDMPRemotesNode { get; }
+    Lazy<PermissionWindow[]> AllPermissionWindows { get; }
+    Lazy<IEnumerable<CatalogueItem>> AllCatalogueItems { get; }
+    Lazy<Dictionary<int, CatalogueItem>> AllCatalogueItemsDictionary { get; }
+    Lazy<AggregateConfiguration[]> AllAggregateConfigurations { get; }
+    Lazy<AllRDMPRemotesNode> AllRDMPRemotesNode { get; }
 
-    AllDashboardsNode AllDashboardsNode { get; }
-    DashboardLayout[] AllDashboards { get; }
+    Lazy<AllDashboardsNode> AllDashboardsNode { get; }
+    Lazy<DashboardLayout[]> AllDashboards { get; }
 
-    AllObjectSharingNode AllObjectSharingNode { get; }
-    ObjectImport[] AllImports { get; }
-    ObjectExport[] AllExports { get; }
+    Lazy<AllObjectSharingNode> AllObjectSharingNode { get; }
+    Lazy<ObjectImport[]> AllImports { get; }
+    Lazy<ObjectExport[]> AllExports { get; }
 
-    AllPluginsNode AllPluginsNode { get; }
+    Lazy<AllPluginsNode> AllPluginsNode { get; }
 
     Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
     IEnumerable<object> GetAllChildrenRecursively(object o);
-    IEnumerable<ExtractionInformation> AllExtractionInformations { get; }
+    Lazy<IEnumerable<ExtractionInformation>> AllExtractionInformations { get; }
 
-    Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; }
+    Lazy<Dictionary<int, ExtractionInformation>> AllExtractionInformationsDictionary { get; }
 
-    AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-    AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
-    AllStandardRegexesNode AllStandardRegexesNode { get; }
-    AllPipelinesNode AllPipelinesNode { get; }
+    Lazy<AllPermissionWindowsNode> AllPermissionWindowsNode { get; set; }
+    Lazy<AllConnectionStringKeywordsNode> AllConnectionStringKeywordsNode { get; set; }
+    Lazy<AllStandardRegexesNode> AllStandardRegexesNode { get; }
+    Lazy<AllPipelinesNode> AllPipelinesNode { get; }
 
-    AllGovernanceNode AllGovernanceNode { get; }
-    GovernancePeriod[] AllGovernancePeriods { get; }
-    GovernanceDocument[] AllGovernanceDocuments { get; }
+    Lazy<AllGovernanceNode> AllGovernanceNode { get; }
+    Lazy<GovernancePeriod[]> AllGovernancePeriods { get; }
+    Lazy<GovernanceDocument[]> AllGovernanceDocuments { get; }
 
-    Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; }
-    AggregateFilter[] AllAggregateFilters { get; }
+    Lazy<Dictionary<int, AggregateFilterContainer>> AllAggregateContainersDictionary { get; }
+    Lazy<AggregateFilter[]> AllAggregateFilters { get; }
 
     /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
-    Dictionary<int, HashSet<int>> GovernanceCoverage { get; }
+    Lazy<Dictionary<int, System.Collections.Generic.HashSet<int>>> GovernanceCoverage { get; }
 
-    JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
+    Lazy<JoinableCohortAggregateConfigurationUse[]> AllJoinableCohortAggregateConfigurationUse { get; }
 
 
     /// <summary>
@@ -124,31 +126,30 @@ public interface ICoreChildProvider : IChildProvider
     IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
 
-    AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
-    AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
+    Lazy<AllOrphanAggregateConfigurationsNode> OrphanAggregateConfigurationsNode { get; }
+    Lazy<AllTemplateAggregateConfigurationsNode> TemplateAggregateConfigurationsNode { get; }
 
     /// <summary>
     /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
     /// </summary>
-    HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
-
+    Lazy<HashSet<StandardPipelineUseCaseNode>> PipelineUseCases { get; }
 
     /// <summary>
     /// All components within all <see cref="Pipeline"/>
     /// </summary>
-    PipelineComponent[] AllPipelineComponents { get; }
+    Lazy<PipelineComponent[]> AllPipelineComponents { get; }
 
     /// <summary>
     /// All arguments for the <see cref="AllPipelineComponents"/>
     /// </summary>
-    PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
+    Lazy<PipelineComponentArgument[]> AllPipelineComponentsArguments { get; }
 
     /// <summary>
     /// All process
     /// </summary>
-    ProcessTask[] AllProcessTasks { get; }
+    Lazy<ProcessTask[]> AllProcessTasks { get; }
 
-    ProcessTaskArgument[] AllProcessTasksArguments { get; }
+    Lazy<ProcessTaskArgument[]> AllProcessTasksArguments { get; }
 
 
     /// <summary>

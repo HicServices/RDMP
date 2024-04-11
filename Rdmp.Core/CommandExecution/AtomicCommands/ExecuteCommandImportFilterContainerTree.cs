@@ -145,7 +145,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
             // The root object that makes most sense to the user e.g. they select an extraction
             var fromConfiguration
                 =
-                childProvider.AllCohortIdentificationConfigurations.Where(IsEligible)
+                childProvider.AllCohortIdentificationConfigurations.Value.Where(IsEligible)
                     .Cast<DatabaseEntity>()
                     .Union(childProvider.SelectedDataSets.Where(IsEligible)
                         .Select(sds => ecById[sds.ExtractionConfiguration_ID])).ToList();

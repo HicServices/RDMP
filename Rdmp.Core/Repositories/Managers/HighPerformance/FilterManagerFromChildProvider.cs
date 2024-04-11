@@ -31,7 +31,7 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
         base(repository)
     {
         _containersToFilters =
-            childProvider.AllAggregateFilters.Where(f => f.FilterContainer_ID.HasValue)
+            childProvider.AllAggregateFilters.Value.Where(f => f.FilterContainer_ID.HasValue)
                 .GroupBy(f => f.FilterContainer_ID.Value)
                 .ToDictionary(gdc => gdc.Key, gdc => gdc.ToList());
 
@@ -49,7 +49,7 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
             if (!_subcontainers.ContainsKey(parentId))
                 _subcontainers.Add(parentId, new List<AggregateFilterContainer>());
 
-            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
+            _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary.Value[subcontainerId]);
         }
         r.Close();
     }

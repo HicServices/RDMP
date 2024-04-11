@@ -142,7 +142,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
         tbCatalogue.Text = databaseObject.ToString();
 
-        cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos);
+        cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos.Value);
 
         UpdateValidityAssesment();
     }

@@ -33,6 +33,7 @@ using Rdmp.Core.Repositories.Managers.HighPerformance;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Comments;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using TB.ComponentModel;
 
 namespace Rdmp.Core.Providers;
 
@@ -53,21 +54,21 @@ namespace Rdmp.Core.Providers;
 public class CatalogueChildProvider : ICoreChildProvider
 {
     //Load System
-    public LoadMetadata[] AllLoadMetadatas { get; set; }
-    public ProcessTask[] AllProcessTasks { get; set; }
-    public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
+    public Lazy<LoadMetadata[]> AllLoadMetadatas { get; set; }
+    public Lazy<ProcessTask[]> AllProcessTasks { get; set; }
+    public Lazy<ProcessTaskArgument[]> AllProcessTasksArguments { get; set; }
 
-    public LoadProgress[] AllLoadProgresses { get; set; }
-    public CacheProgress[] AllCacheProgresses { get; set; }
-    public PermissionWindow[] AllPermissionWindows { get; set; }
+    public Lazy<LoadProgress[]> AllLoadProgresses { get; set; }
+    public Lazy<CacheProgress[]> AllCacheProgresses { get; set; }
+    public Lazy<PermissionWindow[]> AllPermissionWindows { get; set; }
 
     //Catalogue side of things
-    public Catalogue[] AllCatalogues { get; set; }
-    public Curation.Data.Dataset[] AllDatasets { get; set; }
-    public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
+    public Lazy<Catalogue[]> AllCatalogues { get; set; }
+    public Lazy<Curation.Data.Dataset[]> AllDatasets { get; set; }
+    public Lazy<Dictionary<int, Catalogue>> AllCataloguesDictionary { get; private set; }
 
-    public SupportingDocument[] AllSupportingDocuments { get; set; }
-    public SupportingSQLTable[] AllSupportingSQL { get; set; }
+    public Lazy<SupportingDocument[]> AllSupportingDocuments { get; set; }
+    public Lazy<SupportingSQLTable[]> AllSupportingSQL { get; set; }
 
     //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
     private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
@@ -76,133 +77,133 @@ public class CatalogueChildProvider : ICoreChildProvider
     //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
     private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new();
 
-    public IEnumerable<CatalogueItem> AllCatalogueItems => AllCatalogueItemsDictionary.Values;
+    public Lazy<IEnumerable<CatalogueItem>> AllCatalogueItems => new Lazy<IEnumerable<CatalogueItem>>(() => AllCatalogueItemsDictionary.Value.Values);
 
     private Dictionary<int, List<CatalogueItem>> _catalogueToCatalogueItems;
-    public Dictionary<int, CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
+    public Lazy<Dictionary<int, CatalogueItem>> AllCatalogueItemsDictionary { get; private set; }
 
     private Dictionary<int, ColumnInfo> _allColumnInfos;
 
-    public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
-    public AggregateDimension[] AllAggregateDimensions { get; private set; }
+    public Lazy<AggregateConfiguration[]> AllAggregateConfigurations { get; private set; }
+    public Lazy<AggregateDimension[]> AllAggregateDimensions { get; private set; }
 
-    public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get; private set; }
+    public Lazy<AggregateContinuousDateAxis[]> AllAggregateContinuousDateAxis { get; private set; }
 
-    public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
-    public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+    public Lazy<AllRDMPRemotesNode> AllRDMPRemotesNode { get; private set; }
+    public Lazy<RemoteRDMP[]> AllRemoteRDMPs { get; set; }
 
-    public AllDashboardsNode AllDashboardsNode { get; set; }
-    public DashboardLayout[] AllDashboards { get; set; }
+    public Lazy<AllDashboardsNode> AllDashboardsNode { get; set; }
+    public Lazy<DashboardLayout[]> AllDashboards { get; set; }
 
-    public AllObjectSharingNode AllObjectSharingNode { get; private set; }
-    public ObjectImport[] AllImports { get; set; }
-    public ObjectExport[] AllExports { get; set; }
+    public Lazy<AllObjectSharingNode> AllObjectSharingNode { get; private set; }
+    public Lazy<ObjectImport[]> AllImports { get; set; }
+    public Lazy<ObjectExport[]> AllExports { get; set; }
 
-    public AllStandardRegexesNode AllStandardRegexesNode { get; private set; }
-    public AllPipelinesNode AllPipelinesNode { get; private set; }
-    public OtherPipelinesNode OtherPipelinesNode { get; private set; }
-    public Pipeline[] AllPipelines { get; set; }
-    public PipelineComponent[] AllPipelineComponents { get; set; }
+    public Lazy<AllStandardRegexesNode> AllStandardRegexesNode { get; private set; }
+    public Lazy<AllPipelinesNode> AllPipelinesNode { get; private set; }
+    public Lazy<OtherPipelinesNode> OtherPipelinesNode { get; private set; }
+    public Lazy<Pipeline[]> AllPipelines { get; set; }
+    public Lazy<PipelineComponent[]> AllPipelineComponents { get; set; }
 
-    public PipelineComponentArgument[] AllPipelineComponentsArguments { get; set; }
+    public Lazy<PipelineComponentArgument[]> AllPipelineComponentsArguments { get; set; }
 
-    public StandardRegex[] AllStandardRegexes { get; set; }
+    public Lazy<StandardRegex[]> AllStandardRegexes { get; set; }
 
     //TableInfo side of things
-    public AllANOTablesNode AllANOTablesNode { get; private set; }
-    public ANOTable[] AllANOTables { get; set; }
+    public Lazy<AllANOTablesNode> AllANOTablesNode { get; private set; }
+    public Lazy<ANOTable[]> AllANOTables { get; set; }
 
-    public ExternalDatabaseServer[] AllExternalServers { get; private set; }
-    public TableInfoServerNode[] AllServers { get; private set; }
-    public TableInfo[] AllTableInfos { get; private set; }
+    public Lazy<ExternalDatabaseServer[]> AllExternalServers { get; private set; }
+    public Lazy<TableInfoServerNode[]> AllServers { get; private set; }
+    public Lazy<TableInfo[]> AllTableInfos { get; private set; }
 
-    public AllDataAccessCredentialsNode AllDataAccessCredentialsNode { get; set; }
+    public Lazy<AllDataAccessCredentialsNode> AllDataAccessCredentialsNode { get; set; }
 
-    public AllExternalServersNode AllExternalServersNode { get; private set; }
-    public AllServersNode AllServersNode { get; private set; }
+    public Lazy<AllExternalServersNode> AllExternalServersNode { get; private set; }
+    public Lazy<AllServersNode> AllServersNode { get; private set; }
 
-    public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
-    public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
+    public Lazy<DataAccessCredentials[]> AllDataAccessCredentials { get; set; }
+    public Lazy<Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>>> AllDataAccessCredentialUsages { get; set; }
 
-    public Dictionary<int, List<ColumnInfo>> TableInfosToColumnInfos { get; private set; }
-    public ColumnInfo[] AllColumnInfos { get; private set; }
-    public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
+    public Lazy<Dictionary<int, List<ColumnInfo>>> TableInfosToColumnInfos { get; private set; }
+    public Lazy<ColumnInfo[]> AllColumnInfos { get; private set; }
+    public Lazy<PreLoadDiscardedColumn[]> AllPreLoadDiscardedColumns { get; private set; }
 
-    public Lookup[] AllLookups { get; set; }
+    public Lazy<Lookup[]> AllLookups { get; set; }
 
-    public JoinInfo[] AllJoinInfos { get; set; }
+    public Lazy<JoinInfo[]> AllJoinInfos { get; set; }
 
-    public AnyTableSqlParameter[] AllAnyTableParameters;
+    public Lazy<AnyTableSqlParameter[]> AllAnyTableParameters;
 
     //Filter / extraction side of things
-    public IEnumerable<ExtractionInformation> AllExtractionInformations => AllExtractionInformationsDictionary.Values;
+    public Lazy<IEnumerable<ExtractionInformation>> AllExtractionInformations => new Lazy<IEnumerable<ExtractionInformation>>(() => AllExtractionInformationsDictionary.Value.Values);
 
-    public AllPermissionWindowsNode AllPermissionWindowsNode { get; set; }
-    public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
+    public Lazy<AllPermissionWindowsNode> AllPermissionWindowsNode { get; set; }
+    public Lazy<FolderNode<LoadMetadata>> LoadMetadataRootFolder { get; set; }
 
-    public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
-    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    public Lazy<FolderNode<Curation.Data.Dataset>> DatasetRootFolder { get; set; }
+    public Lazy<FolderNode<CohortIdentificationConfiguration>> CohortIdentificationConfigurationRootFolder { get; set; }
 
-    public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
-    public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
+    public Lazy<AllConnectionStringKeywordsNode> AllConnectionStringKeywordsNode { get; set; }
+    public Lazy<ConnectionStringKeyword[]> AllConnectionStringKeywords { get; set; }
 
-    public Dictionary<int, ExtractionInformation> AllExtractionInformationsDictionary { get; private set; }
+    public Lazy<Dictionary<int, ExtractionInformation>> AllExtractionInformationsDictionary { get; private set; }
     protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
     private IFilterManager _aggregateFilterManager;
 
     //Filters for Aggregates (includes filter containers (AND/OR)
-    public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
-    public AggregateFilterContainer[] AllAggregateContainers => AllAggregateContainersDictionary.Values.ToArray();
+    public Lazy<Dictionary<int, AggregateFilterContainer>> AllAggregateContainersDictionary { get; private set; }
+    public Lazy<AggregateFilterContainer[]> AllAggregateContainers => new Lazy<AggregateFilterContainer[]>(() => AllAggregateContainersDictionary.Value.Values.ToArray());
 
-    public AggregateFilter[] AllAggregateFilters { get; private set; }
-    public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
+    public Lazy<AggregateFilter[]> AllAggregateFilters { get; private set; }
+    public Lazy<AggregateFilterParameter[]> AllAggregateFilterParameters { get; private set; }
 
     //Catalogue master filters (does not include any support for filter containers (AND/OR)
-    private ExtractionFilter[] AllCatalogueFilters;
-    public ExtractionFilterParameter[] AllCatalogueParameters;
-    public ExtractionFilterParameterSet[] AllCatalogueValueSets;
-    public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
+    private ExtractionFilter[] AllCatalogueFilters = null;
+    public Lazy<ExtractionFilterParameter[]> AllCatalogueParameters;
+    public Lazy<ExtractionFilterParameterSet[]> AllCatalogueValueSets;
+    public Lazy<ExtractionFilterParameterSetValue[]> AllCatalogueValueSetValues;
 
     private ICohortContainerManager _cohortContainerManager;
 
-    public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
-    public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
-    public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
-    public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+    public Lazy<CohortIdentificationConfiguration[]> AllCohortIdentificationConfigurations { get; private set; }
+    public Lazy<CohortAggregateContainer[]> AllCohortAggregateContainers { get; set; }
+    public Lazy<JoinableCohortAggregateConfiguration[]> AllJoinables { get; set; }
+    public Lazy<JoinableCohortAggregateConfigurationUse[]> AllJoinUses { get; set; }
 
     /// <summary>
     /// Collection of all objects for which there are masqueraders
     /// </summary>
-    public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+    public Lazy<ConcurrentDictionary<object, HashSet<IMasqueradeAs>>> AllMasqueraders { get; private set; }
 
     private IChildProvider[] _pluginChildProviders;
     private readonly ICatalogueRepository _catalogueRepository;
     private readonly ICheckNotifier _errorsCheckNotifier;
     private readonly List<IChildProvider> _blockedPlugins = new();
 
-    public AllGovernanceNode AllGovernanceNode { get; private set; }
-    public GovernancePeriod[] AllGovernancePeriods { get; private set; }
-    public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
-    public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
+    public Lazy<AllGovernanceNode> AllGovernanceNode { get; private set; }
+    public Lazy<GovernancePeriod[]> AllGovernancePeriods { get; private set; }
+    public Lazy<GovernanceDocument[]> AllGovernanceDocuments { get; private set; }
+    public Lazy<Dictionary<int, HashSet<int>>> GovernanceCoverage { get; private set; }
 
     private CommentStore _commentStore;
 
-    public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
-    public AllPluginsNode AllPluginsNode { get; private set; }
-    public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
+    public Lazy<JoinableCohortAggregateConfigurationUse[]> AllJoinableCohortAggregateConfigurationUse { get; private set; }
+    public Lazy<AllPluginsNode> AllPluginsNode { get; private set; }
+    public Lazy<HashSet<StandardPipelineUseCaseNode>> PipelineUseCases { get; set; } = new();
 
     /// <summary>
     /// Lock for changes to Child provider
     /// </summary>
     protected object WriteLock = new();
 
-    public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
-    public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
-    public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
+    public Lazy<AllOrphanAggregateConfigurationsNode> OrphanAggregateConfigurationsNode { get; set; } = new();
+    public Lazy<AllTemplateAggregateConfigurationsNode> TemplateAggregateConfigurationsNode { get; set; } = new();
+    public Lazy<FolderNode<Catalogue>> CatalogueRootFolder { get; private set; }
 
-    public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
-    public AggregateConfiguration[] TemplateAggregateConfigurations;
+    public Lazy<HashSet<AggregateConfiguration>> OrphanAggregateConfigurations;
+    public Lazy<AggregateConfiguration[]> TemplateAggregateConfigurations;
 
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
@@ -229,262 +230,265 @@ public class CatalogueChildProvider : ICoreChildProvider
                 $"Refresh generated by:{Environment.NewLine}{Environment.StackTrace}", CheckResult.Success));
 
         // all the objects which are
-        AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
+        AllMasqueraders = new Lazy<ConcurrentDictionary<object, HashSet<IMasqueradeAs>>>(() => new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>());
 
         _pluginChildProviders = pluginChildProviders ?? Array.Empty<IChildProvider>();
 
         ReportProgress("Before object fetches");
 
-        AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
+        AllAnyTableParameters = new Lazy<AnyTableSqlParameter[]>(() => GetAllObjects<AnyTableSqlParameter>(repository));
 
-        AllANOTables = GetAllObjects<ANOTable>(repository);
-        AllANOTablesNode = new AllANOTablesNode();
-        AddChildren(AllANOTablesNode);
+        AllANOTables = new Lazy<ANOTable[]>(() => GetAllObjects<ANOTable>(repository));
+        AllANOTablesNode = new Lazy<AllANOTablesNode>(() => new AllANOTablesNode());
+        AddChildren(AllANOTablesNode.Value);
 
-        AllCatalogues = GetAllObjects<Catalogue>(repository);
-        AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
+        AllCatalogues = new Lazy<Catalogue[]>(() => GetAllObjects<Catalogue>(repository));
+        AllCataloguesDictionary = new Lazy<Dictionary<int, Catalogue>>(() => AllCatalogues.Value.ToDictionaryEx(i => i.ID, o => o));
 
-        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        AllDatasets = new Lazy<Curation.Data.Dataset[]>(() => GetAllObjects<Curation.Data.Dataset>(repository));
 
-        AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
-        AllProcessTasks = GetAllObjects<ProcessTask>(repository);
-        AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
-        AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
-        AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
+        AllLoadMetadatas = new Lazy<LoadMetadata[]>(() => GetAllObjects<LoadMetadata>(repository));
+        AllProcessTasks = new Lazy<ProcessTask[]>(() => GetAllObjects<ProcessTask>(repository));
+        AllProcessTasksArguments = new Lazy<ProcessTaskArgument[]>(() => GetAllObjects<ProcessTaskArgument>(repository));
+        AllLoadProgresses = new Lazy<LoadProgress[]>(() => GetAllObjects<LoadProgress>(repository));
+        AllCacheProgresses = new Lazy<CacheProgress[]>(() => GetAllObjects<CacheProgress>(repository));
 
-        AllPermissionWindows = GetAllObjects<PermissionWindow>(repository);
-        AllPermissionWindowsNode = new AllPermissionWindowsNode();
-        AddChildren(AllPermissionWindowsNode);
+        AllPermissionWindows = new Lazy<PermissionWindow[]>(() => GetAllObjects<PermissionWindow>(repository));
+        AllPermissionWindowsNode = new Lazy<AllPermissionWindowsNode>(() => new AllPermissionWindowsNode());
+        AddChildren(AllPermissionWindowsNode.Value);
 
-        AllRemoteRDMPs = GetAllObjects<RemoteRDMP>(repository);
+        AllRemoteRDMPs = new Lazy<RemoteRDMP[]>(() => GetAllObjects<RemoteRDMP>(repository));
 
-        AllExternalServers = GetAllObjects<ExternalDatabaseServer>(repository);
+        AllExternalServers = new Lazy<ExternalDatabaseServer[]>(() => GetAllObjects<ExternalDatabaseServer>(repository));
 
-        AllTableInfos = GetAllObjects<TableInfo>(repository);
-        AllDataAccessCredentials = GetAllObjects<DataAccessCredentials>(repository);
-        AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
-        AddChildren(AllDataAccessCredentialsNode);
+        AllTableInfos = new Lazy<TableInfo[]>(() => GetAllObjects<TableInfo>(repository));
+        AllDataAccessCredentials = new Lazy<DataAccessCredentials[]>(() => GetAllObjects<DataAccessCredentials>(repository));
+        AllDataAccessCredentialsNode = new Lazy<AllDataAccessCredentialsNode>(() => new AllDataAccessCredentialsNode());
+        AddChildren(AllDataAccessCredentialsNode.Value);
 
-        AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
-        AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
-        AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),
+        AllConnectionStringKeywordsNode = new Lazy<AllConnectionStringKeywordsNode>(() => new AllConnectionStringKeywordsNode());
+        AllConnectionStringKeywords = new Lazy<ConnectionStringKeyword[]>(() => GetAllObjects<ConnectionStringKeyword>(repository).ToArray());
+        AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords.Value),
             new DescendancyList(AllConnectionStringKeywordsNode));
 
-        ReportProgress("after basic object fetches");
+        //ReportProgress("after basic object fetches");
 
-        Task.WaitAll(
-            //which TableInfos use which Credentials under which DataAccessContexts
-            Task.Factory.StartNew(() =>
-            {
-                AllDataAccessCredentialUsages =
-                    repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,
-                        AllTableInfos);
-            }),
-            Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
-        );
+        //Task.WaitAll(
+        //    //which TableInfos use which Credentials under which DataAccessContexts
+        //    Task.Factory.StartNew(() =>
+        //    {
+        //        AllDataAccessCredentialUsages =
+        //            repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,
+        //                AllTableInfos);
+        //    }),
+        //     //Task.Factory.StartNew(() => { AllColumnInfos = new Lazy<ColumnInfo[]>(()=>GetAllObjects<ColumnInfo>(repository); }))
 
-        ReportProgress("After credentials");
+        //);
 
-        TableInfosToColumnInfos = AllColumnInfos.GroupBy(c => c.TableInfo_ID)
-            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
+        AllColumnInfos = new Lazy<ColumnInfo[]>(() => GetAllObjects<ColumnInfo>(repository));
 
-        ReportProgress("After TableInfo to ColumnInfo mapping");
+        //ReportProgress("After credentials");
 
-        AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
+        TableInfosToColumnInfos = new Lazy<Dictionary<int, List<ColumnInfo>>>(() => AllColumnInfos.Value.GroupBy(c => c.TableInfo_ID)
+            .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList()));
 
-        AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
-        AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
+        //ReportProgress("After TableInfo to ColumnInfo mapping");
 
-        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+        //AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
+
+        //AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
+        //AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
+
+        AllCohortIdentificationConfigurations = new Lazy<CohortIdentificationConfiguration[]>(() => GetAllObjects<CohortIdentificationConfiguration>(repository));
 
         FetchCatalogueItems();
 
-        ReportProgress("After CatalogueItem injection");
+        //ReportProgress("After CatalogueItem injection");
 
-        FetchExtractionInformations();
+        //FetchExtractionInformations();
 
-        ReportProgress("After ExtractionInformation injection");
+        //ReportProgress("After ExtractionInformation injection");
 
-        BuildAggregateConfigurations();
+        BuildAggregateConfigurations();//todo does not use lazy
 
-        BuildCohortCohortAggregateContainers();
+        //BuildCohortCohortAggregateContainers();
 
-        AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
-        AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
+        AllJoinables = new Lazy<JoinableCohortAggregateConfiguration[]>(() => GetAllObjects<JoinableCohortAggregateConfiguration>(repository));
+        AllJoinUses = new Lazy<JoinableCohortAggregateConfigurationUse[]>(() => GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository));
 
-        AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
-        AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
-        AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
-        AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
+        //AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
+        //AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
+        //AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
+        //AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
 
-        ReportProgress("After Filter and Joinable fetching");
-
-
-        AllLookups = GetAllObjects<Lookup>(repository);
-
-        foreach (var l in AllLookups)
-            l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
-                _allColumnInfos[l.Description_ID]);
-
-        AllJoinInfos = repository.GetAllObjects<JoinInfo>();
-
-        foreach (var j in AllJoinInfos)
-            j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
-
-        ReportProgress("After SetKnownColumns");
-
-        AllExternalServersNode = new AllExternalServersNode();
-        AddChildren(AllExternalServersNode);
-
-        AllRDMPRemotesNode = new AllRDMPRemotesNode();
-        AddChildren(AllRDMPRemotesNode);
-
-        AllDashboardsNode = new AllDashboardsNode();
-        AllDashboards = GetAllObjects<DashboardLayout>(repository);
-        AddChildren(AllDashboardsNode);
-
-        AllObjectSharingNode = new AllObjectSharingNode();
-        AllExports = GetAllObjects<ObjectExport>(repository);
-        AllImports = GetAllObjects<ObjectImport>(repository);
-
-        AddChildren(AllObjectSharingNode);
-
-        ReportProgress("After Object Sharing discovery");
-
-        //Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
-        //Root node for all pipelines
-        AllPipelinesNode = new AllPipelinesNode();
-
-        //Pipelines not found to be part of any use case after AddPipelineUseCases
-        OtherPipelinesNode = new OtherPipelinesNode();
-        AllPipelines = GetAllObjects<Pipeline>(repository);
-        AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
-        AllPipelineComponentsArguments = GetAllObjects<PipelineComponentArgument>(repository);
-
-        foreach (var p in AllPipelines)
-            p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
-
-        AllStandardRegexesNode = new AllStandardRegexesNode();
-        AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
-        AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(AllStandardRegexesNode));
-
-        ReportProgress("After Pipelines setup");
-
-        //All the things for TableInfoCollectionUI
-        BuildServerNodes();
-
-        ReportProgress("BuildServerNodes");
-
-        //add a new CatalogueItemNodes
-        InjectCatalogueItems();
-
-        CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
-        AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
+        //ReportProgress("After Filter and Joinable fetching");
 
 
-        DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
-        AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
+        //AllLookups = GetAllObjects<Lookup>(repository);
 
-        ReportProgress("Build Catalogue Folder Root");
+        //foreach (var l in AllLookups)
+        //    l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],
+        //        _allColumnInfos[l.Description_ID]);
 
-        LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
-        AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
+        AllJoinInfos = new Lazy<JoinInfo[]>(() => repository.GetAllObjects<JoinInfo>());
+
+        //foreach (var j in AllJoinInfos)
+        //    j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
+
+        //ReportProgress("After SetKnownColumns");
+
+        //AllExternalServersNode = new AllExternalServersNode();
+        //AddChildren(AllExternalServersNode);
+
+        //AllRDMPRemotesNode = new AllRDMPRemotesNode();
+        //AddChildren(AllRDMPRemotesNode);
+
+        //AllDashboardsNode = new AllDashboardsNode();
+        //AllDashboards = GetAllObjects<DashboardLayout>(repository);
+        //AddChildren(AllDashboardsNode);
+
+        //AllObjectSharingNode = new AllObjectSharingNode();
+        //AllExports = GetAllObjects<ObjectExport>(repository);
+        //AllImports = GetAllObjects<ObjectImport>(repository);
+
+        //AddChildren(AllObjectSharingNode);
+
+        //ReportProgress("After Object Sharing discovery");
+
+        ////Pipelines setup (see also DataExportChildProvider for calls to AddPipelineUseCases)
+        ////Root node for all pipelines
+        AllPipelinesNode = new Lazy<AllPipelinesNode>(() => new AllPipelinesNode());
+
+        ////Pipelines not found to be part of any use case after AddPipelineUseCases
+        OtherPipelinesNode = new Lazy<OtherPipelinesNode>(() => new OtherPipelinesNode());
+        AllPipelines = new Lazy<Pipeline[]>(() => GetAllObjects<Pipeline>(repository));
+        AllPipelineComponents = new Lazy<PipelineComponent[]>(() => GetAllObjects<PipelineComponent>(repository));
+        AllPipelineComponentsArguments = new Lazy<PipelineComponentArgument[]>(() => GetAllObjects<PipelineComponentArgument>(repository));
+
+        //foreach (var p in AllPipelines)
+        //    p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
+
+        //AllStandardRegexesNode = new AllStandardRegexesNode();
+        //AllStandardRegexes = GetAllObjects<StandardRegex>(repository);
+        //AddToDictionaries(new HashSet<object>(AllStandardRegexes), new DescendancyList(AllStandardRegexesNode));
+
+        //ReportProgress("After Pipelines setup");
+
+        ////All the things for TableInfoCollectionUI
+        //BuildServerNodes();
+
+        //ReportProgress("BuildServerNodes");
+
+        ////add a new CatalogueItemNodes
+        //InjectCatalogueItems();
+
+        //CatalogueRootFolder = FolderHelper.BuildFolderTree(AllCatalogues);
+        //AddChildren(CatalogueRootFolder, new DescendancyList(CatalogueRootFolder));
 
 
-        CohortIdentificationConfigurationRootFolder =
-            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
-        AddChildren(CohortIdentificationConfigurationRootFolder,
-            new DescendancyList(CohortIdentificationConfigurationRootFolder));
+        //DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
+        //AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
-        var templateAggregateConfigurationIds =
-            new HashSet<int>(
-                repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
-                    .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
-                    .Select(r => r.ReferencedObjectID));
+        //ReportProgress("Build Catalogue Folder Root");
 
-        TemplateAggregateConfigurations = AllAggregateConfigurations
-            .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
-
-        //add the orphans under the orphan folder
-        AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
-            new DescendancyList(OrphanAggregateConfigurationsNode));
-
-        var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
-        dec.SetBetterRouteExists();
-        AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
+        //LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
+        //AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
 
-        //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
-        //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
-        var joinableDictionaryByAggregateConfigurationId =
-            AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
+        //CohortIdentificationConfigurationRootFolder =
+        //    FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+        //AddChildren(CohortIdentificationConfigurationRootFolder,
+        //    new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
-        foreach (var ac in AllAggregateConfigurations)
-            ac.InjectKnown(
-                joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
-                    out var joinable) //if there's a joinable
-                    ? joinable //inject that we know the joinable (and what it is)
-                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
+        //var templateAggregateConfigurationIds =
+        //    new HashSet<int>(
+        //        repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
+        //            .Where(p => p.ReferencedObjectType.Equals(nameof(AggregateConfiguration)))
+        //            .Select(r => r.ReferencedObjectID));
 
-        ReportProgress("After AggregateConfiguration injection");
+        //TemplateAggregateConfigurations = AllAggregateConfigurations
+        //    .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
 
-        AllGovernanceNode = new AllGovernanceNode();
-        AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
-        AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
-        GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
+        ////add the orphans under the orphan folder
+        //AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
+        //    new DescendancyList(OrphanAggregateConfigurationsNode));
 
-        AddChildren(AllGovernanceNode);
+        //var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
+        //dec.SetBetterRouteExists();
+        //AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
 
-        ReportProgress("After Governance");
 
-        AllPluginsNode = new AllPluginsNode();
-        AddChildren(AllPluginsNode);
+        ////Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
+        ////the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
+        //var joinableDictionaryByAggregateConfigurationId =
+        //    AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
-        ReportProgress("After Plugins");
+        //foreach (var ac in AllAggregateConfigurations)
+        //    ac.InjectKnown(
+        //        joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
+        //            out var joinable) //if there's a joinable
+        //            ? joinable //inject that we know the joinable (and what it is)
+        //            : null); //otherwise inject that it is not a joinable (suppresses database checking later)
 
-        var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
+        //ReportProgress("After AggregateConfiguration injection");
 
-        foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
-        {
-            if (!searchables.ContainsKey(o.ID))
-                searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
+        //AllGovernanceNode = new AllGovernanceNode();
+        //AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
+        //AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
+        //GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
-            searchables[o.ID].Add(o);
-        }
+        //AddChildren(AllGovernanceNode);
 
-        ReportProgress("After building Searchables");
+        //ReportProgress("After Governance");
 
-        foreach (var e in AllExports)
-        {
-            if (!searchables.ContainsKey(e.ReferencedObjectID))
-                continue;
+        //AllPluginsNode = new AllPluginsNode();
+        //AddChildren(AllPluginsNode);
 
-            var known = searchables[e.ReferencedObjectID]
-                .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+        //ReportProgress("After Plugins");
 
-            if (known != null)
-                e.InjectKnown(known);
-        }
+        //var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
-        ReportProgress("After building exports");
+        //foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
+        //{
+        //    if (!searchables.ContainsKey(o.ID))
+        //        searchables.Add(o.ID, new HashSet<IMapsDirectlyToDatabaseTable>());
+
+        //    searchables[o.ID].Add(o);
+        //}
+
+        //ReportProgress("After building Searchables");
+
+        //foreach (var e in AllExports)
+        //{
+        //    if (!searchables.ContainsKey(e.ReferencedObjectID))
+        //        continue;
+
+        //    var known = searchables[e.ReferencedObjectID]
+        //        .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+
+        //    if (known != null)
+        //        e.InjectKnown(known);
+        //}
+
+        //ReportProgress("After building exports");
     }
 
 
     private void FetchCatalogueItems()
     {
         AllCatalogueItemsDictionary =
-            GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o);
+            new Lazy<Dictionary<int, CatalogueItem>>(() => GetAllObjects<CatalogueItem>(_catalogueRepository).ToDictionaryEx(i => i.ID, o => o));
 
         ReportProgress("After CatalogueItem getting");
 
-        _catalogueToCatalogueItems = AllCatalogueItems.GroupBy(c => c.Catalogue_ID)
+        _catalogueToCatalogueItems = AllCatalogueItems.Value.GroupBy(c => c.Catalogue_ID)
             .ToDictionaryEx(gdc => gdc.Key, gdc => gdc.ToList());
-        _allColumnInfos = AllColumnInfos.ToDictionaryEx(i => i.ID, o => o);
+        _allColumnInfos = AllColumnInfos.Value.ToDictionaryEx(i => i.ID, o => o);
 
         ReportProgress("After CatalogueItem Dictionary building");
 
         //Inject known ColumnInfos into CatalogueItems
-        Parallel.ForEach(AllCatalogueItems, ci =>
+        Parallel.ForEach(AllCatalogueItems.Value, ci =>
         {
             if (ci.ColumnInfo_ID != null && _allColumnInfos.TryGetValue(ci.ColumnInfo_ID.Value, out var col))
                 ci.InjectKnown(col);
@@ -495,14 +499,14 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void FetchExtractionInformations()
     {
-        AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(_catalogueRepository)
-            .ToDictionaryEx(i => i.ID, o => o);
+        AllExtractionInformationsDictionary = new Lazy<Dictionary<int, ExtractionInformation>>(() => GetAllObjects<ExtractionInformation>(_catalogueRepository)
+            .ToDictionaryEx(i => i.ID, o => o));
         _extractionInformationsByCatalogueItem =
-            AllExtractionInformationsDictionary.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
+            AllExtractionInformationsDictionary.Value.Values.ToDictionaryEx(k => k.CatalogueItem_ID, v => v);
 
         //Inject known CatalogueItems into ExtractionInformations
-        foreach (var ei in AllExtractionInformationsDictionary.Values)
-            if (AllCatalogueItemsDictionary.TryGetValue(ei.CatalogueItem_ID, out var ci))
+        foreach (var ei in AllExtractionInformationsDictionary.Value.Values)
+            if (AllCatalogueItemsDictionary.Value.TryGetValue(ei.CatalogueItem_ID, out var ci))
             {
                 ei.InjectKnown(ci.ColumnInfo);
                 ei.InjectKnown(ci);
@@ -511,7 +515,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildCohortCohortAggregateContainers()
     {
-        AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
+        AllCohortAggregateContainers = new Lazy<CohortAggregateContainer[]>(() => GetAllObjects<CohortAggregateContainer>(_catalogueRepository));
 
 
         //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
@@ -524,26 +528,26 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateConfigurations()
     {
-        AllJoinableCohortAggregateConfigurationUse =
-            GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository);
-        AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(_catalogueRepository);
+        AllJoinableCohortAggregateConfigurationUse = new Lazy<JoinableCohortAggregateConfigurationUse[]>(() =>
+            GetAllObjects<JoinableCohortAggregateConfigurationUse>(_catalogueRepository));
+        AllAggregateConfigurations = new Lazy<AggregateConfiguration[]>(() => GetAllObjects<AggregateConfiguration>(_catalogueRepository));
 
         BuildAggregateDimensions();
 
         //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
         OrphanAggregateConfigurations =
-            new HashSet<AggregateConfiguration>(
-                AllAggregateConfigurations.Where(ac => ac.IsCohortIdentificationAggregate));
+            new Lazy<HashSet<AggregateConfiguration>>(() => new HashSet<AggregateConfiguration>(
+                AllAggregateConfigurations.Value.Where(ac => ac.IsCohortIdentificationAggregate)));
 
-        foreach (var configuration in AllAggregateConfigurations)
+        foreach (var configuration in AllAggregateConfigurations.Value)
         {
-            configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
-            configuration.InjectKnown(AllAggregateDimensions.Where(d => d.AggregateConfiguration_ID == configuration.ID)
+            configuration.InjectKnown(AllCataloguesDictionary.Value[configuration.Catalogue_ID]);
+            configuration.InjectKnown(AllAggregateDimensions.Value.Where(d => d.AggregateConfiguration_ID == configuration.ID)
                 .ToArray());
         }
 
-        foreach (var d in AllAggregateDimensions)
-            d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
+        foreach (var d in AllAggregateDimensions.Value)
+            d.InjectKnown(AllExtractionInformationsDictionary.Value[d.ExtractionInformation_ID]);
 
         ReportProgress("AggregateDimension injections");
 
@@ -552,16 +556,16 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildAggregateDimensions()
     {
-        AllAggregateDimensions = GetAllObjects<AggregateDimension>(_catalogueRepository);
-        AllAggregateContinuousDateAxis = GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository);
+        AllAggregateDimensions = new Lazy<AggregateDimension[]>(() => GetAllObjects<AggregateDimension>(_catalogueRepository));
+        AllAggregateContinuousDateAxis = new Lazy<AggregateContinuousDateAxis[]>(() => GetAllObjects<AggregateContinuousDateAxis>(_catalogueRepository));
     }
 
     private void BuildAggregateFilterContainers()
     {
-        AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
-            .ToDictionaryEx(o => o.ID, o2 => o2);
-        AllAggregateFilters = GetAllObjects<AggregateFilter>(_catalogueRepository);
-        AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(_catalogueRepository);
+        AllAggregateContainersDictionary = new Lazy<Dictionary<int, AggregateFilterContainer>>(() => GetAllObjects<AggregateFilterContainer>(_catalogueRepository)
+            .ToDictionaryEx(o => o.ID, o2 => o2));
+        AllAggregateFilters = new Lazy<AggregateFilter[]>(() => GetAllObjects<AggregateFilter>(_catalogueRepository));
+        AllAggregateFilterParameters = new Lazy<AggregateFilterParameter[]>(() => GetAllObjects<AggregateFilterParameter>(_catalogueRepository));
 
         _aggregateFilterManager = _catalogueRepository is CatalogueRepository cataRepo
             ? new FilterManagerFromChildProvider(cataRepo, this)
@@ -592,7 +596,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         var children = new HashSet<object>();
         var descendancy = new DescendancyList(allGovernanceNode);
 
-        foreach (var gp in AllGovernancePeriods)
+        foreach (var gp in AllGovernancePeriods.Value)
         {
             children.Add(gp);
             AddChildren(gp, descendancy.Add(gp));
@@ -605,7 +609,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var doc in AllGovernanceDocuments.Where(d => d.GovernancePeriod_ID == governancePeriod.ID))
+        foreach (var doc in AllGovernanceDocuments.Value.Where(d => d.GovernancePeriod_ID == governancePeriod.ID))
             children.Add(doc);
 
         AddToDictionaries(children, descendancy);
@@ -615,18 +619,18 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var descendancy = new DescendancyList(allPermissionWindowsNode);
 
-        foreach (var permissionWindow in AllPermissionWindows)
+        foreach (var permissionWindow in AllPermissionWindows.Value)
             AddChildren(permissionWindow, descendancy.Add(permissionWindow));
 
 
-        AddToDictionaries(new HashSet<object>(AllPermissionWindows), descendancy);
+        AddToDictionaries(new HashSet<object>(AllPermissionWindows.Value), descendancy);
     }
 
     private void AddChildren(PermissionWindow permissionWindow, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
 
-        foreach (var cacheProgress in AllCacheProgresses)
+        foreach (var cacheProgress in AllCacheProgresses.Value)
             if (cacheProgress.PermissionWindow_ID == permissionWindow.ID)
                 children.Add(new PermissionWindowUsedByCacheProgressNode(cacheProgress, permissionWindow, false));
 
@@ -635,17 +639,17 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AllExternalServersNode allExternalServersNode)
     {
-        AddToDictionaries(new HashSet<object>(AllExternalServers), new DescendancyList(allExternalServersNode));
+        AddToDictionaries(new HashSet<object>(AllExternalServers.Value), new DescendancyList(allExternalServersNode));
     }
 
     private void AddChildren(AllRDMPRemotesNode allRDMPRemotesNode)
     {
-        AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
+        AddToDictionaries(new HashSet<object>(AllRemoteRDMPs.Value), new DescendancyList(allRDMPRemotesNode));
     }
 
     private void AddChildren(AllDashboardsNode allDashboardsNode)
     {
-        AddToDictionaries(new HashSet<object>(AllDashboards), new DescendancyList(allDashboardsNode));
+        AddToDictionaries(new HashSet<object>(AllDashboards.Value), new DescendancyList(allDashboardsNode));
     }
 
     private void AddChildren(AllObjectSharingNode allObjectSharingNode)
@@ -655,8 +659,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         var allExportsNode = new AllObjectExportsNode();
         var allImportsNode = new AllObjectImportsNode();
 
-        AddToDictionaries(new HashSet<object>(AllExports), descendancy.Add(allExportsNode));
-        AddToDictionaries(new HashSet<object>(AllImports), descendancy.Add(allImportsNode));
+        AddToDictionaries(new HashSet<object>(AllExports.Value), descendancy.Add(allExportsNode));
+        AddToDictionaries(new HashSet<object>(AllImports.Value), descendancy.Add(allImportsNode));
 
         AddToDictionaries(new HashSet<object>(new object[] { allExportsNode, allImportsNode }), descendancy);
     }
@@ -667,18 +671,24 @@ public class CatalogueChildProvider : ICoreChildProvider
     /// </summary>
     protected void AddPipelineUseCases(Dictionary<string, PipelineUseCase> useCases)
     {
-        var descendancy = new DescendancyList(AllPipelinesNode);
+        var descendancy = new DescendancyList(AllPipelinesNode.Value);
         var children = new HashSet<object>();
 
         //pipelines not found to be part of any StandardPipelineUseCase
-        var unknownPipelines = new HashSet<object>(AllPipelines);
+        var unknownPipelines = new HashSet<object>(AllPipelines.Value);
 
         foreach (var useCase in useCases)
         {
             var node = new StandardPipelineUseCaseNode(useCase.Key, useCase.Value, _commentStore);
 
             //keep track of all the use cases
-            PipelineUseCases.Add(node);
+            PipelineUseCases = new Lazy<HashSet<StandardPipelineUseCaseNode>>(() =>
+            {
+                var pipes = PipelineUseCases.Value;
+                pipes.Add(node);
+                return pipes;
+            });
+            //PipelineUseCases.Add(node);
 
             foreach (var pipeline in AddChildren(node, descendancy.Add(node)))
                 unknownPipelines.Remove(pipeline);
@@ -686,9 +696,9 @@ public class CatalogueChildProvider : ICoreChildProvider
             children.Add(node);
         }
 
-        children.Add(OtherPipelinesNode);
-        OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
-        AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode));
+        children.Add(OtherPipelinesNode.Value);
+        OtherPipelinesNode.Value.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
+        AddToDictionaries(unknownPipelines, descendancy.Add(OtherPipelinesNode.Value));
 
         //it is the first standard use case
         AddToDictionaries(children, descendancy);
@@ -705,7 +715,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //support plugin use cases in this hierarchy
 
         //find compatible pipelines useCase.Value
-        foreach (var compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
+        foreach (var compatiblePipeline in AllPipelines.Value.Where(node.UseCase.GetContext().IsAllowable))
         {
             var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
 
@@ -723,7 +733,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)
     {
-        var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID)
+        var components = AllPipelineComponents.Value.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID)
             .OrderBy(o => o.Order)
             .ToArray();
 
@@ -737,7 +747,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
     {
-        var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID)
+        var components = AllPipelineComponentsArguments.Value.Where(c => c.PipelineComponent_ID == pipelineComponent.ID)
             .ToArray();
 
         var children = new HashSet<object>(components);
@@ -748,12 +758,12 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void BuildServerNodes()
     {
         //add a root node for all the servers to be children of
-        AllServersNode = new AllServersNode();
+        AllServersNode = new Lazy<AllServersNode>(() => new AllServersNode());
 
         var descendancy = new DescendancyList(AllServersNode);
         var allServers = new List<TableInfoServerNode>();
 
-        foreach (var typeGroup in AllTableInfos.GroupBy(t => t.DatabaseType))
+        foreach (var typeGroup in AllTableInfos.Value.GroupBy(t => t.DatabaseType))
         {
             var dbType = typeGroup.Key;
             IEnumerable<TableInfo> tables = typeGroup;
@@ -771,10 +781,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //create the server nodes
-        AllServers = allServers.ToArray();
+        AllServers = new Lazy<TableInfoServerNode[]>(allServers.ToArray());
 
         //record the fact that all the servers are children of the all servers node
-        AddToDictionaries(new HashSet<object>(AllServers), descendancy);
+        AddToDictionaries(new HashSet<object>(AllServers.Value), descendancy);
     }
 
 
@@ -788,7 +798,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         children.Add(new DecryptionPrivateKeyNode(isKeyMissing));
 
-        foreach (var creds in AllDataAccessCredentials)
+        foreach (var creds in AllDataAccessCredentials.Value)
             children.Add(creds);
 
 
@@ -797,7 +807,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AllANOTablesNode anoTablesNode)
     {
-        AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
+        AddToDictionaries(new HashSet<object>(AllANOTables.Value), new DescendancyList(anoTablesNode));
     }
 
     private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
@@ -879,7 +889,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (lmd.OverrideRAWServer_ID.HasValue)
         {
-            var server = AllExternalServers.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
+            var server = AllExternalServers.Value.Single(s => s.ID == lmd.OverrideRAWServer_ID.Value);
             var usage = new OverrideRawServerNode(lmd, server);
             childObjects.Add(usage);
         }
@@ -907,7 +917,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         var lmd = allSchedulesNode.LoadMetadata;
 
-        foreach (var lp in AllLoadProgresses.Where(p => p.LoadMetadata_ID == lmd.ID))
+        foreach (var lp in AllLoadProgresses.Value.Where(p => p.LoadMetadata_ID == lmd.ID))
         {
             AddChildren(lp, descendancy.Add(lp));
             childObjects.Add(lp);
@@ -919,7 +929,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(LoadProgress loadProgress, DescendancyList descendancy)
     {
-        var cacheProgresses = AllCacheProgresses.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
+        var cacheProgresses = AllCacheProgresses.Value.Where(cp => cp.LoadProgress_ID == loadProgress.ID).ToArray();
 
         foreach (var cacheProgress in cacheProgresses)
             AddChildren(cacheProgress, descendancy.Add(cacheProgress));
@@ -934,7 +944,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         if (cacheProgress.PermissionWindow_ID != null)
         {
-            var window = AllPermissionWindows.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
+            var window = AllPermissionWindows.Value.Single(w => w.ID == cacheProgress.PermissionWindow_ID);
             var windowNode = new PermissionWindowUsedByCacheProgressNode(cacheProgress, window, true);
 
             children.Add(windowNode);
@@ -964,7 +974,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(LoadStageNode loadStageNode, DescendancyList descendancy)
     {
-        var tasks = AllProcessTasks.Where(
+        var tasks = AllProcessTasks.Value.Where(
                 p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
             .OrderBy(o => o.Order).ToArray();
 
@@ -977,7 +987,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(ProcessTask procesTask, DescendancyList descendancy)
     {
-        var args = AllProcessTasksArguments.Where(
+        var args = AllProcessTasksArguments.Value.Where(
             a => a.ProcessTask_ID == procesTask.ID).ToArray();
 
         if (args.Any())
@@ -990,7 +1000,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         var chilObjects = new HashSet<object>();
 
         List<Catalogue> usedCatalogues = new();
-        foreach (var catalogue in AllCatalogues)
+        foreach (var catalogue in AllCatalogues.Value)
         {
             var lmds = catalogue.LoadMetadatas();
             if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
@@ -1012,7 +1022,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var childObjects = new List<object>();
 
-        var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
+        var catalogueAggregates = AllAggregateConfigurations.Value.Where(a => a.Catalogue_ID == c.ID).ToArray();
         var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
         var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
 
@@ -1058,10 +1068,10 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
 
         //do we have any foreign key fields into this lookup table
-        var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
+        var lookups = AllLookups.Value.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
 
-        var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
-        var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
+        var docs = AllSupportingDocuments.Value.Where(d => d.Catalogue_ID == c.ID).ToArray();
+        var sql = AllSupportingSQL.Value.Where(d => d.Catalogue_ID == c.ID).ToArray();
 
         //if there are supporting documents or supporting sql files then add  documentation node
         if (docs.Any() || sql.Any())
@@ -1105,7 +1115,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void InjectCatalogueItems()
     {
-        foreach (var ci in AllCatalogueItems)
+        foreach (var ci in AllCatalogueItems.Value)
             if (_extractionInformationsByCatalogueItem.TryGetValue(ci.ID, out var ei))
                 ci.InjectKnown(ei);
             else
@@ -1124,7 +1134,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var childrenObjects = new HashSet<object>();
 
-        var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>()
+        var parameters = AllAnyTableParameters.Value.Where(p => p.IsReferenceTo(aggregateConfiguration)).Cast<ISqlParameter>()
             .ToArray();
 
         foreach (var p in parameters)
@@ -1134,7 +1144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var dim in aggregateConfiguration.AggregateDimensions) childrenObjects.Add(dim);
 
         // show the axis (if any) in the tree.  If there are multiple axis in this tree then that is bad but maybe the user can delete one of them to fix the situation
-        foreach (var axis in AllAggregateContinuousDateAxis.Where(a =>
+        foreach (var axis in AllAggregateContinuousDateAxis.Value.Where(a =>
                      aggregateConfiguration.AggregateDimensions.Any(d => d.ID == a.AggregateDimension_ID)))
             childrenObjects.Add(axis);
 
@@ -1143,7 +1153,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         //really user wants to see it in CohortIdentificationCollectionUI
         if (aggregateConfiguration.RootFilterContainer_ID != null)
         {
-            var container = AllAggregateContainersDictionary[(int)aggregateConfiguration.RootFilterContainer_ID];
+            var container = AllAggregateContainersDictionary.Value[(int)aggregateConfiguration.RootFilterContainer_ID];
 
             AddChildren(container, descendancy.Add(container));
             childrenObjects.Add(container);
@@ -1182,7 +1192,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(AggregateFilter f, DescendancyList descendancy)
     {
-        AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == f.ID)),
+        AddToDictionaries(new HashSet<object>(AllAggregateFilterParameters.Value.Where(p => p.AggregateFilter_ID == f.ID)),
             descendancy);
     }
 
@@ -1225,8 +1235,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(ExtractionFilter filter, DescendancyList descendancy)
     {
         var children = new HashSet<object>();
-        var parameters = AllCatalogueParameters.Where(p => p.ExtractionFilter_ID == filter.ID).ToArray();
-        var parameterSets = AllCatalogueValueSets.Where(vs => vs.ExtractionFilter_ID == filter.ID).ToArray();
+        var parameters = AllCatalogueParameters.Value.Where(p => p.ExtractionFilter_ID == filter.ID).ToArray();
+        var parameterSets = AllCatalogueValueSets.Value.Where(vs => vs.ExtractionFilter_ID == filter.ID).ToArray();
 
         filter.InjectKnown(parameterSets);
 
@@ -1248,7 +1258,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>();
 
-        foreach (var setValue in AllCatalogueValueSetValues.Where(v => v.ExtractionFilterParameterSet_ID == set.ID))
+        foreach (var setValue in AllCatalogueValueSetValues.Value.Where(v => v.ExtractionFilterParameterSet_ID == set.ID))
         {
             setValue.InjectKnown(filterParameters.SingleOrDefault(p => p.ID == setValue.ExtractionFilterParameter_ID));
             children.Add(setValue);
@@ -1264,22 +1274,22 @@ public class CatalogueChildProvider : ICoreChildProvider
         //it has an associated query cache
         if (cic.QueryCachingServer_ID != null)
             children.Add(new QueryCacheUsedByCohortIdentificationNode(cic,
-                AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+                AllExternalServers.Value.Single(s => s.ID == cic.QueryCachingServer_ID)));
 
-        var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
+        var parameters = AllAnyTableParameters.Value.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
         foreach (var p in parameters) children.Add(p);
 
         //if it has a root container
         if (cic.RootCohortAggregateContainer_ID != null)
         {
-            var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
+            var container = AllCohortAggregateContainers.Value.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
             AddChildren(container, descendancy.Add(container).SetBetterRouteExists());
             children.Add(container);
         }
 
         //get the patient index tables
         var joinableNode = new JoinableCollectionNode(cic,
-            AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
+            AllJoinables.Value.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
         AddChildren(joinableNode, descendancy.Add(joinableNode).SetBetterRouteExists());
         children.Add(joinableNode);
 
@@ -1293,12 +1303,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var joinable in joinablesNode.Joinables)
             try
             {
-                var agg = AllAggregateConfigurations.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
+                var agg = AllAggregateConfigurations.Value.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
                 ForceAggregateNaming(agg, descendancy);
                 children.Add(agg);
 
                 //it's no longer an orphan because it's in a known cic (as a patient index table)
-                OrphanAggregateConfigurations.Remove(agg);
+                OrphanAggregateConfigurations.Value.Remove(agg);//todo this might not work as expected
 
                 AddChildren(agg, descendancy.Add(agg));
             }
@@ -1331,7 +1341,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             AddChildren(configuration, descendancy.Add(configuration));
 
             //it's no longer an orphan because it's in a known cic
-            OrphanAggregateConfigurations.Remove(configuration);
+            OrphanAggregateConfigurations.Value.Remove(configuration);
         }
 
         //all our children (containers and aggregates)
@@ -1402,13 +1412,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (tableInfo.IdentifierDumpServer_ID != null)
         {
             //if there is a dump (e.g. for dilution and dumping - not appearing in the live table)
-            var server = AllExternalServers.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
+            var server = AllExternalServers.Value.Single(s => s.ID == tableInfo.IdentifierDumpServer_ID.Value);
 
             children.Add(new IdentifierDumpServerUsageNode(tableInfo, server));
         }
 
         //get the discarded columns in this table
-        var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Where(c => c.TableInfo_ID == tableInfo.ID));
+        var discardedCols = new HashSet<object>(AllPreLoadDiscardedColumns.Value.Where(c => c.TableInfo_ID == tableInfo.ID));
 
         //tell the column who thier parent is so they don't need to look up the database
         foreach (PreLoadDiscardedColumn discardedCol in discardedCols)
@@ -1436,7 +1446,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         }
 
         //next add the column infos
-        if (TableInfosToColumnInfos.TryGetValue(tableInfo.ID, out var result))
+        if (TableInfosToColumnInfos.Value.TryGetValue(tableInfo.ID, out var result))
             foreach (var c in result)
             {
                 children.Add(c);
@@ -1445,7 +1455,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             }
 
         //finally add any credentials objects
-        if (AllDataAccessCredentialUsages.TryGetValue(tableInfo, out var nodes))
+        if (AllDataAccessCredentialUsages.Value.TryGetValue(tableInfo, out var nodes))
             foreach (var node in nodes)
                 children.Add(node);
 
@@ -1455,8 +1465,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(ColumnInfo columnInfo, DescendancyList descendancy)
     {
-        var lookups = AllLookups.Where(l => l.Description_ID == columnInfo.ID).ToArray();
-        var joinInfos = AllJoinInfos.Where(j => j.PrimaryKey_ID == columnInfo.ID);
+        var lookups = AllLookups.Value.Where(l => l.Description_ID == columnInfo.ID).ToArray();
+        var joinInfos = AllJoinInfos.Value.Where(j => j.PrimaryKey_ID == columnInfo.ID);
 
         var children = new HashSet<object>();
 
@@ -1490,12 +1500,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             var key = masquerader.MasqueradingAs();
 
-            if (!AllMasqueraders.ContainsKey(key))
-                AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
+            if (!AllMasqueraders.Value.ContainsKey(key))
+                AllMasqueraders.Value.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
             lock (AllMasqueraders)
             {
-                AllMasqueraders[key].Add(masquerader);
+                AllMasqueraders.Value[key].Add(masquerader);
             }
         }
     }
@@ -1547,7 +1557,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             //Union the unwrapped masqueraders
             return unwrapMasqueraders
                 ? exactMatches.Union(
-                        AllMasqueraders
+                        AllMasqueraders.Value
                             .Select(kvp => kvp.Key)
                             .OfType<IMapsDirectlyToDatabaseTable>()
                             .Where(type.IsInstanceOfType))
@@ -1689,7 +1699,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return AllMasqueraders.TryGetValue(o, out var result) ? result : Array.Empty<IMasqueradeAs>();
+            return AllMasqueraders.Value.TryGetValue(o, out var result) ? result : Array.Empty<IMasqueradeAs>();
         }
     }
 
@@ -1843,7 +1853,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         FetchCatalogueItems();
 
-        foreach (var ci in AllCatalogueItems.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
+        foreach (var ci in AllCatalogueItems.Value.Where(ci => ci.ID == ei.CatalogueItem_ID)) ci.ClearAllInjections();
 
         // property changes or deleting the ExtractionInformation
         FetchExtractionInformations();

@@ -373,7 +373,7 @@ public class CohortQueryBuilderResult
                     $"No PluginCohortCompilers claimed to support '{cohortSet}' in their ShouldRun method");
         }
 
-        var join = ChildProvider.AllJoinUses.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
+        var join = ChildProvider.AllJoinUses.Value.Where(j => j.AggregateConfiguration_ID == cohortSet.ID).ToArray();
 
         if (join.Length > 1)
             throw new NotSupportedException(

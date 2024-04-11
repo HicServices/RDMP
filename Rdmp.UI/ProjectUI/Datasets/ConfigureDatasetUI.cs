@@ -230,7 +230,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         // Prevents later queries to db to figure out things like column name etc
         foreach (var ei in toAdd)
         {
-            var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary[ei.CatalogueItem_ID];
+            var ci = Activator.CoreChildProvider.AllCatalogueItemsDictionary.Value[ei.CatalogueItem_ID];
 
             ei.InjectKnown(ci);
             if (ci.ColumnInfo_ID != null)
@@ -261,7 +261,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             ec.InjectKnown(ei);
             ec.InjectKnown(ei.ColumnInfo);
 
-            if (ciDict.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
+            if (ciDict.Value.TryGetValue(ei.CatalogueItem_ID, out var id)) ec.InjectKnown(id);
         }
 
 

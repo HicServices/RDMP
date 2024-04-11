@@ -57,7 +57,7 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
             if (!BasicActivator.SelectObject(new DialogArgs
             {
                 AllowSelectingNull = true
-            }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
+            }, BasicActivator.CoreChildProvider.AllCatalogues.Value, out rep))
                 // user cancelled
                 return;
 

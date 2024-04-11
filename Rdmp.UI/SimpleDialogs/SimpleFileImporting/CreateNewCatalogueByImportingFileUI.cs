@@ -204,7 +204,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
     private void IdentifyCompatibleServers()
     {
-        var servers = Activator.CoreChildProvider.AllServers;
+        var servers = Activator.CoreChildProvider.AllServers.Value;
 
         if (servers.Length == 1)
         {
@@ -212,7 +212,7 @@ public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
 
 
             var uniqueDatabaseNames =
-                Activator.CoreChildProvider.AllTableInfos.Select(t => t.GetDatabaseRuntimeName())
+                Activator.CoreChildProvider.AllTableInfos.Value.Select(t => t.GetDatabaseRuntimeName())
                     .Distinct()
                     .ToArray();
 
