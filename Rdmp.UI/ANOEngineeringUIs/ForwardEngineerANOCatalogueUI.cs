@@ -209,7 +209,7 @@ public partial class ForwardEngineerANOCatalogueUI : ForwardEngineerANOCatalogue
                 {
                     TaskDescription =
                             "Choose an ANOTable into which to put the identifiable values stored in this column"
-                }, Activator.CoreChildProvider.AllANOTables, out var selected))
+                }, Activator.CoreChildProvider.AllANOTables.Value, out var selected))
                     try
                     {
                         plan.ANOTable = selected;

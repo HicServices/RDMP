@@ -202,7 +202,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         ICatalogue cata;
         try
         {
-            cata = Activator.CoreChildProvider.AllCataloguesDictionary[_dataSet.Catalogue_ID];
+            cata = Activator.CoreChildProvider.AllCataloguesDictionary.Value[_dataSet.Catalogue_ID];
         }
         catch (Exception e)
         {
@@ -257,7 +257,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
             var eiDict = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
             var ciDict = Activator.CoreChildProvider.AllCatalogueItemsDictionary;
 
-            if (!eiDict.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
+            if (!eiDict.Value.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var ei)) continue;
             ec.InjectKnown(ei);
             ec.InjectKnown(ei.ColumnInfo);
 
@@ -665,7 +665,7 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
             .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var extractionInfo) ? extractionInfo : null)
+            .Select(ec => eis.Value.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var extractionInfo) ? extractionInfo : null)
             .Where(ei => ei != null)
             .Select(ei => ei.ColumnInfo.TableInfo)
             .Distinct()

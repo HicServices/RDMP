@@ -50,7 +50,7 @@ public class ExecuteCommandCreateANOVersion : BasicUICommandExecution, IAtomicCo
     public override void Execute()
     {
         if (_catalogue == null)
-            SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
+            SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues.Value));
 
         if (_catalogue == null)
             return;

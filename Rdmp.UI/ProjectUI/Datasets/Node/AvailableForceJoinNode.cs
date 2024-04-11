@@ -60,12 +60,12 @@ internal class AvailableForceJoinNode : IMasqueradeAs
     public void FindJoinsBetween(ICoreChildProvider coreChildProvider, HashSet<AvailableForceJoinNode> otherNodes)
     {
         var allJoins = coreChildProvider.AllJoinInfos;
-        var mycols = coreChildProvider.TableInfosToColumnInfos[TableInfo.ID].ToArray();
+        var mycols = coreChildProvider.TableInfosToColumnInfos.Value[TableInfo.ID].ToArray();
 
         var foundJoinInfos = new List<JoinInfo>();
 
         foreach (var theirCols in otherNodes.Where(otherNode => !Equals(otherNode, this))
-                     .Select(otherNode => coreChildProvider.TableInfosToColumnInfos[otherNode.TableInfo.ID].ToArray()))
+                     .Select(otherNode => coreChildProvider.TableInfosToColumnInfos.Value[otherNode.TableInfo.ID].ToArray()))
             foundJoinInfos.AddRange(
                 TableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(allJoins.Value, mycols,
                     theirCols));

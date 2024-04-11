@@ -56,14 +56,14 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
         var rootFolder = Activator.CoreChildProvider.DatasetRootFolder;
         if (_datasets != null)
         {
-            var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllDatasets.Except(_datasets);
+            var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllDatasets.Value.Except(_datasets);
             if (newCatalogues.Any())
             {
                 oRefreshFrom = rootFolder; //refresh from the root instead
                 tlvDatasets.RefreshObject(oRefreshFrom);
             }
         }
-        _datasets = CommonTreeFunctionality.CoreChildProvider.AllDatasets;
+        _datasets = CommonTreeFunctionality.CoreChildProvider.AllDatasets.Value;
         if (_firstTime || Equals(oRefreshFrom, rootFolder))
         {
             tlvDatasets.RefreshObject(rootFolder);

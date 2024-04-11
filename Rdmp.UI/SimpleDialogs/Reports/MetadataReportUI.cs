@@ -48,7 +48,7 @@ public partial class MetadataReportUI : RDMPForm
     {
         InitializeComponent();
 
-        _catalogues = Activator.CoreChildProvider.AllCatalogues;
+        _catalogues = Activator.CoreChildProvider.AllCatalogues.Value;
         cbxCatalogues.Items.AddRange(_catalogues);
 
         if (initialSelection != null)
@@ -256,7 +256,7 @@ public partial class MetadataReportUI : RDMPForm
     {
         var folders = Activator.CoreChildProvider
             .AllCatalogues
-            .Select(c => c.Folder)
+            .Value.Select(c => c.Folder)
             .Distinct()
             .ToArray();
 
@@ -268,7 +268,7 @@ public partial class MetadataReportUI : RDMPForm
             SetCatalogueSelection(
                 Activator.CoreChildProvider
                     .AllCatalogues
-                    .Where(c => c.Folder.Equals(selected))
+                    .Value.Where(c => c.Folder.Equals(selected))
                     .ToArray());
     }
 }

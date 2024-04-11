@@ -83,10 +83,10 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
         //We get these from the child provider because some objects (those below go off looking stuff up if you get them
         //and do not inject known good values first)
-        foreach (var o in Activator.CoreChildProvider.AllExtractionInformations)
+        foreach (var o in Activator.CoreChildProvider.AllExtractionInformations.Value)
             _allObjects.Add(o);
 
-        foreach (var o in Activator.CoreChildProvider.AllCatalogueItems)
+        foreach (var o in Activator.CoreChildProvider.AllCatalogueItems.Value)
             _allObjects.Add(o);
 
         if (Activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)

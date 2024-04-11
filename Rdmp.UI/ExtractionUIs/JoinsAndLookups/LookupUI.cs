@@ -57,7 +57,7 @@ public partial class LookupUI : LookupUI_Design
         olvExtractionDescriptions.ClearObjects();
 
         var eis = Activator.CoreChildProvider.AllExtractionInformations
-            .Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
+            .Value.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
         olvExtractionDescriptions.AddObjects(eis);
 
         olvCompositeJoins.AddObjects(_lookup.GetSupplementalJoins().ToArray());

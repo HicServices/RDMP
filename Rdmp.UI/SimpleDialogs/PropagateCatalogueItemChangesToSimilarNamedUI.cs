@@ -153,7 +153,7 @@ public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
     {
         return Activator.CoreChildProvider.AllCatalogueItems
-            .Where(ci =>
+            .Value.Where(ci =>
                 ci.Name.Equals(catalogueItemBeingSaved.Name, StringComparison.CurrentCultureIgnoreCase)
                 && ci.ID != catalogueItemBeingSaved.ID)
             .ToArray();

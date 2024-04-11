@@ -55,7 +55,7 @@ public partial class SimpleCohortSetUI : UserControl
     public void SetupFor(IActivateItems activator)
     {
         _activator = activator;
-        cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
+        cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues.Value);
         pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
         pbExtractionIdentifier.Image =
             activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation).ImageToBitmap();

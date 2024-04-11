@@ -105,7 +105,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         //if there are new catalogues we don't already have in our tree
         if (_allCatalogues != null)
         {
-            var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
+            var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Value.Except(_allCatalogues);
             if (newCatalogues.Any())
             {
                 oRefreshFrom = rootFolder; //refresh from the root instead
@@ -113,7 +113,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             }
         }
 
-        _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
+        _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Value;
 
         if (isFirstTime)
         {
