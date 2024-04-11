@@ -241,11 +241,11 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
 
-        tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode);
-        tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder);
+        tlvCatalogues.AddObject(activator.CoreChildProvider.AllGovernanceNode.Value);
+        tlvCatalogues.AddObject(activator.CoreChildProvider.CatalogueRootFolder.Value);
         ApplyFilters();
 
-        RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder);
+        RefreshUIFromDatabase(activator.CoreChildProvider.CatalogueRootFolder.Value);
     }
 
     private void _activator_Emphasise(object sender, EmphasiseEventArgs args)
