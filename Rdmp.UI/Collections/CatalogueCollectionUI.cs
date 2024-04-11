@@ -94,7 +94,7 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
 
     public void RefreshUIFromDatabase(object oRefreshFrom)
     {
-        var rootFolder = Activator.CoreChildProvider.CatalogueRootFolder;
+        var rootFolder = Activator.CoreChildProvider.CatalogueRootFolder.Value;
 
         if (tlvCatalogues.ModelFilter is CatalogueCollectionFilter f)
             f.ChildProvider = Activator.CoreChildProvider;
@@ -275,13 +275,13 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
         switch (o)
         {
             case GovernancePeriod or GovernanceDocument:
-                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode);
+                tlvCatalogues.RefreshObject(Activator.CoreChildProvider.AllGovernanceNode.Value);
                 break;
             case Catalogue cata:
                 {
                     //if there's a change to the folder of the catalogue or it is a new Catalogue (no parent folder) we have to rebuild the entire tree
                     if (tlvCatalogues.GetParent(cata) is not string oldFolder || !oldFolder.Equals(cata.Folder))
-                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder);
+                        RefreshUIFromDatabase(Activator.CoreChildProvider.CatalogueRootFolder.Value);
                     else
                         RefreshUIFromDatabase(o);
                     return;
