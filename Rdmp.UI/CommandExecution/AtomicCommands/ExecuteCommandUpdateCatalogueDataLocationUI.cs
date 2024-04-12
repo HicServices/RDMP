@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandUpdateCatalogueDataLocation : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandUpdateCatalogueDataLocationUI : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
     private IActivateItems _activator;
@@ -24,7 +24,7 @@ internal class ExecuteCommandUpdateCatalogueDataLocation : BasicUICommandExecuti
 
 
 
-    public ExecuteCommandUpdateCatalogueDataLocation(IActivateItems activator, Catalogue catalogue) : base(activator)
+    public ExecuteCommandUpdateCatalogueDataLocationUI(IActivateItems activator, Catalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;
         _activator=activator;
