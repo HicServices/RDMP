@@ -321,6 +321,7 @@
 		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="Terminal.Gui" />
 		<PackageReference Include="YamlDotNet" />
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces"/>
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Curation\KeywordHelp.txt">
