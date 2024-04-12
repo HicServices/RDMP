@@ -562,7 +562,13 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void BuildCohortCohortAggregateContainers()
     {
-        AllCohortAggregateContainers = new Lazy<CohortAggregateContainer[]>(() => GetAllObjects<CohortAggregateContainer>(_catalogueRepository));
+        AllCohortAggregateContainers = new Lazy<CohortAggregateContainer[]>(() =>
+        {
+
+            var container = GetAllObjects<CohortAggregateContainer>(_catalogueRepository);
+
+            return container;
+        });
 
 
         //if we have a database repository then we should get answers from the caching version CohortContainerManagerFromChildProvider otherwise
@@ -1938,7 +1944,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (parentContainer != null)
         {
             var descendancy = GetDescendancyListIfAnyFor(parentContainer);
+            if (descendancy is null)
+            {
+                // attempt to load the stuff
+                var x = CohortIdentificationConfigurationRootFolder.Value;
+                descendancy = GetDescendancyListIfAnyFor(parentContainer);
 
+            }
             if (descendancy != null)
             {
                 BuildAggregateConfigurations();
@@ -1954,7 +1966,13 @@ public class CatalogueChildProvider : ICoreChildProvider
         if (cic != null)
         {
             var descendancy = GetDescendancyListIfAnyFor(cic);
+            if (descendancy is null)
+            {
+                // attempt to load the stuff
+                var x = CohortIdentificationConfigurationRootFolder.Value;
+                descendancy = GetDescendancyListIfAnyFor(cic);
 
+            }
             if (descendancy != null)
             {
                 BuildAggregateConfigurations();

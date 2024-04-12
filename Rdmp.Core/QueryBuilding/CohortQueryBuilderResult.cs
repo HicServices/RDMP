@@ -123,6 +123,7 @@ public class CohortQueryBuilderResult
 
         _log.AppendLine($"Starting Build for {container}");
         //gather dependencies
+        ChildProvider.SelectiveRefresh(container);
         foreach (var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>()
                      .Where(IsEnabled).OrderBy(ac => ac.Order))
             AddDependency(cohortSet);
