@@ -18,10 +18,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 internal class ExecuteCommandUpdateCatalogueDataLocation : BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
+    private IActivateItems _activator;
+
+    public string columnNameMapping = null;
+
+
 
     public ExecuteCommandUpdateCatalogueDataLocation(IActivateItems activator, Catalogue catalogue) : base(activator)
     {
         _catalogue = catalogue;
+        _activator=activator;
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
@@ -29,7 +35,7 @@ internal class ExecuteCommandUpdateCatalogueDataLocation : BasicUICommandExecuti
 
     public override void Execute()
     {
-        var ui = new UpdateCatalogueDataLocationUI(_catalogue);
+        var ui = new UpdateCatalogueDataLocationUI(_activator,_catalogue);
         ui.Show();
     }
 }

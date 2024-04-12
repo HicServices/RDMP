@@ -11,17 +11,20 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     private IBasicActivateItems _activator;
     private readonly DiscoveredTable _table; 
     private readonly CatalogueItem[] _selectedCatalogueItems;
+    private readonly string _catalogueMapping;
     
     private bool _checksPassed = false;
-    public ExecuteCommandUpdateCatalogueDataLocation(IBasicActivateItems activator, CatalogueItem[] selectedCatalogueItems, DiscoveredTable table)
+    public ExecuteCommandUpdateCatalogueDataLocation(IBasicActivateItems activator, CatalogueItem[] selectedCatalogueItems, DiscoveredTable table, string catalogueMapping)
     {
-        _activator=activator;
-        _table=table;
-        _selectedCatalogueItems=selectedCatalogueItems;
+        _activator = activator;
+        _table = table;
+        _selectedCatalogueItems = selectedCatalogueItems;
+        _catalogueMapping = catalogueMapping;
     }
 
     public bool Check()
     {
+        //todo check the columns actually exist & that the types match && that we can talk to the db
         _checksPassed = true;
         return true;
     }
@@ -34,6 +37,8 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
     private string GenerateNewSQLPath(string path)
     {
+        //todo use the mapping 
+
         var qualifier = GrabTablequalifier(path);
         var updatedName = path.Replace(qualifier,_table.GetFullyQualifiedName());
         return updatedName;

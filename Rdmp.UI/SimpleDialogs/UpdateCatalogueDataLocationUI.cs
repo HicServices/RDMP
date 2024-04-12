@@ -1,9 +1,11 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -22,13 +24,15 @@ namespace Rdmp.UI.SimpleDialogs
 
         private Catalogue _catalogue;
         private bool _firstTime = true;
-        public UpdateCatalogueDataLocationUI(Catalogue catalogue)
+        private IActivateItems _activator;
+        public UpdateCatalogueDataLocationUI(IActivateItems activator, Catalogue catalogue)
         {
             InitializeComponent();
             _catalogue = catalogue;
             olvState.AspectGetter = State_AspectGetter;
             GetCurrentDataLocation();
             RefreshData();
+            _activator = activator;
         }
 
 
@@ -80,6 +84,30 @@ namespace Rdmp.UI.SimpleDialogs
         }
 
         private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+            //should be disabled until things are set
+            var cmd = new ExecuteCommandUpdateCatalogueDataLocation(_activator, tlvDatasets.CheckedObjects.Cast<CatalogueItem>().ToArray(), serverDatabaseTableSelector1.GetDiscoveredTable(), tbMapping.Text);
+            if (cmd.Check())
+            {
+                cmd.Execute();
+                _activator.RefreshBus.Publish(_catalogue,new Refreshing.RefreshObjectEventArgs(_catalogue));
+                //todo some sort of UI update to let the user know it's worked
+            }
+
+
+        }
+
+        private void serverDatabaseTableSelector1_Load(object sender, EventArgs e)
         {
 
         }
