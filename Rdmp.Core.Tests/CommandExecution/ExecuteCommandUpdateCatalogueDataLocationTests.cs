@@ -52,7 +52,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         RemoteDatabase.Create(true);
         var dt = new DataTable();
         dt.Columns.Add("Column1", typeof(string));
-        dt.Columns.Add("column2", typeof(int));
+        dt.Columns.Add("Column2", typeof(int));
 
         var dr = dt.NewRow();
         dr["Column1"] = "d";
@@ -131,7 +131,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     [Test]
     public void UpdateLocationColumnNotExist()
     {
-        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column9").ToArray(), RemoteTable, "$column");
+        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column").ToArray(), RemoteTable, "$column");
         Assert.That(cmd.Check(), Is.EqualTo("Unable to find column '[Column]' in selected table"));
     }
 
@@ -139,13 +139,14 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     public void UpdateLocationColumnBadType()
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column").ToArray(), RemoteTable, "$column2");
-        Assert.That(cmd.Check(), Is.EqualTo("The data type of column '{newColumn}' is of type '{foundColumn.DataType}'. This does not match the current type of '{item.ColumnInfo.Data_type}'"));
+        Assert.That(cmd.Check(), Is.EqualTo("The data type of column '[Column2]' is of type 'int'. This does not match the current type of 'varchar(1)'"));
     }
 
     [Test]
     public void UpdateLocationCheckOK()
     {
-        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>(), RemoteTable, null);
+        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2").First().Catalogue_ID;
+        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.That(cmd.Check(), Is.EqualTo(null));
     }
 
@@ -154,7 +155,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     {
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>(), RemoteTable, "badMapping");
         var ex = Assert.Throws<Exception>(() => cmd.Execute());
-        Assert.That(ex.Message, Is.EqualTo("Column Mapping must contain the string '$column'"));
+        Assert.That(ex.Message, Is.EqualTo("Unable to execute ExecuteCommandUpdateCatalogueDataLocation as the checks returned: Column Mapping must contain the string '$column'"));
     }
     [Test]
     public void UpdateLocationExecuteNoCheck_OK()

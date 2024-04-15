@@ -59,6 +59,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
                 return ex.Message;
             }
             var discoveredColumns = _table.DiscoverColumns();
+
             var foundColumn = discoveredColumns.AsEnumerable().Where(dc => dc.GetFullyQualifiedName().Contains(newColumn)).FirstOrDefault();
             if (foundColumn is null)
             {
