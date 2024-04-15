@@ -37,6 +37,10 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     public string Check()
     {
         //check the server is alive
+        if(_table is null)
+        {
+            return "No table has been set";
+        }
         _table.Database.Server.TestConnection();
         //must modify at least 
         if (_selectedCatalogueItems.Length == 0) return "Must select at least one catalogue item to modify";

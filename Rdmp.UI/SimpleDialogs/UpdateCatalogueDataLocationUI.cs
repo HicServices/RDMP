@@ -93,21 +93,50 @@ namespace Rdmp.UI.SimpleDialogs
 
         }
 
-        private void btnConfirm_Click(object sender, EventArgs e)
+        private void Run()
         {
             //should be disabled until things are set
             var cmd = new ExecuteCommandUpdateCatalogueDataLocation(_activator, tlvDatasets.CheckedObjects.Cast<CatalogueItem>().ToArray(), serverDatabaseTableSelector1.GetDiscoveredTable(), tbMapping.Text);
-            if (cmd.Check() is null)
+            var check = cmd.Check();
+            if (check is null)
             {
+                label3.Text = null;
                 cmd.Execute();
-                _activator.RefreshBus.Publish(_catalogue,new Refreshing.RefreshObjectEventArgs(_catalogue));
+                _activator.RefreshBus.Publish(_catalogue, new Refreshing.RefreshObjectEventArgs(_catalogue));
                 //todo some sort of UI update to let the user know it's worked
             }
+            else
+            {
+                label3.Text = check.ToString();
+            }
+        }
+
+        private void btnConfirm_Click(object sender, EventArgs e)
+        {
+            var location = tlvDatasets.CheckedObjects.Cast<CatalogueItem>().Select(ci => DropColumnIdentifierFromName(ci.ColumnInfo.Name)).ToList();
+            if (location.Distinct().Skip(1).Any())
+            {
+                if (_activator.YesNo("Catalogue uses multiple tables. Are you sure you want to proceed?", "Update all Tables"))
+                {
+                    Run();
+                }
+                Run();
+            }
+            else
+            {
+                Run();
+            }
+
 
 
         }
 
         private void serverDatabaseTableSelector1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }

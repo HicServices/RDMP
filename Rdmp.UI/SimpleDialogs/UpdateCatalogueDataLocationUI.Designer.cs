@@ -31,6 +31,13 @@
             components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UpdateCatalogueDataLocationUI));
             helpIcon1 = new SimpleControls.HelpIcon();
+            tbCurrentLocation = new System.Windows.Forms.TextBox();
+            lbl1 = new System.Windows.Forms.Label();
+            serverDatabaseTableSelector1 = new SimpleControls.ServerDatabaseTableSelector();
+            label1 = new System.Windows.Forms.Label();
+            btnConfirm = new System.Windows.Forms.Button();
+            tbMapping = new System.Windows.Forms.TextBox();
+            label2 = new System.Windows.Forms.Label();
             tlvDatasets = new BrightIdeasSoftware.TreeListView();
             olvName = new BrightIdeasSoftware.OLVColumn();
             olvState = new BrightIdeasSoftware.OLVColumn();
@@ -38,13 +45,7 @@
             lblFilter = new System.Windows.Forms.Label();
             tbFilter = new System.Windows.Forms.TextBox();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
-            label2 = new System.Windows.Forms.Label();
-            tbMapping = new System.Windows.Forms.TextBox();
-            btnConfirm = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
-            serverDatabaseTableSelector1 = new SimpleControls.ServerDatabaseTableSelector();
-            lbl1 = new System.Windows.Forms.Label();
-            tbCurrentLocation = new System.Windows.Forms.TextBox();
+            label3 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)tlvDatasets).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -59,7 +60,7 @@
             helpIcon1.BackColor = System.Drawing.Color.Transparent;
             helpIcon1.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon1.BackgroundImage");
             helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            helpIcon1.Location = new System.Drawing.Point(1442, 9);
+            helpIcon1.Location = new System.Drawing.Point(1439, 9);
             helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             helpIcon1.MaximumSize = new System.Drawing.Size(26, 25);
             helpIcon1.MinimumSize = new System.Drawing.Size(26, 25);
@@ -67,6 +68,78 @@
             helpIcon1.Size = new System.Drawing.Size(26, 25);
             helpIcon1.SuppressClick = false;
             helpIcon1.TabIndex = 32;
+            // 
+            // tbCurrentLocation
+            // 
+            tbCurrentLocation.Enabled = false;
+            tbCurrentLocation.Location = new System.Drawing.Point(159, 30);
+            tbCurrentLocation.Name = "tbCurrentLocation";
+            tbCurrentLocation.Size = new System.Drawing.Size(460, 23);
+            tbCurrentLocation.TabIndex = 33;
+            // 
+            // lbl1
+            // 
+            lbl1.AutoSize = true;
+            lbl1.Location = new System.Drawing.Point(30, 33);
+            lbl1.Name = "lbl1";
+            lbl1.Size = new System.Drawing.Size(126, 15);
+            lbl1.TabIndex = 34;
+            lbl1.Text = "Current Data Location:";
+            lbl1.Click += label1_Click;
+            // 
+            // serverDatabaseTableSelector1
+            // 
+            serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
+            serverDatabaseTableSelector1.AutoSize = true;
+            serverDatabaseTableSelector1.Database = "";
+            serverDatabaseTableSelector1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
+            serverDatabaseTableSelector1.Location = new System.Drawing.Point(21, 98);
+            serverDatabaseTableSelector1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
+            serverDatabaseTableSelector1.Password = "";
+            serverDatabaseTableSelector1.Server = "";
+            serverDatabaseTableSelector1.Size = new System.Drawing.Size(727, 218);
+            serverDatabaseTableSelector1.TabIndex = 35;
+            serverDatabaseTableSelector1.Timeout = "";
+            serverDatabaseTableSelector1.Username = "";
+            serverDatabaseTableSelector1.Load += serverDatabaseTableSelector1_Load;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(30, 80);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(110, 15);
+            label1.TabIndex = 36;
+            label1.Text = "New Data Location:";
+            label1.Click += label1_Click_1;
+            // 
+            // btnConfirm
+            // 
+            btnConfirm.Location = new System.Drawing.Point(635, 379);
+            btnConfirm.Name = "btnConfirm";
+            btnConfirm.Size = new System.Drawing.Size(75, 23);
+            btnConfirm.TabIndex = 37;
+            btnConfirm.Text = "Confirm";
+            btnConfirm.UseVisualStyleBackColor = true;
+            btnConfirm.Click += btnConfirm_Click;
+            // 
+            // tbMapping
+            // 
+            tbMapping.Location = new System.Drawing.Point(181, 339);
+            tbMapping.Name = "tbMapping";
+            tbMapping.Size = new System.Drawing.Size(538, 23);
+            tbMapping.TabIndex = 38;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(3, 342);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(172, 15);
+            label2.TabIndex = 39;
+            label2.Text = "(Optional) Map Column Name:";
+            label2.Click += label2_Click;
             // 
             // tlvDatasets
             // 
@@ -148,6 +221,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(label3);
             splitContainer1.Panel2.Controls.Add(label2);
             splitContainer1.Panel2.Controls.Add(tbMapping);
             splitContainer1.Panel2.Controls.Add(btnConfirm);
@@ -161,77 +235,15 @@
             splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 30;
             // 
-            // label2
+            // label3
             // 
-            label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(3, 342);
-            label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(172, 15);
-            label2.TabIndex = 39;
-            label2.Text = "(Optional) Map Column Name:";
-            label2.Click += label2_Click;
-            // 
-            // tbMapping
-            // 
-            tbMapping.Location = new System.Drawing.Point(181, 339);
-            tbMapping.Name = "tbMapping";
-            tbMapping.Size = new System.Drawing.Size(538, 23);
-            tbMapping.TabIndex = 38;
-            // 
-            // btnConfirm
-            // 
-            btnConfirm.Location = new System.Drawing.Point(635, 379);
-            btnConfirm.Name = "btnConfirm";
-            btnConfirm.Size = new System.Drawing.Size(75, 23);
-            btnConfirm.TabIndex = 37;
-            btnConfirm.Text = "Confirm";
-            btnConfirm.UseVisualStyleBackColor = true;
-            btnConfirm.Click += btnConfirm_Click;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(30, 80);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(110, 15);
-            label1.TabIndex = 36;
-            label1.Text = "New Data Location:";
-            label1.Click += label1_Click_1;
-            // 
-            // serverDatabaseTableSelector1
-            // 
-            serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
-            serverDatabaseTableSelector1.AutoSize = true;
-            serverDatabaseTableSelector1.Database = "";
-            serverDatabaseTableSelector1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
-            serverDatabaseTableSelector1.Location = new System.Drawing.Point(21, 98);
-            serverDatabaseTableSelector1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
-            serverDatabaseTableSelector1.Password = "";
-            serverDatabaseTableSelector1.Server = "";
-            serverDatabaseTableSelector1.Size = new System.Drawing.Size(727, 218);
-            serverDatabaseTableSelector1.TabIndex = 35;
-            serverDatabaseTableSelector1.Timeout = "";
-            serverDatabaseTableSelector1.Username = "";
-            serverDatabaseTableSelector1.Load += serverDatabaseTableSelector1_Load;
-            // 
-            // lbl1
-            // 
-            lbl1.AutoSize = true;
-            lbl1.Location = new System.Drawing.Point(30, 33);
-            lbl1.Name = "lbl1";
-            lbl1.Size = new System.Drawing.Size(126, 15);
-            lbl1.TabIndex = 34;
-            lbl1.Text = "Current Data Location:";
-            lbl1.Click += label1_Click;
-            // 
-            // tbCurrentLocation
-            // 
-            tbCurrentLocation.Enabled = false;
-            tbCurrentLocation.Location = new System.Drawing.Point(159, 30);
-            tbCurrentLocation.Name = "tbCurrentLocation";
-            tbCurrentLocation.Size = new System.Drawing.Size(460, 23);
-            tbCurrentLocation.TabIndex = 33;
+            label3.AutoSize = true;
+            label3.ForeColor = System.Drawing.Color.Red;
+            label3.Location = new System.Drawing.Point(12, 379);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(0, 15);
+            label3.TabIndex = 40;
+            label3.Click += label3_Click;
             // 
             // UpdateCatalogueDataLocationUI
             // 
@@ -269,5 +281,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.TextBox tbMapping;
+        private System.Windows.Forms.Label label3;
     }
 }
