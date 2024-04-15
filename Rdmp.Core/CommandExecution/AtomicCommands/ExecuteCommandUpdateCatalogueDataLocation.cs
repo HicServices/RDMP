@@ -1,5 +1,10 @@
-﻿using FAnsi.Discovery;
-using NPOI.OpenXmlFormats;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using System;
 using System.Linq;
@@ -8,7 +13,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 //todo list
 //make the ui nice
-//make sure the checks work
 //how does this work on the CLI?
 //write some tests
 
@@ -38,7 +42,10 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
         //must modify at least 
         if (_selectedCatalogueItems.Length == 0) return "Must select at least one catalogue item to modify";
         // check the mapping isn't junk
-        if (!string.IsNullOrWhiteSpace(_catalogueMapping) && !_catalogueMapping.Contains(CatalogueMappingIdentifier)) return "Column Mapping must contain the strng '$column'";
+        if (!string.IsNullOrWhiteSpace(_catalogueMapping))
+        {
+            if (!_catalogueMapping.Contains(CatalogueMappingIdentifier)) return "Column Mapping must contain the string '$column'";
+        }
         // check the columns actually exist & that the types match
         foreach (var item in _selectedCatalogueItems)
         {
@@ -76,7 +83,12 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
     private string MutilateColumnWithMapping(string columnName)
     {
-
+        bool useParenthesis = false;
+        if (columnName.StartsWith('[') && columnName.EndsWith("]"))
+        {
+            useParenthesis = true;
+            columnName = columnName.Substring(1, columnName.Length - 2);
+        }
         if (!string.IsNullOrWhiteSpace(_catalogueMapping))
         {
             if (!_catalogueMapping.Contains(CatalogueMappingIdentifier))
@@ -85,7 +97,11 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
             else
             {
-                return _catalogueMapping.Replace(CatalogueMappingIdentifier, columnName);
+                columnName = _catalogueMapping.Replace(CatalogueMappingIdentifier, columnName);
+                if (useParenthesis)
+                {
+                    columnName = '[' + columnName + ']';
+                }
             }
         }
         return columnName;

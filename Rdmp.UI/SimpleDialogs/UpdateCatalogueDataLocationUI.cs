@@ -97,7 +97,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             //should be disabled until things are set
             var cmd = new ExecuteCommandUpdateCatalogueDataLocation(_activator, tlvDatasets.CheckedObjects.Cast<CatalogueItem>().ToArray(), serverDatabaseTableSelector1.GetDiscoveredTable(), tbMapping.Text);
-            if (cmd.Check())
+            if (cmd.Check() is null)
             {
                 cmd.Execute();
                 _activator.RefreshBus.Publish(_catalogue,new Refreshing.RefreshObjectEventArgs(_catalogue));
