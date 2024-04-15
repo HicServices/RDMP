@@ -7,19 +7,21 @@ using System.Linq;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 //todo list
-// use the mapping
 //make the ui nice
 //make sure the checks work
+//how does this work on the CLI?
 //write some tests
 
 
 public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, IAtomicCommand
 {
     private IBasicActivateItems _activator;
-    private readonly DiscoveredTable _table; 
+    private readonly DiscoveredTable _table;
     private readonly CatalogueItem[] _selectedCatalogueItems;
     private readonly string _catalogueMapping;
-    
+
+    public readonly string CatalogueMappingIdentifier = "$column";
+
     private bool _checksPassed = false;
     public ExecuteCommandUpdateCatalogueDataLocation(IBasicActivateItems activator, CatalogueItem[] selectedCatalogueItems, DiscoveredTable table, string catalogueMapping)
     {
@@ -29,11 +31,37 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
         _catalogueMapping = catalogueMapping;
     }
 
-    public bool Check()
+    public string Check()
     {
-        //todo check the columns actually exist & that the types match && that we can talk to the db
+        //check the server is alive
+        _table.Database.Server.TestConnection();
+        //must modify at least 
+        if (_selectedCatalogueItems.Length == 0) return "Must select at least one catalogue item to modify";
+        // check the mapping isn't junk
+        if (!string.IsNullOrWhiteSpace(_catalogueMapping) && !_catalogueMapping.Contains(CatalogueMappingIdentifier)) return "Column Mapping must contain the strng '$column'";
+        // check the columns actually exist & that the types match
+        foreach (var item in _selectedCatalogueItems)
+        {
+            string newColumn;
+            try
+            {
+                newColumn = GrabColumnName(item.ColumnInfo.Name);
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+            var discoveredColumns = _table.DiscoverColumns();
+            var foundColumn = discoveredColumns.AsEnumerable().Where(dc => dc.GetFullyQualifiedName().Contains(newColumn)).FirstOrDefault();
+            if (foundColumn is null)
+            {
+                return $"Unable to find column '{newColumn}' in selected table";
+            }
+            if (foundColumn.DataType.ToString() != item.ColumnInfo.Data_type) return $"The data type of column '{newColumn}' is of type '{foundColumn.DataType}'. This does not match the current type of '{item.ColumnInfo.Data_type}'";
+
+        }
         _checksPassed = true;
-        return true;
+        return null;
     }
 
     private string GrabTablequalifier(string name)
@@ -41,35 +69,59 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
         return string.Join('.', name.Split('.')[..^1]);
     }
 
+    private string GrabColumnName(string name)
+    {
+        return MutilateColumnWithMapping(name.Split('.')[^1]);
+    }
+
+    private string MutilateColumnWithMapping(string columnName)
+    {
+
+        if (!string.IsNullOrWhiteSpace(_catalogueMapping))
+        {
+            if (!_catalogueMapping.Contains(CatalogueMappingIdentifier))
+            {
+                throw new Exception("Column Mapping is invalid. Add '$column' to the mapping string to fix this.");
+            }
+            else
+            {
+                return _catalogueMapping.Replace(CatalogueMappingIdentifier, columnName);
+            }
+        }
+        return columnName;
+    }
+
 
     private string GenerateNewSQLPath(string path)
     {
-        //todo use the mapping 
-
         var qualifier = GrabTablequalifier(path);
-        var updatedName = path.Replace(qualifier,_table.GetFullyQualifiedName());
+        var updatedName = qualifier + '.' + GrabColumnName(path);//path.Replace(qualifier,_table.GetFullyQualifiedName());
         return updatedName;
     }
 
     private TableInfo TableIsAlreadyKnown()
     {
-        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>().Where(ti => {
+        return _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>().Where(ti =>
+        {
             return ti.Name == _table.GetFullyQualifiedName() &&
             ti.Server == _table.Database.Server.Name &&
             ti.Database == _table.Database.GetRuntimeName();
-            }).FirstOrDefault();
+        }).FirstOrDefault();
     }
 
 
     public override void Execute()
     {
-        if(!_checksPassed)
+        if (!_checksPassed)
         {
-            throw new Exception("Unable to execute ExecuteCommandUpdateCatalogueDataLocation as checks have not been ran.");
+            var checkResults = Check();
+            if (checkResults != null)
+            {
+                throw new Exception($"Unable to execute ExecuteCommandUpdateCatalogueDataLocation as the checks returned: {checkResults}");
+            }
         }
-        
 
-        foreach(CatalogueItem selectedCatalogueItem in _selectedCatalogueItems)
+        foreach (CatalogueItem selectedCatalogueItem in _selectedCatalogueItems)
         {
             var existingTable = TableIsAlreadyKnown();
             if (existingTable is not null)
@@ -78,9 +130,9 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
             else
             {
-                var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueRepository,_table.GetFullyQualifiedName());
+                var tblInfo = new TableInfo(_activator.RepositoryLocator.CatalogueRepository, _table.GetFullyQualifiedName());
                 tblInfo.Server = _table.Database.Server.Name;
-                tblInfo.Database= _table.Database.GetRuntimeName();
+                tblInfo.Database = _table.Database.GetRuntimeName();
                 tblInfo.SaveToDatabase();
                 selectedCatalogueItem.ColumnInfo.TableInfo_ID = tblInfo.ID;
 
