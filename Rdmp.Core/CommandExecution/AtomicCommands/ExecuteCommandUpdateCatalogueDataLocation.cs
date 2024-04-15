@@ -12,7 +12,6 @@ using System.Linq;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 //todo list
-//make the ui nice
 //how does this work on the CLI?
 
 
@@ -78,8 +77,6 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     private string GrabTableQualifier(string name)
     {
         return _table.GetFullyQualifiedName();
-        //path.Replace(qualifier,_table.GetFullyQualifiedName());
-        //return string.Join('.', name.Split('.')[..^1]);
     }
 
     private string GrabColumnName(string name)
@@ -117,7 +114,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     private string GenerateNewSQLPath(string path)
     {
         var qualifier = GrabTableQualifier(path);
-        var updatedName = qualifier + '.' + GrabColumnName(path);//path.Replace(qualifier,_table.GetFullyQualifiedName());
+        var updatedName = qualifier + '.' + GrabColumnName(path);
         return updatedName;
     }
 
