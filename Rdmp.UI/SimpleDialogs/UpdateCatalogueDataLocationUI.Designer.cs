@@ -46,6 +46,9 @@
             tbFilter = new System.Windows.Forms.TextBox();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             label3 = new System.Windows.Forms.Label();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            toolTip2 = new System.Windows.Forms.ToolTip(components);
+            helpIcon2 = new SimpleControls.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)tlvDatasets).BeginInit();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -60,7 +63,7 @@
             helpIcon1.BackColor = System.Drawing.Color.Transparent;
             helpIcon1.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon1.BackgroundImage");
             helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            helpIcon1.Location = new System.Drawing.Point(1439, 9);
+            helpIcon1.Location = new System.Drawing.Point(1438, 9);
             helpIcon1.Margin = new System.Windows.Forms.Padding(5, 3, 5, 3);
             helpIcon1.MaximumSize = new System.Drawing.Size(26, 25);
             helpIcon1.MinimumSize = new System.Drawing.Size(26, 25);
@@ -221,6 +224,7 @@
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(helpIcon2);
             splitContainer1.Panel2.Controls.Add(label3);
             splitContainer1.Panel2.Controls.Add(label2);
             splitContainer1.Panel2.Controls.Add(tbMapping);
@@ -245,6 +249,19 @@
             label3.TabIndex = 40;
             label3.Click += label3_Click;
             // 
+            // helpIcon2
+            // 
+            helpIcon2.BackColor = System.Drawing.Color.Transparent;
+            helpIcon2.BackgroundImage = (System.Drawing.Image)resources.GetObject("helpIcon2.BackgroundImage");
+            helpIcon2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            helpIcon2.Location = new System.Drawing.Point(728, 340);
+            helpIcon2.Margin = new System.Windows.Forms.Padding(0);
+            helpIcon2.MinimumSize = new System.Drawing.Size(22, 22);
+            helpIcon2.Name = "helpIcon2";
+            helpIcon2.Size = new System.Drawing.Size(22, 22);
+            helpIcon2.SuppressClick = false;
+            helpIcon2.TabIndex = 41;
+            // 
             // UpdateCatalogueDataLocationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -252,7 +269,8 @@
             ClientSize = new System.Drawing.Size(1114, 601);
             Controls.Add(splitContainer1);
             Name = "UpdateCatalogueDataLocationUI";
-            Text = "UpdateCatalogueDataLocationUI";
+            Text = "Update Catalogue Data Location";
+            Load += UpdateCatalogueDataLocationUI_Load;
             ((System.ComponentModel.ISupportInitialize)tlvDatasets).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
@@ -282,5 +300,8 @@
         private System.Windows.Forms.Button btnConfirm;
         private System.Windows.Forms.TextBox tbMapping;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolTip toolTip2;
+        private SimpleControls.HelpIcon helpIcon2;
     }
 }

@@ -158,8 +158,11 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             }
             selectedCatalogueItem.ColumnInfo.Name = GenerateNewSQLPath(selectedCatalogueItem.ColumnInfo.Name);
             selectedCatalogueItem.ColumnInfo.SaveToDatabase();
-            selectedCatalogueItem.ExtractionInformation.SelectSQL = GenerateNewSQLPath(selectedCatalogueItem.ExtractionInformation.SelectSQL);
-            selectedCatalogueItem.ExtractionInformation.SaveToDatabase();
+            foreach (ExtractionInformation ei in selectedCatalogueItem.ColumnInfo.ExtractionInformations)
+            {
+                ei.SelectSQL = GenerateNewSQLPath(selectedCatalogueItem.ExtractionInformation.SelectSQL);
+                ei.SaveToDatabase();
+            }
         }
     }
 }
