@@ -6,6 +6,13 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
+//todo list
+// use the mapping
+//make the ui nice
+//make sure the checks work
+//write some tests
+
+
 public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, IAtomicCommand
 {
     private IBasicActivateItems _activator;
