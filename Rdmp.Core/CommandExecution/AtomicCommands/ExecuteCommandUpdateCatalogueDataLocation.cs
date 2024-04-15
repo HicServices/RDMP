@@ -14,7 +14,6 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 //todo list
 //make the ui nice
 //how does this work on the CLI?
-//write some tests
 
 
 public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, IAtomicCommand
@@ -72,9 +71,11 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
         return null;
     }
 
-    private string GrabTablequalifier(string name)
+    private string GrabTableQualifier(string name)
     {
-        return string.Join('.', name.Split('.')[..^1]);
+        return _table.GetFullyQualifiedName();
+        //path.Replace(qualifier,_table.GetFullyQualifiedName());
+        //return string.Join('.', name.Split('.')[..^1]);
     }
 
     private string GrabColumnName(string name)
@@ -99,11 +100,11 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
             else
             {
                 columnName = _catalogueMapping.Replace(CatalogueMappingIdentifier, columnName);
-                if (useParenthesis)
-                {
-                    columnName = '[' + columnName + ']';
-                }
             }
+        }
+        if (useParenthesis)
+        {
+            columnName = '[' + columnName + ']';
         }
         return columnName;
     }
@@ -111,7 +112,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
 
     private string GenerateNewSQLPath(string path)
     {
-        var qualifier = GrabTablequalifier(path);
+        var qualifier = GrabTableQualifier(path);
         var updatedName = qualifier + '.' + GrabColumnName(path);//path.Replace(qualifier,_table.GetFullyQualifiedName());
         return updatedName;
     }

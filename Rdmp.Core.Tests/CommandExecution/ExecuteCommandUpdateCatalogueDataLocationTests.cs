@@ -24,20 +24,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
 {
-    //checks
-    // no db
-    // no items
-    // bad mapping
-    //column not exist
-    //bad column type
-
-    // check name mapping works as expected
-    // check new sql path
-    // new knownTable generated if new
-    //column info name updated correctly
-    //extractionsql updated correctly
-    //execute ok no checks
-    // execute no checks bad
 
     protected DiscoveredDatabase RemoteDatabase { get; set; }
     protected DiscoveredTable RemoteTable { get; set; }
@@ -46,6 +32,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     private DiscoveredDatabase db;
 
     private int goodCatalogueID;
+    private int originalTableInfoID;
     private void CreateDatabase()
     {
         RemoteDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(RemoteDatabaseName);
@@ -85,6 +72,10 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
 
         };
         cmd.Execute();
+        originalTableInfoID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().First().ColumnInfo.TableInfo_ID;
+        var column1 = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column1").First();
+        column1.ExtractionInformation.SelectSQL = column1.ExtractionInformation.SelectSQL + " as SOME_ALIAS";
+        column1.ExtractionInformation.SaveToDatabase();
     }
 
     private void CreateSecondaryCatalogue()
@@ -163,5 +154,22 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2").First().Catalogue_ID;
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
+        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID).First();
+        Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName()+".[Column2]"));
+        Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
+        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+    }
+
+    [Test]
+    public void UpdateLocationExecuteNoCheck_AliasCheck()
+    {
+        goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2").First().Catalogue_ID;
+        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
+        Assert.DoesNotThrow(() => cmd.Execute());
+        var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column1" && c.Catalogue_ID == goodCatalogueID).First();
+        Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1]"));
+        Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1] as SOME_ALIAS"));
+        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
     }
 }
+
