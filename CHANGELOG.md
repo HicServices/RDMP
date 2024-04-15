@@ -1,3 +1,4 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -9,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Improve error messages for Multi-ExtractionIdentifier extractions
+- Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
 
 ## [8.1.5] - 2024-04-03
 
