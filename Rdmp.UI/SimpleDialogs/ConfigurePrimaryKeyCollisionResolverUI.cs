@@ -362,6 +362,6 @@ public partial class ConfigurePrimaryKeyCollisionResolverUI : RDMPForm
                 .Count() == 1; //if count of distinct directions is 1 then they are all in the same direction
     }
 
-    [LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SendMessageW", StringMarshalling = StringMarshalling.Utf16)]
+    [LibraryImport("user32.dll", SetLastError = true, EntryPoint = "GetScrollPosW", StringMarshalling = StringMarshalling.Utf16)]
     private static partial int GetScrollPos(IntPtr hWnd, Orientation nBar);
 }
