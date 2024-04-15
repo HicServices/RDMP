@@ -3,7 +3,7 @@
 		<PackageVersion Include="CommandLineParser" Version="2.9.1"/>
 		<PackageVersion Include="Equ" Version="2.3.0"/>
 		<PackageVersion Include="ExcelNumberFormat" Version="1.1.0"/>
-		<PackageVersion Include="FluentFTP" Version="49.0.2"/>
+		<PackageVersion Include="FluentFTP" Version="50.0.0"/>
 		<PackageVersion Include="HIC.BadMedicine" Version="1.2.1"/>
 		<PackageVersion Include="HIC.FAnsiSql" Version="3.2.2"/>
 		<PackageVersion Include="LibArchive.Net" Version="0.1.4"/>
@@ -11,7 +11,7 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageVersion>
-		<PackageVersion Include="MongoDB.Driver" Version="2.24.0"/>
+		<PackageVersion Include="MongoDB.Driver" Version="2.25.0"/>
 		<PackageVersion Include="Newtonsoft.Json" Version="13.0.3"/>
 		<PackageVersion Include="NPOI" Version="2.7.0"/>
 		<PackageVersion Include="NLog" Version="5.2.8"/>
