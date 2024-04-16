@@ -36,7 +36,7 @@ public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, 
     public string Check()
     {
         //check the server is alive
-        if(_table is null)
+        if (_table is null)
         {
             return "No table has been set";
         }

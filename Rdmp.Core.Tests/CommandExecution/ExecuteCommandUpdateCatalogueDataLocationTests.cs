@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -24,7 +25,6 @@ namespace Rdmp.Core.Tests.CommandExecution;
 
 //todo
 //test for use in multiple catalogues
-//test single ci flow
 
 public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
 {
@@ -159,7 +159,7 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
         var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID).First();
-        Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName()+".[Column2]"));
+        Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
         Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
         Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
     }
@@ -172,7 +172,8 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
         Assert.DoesNotThrow(() => cmd.Execute());
         var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column1" && c.Catalogue_ID == goodCatalogueID).First();
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1]"));
-        Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1] as SOME_ALIAS"));
+        var ei = RepositoryLocator.CatalogueRepository.GetAllObjects <ExtractionInformation>().Where(e => e.ID == ci.ExtractionInformation.ID).First();
+        Assert.That(ei.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column1] as SOME_ALIAS"));
         Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
     }
 
@@ -181,17 +182,17 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     {
         goodCatalogueID = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2").First().Catalogue_ID;
         var ci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column2" && c.Catalogue_ID == goodCatalogueID).First();
-        var ei = new ExtractionInformation();
-        ei.CatalogueItem_ID = ci.ID;
-        ei.SelectSQL = ci.ExtractionInformation.SelectSQL;
-        ei.SaveToDatabase();
-        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID).ToArray(), RemoteTable, null);
+
+        var otherci = RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Name == "Column").First();
+        var cmd1 = new ExecuteCommandAddNewCatalogueItem(new ThrowImmediatelyActivator(RepositoryLocator), ci.Catalogue, new List<ColumnInfo>() { otherci.ColumnInfo }.ToArray());
+        Assert.DoesNotThrow(() => cmd1.Execute());
+
+        var cmd = new ExecuteCommandUpdateCatalogueDataLocation(new ThrowImmediatelyActivator(RepositoryLocator), RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(c => c.Catalogue_ID == goodCatalogueID && c.Name=="Column2").ToArray(), RemoteTable, null);
         Assert.DoesNotThrow(() => cmd.Execute());
         Assert.That(ci.ColumnInfo.Name, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        Assert.That(ci.ExtractionInformation.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
+        var ei = RepositoryLocator.CatalogueRepository.GetAllObjects<ExtractionInformation>().Where(e => e.ID == ci.ExtractionInformation.ID).First();
         Assert.That(ei.SelectSQL, Is.EqualTo(RemoteTable.GetFullyQualifiedName() + ".[Column2]"));
-
+        Assert.That(ci.ColumnInfo.TableInfo_ID, Is.Not.EqualTo(originalTableInfoID));
     }
 }
 
