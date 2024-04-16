@@ -11,10 +11,6 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-//todo list
-//how does this work on the CLI?
-
-
 public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, IAtomicCommand
 {
     private IBasicActivateItems _activator;

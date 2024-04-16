@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using NPOI.SS.Formula.Functions;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -19,12 +18,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using Tests.Common;
-using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CommandExecution;
-
-//todo
-//test for use in multiple catalogues
 
 public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
 {
