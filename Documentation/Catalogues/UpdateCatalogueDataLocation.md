@@ -12,3 +12,6 @@ Instead of reimporting a [catalogue](../CodeTutorials/Glossary.md#Catalogue), RD
 ## What Does it change?
 This functionality updates the underlying [ColumnInfo](../CodeTutorials/Glossary.md#ColumnInfo) to point to the new table. It also updates the extractionInformation SelectSQL to allow for future extractions to continue to work.
 If you select a never before seen table, RDMP will also generate a new known table record incase of future use
+
+[Catalogue]: ../CodeTutorials/Glossary.md#Catalogue
+[ColumnInfo]: ../CodeTutorials/Glossary.md#ColumnInfo
