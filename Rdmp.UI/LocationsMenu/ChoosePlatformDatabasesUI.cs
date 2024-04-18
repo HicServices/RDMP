@@ -379,6 +379,12 @@ public partial class ChoosePlatformDatabasesUI : Form
         SetState(State.PickNewOrExisting);
     }
 
+    private void btnUseYamlFile_Click(object sender, EventArgs e)
+    {
+        using var fb = new FolderBrowserDialog();
+        return fb.ShowDialog() == DialogResult.OK ? new DirectoryInfo(fb.SelectedPath) : null;
+    }
+
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
     {
         var dialog = new ServerDatabaseTableSelectorDialog("Catalogue Database", false, false, null);
