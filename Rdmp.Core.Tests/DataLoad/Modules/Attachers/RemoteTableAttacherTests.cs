@@ -245,7 +245,7 @@ internal class RemoteTableAttacherTests : DatabaseTests
             //where to go for data
             RemoteServer = db.Server.Name,
             RemoteDatabaseName = db.GetRuntimeName(),
-            DatabaseType = db.Server.DatabaseType
+            DatabaseType = db.Server.DatabaseType,
         };
 
         if (db.Server.ExplicitUsernameIfAny != null)

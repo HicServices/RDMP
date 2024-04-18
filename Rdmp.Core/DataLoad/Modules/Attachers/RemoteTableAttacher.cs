@@ -94,7 +94,7 @@ public class RemoteTableAttacher : RemoteAttacher
     public DatabaseType DatabaseType { get; set; }
 
     [DemandsInitialization("The Columns you wish to pull from the remote table", DefaultValue = "*")]
-    public string SelectedColumns { get; set; }
+    public string SelectedColumns { get; set; } ="*";
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
