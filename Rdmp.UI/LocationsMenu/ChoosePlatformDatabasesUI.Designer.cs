@@ -621,7 +621,7 @@ namespace Rdmp.UI.LocationsMenu
             btnUseYamlFile.Name = "btnUseYamlFile";
             btnUseYamlFile.Size = new System.Drawing.Size(108, 23);
             btnUseYamlFile.TabIndex = 10;
-            btnUseYamlFile.Text = "Use Yaml File";
+            btnUseYamlFile.Text = "Use yaml File";
             btnUseYamlFile.UseVisualStyleBackColor = true;
             btnUseYamlFile.Click += btnUseYamlFile_Click;
             // 
