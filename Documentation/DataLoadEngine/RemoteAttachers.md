@@ -48,7 +48,8 @@ The full configuration options are
 | Delta Reading Look Forward Days               | If using the Delta Reading fetch duration, this is how many days forward in time you wish to look each time                                                                                                                                                                                                                                                  |
 | Set Delta Reading To Last Seen Date Post Load | Optional overwrite to the Delta Reading fetch option. Will use the most recently seen date in the fetched data rather than the adding the forward look days amount onto the stored minimum date                                                                                                                                                              |
 | Culture                                      | Optionally specify a custom date format                                                                                                                                                                                                                                                                                                                     |
-| Explicit Date Time Format                    | Optionally specify a specific datetime format        
+| Explicit Date Time Format                    | Optionally specify a specific datetime format    
+| Selected Columns                             | Optionally select which columns you wish to pull from the remote server (defaults to "*" )
 
 ## Configuring the Remote Database Attacher
 The Remote Database Attacher has a number of configuration options the required fields are:
@@ -68,4 +69,9 @@ The Remote Database Attacher has a number of configuration options the required 
 | Delta Reading Look Forward Days               | If using the Delta Reading fetch duration, this is how many days forward in time you wish to look each time                                                                                                                                                                                                                                                  |
 | Set Delta Reading To Last Seen Date Post Load | Optional overwrite to the Delta Reading fetch option. Will use the most recently seen date in the fetched data rather than the adding the forward look days amount onto the stored minimum date                                                                                                                                                              |
 | Culture                                      | Optionally specify a custom date format                                                                                                                                                                                                                                                                                                                     |
-| Explicit Date Time Format                    | Optionally specify a specific datetime format     
+| Explicit Date Time Format                    | Optionally specify a specific datetime format   
+| Selected Columns                             | Optionally select which columns you wish to pull from the remote server (defaults to "*" )
+
+
+## Pitfalls
+* If you use a custom select SQL in your attacher it will ignore all custom fetch and delta configuration.

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -93,6 +94,9 @@ public class RemoteTableAttacher : RemoteAttacher
     [DemandsInitialization("The database type you are attempting to connect to",
         DefaultValue = DatabaseType.MicrosoftSQLServer)]
     public DatabaseType DatabaseType { get; set; }
+
+    [DemandsInitialization("The Columns you wish to pull from the remote table", DefaultValue = "*")]
+    public string SelectedColumns { get; set; }
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
@@ -361,7 +365,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
-            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,DatabaseType)}";
+            : $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
 
         var scheduleMismatch = false;
         //if there is a load progress
@@ -457,7 +461,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         if (SetDeltaReadingToLatestSeenDatePostLoad)
         {
-            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job);
         }
 
 
