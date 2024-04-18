@@ -25,6 +25,8 @@ using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.DataLoadUIs.ModuleUIs;
 using Rdmp.UI.SimpleDialogs;
+using SharpCompress.Common;
+using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.UI.LocationsMenu;
@@ -381,8 +383,40 @@ public partial class ChoosePlatformDatabasesUI : Form
 
     private void btnUseYamlFile_Click(object sender, EventArgs e)
     {
-        using var fb = new FolderBrowserDialog();
-        return fb.ShowDialog() == DialogResult.OK ? new DirectoryInfo(fb.SelectedPath) : null;
+        using var fb = new OpenFileDialog();
+        var result = fb.ShowDialog();
+        if (result == DialogResult.OK)
+        {
+            try
+            {
+                var location = new DirectoryInfo(fb.FileName);
+                using (var reader = new StreamReader(location.FullName))
+                {
+                    // Load the stream
+                    var yaml = new YamlStream();
+                    yaml.Load(reader);
+                    var docs = yaml.Documents.First().AllNodes.Select(n => n.ToString());
+                    string catalogueConnectionString = null;
+                    string dataExportConnectionString = null;
+                    foreach (var item in docs.Select((value, i) => new { i, value }))
+                    {
+                        var value = item.value;
+                        var index = item.i;
+
+                        if (value == "CatalogueConnectionString") catalogueConnectionString = docs.ToList()[item.i + 1];
+                        if (value == "DataExportConnectionString") dataExportConnectionString = docs.ToList()[item.i + 1];
+                    }
+                    if (catalogueConnectionString != null) tbCatalogueConnectionString.Text = catalogueConnectionString;
+                    if (dataExportConnectionString != null) tbDataExportManagerConnectionString.Text = dataExportConnectionString;
+
+                }
+            }
+            catch (Exception)
+            {
+                //Unable to parse yaml file
+            }
+
+        };
     }
 
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)
