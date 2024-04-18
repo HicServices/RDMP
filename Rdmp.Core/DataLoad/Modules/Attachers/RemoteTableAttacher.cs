@@ -26,6 +26,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
+using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
@@ -361,9 +362,15 @@ public class RemoteTableAttacher : RemoteAttacher
 
         var syntax = _remoteDatabase.Server.GetQuerySyntaxHelper();
 
-        var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
-            ? RemoteSelectSQL
-            : $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
+        string sql;
+        if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
+        {
+            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType).Replace(" WHERE", "");
+            sql = RemoteSelectSQL.Replace("$RDMPDefinedWhereClause", injectedWhereClause);
+        }
+        else {
+            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
+        }
 
         var scheduleMismatch = false;
         //if there is a load progress
