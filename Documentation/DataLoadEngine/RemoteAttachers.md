@@ -73,5 +73,7 @@ The Remote Database Attacher has a number of configuration options the required 
 | Selected Columns                             | Optionally select which columns you wish to pull from the remote server (defaults to "*" )
 
 
-## Pitfalls
-* If you use a custom select SQL in your attacher it will ignore all custom fetch and delta configuration.
+## Using Historical Loading with custom SQL
+By default, historical fetch configuration will be ignored in custome select SQL.
+To enable the use of hostorical fetching, include the string "$RDMPDefinedWhereClause" in the where clause of your query
+e.e. "Select * from Biochemistry Where $RDMPDefinedWhereClause"
