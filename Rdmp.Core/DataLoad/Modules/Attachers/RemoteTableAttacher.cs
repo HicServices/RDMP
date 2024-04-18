@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
@@ -95,7 +96,7 @@ public class RemoteTableAttacher : RemoteAttacher
     public DatabaseType DatabaseType { get; set; }
 
     [DemandsInitialization("The Columns you wish to pull from the remote table", DefaultValue = "*")]
-    public string SelectedColumns { get; set; } ="*";
+    public string SelectedColumns { get; set; } = "*";
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
@@ -366,9 +367,10 @@ public class RemoteTableAttacher : RemoteAttacher
         if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
         {
             var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType).Replace(" WHERE", "");
-            sql = RemoteSelectSQL.Replace("$RDMPDefinedWhereClause", injectedWhereClause);
+            sql = Regex.Replace(RemoteSelectSQL, "\\$RDMPDefinedWhereClause", injectedWhereClause);
         }
-        else {
+        else
+        {
             sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
         }
 
