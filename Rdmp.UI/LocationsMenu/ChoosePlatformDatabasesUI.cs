@@ -400,7 +400,6 @@ public partial class ChoosePlatformDatabasesUI : Form
                     foreach (var item in docs.Select((value, i) => new { i, value }))
                     {
                         var value = item.value;
-                        var index = item.i;
 
                         if (value == "CatalogueConnectionString") catalogueConnectionString = docs.ToList()[item.i + 1];
                         if (value == "DataExportConnectionString") dataExportConnectionString = docs.ToList()[item.i + 1];
@@ -413,6 +412,8 @@ public partial class ChoosePlatformDatabasesUI : Form
             catch (Exception)
             {
                 //Unable to parse yaml file
+                tbCatalogueConnectionString.Text = null;
+                tbDataExportManagerConnectionString.Text = null;
             }
 
         };
