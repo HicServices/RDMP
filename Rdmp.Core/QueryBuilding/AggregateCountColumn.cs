@@ -94,6 +94,9 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     /// <inheritdoc/>
     public bool IsPrimaryKey => false;
 
+
+    public bool GroupBy => false;
+
     /// <inheritdoc/>
     public void Check(ICheckNotifier notifier)
     {
