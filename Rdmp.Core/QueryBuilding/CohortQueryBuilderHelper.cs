@@ -103,7 +103,7 @@ public class CohortQueryBuilderHelper
                 }
             } //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
 
-            //todo write the patches
+            //todo
             //write some tests
 
             builder.DoNotWriteOutOrderBy = true;
