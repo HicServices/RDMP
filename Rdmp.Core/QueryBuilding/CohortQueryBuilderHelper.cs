@@ -93,8 +93,14 @@ public class CohortQueryBuilderHelper
             if (!isJoinAggregate)
                 builder.AddColumn(extractionIdentifier, true);
             else
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(),
-                    true); //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
+            { 
+                foreach(var agg in aggregate.AggregateDimensions)
+                {
+                    builder.AddColumn(agg, true,!agg.GroupBy);
+                }
+            }
+                //builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(),
+                    //true); //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
 
             builder.DoNotWriteOutOrderBy = true;
         }
