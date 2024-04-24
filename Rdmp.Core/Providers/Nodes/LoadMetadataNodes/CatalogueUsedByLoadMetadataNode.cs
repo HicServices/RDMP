@@ -8,6 +8,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
+using System.Linq;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
@@ -22,8 +23,7 @@ public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadM
 
     public void DeleteInDatabase()
     {
-        ObjectBeingUsed.LoadMetadata_ID = null;
-        ObjectBeingUsed.SaveToDatabase();
+        User.UnlinkFromCatalogue(ObjectBeingUsed);
     }
 
     public string GetDeleteMessage() => $"remove Catalogue '{ObjectBeingUsed}' from Load";

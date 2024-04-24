@@ -4,12 +4,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.1.5] - Unreleased
+## [8.1.6] = Unreleased
 
 ## Changed
+
+- Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
+
+## [8.1.5] - 2024-04-03
+
+## Changed
+
+- Migrate from .net7 to .net8
 - Add timeout override to remote table selectors
 - Extractions now remember the last used pipeline
 - Allow for custom .bak file physical locations during data loads
+- Add ability to have multiple data loads for a single catalogue
+- Allow for Project Specific Catalogues to have multiple extraction identifiers
+- Fix issue with notification popups being inaccessable when RDMP is minimised
+- Allow for Catalogues with Non-Core extraction categories to be made Project specific
+- Bump coverlet.collector from 6.0.0 to 6.0.1
+- Bump svenstaro/upload-release-action from 2.7.0 to 2.9.0 
+- Bump Autoupdater.NET.Official from 1.8.4 to 1.8.5 
+- Bump CsvHelper from 30.0.1 to 31.0.0
+- Bump SSH.NET from 2023.0.1 to 2024.0.0 
+- Bump SixLabors.ImageSharp.Drawing from 2.1.0 to 2.1.1 
+- Bump MongoDB.Driver from 2.23.1 to 2.24.0
+- Bump NUnit from 4.0.1 to 4.1.0 
+- Bump FluentFTP from 49.0.1 to 49.0.2 
+- Bump YamlDotNet from 15.1.1 to 15.1.2
+- Bump SixLabors.ImageSharp from 3.1.2 to 3.1.3
+- Bump SixLabors.ImageSharp.Drawing from 2.1.1 to 2.1.2
+- Bump HIC.BadMedicine from 1.1.2 to 1.2.0 
+- Bump coverlet.collector from 6.0.1 to 6.0.2 
+- Bump HIC.FansiSql from 3.2.1 to 3.2.2
+- Bump NUnit.Analyzers from 4.0.1 to 4.1.0 
+- Bump Terminal.Gui from 1.15.1 to 1.16.0 
+- Bump HIC.BadMedicine from 1.2.0 to 1.2.1 
+- Bump NPOI from 2.6.2 to 2.7.0 
+
 
 ## [8.1.4] - 2024-02-19
 
