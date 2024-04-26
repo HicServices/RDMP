@@ -6,7 +6,7 @@
 		<PackageVersion Include="FluentFTP" Version="50.0.1"/>
 		<PackageVersion Include="HIC.BadMedicine" Version="1.2.1"/>
 		<PackageVersion Include="HIC.FAnsiSql" Version="3.2.2"/>
-		<PackageVersion Include="LibArchive.Net" Version="0.1.4"/>
+		<PackageVersion Include="LibArchive.Net" Version="0.1.5"/>
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
