@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add ability to restrict GROUPBY clause in cohort aggregate builder
 
-## [8.1.6] = Unreleased
+## [8.1.6] - Unreleased
 
 ## Changed
 
