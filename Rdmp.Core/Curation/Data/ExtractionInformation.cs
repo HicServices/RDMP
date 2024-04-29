@@ -184,7 +184,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
         IsPrimaryKey = (bool)r["IsPrimaryKey"];
         CatalogueItem_ID = (int)r["CatalogueItem_ID"];
-        GroupBy = GroupBy = int.Parse(r["GroupBy"].ToString()) == 1;
+        GroupBy = int.Parse(r["GroupBy"].ToString()) == 1;
 
         ClearAllInjections();
     }
