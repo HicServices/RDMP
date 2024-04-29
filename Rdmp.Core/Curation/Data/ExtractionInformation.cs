@@ -42,7 +42,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
 
     private int _catalogueItemID;
     private ExtractionCategory _extractionCategory;
-    private bool _groupBy;
+    private bool _groupBy = true;
 
     /// <summary>
     /// The virtual column (description, name etc) to which this <see cref="ExtractionInformation"/> provides extraction SELECT SQL for.
@@ -54,7 +54,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// 
+    /// If the <see cref="ExtractionInformation"/> should be used in any GROUP BY clause  
     /// </summary>
     public bool GroupBy
     {

@@ -49,7 +49,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
 
     /// <summary>
-    /// TODO
+    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.
+    /// This property returns if the dimention should be added to any GROUP BY section of an <see cref="AggregateConfiguration"/>.
     /// </summary>
     public bool GroupBy
     {

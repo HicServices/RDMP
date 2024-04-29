@@ -204,7 +204,7 @@ public class ForwardEngineerANOCatalogueEngine
                         var newExtractionInformation = new ExtractionInformation(_catalogueRepository, newCatalogueItem,
                             newColumnInfo, newColumnInfo.Name)
                         {
-                            ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value
+                            ExtractionCategory = columnPlan.ExtractionCategoryIfAny.Value,
                         };
 
                         newExtractionInformation.SaveToDatabase();

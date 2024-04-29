@@ -1,4 +1,4 @@
-
+ogangel
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- Add abilit to restrict GROUPBY clause in cohort aggregate builder
+- Add ability to restrict GROUPBY clause in cohort aggregate builder
 
 ## [8.1.6] = Unreleased
 

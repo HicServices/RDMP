@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Curation;
@@ -92,7 +93,7 @@ public class ForwardEngineerCatalogue
 
             var newExtractionInfo = new ExtractionInformation(repo, cataItem, col, col.Name)
             {
-                Order = order
+                Order = order,
             };
             newExtractionInfo.SaveToDatabase();
             extractionInformationsCreated.Add(newExtractionInfo);
