@@ -1,4 +1,3 @@
-ogangel
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -16,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
+- Add prompt to reanem container when adding a cohort filter
 
 ## [8.1.5] - 2024-04-03
 
