@@ -59,7 +59,7 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
                 $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
 
         eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
         {
             ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             ei.SaveToDatabase();
@@ -112,12 +112,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         if (!ei.Any())
             SetImpossible("Catalogue has no extractable columns");
 
-        if (ei.Count(e => e.IsExtractionIdentifier) != 1)
-            SetImpossible("Catalogue must have exactly 1 IsExtractionIdentifier column");
+        if (ei.Count(e => e.IsExtractionIdentifier) < 1)
+            SetImpossible("Catalogue must have at least 1 IsExtractionIdentifier column");
 
-        if (ei.Any(e =>
-                e.ExtractionCategory != ExtractionCategory.Core &&
-                e.ExtractionCategory != ExtractionCategory.ProjectSpecific))
-            SetImpossible("All existing ExtractionInformations must be ExtractionCategory.Core");
     }
 }

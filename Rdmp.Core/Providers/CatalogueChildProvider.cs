@@ -989,13 +989,17 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var chilObjects = new HashSet<object>();
 
-        var usedCatalogues = AllCatalogues
-            .Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
-
-
-        foreach (var catalogue in usedCatalogues)
-            chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-                catalogue));
+        List<Catalogue> usedCatalogues = new();
+        foreach (var catalogue in AllCatalogues)
+        {
+            var lmds = catalogue.LoadMetadatas();
+            if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
+            {
+                usedCatalogues.Add(catalogue);
+                chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
+                    catalogue));
+            }
+        }
 
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
@@ -1519,7 +1523,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock (WriteLock)
         {
             //if we have a record of any children in the child dictionary for the parent model object
-            if (_childDictionary.TryGetValue(model,out var cached))
+            if (_childDictionary.TryGetValue(model, out var cached))
                 return cached.OrderBy(static o => o.ToString()).ToArray();
 
             return model switch
@@ -1628,13 +1632,13 @@ public class CatalogueChildProvider : ICoreChildProvider
                             //otherwise ask plugin what its children are
                             var pluginChildren = plugin.GetChildren(o);
 
-                        //if the plugin takes too long to respond we need to stop
-                        if (sw.ElapsedMilliseconds > 1000)
-                        {
-                            _blockedPlugins.Add(plugin);
-                            throw new Exception(
-                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                        }
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
+                            {
+                                _blockedPlugins.Add(plugin);
+                                throw new Exception(
+                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                            }
 
                             //it has children
                             if (pluginChildren != null && pluginChildren.Any())
@@ -1659,8 +1663,8 @@ public class CatalogueChildProvider : ICoreChildProvider
                                             (o1, set) => set); //it does now
 
 
-                                //add us to the parent objects child collection
-                                _childDictionary[o].Add(pluginChild);
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
 
                                     //add to the child collection of the parent object kvp.Key
                                     _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
