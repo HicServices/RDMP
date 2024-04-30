@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow for Project Specific Catalogues to have multiple extraction identifiers
 - Fix issue with notification popups being inaccessable when RDMP is minimised
 - Allow for Catalogues with Non-Core extraction categories to be made Project specific
+- Fix to remove stack trace button from non error popups
 - Bump coverlet.collector from 6.0.0 to 6.0.1
 - Bump svenstaro/upload-release-action from 2.7.0 to 2.9.0 
 - Bump Autoupdater.NET.Official from 1.8.4 to 1.8.5 
