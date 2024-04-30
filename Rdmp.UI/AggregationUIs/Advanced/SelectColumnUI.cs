@@ -114,9 +114,9 @@ public partial class SelectColumnUI : RDMPUserControl
                     return;
                 }
                 var ei = args.RowObject as ExtractionInformation;
-                if (ei != null)
+                if (ei != null )
                 {
-                    ei.GroupBy = !ad.GroupBy;
+                    ei.GroupBy = !ei.GroupBy;
                     ei.SaveToDatabase();
                     return;
                 }
