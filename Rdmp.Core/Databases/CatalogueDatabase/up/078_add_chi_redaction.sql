@@ -1,4 +1,4 @@
-﻿--Version:8.1.1
+﻿--Version:8.2.0
 --Description:Adds support for redacting CHI values on data load
 
 if not exists (select 1 from sys.tables where name = 'RedactedCHI')

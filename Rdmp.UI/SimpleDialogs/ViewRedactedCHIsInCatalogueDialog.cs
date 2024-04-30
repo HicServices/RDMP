@@ -38,7 +38,7 @@ namespace Rdmp.UI.SimpleDialogs
             var result = _results.Rows[itemIndex];
             var potentialCHI = result.ItemArray[0].ToString();
             var column = result.ItemArray[2].ToString();
-            var table = result.ItemArray[3].ToString();
+            var table = result.ItemArray[1].ToString();
             var pkColumn = result.ItemArray[4].ToString();
             var pkValue = result.ItemArray[5].ToString();
             var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.ColumnName == column && rc.PKColumnName == pkColumn && rc.PKValue == pkValue && rc.TableName == table).First();
@@ -57,7 +57,7 @@ namespace Rdmp.UI.SimpleDialogs
             var result = _results.Rows[itemIndex];
             var potentialCHI = result.ItemArray[0].ToString();
             var column = result.ItemArray[2].ToString();
-            var table = result.ItemArray[3].ToString();
+            var table = result.ItemArray[1].ToString();
             var pkColumn = result.ItemArray[4].ToString();
             var pkValue = result.ItemArray[5].ToString();
             var redactedChi = _catalogue.CatalogueRepository.GetAllObjects<RedactedCHI>().Where(rc => rc.PotentialCHI == potentialCHI && rc.ColumnName == column && rc.PKColumnName == pkColumn && rc.PKValue == pkValue && rc.TableName == table).First();
@@ -117,15 +117,14 @@ namespace Rdmp.UI.SimpleDialogs
 
             var dt = new DataTable();
             dt.Columns.Add(new DataColumn("Potental CHI", typeof(string)));
-            dt.Columns.Add(new DataColumn("Context", typeof(string)));
-            dt.Columns.Add(new DataColumn("Column", typeof(string)));
             dt.Columns.Add(new DataColumn("Table", typeof(string)));
+            dt.Columns.Add(new DataColumn("Column", typeof(string)));
+            dt.Columns.Add(new DataColumn("PK", typeof(string)));
             dt.Columns.Add(new DataColumn("_pkColumn", typeof(string)));
             dt.Columns.Add(new DataColumn("_pkValue", typeof(string)));
             foreach (var rc in redactedChis)
             {
-                var context = "TODO";
-                dt.Rows.Add(new object[] { rc.PotentialCHI, context, rc.ColumnName, rc.TableName, rc.PKColumnName, rc.PKValue });
+                dt.Rows.Add(new object[] { rc.PotentialCHI, rc.TableName, rc.ColumnName, $"{rc.PKColumnName}:{rc.PKValue}",   rc.PKColumnName, rc.PKValue });
             }
             dtResults.DataSource = dt;
             if (_firstTime)
@@ -147,11 +146,11 @@ namespace Rdmp.UI.SimpleDialogs
             dtResults.CellClick += HandleClick;
             if (dtResults.Columns["Revert"] == null)
             {
-                dtResults.Columns.Insert(3, revertColumn);
+                dtResults.Columns.Insert(4, revertColumn);
             }
             if (dtResults.Columns["Confirm"] == null)
             {
-                dtResults.Columns.Insert(4, confirmColumn);
+                dtResults.Columns.Insert(5, confirmColumn);
             }
             _isLoading = false;
             lblLoading.Visible = _isLoading;

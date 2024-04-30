@@ -112,7 +112,7 @@ internal class ExecuteCHIRedactionStage
                     }
                     else
                     {
-                        _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Found the CHI {foundChi} during the dataload"));
+                        _job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"Found the CHI {foundChi} during the dataload"));
                     }
                 }
             }
