@@ -60,6 +60,7 @@ public class UnitTests
         "DQEGraphAnnotation",
         "Evaluation",
         "WindowLayout",
+        "RedactedCHI",
         "Dataset"
     });
 
@@ -122,7 +123,6 @@ public class UnitTests
     {
         if (typeof(T) == typeof(Catalogue))
             return (T)(object)Save(new Catalogue(repository, "Mycata"));
-
 
         if (typeof(T) == typeof(ExtendedProperty))
             return (T)(object)new ExtendedProperty(repository, Save(new Catalogue(repository, "Mycata")), "TestProp",

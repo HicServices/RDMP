@@ -1,16 +1,23 @@
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.1.6] = Unreleased
+## [8.2.0] - Unreleased
+
+## Changed
+
+- Add ability to redact CHI values on daata load and to redact existing catalogues
+
+## [8.1.6] - Unreleased
 
 ## Changed
 
 - Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
-- Add prompt to reanem container when adding a cohort filter
+- Add prompt to rename container when adding a cohort filter
 
 ## [8.1.5] - 2024-04-03
 
