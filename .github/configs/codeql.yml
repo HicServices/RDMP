@@ -1,0 +1,12 @@
+name: CodeQL Configuration
+
+paths-ignore:
+  - "**/*.md"
+  - "**/*.txt"
+  - "**/obj/**/*.*"
+  - "**/bin/**/*.*"
+ 
+query-filters:
+  - exclude:
+      # See: https://codeql.github.com/codeql-query-help/cpp/cpp-commented-out-code/
+      id: cs/catch-of-all-exceptions
