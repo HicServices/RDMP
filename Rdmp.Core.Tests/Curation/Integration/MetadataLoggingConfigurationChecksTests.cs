@@ -21,7 +21,6 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     public void Test_NoLoggingTask()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-        var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
         lmd.LinkToCatalogue(cata2);
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
