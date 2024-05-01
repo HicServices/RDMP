@@ -1,6 +1,9 @@
 # RDMP Test Plan
 The RDMP test plan outlines the questions that should be asked of new changes to help ensure the correct changes are being made at the correct time.
 These questions are designed to help highlight any steps in the testing process that may have been missed.
+
+If you are looking to release a new version with this change, please look at the [Release Testing](#release_testing) section below.
+
 ## Questions To Ask
 ### Does this change add a database migration?
 If the change adds a database migration, ask yourself the following questions:
@@ -34,3 +37,15 @@ If the change adds or amends functionality that processes data
 ### What assumptions have been made?
 * Have any assumptions about how this functionality will be used been made?
 * Have any assumptions about the input data been made? Can these assumptions be extracted out into configuration?
+
+## <a name="release_testing"></a>Release Testing
+The release testing process should be completed once the release is feature complete and no more code changes are due to take place.
+This testing is to ensure that all code changes made during this release play nicely together and have no unintended side effcts.
+It may be useful at this point to revisit each piece of functionality and ensure they work as expected and perform some user acceptance testing on them, in light with the questions above.
+### What's changed?
+* Does the changelog accuratly reflect the pull request changes made?
+* If there are database migrations, are they all correctly sequenced and not overlapping?
+* Does the release work as epxected with a fresh install and via the upgrade path?
+* Is all functionality documented?
+* Are all version numbers bumped correctly?
+* Do all of the managed plugins work with the new release without issues or warnings?
