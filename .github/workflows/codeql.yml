@@ -31,6 +31,7 @@ jobs:
         with:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
+          config-file: ./.github/configs/codeql.yml
 
       - name: Build
         run: dotnet build
@@ -41,12 +42,6 @@ jobs:
           mkdir -p sarif-results
           security-scan HIC.DataManagementPlatform.sln -n -x sarif-results/scs.sarif
           sed -i 's/"language": ""/"language": "en-US"/' sarif-results/scs.sarif
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          config-file: ./.github/configs/codeql.yml
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
