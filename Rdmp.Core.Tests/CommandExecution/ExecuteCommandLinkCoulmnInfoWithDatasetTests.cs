@@ -34,7 +34,6 @@ internal class ExecuteCommandLinkCoulmnInfoWithDatasetTests: CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(() => cmd.Execute());
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
-        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
         var linkCmd = new ExecuteCommandLinkColumnInfoToDataset(GetMockActivator(), _c1, founddataset);
         Assert.DoesNotThrow(() => linkCmd.Execute());
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>();
@@ -69,7 +68,6 @@ internal class ExecuteCommandLinkCoulmnInfoWithDatasetTests: CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(() => cmd.Execute());
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
-        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
         var linkCmd = new ExecuteCommandLinkColumnInfoToDataset(GetMockActivator(), _c1, founddataset, false);
         Assert.DoesNotThrow(() => linkCmd.Execute());
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(ci => _cata1.CatalogueItems.Contains(ci));
@@ -99,7 +97,6 @@ internal class ExecuteCommandLinkCoulmnInfoWithDatasetTests: CommandCliTests
     {
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(() => cmd.Execute());
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
         var linkCmd = new ExecuteCommandLinkColumnInfoToDataset(GetMockActivator(), new ColumnInfo(), null, false);
         Assert.Throws<NullReferenceException>(() => linkCmd.Execute());
     }
