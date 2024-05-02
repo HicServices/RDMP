@@ -17,9 +17,11 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// Manages the adding and executing of tasks in a CohortCompiler to execute a CohortIdentificationConfiguration in the most optimised way when a cache server is present.  For example it
-/// will run all the individual 'Patient Index Tables' first and cache them, then run the individual 'cohort queries' and cache those before finally running the top level set containers
-/// (which will now execute from the cached lists).
+///     Manages the adding and executing of tasks in a CohortCompiler to execute a CohortIdentificationConfiguration in the
+///     most optimised way when a cache server is present.  For example it
+///     will run all the individual 'Patient Index Tables' first and cache them, then run the individual 'cohort queries'
+///     and cache those before finally running the top level set containers
+///     (which will now execute from the cached lists).
 /// </summary>
 public class CohortCompilerRunner
 {
@@ -33,14 +35,17 @@ public class CohortCompilerRunner
     private readonly ExternalDatabaseServer _queryCachingServer;
 
     /// <summary>
-    /// The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container (final answer for who is in cohort)
-    /// but not the other subcontainers (if there were any in the first place!).  Defaults to true.
+    ///     The root container is always added to the task list but you could skip subcontainer totals if all you care about is
+    ///     the final total for the cohort
+    ///     and you don't have a dependant UI etc.  Setting false will add all joinables, subqueries etc and the root container
+    ///     (final answer for who is in cohort)
+    ///     but not the other subcontainers (if there were any in the first place!).  Defaults to true.
     /// </summary>
     public bool RunSubcontainers { get; set; }
 
     /// <summary>
-    /// Creates a new runner for the given <paramref name="compiler"/> which will facilitate running its Tasks in a sensible order using result caching if possible
+    ///     Creates a new runner for the given <paramref name="compiler" /> which will facilitate running its Tasks in a
+    ///     sensible order using result caching if possible
     /// </summary>
     /// <param name="compiler"></param>
     /// <param name="timeout">CommandTimeout for each individual command in seconds</param>

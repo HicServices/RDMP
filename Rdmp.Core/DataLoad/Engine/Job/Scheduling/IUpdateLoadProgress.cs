@@ -7,7 +7,7 @@
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// See UpdateProgressIfLoadsuccessful
+///     See UpdateProgressIfLoadsuccessful
 /// </summary>
 public interface IUpdateLoadProgress : IDisposeAfterDataLoad
 {

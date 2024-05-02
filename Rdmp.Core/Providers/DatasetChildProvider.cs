@@ -3,16 +3,18 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Rdmp.Core.Repositories;
+
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Providers;
 
-/// <inheritdoc cref="CatalogueChildProvider"/>
+/// <inheritdoc cref="CatalogueChildProvider" />
 public class DatasetChildProvider : CatalogueChildProvider
 {
-    public DatasetChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown) : base(repository, pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
+    public DatasetChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
+        ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown) : base(repository,
+        pluginChildProviders, errorsCheckNotifier, previousStateIfKnown)
     {
     }
 }
-

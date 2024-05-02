@@ -28,7 +28,10 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
             SetImpossible("CatalougeItem is already extractable");
     }
 
-    public override string GetCommandHelp() => "Make the column/transform available for extraction to researchers";
+    public override string GetCommandHelp()
+    {
+        return "Make the column/transform available for extraction to researchers";
+    }
 
     public override void Execute()
     {
@@ -49,8 +52,13 @@ public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,
         Activate(newExtractionInformation);
     }
 
-    public override string GetCommandName() => "Make Extractable";
+    public override string GetCommandName()
+    {
+        return "Make Extractable";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractionInformation, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionInformation, OverlayKind.Add);
+    }
 }

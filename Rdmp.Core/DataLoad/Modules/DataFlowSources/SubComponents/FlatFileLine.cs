@@ -10,29 +10,32 @@ using CsvHelper;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// Point in time record of a line read from CsvHelper including ReadingContext information such as <see cref="LineNumber"/>.  Can include multiple lines
-/// of the underlying file if there is proper qualifying quotes and newlines in the csv e.g. when including free text columns.
+///     Point in time record of a line read from CsvHelper including ReadingContext information such as
+///     <see cref="LineNumber" />.  Can include multiple lines
+///     of the underlying file if there is proper qualifying quotes and newlines in the csv e.g. when including free text
+///     columns.
 /// </summary>
 public class FlatFileLine
 {
     /// <summary>
-    /// The RAW file line number that this line reflects.  Where a record spans multiple lines (e.g. when it has newlines in quote qualified fields) it
-    /// seems to be the last line number in the record
+    ///     The RAW file line number that this line reflects.  Where a record spans multiple lines (e.g. when it has newlines
+    ///     in quote qualified fields) it
+    ///     seems to be the last line number in the record
     /// </summary>
-    public int LineNumber { get; private set; }
+    public int LineNumber { get; }
 
     /// <summary>
-    /// The values as interpreted by CsvHelper for the current line
+    ///     The values as interpreted by CsvHelper for the current line
     /// </summary>
     public string[] Cells { get; set; }
 
     /// <summary>
-    /// The absolute text as it appears in the flat file being read for this 'line'
+    ///     The absolute text as it appears in the flat file being read for this 'line'
     /// </summary>
     public string RawRecord { get; set; }
 
     /// <summary>
-    /// The state of the CSVReader when the line was read
+    ///     The state of the CSVReader when the line was read
     /// </summary>
     public CsvContext ReadingContext { get; set; }
 
@@ -56,5 +59,8 @@ public class FlatFileLine
 
     public string this[int i] => Cells[i];
 
-    public string GetLineDescription() => $"line {LineNumber}";
+    public string GetLineDescription()
+    {
+        return $"line {LineNumber}";
+    }
 }

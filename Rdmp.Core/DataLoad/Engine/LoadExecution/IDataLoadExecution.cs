@@ -12,7 +12,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
 /// <summary>
-/// See SingleJobExecution
+///     See SingleJobExecution
 /// </summary>
 public interface IDataLoadExecution
 {

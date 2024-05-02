@@ -24,34 +24,40 @@ namespace Rdmp.Core.CohortCreation.Execution;
 public abstract class PluginCohortCompiler : IPluginCohortCompiler
 {
     /// <summary>
-    /// The prefix that should be on <see cref="Catalogue"/> names if they reflect API calls.
-    /// Each <see cref="IPluginCohortCompiler"/> should expand upon this to identify its specific
-    /// responsibilities (e.g. if you have 2+ Types of API available)
+    ///     The prefix that should be on <see cref="Catalogue" /> names if they reflect API calls.
+    ///     Each <see cref="IPluginCohortCompiler" /> should expand upon this to identify its specific
+    ///     responsibilities (e.g. if you have 2+ Types of API available)
     /// </summary>
     public const string ApiPrefix = "API_";
 
     /// <summary>
-    /// The string to put into the database when no <see cref="AggregateConfiguration.Description"/> exists
+    ///     The string to put into the database when no <see cref="AggregateConfiguration.Description" /> exists
     /// </summary>
     protected const string None = "None";
 
     /// <summary>
-    /// Override to fetch the results from your API.
+    ///     Override to fetch the results from your API.
     /// </summary>
     /// <param name="ac">Stores any configuration information about what query to to execute on your API</param>
-    /// <param name="cache">Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}"/> instead
-    /// of using this directly</param>
+    /// <param name="cache">
+    ///     Where to store results.  Note you can use helper method <see cref="SubmitIdentifierList{T}" /> instead
+    ///     of using this directly
+    /// </param>
     /// <param name="token">Check this token for cancellation regularly if your API call takes a while to complete</param>
     public abstract void Run(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
         CancellationToken token);
 
-    public virtual bool ShouldRun(AggregateConfiguration ac) => ShouldRun(ac.Catalogue);
+    public virtual bool ShouldRun(AggregateConfiguration ac)
+    {
+        return ShouldRun(ac.Catalogue);
+    }
+
     public abstract bool ShouldRun(ICatalogue catalogue);
 
 
     /// <summary>
-    /// Submits the resulting <paramref name="enumerable"/> list to the query <paramref name="cache"/> as the result
-    /// of executing the API call of the <paramref name="aggregate"/>
+    ///     Submits the resulting <paramref name="enumerable" /> list to the query <paramref name="cache" /> as the result
+    ///     of executing the API call of the <paramref name="aggregate" />
     /// </summary>
     /// <typeparam name="T">Type of the identifiers, must be a basic value type supported by DBMS e.g. string, int etc</typeparam>
     /// <param name="identifierName"></param>
@@ -80,15 +86,18 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     }
 
     /// <summary>
-    /// Submits the <paramref name="results"/> of calling your API to the cache ready for joining
-    /// against other datasets as a patient index table.  Only use this method if you must return
-    /// multiple columns.
+    ///     Submits the <paramref name="results" /> of calling your API to the cache ready for joining
+    ///     against other datasets as a patient index table.  Only use this method if you must return
+    ///     multiple columns.
     /// </summary>
     /// <param name="results"></param>
     /// <param name="aggregate"></param>
     /// <param name="cache"></param>
-    /// <param name="knownTypes">If your DataTable is properly Typed (i.e. columns in <paramref name="results"/> have assigned Types)
-    /// then pass true.  If everything is a string and you want types to be assigned for these for querying later pass false.</param>
+    /// <param name="knownTypes">
+    ///     If your DataTable is properly Typed (i.e. columns in <paramref name="results" /> have assigned Types)
+    ///     then pass true.  If everything is a string and you want types to be assigned for these for querying later pass
+    ///     false.
+    /// </param>
     protected void SubmitPatientIndexTable(DataTable results, AggregateConfiguration aggregate,
         CachedAggregateConfigurationResultsManager cache, bool knownTypes)
     {
@@ -114,16 +123,21 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     }
 
     /// <summary>
-    /// Returns a description of the <paramref name="aggregate"/>.  This will be persisted along
-    /// with the results in the cache to detect when changes are made to the config (and therefore
-    /// the cached result list should be discarded).
+    ///     Returns a description of the <paramref name="aggregate" />.  This will be persisted along
+    ///     with the results in the cache to detect when changes are made to the config (and therefore
+    ///     the cached result list should be discarded).
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    protected virtual string GetDescription(AggregateConfiguration aggregate) => aggregate.Description ?? "none";
+    protected virtual string GetDescription(AggregateConfiguration aggregate)
+    {
+        return aggregate.Description ?? "none";
+    }
 
-    public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription) =>
-        !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
+    public virtual bool IsStale(AggregateConfiguration aggregate, string oldDescription)
+    {
+        return !string.Equals(GetDescription(aggregate), oldDescription, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public virtual IHasRuntimeName GetJoinColumnForPatientIndexTable(AggregateConfiguration joinedTo)
     {
@@ -132,9 +146,9 @@ public abstract class PluginCohortCompiler : IPluginCohortCompiler
     }
 
     /// <summary>
-    /// If your API supports returning multiple columns (it can be a patient index table)
-    /// then you must return (for <paramref name="joinedTo"/>) the name of the column
-    /// that will be joined to other cohorts in the cohort builder.
+    ///     If your API supports returning multiple columns (it can be a patient index table)
+    ///     then you must return (for <paramref name="joinedTo" />) the name of the column
+    ///     that will be joined to other cohorts in the cohort builder.
     /// </summary>
     /// <param name="joinedTo"></param>
     /// <returns></returns>

@@ -13,7 +13,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-/// Determines if a command line argument provided was a reference to a <see cref="DiscoveredDatabase"/>
+///     Determines if a command line argument provided was a reference to a <see cref="DiscoveredDatabase" />
 /// </summary>
 public partial class PickDatabase : PickObjectBase
 {

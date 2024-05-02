@@ -12,7 +12,7 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values being validated are expected to pass the Regex pattern
+///     Values being validated are expected to pass the Regex pattern
 /// </summary>
 public class RegularExpression : SecondaryConstraint
 {
@@ -65,5 +65,8 @@ public class RegularExpression : SecondaryConstraint
     {
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() => $"Matches regex {Pattern}";
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return $"Matches regex {Pattern}";
+    }
 }

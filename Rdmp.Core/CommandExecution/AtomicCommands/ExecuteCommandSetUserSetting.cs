@@ -25,12 +25,12 @@ public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
     private readonly CheckResult _errorCodeValue;
 
     /// <summary>
-    /// The new value chosen by the user during command execution
+    ///     The new value chosen by the user during command execution
     /// </summary>
-    public object NewValue { get; private set; }
+    public object NewValue { get; }
 
     /// <summary>
-    /// True if the command was successfully completed
+    ///     True if the command was successfully completed
     /// </summary>
     public bool Success { get; private set; }
 
@@ -87,7 +87,7 @@ public sealed class ExecuteCommandSetUserSetting : BasicCommandExecution
         }
         else
         {
-            var picker = new CommandLineObjectPicker(new string[] { value ?? "NULL" }, activator);
+            var picker = new CommandLineObjectPicker(new[] { value ?? "NULL" }, activator);
 
             if (!picker.HasArgumentOfType(0, _property.PropertyType))
                 SetImpossible($"Provided value could not be converted to '{_property.PropertyType}'");

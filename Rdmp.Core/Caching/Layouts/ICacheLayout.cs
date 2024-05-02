@@ -14,8 +14,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-///'static' information about the cache layout, as opposed to the resolver which will give information for specific cache configurations
-/// Cache layout is effectively based on date with load schedule-specific sub directories with dataset-specific layout information provided through the Resolver
+///     'static' information about the cache layout, as opposed to the resolver which will give information for specific
+///     cache configurations
+///     Cache layout is effectively based on date with load schedule-specific sub directories with dataset-specific layout
+///     information provided through the Resolver
 /// </summary>
 public interface ICacheLayout
 {

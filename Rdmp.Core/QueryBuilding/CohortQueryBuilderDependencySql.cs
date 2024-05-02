@@ -12,17 +12,20 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Describes a block of sql built using a <see cref="AggregateBuilder"/> which may need to be slotted into a larger query e.g.
-/// as a subsection of a large <see cref="CohortIdentificationConfiguration"/>.  The <see cref="Sql"/> is built without considering
-/// parameters that exist in any larger query.  Use method <see cref="Use"/> to deploy the <see cref="Sql"/> into a larger query
-/// or use it on its own for cache hit checking / running in isolation.
+///     Describes a block of sql built using a <see cref="AggregateBuilder" /> which may need to be slotted into a larger
+///     query e.g.
+///     as a subsection of a large <see cref="CohortIdentificationConfiguration" />.  The <see cref="Sql" /> is built
+///     without considering
+///     parameters that exist in any larger query.  Use method <see cref="Use" /> to deploy the <see cref="Sql" /> into a
+///     larger query
+///     or use it on its own for cache hit checking / running in isolation.
 /// </summary>
 public class CohortQueryBuilderDependencySql
 {
     public string Sql { get; private set; }
 
     /// <summary>
-    /// New parameters needed by the <see cref="Sql"/>
+    ///     New parameters needed by the <see cref="Sql" />
     /// </summary>
     public ParameterManager ParametersUsed { get; }
 
@@ -35,13 +38,17 @@ public class CohortQueryBuilderDependencySql
     }
 
     /// <summary>
-    /// Can only be called once, updates the <see cref="Sql"/> to resolve parameter naming collisions with the larger query
-    /// (see <paramref name="compositeLevelParameterManager"/>.  Returns the updated <see cref="Sql"/> (for convenience)
+    ///     Can only be called once, updates the <see cref="Sql" /> to resolve parameter naming collisions with the larger
+    ///     query
+    ///     (see <paramref name="compositeLevelParameterManager" />.  Returns the updated <see cref="Sql" /> (for convenience)
     /// </summary>
     /// <param name="compositeLevelParameterManager">
-    /// <see cref="ParameterManager"/> that reflects this aggregates location within a larger composite query (e.g. with UNION / INTERSECT / EXCEPT)
-    /// containers.  This manager may include non global parameters that have been used to satisfy previously written SQL and new parameters
-    /// discovered may be subject to rename operations (which can break caching).</param>
+    ///     <see cref="ParameterManager" /> that reflects this aggregates location within a larger composite query (e.g. with
+    ///     UNION / INTERSECT / EXCEPT)
+    ///     containers.  This manager may include non global parameters that have been used to satisfy previously written SQL
+    ///     and new parameters
+    ///     discovered may be subject to rename operations (which can break caching).
+    /// </param>
     /// <returns></returns>
     public string Use(ParameterManager compositeLevelParameterManager)
     {

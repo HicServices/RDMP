@@ -16,8 +16,9 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
     private readonly CatalogueRepository _repository;
 
     /// <summary>
-    /// Creates a new instance targetting the catalogue database referenced by the repository.  The instance can be used to populate / edit the AggregateForcedJoin in
-    /// the database.  Access via <see cref="CatalogueRepository.AggregateForcedJoinManager"/>
+    ///     Creates a new instance targetting the catalogue database referenced by the repository.  The instance can be used to
+    ///     populate / edit the AggregateForcedJoin in
+    ///     the database.  Access via <see cref="CatalogueRepository.AggregateForcedJoinManager" />
     /// </summary>
     /// <param name="repository"></param>
     internal AggregateForcedJoin(CatalogueRepository repository)
@@ -25,7 +26,7 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
         _repository = repository;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
     {
         var everyone = Enumerable.Empty<ITableInfo>();
@@ -40,14 +41,14 @@ internal class AggregateForcedJoin : IAggregateForcedJoinManager
                 "TableInfo_ID").Union(everyone).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void BreakLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
     {
         _repository.Delete(
             $"DELETE FROM AggregateForcedJoin WHERE AggregateConfiguration_ID = {configuration.ID} AND TableInfo_ID = {tableInfo.ID}");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void CreateLinkBetween(AggregateConfiguration configuration, ITableInfo tableInfo)
     {
         using var con = _repository.GetConnection();

@@ -14,8 +14,9 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 /// <summary>
-/// Helper class for assembling a command line parameters strings for an .exe.  This will wrap with quotes when there is whitespace etc.  Class can
-/// be used when you have generic key value pairs you want to send to an exe as startup parameters.
+///     Helper class for assembling a command line parameters strings for an .exe.  This will wrap with quotes when there
+///     is whitespace etc.  Class can
+///     be used when you have generic key value pairs you want to send to an exe as startup parameters.
 /// </summary>
 public class CommandLineHelper
 {
@@ -42,10 +43,12 @@ public class CommandLineHelper
         };
     }
 
-    public static string ConvertArgNameToString(string name) =>
+    public static string ConvertArgNameToString(string name)
+    {
         // Will split on capitals without breaking up capital sequences
         // e.g. 'TestArg' => 'test-arg' and 'TestTLAArg' => 'test-tla-arg'
-        Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
+        return Regex.Replace(name, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", @"-$1").ToLower();
+    }
 
     public static string GetValueString(object value)
     {

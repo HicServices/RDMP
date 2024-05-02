@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.Cache;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CacheProgress"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="CacheProgress" />
 /// </summary>
 public class CacheProgressCombineable : ICombineToMakeCommand
 {
@@ -20,5 +20,8 @@ public class CacheProgressCombineable : ICombineToMakeCommand
         CacheProgress = cacheProgress;
     }
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 }

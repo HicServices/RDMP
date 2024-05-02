@@ -14,14 +14,15 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Triggers;
 
 /// <summary>
-/// Checks that the specified table has a backup trigger <see cref="ITriggerImplementer"/> on it.  Also inspects the _Archive table schema and compares it
-/// to the live schema to make sure they are compatible.
+///     Checks that the specified table has a backup trigger <see cref="ITriggerImplementer" /> on it.  Also inspects the
+///     _Archive table schema and compares it
+///     to the live schema to make sure they are compatible.
 /// </summary>
 public class TriggerChecks : ICheckable
 {
-    private DiscoveredTable _table;
-    private DiscoveredTable _archiveTable;
-    private DiscoveredServer _server;
+    private readonly DiscoveredTable _table;
+    private readonly DiscoveredTable _archiveTable;
+    private readonly DiscoveredServer _server;
 
     public bool TriggerCreated { get; private set; }
 
@@ -32,7 +33,7 @@ public class TriggerChecks : ICheckable
         _archiveTable = table.Database.ExpectTable($"{_table.GetRuntimeName()}_Archive", _table.Schema);
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public void Check(ICheckNotifier notifier)
     {
         if (_table.Exists() && _archiveTable.Exists())
@@ -87,8 +88,7 @@ public class TriggerChecks : ICheckable
 
         if (present)
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Trigger presence/intactness for table {_table} matched expected presence", CheckResult.Success,
-                null));
+                $"Trigger presence/intactness for table {_table} matched expected presence", CheckResult.Success));
         else
             NotifyFail(null, notifier, implementer); //try creating it
     }
@@ -114,7 +114,7 @@ public class TriggerChecks : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Column {missingColumn} in table {_table} was not found in the  _Archive table",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
             passed = false;
         }
 
@@ -132,10 +132,10 @@ public class TriggerChecks : ICheckable
         microsoftSQLTrigger.DropTrigger(out var problemsDroppingTrigger, out var thingsThatWorkedDroppingTrigger);
 
         if (!string.IsNullOrWhiteSpace(thingsThatWorkedDroppingTrigger))
-            notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(thingsThatWorkedDroppingTrigger, CheckResult.Success));
 
         if (!string.IsNullOrWhiteSpace(problemsDroppingTrigger))
-            notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning, null));
+            notifier.OnCheckPerformed(new CheckEventArgs(problemsDroppingTrigger, CheckResult.Warning));
 
         microsoftSQLTrigger.CreateTrigger(notifier);
         TriggerCreated = true;

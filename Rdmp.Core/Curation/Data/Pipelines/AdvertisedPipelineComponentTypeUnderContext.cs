@@ -11,19 +11,21 @@ using System.Linq;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if its requirements conflict with the context
-/// e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context where that object is not available.
+///     Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It
+///     describes how/if its requirements conflict with the context
+///     e.g. a DelimitedFlatFileDataFlowSource requires a FlatFileToLoad and is therefore incompatible under any context
+///     where that object is not available.
 /// </summary>
 public class AdvertisedPipelineComponentTypeUnderContext
 {
-    private bool _allowableUnderContext;
-    private string _allowableReason;
+    private readonly bool _allowableUnderContext;
+    private readonly string _allowableReason;
 
     private readonly PipelineComponentRole _role;
-    private Type _componentType;
+    private readonly Type _componentType;
 
 
-    private List<Type> unmetRequirements = new();
+    private readonly List<Type> unmetRequirements = new();
 
     public AdvertisedPipelineComponentTypeUnderContext(Type componentType, IPipelineUseCase useCase)
     {
@@ -52,17 +54,35 @@ public class AdvertisedPipelineComponentTypeUnderContext
                 unmetRequirements.Add(requiredInputType);
     }
 
-    public Type GetComponentType() => _componentType;
+    public Type GetComponentType()
+    {
+        return _componentType;
+    }
 
-    public string Namespace() => _componentType.Namespace;
+    public string Namespace()
+    {
+        return _componentType.Namespace;
+    }
 
-    public override string ToString() => _componentType.Name;
+    public override string ToString()
+    {
+        return _componentType.Name;
+    }
 
-    public PipelineComponentRole GetRole() => _role;
+    public PipelineComponentRole GetRole()
+    {
+        return _role;
+    }
 
-    public string UIDescribeCompatible() => _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
+    public string UIDescribeCompatible()
+    {
+        return _allowableUnderContext && !unmetRequirements.Any() ? "Yes" : "No";
+    }
 
-    public bool IsCompatible() => _allowableUnderContext && !unmetRequirements.Any();
+    public bool IsCompatible()
+    {
+        return _allowableUnderContext && !unmetRequirements.Any();
+    }
 
     public string GetReasonIncompatible()
     {

@@ -12,12 +12,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Serialization;
 
 /// <summary>
-/// Facilitates the use of <see cref="DatabaseEntityJsonConverter"/> and <see cref="PickAnyConstructorJsonConverter"/> by configuring appropriate <see cref="JsonSerializerSettings"/> etc
+///     Facilitates the use of <see cref="DatabaseEntityJsonConverter" /> and
+///     <see cref="PickAnyConstructorJsonConverter" /> by configuring appropriate <see cref="JsonSerializerSettings" /> etc
 /// </summary>
 public static class JsonConvertExtensions
 {
     /// <summary>
-    /// Serialize the given object resolving any properties which are <see cref="DatabaseEntity"/> into pointers using <see cref="DatabaseEntityJsonConverter"/>
+    ///     Serialize the given object resolving any properties which are <see cref="DatabaseEntity" /> into pointers using
+    ///     <see cref="DatabaseEntityJsonConverter" />
     /// </summary>
     /// <param name="value"></param>
     /// <param name="repositoryLocator"></param>
@@ -38,12 +40,21 @@ public static class JsonConvertExtensions
     }
 
     /// <summary>
-    /// Deserializes a string created with <see cref="SerializeObject(object,IRDMPPlatformRepositoryServiceLocator)"/>.  This involves two additional areas of functionality
-    /// beyond basic JSON:
-    /// 
-    /// <para>1. Any database pointer (e.g. Catalogue 123 0xab1d) will be fetched and returned from the appropriate platform database (referenced by <paramref name="repositoryLocator"/>)</para>
-    /// <para>2. Objects do not need a default constructor, instead <see cref="PickAnyConstructorJsonConverter"/> will be used with <paramref name="objectsForConstructingStuffWith"/></para>
-    /// <para>3. Any objects implementing <see cref="IPickAnyConstructorFinishedCallback"/> will have <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/> called</para>
+    ///     Deserializes a string created with <see cref="SerializeObject(object,IRDMPPlatformRepositoryServiceLocator)" />.
+    ///     This involves two additional areas of functionality
+    ///     beyond basic JSON:
+    ///     <para>
+    ///         1. Any database pointer (e.g. Catalogue 123 0xab1d) will be fetched and returned from the appropriate
+    ///         platform database (referenced by <paramref name="repositoryLocator" />)
+    ///     </para>
+    ///     <para>
+    ///         2. Objects do not need a default constructor, instead <see cref="PickAnyConstructorJsonConverter" /> will be
+    ///         used with <paramref name="objectsForConstructingStuffWith" />
+    ///     </para>
+    ///     <para>
+    ///         3. Any objects implementing <see cref="IPickAnyConstructorFinishedCallback" /> will have
+    ///         <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction" /> called
+    ///     </para>
     /// </summary>
     /// <param name="value"></param>
     /// <param name="type"></param>

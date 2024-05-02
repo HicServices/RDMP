@@ -10,12 +10,12 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core;
 
 /// <summary>
-/// Extensions for the <see cref="Enum"/> class
+///     Extensions for the <see cref="Enum" /> class
 /// </summary>
 public static class EnumExtensions
 {
     /// <summary>
-    /// Returns a culture specific string for the <see cref="Enum"/>
+    ///     Returns a culture specific string for the <see cref="Enum" />
     /// </summary>
     /// <param name="e"></param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>

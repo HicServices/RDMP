@@ -17,9 +17,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
-/// Each AggregateFilter can have 1 or more AggregateFilterParameters, these allows you to specify an SQL parameter that the user can adjust at runtime to change
-/// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParameter called @startDate with an appropriate
-/// user friendly description.
+///     Each AggregateFilter can have 1 or more AggregateFilterParameters, these allows you to specify an SQL parameter
+///     that the user can adjust at runtime to change
+///     how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an
+///     AggregateFilterParameter called @startDate with an appropriate
+///     user friendly description.
 /// </summary>
 public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 {
@@ -31,8 +33,9 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     private string _comment;
 
     /// <summary>
-    /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
-    /// in its WhereSQL.
+    ///     The ID of the <see cref="AggregateFilter" /> to which this parameter should be used with.  The filter should have a
+    ///     reference to the parameter name (e.g. @startDate)
+    ///     in its WhereSQL.
     /// </summary>
     [Relationship(typeof(AggregateFilter), RelationshipType.SharedObject)]
     public int AggregateFilter_ID
@@ -42,7 +45,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     } // changing this is required for cloning functionality i.e. clone parameter then point it to new parent
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string ParameterSQL
     {
@@ -50,7 +53,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
         set => SetField(ref _parameterSQL, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Value
     {
@@ -58,7 +61,7 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
         set => SetField(ref _value, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Comment
     {
         get => _comment;
@@ -69,14 +72,14 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
 
     #region Relationships
 
-    /// <inheritdoc cref="AggregateFilter_ID"/>
+    /// <inheritdoc cref="AggregateFilter_ID" />
     [NoMappingToDatabase]
     public AggregateFilter AggregateFilter => Repository.GetObjectByID<AggregateFilter>(AggregateFilter_ID);
 
     #endregion
 
     /// <summary>
-    /// extracts the name ofthe parameter from the SQL
+    ///     extracts the name ofthe parameter from the SQL
     /// </summary>
     [NoMappingToDatabase]
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
@@ -86,8 +89,8 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     }
 
     /// <summary>
-    /// Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
-    /// constructor.
+    ///     Declares a new parameter to be used by the specified AggregateFilter.  Use AggregateFilterFactory to call this
+    ///     constructor.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parameterSQL"></param>
@@ -110,20 +113,29 @@ public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
         Comment = r["Comment"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{ParameterName} = {Value}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
-    /// <inheritdoc cref="ParameterSyntaxChecker"/>
+    /// <inheritdoc cref="ParameterSyntaxChecker" />
     public void Check(ICheckNotifier notifier)
     {
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateFilter.GetQuerySyntaxHelper();
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return AggregateFilter.GetQuerySyntaxHelper();
+    }
 
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => AggregateFilter;
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return AggregateFilter;
+    }
 
 
     public AggregateFilterParameter ShallowClone(AggregateFilter into)

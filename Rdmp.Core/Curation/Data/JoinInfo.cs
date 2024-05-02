@@ -15,60 +15,71 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Lookup relationships in RDMP are defined using 3 columns, a PrimaryKey from one table and a ForeignKey which appears in the lookup and the Description column
-/// which must also appear in the ForeignKey table.  This Enum is used to identify which ColumnInfo you are addressing in this relationship.
+///     Lookup relationships in RDMP are defined using 3 columns, a PrimaryKey from one table and a ForeignKey which
+///     appears in the lookup and the Description column
+///     which must also appear in the ForeignKey table.  This Enum is used to identify which ColumnInfo you are addressing
+///     in this relationship.
 /// </summary>
 public enum LookupType
 {
     /// <summary>
-    /// The column in the Lookup table which contains the description of what a code means
+    ///     The column in the Lookup table which contains the description of what a code means
     /// </summary>
     Description,
 
     /// <summary>
-    /// Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).  Used for example to find out
-    /// all the Lookup involvements of a given ColumnInfo.
+    ///     Used for Fetching only, this value reflects either the PrimaryKey or the ForeignKey (but not the Description).
+    ///     Used for example to find out
+    ///     all the Lookup involvements of a given ColumnInfo.
     /// </summary>
     AnyKey,
 
     /// <summary>
-    /// The column in the lookup table which contains the code
+    ///     The column in the lookup table which contains the code
     /// </summary>
     ForeignKey
 }
 
 /// <summary>
-/// The type of ANSI Sql Join to direction e.g. Left/Right
+///     The type of ANSI Sql Join to direction e.g. Left/Right
 /// </summary>
 public enum ExtractionJoinType
 {
     /// <summary>
-    /// All records from the table on the left and any matching ones from the table on the right (otherwise null for those fields)
+    ///     All records from the table on the left and any matching ones from the table on the right (otherwise null for those
+    ///     fields)
     /// </summary>
     Left,
 
     /// <summary>
-    /// All records from the table on the right and any matching ones from the table on the left (otherwise null for those fields)
+    ///     All records from the table on the right and any matching ones from the table on the left (otherwise null for those
+    ///     fields)
     /// </summary>
     Right,
 
     /// <summary>
-    /// Only records where the primary/foreign keys match exactly between both tables (the right and the left)
+    ///     Only records where the primary/foreign keys match exactly between both tables (the right and the left)
     /// </summary>
     Inner
 }
 
 /// <summary>
-/// Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances of this class via JoinHelper (which is available as
-/// a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
-/// 
-/// <para>1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
-/// 2. Query builder identifies all available JoinInfos between the TablesUsedInQuery (See SqlQueryBuilderHelper.FindRequiredJoins)
-/// 3. Query builder merges JoinInfos that reference the same tables together into Combo Joins (See AddQueryBuildingTimeComboJoinDiscovery)
-/// 4. Query builder creates final Join Sql </para>
-/// 
-/// <para>'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
-/// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.</para>
+///     Persistent reference in the Catalogue database that records how to join two TableInfos.  You can create instances
+///     of this class via JoinHelper (which is available as
+///     a property on ICatalogueRepository).  JoinInfos are processed by during query building in the following way:
+///     <para>
+///         1. Query builder identifies all the TablesUsedInQuery (from the columns selected, forced table inclusions etc)
+///         2. Query builder identifies all available JoinInfos between the TablesUsedInQuery (See
+///         SqlQueryBuilderHelper.FindRequiredJoins)
+///         3. Query builder merges JoinInfos that reference the same tables together into Combo Joins (See
+///         AddQueryBuildingTimeComboJoinDiscovery)
+///         4. Query builder creates final Join Sql
+///     </para>
+///     <para>
+///         'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join
+///         B on A.x = B.x AND A.y = B.y.  You can define
+///         these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.
+///     </para>
 /// </summary>
 public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
 {
@@ -79,28 +90,28 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private string _collation;
     private ExtractionJoinType _extractionJoinType;
 
-    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    /// <inheritdoc cref="IJoin.ForeignKey" />
     public int ForeignKey_ID
     {
         get => _foreignKeyID;
         set => SetField(ref _foreignKeyID, value);
     }
 
-    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    /// <inheritdoc cref="IJoin.PrimaryKey" />
     public int PrimaryKey_ID
     {
         get => _primaryKeyID;
         set => SetField(ref _primaryKeyID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Collation
     {
         get => _collation;
         set => SetField(ref _collation, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionJoinType ExtractionJoinType
     {
         get => _extractionJoinType;
@@ -114,15 +125,15 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     private ColumnInfo _primaryKey;
 
 
-    private List<JoinInfo> _queryTimeComboJoins = new();
+    private readonly List<JoinInfo> _queryTimeComboJoins = new();
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
@@ -133,7 +144,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
     }
 
     /// <summary>
-    /// Constructor to be used to create already existing JoinInfos out of the database only.
+    ///     Constructor to be used to create already existing JoinInfos out of the database only.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
@@ -172,12 +183,15 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         });
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $" {ForeignKey.Name} = {PrimaryKey.Name}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $" {ForeignKey.Name} = {PrimaryKey.Name}";
+    }
 
     /// <summary>
-    /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
-    /// which have to appear on the SQL ON section of the query
+    ///     Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
+    ///     which have to appear on the SQL ON section of the query
     /// </summary>
     /// <param name="availableJoin"></param>
     public void AddQueryBuildingTimeComboJoinDiscovery(JoinInfo availableJoin)
@@ -189,7 +203,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
             _queryTimeComboJoins.Add(availableJoin);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
     {
         //Supplemental Joins are not currently supported by JoinInfo, only Lookups
@@ -201,7 +215,7 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         });
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionJoinType GetInvertedJoinType()
     {
         return ExtractionJoinType switch
@@ -214,20 +228,21 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
 
     private class QueryTimeComboJoin : ISupplementalJoin
     {
-        /// <inheritdoc cref="IJoin.ForeignKey"/>
+        /// <inheritdoc cref="IJoin.ForeignKey" />
         public ColumnInfo ForeignKey { get; set; }
 
-        /// <inheritdoc cref="IJoin.PrimaryKey"/>
+        /// <inheritdoc cref="IJoin.PrimaryKey" />
         public ColumnInfo PrimaryKey { get; set; }
 
-        /// <inheritdoc cref="IJoin.Collation"/>
+        /// <inheritdoc cref="IJoin.Collation" />
         public string Collation { get; set; }
     }
 
 
     /// <summary>
-    /// Tells the the <see cref="JoinInfo"/> what the objects are referenced by <see cref="PrimaryKey_ID"/> and <see cref="ForeignKey_ID"/>
-    /// so that it doesn't have to fetch them from the database.
+    ///     Tells the the <see cref="JoinInfo" /> what the objects are referenced by <see cref="PrimaryKey_ID" /> and
+    ///     <see cref="ForeignKey_ID" />
+    ///     so that it doesn't have to fetch them from the database.
     /// </summary>
     /// <param name="primaryKey"></param>
     /// <param name="foreignKey"></param>
@@ -240,16 +255,22 @@ public class JoinInfo : DatabaseEntity, IJoin, IHasDependencies
         _foreignKey = foreignKey;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { PrimaryKey, ForeignKey };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
-    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
-        .FirstOrDefault()?.Value;
+    /// <inheritdoc />
+    public string GetCustomJoinSql()
+    {
+        return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+            .FirstOrDefault()?.Value;
+    }
 }

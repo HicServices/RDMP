@@ -20,9 +20,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 
 /// <summary>
-/// DataLoadProcess for LoadMetadata's which have one or more LoadProgresses (See ScheduledDataLoadProcess).  This version of ScheduledDataLoadProcess will
-/// run a single execution of a LoadProgress.  For example if you have a load 'Load biochemistry records' with a LoadProgress which 'loads 5 days at a time'
-/// and is currently at LoadProgress.DataLoadProgress of 2001-01-01 it will run a single load (See ScheduledDataLoadJob) for the next 5 days and then stop.
+///     DataLoadProcess for LoadMetadata's which have one or more LoadProgresses (See ScheduledDataLoadProcess).  This
+///     version of ScheduledDataLoadProcess will
+///     run a single execution of a LoadProgress.  For example if you have a load 'Load biochemistry records' with a
+///     LoadProgress which 'loads 5 days at a time'
+///     and is currently at LoadProgress.DataLoadProgress of 2001-01-01 it will run a single load (See
+///     ScheduledDataLoadJob) for the next 5 days and then stop.
 /// </summary>
 public class SingleJobScheduledDataLoadProcess : ScheduledDataLoadProcess
 {

@@ -12,18 +12,20 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a reference in one <see cref="AggregateConfiguration"/> pointing to another informing it to use the WHERE filter logic of the other.  This allows you to maintain a single master copy of a given configuration and reference it from several places without creating duplicates.
+///     Creates a reference in one <see cref="AggregateConfiguration" /> pointing to another informing it to use the WHERE
+///     filter logic of the other.  This allows you to maintain a single master copy of a given configuration and reference
+///     it from several places without creating duplicates.
 /// </summary>
 internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
 {
     private AggregateConfiguration _setOn { get; }
 
-    private bool _promptChoice;
+    private readonly bool _promptChoice;
 
     private AggregateConfiguration _pointTo { get; }
 
     /// <summary>
-    /// Constructor for interactive mode (ask what they want to set it to when the command is run)
+    ///     Constructor for interactive mode (ask what they want to set it to when the command is run)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="setOn"></param>
@@ -34,14 +36,14 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         _promptChoice = true;
 
         if (_setOn.RootFilterContainer_ID != null)
-            SetImpossible($"Aggregate already has a root filter container");
+            SetImpossible("Aggregate already has a root filter container");
 
         if (_setOn.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);
     }
 
     /// <summary>
-    /// Constructor for setting a specific shortcut
+    ///     Constructor for setting a specific shortcut
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="setOn"></param>
@@ -95,7 +97,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
                 return;
             }
 
-            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target", available, null, false);
+            pointTo = (AggregateConfiguration)BasicActivator.SelectOne("Target", available);
 
             // Looks like they didn't make a choice
             if (pointTo == null)

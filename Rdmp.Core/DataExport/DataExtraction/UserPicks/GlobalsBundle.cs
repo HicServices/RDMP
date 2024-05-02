@@ -12,25 +12,29 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need
-/// to be extracted/copied to the output ExtractionDirectory.
+///     Bundle containing references to all the globally extractable (supplied with every project extraction regardless of
+///     dataset) documents and tables that need
+///     to be extracted/copied to the output ExtractionDirectory.
 /// </summary>
 public class GlobalsBundle : Bundle
 {
-    public List<SupportingDocument> Documents { get; private set; }
-    public List<SupportingSQLTable> SupportingSQL { get; private set; }
+    public List<SupportingDocument> Documents { get; }
+    public List<SupportingSQLTable> SupportingSQL { get; }
 
     public GlobalsBundle(SupportingDocument[] documents, SupportingSQLTable[] supportingSQL) :
         base(
             Array.Empty<object>().Union(documents).Union(supportingSQL).ToArray()
-        //pass all the objects to the base class so it can allocate initial States
+            //pass all the objects to the base class so it can allocate initial States
         )
     {
         Documents = documents.ToList();
         SupportingSQL = supportingSQL.ToList();
     }
 
-    public bool Any() => Documents.Any() || SupportingSQL.Any();
+    public bool Any()
+    {
+        return Documents.Any() || SupportingSQL.Any();
+    }
 
 
     protected override void OnDropContent(object toDrop)

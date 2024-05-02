@@ -21,10 +21,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class DataLoadJob : IDataLoadJob
 {
-    public string Description { get; private set; }
+    public string Description { get; }
     public IDataLoadInfo DataLoadInfo { get; private set; }
     public ILoadDirectory LoadDirectory { get; set; }
     private readonly IDataLoadEventListener _listener;
@@ -32,13 +32,13 @@ public class DataLoadJob : IDataLoadJob
     public int JobID { get; set; }
 
     private readonly ILogManager _logManager;
-    public ILoadMetadata LoadMetadata { get; private set; }
+    public ILoadMetadata LoadMetadata { get; }
 
-    public List<ITableInfo> RegularTablesToLoad { get; private set; }
-    public List<ITableInfo> LookupTablesToLoad { get; private set; }
-    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+    public List<ITableInfo> RegularTablesToLoad { get; }
+    public List<ITableInfo> LookupTablesToLoad { get; }
+    public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
-    private Stack<IDisposeAfterDataLoad> _disposalStack = new();
+    private readonly Stack<IDisposeAfterDataLoad> _disposalStack = new();
 
     public HICDatabaseConfiguration Configuration { get; set; }
     public object Payload { get; set; }
@@ -46,7 +46,7 @@ public class DataLoadJob : IDataLoadJob
     public bool PersistentRaw { get; set; }
 
 
-    private List<NotifyEventArgs> _crashAtEnd = new();
+    private readonly List<NotifyEventArgs> _crashAtEnd = new();
 
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 

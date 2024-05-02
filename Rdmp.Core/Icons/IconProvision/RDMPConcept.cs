@@ -8,7 +8,7 @@
 namespace Rdmp.Core.Icons.IconProvision;
 
 /// <summary>
-/// Describes all the objects that exist in RDMP.  Serves as an index into <see cref="CatalogueIcons"/>
+///     Describes all the objects that exist in RDMP.  Serves as an index into <see cref="CatalogueIcons" />
 /// </summary>
 public enum RDMPConcept
 {

@@ -9,8 +9,9 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// A command that can never be executed because of the given reason, this is a corner case where you are unable even to construct the
-/// BasicCommandExecution you really want but need to return an ICommandExecution anyway.
+///     A command that can never be executed because of the given reason, this is a corner case where you are unable even
+///     to construct the
+///     BasicCommandExecution you really want but need to return an ICommandExecution anyway.
 /// </summary>
 public class ImpossibleCommand : BasicCommandExecution, IAtomicCommand
 {

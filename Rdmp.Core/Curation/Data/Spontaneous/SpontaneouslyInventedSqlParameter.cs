@@ -14,9 +14,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to inject new ISqlParameters into an ISqlQueryBuilder
-/// at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that have the exact same declaration/value into a single
-/// new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
+///     Spontaneous (memory only) implementation of ISqlParameter.  This class is used extensively when there is a need to
+///     inject new ISqlParameters into an ISqlQueryBuilder
+///     at runtime (or a ParameterManager).  The most common use case for this is merging two or more ISqlParameters that
+///     have the exact same declaration/value into a single
+///     new one (which will be SpontaneouslyInventedSqlParameter to prevent changes to the originals).
 /// </summary>
 public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParameter
 {
@@ -39,11 +41,16 @@ public class SpontaneouslyInventedSqlParameter : SpontaneousObject, ISqlParamete
 
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() =>
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
         //I am my own owner! mwahahaha
-        this;
+        return this;
+    }
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper;
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _syntaxHelper;
+    }
 
     public void Check(ICheckNotifier notifier)
     {

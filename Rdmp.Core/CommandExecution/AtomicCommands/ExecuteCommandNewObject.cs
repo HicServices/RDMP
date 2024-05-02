@@ -14,25 +14,26 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new <see cref="DatabaseEntity"/> in the RDMP Platform database with the provided arguments.
+///     Creates a new <see cref="DatabaseEntity" /> in the RDMP Platform database with the provided arguments.
 /// </summary>
 public class ExecuteCommandNewObject : BasicCommandExecution
 {
     /// <summary>
-    /// The type of <see cref="DatabaseEntity"/> the user wants to construct
+    ///     The type of <see cref="DatabaseEntity" /> the user wants to construct
     /// </summary>
     private readonly Type _type;
 
     /// <summary>
-    /// if arguments are coming direct from the command line we can pull values from here otherwise we must prompt user for those
-    /// values
+    ///     if arguments are coming direct from the command line we can pull values from here otherwise we must prompt user for
+    ///     those
+    ///     values
     /// </summary>
-    private CommandLineObjectPicker _picker;
+    private readonly CommandLineObjectPicker _picker;
 
-    private Func<IMapsDirectlyToDatabaseTable> _func;
+    private readonly Func<IMapsDirectlyToDatabaseTable> _func;
 
     /// <summary>
-    /// Interactive constructor, user will be prompted for values at execute time
+    ///     Interactive constructor, user will be prompted for values at execute time
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="type"></param>
@@ -47,8 +48,9 @@ public class ExecuteCommandNewObject : BasicCommandExecution
     }
 
     /// <summary>
-    /// Automatic/Unattended constructor, construction values will come from <paramref name="picker"/> and user will not be
-    /// prompted for each constructor argument.
+    ///     Automatic/Unattended constructor, construction values will come from <paramref name="picker" /> and user will not
+    ///     be
+    ///     prompted for each constructor argument.
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="picker"></param>
@@ -74,7 +76,7 @@ args    Dynamic list of values to satisfy the types constructor")]
     }
 
     /// <summary>
-    /// Create a new instance of an object using the provided func
+    ///     Create a new instance of an object using the provided func
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="callCtor"></param>

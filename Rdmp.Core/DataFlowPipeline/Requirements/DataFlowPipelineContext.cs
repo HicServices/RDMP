@@ -17,34 +17,45 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataFlowPipeline.Requirements;
 
 /// <summary>
-/// Low level description of what an IPipeline must look like to be compatible with a given use case for a IDataFlowPipelineEngine.  This includes whether there must be
-/// a specific base type / interface for source / destination components as well as what the flow T object is (e.g. System.Data.DataTable).
-/// 
-/// <para>This class also handles distributing initialization object instances to subscribers (components implementing IPipelineRequirement X).  You can create one of these
-/// with DataFlowPipelineContextFactory but really you should only be doing this if you are building a new IPipelineUseCase.  If you are trying to run an IPipeline that
-/// is used elsewhere in RDMP then you need to find the IPipelineUseCase that matches the job you are trying to achieve.</para>
-/// 
-/// <para>DataFlowPipelineContext is symantically similar to IPipelineUseCase, the difference is that the context only contains low level rules about what is compatible while
-/// the IPipelineUseCase also has the specific objects that will be used for initialization, fixed source instances etc (as well the context).</para>
+///     Low level description of what an IPipeline must look like to be compatible with a given use case for a
+///     IDataFlowPipelineEngine.  This includes whether there must be
+///     a specific base type / interface for source / destination components as well as what the flow T object is (e.g.
+///     System.Data.DataTable).
+///     <para>
+///         This class also handles distributing initialization object instances to subscribers (components implementing
+///         IPipelineRequirement X).  You can create one of these
+///         with DataFlowPipelineContextFactory but really you should only be doing this if you are building a new
+///         IPipelineUseCase.  If you are trying to run an IPipeline that
+///         is used elsewhere in RDMP then you need to find the IPipelineUseCase that matches the job you are trying to
+///         achieve.
+///     </para>
+///     <para>
+///         DataFlowPipelineContext is symantically similar to IPipelineUseCase, the difference is that the context only
+///         contains low level rules about what is compatible while
+///         the IPipelineUseCase also has the specific objects that will be used for initialization, fixed source instances
+///         etc (as well the context).
+///     </para>
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
 {
     /// <summary>
-    /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, its <see cref="IPipeline.Source"/> must inherit/implement the given Type
+    ///     Optional.  Specifies that in order for an <see cref="IPipeline" /> to be compatible with the context, its
+    ///     <see cref="IPipeline.Source" /> must inherit/implement the given Type
     /// </summary>
     public Type MustHaveSource { get; set; }
 
     /// <summary>
-    /// Optional.  Specifies that in order for an <see cref="IPipeline"/> to be compatible with the context, its <see cref="IPipeline.Destination"/> must inherit/implement the given Type
+    ///     Optional.  Specifies that in order for an <see cref="IPipeline" /> to be compatible with the context, its
+    ///     <see cref="IPipeline.Destination" /> must inherit/implement the given Type
     /// </summary>
     public Type MustHaveDestination { get; set; }
 
-    /// <inheritdoc/>
-    public HashSet<Type> CannotHave { get; private set; }
+    /// <inheritdoc />
+    public HashSet<Type> CannotHave { get; }
 
     /// <summary>
-    /// Creates a new empty context for determining <see cref="IPipeline"/> compatibility
+    ///     Creates a new empty context for determining <see cref="IPipeline" /> compatibility
     /// </summary>
     public DataFlowPipelineContext()
     {
@@ -52,13 +63,17 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     }
 
     /// <summary>
-    /// Returns true the Type <paramref name="t"/> would be allowed by the context e.g. it doesn't implement an <see cref="CannotHave"/> and it is compatible with the flow Type {T} etc
+    ///     Returns true the Type <paramref name="t" /> would be allowed by the context e.g. it doesn't implement an
+    ///     <see cref="CannotHave" /> and it is compatible with the flow Type {T} etc
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public bool IsAllowable(Type t) => IsAllowable(t, out string _);
+    public bool IsAllowable(Type t)
+    {
+        return IsAllowable(t, out string _);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsAllowable(Type t, out string reason)
     {
         //if t is a source
@@ -132,7 +147,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         return forbiddenType == null;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsAllowable(IPipeline pipeline, out string reason)
     {
         foreach (var component in pipeline.PipelineComponents)
@@ -173,7 +188,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
                         $"The pipeline requires a {descriptionOfThingBeingChecked} of type {GetFullName(mustHaveType)} but the currently configured {descriptionOfThingBeingChecked}{GetFullName(pipelineComponentType)} is not of the same type or a derived type";
             }
         else
-        //it cannot have destination
+            //it cannot have destination
         if (component != null)
             return $"Context does not allow for an explicit (custom) {descriptionOfThingBeingChecked}";
 
@@ -181,13 +196,17 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         return null;
     }
 
-    /// <inheritdoc/>
-    public bool IsAllowable(IPipeline pipeline) => IsAllowable(pipeline, out _);
+    /// <inheritdoc />
+    public bool IsAllowable(IPipeline pipeline)
+    {
+        return IsAllowable(pipeline, out _);
+    }
 
 
     /// <summary>
-    /// Initializes the given <paramref name="component"/> by calling all <see cref="IPipelineRequirement{T}"/> it implements with the appropriate
-    /// input object <paramref name="parameters"/>
+    ///     Initializes the given <paramref name="component" /> by calling all <see cref="IPipelineRequirement{T}" /> it
+    ///     implements with the appropriate
+    ///     input object <paramref name="parameters" />
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="component"></param>
@@ -199,8 +218,9 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
     }
 
     /// <summary>
-    /// Initializes the given <paramref name="component"/> by calling all <see cref="IPipelineRequirement{T}"/> it implements with the appropriate
-    /// input object <paramref name="parameters"/>
+    ///     Initializes the given <paramref name="component" /> by calling all <see cref="IPipelineRequirement{T}" /> it
+    ///     implements with the appropriate
+    ///     input object <paramref name="parameters" />
     /// </summary>
     public void PreInitialize(IDataLoadEventListener listener, IDataFlowSource<T> component, params object[] parameters)
     {
@@ -313,7 +333,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         return interfaceToInvokeIfAny.GenericTypeArguments[0];
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void PreInitializeGeneric(IDataLoadEventListener listener, object component,
         params object[] initializationObjects)
     {
@@ -347,7 +367,7 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
         return sb.ToString();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<Type> GetIPipelineRequirementsForType(Type t)
     {
         return t.GetInterfaces()
@@ -355,6 +375,9 @@ public class DataFlowPipelineContext<T> : IDataFlowPipelineContext
             .Select(r => r.GetGenericArguments()[0]);
     }
 
-    /// <inheritdoc/>
-    public Type GetFlowType() => typeof(T);
+    /// <inheritdoc />
+    public Type GetFlowType()
+    {
+        return typeof(T);
+    }
 }

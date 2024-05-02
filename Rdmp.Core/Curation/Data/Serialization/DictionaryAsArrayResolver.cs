@@ -13,8 +13,8 @@ using Newtonsoft.Json.Serialization;
 namespace Rdmp.Core.Curation.Data.Serialization;
 
 /// <summary>
-/// JSON Contract Resolver which serializes <see cref="IDictionary"/> as two arrays (keys and values).  This
-/// allows serialization of keys which are complex types (by default json only supports string keys).
+///     JSON Contract Resolver which serializes <see cref="IDictionary" /> as two arrays (keys and values).  This
+///     allows serialization of keys which are complex types (by default json only supports string keys).
 /// </summary>
 public class DictionaryAsArrayResolver : DefaultContractResolver
 {

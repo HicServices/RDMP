@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Sets the <see cref="AggregateContinuousDateAxis"/> on a graph <see cref="AggregateConfiguration"/>
+///     Sets the <see cref="AggregateContinuousDateAxis" /> on a graph <see cref="AggregateConfiguration" />
 /// </summary>
 public class ExecuteCommandSetAxis : BasicCommandExecution
 {
@@ -62,10 +62,7 @@ public class ExecuteCommandSetAxis : BasicCommandExecution
             }
 
             if (aggregate.GetAxisIfAny() != null)
-            {
                 SetImpossible($"AggregateConfiguration {aggregate} already has an axis");
-                return;
-            }
         }
         else
         {

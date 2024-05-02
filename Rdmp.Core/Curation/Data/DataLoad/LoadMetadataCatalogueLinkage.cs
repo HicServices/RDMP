@@ -4,21 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
 
-using Rdmp.Core.Curation.Data.ImportExport;
-using Rdmp.Core.Curation.Data.Serialization;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.ReusableLibraryCode;
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
-/// <inheritdoc cref="ILoadMetadataCatalogueLinkage"/>
+/// <inheritdoc cref="ILoadMetadataCatalogueLinkage" />
 public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalogueLinkage
 {
-
     private int _LoadMetadataID;
     private int _CatalogueID;
 
@@ -37,25 +34,28 @@ public class LoadMetadataCatalogueLinkage : DatabaseEntity, ILoadMetadataCatalog
         set => SetField(ref _CatalogueID, value);
     }
 
-    public LoadMetadataCatalogueLinkage() { }
+    public LoadMetadataCatalogueLinkage()
+    {
+    }
 
     /// <summary>
-    /// Creates a link between a catalogue and a data load 
+    ///     Creates a link between a catalogue and a data load
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="loadMetadata"></param>
     /// <param name="catalogue"></param>
-    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata, ICatalogue catalogue)
+    public LoadMetadataCatalogueLinkage(ICatalogueRepository repository, ILoadMetadata loadMetadata,
+        ICatalogue catalogue)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"LoadMetadataID",  loadMetadata.ID},
-            {"CatalogueID",  catalogue.ID }
+            { "LoadMetadataID", loadMetadata.ID },
+            { "CatalogueID", catalogue.ID }
         });
     }
 
     internal LoadMetadataCatalogueLinkage(ICatalogueRepository repository, DbDataReader r)
-   : base(repository, r)
+        : base(repository, r)
     {
         LoadMetadataID = int.Parse(r["LoadMetadataID"].ToString());
         CatalogueID = int.Parse(r["CatalogueID"].ToString());

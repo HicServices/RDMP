@@ -7,8 +7,9 @@
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// <see cref="Node"/> of which there can only ever be one in the RDMP object hierarchy e.g. <see cref="AllCohortsNode"/>.  By convention
-/// these classes should normally start with the prefix "All"
+///     <see cref="Node" /> of which there can only ever be one in the RDMP object hierarchy e.g.
+///     <see cref="AllCohortsNode" />.  By convention
+///     these classes should normally start with the prefix "All"
 /// </summary>
 public abstract class SingletonNode : Node
 {
@@ -19,12 +20,24 @@ public abstract class SingletonNode : Node
         _caption = caption;
     }
 
-    public override string ToString() => _caption;
+    public override string ToString()
+    {
+        return _caption;
+    }
 
-    public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
+    public bool Equals(SingletonNode other)
+    {
+        return string.Equals(_caption, other._caption);
+    }
 
-    public override bool Equals(object obj) => obj is SingletonNode sn &&
-                                               Equals(sn);
+    public override bool Equals(object obj)
+    {
+        return obj is SingletonNode sn &&
+               Equals(sn);
+    }
 
-    public override int GetHashCode() => _caption.GetHashCode();
+    public override int GetHashCode()
+    {
+        return _caption.GetHashCode();
+    }
 }

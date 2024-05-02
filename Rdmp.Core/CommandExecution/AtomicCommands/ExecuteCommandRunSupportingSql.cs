@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Runs the SQL in <see cref="SupportingSQLTable"/> and displays output (if a single table is returned)
+///     Runs the SQL in <see cref="SupportingSQLTable" /> and displays output (if a single table is returned)
 /// </summary>
 public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
 {
@@ -36,7 +36,6 @@ public partial class ExecuteCommandRunSupportingSql : ExecuteCommandViewDataBase
         if (string.IsNullOrWhiteSpace(SupportingSQLTable.SQL))
         {
             SetImpossible($"No SQL is defined for {SupportingSQLTable}");
-            return;
         }
     }
 

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -11,7 +12,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>
+///     The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated
+///     <see cref="ExtractionConfiguration" />
 /// </summary>
 public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
 {
@@ -24,12 +26,20 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
         Cohort = cohort;
     }
 
-    public override string ToString() => Cohort.ToString();
+    public override string ToString()
+    {
+        return Cohort.ToString();
+    }
 
-    public object MasqueradingAs() => Cohort;
+    public object MasqueradingAs()
+    {
+        return Cohort;
+    }
 
-    protected bool Equals(LinkedCohortNode other) =>
-        Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    protected bool Equals(LinkedCohortNode other)
+    {
+        return Equals(Configuration, other.Configuration) && Equals(Cohort, other.Cohort);
+    }
 
     public override bool Equals(object obj)
     {
@@ -39,7 +49,10 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
         return Equals((LinkedCohortNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Configuration, Cohort);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Configuration, Cohort);
+    }
 
     public void DeleteInDatabase()
     {
@@ -47,8 +60,14 @@ public class LinkedCohortNode : Node, IMasqueradeAs, IDeletableWithCustomMessage
         Configuration.SaveToDatabase();
     }
 
-    public string GetDeleteMessage() => $"remove cohort from ExtractionConfiguration '{Configuration}'";
+    public string GetDeleteMessage()
+    {
+        return $"remove cohort from ExtractionConfiguration '{Configuration}'";
+    }
 
-    /// <inheritdoc/>
-    public string GetDeleteVerb() => "Remove";
+    /// <inheritdoc />
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
 }

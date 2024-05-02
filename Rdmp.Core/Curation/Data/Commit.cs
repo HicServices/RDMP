@@ -13,8 +13,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Captures a user tracked change to the state of objects in RDMP.  A single <see cref="Commit"/> contains
-/// one or more <see cref="Memento"/> which track the before and after states of the objects changed
+///     Captures a user tracked change to the state of objects in RDMP.  A single <see cref="Commit" /> contains
+///     one or more <see cref="Memento" /> which track the before and after states of the objects changed
 /// </summary>
 public class Commit : DatabaseEntity
 {
@@ -80,5 +80,8 @@ public class Commit : DatabaseEntity
         });
     }
 
-    public override string ToString() => Transaction;
+    public override string ToString()
+    {
+        return Transaction;
+    }
 }

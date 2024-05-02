@@ -12,8 +12,9 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 
 /// <summary>
-/// Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits such that DD3 7LX becomes DD3.
-/// See TestExcludeRight3OfUKPostcodes for expected inputs/outputs.
+///     Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits
+///     such that DD3 7LX becomes DD3.
+///     See TestExcludeRight3OfUKPostcodes for expected inputs/outputs.
 /// </summary>
 public class ExcludeRight3OfUKPostcodes : DilutionOperation
 {
@@ -32,8 +33,9 @@ public class ExcludeRight3OfUKPostcodes : DilutionOperation
                 CheckResult.Fail));
     }
 
-    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer) =>
-        string.Format(@"
+    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
+    {
+        return string.Format(@"
 
 IF OBJECT_ID('dbo.RemoveDodgyCharacters') IS NOT NULL
   DROP FUNCTION RemoveDodgyCharacters
@@ -100,4 +102,5 @@ GO
 
 UPDATE {0} SET {1}=dbo.Left4OfPostcodes({1})
 GO", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
+    }
 }

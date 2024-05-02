@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Checks a given <see cref="ICheckable"/> object reporting integrity to an <see cref="ICheckNotifier"/>
+///     Checks a given <see cref="ICheckable" /> object reporting integrity to an <see cref="ICheckNotifier" />
 /// </summary>
 public sealed class ExecuteCommandCheck : BasicCommandExecution
 {
@@ -33,5 +33,8 @@ public sealed class ExecuteCommandCheck : BasicCommandExecution
         _checkable.Check(_notifier);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.TinyYellow);
+    }
 }

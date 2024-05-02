@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// <see cref="IViewSQLAndResultsCollection"/> for querying samples of arbitrary tables / columns
+///     <see cref="IViewSQLAndResultsCollection" /> for querying samples of arbitrary tables / columns
 /// </summary>
 public class ArbitraryTableExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection,
     IDataAccessPoint, IDataAccessCredentials
@@ -33,12 +33,16 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
 
     public string Username { get; set; }
     public string Password { get; set; }
-    public string GetDecryptedPassword() => Password ?? "";
+
+    public string GetDecryptedPassword()
+    {
+        return Password ?? "";
+    }
 
     public string OverrideSql { get; set; }
 
     /// <summary>
-    /// Needed for deserialization
+    ///     Needed for deserialization
     /// </summary>
     public ArbitraryTableExtractionUICollection()
     {
@@ -59,8 +63,11 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         Password = table.Database.Server.ExplicitPasswordIfAny;
     }
 
-    /// <nheritdoc/>
-    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
+    /// <nheritdoc />
+    public override string SaveExtraText()
+    {
+        return PersistStringHelper.SaveDictionaryToString(_arguments);
+    }
 
     public override void LoadExtraText(string s)
     {
@@ -77,7 +84,10 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         yield break;
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => this;
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return this;
+    }
 
     public string GetSql()
     {
@@ -95,7 +105,10 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
         };
     }
 
-    public string GetTabName() => $"View {_table.GetRuntimeName()}";
+    public string GetTabName()
+    {
+        return $"View {_table.GetRuntimeName()}";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -115,11 +128,16 @@ public class ArbitraryTableExtractionUICollection : PersistableObjectCollection,
     }
 
 
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
+    {
         //we have our own credentials if we do
-        string.IsNullOrWhiteSpace(Username) ? null : this;
+        return string.IsNullOrWhiteSpace(Username) ? null : this;
+    }
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _table.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _table.GetQuerySyntaxHelper();
+    }
 
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {

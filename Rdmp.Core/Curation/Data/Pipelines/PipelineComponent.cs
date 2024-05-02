@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
-/// <inheritdoc cref="IPipelineComponent"/>
+/// <inheritdoc cref="IPipelineComponent" />
 public class PipelineComponent : DatabaseEntity, IPipelineComponent
 {
     #region Database Properties
@@ -26,28 +26,28 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     private int _pipelineID;
     private string _class;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Name
     {
         get => _name;
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Order
     {
         get => _order;
         set => SetField(ref _order, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Pipeline_ID
     {
         get => _pipelineID;
         set => SetField(ref _pipelineID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Class
     {
         get => _class;
@@ -58,12 +58,12 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IEnumerable<IPipelineComponentArgument> PipelineComponentArguments =>
         Repository.GetAllObjectsWithParent<PipelineComponentArgument>(this);
 
-    /// <inheritdoc cref="Pipeline_ID"/>
+    /// <inheritdoc cref="Pipeline_ID" />
     [NoMappingToDatabase]
     public IHasDependencies Pipeline => Repository.GetObjectByID<Pipeline>(Pipeline_ID);
 
@@ -73,12 +73,16 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
     {
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Creates a new component in the <paramref name="parent"/> <see cref="Pipeline"/>.  This will mean that when run the <see cref="Pipeline"/>
-    /// will instantiate and run the given <paramref name="componentType"/>.
+    ///     Creates a new component in the <paramref name="parent" /> <see cref="Pipeline" />.  This will mean that when run
+    ///     the <see cref="Pipeline" />
+    ///     will instantiate and run the given <paramref name="componentType" />.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -106,23 +110,37 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         Name = r["Name"].ToString();
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<IArgument> GetAllArguments() => PipelineComponentArguments;
+    /// <inheritdoc />
+    public IEnumerable<IArgument> GetAllArguments()
+    {
+        return PipelineComponentArguments;
+    }
 
-    /// <inheritdoc/>
-    public IArgument CreateNewArgument() => new PipelineComponentArgument((ICatalogueRepository)Repository, this);
+    /// <inheritdoc />
+    public IArgument CreateNewArgument()
+    {
+        return new PipelineComponentArgument((ICatalogueRepository)Repository, this);
+    }
 
-    /// <inheritdoc/>
-    public string GetClassNameWhoArgumentsAreFor() => Class;
+    /// <inheritdoc />
+    public string GetClassNameWhoArgumentsAreFor()
+    {
+        return Class;
+    }
 
-    /// <inheritdoc/>
-    public Type GetClassAsSystemType() => MEF.GetType(Class);
+    /// <inheritdoc />
+    public Type GetClassAsSystemType()
+    {
+        return MEF.GetType(Class);
+    }
 
-    /// <inheritdoc/>
-    public string GetClassNameLastPart() =>
-        string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
+    /// <inheritdoc />
+    public string GetClassNameLastPart()
+    {
+        return string.IsNullOrWhiteSpace(Class) ? Class : Class[(Class.LastIndexOf('.') + 1)..];
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public PipelineComponent Clone(Pipeline intoTargetPipeline)
     {
         var cataRepo = (ICatalogueRepository)intoTargetPipeline.Repository;
@@ -147,10 +165,13 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
         return clone;
     }
 
-    /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));
+    /// <inheritdoc />
+    public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+    {
+        return CreateArgumentsForClassIfNotExists(typeof(T));
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IArgument[] CreateArgumentsForClassIfNotExists(Type underlyingComponentType)
     {
         var argFactory = new ArgumentFactory();
@@ -166,15 +187,17 @@ public class PipelineComponent : DatabaseEntity, IPipelineComponent
             .Cast<PipelineComponentArgument>().ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
-        return new IHasDependencies[] { Pipeline };
+        return new[] { Pipeline };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() =>
-        PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return PipelineComponentArguments.Cast<IHasDependencies>().ToArray();
+    }
 
     public override void DeleteInDatabase()
     {

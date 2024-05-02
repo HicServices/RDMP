@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractionProgress"/>
+/// <inheritdoc cref="IExtractionProgress" />
 public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 {
     #region Database Properties
@@ -33,49 +33,49 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int SelectedDataSets_ID
     {
         get => _selectedDataSets_ID;
         set => SetField(ref _selectedDataSets_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? ProgressDate
     {
         get => _progress;
         set => SetField(ref _progress, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? StartDate
     {
         get => _startDate;
         set => SetField(ref _startDate, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? EndDate
     {
         get => _endDate;
         set => SetField(ref _endDate, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int NumberOfDaysPerBatch
     {
         get => _numberOfDaysPerBatch;
         set => SetField(ref _numberOfDaysPerBatch, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ExtractionInformation_ID
     {
         get => _extractionInformation_ID;
         set => SetField(ref _extractionInformation_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Name
     {
         get => _name;
@@ -90,7 +90,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ISelectedDataSets SelectedDataSets =>
         DataExportRepository.GetObjectByID<SelectedDataSets>(SelectedDataSets_ID);
@@ -126,7 +126,7 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation =>
         DataExportRepository.CatalogueRepository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
@@ -192,9 +192,15 @@ public class ExtractionProgress : DatabaseEntity, IExtractionProgress
         Retry = (RetryStrategy)Enum.Parse(typeof(RetryStrategy), r["Retry"].ToString());
     }
 
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    public bool MoreToFetch() => ProgressDate < EndDate;
+    public bool MoreToFetch()
+    {
+        return ProgressDate < EndDate;
+    }
 
     public bool ApplyRetryWaitStrategy(GracefulCancellationToken token, IDataLoadEventListener listener,
         int totalFailureCount, int consecutiveFailureCount)

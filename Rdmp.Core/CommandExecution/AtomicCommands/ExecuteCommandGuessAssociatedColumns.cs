@@ -11,7 +11,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Automatically associates <see cref="CatalogueItem"/> in a <see cref="Catalogue"/> with underlying columns in a given <see cref="TableInfo"/> based on name
+///     Automatically associates <see cref="CatalogueItem" /> in a <see cref="Catalogue" /> with underlying columns in a
+///     given <see cref="TableInfo" /> based on name
 /// </summary>
 public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
 {

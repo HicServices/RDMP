@@ -12,8 +12,8 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Factory for providing the correct implementation of <see cref="FilterUIOptions"/> based on the Type of the
-/// provided <see cref="IFilter"/>.
+///     Factory for providing the correct implementation of <see cref="FilterUIOptions" /> based on the Type of the
+///     provided <see cref="IFilter" />.
 /// </summary>
 public class FilterUIOptionsFactory
 {

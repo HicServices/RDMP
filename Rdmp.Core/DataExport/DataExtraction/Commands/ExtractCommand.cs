@@ -11,10 +11,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 public abstract class ExtractCommand : IExtractCommand
 {
-    public IProject Project { get; private set; }
-    public IExtractionConfiguration Configuration { get; private set; }
+    public IProject Project { get; }
+    public IExtractionConfiguration Configuration { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsBatchResume { get; set; }
 
     protected ExtractCommand(IExtractionConfiguration configuration)

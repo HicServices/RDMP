@@ -20,7 +20,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient index table)
+///     Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient
+///     index table)
 /// </summary>
 public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable>,
     IPipelineRequirement<AggregateConfiguration>
@@ -36,7 +37,7 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     public int Timeout { get; set; }
 
     /// <summary>
-    /// The name to give the table produced into the pipeline
+    ///     The name to give the table produced into the pipeline
     /// </summary>
     public string TableName { get; set; }
 
@@ -102,7 +103,10 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
         return dt;
     }
 
-    public DataTable TryGetPreview() => GetDataTable(10, null);
+    public DataTable TryGetPreview()
+    {
+        return GetDataTable(10, null);
+    }
 
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -137,5 +141,8 @@ public class AggregateConfigurationTableSource : IPluginDataFlowSource<DataTable
     }
 
     [NotNull]
-    public override string ToString() => GetType().Name;
+    public override string ToString()
+    {
+        return GetType().Name;
+    }
 }

@@ -15,9 +15,11 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a StandardRegex which is a central curated definition
-/// pattern in the Catalogue database.  This allows you to have multiple columns/validation rules in multiple datasets share the same regex without having to
-/// create copies (and allows you to update the definition in one place).
+///     Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a
+///     StandardRegex which is a central curated definition
+///     pattern in the Catalogue database.  This allows you to have multiple columns/validation rules in multiple datasets
+///     share the same regex without having to
+///     create copies (and allows you to update the definition in one place).
 /// </summary>
 public class StandardRegexConstraint : SecondaryConstraint
 {
@@ -27,7 +29,7 @@ public class StandardRegexConstraint : SecondaryConstraint
     private int _standardRegexID;
 
     /// <summary>
-    /// Only for XmlSerializer, do not use otherwise
+    ///     Only for XmlSerializer, do not use otherwise
     /// </summary>
     public StandardRegexConstraint()
     {
@@ -80,10 +82,12 @@ public class StandardRegexConstraint : SecondaryConstraint
     {
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() =>
-        CatalogueStandardRegex != null
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return CatalogueStandardRegex != null
             ? $"Checks that the value conforms to the agency specific StandardRegex concept '{CatalogueStandardRegex.ConceptName}' defined in the Catalogue"
             : "Checks that values match the supplied agency specific StandardRegex defined in the Catalogue for core concepts (e.g. Gender)";
+    }
 
     public override ValidationFailure Validate(object value, object[] otherColumns, string[] otherColumnNames)
     {

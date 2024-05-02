@@ -19,20 +19,23 @@ using TypeGuesser;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// Creates new databases with a fixed (versioned) schema (determined by an <see cref="IPatcher"/>) into a database server (e.g. localhost\sqlexpress).
+///     Creates new databases with a fixed (versioned) schema (determined by an <see cref="IPatcher" />) into a database
+///     server (e.g. localhost\sqlexpress).
 /// </summary>
 public class MasterDatabaseScriptExecutor
 {
     public DiscoveredDatabase Database { get; }
 
     /// <summary>
-    /// Returns the name of the schema we expect to create/store the Version / ScriptsRun tables in.  Returns null if
-    /// <see cref="Database"/> is not a DBMS that supports schemas (e.g. MySql).
+    ///     Returns the name of the schema we expect to create/store the Version / ScriptsRun tables in.  Returns null if
+    ///     <see cref="Database" /> is not a DBMS that supports schemas (e.g. MySql).
     /// </summary>
     public string RoundhouseSchemaName => GetRoundhouseSchemaName(Database);
 
-    public static string GetRoundhouseSchemaName(DiscoveredDatabase database) =>
-        database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer ? "RoundhousE" : null;
+    public static string GetRoundhouseSchemaName(DiscoveredDatabase database)
+    {
+        return database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer ? "RoundhousE" : null;
+    }
 
     public const string RoundhouseVersionTable = "Version";
     public const string RoundhouseScriptsRunTable = "ScriptsRun";
@@ -85,8 +88,7 @@ public class MasterDatabaseScriptExecutor
                     throw new Exception(
                         "Create database failed without Exception! (It did not Exist after creation)");
 
-                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success,
-                    null));
+                notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database} created", CheckResult.Success));
             }
 
             if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
@@ -122,9 +124,9 @@ public class MasterDatabaseScriptExecutor
 
             RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success));
 
-            notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success));
 
             return true;
         }
@@ -177,7 +179,6 @@ public class MasterDatabaseScriptExecutor
         sb.Append(hash.Select(x => x.ToString("X2")));
 
         return sb.ToString();
-
     }
 
     private void SetVersion(string name, string version)
@@ -207,7 +208,7 @@ public class MasterDatabaseScriptExecutor
         if (!patches.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs("There are no patches to apply so skipping patching",
-                CheckResult.Success, null));
+                CheckResult.Success));
             return true;
         }
 
@@ -216,11 +217,11 @@ public class MasterDatabaseScriptExecutor
         if (backupDatabase && SupportsBackup(Database))
             try
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success));
 
                 Database.CreateBackup($"Full backup of {Database}");
 
-                notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success));
             }
             catch (Exception e)
             {
@@ -249,8 +250,7 @@ public class MasterDatabaseScriptExecutor
                     }
 
 
-                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success,
-                        null));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"Executed patch {patch.Value}", CheckResult.Success));
                 }
                 else
                 {
@@ -283,7 +283,7 @@ public class MasterDatabaseScriptExecutor
     }
 
     /// <summary>
-    /// Patches the <see cref="Database"/> with ONLY the patches that are outstanding from <paramref name="patcher"/>
+    ///     Patches the <see cref="Database" /> with ONLY the patches that are outstanding from <paramref name="patcher" />
     /// </summary>
     /// <param name="patcher"></param>
     /// <param name="notifier"></param>
@@ -317,15 +317,13 @@ public class MasterDatabaseScriptExecutor
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"The database contains an unexplained patch called {patch.locationInAssembly} (it is not in {patcher.GetDbAssembly().FullName} ) so how did it get there?",
-                        CheckResult.Warning,
-                        null));
+                        CheckResult.Warning));
                 }
                 else if (!allPatchesInAssembly[patch.locationInAssembly].GetScriptBody().Equals(patch.GetScriptBody()))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"The contents of patch {patch.locationInAssembly} are different between live database and the database patching assembly",
-                        CheckResult.Warning,
-                        null));
+                        CheckResult.Warning));
 
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
@@ -335,7 +333,7 @@ public class MasterDatabaseScriptExecutor
                     //we found it and it was intact
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Patch {patch.locationInAssembly} was previously installed successfully so no need to touch it",
-                        CheckResult.Success, null));
+                        CheckResult.Success));
 
                     //do not apply this patch
                     toApply.Remove(patch.locationInAssembly);
@@ -355,7 +353,7 @@ public class MasterDatabaseScriptExecutor
             stop = true;
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Patch {missedOpportunity.locationInAssembly} cannot be applied because its version number is {missedOpportunity.DatabaseVersionNumber} but the current database is at version {databaseVersion}{Environment.NewLine} Contents of patch was:{Environment.NewLine}{missedOpportunity.EntireScript}"
-                , CheckResult.Fail, null));
+                , CheckResult.Fail));
         }
 
         //if the patches to be applied would bring the version number above that of the host Library
@@ -363,7 +361,7 @@ public class MasterDatabaseScriptExecutor
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Cannot apply patch {futurePatch.locationInAssembly} because its database version number is {futurePatch.DatabaseVersionNumber} which is higher than the currently loaded host assembly ({patcher.GetDbAssembly().FullName}). ",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
             stop = true;
         }
 
@@ -371,7 +369,7 @@ public class MasterDatabaseScriptExecutor
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "Abandoning patching process (no patches have been applied) because of one or more previous errors",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
             return false;
         }
 
@@ -409,10 +407,13 @@ public class MasterDatabaseScriptExecutor
     }
 
     /// <summary>
-    /// Creates a new platform database and patches it
+    ///     Creates a new platform database and patches it
     /// </summary>
     /// <param name="patcher">Determines the SQL schema created</param>
-    /// <param name="notifier">audit object, can be a ThrowImmediatelyCheckNotifier.Quiet if you aren't in a position to pass one</param>
+    /// <param name="notifier">
+    ///     audit object, can be a ThrowImmediatelyCheckNotifier.Quiet if you aren't in a position to pass
+    ///     one
+    /// </param>
     public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
     {
         var initialPatch = patcher.GetInitialCreateScriptContents(Database);

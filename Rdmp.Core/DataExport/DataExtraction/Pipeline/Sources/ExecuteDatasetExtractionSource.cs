@@ -29,8 +29,9 @@ using IContainer = Rdmp.Core.Curation.Data.IContainer;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 
 /// <summary>
-/// Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See IExtractCommand).  Also calculates the number
-/// of unique identifiers seen, records row validation failures etc.
+///     Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See
+///     IExtractCommand).  Also calculates the number
+///     of unique identifiers seen, records row validation failures etc.
 /// </summary>
 public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<IExtractCommand>
 {
@@ -41,8 +42,6 @@ public class ExecuteDatasetExtractionSource : IPluginDataFlowSource<DataTable>, 
     public const string AuditTaskName = "DataExtraction";
 
     private readonly List<string> _extractionIdentifiersidx = new();
-
-    private bool _cancel;
 
     private ICatalogue _catalogue;
 
@@ -90,10 +89,12 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
 
     /// <summary>
-    /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
-    /// actual datatype that was output after the transform operation e.g. a varchar(10) could be converted into a bona fide DateTime which
-    /// would be an sql Date.  Finally
-    /// a recommended SqlDbType is passed back.
+    ///     This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin
+    ///     database and the
+    ///     actual datatype that was output after the transform operation e.g. a varchar(10) could be converted into a bona
+    ///     fide DateTime which
+    ///     would be an sql Date.  Finally
+    ///     a recommended SqlDbType is passed back.
     /// </summary>
     public Dictionary<ExtractableColumn, ExtractTimeTransformationObserved> ExtractTimeTransformationsObserved;
 
@@ -141,7 +142,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         GlobalsRequest = request;
     }
 
-    public bool WasCancelled => _cancel;
+    public bool WasCancelled { get; private set; }
 
     private Stopwatch _timeSpentValidating;
     private int _rowsValidated;
@@ -154,7 +155,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     private bool firstGlobalChunk = true;
     private int _rowsRead;
 
-    private RowPeeker _peeker = new();
+    private readonly RowPeeker _peeker = new();
 
     public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
@@ -180,7 +181,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
         Request.ElevateState(ExtractCommandState.WaitingForSQLServer);
 
-        if (_cancel)
+        if (WasCancelled)
             throw new Exception("User cancelled data extraction");
 
         if (_hostedSource == null)
@@ -232,7 +233,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         catch (AggregateException a)
         {
             if (a.GetExceptionIfExists<TaskCanceledException>() != null)
-                _cancel = true;
+                WasCancelled = true;
 
             throw;
         }
@@ -345,7 +346,8 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     }
 
     /// <summary>
-    /// Makes the current batch ONLY distinct.  This only works if you have a bounded batch (see OrderByAndDistinctInMemory)
+    ///     Makes the current batch ONLY distinct.  This only works if you have a bounded batch (see
+    ///     OrderByAndDistinctInMemory)
     /// </summary>
     /// <param name="chunk"></param>
     /// <param name="listener"></param>
@@ -467,7 +469,10 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         return false;
     }
 
-    public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener) => sql;
+    public virtual string HackExtractionSQL(string sql, IDataLoadEventListener listener)
+    {
+        return sql;
+    }
 
     private void StartAudit(string sql)
     {
@@ -595,7 +600,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (Request == null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("ExtractionRequest has not been set", CheckResult.Fail));
-            return;
         }
     }
 }

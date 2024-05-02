@@ -11,8 +11,9 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Validation rule in which two columns are dependent on one another for validation according to a given PredictionRule.  For example the CHI number contains
-/// a gender digit, validation passes if the digit matches the selected gender column (See ChiSexPredictor).
+///     Validation rule in which two columns are dependent on one another for validation according to a given
+///     PredictionRule.  For example the CHI number contains
+///     a gender digit, validation passes if the digit matches the selected gender column (See ChiSexPredictor).
 /// </summary>
 public class Prediction : SecondaryConstraint
 {
@@ -59,8 +60,11 @@ public class Prediction : SecondaryConstraint
     }
 
 
-    private static bool OtherFieldInfoIsNotProvided(object[] otherColumns, string[] otherColumnNames) =>
-        otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null || otherColumnNames.Length < 1;
+    private static bool OtherFieldInfoIsNotProvided(object[] otherColumns, string[] otherColumnNames)
+    {
+        return otherColumns == null || otherColumns.Length < 1 || otherColumnNames == null ||
+               otherColumnNames.Length < 1;
+    }
 
 
     public override void RenameColumn(string originalName, string newName)
@@ -69,8 +73,10 @@ public class Prediction : SecondaryConstraint
             TargetColumn = newName;
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() =>
-        Rule == null
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return Rule == null
             ? "Normally checks input against prediction rule but no rule has yet been configured"
             : $"Checks that input follows its prediction rule: '{Rule.GetType().Name}'";
+    }
 }

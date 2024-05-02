@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -31,16 +30,13 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)
-/// and inserts the results of the query into RAW.
+///     Data load component for loading RAW tables with records read from a remote database server.  Runs the specified
+///     query (which can include a date parameter)
+///     and inserts the results of the query into RAW.
 /// </summary>
 public class RemoteTableAttacher : RemoteAttacher
 {
     private const string FutureLoadMessage = "Cannot load data from the future";
-
-    public RemoteTableAttacher() : base()
-    {
-    }
 
     [DemandsInitialization(
         "The server to connect to (this replaces all other settings e.g. RemoteServer, RemoteDatabaseName etc")]
@@ -100,7 +96,7 @@ public class RemoteTableAttacher : RemoteAttacher
     private DiscoveredDatabase _remoteDatabase;
 
     /// <summary>
-    /// If parameters are not supported in SQL and have to be injected as DbParameter objects
+    ///     If parameters are not supported in SQL and have to be injected as DbParameter objects
     /// </summary>
     private DateTime? _minDateParam;
 
@@ -215,7 +211,7 @@ public class RemoteTableAttacher : RemoteAttacher
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "LoadDirectory was null in Check() for class RemoteTableAttacher",
-                CheckResult.Warning, null));
+                CheckResult.Warning));
         }
 
 
@@ -239,14 +235,14 @@ public class RemoteTableAttacher : RemoteAttacher
                     else
                     {
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            "User decided not to apply suggested fix so stopping checking", CheckResult.Fail, null));
+                            "User decided not to apply suggested fix so stopping checking", CheckResult.Fail));
                     }
                 }
                 else
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
-                        CheckResult.Fail, null));
+                        CheckResult.Fail));
                 }
             }
 
@@ -266,17 +262,17 @@ public class RemoteTableAttacher : RemoteAttacher
             if (string.IsNullOrWhiteSpace(RemoteSelectSQL))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "A LoadProgress has been configured but the RemoteSelectSQL is empty, how are you respecting the schedule without tailoring your query?",
-                    CheckResult.Fail, null));
+                    CheckResult.Fail));
             else
                 foreach (var expectedParameter in new[] { StartDateParameter, EndDateParameter })
                     if (RemoteSelectSQL.Contains(expectedParameter))
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Found {expectedParameter} in the RemoteSelectSQL",
-                            CheckResult.Success, null));
+                            CheckResult.Success));
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Could not find any reference to parameter {expectedParameter} in the RemoteSelectSQL, how do you expect to respect the LoadProgress you have configured without a reference to this date?",
-                            CheckResult.Fail, null));
+                            CheckResult.Fail));
         }
 
         // If user hasn't picked a table to load (either explicit or free text)
@@ -291,7 +287,8 @@ public class RemoteTableAttacher : RemoteAttacher
                 CheckResult.Warning));
 
         if (HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
-            throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
+            throw new Exception(
+                "No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
     protected void CheckTablesExist(ICheckNotifier notifier)
@@ -312,11 +309,11 @@ public class RemoteTableAttacher : RemoteAttacher
             if (tables.Contains(RemoteTableName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"successfully found table {RemoteTableName} on server {_remoteDatabase.Server} on database {_remoteDatabase}",
-                    CheckResult.Success, null));
+                    CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Could not find table called '{RemoteTableName}' on server {_remoteDatabase.Server} on database {_remoteDatabase}{Environment.NewLine}(The following tables were found:{string.Join(",", tables)})",
-                    CheckResult.Fail, null));
+                    CheckResult.Fail));
         }
         catch (Exception e)
         {
@@ -361,7 +358,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
             ? RemoteSelectSQL
-            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,DatabaseType)}";
+            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
 
         var scheduleMismatch = false;
         //if there is a load progress
@@ -456,9 +453,7 @@ public class RemoteTableAttacher : RemoteAttacher
         }
 
         if (SetDeltaReadingToLatestSeenDatePostLoad)
-        {
-            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
-        }
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job);
 
 
         return ExitCodeType.Success;

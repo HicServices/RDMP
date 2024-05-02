@@ -21,15 +21,15 @@ using Rdmp.Core.Sharing.Dependency.Gathering;
 namespace Rdmp.Core.Sharing.Transmission;
 
 /// <summary>
-/// Serializes collections of RDMP objects into BINARY Json and streams to a RemoteRDMP endpoint.
+///     Serializes collections of RDMP objects into BINARY Json and streams to a RemoteRDMP endpoint.
 /// </summary>
 public class RemotePushingService
 {
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
     private readonly IDataLoadEventListener listener;
     private readonly IEnumerable<RemoteRDMP> remotes;
-    private Gatherer _gatherer;
-    private ShareManager _shareManager;
+    private readonly Gatherer _gatherer;
+    private readonly ShareManager _shareManager;
 
     public RemotePushingService(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IDataLoadEventListener listener)

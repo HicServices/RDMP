@@ -17,7 +17,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 /// <summary>
-/// Creates a new <see cref="Catalogue"/> reference in the RDMP database pointing to a table (which must already exist) in a relational database
+///     Creates a new <see cref="Catalogue" /> reference in the RDMP database pointing to a table (which must already
+///     exist) in a relational database
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : CatalogueCreationCommandExecution
 {
@@ -65,11 +66,18 @@ public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable : Cata
             ti.DeleteInDatabase();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    }
 
-    public override string GetCommandHelp() => GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
+    public override string GetCommandHelp()
+    {
+        return GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
+    }
 
-    public override string GetCommandName() =>
-        OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+    public override string GetCommandName()
+    {
+        return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+    }
 }

@@ -31,20 +31,25 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or load / curate data.
-/// These can be created most easily by using TableInfoImporter.  This entity is the hanging off point for PreLoadDiscardedColumn, ColumnInfo etc
-/// 
-/// <para>TDescribes an sql table (or table valued function) on a given [DBMS] Server from which you intend to either extract and/or load / curate data.
-/// A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes
-/// (e.g. dropping columns) (see <see cref="TableInfoSynchronizer"/>).</para>
+///     Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or
+///     load / curate data.
+///     These can be created most easily by using TableInfoImporter.  This entity is the hanging off point for
+///     PreLoadDiscardedColumn, ColumnInfo etc
+///     <para>
+///         TDescribes an sql table (or table valued function) on a given [DBMS] Server from which you intend to either
+///         extract and/or load / curate data.
+///         A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at
+///         any time to handle schema changes
+///         (e.g. dropping columns) (see <see cref="TableInfoSynchronizer" />).
+///     </para>
 /// </summary>
 public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,
     ICheckable
 {
     /// <summary>
-    /// Cached results of <see cref="GetQuerySyntaxHelper"/>
+    ///     Cached results of <see cref="GetQuerySyntaxHelper" />
     /// </summary>
-    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
+    private static readonly ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
 
     #region Database Properties
 
@@ -61,7 +66,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     private bool _isView;
 
     /// <summary>
-    /// Fully specified table name
+    ///     Fully specified table name
     /// </summary>
     [Sql]
     [NotNull]
@@ -71,21 +76,21 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DatabaseType DatabaseType
     {
         get => _databaseType;
         set => SetField(ref _databaseType, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Server
     {
         get => _server;
         set => SetField(ref _server, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Database
     {
@@ -94,7 +99,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <summary>
-    /// Obsolete
+    ///     Obsolete
     /// </summary>
     [Obsolete("Not used for anything")]
     public string State
@@ -104,7 +109,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <summary>
-    /// Obsolete
+    ///     Obsolete
     /// </summary>
     [Obsolete("Not used for anything")]
     [DoNotExtractProperty]
@@ -114,28 +119,28 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         set => SetField(ref _validationXml, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsPrimaryExtractionTable
     {
         get => _isPrimaryExtractionTable;
         set => SetField(ref _isPrimaryExtractionTable, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? IdentifierDumpServer_ID
     {
         get => _identifierDumpServer_ID;
         set => SetField(ref _identifierDumpServer_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsTableValuedFunction
     {
         get => _isTableValuedFunction;
         set => SetField(ref _isTableValuedFunction, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Schema
     {
         get => _schema;
@@ -152,21 +157,21 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
     private Lazy<ColumnInfo[]> _knownColumnInfos;
     private Lazy<bool> _knownIsLookup;
-    private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new();
+    private readonly Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new();
 
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ColumnInfo[] ColumnInfos => _knownColumnInfos.Value;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public PreLoadDiscardedColumn[] PreLoadDiscardedColumns =>
         Repository.GetAllObjectsWithParent<PreLoadDiscardedColumn>(this);
 
-    /// <inheritdoc cref="IdentifierDumpServer_ID"/>
+    /// <inheritdoc cref="IdentifierDumpServer_ID" />
     [NoMappingToDatabase]
     public ExternalDatabaseServer IdentifierDumpServer =>
         IdentifierDumpServer_ID == null
@@ -181,8 +186,8 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <summary>
-    /// Defines a new table reference in the platform database <paramref name="repository"/>.
-    /// <para>Usually you should use <see cref="TableInfoImporter"/> instead</para>
+    ///     Defines a new table reference in the platform database <paramref name="repository" />.
+    ///     <para>Usually you should use <see cref="TableInfoImporter" /> instead</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -224,14 +229,20 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters() => CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    /// <inheritdoc />
+    public ISqlParameter[] GetAllParameters()
+    {
+        return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    }
 
     /// <summary>
-    /// Sorts two <see cref="TableInfo"/> alphabetically
+    ///     Sorts two <see cref="TableInfo" /> alphabetically
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
@@ -245,18 +256,26 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
 
-    /// <inheritdoc/>
-    public string GetRuntimeName() => GetQuerySyntaxHelper().GetRuntimeName(Name);
+    /// <inheritdoc />
+    public string GetRuntimeName()
+    {
+        return GetQuerySyntaxHelper().GetRuntimeName(Name);
+    }
 
-    /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName"/>
-    public string GetFullyQualifiedName() =>
-        GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
+    /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName" />
+    public string GetFullyQualifiedName()
+    {
+        return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());
+    }
 
-    /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()"/>
-    public string GetDatabaseRuntimeName() => Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
+    /// <inheritdoc cref="ITableInfo.GetDatabaseRuntimeName()" />
+    public string GetDatabaseRuntimeName()
+    {
+        return Database.Trim(QuerySyntaxHelper.TableNameQualifiers);
+    }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDatabaseRuntimeName(LoadStage loadStage, INameDatabasesAndTablesDuringLoads namer = null)
     {
         var baseName = GetDatabaseRuntimeName();
@@ -266,7 +285,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         return namer.GetDatabaseName(baseName, loadStage.ToLoadBubble());
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetRuntimeName(LoadBubble bubble, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
     {
         // If no naming scheme is specified, the default 'FixedStaging...' prepends the database name and appends '_STAGING'
@@ -277,19 +296,23 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         return tableNamingScheme.GetName(baseName, bubble);
     }
 
-    /// <inheritdoc/>
-    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null) =>
-        GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
+    /// <inheritdoc />
+    public string GetRuntimeName(LoadStage stage, INameDatabasesAndTablesDuringLoads tableNamingScheme = null)
+    {
+        return GetRuntimeName(stage.ToLoadBubble(), tableNamingScheme);
+    }
 
-    /// <inheritdoc/>
-    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context) =>
-        context == DataAccessContext.Any
+    /// <inheritdoc />
+    public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
+    {
+        return context == DataAccessContext.Any
             ? throw new Exception("You cannot ask for any credentials, you must supply a usage context.")
             : _knownCredentials[context].Value;
+    }
 
     /// <summary>
-    /// Declares that the given <paramref name="credentials"/> should be used to access the data table referenced by this
-    /// <see cref="TableInfo"/> under the given <see cref="DataAccessContext"/> (loading data etc).
+    ///     Declares that the given <paramref name="credentials" /> should be used to access the data table referenced by this
+    ///     <see cref="TableInfo" /> under the given <see cref="DataAccessContext" /> (loading data etc).
     /// </summary>
     /// <param name="credentials">Credentials to use (username / encrypted password)</param>
     /// <param name="context">When the credentials can be used (Use Any for any case)</param>
@@ -325,7 +348,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         CatalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return
@@ -335,13 +358,17 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
                 .ToArray();
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => ColumnInfos.ToArray();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return ColumnInfos.ToArray();
+    }
 
 
     /// <summary>
-    /// Checks that the table referenced exists on the database server and that its properties and <see cref="ColumnInfo"/> etc are synchronized with the live
-    /// table as it exists on the server.
+    ///     Checks that the table referenced exists on the database server and that its properties and
+    ///     <see cref="ColumnInfo" /> etc are synchronized with the live
+    ///     table as it exists on the server.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -364,8 +391,8 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     }
 
     /// <summary>
-    /// Higher performance version of <see cref="IsLookupTable()"/> when you have
-    /// a <see cref="ICoreChildProvider"/> around for rapid in memory answers
+    ///     Higher performance version of <see cref="IsLookupTable()" /> when you have
+    ///     a <see cref="ICoreChildProvider" /> around for rapid in memory answers
     /// </summary>
     /// <param name="childProvider"></param>
     /// <returns></returns>
@@ -376,15 +403,24 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         return ColumnInfos.Any(c => lookupDescriptionColumnInfoIds.Contains(c.ID));
     }
 
-    /// <inheritdoc/>
-    public bool IsLookupTable() => _knownIsLookup.Value;
+    /// <inheritdoc />
+    public bool IsLookupTable()
+    {
+        return _knownIsLookup.Value;
+    }
 
-    private bool FetchIsLookup() => CatalogueRepository.IsLookupTable(this);
+    private bool FetchIsLookup()
+    {
+        return CatalogueRepository.IsLookupTable(this);
+    }
 
-    /// <inheritdoc/>
-    public Catalogue[] GetAllRelatedCatalogues() => CatalogueRepository.GetAllCataloguesUsing(this);
+    /// <inheritdoc />
+    public Catalogue[] GetAllRelatedCatalogues()
+    {
+        return CatalogueRepository.GetAllCataloguesUsing(this);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<IHasStageSpecificRuntimeName> GetColumnsAtStage(LoadStage loadStage)
     {
         //if it is AdjustRaw then it will also have the pre load discarded columns
@@ -410,17 +446,19 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
                 yield return c;
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
-        _cachedSyntaxHelpers.GetOrAdd(DatabaseType, QuerySyntaxHelperFactory.Create(DatabaseType));
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _cachedSyntaxHelpers.GetOrAdd(DatabaseType, QuerySyntaxHelperFactory.Create(DatabaseType));
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ColumnInfo[] instance)
     {
         _knownColumnInfos = new Lazy<ColumnInfo[]>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _knownColumnInfos = new Lazy<ColumnInfo[]>(FetchColumnInfos);
@@ -441,9 +479,12 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         }
     }
 
-    private ColumnInfo[] FetchColumnInfos() => Repository.GetAllObjectsWithParent<ColumnInfo, TableInfo>(this);
+    private ColumnInfo[] FetchColumnInfos()
+    {
+        return Repository.GetAllObjectsWithParent<ColumnInfo, TableInfo>(this);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DiscoveredTable Discover(DataAccessContext context)
     {
         var db = DataAccessPortal.ExpectDatabase(this, context);
@@ -453,7 +494,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
             : db.ExpectTable(GetRuntimeName(), Schema, IsView ? TableType.View : TableType.Table);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {
         DiscoveredTable tbl;
@@ -492,17 +533,26 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
 
     /// <summary>
-    /// Returns true if the TableInfo is a reference to the discovered live table (same database, same table name, same server)
-    /// <para>By default servername is not checked since you can have server aliases e.g. localhost\sqlexpress could be the same as 127.0.0.1\sqlexpress</para>
+    ///     Returns true if the TableInfo is a reference to the discovered live table (same database, same table name, same
+    ///     server)
+    ///     <para>
+    ///         By default servername is not checked since you can have server aliases e.g. localhost\sqlexpress could be the
+    ///         same as 127.0.0.1\sqlexpress
+    ///     </para>
     /// </summary>
-    /// <param name="discoveredTable">Pass true to also check the servername is EXACTLY the same (dangerous due to the fact that servers can be accessed by hostname or IP etc)</param>
+    /// <param name="discoveredTable">
+    ///     Pass true to also check the servername is EXACTLY the same (dangerous due to the fact
+    ///     that servers can be accessed by hostname or IP etc)
+    /// </param>
     /// <param name="alsoCheckServer"></param>
     /// <returns></returns>
-    public bool Is(DiscoveredTable discoveredTable, bool alsoCheckServer = false) =>
-        GetRuntimeName().Equals(discoveredTable.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
-        GetDatabaseRuntimeName()
-            .Equals(discoveredTable.Database.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
-        DatabaseType == discoveredTable.Database.Server.DatabaseType &&
-        (!alsoCheckServer ||
-         discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
+    public bool Is(DiscoveredTable discoveredTable, bool alsoCheckServer = false)
+    {
+        return GetRuntimeName().Equals(discoveredTable.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+               GetDatabaseRuntimeName()
+                   .Equals(discoveredTable.Database.GetRuntimeName(), StringComparison.CurrentCultureIgnoreCase) &&
+               DatabaseType == discoveredTable.Database.Server.DatabaseType &&
+               (!alsoCheckServer ||
+                discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
+    }
 }

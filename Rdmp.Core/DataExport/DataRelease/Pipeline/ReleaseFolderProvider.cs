@@ -17,8 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Middle component for preparing the Release Folders for the Release Pipeline.
-/// Some destination components will complain if this is not present!
+///     Middle component for preparing the Release Folders for the Release Pipeline.
+///     Some destination components will complain if this is not present!
 /// </summary>
 public class ReleaseFolderProvider : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<Project>,
     IPipelineRequirement<ReleaseData>

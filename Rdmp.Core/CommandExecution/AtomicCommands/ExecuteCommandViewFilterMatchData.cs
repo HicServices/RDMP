@@ -26,7 +26,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
     private ColumnInfo[] _candidates;
 
     /// <summary>
-    /// Views an extract of data from a column that matches a given <paramref name="filter"/>
+    ///     Views an extract of data from a column that matches a given <paramref name="filter" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="filter"></param>
@@ -133,6 +133,8 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             : (IViewSQLAndResultsCollection)collection;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);
+    }
 }

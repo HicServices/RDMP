@@ -11,8 +11,9 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values (if present) in a column must be within a certain range.  This can include referencing another column.  For example you could specify that
-/// Date of Birth must have an Inclusive Upper bound of Date of Death.
+///     Values (if present) in a column must be within a certain range.  This can include referencing another column.  For
+///     example you could specify that
+///     Date of Birth must have an Inclusive Upper bound of Date of Death.
 /// </summary>
 public abstract class Bound : SecondaryConstraint
 {

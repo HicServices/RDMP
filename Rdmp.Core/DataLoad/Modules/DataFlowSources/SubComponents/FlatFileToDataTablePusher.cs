@@ -20,8 +20,9 @@ using TypeGuesser.Deciders;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for adding rows read from the CSV file to
-/// the DataTable built by <see cref="FlatFileColumnCollection"/>.
+///     This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource" />, it is responsible for adding rows
+///     read from the CSV file to
+///     the DataTable built by <see cref="FlatFileColumnCollection" />.
 /// </summary>
 public class FlatFileToDataTablePusher
 {
@@ -31,28 +32,33 @@ public class FlatFileToDataTablePusher
     private readonly bool _attemptToResolveNewlinesInRecords;
     private readonly CultureInfo _culture;
     private readonly string _explicitDateTimeFormat;
-    private TypeDeciderFactory typeDeciderFactory;
+    private readonly TypeDeciderFactory typeDeciderFactory;
 
     /// <summary>
-    /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
-    /// make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines do not
-    /// resolve the problem then the line will be marked as BadData and the peeked records must be reprocessed by <see cref="DelimitedFlatFileDataFlowSource"/>
+    ///     Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if
+    ///     they
+    ///     make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines
+    ///     do not
+    ///     resolve the problem then the line will be marked as BadData and the peeked records must be reprocessed by
+    ///     <see cref="DelimitedFlatFileDataFlowSource" />
     /// </summary>
     public FlatFileLine PeekedRecord;
 
     /// <summary>
-    /// All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called multiple times without skipping
-    /// records by accident.
+    ///     All line numbers of the source file being read that could not be processed.  Allows BadDataFound etc to be called
+    ///     multiple times without skipping
+    ///     records by accident.
     /// </summary>
     public HashSet<int> BadLines = new();
 
     /// <summary>
-    /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
+    ///     This is incremented when too many values are read from the file to match the header count BUT the values read were
+    ///     null/empty
     /// </summary>
     private long _bufferOverrunsWhereColumnValueWasBlank;
 
     /// <summary>
-    /// We only complain once about headers not matching the number of cell values
+    ///     We only complain once about headers not matching the number of cell values
     /// </summary>
     private bool _haveComplainedAboutColumnMismatch;
 

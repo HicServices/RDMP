@@ -19,23 +19,23 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 /// <summary>
-/// Bulk inserts data into an (already existing) table, one chunk at a time
+///     Bulk inserts data into an (already existing) table, one chunk at a time
 /// </summary>
 public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipelineRequirement<ITableLoadInfo>
 {
     protected readonly string Table;
     private readonly List<string> _columnNamesToIgnore;
-    private string _taskBeingPerformed;
+    private readonly string _taskBeingPerformed;
 
     public const int Timeout = 5000;
 
     private IBulkCopy _copy;
-    private Stopwatch _timer = new();
+    private readonly Stopwatch _timer = new();
 
     protected ITableLoadInfo TableLoadInfo;
-    private DiscoveredDatabase _dbInfo;
+    private readonly DiscoveredDatabase _dbInfo;
 
-    private DiscoveredTable _table;
+    private readonly DiscoveredTable _table;
 
     public SqlBulkInsertDestination(DiscoveredDatabase dbInfo, string tableName,
         IEnumerable<string> columnNamesToIgnore)
@@ -91,9 +91,11 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
             if (columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
                 columnInDestination.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
                 //it's fine if validFrom/DataLoadRunID columns are missing
-                continue;//it's fine
-            else
-            if (!chunk.Columns.Contains(columnInDestination.GetRuntimeName()))//it's not fine if there are other columns missing (at the very least we should warn the user).
+            {
+            }
+            else if
+                (!chunk.Columns.Contains(columnInDestination
+                    .GetRuntimeName())) //it's not fine if there are other columns missing (at the very least we should warn the user).
             {
                 var isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
@@ -151,7 +153,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
         CloseConnection(listener);
     }
 
-    private bool _isDisposed = false;
+    private bool _isDisposed;
 
 
     private void CloseConnection(IDataLoadEventListener listener)

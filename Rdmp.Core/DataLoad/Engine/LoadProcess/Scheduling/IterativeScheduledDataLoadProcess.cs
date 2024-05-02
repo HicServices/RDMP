@@ -19,10 +19,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
 
 /// <summary>
-/// DataLoadProcess for LoadMetadata's which have one or more LoadProgresses (See ScheduledDataLoadProcess).  This version of ScheduledDataLoadProcess will
-/// run loads one after another until all LoadProgresses are exhausted (they have loaded all data up to today / when available data stops).  For example
-/// if you have a load 'Load biochemistry records' with a LoadProgress which 'loads 5 days at a time' and is currently at LoadProgress.DataLoadProgress of
-/// 2001-01-01 it will keep running data loads iteratively until the IDataLoadExecution returns OperationNotRequired (i.e. the load is up-to-date).
+///     DataLoadProcess for LoadMetadata's which have one or more LoadProgresses (See ScheduledDataLoadProcess).  This
+///     version of ScheduledDataLoadProcess will
+///     run loads one after another until all LoadProgresses are exhausted (they have loaded all data up to today / when
+///     available data stops).  For example
+///     if you have a load 'Load biochemistry records' with a LoadProgress which 'loads 5 days at a time' and is currently
+///     at LoadProgress.DataLoadProgress of
+///     2001-01-01 it will keep running data loads iteratively until the IDataLoadExecution returns OperationNotRequired
+///     (i.e. the load is up-to-date).
 /// </summary>
 public class IterativeScheduledDataLoadProcess : ScheduledDataLoadProcess
 {

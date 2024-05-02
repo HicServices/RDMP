@@ -12,8 +12,9 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
-/// table between ColumnInfos (with join direction / collation).
+///     Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes
+///     because they are mostly just a m-m relationship
+///     table between ColumnInfos (with join direction / collation).
 /// </summary>
 public class JoinManager : IJoinManager
 {
@@ -44,8 +45,10 @@ public class JoinManager : IJoinManager
                 .ToArray();
     }
 
-    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2) =>
-        GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
+    public JoinInfo[] GetAllJoinInfosBetweenColumnInfoSets(ColumnInfo[] set1, ColumnInfo[] set2)
+    {
+        return GetAllJoinInfosBetweenColumnInfoSets(_repository.GetAllObjects<JoinInfo>(), set1, set2);
+    }
 
     public JoinInfo[] GetAllJoinInfosWhereTableContains(ITableInfo tableInfo, JoinInfoType type)
     {

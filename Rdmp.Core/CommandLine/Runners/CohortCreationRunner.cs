@@ -17,12 +17,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Runner for Cohort Creation Tasks.
+///     Runner for Cohort Creation Tasks.
 /// </summary>
 public class CohortCreationRunner : Runner
 {
     private readonly CohortCreationOptions _options;
-    private ExtractionConfiguration _configuration;
+    private readonly ExtractionConfiguration _configuration;
 
     public CohortCreationRunner(CohortCreationOptions options)
     {

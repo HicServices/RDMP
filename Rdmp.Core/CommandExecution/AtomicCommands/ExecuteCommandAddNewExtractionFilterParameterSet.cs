@@ -14,9 +14,9 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new set of paramter values that model a concept (e.g. dementia
-/// ICD codes).  The filter must have parameters defined in it and the value
-/// set must provide accurate values for those parameters to model the concept
+///     Creates a new set of paramter values that model a concept (e.g. dementia
+///     ICD codes).  The filter must have parameters defined in it and the value
+///     set must provide accurate values for those parameters to model the concept
 /// </summary>
 public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExecution
 {
@@ -41,6 +41,8 @@ public class ExecuteCommandAddNewExtractionFilterParameterSet : BasicCommandExec
         Activate(parameterSet);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionFilterParameterSet, OverlayKind.Add);
+    }
 }

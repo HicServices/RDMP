@@ -27,9 +27,14 @@ public class ExecuteCommandCreateNewStandardRegex : BasicCommandExecution, IAtom
         Activate(regex);
     }
 
-    public override string GetCommandHelp() =>
-        "Regular Expressions are patterns that match a given text input.  StandardRegex allow a central declaration of a given pattern rather than copying and pasting it everywhere";
+    public override string GetCommandHelp()
+    {
+        return
+            "Regular Expressions are patterns that match a given text input.  StandardRegex allow a central declaration of a given pattern rather than copying and pasting it everywhere";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.StandardRegex, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.StandardRegex, OverlayKind.Add);
+    }
 }

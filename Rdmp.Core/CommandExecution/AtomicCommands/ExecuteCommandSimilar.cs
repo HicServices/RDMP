@@ -14,8 +14,9 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Find similar objects to an example e.g. all CHI columns in all datasets.  Optionally finds those with important differences only
-/// e.g. data type is different
+///     Find similar objects to an example e.g. all CHI columns in all datasets.  Optionally finds those with important
+///     differences only
+///     e.g. data type is different
 /// </summary>
 public sealed class ExecuteCommandSimilar : BasicCommandExecution
 {
@@ -23,8 +24,8 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
     private readonly bool _butDifferent;
 
     /// <summary>
-    /// Collection of all Types where finding differences between instances is supported by
-    /// <see cref="Include(IMapsDirectlyToDatabaseTable)"/>
+    ///     Collection of all Types where finding differences between instances is supported by
+    ///     <see cref="Include(IMapsDirectlyToDatabaseTable)" />
     /// </summary>
     private readonly Type[] _diffSupportedTypes = { typeof(ColumnInfo) };
 
@@ -32,7 +33,7 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
 
 
     /// <summary>
-    /// The objects matched by the command (similar or different objects)
+    ///     The objects matched by the command (similar or different objects)
     /// </summary>
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> Matched
     {
@@ -40,7 +41,7 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
     }
 
     /// <summary>
-    /// Set to true to make command show similar objects in interactive
+    ///     Set to true to make command show similar objects in interactive
     /// </summary>
     internal bool GoTo { get; init; }
 
@@ -110,10 +111,12 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
         }
     }
 
-    public override string GetCommandHelp() =>
-        _butDifferent
+    public override string GetCommandHelp()
+    {
+        return _butDifferent
             ? "Find objects with the same name but different implementation (e.g. different column data type)"
             : "Find other objects with the same or similar name to this";
+    }
 
     private bool IsSimilar(IMapsDirectlyToDatabaseTable other)
     {
@@ -131,11 +134,13 @@ public sealed class ExecuteCommandSimilar : BasicCommandExecution
 
     private static readonly char[] TrimChars = { ' ', '[', ']', '\'', '"', '`' };
 
-    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType) =>
-        !string.IsNullOrWhiteSpace(name1) && !string.IsNullOrWhiteSpace(name2) && string.Equals(
+    private static bool SimilarWord(string name1, string name2, StringComparison comparisonType)
+    {
+        return !string.IsNullOrWhiteSpace(name1) && !string.IsNullOrWhiteSpace(name2) && string.Equals(
             name1[Math.Max(0, name1.LastIndexOf('.'))..].Trim(TrimChars),
             name2[Math.Max(0, name2.LastIndexOf('.'))..].Trim(TrimChars),
             comparisonType);
+    }
 
     private bool Include(IMapsDirectlyToDatabaseTable arg)
     {

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -19,14 +20,20 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         DatabaseObjects = new List<IMapsDirectlyToDatabaseTable>();
     }
 
-    public virtual string SaveExtraText() => "";
+    public virtual string SaveExtraText()
+    {
+        return "";
+    }
 
     public virtual void LoadExtraText(string s)
     {
     }
 
-    protected bool Equals(PersistableObjectCollection other) => DatabaseObjects.SequenceEqual(other.DatabaseObjects) &&
-                                                                Equals(SaveExtraText(), other.SaveExtraText());
+    protected bool Equals(PersistableObjectCollection other)
+    {
+        return DatabaseObjects.SequenceEqual(other.DatabaseObjects) &&
+               Equals(SaveExtraText(), other.SaveExtraText());
+    }
 
     public override bool Equals(object obj)
     {
@@ -36,5 +43,8 @@ public abstract class PersistableObjectCollection : IPersistableObjectCollection
         return Equals((PersistableObjectCollection)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(DatabaseObjects, SaveExtraText());
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(DatabaseObjects, SaveExtraText());
+    }
 }

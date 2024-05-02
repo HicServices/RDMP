@@ -10,7 +10,7 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-/// A custom Validation exception, thrown when user-specified validation has failed in some way.
+///     A custom Validation exception, thrown when user-specified validation has failed in some way.
 /// </summary>
 public class ValidationFailure
 {
@@ -19,7 +19,7 @@ public class ValidationFailure
 
     public string Message { get; set; }
 
-    private List<ValidationFailure> eList;
+    private readonly List<ValidationFailure> eList;
 
     private ValidationFailure(string message)
     {
@@ -41,5 +41,8 @@ public class ValidationFailure
         eList = e;
     }
 
-    public List<ValidationFailure> GetExceptionList() => eList;
+    public List<ValidationFailure> GetExceptionList()
+    {
+        return eList;
+    }
 }

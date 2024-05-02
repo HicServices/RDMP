@@ -22,7 +22,8 @@ using TypeGuesser;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.
+///     Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are
+///     fast to detect at runtime.
 /// </summary>
 public class CatalogueProblemProvider : ProblemProvider
 {
@@ -32,12 +33,12 @@ public class CatalogueProblemProvider : ProblemProvider
     private JoinInfo[] _joinsWithMismatchedCollations = Array.Empty<JoinInfo>();
 
     /// <summary>
-    /// Set the culture for problem provision which is culture sensitive
-    /// e.g. detecting date values or leave null for the default system culture
+    ///     Set the culture for problem provision which is culture sensitive
+    ///     e.g. detecting date values or leave null for the default system culture
     /// </summary>
     public CultureInfo Culture;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
@@ -66,7 +67,7 @@ public class CatalogueProblemProvider : ProblemProvider
         ).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override string DescribeProblemImpl(object o)
     {
         return o switch
@@ -86,10 +87,12 @@ public class CatalogueProblemProvider : ProblemProvider
         };
     }
 
-    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode) =>
-        !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any()
+    public static string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
+    {
+        return !allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any()
             ? "Load has no Catalogues therefore loads no tables"
             : null;
+    }
 
     public string DescribeProblem(ISqlParameter parameter)
     {
@@ -128,8 +131,10 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode) =>
-        decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
+    public static string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
+    {
+        return decryptionPrivateKeyNode.KeyNotSpecified ? "No RSA encryption key has been created yet" : null;
+    }
 
     public string DescribeProblem(AggregateConfiguration aggregateConfiguration)
     {
@@ -142,14 +147,19 @@ public class CatalogueProblemProvider : ProblemProvider
             : null;
     }
 
-    public static string DescribeProblem(IFilter filter) =>
-        string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
+    public static string DescribeProblem(IFilter filter)
+    {
+        return string.IsNullOrWhiteSpace(filter.WhereSQL) ? "Filter is blank" : null;
+    }
 
-    public static string DescribeProblem(Catalogue catalogue) =>
-        !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
+    public static string DescribeProblem(Catalogue catalogue)
+    {
+        return !Catalogue.IsAcceptableName(catalogue.Name, out var reason) ? $"Invalid Name:{reason}" : null;
+    }
 
     /// <summary>
-    /// Identifies problems with dataset governance (e.g. <see cref="Catalogue"/> which have expired <see cref="GovernancePeriod"/>)
+    ///     Identifies problems with dataset governance (e.g. <see cref="Catalogue" /> which have expired
+    ///     <see cref="GovernancePeriod" />)
     /// </summary>
     /// <param name="allGovernanceNode"></param>
     /// <returns></returns>
@@ -216,9 +226,12 @@ public class CatalogueProblemProvider : ProblemProvider
         return null;
     }
 
-    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode) => LoadDirectoryNode.IsEmpty
-        ? "No Project Directory has been specified for the load"
-        : null;
+    private static string DescribeProblem(LoadDirectoryNode LoadDirectoryNode)
+    {
+        return LoadDirectoryNode.IsEmpty
+            ? "No Project Directory has been specified for the load"
+            : null;
+    }
 
     public string DescribeProblem(CatalogueItem catalogueItem)
     {
@@ -245,7 +258,7 @@ public class CatalogueProblemProvider : ProblemProvider
             // if there is a parent container
             var parents = _childProvider.GetDescendancyListIfAnyFor(container);
             if (parents?.Last() is CohortAggregateContainer { Operation: SetOperation.EXCEPT } parentContainer)
-            // which is EXCEPT
+                // which is EXCEPT
             {
                 // then something called 'inclusion criteria' should be the first among them
                 var first = _childProvider.GetChildren(parentContainer).OfType<IOrderable>().MinBy(o => o.Order);

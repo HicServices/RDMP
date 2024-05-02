@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -37,11 +38,11 @@ internal sealed class CatalogueItemsNodeStateBasedIconProvider : IObjectStateBas
             ? Basic
             : cin.Category.Value switch
             {
-                Curation.Data.ExtractionCategory.Core => Core,
-                Curation.Data.ExtractionCategory.Supplemental => Supplemental,
-                Curation.Data.ExtractionCategory.SpecialApprovalRequired => Special,
-                Curation.Data.ExtractionCategory.Internal => Internal,
-                Curation.Data.ExtractionCategory.Deprecated => Deprecated,
+                ExtractionCategory.Core => Core,
+                ExtractionCategory.Supplemental => Supplemental,
+                ExtractionCategory.SpecialApprovalRequired => Special,
+                ExtractionCategory.Internal => Internal,
+                ExtractionCategory.Deprecated => Deprecated,
                 _ => Basic
             };
     }

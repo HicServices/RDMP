@@ -17,8 +17,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing
-/// TableInfos (See TableInfoSynchronizer).
+///     Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.
+///     Can also be used to import new ColumnInfos into existing
+///     TableInfos (See TableInfoSynchronizer).
 /// </summary>
 public class TableInfoImporter : ITableInfoImporter
 {
@@ -35,14 +36,14 @@ public class TableInfoImporter : ITableInfoImporter
     private readonly DatabaseType _type;
 
     private DiscoveredServer _server;
-    private TableType _importTableType;
+    private readonly TableType _importTableType;
 
     #region Construction
 
     /// <summary>
-    /// Prepares to import the named table as a <see cref="TableInfo"/>
+    ///     Prepares to import the named table as a <see cref="TableInfo" />
     /// </summary>
-    /// <param name="repository">Repository to create the <see cref="TableInfo"/>/<see cref="ColumnInfo"/> in</param>
+    /// <param name="repository">Repository to create the <see cref="TableInfo" />/<see cref="ColumnInfo" /> in</param>
     /// <param name="importFromServer"></param>
     /// <param name="importDatabaseName"></param>
     /// <param name="importTableName"></param>
@@ -75,7 +76,8 @@ public class TableInfoImporter : ITableInfoImporter
     }
 
     /// <summary>
-    /// Prepares to import a reference to the <paramref name="table"/> as <see cref="TableInfo"/> and <see cref="ColumnInfo"/> in the RDMP <paramref name="catalogueRepository"/>
+    ///     Prepares to import a reference to the <paramref name="table" /> as <see cref="TableInfo" /> and
+    ///     <see cref="ColumnInfo" /> in the RDMP <paramref name="catalogueRepository" />
     /// </summary>
     /// <param name="catalogueRepository"></param>
     /// <param name="table"></param>
@@ -104,7 +106,7 @@ public class TableInfoImporter : ITableInfoImporter
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void DoImport(out ITableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
     {
         try
@@ -158,7 +160,7 @@ public class TableInfoImporter : ITableInfoImporter
             new DataAccessCredentialsFactory(_repository).Create(tableInfoCreated, _username, _password, _usageContext);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ColumnInfo CreateNewColumnInfo(ITableInfo parent, DiscoveredColumn discoveredColumn)
     {
         var col = new ColumnInfo((ICatalogueRepository)parent.Repository, discoveredColumn.GetFullyQualifiedName(),
@@ -178,7 +180,7 @@ public class TableInfoImporter : ITableInfoImporter
         return col;
     }
 
-    /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])"/>
+    /// <inheritdoc cref="DoImport(out ITableInfo,out ColumnInfo[])" />
     public void DoImport()
     {
         DoImport(out _, out _);

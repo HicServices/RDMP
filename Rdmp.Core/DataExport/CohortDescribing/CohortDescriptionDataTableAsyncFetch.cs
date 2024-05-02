@@ -13,12 +13,13 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)
+///     Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a
+///     cohort database (ExternalCohortTable)
 /// </summary>
 public class CohortDescriptionDataTableAsyncFetch
 {
-    public ExternalCohortTable Source { get; private set; }
-    public DataTable DataTable { get; private set; }
+    public ExternalCohortTable Source { get; }
+    public DataTable DataTable { get; }
     public Task Task { get; private set; }
 
 

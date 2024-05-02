@@ -9,17 +9,18 @@ using System;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// ICheckNotifier which accepts a;; ProposedFixes automatically and throws Exceptions on Fail messages (if there wasn't a ProposedFix)
+///     ICheckNotifier which accepts a;; ProposedFixes automatically and throws Exceptions on Fail messages (if there
+///     wasn't a ProposedFix)
 /// </summary>
 public class AcceptAllCheckNotifier : ICheckNotifier
 {
     /// <summary>
-    /// True to write out all messages seen directly to the console
+    ///     True to write out all messages seen directly to the console
     /// </summary>
     public bool WriteToConsole { get; init; }
 
     /// <summary>
-    /// Check handler that throws <see cref="Exception"/> on Failures but otherwise returns true
+    ///     Check handler that throws <see cref="Exception" /> on Failures but otherwise returns true
     /// </summary>
     /// <param name="args"></param>
     /// <returns></returns>

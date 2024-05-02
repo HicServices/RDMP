@@ -11,7 +11,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Encrypts a string, providing access to both the encrypted and decrypted values.
+///     Encrypts a string, providing access to both the encrypted and decrypted values.
 /// </summary>
 /// <exception cref="InvalidOperationException">Value is too long to be encrypted</exception>
 /// <exception cref="CryptographicException" />
@@ -20,10 +20,13 @@ public class EncryptedString : IEncryptedString
     private readonly IEncryptStrings _encrypter;
     private string _value;
 
-    /// <inheritdoc/>
-    public override string ToString() => Value;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Value;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Value
     {
         get =>
@@ -54,7 +57,7 @@ public class EncryptedString : IEncryptedString
     }
 
     /// <summary>
-    /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/>
+    ///     Creates a new encrypted string using <see cref="SimpleStringValueEncryption" />
     /// </summary>
     /// <param name="repository"></param>
     public EncryptedString(ICatalogueRepository repository)
@@ -62,7 +65,7 @@ public class EncryptedString : IEncryptedString
         _encrypter = repository.EncryptionManager.GetEncrypter();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetDecryptedValue()
     {
         if (string.IsNullOrWhiteSpace(Value))
@@ -75,6 +78,9 @@ public class EncryptedString : IEncryptedString
         throw new Exception("Found Value in memory that was not encrypted");
     }
 
-    /// <inheritdoc/>
-    public bool IsStringEncrypted(string value) => _encrypter.IsStringEncrypted(value);
+    /// <inheritdoc />
+    public bool IsStringEncrypted(string value)
+    {
+        return _encrypter.IsStringEncrypted(value);
+    }
 }

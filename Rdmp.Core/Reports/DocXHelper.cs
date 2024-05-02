@@ -15,10 +15,14 @@ using SixLabors.ImageSharp;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the .docx file so it doesn't actually require Microsoft
-/// Office to be installed on the machine using the class but in order to open the resulting files the user will need something compatible with .docx.
-/// 
-/// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
+///     Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the
+///     .docx file so it doesn't actually require Microsoft
+///     Office to be installed on the machine using the class but in order to open the resulting files the user will need
+///     something compatible with .docx.
+///     <para>
+///         Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding
+///         paragraphs/pictures/tables.
+///     </para>
 /// </summary>
 public class DocXHelper
 {
@@ -28,9 +32,8 @@ public class DocXHelper
     private const int H4Size = 11;
 
     /// <summary>
-    /// <see cref="Units.ToEMU(double)"/> seems to result in word showing images at 133% size.  This constant fixes that
-    /// problem when using the <see cref="GetPicture(XWPFDocument, Image)"/> methods.
-    /// 
+    ///     <see cref="Units.ToEMU(double)" /> seems to result in word showing images at 133% size.  This constant fixes that
+    ///     problem when using the <see cref="GetPicture(XWPFDocument, Image)" /> methods.
     /// </summary>
     private const float PICTURE_SCALING = 0.75f;
 
@@ -59,8 +62,9 @@ public class DocXHelper
         r0.SetText(htext ?? "");
     }
 
-    private static int GetSize(int headSize) =>
-        headSize switch
+    private static int GetSize(int headSize)
+    {
+        return headSize switch
         {
             1 => H1Size,
             2 => H2Size,
@@ -68,6 +72,7 @@ public class DocXHelper
             4 => H4Size,
             _ => throw new ArgumentOutOfRangeException(nameof(headSize))
         };
+    }
 
     protected static void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
     {
@@ -150,10 +155,13 @@ public class DocXHelper
         return f;
     }
 
-    protected static DirectoryInfo GetTempPath() => new(Path.GetTempPath());
+    protected static DirectoryInfo GetTempPath()
+    {
+        return new DirectoryInfo(Path.GetTempPath());
+    }
 
     /// <summary>
-    /// Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)"/>
+    ///     Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)" />
     /// </summary>
     /// <param name="filename"></param>
     /// <returns></returns>
@@ -164,7 +172,7 @@ public class DocXHelper
     }
 
     /// <summary>
-    /// Opens windows explorer to show the file
+    ///     Opens windows explorer to show the file
     /// </summary>
     /// <param name="fileInfo"></param>
     protected static void ShowFile(FileInfo fileInfo)
@@ -173,7 +181,7 @@ public class DocXHelper
     }
 
     /// <summary>
-    /// Opens windows explorer to show the document
+    ///     Opens windows explorer to show the document
     /// </summary>
     /// <param name="document"></param>
     protected static void ShowFile(XWPFDocumentFile document)
@@ -202,12 +210,14 @@ public class DocXHelper
     }
 
     /// <summary>
-    /// Creates a new document in the location of <paramref name="fileInfo"/>
+    ///     Creates a new document in the location of <paramref name="fileInfo" />
     /// </summary>
     /// <param name="fileInfo"></param>
     /// <returns></returns>
-    protected static XWPFDocumentFile GetNewDocFile(FileInfo fileInfo) =>
-        new(fileInfo, new FileStream(fileInfo.FullName, FileMode.Create));
+    protected static XWPFDocumentFile GetNewDocFile(FileInfo fileInfo)
+    {
+        return new XWPFDocumentFile(fileInfo, new FileStream(fileInfo.FullName, FileMode.Create));
+    }
 
     protected static void InsertSectionPageBreak(XWPFDocument document)
     {
@@ -242,7 +252,7 @@ public class DocXHelper
     }
 
     /// <summary>
-    /// Sets the page margins to <paramref name="marginSize"/> in hundredths of an inch e.g. 20 = 0.20"
+    ///     Sets the page margins to <paramref name="marginSize" /> in hundredths of an inch e.g. 20 = 0.20"
     /// </summary>
     /// <param name="document"></param>
     /// <param name="marginSize"></param>
@@ -258,12 +268,16 @@ public class DocXHelper
         document.MarginBottom = marginSize;*/
     }
 
-    protected static float GetPageWidth() => 500;
+    protected static float GetPageWidth()
+    {
+        return 500;
+    }
 
     //return document.PageWidth;
     /// <summary>
-    /// An <see cref="XWPFDocument"/> pointed at a <see cref="FileStream"/> that implements <see cref="IDisposable"/> and
-    /// disposes of underlying stream when that happens.
+    ///     An <see cref="XWPFDocument" /> pointed at a <see cref="FileStream" /> that implements <see cref="IDisposable" />
+    ///     and
+    ///     disposes of underlying stream when that happens.
     /// </summary>
     protected class XWPFDocumentFile : XWPFDocument, IDisposable
     {

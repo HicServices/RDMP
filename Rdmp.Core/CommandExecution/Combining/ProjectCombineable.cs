@@ -10,13 +10,13 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// Makes <see cref="Project"/> objects draggable.  Cache any relevant slow to fetch
-/// info here so that it is available for rapid query as user waves it around over
-/// potential drop targets
+///     Makes <see cref="Project" /> objects draggable.  Cache any relevant slow to fetch
+///     info here so that it is available for rapid query as user waves it around over
+///     potential drop targets
 /// </summary>
 public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
-    public Project Project { get; private set; }
+    public Project Project { get; }
 
     public IHasFolder Folderable => Project;
 
@@ -25,5 +25,8 @@ public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
         Project = project;
     }
 
-    public string GetSqlString() => "";
+    public string GetSqlString()
+    {
+        return "";
+    }
 }

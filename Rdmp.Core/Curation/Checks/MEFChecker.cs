@@ -12,12 +12,16 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Checks;
 
 /// <summary>
-/// This class checks for the existence of a given MEF export e.g. .  The class to find should be a fully expressed path to the class
-/// e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will not only check at runtime that the class
-/// exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name as the missing MEF but in a different namespace
-/// 
-/// <para>If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action userAcceptedSubstitution is called with the new class name</para>
-/// 
+///     This class checks for the existence of a given MEF export e.g. .  The class to find should be a fully expressed
+///     path to the class
+///     e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will
+///     not only check at runtime that the class
+///     exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name
+///     as the missing MEF but in a different namespace
+///     <para>
+///         If the Check method finds a namespace change and the ICheckNotifier accepts the substitution then the Action
+///         userAcceptedSubstitution is called with the new class name
+///     </para>
 /// </summary>
 public class MEFChecker : ICheckable
 {
@@ -25,8 +29,10 @@ public class MEFChecker : ICheckable
     private readonly Action<string> _userAcceptedSubstitution;
 
     /// <summary>
-    /// Setup the checker to look for a specific class within the defined Types in all assemblies loaded in MEF.  The Action will be called if the class name is found
-    /// in a different namespace/assembly and the check handler accepts the proposed fix.  It is up to you to decide what to do with this information.
+    ///     Setup the checker to look for a specific class within the defined Types in all assemblies loaded in MEF.  The
+    ///     Action will be called if the class name is found
+    ///     in a different namespace/assembly and the check handler accepts the proposed fix.  It is up to you to decide what
+    ///     to do with this information.
     /// </summary>
     /// <param name="classToFind"></param>
     /// <param name="userAcceptedSubstitution"></param>
@@ -37,9 +43,11 @@ public class MEFChecker : ICheckable
     }
 
     /// <summary>
-    /// Looks for the class name within the defined Types in all assemblies loaded in MEF.  If you pass an ICheckNotifier which responds to ProposedFixes and the class
-    /// is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location in his assembly) then the callback
-    /// userAcceptedSubstitution will be invoked.  Use AcceptAllCheckNotifier if you want the callback to always be called.
+    ///     Looks for the class name within the defined Types in all assemblies loaded in MEF.  If you pass an ICheckNotifier
+    ///     which responds to ProposedFixes and the class
+    ///     is found under a different namespace (e.g. due to the coder of the plugin refactoring the class to a new location
+    ///     in his assembly) then the callback
+    ///     userAcceptedSubstitution will be invoked.  Use AcceptAllCheckNotifier if you want the callback to always be called.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -48,7 +56,7 @@ public class MEFChecker : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
             return;
         }
 
@@ -60,7 +68,7 @@ public class MEFChecker : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found MEF class {_classToFind}",
-                CheckResult.Success, null));
+                CheckResult.Success));
         }
         else
         {
@@ -69,37 +77,37 @@ public class MEFChecker : ICheckable
             switch (substitute.Length)
             {
                 case 0:
-                    {
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
+                        CheckResult.Fail));
+
+                    var badAssemblies = MEF.ListBadAssemblies();
+
+                    if (badAssemblies.Any())
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Could not find MEF class called {_classToFind} in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name (Note that we only checked Exported MEF types e.g. classes implementing IPluginAttacher, IPluginDataProvider etc)",
-                            CheckResult.Fail, null));
-
-                        var badAssemblies = MEF.ListBadAssemblies();
-
-                        if (badAssemblies.Any())
-                            notifier.OnCheckPerformed(new CheckEventArgs(
-                                "It is possible that the class you are looking for is in the BadAssemblies list",
-                                CheckResult.Fail, null));
-                        foreach (var (assembly, exception) in badAssemblies)
-                            notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
-                                exception));
-                        break;
-                    }
+                            "It is possible that the class you are looking for is in the BadAssemblies list",
+                            CheckResult.Fail));
+                    foreach (var (assembly, exception) in badAssemblies)
+                        notifier.OnCheckPerformed(new CheckEventArgs($"Bad Assembly {assembly}", CheckResult.Warning,
+                            exception));
+                    break;
+                }
                 case 1:
-                    {
-                        var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
-                            $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
-                            CheckResult.Fail, null,
-                            $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));
+                {
+                    var acceptSubstitution = notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Could not find MEF class called {_classToFind} but did find one called {substitute[0].FullName}",
+                        CheckResult.Fail, null,
+                        $"Change reference to {_classToFind} to point to MEF assembly type {substitute[0].FullName}"));
 
-                        if (acceptSubstitution)
-                            _userAcceptedSubstitution(substitute[0].FullName);
-                        break;
-                    }
+                    if (acceptSubstitution)
+                        _userAcceptedSubstitution(substitute[0].FullName);
+                    break;
+                }
                 default:
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Could not find MEF class called {_classToFind}, we were looking for a suitable replacement (a Type with the same basic name) but we found {substitute.Length} substitutions! ({substitute.Aggregate("", (s, n) => $"{s}{n.FullName},")}",
-                        CheckResult.Fail, null));
+                        CheckResult.Fail));
                     break;
             }
         }

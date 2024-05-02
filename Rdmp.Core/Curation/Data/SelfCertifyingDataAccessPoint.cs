@@ -15,22 +15,26 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These
-/// These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections use integrated/windows security).
-/// 
-/// <para>Instead of doing that however, you can use this class to store all the bits in one object that implements both interfaces.  It can then be used with a
-/// DataAccessPortal.</para>
+///     Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional
+///     IDataAccessCredentials (username and encrypted password).  These
+///     These are usually two separate objects e.g. TableInfo and DataAccessCredentials (optional - if ommmited connections
+///     use integrated/windows security).
+///     <para>
+///         Instead of doing that however, you can use this class to store all the bits in one object that implements both
+///         interfaces.  It can then be used with a
+///         DataAccessPortal.
+///     </para>
 /// </summary>
 public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessCredentials, IDataAccessPoint
 {
     /// <summary>
-    /// Blank constructor for use with serializers
+    ///     Blank constructor for use with serializers
     /// </summary>
     public SelfCertifyingDataAccessPoint()
     {
     }
 
-    /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
+    /// <inheritdoc cref="SelfCertifyingDataAccessPoint" />
     public SelfCertifyingDataAccessPoint(ICatalogueRepository repository, DatabaseType databaseType) : base(repository)
     {
         DatabaseType = databaseType;
@@ -46,20 +50,20 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
         Password = server.ExplicitPasswordIfAny;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Server { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Database { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Username { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public DatabaseType DatabaseType { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IDataAccessCredentials GetCredentialsIfExists(DataAccessContext context)
     {
         //this class is not configured with a username so pretend like we don't have any credentials
@@ -70,8 +74,11 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
         return this;
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => QuerySyntaxHelperFactory.Create(DatabaseType);
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return QuerySyntaxHelperFactory.Create(DatabaseType);
+    }
 
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {
@@ -97,5 +104,8 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
         return true;
     }
 
-    internal DiscoveredDatabase Discover(DataAccessContext context) => DataAccessPortal.ExpectDatabase(this, context);
+    internal DiscoveredDatabase Discover(DataAccessContext context)
+    {
+        return DataAccessPortal.ExpectDatabase(this, context);
+    }
 }

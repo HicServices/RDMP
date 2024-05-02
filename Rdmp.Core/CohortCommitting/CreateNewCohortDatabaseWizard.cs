@@ -19,15 +19,19 @@ using TypeGuesser;
 namespace Rdmp.Core.CohortCommitting;
 
 /// <summary>
-/// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns
-/// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="IAllocateReleaseIdentifiers"/>)
-///  e.g. varchar(10) private patient identifier gets mapped to a new GUID.
-/// 
-/// <para>This implementation is intended to be a basic solution only and lacks advanced features such having the same release identifier for the same primary
-/// key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't want people to be able to link patients
-/// across project extracts they are working on).</para>
-/// 
-/// <para>See UserManual.md for more information on how to tailor the resulting database to fit your needs.</para>
+///     Creates an ExternalCohortTable database implementation.  The implementation will be based on your live
+///     IsExtractionIdentifier columns
+///     (PrivateIdentifierPrototype) and a release identifier allocation strategy (
+///     <see cref="IAllocateReleaseIdentifiers" />)
+///     e.g. varchar(10) private patient identifier gets mapped to a new GUID.
+///     <para>
+///         This implementation is intended to be a basic solution only and lacks advanced features such having the same
+///         release identifier for the same primary
+///         key in subsequent versions of the same cohort (generally you want 1 - m private identifiers because you don't
+///         want people to be able to link patients
+///         across project extracts they are working on).
+///     </para>
+///     <para>See UserManual.md for more information on how to tailor the resulting database to fit your needs.</para>
 /// </summary>
 public class CreateNewCohortDatabaseWizard
 {
@@ -111,7 +115,7 @@ public class CreateNewCohortDatabaseWizard
             var idColumn = definitionTable.DiscoverColumn("id");
             var foreignKey =
                 new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
-                { IsPrimaryKey = true };
+                    { IsPrimaryKey = true };
 
             // Look up the collations of all the private identifier columns
             var collations = privateIdentifierPrototype.MatchingExtractionInformations

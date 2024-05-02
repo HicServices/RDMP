@@ -27,11 +27,17 @@ public class TableInfoServerNode : Node
         Tables = tables.ToArray();
     }
 
-    public override string ToString() => ServerName;
+    public override string ToString()
+    {
+        return ServerName;
+    }
 
-    protected bool Equals(TableInfoServerNode other) => DatabaseType == other.DatabaseType &&
-                                                        string.Equals(ServerName, other.ServerName,
-                                                            StringComparison.CurrentCultureIgnoreCase);
+    protected bool Equals(TableInfoServerNode other)
+    {
+        return DatabaseType == other.DatabaseType &&
+               string.Equals(ServerName, other.ServerName,
+                   StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public override bool Equals(object obj)
     {
@@ -41,10 +47,15 @@ public class TableInfoServerNode : Node
         return Equals((TableInfoServerNode)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(DatabaseType, ServerName);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(DatabaseType, ServerName);
+    }
 
-    public bool IsSameServer(TableInfo tableInfo) =>
-        ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)
-        &&
-        DatabaseType == tableInfo.DatabaseType;
+    public bool IsSameServer(TableInfo tableInfo)
+    {
+        return ServerName.Equals(tableInfo.Server ?? NullServerNode, StringComparison.CurrentCultureIgnoreCase)
+               &&
+               DatabaseType == tableInfo.DatabaseType;
+    }
 }

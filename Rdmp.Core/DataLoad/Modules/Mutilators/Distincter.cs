@@ -12,11 +12,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// This component will make all tables matching the <see cref="MatchingTablesMutilator.TableRegexPattern"/> distinct.  It should only be run in RAW.
-/// 
-/// <para>The RAW=>STAGING migration will already take care of identical records.  This means this component is only useful for
-/// debugging failed RAW batches or running SQL that is intented to resolve PK collisions / data integrity issues where identical
-/// duplicates make the process slow / difficult.</para>
+///     This component will make all tables matching the <see cref="MatchingTablesMutilator.TableRegexPattern" /> distinct.
+///     It should only be run in RAW.
+///     <para>
+///         The RAW=>STAGING migration will already take care of identical records.  This means this component is only
+///         useful for
+///         debugging failed RAW batches or running SQL that is intented to resolve PK collisions / data integrity issues
+///         where identical
+///         duplicates make the process slow / difficult.
+///     </para>
 /// </summary>
 public class Distincter : MatchingTablesMutilator
 {

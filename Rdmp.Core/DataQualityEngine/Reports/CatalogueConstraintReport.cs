@@ -29,8 +29,9 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
-/// Runs the DQE and populates Evaluation and sub tables with the results.  This includes counts of the number of rows / columns passing / failing validation
-/// nullness etc both overall and subdivided by month / pivot.
+///     Runs the DQE and populates Evaluation and sub tables with the results.  This includes counts of the number of rows
+///     / columns passing / failing validation
+///     nullness etc both overall and subdivided by month / pivot.
 /// </summary>
 public class CatalogueConstraintReport : DataQualityReport
 {
@@ -44,16 +45,16 @@ public class CatalogueConstraintReport : DataQualityReport
 
     public static int MaximumPivotValues = 5000;
 
-    private Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
-    private Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
+    private readonly Dictionary<string, DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new();
+    private readonly Dictionary<string, PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new();
 
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
     private LogManager _logManager;
 
     /// <summary>
-    /// Set this property to use an explicit DQE results store database instead of the
-    /// default DQE database indicated by the <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)"/>
+    ///     Set this property to use an explicit DQE results store database instead of the
+    ///     default DQE database indicated by the <see cref="IServerDefaults.GetDefaultFor(PermissableDefaults)" />
     /// </summary>
     public DQERepository ExplicitDQERepository { get; set; }
 
@@ -189,7 +190,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         //now we are sure that the dictionaries have the category field we can increment it
                         ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
+                            periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                     }
 
                     if (progress % 5000 == 0)

@@ -12,11 +12,12 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past / readonly event).
+///     Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past /
+///     readonly event).
 /// </summary>
 public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
 {
-    public int ID { get; private set; }
+    public int ID { get; }
     public DateTime Date { get; internal set; }
     public string Source { get; internal set; }
     public string Description { get; internal set; }
@@ -39,8 +40,11 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
             : s;
     }
 
-    public override string ToString() =>
-        $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
+    public override string ToString()
+    {
+        return
+            $"{Source} - {Description}{(string.IsNullOrWhiteSpace(Explanation) ? "(UNRESOLVED)" : $"(RESOLVED:{Explanation})")}";
+    }
 
     public int CompareTo(object obj)
     {

@@ -14,8 +14,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be extracted along with the extracted data
-/// set (See ExtractableDatasetBundle).
+///     Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be
+///     extracted along with the extracted data
+///     set (See ExtractableDatasetBundle).
 /// </summary>
 public class BundledLookupTable : IBundledLookupTable
 {
@@ -29,10 +30,13 @@ public class BundledLookupTable : IBundledLookupTable
         TableInfo = tableInfo;
     }
 
-    public override string ToString() => TableInfo.ToString();
+    public override string ToString()
+    {
+        return TableInfo.ToString();
+    }
 
     /// <summary>
-    /// Reads lookup data from the <see cref="TableInfo"/> using <see cref="DataAccessContext.DataExport"/>
+    ///     Reads lookup data from the <see cref="TableInfo" /> using <see cref="DataAccessContext.DataExport" />
     /// </summary>
     /// <returns></returns>
     public DataTable GetDataTable()
@@ -82,9 +86,9 @@ public class BundledLookupTable : IBundledLookupTable
     }
 
     /// <summary>
-    /// We only want Catalogues where all <see cref="CatalogueItem"/>
-    /// are us (i.e. we don't want to pick up Catalogues where we are
-    /// Description column slotted in amongst the other columns).
+    ///     We only want Catalogues where all <see cref="CatalogueItem" />
+    ///     are us (i.e. we don't want to pick up Catalogues where we are
+    ///     Description column slotted in amongst the other columns).
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>

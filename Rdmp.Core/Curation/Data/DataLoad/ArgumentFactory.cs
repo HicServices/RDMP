@@ -14,26 +14,42 @@ using Rdmp.Core.ReusableLibraryCode.Exceptions;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Provides methods for creating Argument values in the database for [DemandsInitialization] properties on classes (See Argument).  Every public property marked with
-/// [DemandsInitialization] on a plugin component will allow the user to specify a value of the appropriate type.  This class will handle not only creating the IArguments
-/// for a plugin component but also rationalising differences e.g. there is a new version of a class in the latest plugin with different [DemandsInitialization] properties,
-/// which Argument values are no longer needed and which new ones must be created to store configuration values.
-/// 
-/// <para>Remember that a given plugin class can have multiple instances of it deployed into different pipelines with different argument values.</para>
+///     Provides methods for creating Argument values in the database for [DemandsInitialization] properties on classes
+///     (See Argument).  Every public property marked with
+///     [DemandsInitialization] on a plugin component will allow the user to specify a value of the appropriate type.  This
+///     class will handle not only creating the IArguments
+///     for a plugin component but also rationalising differences e.g. there is a new version of a class in the latest
+///     plugin with different [DemandsInitialization] properties,
+///     which Argument values are no longer needed and which new ones must be created to store configuration values.
+///     <para>
+///         Remember that a given plugin class can have multiple instances of it deployed into different pipelines with
+///         different argument values.
+///     </para>
 /// </summary>
 public class ArgumentFactory
 {
-    /// <inheritdoc cref = "CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])"/>
+    /// <inheritdoc cref="CreateArgumentsForClassIfNotExistsGeneric(Type,IArgumentHost,IArgument[])" />
     /// <typeparam name="T">A class with one or more Properties marked with DemandsInitialization</typeparam>
-    /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
+    /// <returns>
+    ///     Each new ProcessTaskArgument created - note that it will not return existing ones that were already present
+    ///     (and therefore not created)
+    /// </returns>
     public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric<T>(IArgumentHost host,
-        IArgument[] existingArguments) => CreateArgumentsForClassIfNotExistsGeneric(typeof(T), host, existingArguments);
+        IArgument[] existingArguments)
+    {
+        return CreateArgumentsForClassIfNotExistsGeneric(typeof(T), host, existingArguments);
+    }
 
     /// <summary>
-    /// Interrogates a class via reflection and enumerates its properties to find any that have the attribute [DemandsInitialization]
-    /// Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under the parent ProcessTask
+    ///     Interrogates a class via reflection and enumerates its properties to find any that have the attribute
+    ///     [DemandsInitialization]
+    ///     Each one of these that is found is created as a ProcessTaskArgument of the appropriate Name and PropertyType under
+    ///     the parent ProcessTask
     /// </summary>
-    /// <returns>Each new ProcessTaskArgument created - note that it will not return existing ones that were already present (and therefore not created)</returns>
+    /// <returns>
+    ///     Each new ProcessTaskArgument created - note that it will not return existing ones that were already present
+    ///     (and therefore not created)
+    /// </returns>
     public static IEnumerable<IArgument> CreateArgumentsForClassIfNotExistsGeneric(
         Type underlyingClassTypeForWhichArgumentsWillPopulate, IArgumentHost host,
         IArgument[] existingArguments)
@@ -68,9 +84,12 @@ public class ArgumentFactory
     }
 
     /// <summary>
-    /// Gets all public properties of the given <paramref name="classType"/> decorated with <see cref="DemandsInitializationAttribute"/>.
-    /// 
-    /// <para>If there are any public properties encountered with <see cref="DemandsNestedInitializationAttribute"/> then the referenced class is also investigated in the same manner.</para>
+    ///     Gets all public properties of the given <paramref name="classType" /> decorated with
+    ///     <see cref="DemandsInitializationAttribute" />.
+    ///     <para>
+    ///         If there are any public properties encountered with <see cref="DemandsNestedInitializationAttribute" /> then
+    ///         the referenced class is also investigated in the same manner.
+    ///     </para>
     /// </summary>
     /// <param name="classType"></param>
     /// <returns></returns>
@@ -111,8 +130,9 @@ public class ArgumentFactory
     }
 
     /// <summary>
-    /// Creates <see cref="IArgument"/> instances for all demanded properties (See <see cref="GetRequiredProperties"/>) of the given class and deletes any old arguments
-    /// which are no longer required by the class (e.g. due to an API change).
+    ///     Creates <see cref="IArgument" /> instances for all demanded properties (See <see cref="GetRequiredProperties" />)
+    ///     of the given class and deletes any old arguments
+    ///     which are no longer required by the class (e.g. due to an API change).
     /// </summary>
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>
@@ -128,7 +148,7 @@ public class ArgumentFactory
 
         //get rid of arguments that are no longer required
         foreach (var argumentsNotRequired in existingArguments.Where(e => required.All(r => r.Name != e.Name)))
-            ((IDeleteable)argumentsNotRequired).DeleteInDatabase();
+            argumentsNotRequired.DeleteInDatabase();
 
         //create new arguments
         existingArguments.AddRange(CreateArgumentsForClassIfNotExistsGeneric(
@@ -143,14 +163,16 @@ public class ArgumentFactory
             {
                 //user wants to fix the problem
                 existing.SetType(r.PropertyInfo.PropertyType);
-                ((ISaveable)existing).SaveToDatabase();
+                existing.SaveToDatabase();
             }
         }
     }
 
     /// <summary>
-    /// Synchronizes all arguments (See SyncArgumentsForClass) for the supplied class (<paramref name="underlyingClassTypeForWhichArgumentsWillPopulate"/>) and returns the mapping
-    /// between <see cref="IArgument"/> (which stores the value) and public class property (<see cref="RequiredPropertyInfo"/>)
+    ///     Synchronizes all arguments (See SyncArgumentsForClass) for the supplied class (
+    ///     <paramref name="underlyingClassTypeForWhichArgumentsWillPopulate" />) and returns the mapping
+    ///     between <see cref="IArgument" /> (which stores the value) and public class property (
+    ///     <see cref="RequiredPropertyInfo" />)
     /// </summary>
     /// <param name="host"></param>
     /// <param name="underlyingClassTypeForWhichArgumentsWillPopulate"></param>

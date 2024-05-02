@@ -23,7 +23,7 @@ using MissingFieldException = System.MissingFieldException;
 namespace Rdmp.Core.DataLoad.Modules.Web;
 
 /// <summary>
-/// Data load component which downloads a file from a remote URL (e.g. http) into the ForLoading directory of the load.
+///     Data load component which downloads a file from a remote URL (e.g. http) into the ForLoading directory of the load.
 /// </summary>
 public class WebFileDownloader : IPluginDataProvider
 {
@@ -97,15 +97,23 @@ public class WebFileDownloader : IPluginDataProvider
                 $"Could not get response from {url} - {response.StatusCode} - {response.ReasonPhrase}");
     }
 
-    public string GetDescription() => throw new NotImplementedException();
+    public string GetDescription()
+    {
+        throw new NotImplementedException();
+    }
 
-    public IDataProvider Clone() => throw new NotImplementedException();
+    public IDataProvider Clone()
+    {
+        throw new NotImplementedException();
+    }
 
-    public bool Validate(ILoadDirectory _) =>
-        string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
+    public bool Validate(ILoadDirectory _)
+    {
+        return string.IsNullOrWhiteSpace(UriToFile?.PathAndQuery)
             ? throw new MissingFieldException(
                 "PathToFile is null or white space - should be populated externally as a parameter")
             : true;
+    }
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

@@ -25,8 +25,10 @@ public class ExecuteCommandUnfreezeExtractionConfiguration : BasicCommandExecuti
             SetImpossible("Extraction Configuration is not Frozen");
     }
 
-    public override string GetCommandHelp() =>
-        "Reopens a released extraction configuration and deletes all record of it ever having been released";
+    public override string GetCommandHelp()
+    {
+        return "Reopens a released extraction configuration and deletes all record of it ever having been released";
+    }
 
     public override void Execute()
     {
@@ -41,6 +43,8 @@ public class ExecuteCommandUnfreezeExtractionConfiguration : BasicCommandExecuti
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.UnfreezeExtractionConfiguration);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.UnfreezeExtractionConfiguration);
+    }
 }

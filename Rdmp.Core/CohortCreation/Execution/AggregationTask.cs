@@ -18,12 +18,14 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from
-/// TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the CachedAggregateConfigurationResultsManager.
+///     A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query
+///     like 'select distinct patientId from
+///     TableX where ...'.  The  query result table can/will be committed as a CacheCommitIdentifierList to  the
+///     CachedAggregateConfigurationResultsManager.
 /// </summary>
 public class AggregationTask : CacheableTask
 {
-    public AggregateConfiguration Aggregate { get; private set; }
+    public AggregateConfiguration Aggregate { get; }
 
     private readonly string _catalogueName;
     private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
@@ -45,7 +47,10 @@ public class AggregationTask : CacheableTask
     }
 
 
-    public override string GetCatalogueName() => _catalogueName;
+    public override string GetCatalogueName()
+    {
+        return _catalogueName;
+    }
 
     public override IMapsDirectlyToDatabaseTable Child => Aggregate;
 
@@ -59,7 +64,10 @@ public class AggregationTask : CacheableTask
         return name.StartsWith(expectedTrimStart) ? name[expectedTrimStart.Length..] : name;
     }
 
-    public override IDataAccessPoint[] GetDataAccessPoints() => Aggregate.Catalogue.GetTableInfoList(false);
+    public override IDataAccessPoint[] GetDataAccessPoints()
+    {
+        return Aggregate.Catalogue.GetTableInfoList(false);
+    }
 
     public override bool IsEnabled()
     {
@@ -67,11 +75,16 @@ public class AggregationTask : CacheableTask
         return !Aggregate.IsDisabled && !_allParentContainers.Any(c => c.IsDisabled);
     }
 
-    public override AggregateConfiguration GetAggregateConfiguration() => Aggregate;
+    public override AggregateConfiguration GetAggregateConfiguration()
+    {
+        return Aggregate;
+    }
 
     public override CacheCommitArguments GetCacheArguments(string sql, DataTable results,
-        DatabaseColumnRequest[] explicitTypes) =>
-        new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
+        DatabaseColumnRequest[] explicitTypes)
+    {
+        return new CacheCommitIdentifierList(Aggregate, sql, results, explicitTypes.Single(), Timeout);
+    }
 
     public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
     {

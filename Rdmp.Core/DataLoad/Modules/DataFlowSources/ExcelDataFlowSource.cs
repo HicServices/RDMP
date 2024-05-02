@@ -29,8 +29,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-/// Pipeline component for reading from Microsoft Excel files.  Reads only from a single worksheet (by default the first one in the workbook).  Data read
-/// is returned as a DataTable all read at once in one big batch.  This component requires Microsoft Office to be installed since it uses Interop.
+///     Pipeline component for reading from Microsoft Excel files.  Reads only from a single worksheet (by default the
+///     first one in the workbook).  Data read
+///     is returned as a DataTable all read at once in one big batch.  This component requires Microsoft Office to be
+///     installed since it uses Interop.
 /// </summary>
 public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
 {
@@ -55,7 +57,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     private DataTable dataReadFromFile;
     private bool haveDispatchedDataTable;
 
-    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
+    public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken,
+        int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         dataReadFromFile ??= GetAllData(listener, cancellationToken, rowOffset, columnOffset, replacementHeadersSplit);
 
@@ -67,7 +70,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return dataReadFromFile;
     }
 
-    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
+    private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken,
+        int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var sw = new Stopwatch();
         sw.Start();
@@ -117,7 +121,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     }
 
     /// <summary>
-    /// Returns all data held in the current <paramref name="worksheet"/>.  The first row of data becomes the headers.  Throws away fully blank columns/rows.
+    ///     Returns all data held in the current <paramref name="worksheet" />.  The first row of data becomes the headers.
+    ///     Throws away fully blank columns/rows.
     /// </summary>
     /// <param name="worksheet"></param>
     /// <param name="listener"></param>
@@ -125,7 +130,8 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     /// <param name="columnOffset"></param>
     /// <param name="replacementHeadersSplit"></param>
     /// <returns></returns>
-    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset = 0, int columnOffset = 0, string[] replacementHeadersSplit = null)
+    public DataTable GetAllData(ISheet worksheet, IDataLoadEventListener listener, int rowOffset = 0,
+        int columnOffset = 0, string[] replacementHeadersSplit = null)
     {
         var toReturn = new DataTable();
         toReturn.BeginLoadData();
@@ -138,7 +144,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         while (rowEnumerator.MoveNext())
         {
             var row = (IRow)rowEnumerator.Current;
-            if (rowOffset - 1 > row.RowNum) continue;// .RowNumber is 0 indexed
+            if (rowOffset - 1 > row.RowNum) continue; // .RowNumber is 0 indexed
 
             //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
             if (row.Cells.All(c => string.IsNullOrWhiteSpace(c.ToString())))
@@ -152,12 +158,13 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     $"Excel sheet {worksheet.SheetName} contains {nColumns}"));
 
 
-                if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length != nColumns)
+                if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() &&
+                    replacementHeadersSplit.Length != nColumns)
                     listener.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error,
                             $"ForceReplacementHeaders was set but it had {replacementHeadersSplit.Length} column header names while the file had {nColumns} (there must be the same number of replacement headers as headers in the excel file)"));
 
-                string[] originalHeaders = new string[nColumns];
+                var originalHeaders = new string[nColumns];
                 for (var i = 0; i < nColumns; i++)
                 {
                     //if the cell header is blank
@@ -172,19 +179,23 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     {
                         h = cell.NumericCellValue.ToString();
                     }
-                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() && replacementHeadersSplit.Length == nColumns)
+
+                    if (replacementHeadersSplit is not null && replacementHeadersSplit.Any() &&
+                        replacementHeadersSplit.Length == nColumns)
                     {
                         originalHeaders[i] = h;
                         h = replacementHeadersSplit[i];
                     }
+
                     if (string.IsNullOrWhiteSpace(h))
                         continue;
 
                     nonBlankColumns.Add(cell.ColumnIndex, toReturn.Columns.Add(h));
                 }
+
                 if (replacementHeadersSplit is not null && replacementHeadersSplit.Any())
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
+                        $"Force headers will make the following header changes:{GenerateASCIIArtOfSubstitutions(originalHeaders, replacementHeadersSplit)}"));
 
                 continue;
             }
@@ -223,7 +234,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     }
 
     private static string GenerateASCIIArtOfSubstitutions(string[] headers,
-      string[] replacements)
+        string[] replacements)
     {
         var sb = new StringBuilder("");
 
@@ -241,7 +252,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
     }
 
     /// <summary>
-    /// Returns the C# value that best represents the contents of the cell.
+    ///     Returns the C# value that best represents the contents of the cell.
     /// </summary>
     /// <param name="cell">The cell whose value you want to retrieve</param>
     /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>
@@ -273,7 +284,9 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("yyyy-MM-dd") : null;
 
                 if (IsDateWithTime(format))
-                    return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("yyyy-MM-dd HH:mm:ss") : null;
+                    return cell.DateCellValue.HasValue
+                        ? cell.DateCellValue.Value.ToString("yyyy-MM-dd HH:mm:ss")
+                        : null;
 
                 if (IsTimeWithoutDate(format))
                     return cell.DateCellValue.HasValue ? cell.DateCellValue.Value.ToString("HH:mm:ss") : null;
@@ -302,18 +315,28 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         }
     }
 
-    private static bool IsDateWithTime(string formatString) => formatString.Contains('h') && formatString.Contains('y');
+    private static bool IsDateWithTime(string formatString)
+    {
+        return formatString.Contains('h') && formatString.Contains('y');
+    }
 
-    private static bool IsDateWithoutTime(string formatString) =>
-        formatString.Contains('y') && !formatString.Contains('h');
+    private static bool IsDateWithoutTime(string formatString)
+    {
+        return formatString.Contains('y') && !formatString.Contains('h');
+    }
 
-    private static bool IsTimeWithoutDate(string formatString) =>
-        !formatString.Contains('y') && formatString.Contains('h');
+    private static bool IsTimeWithoutDate(string formatString)
+    {
+        return !formatString.Contains('y') && formatString.Contains('h');
+    }
 
-    private static bool IsDateFormat(string formatString) => !string.IsNullOrWhiteSpace(formatString) &&
-                                                             (formatString.Contains('/') ||
-                                                              formatString.Contains('\\') ||
-                                                              formatString.Contains(':'));
+    private static bool IsDateFormat(string formatString)
+    {
+        return !string.IsNullOrWhiteSpace(formatString) &&
+               (formatString.Contains('/') ||
+                formatString.Contains('\\') ||
+                formatString.Contains(':'));
+    }
 
     /*
 
@@ -347,15 +370,21 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
         return value;
     }
     */
-    private string[] acceptedFileExtensions =
+    private readonly string[] acceptedFileExtensions =
     {
         ".xlsx",
         ".xls"
     };
 
-    private bool IsAcceptableFileExtension() => acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
+    private bool IsAcceptableFileExtension()
+    {
+        return acceptedFileExtensions.Contains(_fileToLoad.File.Extension.ToLower());
+    }
 
-    private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
+    private static bool IsNull(object o)
+    {
+        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
+    }
 
     public void Check(ICheckNotifier notifier)
     {
@@ -416,6 +445,6 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
 
     public DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
     {
-        return GetChunk(listener, cancellationToken, 0, 0);
+        return GetChunk(listener, cancellationToken, 0);
     }
 }

@@ -12,14 +12,20 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
 /// <summary>
-/// Allocates a Guid for each private identifier supplied.  This is similar to <see cref="GuidReleaseIdentifierAllocator"/> except that it will preserve previous
-/// allocations within the <see cref="Project"/>.  For example if you commit a cohort 'Cases' with private id '123' to project '10' then might get a guid 'abc...',
-/// if you then submit verison 2 of the cohort you will get the same guid ('abc...') for persion '123'.
-/// 
-/// <para>Guids are always different between <see cref="Project"/> for example person 'abc' in project '10' will have a different Guid release identifier than if he
-/// was committed to project '11' and it would be impossible to link the two release identifiers</para>
-/// 
-/// <para>Projects are differentiated by <see cref="Project.ProjectNumber"/> since this is what is stored in your cohort database</para>
+///     Allocates a Guid for each private identifier supplied.  This is similar to
+///     <see cref="GuidReleaseIdentifierAllocator" /> except that it will preserve previous
+///     allocations within the <see cref="Project" />.  For example if you commit a cohort 'Cases' with private id '123' to
+///     project '10' then might get a guid 'abc...',
+///     if you then submit verison 2 of the cohort you will get the same guid ('abc...') for persion '123'.
+///     <para>
+///         Guids are always different between <see cref="Project" /> for example person 'abc' in project '10' will have a
+///         different Guid release identifier than if he
+///         was committed to project '11' and it would be impossible to link the two release identifiers
+///     </para>
+///     <para>
+///         Projects are differentiated by <see cref="Project.ProjectNumber" /> since this is what is stored in your
+///         cohort database
+///     </para>
 /// </summary>
 public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
 {
@@ -28,8 +34,8 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
     private Dictionary<object, object> _releaseMap;
 
     /// <summary>
-    /// Returns the existing anonymous release identifier for the <paramref name="privateIdentifier"/> if it has ever been
-    /// uploaded to the given <see cref="Project"/> before otherwise returns a new unique guid as a string.
+    ///     Returns the existing anonymous release identifier for the <paramref name="privateIdentifier" /> if it has ever been
+    ///     uploaded to the given <see cref="Project" /> before otherwise returns a new unique guid as a string.
     /// </summary>
     /// <param name="privateIdentifier"></param>
     /// <returns></returns>
@@ -50,7 +56,8 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
     }
 
     /// <summary>
-    /// Figures out all the previously allocated release identifiers for private identifiers for cohorts assigned to the projectNumber
+    ///     Figures out all the previously allocated release identifiers for private identifiers for cohorts assigned to the
+    ///     projectNumber
     /// </summary>
     /// <returns></returns>
     private Dictionary<object, object> GetReleaseMap()
@@ -87,7 +94,7 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         return toReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Initialize(ICohortCreationRequest request)
     {
         if (request.Project != null)

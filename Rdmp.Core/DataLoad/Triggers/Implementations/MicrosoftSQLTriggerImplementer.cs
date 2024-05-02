@@ -20,23 +20,32 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-/// Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of records to the _Archive table when the main table
-/// is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but also includes several audit fields (date it
-/// was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See DiffDatabaseDataFetcher) and/or generate a
-/// 'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction method).
-/// 
-/// <para>This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in which you expect high volitility (lots of frequent
-/// updates all the time).</para>
-/// 
-/// <para>Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
-/// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).</para>
+///     Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of
+///     records to the _Archive table when the main table
+///     is UPDATEd.  An _Archive table is an exact match of columns as the live table (which must have primary keys) but
+///     also includes several audit fields (date it
+///     was archived etc).  The _Archive table can be used to view the changes that occured during data loading (See
+///     DiffDatabaseDataFetcher) and/or generate a
+///     'way back machine' view of the data at a given date in the past (See CreateViewOldVersionsTableValuedFunction
+///     method).
+///     <para>
+///         This class is super Microsoft Sql Server specific.  It is not suitable to create backup triggers on tables in
+///         which you expect high volitility (lots of frequent
+///         updates all the time).
+///     </para>
+///     <para>
+///         Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match
+///         when it was created and the _Archive table hasn't
+///         got a different schema to the live table (e.g. if you made a change to the live table this would pick up that
+///         the _Archive wasn't updated).
+///     </para>
 /// </summary>
 public class MicrosoftSQLTriggerImplementer : TriggerImplementer
 {
-    private string _schema;
-    private string _triggerName;
+    private readonly string _schema;
+    private readonly string _triggerName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
     public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
         createDataLoadRunIDAlso)
     {
@@ -244,7 +253,7 @@ END
         columnsInArchive = sqlUsedToCreateArchiveTableSQL[startExtractingColumnsAt..];
 
         //trim off excess crud at the end
-        columnsInArchive = columnsInArchive.Trim(new[] { ')', '\r', '\n' });
+        columnsInArchive = columnsInArchive.Trim(')', '\r', '\n');
 
         var sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]",
             QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
@@ -270,7 +279,7 @@ END
         sqlToRun += $"BEGIN{Environment.NewLine}";
         sqlToRun += Environment.NewLine;
 
-        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new string[]
+        var liveCols = _columns.Select(c => $"[{c.GetRuntimeName()}]").Union(new[]
         {
             $"[{SpecialFieldNames.DataLoadRunID}]", $"[{SpecialFieldNames.ValidFrom}]"
         }).ToArray();
@@ -345,7 +354,10 @@ END
         }
     }
 
-    private string GetTriggerName() => $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_OnUpdate";
+    private string GetTriggerName()
+    {
+        return $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_OnUpdate";
+    }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {

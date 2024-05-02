@@ -7,8 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Linq.Expressions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
@@ -21,13 +19,15 @@ public class ExecuteCommandExportDatabaseToDir : BasicCommandExecution
     private readonly IBasicActivateItems _activator;
     private readonly DirectoryInfo _target;
 
-    public ExecuteCommandExportDatabaseToDir(IBasicActivateItems activator, [DemandsInitialization("Where the platform directory should be created")] string target)
+    public ExecuteCommandExportDatabaseToDir(IBasicActivateItems activator,
+        [DemandsInitialization("Where the platform directory should be created")] string target)
     {
         _target = new DirectoryInfo(target);
         _activator = activator;
     }
 
-    private readonly List<string> ignoreList = new() { "Rdmp.Core.DataQualityEngine.Data.DQEGraphAnnotation", "Rdmp.Core.DataQualityEngine.Data.Evaluation" };
+    private readonly List<string> ignoreList = new()
+        { "Rdmp.Core.DataQualityEngine.Data.DQEGraphAnnotation", "Rdmp.Core.DataQualityEngine.Data.Evaluation" };
 
     public override void Execute()
     {
@@ -42,11 +42,10 @@ public class ExecuteCommandExportDatabaseToDir : BasicCommandExecution
                 foreach (var o in _activator.GetRepositoryFor(t).GetAllObjects(t))
                     repo.SaveToDatabase(o);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 Console.WriteLine($"Unable to find repo for {t.FullName}");
             }
-
         }
     }
 }

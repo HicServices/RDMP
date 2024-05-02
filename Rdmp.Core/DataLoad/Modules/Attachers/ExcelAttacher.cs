@@ -20,8 +20,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading Microsoft Excel files into RAW tables.  This class relies on pipeline source component ExcelDataFlowSource for the actual
-/// reading and handles only the rationalisation of columns read vs RAW columns available.
+///     Data load component for loading Microsoft Excel files into RAW tables.  This class relies on pipeline source
+///     component ExcelDataFlowSource for the actual
+///     reading and handles only the rationalisation of columns read vs RAW columns available.
 /// </summary>
 public class ExcelAttacher : FlatFileAttacher
 {
@@ -43,20 +44,23 @@ public class ExcelAttacher : FlatFileAttacher
         "By default ALL columns in the source MUST match exactly (by name) the set of all columns in the destination table.  If you enable this option then it is allowable for there to be extra columns in the destination that are not populated (because they are not found in the flat file).  This does not let you discard columns from the source! (all source columns must have mappings but destination columns with no matching source are left null)")]
     public bool AllowExtraColumnsInTargetWithoutComplainingOfColumnMismatch { get; set; }
 
-    [DemandsInitialization("Which Row the data you want to read starts on. Set this value to row containing the header information. The First row is 1.")]
-    public int RowOffset { get; set; } = 0;//First row 1;
+    [DemandsInitialization(
+        "Which Row the data you want to read starts on. Set this value to row containing the header information. The First row is 1.")]
+    public int RowOffset { get; set; } = 0; //First row 1;
 
-    [DemandsInitialization("Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0. ")]
-    public string ColumnOffset { get; set; } = "A";//A=0,B=1...
+    [DemandsInitialization(
+        "Which column the data you want to read starts on. Accepts both letters & numbers, starts at 'A'/0. ")]
+    public string ColumnOffset { get; set; } = "A"; //A=0,B=1...
 
-    private bool _haveServedData = false;
+    private bool _haveServedData;
 
 
     private int ConvertColumnOffsetToInt()
     {
         if (ColumnOffset is null) return 0;
-        if(int.TryParse(ColumnOffset,out var result)) return result;
-        if (ColumnOffset.Length == 1 && char.IsLetter(ColumnOffset[0])) return char.ToUpper(ColumnOffset[0]) - 65;//would be 64, but we index from zero here
+        if (int.TryParse(ColumnOffset, out var result)) return result;
+        if (ColumnOffset.Length == 1 && char.IsLetter(ColumnOffset[0]))
+            return char.ToUpper(ColumnOffset[0]) - 65; //would be 64, but we index from zero here
         throw new Exception("Column offset is not a valid number or letter");
     }
 
@@ -86,13 +90,12 @@ public class ExcelAttacher : FlatFileAttacher
 
         string[] replacementHeadersSplit = { };
         if (!string.IsNullOrEmpty(ForceReplacementHeaders))
-        {
             replacementHeadersSplit = ForceReplacementHeaders.Split(',')
                 .Select(h => string.IsNullOrWhiteSpace(h) ? h : h.Trim()).ToArray();
-        }
 
-        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation, replacementHeadersSplit);
-      
+        _dataTable = _hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation,
+            replacementHeadersSplit);
+
         //all data should now be exhausted
         if (_hostedSource.GetChunk(listener, cancellationToken, RowOffset, columnTranslation) != null)
             throw new Exception(

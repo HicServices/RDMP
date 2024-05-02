@@ -16,10 +16,12 @@ internal sealed class ExtractableCohortStateBasedIconProvider : IObjectStateBase
 {
     private static readonly Image<Rgba32> BasicIcon = Image.Load<Rgba32>(CatalogueIcons.ExtractableCohort);
 
-    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
-        o is ExtractableCohort cohort
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o is ExtractableCohort cohort
             ? cohort.IsDeprecated
                 ? IconOverlayProvider.GetOverlay(BasicIcon, OverlayKind.Deprecated)
                 : BasicIcon
             : null;
+    }
 }

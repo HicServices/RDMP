@@ -9,12 +9,12 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-/// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on ID (e.g. "Catalogue:23")
+///     Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity" />
+///     matching based on ID (e.g. "Catalogue:23")
 /// </summary>
 public partial class PickObjectByID : PickObjectBase
 {
@@ -60,7 +60,7 @@ ID2+: (optional) only allowed if you are being prompted for multiple objects, al
 
         var objs = objectId.Split(',').Select(id => GetObjectByID(dbObjectType, int.Parse(id))).Distinct();
 
-        return new CommandLineObjectPickerArgumentValue(arg, idx, objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+        return new CommandLineObjectPickerArgumentValue(arg, idx, objs.ToArray());
     }
 
     [GeneratedRegex("^([A-Za-z]+):([0-9,]+)$", RegexOptions.IgnoreCase, "en-US")]

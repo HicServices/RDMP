@@ -11,8 +11,9 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// <see cref="ICommandExecution"/> with an Image designed for use with MenuItems and HomeUI.  Represents a single atomic
-/// action which the user can undertake.  The command may be <see cref="ICommandExecution.IsImpossible"/>.
+///     <see cref="ICommandExecution" /> with an Image designed for use with MenuItems and HomeUI.  Represents a single
+///     atomic
+///     action which the user can undertake.  The command may be <see cref="ICommandExecution.IsImpossible" />.
 /// </summary>
 public interface IAtomicCommand : ICommandExecution
 {
@@ -20,25 +21,25 @@ public interface IAtomicCommand : ICommandExecution
 
 
     /// <summary>
-    /// When presenting the command in a hierarchical presentation should it be under a subheading
-    /// (e.g. in a context menu).  Null if not
+    ///     When presenting the command in a hierarchical presentation should it be under a subheading
+    ///     (e.g. in a context menu).  Null if not
     /// </summary>
     string SuggestedCategory { get; set; }
 
     /// <summary>
-    /// Key which should result in this command being fired e.g. "F2"
+    ///     Key which should result in this command being fired e.g. "F2"
     /// </summary>
     string SuggestedShortcut { get; set; }
 
     /// <summary>
-    /// True to require Ctrl key to be pressed when <see cref="SuggestedShortcut"/> is entered
+    ///     True to require Ctrl key to be pressed when <see cref="SuggestedShortcut" /> is entered
     /// </summary>
     bool Ctrl { get; set; }
 
     /// <summary>
-    /// The relative heaviness of the control in menus.  Higher means that it sinks down the menu
-    /// Lower floats to the top.  Also determines where Separators appear (if supported by the UI
-    /// framework).
+    ///     The relative heaviness of the control in menus.  Higher means that it sinks down the menu
+    ///     Lower floats to the top.  Also determines where Separators appear (if supported by the UI
+    ///     framework).
     /// </summary>
     float Weight { get; set; }
 }

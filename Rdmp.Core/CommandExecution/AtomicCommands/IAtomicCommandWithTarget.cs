@@ -9,15 +9,18 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// An executable command with variable target.  SetTarget should be obvious based on your class name e.g. ExecuteCommandRelease (pass a Project to release).
-/// 
-/// <para>In general you should also provide a constructor overload that hydrates the command properly decorated with [UseWithObjectConstructor] so that it is
-/// useable with RunUI</para>
+///     An executable command with variable target.  SetTarget should be obvious based on your class name e.g.
+///     ExecuteCommandRelease (pass a Project to release).
+///     <para>
+///         In general you should also provide a constructor overload that hydrates the command properly decorated with
+///         [UseWithObjectConstructor] so that it is
+///         useable with RunUI
+///     </para>
 /// </summary>
 public interface IAtomicCommandWithTarget : IAtomicCommand
 {
     /// <summary>
-    /// Defines the object which this command should operate on
+    ///     Defines the object which this command should operate on
     /// </summary>
     /// <param name="target"></param>
     /// <returns></returns>

@@ -11,8 +11,9 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL
-/// for merging STAGING into LIVE during a data load.
+///     Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by
+///     MigrationQueryHelper to generate SQL
+///     for merging STAGING into LIVE during a data load.
 /// </summary>
 public class MigrationColumnSetQueryHelper
 {
@@ -32,9 +33,15 @@ public class MigrationColumnSetQueryHelper
         return sql.TrimEnd(',');
     }
 
-    public string BuildPrimaryKeyNotNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
+    public string BuildPrimaryKeyNotNullTest(string columnPrefix)
+    {
+        return BuildPrimaryKeyCondition(columnPrefix, "NOT NULL");
+    }
 
-    public string BuildPrimaryKeyNullTest(string columnPrefix) => BuildPrimaryKeyCondition(columnPrefix, "NULL");
+    public string BuildPrimaryKeyNullTest(string columnPrefix)
+    {
+        return BuildPrimaryKeyCondition(columnPrefix, "NULL");
+    }
 
     private string BuildPrimaryKeyCondition(string columnPrefix, string condition)
     {

@@ -12,7 +12,8 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Describes a single <see cref="ParameterInfo"/> or <see cref="PropertyInfo"/> required by a <see cref="CommandInvoker"/>
+///     Describes a single <see cref="ParameterInfo" /> or <see cref="PropertyInfo" /> required by a
+///     <see cref="CommandInvoker" />
 /// </summary>
 public class RequiredArgument
 {

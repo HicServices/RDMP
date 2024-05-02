@@ -11,8 +11,9 @@ using System.Globalization;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values (if present) in a column must be within a certain range of numeric values.  This can include referencing another column.  For example you could
-/// specify that the column 'AverageResult' must have an Inclusive Upper bound of the column 'MaxResult'.
+///     Values (if present) in a column must be within a certain range of numeric values.  This can include referencing
+///     another column.  For example you could
+///     specify that the column 'AverageResult' must have an Inclusive Upper bound of the column 'MaxResult'.
 /// </summary>
 public class BoundDouble : Bound
 {
@@ -139,16 +140,28 @@ public class BoundDouble : Bound
             : throw new InvalidOperationException("Illegal state.");
     }
 
-    private string BetweenMessage(double d, string l, string u) =>
-        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+    private string BetweenMessage(double d, string l, string u)
+    {
+        return
+            $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+    }
 
-    private static string GreaterThanMessage(double d, string s) =>
-        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
+    private static string GreaterThanMessage(double d, string s)
+    {
+        return
+            $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value greater than {Wrap(s)}.";
+    }
 
-    private static string LessThanMessage(double d, string s) =>
-        $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
+    private static string LessThanMessage(double d, string s)
+    {
+        return
+            $"Value {Wrap(d.ToString(CultureInfo.CurrentCulture))} out of range. Expected a value less than {Wrap(s)}.";
+    }
 
-    private static string Wrap(string s) => $"[{s}]";
+    private static string Wrap(string s)
+    {
+        return $"[{s}]";
+    }
 
     public BoundDouble And(int upper)
     {

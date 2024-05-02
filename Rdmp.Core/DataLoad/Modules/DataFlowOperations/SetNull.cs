@@ -29,7 +29,7 @@ internal class SetNull : IPluginDataFlowComponent<DataTable>
     public Regex NullCellsWhereValuesMatch { get; set; }
 
     private int _changes;
-    private Stopwatch _sw = new();
+    private readonly Stopwatch _sw = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)

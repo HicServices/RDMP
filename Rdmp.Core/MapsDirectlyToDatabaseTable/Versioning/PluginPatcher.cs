@@ -7,7 +7,7 @@
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// MEF discoverable version of IPatcher
+///     MEF discoverable version of IPatcher
 /// </summary>
 public class PluginPatcher : Patcher
 {

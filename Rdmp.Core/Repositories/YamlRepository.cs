@@ -23,20 +23,20 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Implementation of <see cref="IRepository"/> which creates objects on the file system instead of a database.
+///     Implementation of <see cref="IRepository" /> which creates objects on the file system instead of a database.
 /// </summary>
 public class YamlRepository : MemoryDataExportRepository
 {
-    private ISerializer _serializer;
+    private readonly ISerializer _serializer;
 
     /// <summary>
-    /// All objects that are known about by this repository
+    ///     All objects that are known about by this repository
     /// </summary>
     public IReadOnlyCollection<IMapsDirectlyToDatabaseTable> AllObjects => Objects.Keys.ToList().AsReadOnly();
 
     public DirectoryInfo Directory { get; }
 
-    private object lockFs = new();
+    private readonly object lockFs = new();
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -58,7 +58,6 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <returns></returns>
     public static ISerializer CreateSerializer(IEnumerable<Type> supportedTypes)
@@ -142,8 +141,8 @@ public class YamlRepository : MemoryDataExportRepository
 
 
     /// <summary>
-    /// Sets <see cref="IMapsDirectlyToDatabaseTable.Repository"/> on <paramref name="obj"/>.
-    /// Override to also set other destination repo specific fields
+    ///     Sets <see cref="IMapsDirectlyToDatabaseTable.Repository" /> on <paramref name="obj" />.
+    ///     Override to also set other destination repo specific fields
     /// </summary>
     /// <param name="obj"></param>
     protected virtual void SetRepositoryOnObject(IMapsDirectlyToDatabaseTable obj)
@@ -205,12 +204,14 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     /// <summary>
-    /// Returns the path on disk in which the yaml file for <paramref name="o"/> is stored
+    ///     Returns the path on disk in which the yaml file for <paramref name="o" /> is stored
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    private string GetPath(IMapsDirectlyToDatabaseTable o) =>
-        Path.Combine(Directory.FullName, o.GetType().Name, $"{o.ID}.yaml");
+    private string GetPath(IMapsDirectlyToDatabaseTable o)
+    {
+        return Path.Combine(Directory.FullName, o.GetType().Name, $"{o.ID}.yaml");
+    }
 
     public override void DeleteEncryptionKeyPath()
     {
@@ -237,11 +238,17 @@ public class YamlRepository : MemoryDataExportRepository
         }
     }
 
-    private string GetEncryptionKeyPathFile() => Path.Combine(Directory.FullName, "EncryptionKeyPath");
+    private string GetEncryptionKeyPathFile()
+    {
+        return Path.Combine(Directory.FullName, "EncryptionKeyPath");
+    }
 
     #region Server Defaults Persistence
 
-    private string GetDefaultsFile() => Path.Combine(Directory.FullName, "Defaults.yaml");
+    private string GetDefaultsFile()
+    {
+        return Path.Combine(Directory.FullName, "Defaults.yaml");
+    }
 
     public override void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
@@ -283,7 +290,7 @@ public class YamlRepository : MemoryDataExportRepository
     }
 
     /// <summary>
-    /// Returns the object referenced or null if it has been deleted on the sly (e.g. by user deleting .yaml files on disk)
+    ///     Returns the object referenced or null if it has been deleted on the sly (e.g. by user deleting .yaml files on disk)
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="id"></param>
@@ -304,7 +311,10 @@ public class YamlRepository : MemoryDataExportRepository
 
     #region DataExportProperties Persistence
 
-    private string GetDataExportPropertiesFile() => Path.Combine(Directory.FullName, "DataExportProperties.yaml");
+    private string GetDataExportPropertiesFile()
+    {
+        return Path.Combine(Directory.FullName, "DataExportProperties.yaml");
+    }
 
     public void LoadDataExportProperties()
     {
@@ -377,7 +387,10 @@ public class YamlRepository : MemoryDataExportRepository
 
     #region Persist CredentialsDictionary
 
-    private string GetCredentialsDictionaryFile() => Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
+    private string GetCredentialsDictionaryFile()
+    {
+        return Path.Combine(Directory.FullName, "CredentialsDictionary.yaml");
+    }
 
     public void LoadCredentialsDictionary()
     {
@@ -545,9 +558,9 @@ public class YamlRepository : MemoryDataExportRepository
 
     private class PersistCohortContainerContent
     {
-        public string Type { get; set; }
-        public int ID { get; set; }
-        public int Order { get; set; }
+        public string Type { get; }
+        public int ID { get; }
+        public int Order { get; }
 
         public PersistCohortContainerContent()
         {
@@ -599,7 +612,10 @@ public class YamlRepository : MemoryDataExportRepository
                 v => v.Value), "AggregateFilters");
     }
 
-    public override string ToString() => $"{{YamlRepository {Directory.FullName}}}";
+    public override string ToString()
+    {
+        return $"{{YamlRepository {Directory.FullName}}}";
+    }
 
     private void LoadWhereSubContainers()
     {
@@ -646,7 +662,6 @@ public class YamlRepository : MemoryDataExportRepository
                         catch (KeyNotFoundException)
                         {
                             // skip missing objects (they will disapear next save anyway)
-                            continue;
                         }
 
                     dictionary.Add(key, set);
@@ -654,7 +669,6 @@ public class YamlRepository : MemoryDataExportRepository
                 catch (KeyNotFoundException)
                 {
                     // skip missing container objects (they will disapear next save anyway)
-                    continue;
                 }
 
             return dictionary;

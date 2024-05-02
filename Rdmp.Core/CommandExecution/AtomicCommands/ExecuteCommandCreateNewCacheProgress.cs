@@ -26,8 +26,11 @@ public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution, IAtom
             SetImpossible("LoadProgress already has a CacheProgress associated with it");
     }
 
-    public override string GetCommandHelp() =>
-        "Defines that the load requires data that is intensive/expensive to fetch and that this fetching and storing to disk should happen independently of the loading";
+    public override string GetCommandHelp()
+    {
+        return
+            "Defines that the load requires data that is intensive/expensive to fetch and that this fetching and storing to disk should happen independently of the loading";
+    }
 
     public override void Execute()
     {
@@ -40,6 +43,8 @@ public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution, IAtom
         Emphasise(cp);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CacheProgress, OverlayKind.Add);
+    }
 }

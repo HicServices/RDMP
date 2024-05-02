@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandShowRelatedObject : BasicCommandExecution
 {
-    private DatabaseEntity _toShow;
+    private readonly DatabaseEntity _toShow;
 
     public ExecuteCommandShowRelatedObject(IBasicActivateItems activator, ReferenceOtherObjectDatabaseEntity node) :
         base(activator)
@@ -25,8 +25,10 @@ public class ExecuteCommandShowRelatedObject : BasicCommandExecution
             SetImpossible("Reference is an orphan");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
+    }
 
     public override void Execute()
     {

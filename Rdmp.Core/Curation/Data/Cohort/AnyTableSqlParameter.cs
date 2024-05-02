@@ -23,16 +23,19 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Cohort;
 
 /// <summary>
-/// Allows you to override ALL instances of a given named parameter e.g. @studyStartDate in ALL AggregateFilterParameters in a given CohortIdentificationConfiguration
-/// with a single value.  This allows you to have multiple filters in different datasets that all use @studyStartDate parameter but override it globally for the configuration
-/// so that you don't have to manually update every parameter when you want to change your study criteria.  For this to work all AggregateFilterParameters must have the same name
-/// and datatype AND comment! as the study filters (see CohortQueryBuilder).
+///     Allows you to override ALL instances of a given named parameter e.g. @studyStartDate in ALL
+///     AggregateFilterParameters in a given CohortIdentificationConfiguration
+///     with a single value.  This allows you to have multiple filters in different datasets that all use @studyStartDate
+///     parameter but override it globally for the configuration
+///     so that you don't have to manually update every parameter when you want to change your study criteria.  For this to
+///     work all AggregateFilterParameters must have the same name
+///     and datatype AND comment! as the study filters (see CohortQueryBuilder).
 /// </summary>
 public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlParameter, IHasDependencies
 {
     /// <summary>
-    /// Names that are not allowed for user custom parameters because they
-    /// are used internally by RMDP query building engines
+    ///     Names that are not allowed for user custom parameters because they
+    ///     are used internally by RMDP query building engines
     /// </summary>
     public static readonly string[] ProhibitedParameterNames =
     {
@@ -58,7 +61,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     private string _value;
     private string _comment;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string ParameterSQL
     {
@@ -66,7 +69,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         set => SetField(ref _parameterSQL, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Value
     {
@@ -74,7 +77,7 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         set => SetField(ref _value, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Comment
     {
         get => _comment;
@@ -83,12 +86,12 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     /// <summary>
-    /// The default value to give to parameters when creating new blank/unknown role
+    ///     The default value to give to parameters when creating new blank/unknown role
     /// </summary>
     public const string DefaultValue = "'todo'";
 
@@ -97,9 +100,11 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     }
 
     /// <summary>
-    /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
-    /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
-    /// then the parameter will be used
+    ///     Declares that a new <see cref="ISqlParameter" /> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent
+    ///     database object.  The object
+    ///     should be of a type which passes <see cref="IsSupportedType" />.  When the object is used for query generation by
+    ///     an <see cref="QueryBuilding.ISqlQueryBuilder" />
+    ///     then the parameter will be used
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -124,16 +129,19 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         Comment = r["Comment"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{ParameterName} = {Value}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
-    /// <inheritdoc cref="ParameterSyntaxChecker"/>
+    /// <inheritdoc cref="ParameterSyntaxChecker" />
     public void Check(ICheckNotifier notifier)
     {
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var parentWithQuerySyntaxHelper = GetOwnerIfAny() as IHasQuerySyntaxHelper ??
@@ -143,20 +151,26 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     }
 
     /// <summary>
-    /// Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable"/>) is one which is designed to store its <see cref="ISqlParameter"/>
-    /// in this table.  Only supported objects will have parameters sought here by <see cref="QueryBuilding.ISqlQueryBuilder"/>s.
+    ///     Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable" />) is one which is
+    ///     designed to store its <see cref="ISqlParameter" />
+    ///     in this table.  Only supported objects will have parameters sought here by
+    ///     <see cref="QueryBuilding.ISqlQueryBuilder" />s.
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    /// <seealso cref="DescribeUseCaseForParent"/>
-    public static bool IsSupportedType(Type type) => DescribeUseCaseForParent(type) != null;
+    /// <seealso cref="DescribeUseCaseForParent" />
+    public static bool IsSupportedType(Type type)
+    {
+        return DescribeUseCaseForParent(type) != null;
+    }
 
     /// <summary>
-    /// Describes how the <see cref="ISqlParameter"/>s declared in this table will be used with parents of the supplied Type (See <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>).
+    ///     Describes how the <see cref="ISqlParameter" />s declared in this table will be used with parents of the supplied
+    ///     Type (See <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType" />).
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    /// <seealso cref="IsSupportedType"/>
+    /// <seealso cref="IsSupportedType" />
     public static string DescribeUseCaseForParent(Type type)
     {
         if (type == typeof(CohortIdentificationConfiguration))
@@ -174,8 +188,8 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
 
 
     /// <summary>
-    /// Returns true if the <paramref name="parameter"/> is user generated and has a name in
-    /// the <see cref="ProhibitedParameterNames"/> list
+    ///     Returns true if the <paramref name="parameter" /> is user generated and has a name in
+    ///     the <see cref="ProhibitedParameterNames" /> list
     /// </summary>
     /// <param name="parameter"></param>
     /// <returns></returns>
@@ -187,7 +201,9 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
     }
 
     /// <summary>
-    /// Returns the parent object that declares this paramter (see <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID"/> and <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType"/>)
+    ///     Returns the parent object that declares this paramter (see
+    ///     <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectID" /> and
+    ///     <see cref="ReferenceOtherObjectDatabaseEntity.ReferencedObjectType" />)
     /// </summary>
     /// <returns></returns>
     public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
@@ -197,28 +213,36 @@ public class AnyTableSqlParameter : ReferenceOtherObjectDatabaseEntity, ISqlPara
         return Repository.GetObjectByID(type, ReferencedObjectID);
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         return GetOwnerIfAny() is IHasDependencies parent ? new[] { parent } : Array.Empty<IHasDependencies>();
     }
 
     /// <summary>
-    /// Returns the default parameter declaration (varchar 10)
+    ///     Returns the default parameter declaration (varchar 10)
     /// </summary>
     /// <param name="parameterName"></param>
     /// <returns></returns>
-    public static string GetDefaultDeclaration(string parameterName) => $"DECLARE {parameterName} as varchar(10)";
+    public static string GetDefaultDeclaration(string parameterName)
+    {
+        return $"DECLARE {parameterName} as varchar(10)";
+    }
 
-    /// <inheritdoc cref="GetValuePromptDialogArgs(IFilter, ISqlParameter)"/>
-    public static DialogArgs GetValuePromptDialogArgs(ISqlParameter parameter) =>
-        GetValuePromptDialogArgs(null, parameter);
+    /// <inheritdoc cref="GetValuePromptDialogArgs(IFilter, ISqlParameter)" />
+    public static DialogArgs GetValuePromptDialogArgs(ISqlParameter parameter)
+    {
+        return GetValuePromptDialogArgs(null, parameter);
+    }
 
     /// <summary>
-    /// Returns a task description with user friendly information for when a parameter value needs to be changed
+    ///     Returns a task description with user friendly information for when a parameter value needs to be changed
     /// </summary>
     /// <param name="filter"></param>
     /// <param name="parameter"></param>

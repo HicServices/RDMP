@@ -21,13 +21,15 @@ internal class DataExportFilterManager : IFilterManager
         _dataExportRepository = dataExportRepository;
     }
 
-    public IContainer GetParentContainerIfAny(IContainer container) =>
-        _dataExportRepository.SelectAll<FilterContainer>(
+    public IContainer GetParentContainerIfAny(IContainer container)
+    {
+        return _dataExportRepository.SelectAll<FilterContainer>(
             $"SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID={container.ID}",
             "FilterContainer_ParentID").SingleOrDefault();
+    }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual IContainer[] GetSubContainers(IContainer parent)
     {
         var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
@@ -37,7 +39,7 @@ internal class DataExportFilterManager : IFilterManager
         return subcontainers.Cast<IContainer>().ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual IFilter[] GetFilters(IContainer container)
     {
         var filters =
@@ -45,7 +47,7 @@ internal class DataExportFilterManager : IFilterManager
         return filters.Cast<IFilter>().ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddSubContainer(IContainer parent, IContainer child)
     {
         if (child is not FilterContainer)
@@ -60,7 +62,7 @@ internal class DataExportFilterManager : IFilterManager
             });
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void MakeIntoAnOrphan(IContainer container)
     {
         _dataExportRepository.Delete(

@@ -11,7 +11,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IArgument.
+///     Spontaneous (memory only) implementation of IArgument.
 /// </summary>
 public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
 {
@@ -35,11 +35,20 @@ public class SpontaneouslyInventedArgument : SpontaneousObject, IArgument
         throw new NotSupportedException();
     }
 
-    public object GetValueAsSystemType() => _value;
+    public object GetValueAsSystemType()
+    {
+        return _value;
+    }
 
-    public Type GetSystemType() => _value.GetType();
+    public Type GetSystemType()
+    {
+        return _value.GetType();
+    }
 
-    public Type GetConcreteSystemType() => _value.GetType();
+    public Type GetConcreteSystemType()
+    {
+        return _value.GetType();
+    }
 
     public void SetType(Type t)
     {

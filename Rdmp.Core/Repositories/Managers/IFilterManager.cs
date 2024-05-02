@@ -9,8 +9,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editting which
-/// <see cref="IFilter"/> belong in which <see cref="IContainer"/> etc.
+///     Subcomponent of <see cref="ICatalogueRepository" /> which manages persisting / editting which
+///     <see cref="IFilter" /> belong in which <see cref="IContainer" /> etc.
 /// </summary>
 public interface IFilterManager
 {

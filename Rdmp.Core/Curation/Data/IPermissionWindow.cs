@@ -12,41 +12,45 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a period of time in which a given act can take place (e.g. only cache data from the MRI imaging web service during the hours of 11pm - 5am so as not to
-/// disrupt routine hospital use).  Also serves as a Locking point for job control.  Once an IPermissionWindow is in use by a process (e.g. Caching Pipeline) then it
-/// is not available to other processes (e.g. loading or other caching pipelines that share the same IPermissionWindow).
+///     Describes a period of time in which a given act can take place (e.g. only cache data from the MRI imaging web
+///     service during the hours of 11pm - 5am so as not to
+///     disrupt routine hospital use).  Also serves as a Locking point for job control.  Once an IPermissionWindow is in
+///     use by a process (e.g. Caching Pipeline) then it
+///     is not available to other processes (e.g. loading or other caching pipelines that share the same
+///     IPermissionWindow).
 /// </summary>
 public interface IPermissionWindow : INamed
 {
     /// <summary>
-    /// Human readable description of the period of time described e.g. 'weekday nights only because we don't want to hit local server backup periods'
+    ///     Human readable description of the period of time described e.g. 'weekday nights only because we don't want to hit
+    ///     local server backup periods'
     /// </summary>
     string Description { get; set; }
 
     /// <summary>
-    /// Obsolete
+    ///     Obsolete
     /// </summary>
     [Obsolete("NotUsed")]
     bool RequiresSynchronousAccess { get; set; }
 
     /// <summary>
-    /// All caching activities which are restricted to running in this time window
+    ///     All caching activities which are restricted to running in this time window
     /// </summary>
     IEnumerable<ICacheProgress> CacheProgresses { get; }
 
     /// <summary>
-    /// The time windows that the activity is allowed in
+    ///     The time windows that the activity is allowed in
     /// </summary>
     List<PermissionWindowPeriod> PermissionWindowPeriods { get; }
 
     /// <summary>
-    /// Returns true if the current time is within one of the <see cref="PermissionWindowPeriods"/>
+    ///     Returns true if the current time is within one of the <see cref="PermissionWindowPeriods" />
     /// </summary>
     /// <returns></returns>
     bool WithinPermissionWindow();
 
     /// <summary>
-    /// Sets the time of day that activities are permitted in
+    ///     Sets the time of day that activities are permitted in
     /// </summary>
     /// <param name="windowPeriods"></param>
     void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods);

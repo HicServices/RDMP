@@ -16,11 +16,15 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
-/// All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells QueryBuilder how to use brackets and whether to AND / OR
-/// the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data Export Manager but for AggregateConfigurations (GROUP BY queries)
-/// 
-/// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer).
-/// The class deals with all this transparently via GetSubContainers.</para>
+///     All AggregateFilters must be contained within an AggregateFilterContainer at Query Generation time.  This tells
+///     QueryBuilder how to use brackets and whether to AND / OR
+///     the various filter lines.  The AggregateFilterContainer serves the same purpose as the FilterContainer in Data
+///     Export Manager but for AggregateConfigurations (GROUP BY queries)
+///     <para>
+///         FilterContainers are fully hierarchical and must be fetched from the database via recursion from the
+///         SubContainer table (AggregateFilterSubContainer).
+///         The class deals with all this transparently via GetSubContainers.
+///     </para>
 /// </summary>
 public class AggregateFilterContainer : ConcreteContainer, IDisableable
 {
@@ -29,7 +33,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     private bool _isDisabled;
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsDisabled
     {
         get => _isDisabled;
@@ -43,7 +47,7 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration"/>
+    ///     Creates a new IContainer in the dtabase for use with an <see cref="AggregateConfiguration" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
@@ -60,11 +64,14 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Operation.ToString();
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Operation.ToString();
+    }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override Catalogue GetCatalogueIfAny()
     {
         var agg = GetAggregate();
@@ -72,7 +79,8 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration"/> that is frozen
+    ///     Returns true if the filter container belongs to a parent <see cref="CohortIdentificationConfiguration" /> that is
+    ///     frozen
     /// </summary>
     /// <param name="reason"></param>
     /// <returns></returns>
@@ -89,8 +97,9 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters (including those in subcontainers) and paramaters of those
-    /// filters.  This is a recursive operation that will clone the entire tree no matter how deep.
+    ///     Creates a copy of the current AggregateFilterContainer including new copies of all subcontainers, filters
+    ///     (including those in subcontainers) and paramaters of those
+    ///     filters.  This is a recursive operation that will clone the entire tree no matter how deep.
     /// </summary>
     /// <returns></returns>
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
@@ -132,8 +141,9 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
     }
 
     /// <summary>
-    /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
-    /// Returns null if the container is somehow an orphan.
+    ///     Returns the AggregateConfiguration for which this container is either the root container for or part of the root
+    ///     container subcontainer tree.
+    ///     Returns null if the container is somehow an orphan.
     /// </summary>
     /// <returns></returns>
     public AggregateConfiguration GetAggregate()
@@ -149,7 +159,10 @@ public class AggregateFilterContainer : ConcreteContainer, IDisableable
         return ((AggregateFilterContainer)parentContainer)?.GetAggregate();
     }
 
-    public override IFilterFactory GetFilterFactory() => new AggregateFilterFactory(CatalogueRepository);
+    public override IFilterFactory GetFilterFactory()
+    {
+        return new AggregateFilterFactory(CatalogueRepository);
+    }
 
     public override void DeleteInDatabase()
     {

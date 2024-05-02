@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using FluentFTP;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -17,10 +16,13 @@ using Renci.SshNet;
 namespace Rdmp.Core.DataLoad.Modules.FTP;
 
 /// <summary>
-/// load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading directory
-/// 
-/// <para>Operates in the same way as <see cref="FTPDownloader"/> except that it uses SSH.  In addition, this
-/// class will not bother downloading any files that already exist in the forLoading directory (have the same name - file size is NOT checked)</para>
+///     load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading
+///     directory
+///     <para>
+///         Operates in the same way as <see cref="FTPDownloader" /> except that it uses SSH.  In addition, this
+///         class will not bother downloading any files that already exist in the forLoading directory (have the same name
+///         - file size is NOT checked)
+///     </para>
 /// </summary>
 public class SFTPDownloader : FTPDownloader
 {
@@ -31,7 +33,7 @@ public class SFTPDownloader : FTPDownloader
 
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
-        _connection = new Lazy<SftpClient>(SetupSftp,LazyThreadSafetyMode.ExecutionAndPublication);
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public SFTPDownloader()
@@ -60,8 +62,11 @@ public class SFTPDownloader : FTPDownloader
 
         var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
-        using (var dest=File.Create(destinationFilePath))
-            _connection.Value.DownloadFile(fullFilePath,dest);
+        using (var dest = File.Create(destinationFilePath))
+        {
+            _connection.Value.DownloadFile(fullFilePath, dest);
+        }
+
         _filesRetrieved.Add(fullFilePath);
     }
 

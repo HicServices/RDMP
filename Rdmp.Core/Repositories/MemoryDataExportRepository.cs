@@ -15,8 +15,9 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in
-/// dictionaries and arrays in memory instead of the database.
+///     Memory only implementation of <see cref="IDataExportRepository" />.  Also implements
+///     <see cref="ICatalogueRepository" />.  All objects are created in
+///     dictionaries and arrays in memory instead of the database.
 /// </summary>
 public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExportRepository, IDataExportPropertyManager,
     IExtractableDataSetPackageManager
@@ -49,8 +50,10 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
     protected Dictionary<DataExportProperty, string> PropertiesDictionary = new();
 
-    public virtual string GetValue(DataExportProperty property) =>
-        PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
+    public virtual string GetValue(DataExportProperty property)
+    {
+        return PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
+    }
 
     public virtual void SetValue(DataExportProperty property, string value)
     {
@@ -105,9 +108,11 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
             e.ExtractionConfiguration_ID == configuration.ID && e.ExtractableDataSet_ID == dataset.ID);
     }
 
-    public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults) =>
-        GetAllObjectsWhere<ReleaseLog>("CumulativeExtractionResults_ID", cumulativeExtractionResults.ID)
+    public IReleaseLog GetReleaseLogEntryIfAny(CumulativeExtractionResults cumulativeExtractionResults)
+    {
+        return GetAllObjectsWhere<ReleaseLog>("CumulativeExtractionResults_ID", cumulativeExtractionResults.ID)
             .SingleOrDefault();
+    }
 
     #endregion
 }

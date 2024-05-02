@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
@@ -12,7 +13,8 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all the virtual columns (<see cref="CatalogueItem"/>) in a dataset (<see cref="Curation.Data.Catalogue"/>)
+///     Collection of all the virtual columns (<see cref="CatalogueItem" />) in a dataset (
+///     <see cref="Curation.Data.Catalogue" />)
 /// </summary>
 public class CatalogueItemsNode : Node, IOrderable
 {
@@ -49,8 +51,10 @@ public class CatalogueItemsNode : Node, IOrderable
             };
     }
 
-    protected bool Equals(CatalogueItemsNode other) =>
-        Catalogue.Equals(other.Catalogue) && Equals(Category, other.Category);
+    protected bool Equals(CatalogueItemsNode other)
+    {
+        return Catalogue.Equals(other.Catalogue) && Equals(Category, other.Category);
+    }
 
     public override bool Equals(object obj)
     {
@@ -59,5 +63,8 @@ public class CatalogueItemsNode : Node, IOrderable
         return obj.GetType() == typeof(CatalogueItemsNode) && Equals((CatalogueItemsNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Catalogue, Category);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Catalogue, Category);
+    }
 }

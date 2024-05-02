@@ -21,9 +21,9 @@ using Rdmp.Core.QueryCaching.Aggregation;
 namespace Rdmp.Core.CohortCreation;
 
 /// <summary>
-/// Common methods used by Cohort Builder UI implementations.  Eliminates
-/// code duplication and makes it possible to add new UI formats later
-/// e.g. web/console etc
+///     Common methods used by Cohort Builder UI implementations.  Eliminates
+///     code duplication and makes it possible to add new UI formats later
+///     e.g. web/console etc
 /// </summary>
 public class CohortIdentificationConfigurationUICommon
 {
@@ -35,12 +35,12 @@ public class CohortIdentificationConfigurationUICommon
     public CohortCompilerRunner Runner;
 
     /// <summary>
-    /// User interface layer for modal dialogs, showing Exceptions etc
+    ///     User interface layer for modal dialogs, showing Exceptions etc
     /// </summary>
     public IBasicActivateItems Activator;
 
     /// <summary>
-    /// Duration in seconds to allow tasks to run for before cancelling
+    ///     Duration in seconds to allow tasks to run for before cancelling
     /// </summary>
     public int Timeout = 3000;
 
@@ -51,12 +51,20 @@ public class CohortIdentificationConfigurationUICommon
         Compiler = new CohortCompiler(null);
     }
 
-    public object Working_AspectGetter(object rowobject) => GetKey(rowobject)?.State;
+    public object Working_AspectGetter(object rowobject)
+    {
+        return GetKey(rowobject)?.State;
+    }
 
-    public object Time_AspectGetter(object rowobject) => GetKey(rowobject)?.ElapsedTime?.ToString(@"hh\:mm\:ss");
+    public object Time_AspectGetter(object rowobject)
+    {
+        return GetKey(rowobject)?.ElapsedTime?.ToString(@"hh\:mm\:ss");
+    }
 
-    public object CumulativeTotal_AspectGetter(object rowobject) =>
-        GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
+    public object CumulativeTotal_AspectGetter(object rowobject)
+    {
+        return GetKey(rowobject)?.CumulativeRowCount?.ToString("N0");
+    }
 
     public ICompileable GetKey(object rowobject)
     {
@@ -86,8 +94,10 @@ public class CohortIdentificationConfigurationUICommon
         return key is { State: CompilationState.Finished } ? key.FinalRowCount.ToString("N0") : (object)null;
     }
 
-    public static object Catalogue_AspectGetter(object rowobject) =>
-        rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
+    public static object Catalogue_AspectGetter(object rowobject)
+    {
+        return rowobject is AggregateConfiguration ac ? ac.Catalogue.Name : null;
+    }
 
     public object ExecuteAspectGetter(object rowObject)
     {
@@ -115,9 +125,12 @@ public class CohortIdentificationConfigurationUICommon
         }
     }
 
-    public bool IsExecutingGlobalOperations() => Runner != null &&
-                                                 Runner.ExecutionPhase != CohortCompilerRunner.Phase.None &&
-                                                 Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
+    public bool IsExecutingGlobalOperations()
+    {
+        return Runner != null &&
+               Runner.ExecutionPhase != CohortCompilerRunner.Phase.None &&
+               Runner.ExecutionPhase != CohortCompilerRunner.Phase.Finished;
+    }
 
     private static Operation GetNextOperation(CompilationState currentState)
     {
@@ -134,7 +147,7 @@ public class CohortIdentificationConfigurationUICommon
     }
 
     /// <summary>
-    /// Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
+    ///     Rebuilds the CohortCompiler diagram which shows all the currently configured tasks
     /// </summary>
     /// <param name="cancelTasks"></param>
     public void RecreateAllTasks(bool cancelTasks = true)
@@ -295,12 +308,15 @@ public class CohortIdentificationConfigurationUICommon
 
     #endregion
 
-    public ICompileable[] GetAllTasks() => Compiler.Tasks.Keys.ToArray();
+    public ICompileable[] GetAllTasks()
+    {
+        return Compiler.Tasks.Keys.ToArray();
+    }
 
     /// <summary>
-    /// Considers the state of <see cref="Compiler"/> to check for still running
-    /// processes.  Returns true to cancel closing (also informs user that closing
-    /// cannot happen right now).
+    ///     Considers the state of <see cref="Compiler" /> to check for still running
+    ///     processes.  Returns true to cancel closing (also informs user that closing
+    ///     cannot happen right now).
     /// </summary>
     /// <returns></returns>
     public bool ConsultAboutClosing()
@@ -323,9 +339,9 @@ public class CohortIdentificationConfigurationUICommon
     }
 
     /// <summary>
-    /// Inspects the state of the object and either starts its execution or
-    /// cancels it.  See <see cref="ExecuteAspectGetter(object)"/> to display
-    /// the appropriate message to the user
+    ///     Inspects the state of the object and either starts its execution or
+    ///     cancels it.  See <see cref="ExecuteAspectGetter(object)" /> to display
+    ///     the appropriate message to the user
     /// </summary>
     /// <param name="o"></param>
     /// <param name="userDefinedTimeout"></param>
@@ -336,15 +352,15 @@ public class CohortIdentificationConfigurationUICommon
             switch (o)
             {
                 case AggregateConfiguration aggregate:
-                    {
-                        var joinable = aggregate.JoinableCohortAggregateConfiguration;
+                {
+                    var joinable = aggregate.JoinableCohortAggregateConfiguration;
 
-                        if (joinable != null)
-                            OrderActivity(GetNextOperation(GetState(joinable)), joinable, userDefinedTimeout);
-                        else
-                            OrderActivity(GetNextOperation(GetState(aggregate)), aggregate, userDefinedTimeout);
-                        break;
-                    }
+                    if (joinable != null)
+                        OrderActivity(GetNextOperation(GetState(joinable)), joinable, userDefinedTimeout);
+                    else
+                        OrderActivity(GetNextOperation(GetState(aggregate)), aggregate, userDefinedTimeout);
+                    break;
+                }
                 case CohortAggregateContainer container:
                     OrderActivity(GetNextOperation(GetState(container)), container, userDefinedTimeout);
                     break;

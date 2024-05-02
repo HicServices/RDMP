@@ -22,14 +22,16 @@ internal class CohortContainerManager : ICohortContainerManager
         CatalogueRepository = catalogueRepository;
     }
 
-    public CohortAggregateContainer GetParent(AggregateConfiguration child) =>
-        CatalogueRepository.SelectAllWhere<CohortAggregateContainer>(
+    public CohortAggregateContainer GetParent(AggregateConfiguration child)
+    {
+        return CatalogueRepository.SelectAllWhere<CohortAggregateContainer>(
             "SELECT CohortAggregateContainer_ID FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
             "CohortAggregateContainer_ID",
             new Dictionary<string, object>
             {
                 { "AggregateConfiguration_ID", child.ID }
             }).SingleOrDefault();
+    }
 
     public void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order)
     {
@@ -90,14 +92,16 @@ internal class CohortContainerManager : ICohortContainerManager
         return containers.Cast<IOrderable>().Union(configs).OrderBy(o => o.Order).ToArray();
     }
 
-    public CohortAggregateContainer GetParent(CohortAggregateContainer child) =>
-        CatalogueRepository.SelectAllWhere<CohortAggregateContainer>(
+    public CohortAggregateContainer GetParent(CohortAggregateContainer child)
+    {
+        return CatalogueRepository.SelectAllWhere<CohortAggregateContainer>(
             "SELECT CohortAggregateContainer_ParentID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID=@CohortAggregateContainer_ChildID",
             "CohortAggregateContainer_ParentID",
             new Dictionary<string, object>
             {
                 { "CohortAggregateContainer_ChildID", child.ID }
             }).SingleOrDefault();
+    }
 
     public void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
     {

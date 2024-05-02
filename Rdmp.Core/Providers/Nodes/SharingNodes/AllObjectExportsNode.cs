@@ -7,7 +7,8 @@
 namespace Rdmp.Core.Providers.Nodes.SharingNodes;
 
 /// <summary>
-/// Collection of ObjectExport records which document RDMP metadata objects which you have exported (ready for sharing with another RDMP user).
+///     Collection of ObjectExport records which document RDMP metadata objects which you have exported (ready for sharing
+///     with another RDMP user).
 /// </summary>
 public class AllObjectExportsNode : SingletonNode
 {

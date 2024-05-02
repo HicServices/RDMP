@@ -15,15 +15,16 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
-/// Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated with it.  This is used in data extraction
-/// to generate metadata documents for the researchers to read (See WordDataWriter)
+///     Generates tables in a Microsoft Word document describing a Catalogue, its CatalogueItems and any Issues associated
+///     with it.  This is used in data extraction
+///     to generate metadata documents for the researchers to read (See WordDataWriter)
 /// </summary>
 public class WordCatalogueExtractor : DocXHelper
 {
-    private ICatalogue Catalogue { get; set; }
+    private ICatalogue Catalogue { get; }
 
     //This is an alternative for [DoNotExtractProperty] that only applies to this class where [DoNotExtractProperty] applies to all users of Catalogue e.g. DITAExtractor
-    private static string[] PropertyIgnorelist =
+    private static readonly string[] PropertyIgnorelist =
     {
         "Statistical_cons", "Research_relevance", "Topic", "Agg_method", "Limitations", "Comments", "Periodicity",
         "Acronym",
@@ -67,7 +68,7 @@ public class WordCatalogueExtractor : DocXHelper
         "Name"
     };
 
-    private XWPFDocument _document;
+    private readonly XWPFDocument _document;
 
 
     public WordCatalogueExtractor(ICatalogue catalogue, XWPFDocument document)
@@ -77,10 +78,16 @@ public class WordCatalogueExtractor : DocXHelper
     }
 
     /// <summary>
-    /// 
     /// </summary>
-    /// <param name="cataItems">The CatalogueItems you want to write out ( should all belong to the same Catalogue) but may be a subset of the whole Catalogue e.g. those columns that were actualy extracted</param>
-    /// <param name="supplementalData">A bunch of key value pairs (Tuple actually) that accompany a CatalogueItem and should be rammed into the table as it is written out, this could contain information only determined at runtime e.g. not part of the Catalogue</param>
+    /// <param name="cataItems">
+    ///     The CatalogueItems you want to write out ( should all belong to the same Catalogue) but may be
+    ///     a subset of the whole Catalogue e.g. those columns that were actualy extracted
+    /// </param>
+    /// <param name="supplementalData">
+    ///     A bunch of key value pairs (Tuple actually) that accompany a CatalogueItem and should be
+    ///     rammed into the table as it is written out, this could contain information only determined at runtime e.g. not part
+    ///     of the Catalogue
+    /// </param>
     public void AddMetaDataForColumns(CatalogueItem[] cataItems,
         Dictionary<CatalogueItem, Tuple<string, string>[]> supplementalData = null)
     {

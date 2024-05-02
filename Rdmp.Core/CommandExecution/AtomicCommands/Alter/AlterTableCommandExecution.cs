@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Abstract base command for all commands which change a tables schema (on the live database)
+///     Abstract base command for all commands which change a tables schema (on the live database)
 /// </summary>
 public abstract class AlterTableCommandExecution : BasicCommandExecution
 {
@@ -44,7 +44,6 @@ public abstract class AlterTableCommandExecution : BasicCommandExecution
         if (Table.TableType != TableType.Table)
         {
             SetImpossible($"Table is a {Table.TableType}");
-            return;
         }
     }
 

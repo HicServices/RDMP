@@ -24,8 +24,11 @@ public abstract class ProblemProvider : IProblemProvider
         typeof(Pipeline)
     });
 
-    /// <inheritdoc/>
-    public bool HasProblem(object o) => DescribeProblem(o) != null;
+    /// <inheritdoc />
+    public bool HasProblem(object o)
+    {
+        return DescribeProblem(o) != null;
+    }
 
     public string DescribeProblem(object o)
     {

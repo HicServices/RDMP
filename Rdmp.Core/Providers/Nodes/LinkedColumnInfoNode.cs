@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
@@ -20,10 +21,15 @@ public class LinkedColumnInfoNode : Node, IDeleteable, IMasqueradeAs
         ColumnInfo = columnInfo;
     }
 
-    public override string ToString() => ColumnInfo.ToString();
+    public override string ToString()
+    {
+        return ColumnInfo.ToString();
+    }
 
-    protected bool Equals(LinkedColumnInfoNode other) =>
-        Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
+    protected bool Equals(LinkedColumnInfoNode other)
+    {
+        return Equals(CatalogueItem, other.CatalogueItem) && Equals(ColumnInfo, other.ColumnInfo);
+    }
 
     public override bool Equals(object obj)
     {
@@ -33,9 +39,15 @@ public class LinkedColumnInfoNode : Node, IDeleteable, IMasqueradeAs
         return Equals((LinkedColumnInfoNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(CatalogueItem, ColumnInfo);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(CatalogueItem, ColumnInfo);
+    }
 
-    public object MasqueradingAs() => ColumnInfo;
+    public object MasqueradingAs()
+    {
+        return ColumnInfo;
+    }
 
     public void DeleteInDatabase()
     {

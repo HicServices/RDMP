@@ -9,11 +9,11 @@ using System.Data.Common;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
 {
     /// <summary>
-    /// Reads the externally held cohort descriptive data into memory from the <paramref name="r"/>
+    ///     Reads the externally held cohort descriptive data into memory from the <paramref name="r" />
     /// </summary>
     /// <param name="r"></param>
     /// <param name="tableName"></param>
@@ -30,31 +30,34 @@ public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ExternalProjectNumber { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ExternalDescription { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ExternalVersion { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ExternalCohortTableName { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? ExternalCohortCreationDate { get; set; }
 
     /// <summary>
-    /// Returns null for null or DBNull.Value otherwise the <see cref="DateTime"/> held in <paramref name="o"/>
+    ///     Returns null for null or DBNull.Value otherwise the <see cref="DateTime" /> held in <paramref name="o" />
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
+    public static DateTime? ObjectToNullableDateTime(object o)
+    {
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
+    }
 
     /// <summary>
-    /// Describes the lack of available external data for an <see cref="ExtractableCohort"/> because the data has
-    /// been deleted from the cohort database
+    ///     Describes the lack of available external data for an <see cref="ExtractableCohort" /> because the data has
+    ///     been deleted from the cohort database
     /// </summary>
     public static IExternalCohortDefinitionData Orphan { get; } = new ExternalCohortDefinitionData
     {

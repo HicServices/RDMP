@@ -39,10 +39,10 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
 
         if (p == null)
             if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add Governance Document",
-                TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
+                    {
+                        WindowTitle = "Add Governance Document",
+                        TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
                     out p))
                 // user cancelled selecting a Catalogue
                 return;
@@ -57,6 +57,8 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
         Activate(doc);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
+    }
 }

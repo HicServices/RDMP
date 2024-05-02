@@ -17,15 +17,16 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Builds a query based on a <see cref="AggregateConfiguration"/> (either a sample of data in a graph or matching a cohort
-/// (<see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>)
+///     Builds a query based on a <see cref="AggregateConfiguration" /> (either a sample of data in a graph or matching a
+///     cohort
+///     (<see cref="Curation.Data.Aggregation.AggregateConfiguration.IsCohortIdentificationAggregate" />)
 /// </summary>
 public class ViewAggregateExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public bool UseQueryCache { get; set; }
 
     /// <summary>
-    /// How big should the sample be
+    ///     How big should the sample be
     /// </summary>
     public int? TopX { get; set; } = 100;
 
@@ -80,7 +81,10 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
         return TopX.HasValue ? builder.GetDatasetSampleSQL(TopX.Value) : builder.SQL;
     }
 
-    public string GetTabName() => $"View Top 100 {AggregateConfiguration}";
+    public string GetTabName()
+    {
+        return $"View Top 100 {AggregateConfiguration}";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -91,5 +95,8 @@ public class ViewAggregateExtractUICollection : PersistableObjectCollection, IVi
     private AggregateConfiguration AggregateConfiguration =>
         DatabaseObjects.OfType<AggregateConfiguration>().SingleOrDefault();
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => AggregateConfiguration?.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return AggregateConfiguration?.GetQuerySyntaxHelper();
+    }
 }

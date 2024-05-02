@@ -9,16 +9,19 @@ using System.Collections.Generic;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Type manager which supports loading assemblies from both the bin directory and plugin directories.  Types discovered are indexed
-/// according to name so they can be built on demand later on.
-/// 
-/// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the
-/// assembly could be resolved).</para>
+///     Type manager which supports loading assemblies from both the bin directory and plugin directories.  Types
+///     discovered are indexed
+///     according to name so they can be built on demand later on.
+///     <para>
+///         Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of
+///         the Types in the
+///         assembly could be resolved).
+///     </para>
 /// </summary>
 public static class SafeDirectoryCatalog
 {
     /// <summary>
-    /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
+    ///     These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
     /// </summary>
     internal static readonly HashSet<string> Ignore = new()
     {

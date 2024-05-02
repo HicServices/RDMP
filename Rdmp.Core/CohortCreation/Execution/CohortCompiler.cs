@@ -27,12 +27,15 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)
-/// at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g. AggregationContainerTask) and a
-/// CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of the query is cached, whether it
-/// has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query on the data set database.
-/// 
-/// <para>See CohortCompiler.cd</para>
+///     Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple
+///     cohort builder objects (ICompileable)
+///     at once.  Every input object (e.g. CohortAggregateContainer) will be assigned a corresponding ICompileable (e.g.
+///     AggregationContainerTask) and a
+///     CohortIdentificationTaskExecution.  The ICompileable records how long the query has been running for, how much of
+///     the query is cached, whether it
+///     has been cancelled / crashed etc.  The CohortIdentificationTaskExecution handles the actual execution of the query
+///     on the data set database.
+///     <para>See CohortCompiler.cd</para>
 /// </summary>
 public class CohortCompiler
 {
@@ -52,12 +55,12 @@ public class CohortCompiler
 
 
     /// <summary>
-    /// Plugin custom cohort compilers e.g. API calls that return identifier lists
+    ///     Plugin custom cohort compilers e.g. API calls that return identifier lists
     /// </summary>
     public IReadOnlyCollection<IPluginCohortCompiler> PluginCohortCompilers { get; private set; }
 
     /// <summary>
-    /// Returns the current child provider (creating it if none has been injected yet).
+    ///     Returns the current child provider (creating it if none has been injected yet).
     /// </summary>
     public ICoreChildProvider CoreChildProvider
     {
@@ -67,8 +70,8 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable"/> is still building
-    /// and not running yet.
+    ///     Tasks currently running in the compiler, Value can be null if the <see cref="ICompileable" /> is still building
+    ///     and not running yet.
     /// </summary>
     public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new();
 
@@ -130,10 +133,15 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Adds all subqueries and containers that are below the current CohortIdentificationConfiguration as tasks to the compiler
+    ///     Adds all subqueries and containers that are below the current CohortIdentificationConfiguration as tasks to the
+    ///     compiler
     /// </summary>
-    /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+    /// <param name="addSubcontainerTasks">
+    ///     The root container is always added to the task list but you could skip subcontainer totals if all you care about is
+    ///     the final total for the cohort
+    ///     and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container
+    ///     (final answer for who is in cohort) only.
+    /// </param>
     /// <returns></returns>
     public List<ICompileable> AddAllTasks(bool addSubcontainerTasks = true)
     {
@@ -161,15 +169,19 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Adds all AggregateConfigurations and CohortAggregateContainers in the specified container or subcontainers. Passing addSubcontainerTasks false will still process the subcontainers
-    /// but will only add AggregateConfigurations to the task list.
-    /// 
-    /// <para>Does not add disabled objects</para>
+    ///     Adds all AggregateConfigurations and CohortAggregateContainers in the specified container or subcontainers. Passing
+    ///     addSubcontainerTasks false will still process the subcontainers
+    ///     but will only add AggregateConfigurations to the task list.
+    ///     <para>Does not add disabled objects</para>
     /// </summary>
     /// <param name="globals"></param>
     /// <param name="container"></param>
-    /// <param name="addSubcontainerTasks">The root container is always added to the task list but you could skip subcontainer totals if all you care about is the final total for the cohort
-    /// and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container (final answer for who is in cohort) only.</param>
+    /// <param name="addSubcontainerTasks">
+    ///     The root container is always added to the task list but you could skip subcontainer totals if all you care about is
+    ///     the final total for the cohort
+    ///     and you don't have a dependant UI etc.  Passing false will add all joinables, subqueries etc and the root container
+    ///     (final answer for who is in cohort) only.
+    /// </param>
     /// <returns></returns>
     public List<Task<ICompileable>> AddTasksRecursivelyAsync(ISqlParameter[] globals,
         CohortAggregateContainer container, bool addSubcontainerTasks = true)
@@ -201,10 +213,15 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Adds the given AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration to the compiler Task list or returns the existing
-    /// ICompileable if it is already part of the Compilation list.  This will not start the task, you will have to call Launch... to start the ICompileable executing
+    ///     Adds the given AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration to the
+    ///     compiler Task list or returns the existing
+    ///     ICompileable if it is already part of the Compilation list.  This will not start the task, you will have to call
+    ///     Launch... to start the ICompileable executing
     /// </summary>
-    /// <param name="runnable">An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you want to schedule for execution</param>
+    /// <param name="runnable">
+    ///     An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you
+    ///     want to schedule for execution
+    /// </param>
     /// <param name="globals"></param>
     /// <returns></returns>
     public ICompileable AddTask(IMapsDirectlyToDatabaseTable runnable, IEnumerable<ISqlParameter> globals)
@@ -437,8 +454,9 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Translates the <paramref name="data_type"/> which was read from <paramref name="cacheableTask"/> into an appropriate type
-    /// that can be written into the tables referenced by <paramref name="queryCachingServer"/>.
+    ///     Translates the <paramref name="data_type" /> which was read from <paramref name="cacheableTask" /> into an
+    ///     appropriate type
+    ///     that can be written into the tables referenced by <paramref name="queryCachingServer" />.
     /// </summary>
     /// <param name="data_type">The datatype you want translated e.g. varchar2(10) (oracle syntax)</param>
     /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
@@ -461,10 +479,15 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Stops the execution of all currently executing ICompileable CohortIdentificationTaskExecutions. If it is executing an SQL query this should cancel the ongoing query.  If the
-    /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
+    ///     Stops the execution of all currently executing ICompileable CohortIdentificationTaskExecutions. If it is executing
+    ///     an SQL query this should cancel the ongoing query.  If the
+    ///     ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is
+    ///     always respected
     /// </summary>
-    /// <param name="alsoClearTaskList">True to also remove all ICompileables, False to leave the Tasks intact (allows you to rerun them or clear etc)</param>
+    /// <param name="alsoClearTaskList">
+    ///     True to also remove all ICompileables, False to leave the Tasks intact (allows you to
+    ///     rerun them or clear etc)
+    /// </param>
     public void CancelAllTasks(bool alsoClearTaskList)
     {
         lock (Tasks)
@@ -476,11 +499,16 @@ public class CohortCompiler
     }
 
     /// <summary>
-    /// Stops execution of the specified ICompileable CohortIdentificationTaskExecutions.  If it is executing an SQL query this should cancel the ongoing query.  If the
-    /// ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is always respected
+    ///     Stops execution of the specified ICompileable CohortIdentificationTaskExecutions.  If it is executing an SQL query
+    ///     this should cancel the ongoing query.  If the
+    ///     ICompileable is not executing (it has crashed or finished etc) then nothing will happen.  alsoClearFromTaskList is
+    ///     always respected
     /// </summary>
     /// <param name="compileable"></param>
-    /// <param name="alsoClearFromTaskList">True to remove the ICompileable from the tasks list, False to leave the Tasks intact (allows you to rerun it or clear etc) </param>
+    /// <param name="alsoClearFromTaskList">
+    ///     True to remove the ICompileable from the tasks list, False to leave the Tasks
+    ///     intact (allows you to rerun it or clear etc)
+    /// </param>
     public void CancelTask(ICompileable compileable, bool alsoClearFromTaskList)
     {
         lock (Tasks)

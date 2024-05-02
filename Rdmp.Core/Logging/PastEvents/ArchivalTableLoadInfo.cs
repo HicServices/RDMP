@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
+///     Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
 /// </summary>
 public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
@@ -74,10 +74,15 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
         return toReturn;
     }
 
-    private static int? ToNullableInt(object i) => i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
+    private static int? ToNullableInt(object i)
+    {
+        return i == null || i == DBNull.Value ? null : Convert.ToInt32(i);
+    }
 
-    public override string ToString() =>
-        $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
+    public override string ToString()
+    {
+        return $"{Start} - {TargetTable} (Inserts={Inserts},Updates={Updates},Deletes={Deletes})";
+    }
 
     public int CompareTo(object obj)
     {

@@ -16,12 +16,18 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// The RDMP data load engine is designed to prevent duplicate data entering your live database.  This is achieved by requiring a primary key defined by the source
-/// data (i.e. not an autonum).  However it is expected that semantically correct primary keys will not be perfectly supplied in all cases by data providers, for example
-/// if 'TestLabCode' is the primary key on biochemistry but duplicates appear with unique values in 'DataAge' it would be reasonable to assume that newer 'DataAge' records
-/// replace older ones.  Therefore we might decide to keep the primary key as 'TestLabCode' and then discard duplicate records based on preserving the latest 'DataAge'.
-/// 
-/// <para>This class handles creating the query that deletes duplicates based on the column preference order supplied (See ConfigurePrimaryKeyCollisionResolution). </para>
+///     The RDMP data load engine is designed to prevent duplicate data entering your live database.  This is achieved by
+///     requiring a primary key defined by the source
+///     data (i.e. not an autonum).  However it is expected that semantically correct primary keys will not be perfectly
+///     supplied in all cases by data providers, for example
+///     if 'TestLabCode' is the primary key on biochemistry but duplicates appear with unique values in 'DataAge' it would
+///     be reasonable to assume that newer 'DataAge' records
+///     replace older ones.  Therefore we might decide to keep the primary key as 'TestLabCode' and then discard duplicate
+///     records based on preserving the latest 'DataAge'.
+///     <para>
+///         This class handles creating the query that deletes duplicates based on the column preference order supplied
+///         (See ConfigurePrimaryKeyCollisionResolution).
+///     </para>
 /// </summary>
 public class PrimaryKeyCollisionResolver
 {
@@ -36,7 +42,8 @@ FROM CTE
 WHERE DuplicateCount > 1";
 
     /// <summary>
-    /// Creates a new collision resolver using the primary keys and resolution order of the supplied <see cref="TableInfo"/>
+    ///     Creates a new collision resolver using the primary keys and resolution order of the supplied
+    ///     <see cref="TableInfo" />
     /// </summary>
     /// <param name="tableInfo"></param>
     public PrimaryKeyCollisionResolver(ITableInfo tableInfo)
@@ -46,10 +53,13 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    /// Get the SQL to run to delete records colliding on primary key
+    ///     Get the SQL to run to delete records colliding on primary key
     /// </summary>
     /// <returns></returns>
-    public string GenerateSQL() => GenerateSQL(out _, out _);
+    public string GenerateSQL()
+    {
+        return GenerateSQL(out _, out _);
+    }
 
     private string GenerateSQL(out ColumnInfo[] pks, out List<IResolveDuplication> resolvers)
     {
@@ -96,7 +106,10 @@ WHERE DuplicateCount > 1";
         return sql;
     }
 
-    private string GetTableName() => _tableInfo.GetRuntimeName(LoadStage.AdjustRaw);
+    private string GetTableName()
+    {
+        return _tableInfo.GetRuntimeName(LoadStage.AdjustRaw);
+    }
 
     private string AppendRelevantOrderBySql(string sql, IResolveDuplication col)
     {
@@ -121,7 +134,7 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    /// Generates the SQL that will be run to determine whether there are any record collisions on primary key (in RAW)
+    ///     Generates the SQL that will be run to determine whether there are any record collisions on primary key (in RAW)
     /// </summary>
     /// <returns></returns>
     public string GenerateCollisionDetectionSQL()
@@ -135,7 +148,7 @@ WHERE DuplicateCount > 1";
         sql += tableNameInRAW + Environment.NewLine;
         sql +=
             $"group by {pks.Aggregate("", (s, n) => $"{s}{_querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw))},")}{Environment.NewLine}";
-        sql = sql.TrimEnd(new[] { ',', '\r', '\n' }) + Environment.NewLine;
+        sql = sql.TrimEnd(',', '\r', '\n') + Environment.NewLine;
         sql += $"having count(*) > 1{Environment.NewLine}";
         sql += $") then 1 else 0 end{Environment.NewLine}";
 
@@ -143,8 +156,9 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    /// Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run manually by the data analyst if he is unsure about the
-    /// resolution order / current primary keys
+    ///     Generates SQL to show which records would be deleted by primary key collision resolution.  This should be run
+    ///     manually by the data analyst if he is unsure about the
+    ///     resolution order / current primary keys
     /// </summary>
     /// <returns></returns>
     public string GeneratePreviewSQL()
@@ -235,10 +249,14 @@ WHERE DuplicateCount > 1";
     }
 
     /// <summary>
-    /// When using ORDER BY to resolve primary key collisions this will specify what substitution to use for null values (such that the ORDER BY works correctly).
+    ///     When using ORDER BY to resolve primary key collisions this will specify what substitution to use for null values
+    ///     (such that the ORDER BY works correctly).
     /// </summary>
     /// <param name="datatype">The Sql Server column datatype for the column you are substituting</param>
-    /// <param name="min">true to substitute null values for the minimum value of the <paramref name="datatype"/>, false to substitute for the maximum</param>
+    /// <param name="min">
+    ///     true to substitute null values for the minimum value of the <paramref name="datatype" />, false to
+    ///     substitute for the maximum
+    /// </param>
     /// <returns></returns>
     public static string GetNullSubstituteForComparisonsWithDataType(string datatype, bool min)
     {

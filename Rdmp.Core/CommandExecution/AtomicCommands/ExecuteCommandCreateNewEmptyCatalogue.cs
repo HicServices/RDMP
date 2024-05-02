@@ -21,11 +21,15 @@ public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAto
     {
     }
 
-    public override string GetCommandHelp() =>
-        @"Create a new dataset not yet linked to any underlying database columns\tables";
+    public override string GetCommandHelp()
+    {
+        return @"Create a new dataset not yet linked to any underlying database columns\tables";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);
+    }
 
     public override void Execute()
     {

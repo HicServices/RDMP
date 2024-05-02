@@ -15,8 +15,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied (e.g. load the next 5 days of Load Progress 'Tayside Biochem
-/// Loading').
+///     Return a ScheduledDataLoadJob hydrated with appropriate dates for the LoadProgress supplied (e.g. load the next 5
+///     days of Load Progress 'Tayside Biochem
+///     Loading').
 /// </summary>
 public class SingleScheduledJobFactory : ScheduledJobFactory
 {
@@ -31,9 +32,11 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
         _jobDateGenerationStrategy = jobDateGenerationStrategy;
     }
 
-    public override bool HasJobs() =>
-        _jobDateGenerationStrategy.GetTotalNumberOfJobs(
+    public override bool HasJobs()
+    {
+        return _jobDateGenerationStrategy.GetTotalNumberOfJobs(
             OverrideNumberOfDaysToLoad ?? _loadProgress.DefaultNumberOfDaysToLoadEachTime, false) > 0;
+    }
 
     protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IDataLoadEventListener listener, HICDatabaseConfiguration configuration)

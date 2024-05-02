@@ -20,9 +20,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Extraction component that will generate share definition files for the catalogues involved in the extraction.
-/// 
-/// <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
+///     Extraction component that will generate share definition files for the catalogues involved in the extraction.
+///     <para>The Metadata Naming Pattern will also override the table name in the DataTable flow object.</para>
 /// </summary>
 public class ExtractCatalogueMetadata : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>,
     IPipelineRequirement<IBasicActivateItems>

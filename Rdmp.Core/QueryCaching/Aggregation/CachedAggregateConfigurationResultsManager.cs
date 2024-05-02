@@ -21,29 +21,42 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.QueryCaching.Aggregation;
 
 /// <summary>
-/// Handles the caching and versioning of AggregateConfigurations in a QueryCaching database (QueryCaching.Database.csproj).  Query caching is the process
-/// of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built by an AggregateBuilder).
-/// 
-/// <para>Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with WHERE conditions and even Patient Index
-/// Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible time frame (i.e. minutes instead of days)
-/// is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key indexes.  The
-/// CohortIdentificationConfiguration can then be built into a query that uses the cached results (See CohortQueryBuilder).</para>
-/// 
-/// <para>In order to ensure the cache is never stale the exact SQL query is stored in a table (CachedAggregateConfigurationResults) so that if the user changes
-/// the AggregateConfiguration the cached DataTable is discarded (until the user executes and caches the new version).</para>
-/// 
-/// <para> CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient identifier lists but also aggregate graphs and
-/// patient index tables).</para>
+///     Handles the caching and versioning of AggregateConfigurations in a QueryCaching database
+///     (QueryCaching.Database.csproj).  Query caching is the process
+///     of storing the SQL query and resulting DataTable from running an Aggregate Configuration SQL query (Usually built
+///     by an AggregateBuilder).
+///     <para>
+///         Caching is vital for large CohortIdentificationConfigurations which feature many complicated subqueries with
+///         WHERE conditions and even Patient Index
+///         Tables (See JoinableCohortAggregateConfiguration).  The only way some of these queries can finish in a sensible
+///         time frame (i.e. minutes instead of days)
+///         is to execute each subquery (AggregateConfiguration) and cache the resulting identifier lists with primary key
+///         indexes.  The
+///         CohortIdentificationConfiguration can then be built into a query that uses the cached results (See
+///         CohortQueryBuilder).
+///     </para>
+///     <para>
+///         In order to ensure the cache is never stale the exact SQL query is stored in a table
+///         (CachedAggregateConfigurationResults) so that if the user changes
+///         the AggregateConfiguration the cached DataTable is discarded (until the user executes and caches the new
+///         version).
+///     </para>
+///     <para>
+///         CachedAggregateConfigurationResultsManager can cache any CacheCommitArguments (includes not just patient
+///         identifier lists but also aggregate graphs and
+///         patient index tables).
+///     </para>
 /// </summary>
 public partial class CachedAggregateConfigurationResultsManager
 {
     private readonly DiscoveredServer _server;
-    private DiscoveredDatabase _database;
+    private readonly DiscoveredDatabase _database;
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     /// <summary>
-    /// The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when caching
+    ///     The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when
+    ///     caching
     /// </summary>
     public const string ResultsManagerTable = "CachedAggregateConfigurationResults";
 
@@ -56,7 +69,10 @@ public partial class CachedAggregateConfigurationResultsManager
     public const string CachingPrefix = "/*Cached:";
 
     public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
-        AggregateOperation operation) => GetLatestResultsTableUnsafe(configuration, operation, out _);
+        AggregateOperation operation)
+    {
+        return GetLatestResultsTableUnsafe(configuration, operation, out _);
+    }
 
     public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,
         AggregateOperation operation, out string sql)
@@ -87,9 +103,11 @@ AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con);
     }
 
     /// <summary>
-    /// Returns the name of the query cache results table for <paramref name="configuration"/> if the <paramref name="currentSql"/> matches
-    /// the SQL run when the cache result was generated.  Returns null if no cache result is found or there are changes in the <paramref name="currentSql"/>
-    /// since the cache result was generated.
+    ///     Returns the name of the query cache results table for <paramref name="configuration" /> if the
+    ///     <paramref name="currentSql" /> matches
+    ///     the SQL run when the cache result was generated.  Returns null if no cache result is found or there are changes in
+    ///     the <paramref name="currentSql" />
+    ///     since the cache result was generated.
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="operation"></param>
@@ -188,7 +206,7 @@ WHERE
     }
 
     /// <summary>
-    /// Deletes any cache entries for <paramref name="configuration"/> in its role as <paramref name="operation"/>
+    ///     Deletes any cache entries for <paramref name="configuration" /> in its role as <paramref name="operation" />
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="operation"></param>

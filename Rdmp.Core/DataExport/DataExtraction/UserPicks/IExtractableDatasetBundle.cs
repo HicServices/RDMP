@@ -12,7 +12,7 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// See ExtractableDatasetBundle
+///     See ExtractableDatasetBundle
 /// </summary>
 public interface IExtractableDatasetBundle
 {

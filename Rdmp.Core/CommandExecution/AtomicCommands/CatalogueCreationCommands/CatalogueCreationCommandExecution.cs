@@ -22,7 +22,7 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
         "Optionally create the Catalogue in a virtual subdirectory e.g. /mycatalogues/, otherwise Null";
 
     /// <summary>
-    /// Create a project specific Catalogue when command is executed by prompting the user to first pick a project
+    ///     Create a project specific Catalogue when command is executed by prompting the user to first pick a project
     /// </summary>
     public bool PromptForProject { get; set; }
 

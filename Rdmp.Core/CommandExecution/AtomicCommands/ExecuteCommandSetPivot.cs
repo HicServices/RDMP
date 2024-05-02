@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Changes the pivot dimension of an aggregate graph
+///     Changes the pivot dimension of an aggregate graph
 /// </summary>
 public class ExecuteCommandSetPivot : BasicCommandExecution
 {
@@ -49,11 +49,8 @@ public class ExecuteCommandSetPivot : BasicCommandExecution
         {
             // don't let them try to set a pivot on a cohort aggregate configuration but do let them clear it if it somehow ended up with one
             if (aggregate.IsCohortIdentificationAggregate)
-            {
                 SetImpossible(
                     $"AggregateConfiguration {aggregate} is a cohort identification aggregate and so cannot have a pivot");
-                return;
-            }
         }
         else
         {

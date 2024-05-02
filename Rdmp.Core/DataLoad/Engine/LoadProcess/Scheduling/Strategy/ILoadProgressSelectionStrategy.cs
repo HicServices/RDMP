@@ -10,12 +10,12 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 
 /// <summary>
-/// Decides which LoadProgress (if any) to advance in a ScheduledDataLoadProcess.
+///     Decides which LoadProgress (if any) to advance in a ScheduledDataLoadProcess.
 /// </summary>
 public interface ILoadProgressSelectionStrategy
 {
     /// <summary>
-    /// Return a list of the runnable load progresses
+    ///     Return a list of the runnable load progresses
     /// </summary>
     /// <returns></returns>
     List<ILoadProgress> GetAllLoadProgresses();

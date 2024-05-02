@@ -10,7 +10,7 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// See DataLoadInfo
+///     See DataLoadInfo
 /// </summary>
 public interface IDataLoadInfo
 {

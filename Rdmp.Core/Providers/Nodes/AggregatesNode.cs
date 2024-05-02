@@ -10,12 +10,13 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
+///     Collection of all <see cref="AggregateConfiguration" /> graphs for visualising data in the
+///     <see cref="Curation.Data.Catalogue" />.
 /// </summary>
 public class AggregatesNode : Node
 {
     /// <summary>
-    /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
+    ///     The <see cref="Curation.Data.Catalogue" /> to which all the <see cref="AggregateConfiguration" /> belong
     /// </summary>
     public Catalogue Catalogue { get; set; }
 
@@ -24,9 +25,15 @@ public class AggregatesNode : Node
         Catalogue = c;
     }
 
-    public override string ToString() => "Aggregate Graphs";
+    public override string ToString()
+    {
+        return "Aggregate Graphs";
+    }
 
-    protected bool Equals(AggregatesNode other) => Catalogue.Equals(other.Catalogue);
+    protected bool Equals(AggregatesNode other)
+    {
+        return Catalogue.Equals(other.Catalogue);
+    }
 
     public override bool Equals(object obj)
     {
@@ -36,5 +43,8 @@ public class AggregatesNode : Node
         return Equals((AggregatesNode)obj);
     }
 
-    public override int GetHashCode() => Catalogue.GetHashCode() * GetType().GetHashCode();
+    public override int GetHashCode()
+    {
+        return Catalogue.GetHashCode() * GetType().GetHashCode();
+    }
 }

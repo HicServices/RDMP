@@ -22,21 +22,26 @@ using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-/// The Validator is the main entry point into this API. A client would typically create a Validator instance and then
-/// add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set
-/// LocatorForXMLDeserialization.
-/// 
-/// <para>Generally, there are two phases of interaction with a Validator:</para>
-/// 
-/// <para>1. Design Time
-/// During this phase, the client will instantiate and set up a Validator. The Check() method can be called to check for
-/// any type incompatibilities prior to running the actual Validate() method.</para>
-/// 
-/// <para>2. Run Time
-/// The Validation(o) method is called, applying the previously set up validation rules to the supplied domain object (o).</para>
-/// 
-/// <para>Note: As of this writing the Dictionary-based method is under active development, whereas the Object-based method
-/// is not adequately developed or tested . PLEASE USE THE DICTIONARY method FOR NOW!</para>
+///     The Validator is the main entry point into this API. A client would typically create a Validator instance and then
+///     add a number of ItemValidators to it.  Alternatively you can use the static method LoadFromXml.  Ensure you set
+///     LocatorForXMLDeserialization.
+///     <para>Generally, there are two phases of interaction with a Validator:</para>
+///     <para>
+///         1. Design Time
+///         During this phase, the client will instantiate and set up a Validator. The Check() method can be called to
+///         check for
+///         any type incompatibilities prior to running the actual Validate() method.
+///     </para>
+///     <para>
+///         2. Run Time
+///         The Validation(o) method is called, applying the previously set up validation rules to the supplied domain
+///         object (o).
+///     </para>
+///     <para>
+///         Note: As of this writing the Dictionary-based method is under active development, whereas the Object-based
+///         method
+///         is not adequately developed or tested . PLEASE USE THE DICTIONARY method FOR NOW!
+///     </para>
 /// </summary>
 [XmlRoot("Validator")]
 public class Validator
@@ -45,8 +50,9 @@ public class Validator
     private Dictionary<string, object> _domainObjectDictionary;
 
     /// <summary>
-    /// Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the available instances available
-    /// for selection (the Catalogue database).
+    ///     Validation rules can reference objects e.g. StandardRegex.  This static property indicates where to get the
+    ///     available instances available
+    ///     for selection (the Catalogue database).
     /// </summary>
     public static ICatalogueRepositoryServiceLocator LocatorForXMLDeserialization;
 
@@ -59,8 +65,8 @@ public class Validator
     }
 
     /// <summary>
-    /// Adds an ItemValidator to the Validator, specifying the target property (in the object to be validated) and
-    /// the type that we expect this property to have. The type is used later in the Check() method. See below..
+    ///     Adds an ItemValidator to the Validator, specifying the target property (in the object to be validated) and
+    ///     the type that we expect this property to have. The type is used later in the Check() method. See below..
     /// </summary>
     /// <param name="itemValidator"></param>
     /// <param name="targetProperty"></param>
@@ -78,7 +84,7 @@ public class Validator
     }
 
     /// <summary>
-    /// Returns the ItemValidator associated with the given key.
+    ///     Returns the ItemValidator associated with the given key.
     /// </summary>
     /// <param name="key"></param>
     /// <returns>An Itemvalidator reference, or null if no match found for the supplied key</returns>
@@ -95,7 +101,7 @@ public class Validator
     }
 
     /// <summary>
-    /// Removes a given (key) ItemValidator from the collection.
+    ///     Removes a given (key) ItemValidator from the collection.
     /// </summary>
     /// <param name="key"></param>
     /// <returns>true if the removal succeeded, false otherwise</returns>
@@ -117,7 +123,7 @@ public class Validator
     }
 
     /// <summary>
-    /// Validate against the supplied domain object, which takes the form of a generic object.
+    ///     Validate against the supplied domain object, which takes the form of a generic object.
     /// </summary>
     /// <param name="domainObject"></param>
     public ValidationFailure Validate(object domainObject)
@@ -128,10 +134,16 @@ public class Validator
     }
 
     /// <summary>
-    /// Validate against the supplied domain object, which takes the form of a generic object with Properties matching TargetProperty or an SqlDataReader or a DataTable
+    ///     Validate against the supplied domain object, which takes the form of a generic object with Properties matching
+    ///     TargetProperty or an SqlDataReader or a DataTable
     /// </summary>
     /// <param name="domainObject"></param>
-    /// /// <param name="currentResults">It is expected that Validate is called multiple times (once per row) therefore you can store the Result of the last one and pass it back into the method the next time you call it in order to maintain a running total</param>
+    /// ///
+    /// <param name="currentResults">
+    ///     It is expected that Validate is called multiple times (once per row) therefore you can
+    ///     store the Result of the last one and pass it back into the method the next time you call it in order to maintain a
+    ///     running total
+    /// </param>
     /// <param name="worstConsequence"></param>
     public VerboseValidationResults ValidateVerboseAdditive(object domainObject,
         VerboseValidationResults currentResults, out Consequence? worstConsequence)
@@ -153,7 +165,7 @@ public class Validator
 
 
     /// <summary>
-    /// Validate against the supplied domain object, which takes the form of a Dictionary.
+    ///     Validate against the supplied domain object, which takes the form of a Dictionary.
     /// </summary>
     /// <param name="d"></param>
     public ValidationFailure Validate(Dictionary<string, object> d)
@@ -167,7 +179,7 @@ public class Validator
     private static XmlSerializer _serializer;
 
     /// <summary>
-    /// Instantiate a Validator from a (previously saved) XML string.
+    ///     Instantiate a Validator from a (previously saved) XML string.
     /// </summary>
     /// <param name="xml"></param>
     /// <returns>a Validator</returns>
@@ -188,7 +200,7 @@ public class Validator
     }
 
     /// <summary>
-    /// Persist the current Validator instance to a string containing XML.
+    ///     Persist the current Validator instance to a string containing XML.
     /// </summary>
     /// <returns>a String</returns>
     public string SaveToXml(bool indent = true)
@@ -239,15 +251,18 @@ public class Validator
 
 
     /// <summary>
-    /// This Factory method returns a new RegularExpression instance.
+    ///     This Factory method returns a new RegularExpression instance.
     /// </summary>
     /// <param name="pattern"></param>
     /// <returns></returns>
-    public static ISecondaryConstraint CreateRegularExpression(string pattern) => new RegularExpression(pattern);
+    public static ISecondaryConstraint CreateRegularExpression(string pattern)
+    {
+        return new RegularExpression(pattern);
+    }
 
     /// <summary>
-    /// Returns an array of available PrimaryConstraint names.
-    /// Provides support for client applications who may need to display a list for selection.
+    ///     Returns an array of available PrimaryConstraint names.
+    ///     Provides support for client applications who may need to display a list for selection.
     /// </summary>
     /// <returns></returns>
     public static string[] GetPrimaryConstraintNames()
@@ -265,9 +280,9 @@ public class Validator
     }
 
     /// <summary>
-    /// This Factory method returns a Constraint corresponding to the supplied constraint name.
-    /// The name must match the corresponding class name. Matching is case-insensitive.
-    /// An ArgumentException is thrown if a matching constraint cannot be found.
+    ///     This Factory method returns a Constraint corresponding to the supplied constraint name.
+    ///     The name must match the corresponding class name. Matching is case-insensitive.
+    ///     An ArgumentException is thrown if a matching constraint cannot be found.
     /// </summary>
     /// <param name="name"></param>
     /// <param name="consequence"></param>
@@ -363,31 +378,31 @@ public class Validator
         switch (o)
         {
             case DbDataReader reader:
+            {
+                names = new string[reader.FieldCount];
+                values = new object[reader.FieldCount];
+
+                for (var i = 0; i < reader.FieldCount; i++)
                 {
-                    names = new string[reader.FieldCount];
-                    values = new object[reader.FieldCount];
-
-                    for (var i = 0; i < reader.FieldCount; i++)
-                    {
-                        names[i] = reader.GetName(i);
-                        values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
-                    }
-
-                    break;
+                    names[i] = reader.GetName(i);
+                    values[i] = reader[i] == DBNull.Value ? null : reader[i].ToString();
                 }
+
+                break;
+            }
             case DataRow row:
+            {
+                names = new string[row.Table.Columns.Count];
+                values = new object[row.Table.Columns.Count];
+
+                for (var i = 0; i < row.Table.Columns.Count; i++)
                 {
-                    names = new string[row.Table.Columns.Count];
-                    values = new object[row.Table.Columns.Count];
-
-                    for (var i = 0; i < row.Table.Columns.Count; i++)
-                    {
-                        names[i] = row.Table.Columns[i].ColumnName;
-                        values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
-                    }
-
-                    break;
+                    names[i] = row.Table.Columns[i].ColumnName;
+                    values[i] = row[i] == DBNull.Value ? null : row[i].ToString();
                 }
+
+                break;
+            }
         }
 
         #endregion
@@ -407,29 +422,29 @@ public class Validator
                 switch (o)
                 {
                     case DbDataReader reader:
-                        {
-                            value = reader[itemValidator.TargetProperty];
-                            if (value == DBNull.Value)
-                                value = null;
+                    {
+                        value = reader[itemValidator.TargetProperty];
+                        if (value == DBNull.Value)
+                            value = null;
 
-                            result = itemValidator.ValidateAll(value, values, names);
-                            break;
-                        }
+                        result = itemValidator.ValidateAll(value, values, names);
+                        break;
+                    }
                     case DataRow row:
                         result = itemValidator.ValidateAll(row[itemValidator.TargetProperty], values, names);
                         break;
                     default:
-                        {
-                            var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
+                    {
+                        var propertiesDictionary = DomainObjectPropertiesToDictionary(o);
 
-                            if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
-                                throw new MissingFieldException(
-                                    $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
+                        if (!propertiesDictionary.TryGetValue(itemValidator.TargetProperty, out value))
+                            throw new MissingFieldException(
+                                $"Validation failed: Target field [{itemValidator.TargetProperty}] not found in domain object.");
 
-                            result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
-                                propertiesDictionary.Keys.ToArray());
-                            break;
-                        }
+                        result = itemValidator.ValidateAll(value, propertiesDictionary.Values.ToArray(),
+                            propertiesDictionary.Keys.ToArray());
+                        break;
+                    }
                 }
 
                 if (result != null)

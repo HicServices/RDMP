@@ -22,9 +22,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which values for a single DataTable are stored
-///  (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the correct tables for loading (it is likely that
-/// the DataLoadEngine handles all this - as a user you don't need to worry about this).
+///     Base class for an Attacher which expects to be passed a Filepath which is the location of a textual file in which
+///     values for a single DataTable are stored
+///     (e.g. csv or fixed width etc).  This attacher requires that the RAW database server be setup and contain the
+///     correct tables for loading (it is likely that
+///     the DataLoadEngine handles all this - as a user you don't need to worry about this).
 /// </summary>
 public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 {
@@ -129,7 +131,7 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
         //if user wants to use a specific explicit format for datetimes
         if (ExplicitDateTimeFormat != null)
-            insert.DateTimeDecider.Settings.ExplicitDateFormats = new string[] { ExplicitDateTimeFormat };
+            insert.DateTimeDecider.Settings.ExplicitDateFormats = new[] { ExplicitDateTimeFormat };
 
         //bulk insert ito destination
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
@@ -220,19 +222,22 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
 
 
     /// <summary>
-    /// DataTable dt is a copy of what is in RAW, your job (if you choose to accept it) is to look in your file and work out what headers you can see
-    /// and then complain to job (or throw) if what you see in the file does not match the RAW target
+    ///     DataTable dt is a copy of what is in RAW, your job (if you choose to accept it) is to look in your file and work
+    ///     out what headers you can see
+    ///     and then complain to job (or throw) if what you see in the file does not match the RAW target
     /// </summary>
     protected abstract void ConfirmFlatFileHeadersAgainstDataTable(DataTable loadTarget, IDataLoadJob job);
 
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="dt"></param>
     /// <param name="maxBatchSize"></param>
     /// <param name="cancellationToken"></param>
-    /// <returns>return the number of rows read, if you return >0 then you will be called again to get more data (if during this second or subsequent call there is no more data to read from source, return 0)</returns>
+    /// <returns>
+    ///     return the number of rows read, if you return >0 then you will be called again to get more data (if during
+    ///     this second or subsequent call there is no more data to read from source, return 0)
+    /// </returns>
     protected abstract int IterativelyBatchLoadDataIntoDataTable(DataTable dt, int maxBatchSize,
         GracefulCancellationToken cancellationToken);
 
@@ -264,7 +269,10 @@ public abstract class FlatFileAttacher : Attacher, IPluginAttacher
             }
     }
 
-    protected virtual object HackValueReadFromFile(string s) => s;
+    protected virtual object HackValueReadFromFile(string s)
+    {
+        return s;
+    }
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {

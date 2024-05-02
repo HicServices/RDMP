@@ -22,7 +22,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Uploads a packed plugin (.nupkg) into a consumable plugin for RDMP
+///     Uploads a packed plugin (.nupkg) into a consumable plugin for RDMP
 /// </summary>
 public sealed partial class PackPluginRunner : IRunner
 {
@@ -63,7 +63,8 @@ public sealed partial class PackPluginRunner : IRunner
         //find the manifest that lists name, version etc
         using (var zf = ZipFile.OpenRead(toCommit.FullName))
         {
-            var manifests = zf.Entries.Where(static e => e.FullName.EndsWith(PluginPackageManifest, StringComparison.OrdinalIgnoreCase)).ToArray();
+            var manifests = zf.Entries.Where(static e =>
+                e.FullName.EndsWith(PluginPackageManifest, StringComparison.OrdinalIgnoreCase)).ToArray();
 
             if (manifests.Length != 1)
                 throw new Exception(

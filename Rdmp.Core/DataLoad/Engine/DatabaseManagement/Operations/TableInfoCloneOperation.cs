@@ -18,10 +18,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 
 /// <summary>
-/// Creates RAW / STAGING tables during a data load (See LoadMetadata).  Tables created are based on the live schema.  Depending on stage though certain
-/// changes will be made.  For example RAW tables will not have any constraints (primary keys, not null etc) and will also contain all PreLoadDiscardedColumns.
-/// 
-/// <para>This class is powered by SMO and is Microsoft Sql Server specific.</para>
+///     Creates RAW / STAGING tables during a data load (See LoadMetadata).  Tables created are based on the live schema.
+///     Depending on stage though certain
+///     changes will be made.  For example RAW tables will not have any constraints (primary keys, not null etc) and will
+///     also contain all PreLoadDiscardedColumns.
+///     <para>This class is powered by SMO and is Microsoft Sql Server specific.</para>
 /// </summary>
 public class TableInfoCloneOperation
 {
@@ -88,12 +89,14 @@ public class TableInfoCloneOperation
     }
 
 
-    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName) =>
-        tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
-        tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
-        ||
-        dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
-        dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    private static bool IsNukable(DiscoveredDatabase dbInfo, string tableName)
+    {
+        return tableName.EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+               tableName.EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase)
+               ||
+               dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+               dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo,
         DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns,

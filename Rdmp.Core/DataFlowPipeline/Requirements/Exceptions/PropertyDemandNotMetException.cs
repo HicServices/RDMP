@@ -11,8 +11,9 @@ using Rdmp.Core.Curation.Data.Pipelines;
 namespace Rdmp.Core.DataFlowPipeline.Requirements.Exceptions;
 
 /// <summary>
-/// Thrown when a component blueprint (<see cref="PipelineComponent"/>) could not be resolved into an instance because a given property on the
-/// class was not set up correctly (<see cref="PropertyInfo"/>)
+///     Thrown when a component blueprint (<see cref="PipelineComponent" />) could not be resolved into an instance because
+///     a given property on the
+///     class was not set up correctly (<see cref="PropertyInfo" />)
 /// </summary>
 internal class PropertyDemandNotMetException : Exception
 {

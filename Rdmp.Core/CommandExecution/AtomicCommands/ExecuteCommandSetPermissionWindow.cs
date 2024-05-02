@@ -29,7 +29,10 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
             SetImpossible("There are no PermissionWindows created yet");
     }
 
-    public override string GetCommandHelp() => "Restrict caching execution to the given time period";
+    public override string GetCommandHelp()
+    {
+        return "Restrict caching execution to the given time period";
+    }
 
     public override void Execute()
     {
@@ -46,8 +49,10 @@ public class ExecuteCommandSetPermissionWindow : BasicCommandExecution, IAtomicC
         Publish(_cacheProgress);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

@@ -18,7 +18,7 @@ using LibArchive.Net;
 namespace Rdmp.Core.ReusableLibraryCode.Comments;
 
 /// <summary>
-/// Records documentation for classes and keywords (e.g. foreign key names).
+///     Records documentation for classes and keywords (e.g. foreign key names).
 /// </summary>
 public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 {
@@ -72,7 +72,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     }
 
     /// <summary>
-    /// Adds the given member xml doc to the <see cref="CommentStore"/>
+    ///     Adds the given member xml doc to the <see cref="CommentStore" />
     /// </summary>
     /// <param name="obj"></param>
     public void AddXmlDoc(XmlNode obj)
@@ -113,21 +113,25 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
                                     Environment.NewLine); //open para tag (next tag is probably #text)
                         break;
                     default:
-                        {
-                            if (n.Value != null) //e.g. #text
-                                sb.Append($"{TrimSummary(n.Value)} ");
-                            break;
-                        }
+                    {
+                        if (n.Value != null) //e.g. #text
+                            sb.Append($"{TrimSummary(n.Value)} ");
+                        break;
+                    }
                 }
             });
 
         return sb.ToString();
     }
 
-    private static string TrimSummary(string value) => value == null ? null : Regex.Replace(value, @"\s+", " ").Trim();
+    private static string TrimSummary(string value)
+    {
+        return value == null ? null : Regex.Replace(value, @"\s+", " ").Trim();
+    }
 
     /// <summary>
-    /// Returns the last x parts from a string like M:Abc.Def.Geh.AAA(fff,mm).  In this case it would return AAA for 1, Geh.AAA for 2 etc.
+    ///     Returns the last x parts from a string like M:Abc.Def.Geh.AAA(fff,mm).  In this case it would return AAA for 1,
+    ///     Geh.AAA for 2 etc.
     /// </summary>
     /// <param name="memberName"></param>
     /// <param name="partsToGet"></param>
@@ -186,22 +190,32 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         _dictionary.Add(name, summary);
     }
 
-    public bool ContainsKey(string keyword) => _dictionary.ContainsKey(keyword);
+    public bool ContainsKey(string keyword)
+    {
+        return _dictionary.ContainsKey(keyword);
+    }
 
     /// <summary>
-    /// Returns documentation for the keyword or null if no documentation exists
+    ///     Returns documentation for the keyword or null if no documentation exists
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
     public string this[string index] =>
         _dictionary.TryGetValue(index, out var value) ? value : null; // Indexer declaration
 
-    public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _dictionary.GetEnumerator();
+    public IEnumerator<KeyValuePair<string, string>> GetEnumerator()
+    {
+        return _dictionary.GetEnumerator();
+    }
 
-    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     /// <summary>
-    /// Returns documentation for the class specified up to maxLength characters (after which ... is appended).  Returns null if no documentation exists for the class
+    ///     Returns documentation for the class specified up to maxLength characters (after which ... is appended).  Returns
+    ///     null if no documentation exists for the class
     /// </summary>
     /// <param name="maxLength"></param>
     /// <param name="type"></param>
@@ -231,17 +245,20 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
         return docs.Length <= maxLength ? docs : $"{docs[..maxLength]}...";
     }
 
-    /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)"/>
+    /// <inheritdoc cref="GetTypeDocumentationIfExists(int,Type,bool,bool)" />
     public string GetTypeDocumentationIfExists(Type type, bool allowInterfaceInstead = true,
-        bool formatAsParagraphs = false) =>
-        GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead, formatAsParagraphs);
+        bool formatAsParagraphs = false)
+    {
+        return GetTypeDocumentationIfExists(int.MaxValue, type, allowInterfaceInstead, formatAsParagraphs);
+    }
 
     /// <summary>
-    /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the documentation if found (or null)
+    ///     Searches the CommentStore for variations of the <paramref name="word" /> and returns the documentation if found (or
+    ///     null)
     /// </summary>
     /// <param name="word"></param>
     /// <param name="fuzzyMatch"></param>
-    /// <param name="formatAsParagraphs">true to pass result string through <see cref="FormatAsParagraphs"/></param>
+    /// <param name="formatAsParagraphs">true to pass result string through <see cref="FormatAsParagraphs" /></param>
     /// <returns></returns>
     public string GetDocumentationIfExists(string word, bool fuzzyMatch, bool formatAsParagraphs = false)
     {
@@ -251,9 +268,9 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     }
 
     /// <summary>
-    /// Searches the CommentStore for variations of the <paramref name="word"/> and returns the key that matches (which might be word verbatim).
-    /// 
-    /// <para>This does not return the actual documentation, use <see cref="GetDocumentationIfExists"/> for that</para>
+    ///     Searches the CommentStore for variations of the <paramref name="word" /> and returns the key that matches (which
+    ///     might be word verbatim).
+    ///     <para>This does not return the actual documentation, use <see cref="GetDocumentationIfExists" /> for that</para>
     /// </summary>
     /// <param name="word"></param>
     /// <param name="fuzzyMatch"></param>
@@ -275,7 +292,8 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     }
 
     /// <summary>
-    /// Formats a string read from xmldoc into paragraphs and gets rid of namespace prefixes introduced by cref="" notation.
+    ///     Formats a string read from xmldoc into paragraphs and gets rid of namespace prefixes introduced by cref=""
+    ///     notation.
     /// </summary>
     /// <param name="message"></param>
     /// <returns></returns>

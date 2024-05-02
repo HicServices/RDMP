@@ -17,8 +17,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
-/// RuntimeArgumentCollection
+///     RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask
+///     and ProcessTaskArguments) See
+///     RuntimeArgumentCollection
 /// </summary>
 public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
@@ -65,7 +66,10 @@ public class MutilateDataTablesRuntimeTask : RuntimeTask, IMEFRuntimeTask
         }
     }
 
-    public override bool Exists() => true;
+    public override bool Exists()
+    {
+        return true;
+    }
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

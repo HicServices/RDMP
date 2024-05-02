@@ -29,12 +29,18 @@ public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicComm
             SetImpossible($"{_rdmpBinaryPath} did not exist");
 
         if (!BasicActivator.IsAbleToLaunchSubprocesses)
-            SetImpossible($"Client does not support launching subprocesses");
+            SetImpossible("Client does not support launching subprocesses");
     }
 
-    public override string GetCommandHelp() => "Generates the execute command line invocation (including arguments)";
+    public override string GetCommandHelp()
+    {
+        return "Generates the execute command line invocation (including arguments)";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Exe);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.Exe);
+    }
 
     public override void Execute()
     {

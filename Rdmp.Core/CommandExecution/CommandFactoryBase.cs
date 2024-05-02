@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandExecution;
 public abstract class CommandFactoryBase
 {
     /// <summary>
-    /// Returns o is <typeparamref name="T"/> but with auto unpacking of <see cref="IMasqueradeAs"/>
+    ///     Returns o is <typeparamref name="T" /> but with auto unpacking of <see cref="IMasqueradeAs" />
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="o"></param>

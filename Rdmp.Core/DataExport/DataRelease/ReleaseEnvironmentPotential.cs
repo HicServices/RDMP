@@ -16,14 +16,15 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.DataExport.DataRelease;
 
 /// <summary>
-/// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available
-///  / tickets in wrong status / safehaven down for maintencence etc.
+///     Evaluates things that are not within the control area of the DataExportManager but which might prevent a release
+///     e.g. ticketing system is not available
+///     / tickets in wrong status / safehaven down for maintencence etc.
 /// </summary>
 public class ReleaseEnvironmentPotential : ICheckable
 {
     private readonly IDataExportRepository _repository;
-    public IExtractionConfiguration Configuration { get; private set; }
-    public IProject Project { get; private set; }
+    public IExtractionConfiguration Configuration { get; }
+    public IProject Project { get; }
 
     public Exception Exception { get; private set; }
     public TicketingReleaseabilityEvaluation Assesment { get; private set; }

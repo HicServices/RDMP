@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates or Updates an <see cref="ExtendedProperty"/> declaration on any RDMP object.
+///     Creates or Updates an <see cref="ExtendedProperty" /> declaration on any RDMP object.
 /// </summary>
 public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicCommand
 {
@@ -22,13 +22,13 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
     private readonly string _value;
 
     /// <summary>
-    /// Set to true to prompt user for the <see cref="_value"/> at execution time (e.g. for interactive UIs)
+    ///     Set to true to prompt user for the <see cref="_value" /> at execution time (e.g. for interactive UIs)
     /// </summary>
     internal bool PromptForValue { get; init; }
 
     /// <summary>
-    /// If <see cref="PromptForValue"/> is set to true then this is the description to show to the user
-    /// that explains what they should be entering as a <see cref="_value"/>
+    ///     If <see cref="PromptForValue" /> is set to true then this is the description to show to the user
+    ///     that explains what they should be entering as a <see cref="_value" />
     /// </summary>
     internal string PromptForValueTaskDescription { get; init; }
 
@@ -55,9 +55,12 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
         _value = value;
     }
 
-    public override string GetCommandName() => !string.IsNullOrWhiteSpace(OverrideCommandName)
-        ? OverrideCommandName
-        : $"Set {_propertyName}";
+    public override string GetCommandName()
+    {
+        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? OverrideCommandName
+            : $"Set {_propertyName}";
+    }
 
     public override void Execute()
     {
@@ -72,10 +75,10 @@ public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, I
             var oldValue = props.FirstOrDefault()?.Value;
 
             if (PromptForValue && !BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = _propertyName,
-                TaskDescription = PromptForValueTaskDescription
-            }, int.MaxValue, oldValue, out newValue, false))
+                {
+                    WindowTitle = _propertyName,
+                    TaskDescription = PromptForValueTaskDescription
+                }, int.MaxValue, oldValue, out newValue, false))
                 // user cancelled entering some text
                 return;
 

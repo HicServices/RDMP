@@ -26,8 +26,11 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
         _desiredState = desiredState;
     }
 
-    public override string GetCommandName() => !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName :
-        _desiredState ? "Deprecate" : "Undeprecate";
+    public override string GetCommandName()
+    {
+        return !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName :
+            _desiredState ? "Deprecate" : "Undeprecate";
+    }
 
     public override void Execute()
     {

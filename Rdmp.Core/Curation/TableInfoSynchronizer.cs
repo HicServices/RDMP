@@ -19,20 +19,22 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Synchronizes a <see cref="TableInfo"/> against the live table on your database server.  This involves confirming it still exists, identifying new ColumnInfos and ones that have
-/// disapeared as well as checking column types and primary keys etc still match the current RDMP records.
+///     Synchronizes a <see cref="TableInfo" /> against the live table on your database server.  This involves confirming
+///     it still exists, identifying new ColumnInfos and ones that have
+///     disapeared as well as checking column types and primary keys etc still match the current RDMP records.
 /// </summary>
 public class TableInfoSynchronizer
 {
     private readonly ITableInfo _tableToSync;
-    private DiscoveredServer _toSyncTo;
-    private ICatalogueRepository _repository;
+    private readonly DiscoveredServer _toSyncTo;
+    private readonly ICatalogueRepository _repository;
 
     public HashSet<Catalogue> ChangedCatalogues = new();
 
     /// <summary>
-    /// Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns exist, what are primary keys,
-    /// collation types etc match the reality.  Pass in an alternative
+    ///     Synchronizes the TableInfo against the underlying database to ensure the Catalogues understanding of what columns
+    ///     exist, what are primary keys,
+    ///     collation types etc match the reality.  Pass in an alternative
     /// </summary>
     /// <param name="tableToSync"></param>
     public TableInfoSynchronizer(ITableInfo tableToSync)
@@ -44,10 +46,15 @@ public class TableInfoSynchronizer
     }
 
     /// <summary>
-    /// 
     /// </summary>
-    /// <exception cref="SynchronizationFailedException">Could not figure out how to resolve a synchronization problem between the TableInfo and the underlying table structure</exception>
-    /// <param name="notifier">Called every time a fixable problem is detected, method must return true or false.  True = apply fix, False = don't - but carry on checking</param>
+    /// <exception cref="SynchronizationFailedException">
+    ///     Could not figure out how to resolve a synchronization problem between
+    ///     the TableInfo and the underlying table structure
+    /// </exception>
+    /// <param name="notifier">
+    ///     Called every time a fixable problem is detected, method must return true or false.  True = apply
+    ///     fix, False = don't - but carry on checking
+    /// </param>
     public bool Synchronize(ICheckNotifier notifier)
     {
         var IsSynched = true;

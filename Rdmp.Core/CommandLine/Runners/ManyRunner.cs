@@ -28,7 +28,8 @@ public abstract class ManyRunner : Runner
     private readonly Dictionary<ICheckable, ToMemoryCheckNotifier> _checksDictionary = new();
 
     /// <summary>
-    /// Lock for all operations that read or write to <see cref="_checksDictionary"/>.  Use it if you want to enumerate / read the results
+    ///     Lock for all operations that read or write to <see cref="_checksDictionary" />.  Use it if you want to enumerate /
+    ///     read the results
     /// </summary>
     private readonly object _oLock = new();
 
@@ -132,11 +133,10 @@ public abstract class ManyRunner : Runner
 
 
     /// <summary>
-    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in the dictionary e.g. a globals checker).
-    /// 
-    /// <para>Use GetCheckerResults to get multiple </para>
-    /// 
-    /// <para>Returns null if there are no checkers of the given Type</para>
+    ///     Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type (of which there must only be one in
+    ///     the dictionary e.g. a globals checker).
+    ///     <para>Use GetCheckerResults to get multiple </para>
+    ///     <para>Returns null if there are no checkers of the given Type</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
@@ -147,9 +147,8 @@ public abstract class ManyRunner : Runner
     }
 
     /// <summary>
-    /// Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
-    /// 
-    /// <para>Returns null if there are no checkers of the given Type matching the func</para>
+    ///     Returns the ToMemoryCheckNotifier that corresponds to the given checkable Type which matches the func.
+    ///     <para>Returns null if there are no checkers of the given Type matching the func</para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <exception cref="InvalidOperationException">Thrown if there are more than 1 ICheckable of the type T</exception>
@@ -170,7 +169,7 @@ public abstract class ManyRunner : Runner
     }
 
     /// <summary>
-    /// Returns the results for the given <see cref="ICheckable"/> type which match the function
+    ///     Returns the results for the given <see cref="ICheckable" /> type which match the function
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="func"></param>

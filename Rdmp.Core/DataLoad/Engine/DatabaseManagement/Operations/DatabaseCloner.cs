@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 
 /// <summary>
-/// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
+///     Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.
 /// </summary>
 public class DatabaseCloner : IDisposeAfterDataLoad
 {

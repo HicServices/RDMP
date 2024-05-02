@@ -11,7 +11,7 @@ using CommandLine.Text;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Command line options for the Data Load Engine
+///     Command line options for the Data Load Engine
 /// </summary>
 [Verb("dle", HelpText = "Runs the Data Load Engine")]
 public class DleOptions : RDMPCommandLineOptions

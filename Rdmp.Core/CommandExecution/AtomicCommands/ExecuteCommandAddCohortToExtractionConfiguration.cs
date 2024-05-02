@@ -63,8 +63,6 @@ public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExec
             else
                 SetImpossible(
                     "ExtractionConfiguration already uses a different cohort (delete the relationship to the old cohort first)");
-
-            return;
         }
     }
 

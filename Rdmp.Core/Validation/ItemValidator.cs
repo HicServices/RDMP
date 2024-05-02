@@ -1,9 +1,3 @@
-// Copyright (c) The University of Dundee 2018-2019
-// This file is part of the Research Data Management Platform (RDMP).
-// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,19 +10,13 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-/// An ItemValidator is created for each item in the target object (row) you want to validate.
-/// Each ItemValidator has a single PrimaryConstraint and zero or more SecondaryConstraint(s).
+///     An ItemValidator is created for each item in the target object (row) you want to validate.
+///     Each ItemValidator has a single PrimaryConstraint and zero or more SecondaryConstraint(s).
 /// </summary>
 public class ItemValidator
 {
-    public PrimaryConstraint PrimaryConstraint { get; set; }
-    public string TargetProperty { get; set; }
-
-    [XmlIgnore] public Type ExpectedType { get; set; }
-
-    [XmlArray]
-    [XmlArrayItem("SecondaryConstraint", typeof(SecondaryConstraint))]
-    public List<SecondaryConstraint> SecondaryConstraints { get; set; }
+    //This is static because creating new ones with the Type[] causes memory leaks in unmanaged memory   https://blogs.msdn.microsoft.com/tess/2006/02/15/net-memory-leak-xmlserializing-your-way-to-a-memory-leak/
+    private static XmlSerializer _serializer;
 
     public ItemValidator()
     {
@@ -42,6 +30,15 @@ public class ItemValidator
         PrimaryConstraint = null;
         SecondaryConstraints = new List<SecondaryConstraint>();
     }
+
+    public PrimaryConstraint PrimaryConstraint { get; set; }
+    public string TargetProperty { get; set; }
+
+    [XmlIgnore] public Type ExpectedType { get; set; }
+
+    [XmlArray]
+    [XmlArrayItem("SecondaryConstraint", typeof(SecondaryConstraint))]
+    public List<SecondaryConstraint> SecondaryConstraints { get; set; }
 
     public ValidationFailure ValidateAll(object columnValue, object[] otherColumns, string[] otherColumnNames)
     {
@@ -99,7 +96,28 @@ public class ItemValidator
         SecondaryConstraints.Add(c);
     }
 
-    public override string ToString() => TargetProperty;
+    public override string ToString()
+    {
+        return TargetProperty;
+    }
+
+    /// <summary>
+    ///     Persist the current ItemValidator instance to a string containing XML.
+    /// </summary>
+    /// <returns>a String</returns>
+    public string SaveToXml(bool indent = true)
+    {
+        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes().ToArray());
+
+        var sb = new StringBuilder();
+
+        using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
+        {
+            _serializer.Serialize(sw, this);
+        }
+
+        return sb.ToString();
+    }
 
     #region Fluent API experiment
 
@@ -162,28 +180,10 @@ public class ItemValidator
         return b;
     }
 
-    public ItemValidator And() => this;
+    public ItemValidator And()
+    {
+        return this;
+    }
 
     #endregion
-
-    //This is static because creating new ones with the Type[] causes memory leaks in unmanaged memory   https://blogs.msdn.microsoft.com/tess/2006/02/15/net-memory-leak-xmlserializing-your-way-to-a-memory-leak/
-    private static XmlSerializer _serializer;
-
-    /// <summary>
-    /// Persist the current ItemValidator instance to a string containing XML.
-    /// </summary>
-    /// <returns>a String</returns>
-    public string SaveToXml(bool indent = true)
-    {
-        _serializer ??= new XmlSerializer(typeof(ItemValidator), Validator.GetExtraTypes().ToArray());
-
-        var sb = new StringBuilder();
-
-        using (var sw = XmlWriter.Create(sb, new XmlWriterSettings { Indent = indent }))
-        {
-            _serializer.Serialize(sw, this);
-        }
-
-        return sb.ToString();
-    }
 }

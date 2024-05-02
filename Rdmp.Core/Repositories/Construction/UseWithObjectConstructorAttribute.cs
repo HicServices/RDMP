@@ -9,8 +9,9 @@ using System;
 namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
-/// Attribute for decorating constructors which should be chosen over other constructors when using <see cref="ObjectConstructor"/>.
-/// This is only needed if you have 2+ constructors in your class.
+///     Attribute for decorating constructors which should be chosen over other constructors when using
+///     <see cref="ObjectConstructor" />.
+///     This is only needed if you have 2+ constructors in your class.
 /// </summary>
 [AttributeUsage(AttributeTargets.Constructor)]
 public class UseWithObjectConstructorAttribute : Attribute

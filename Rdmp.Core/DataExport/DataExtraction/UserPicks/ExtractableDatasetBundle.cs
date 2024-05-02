@@ -13,19 +13,21 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
-/// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
-/// the lookups).
+///     The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to
+///     be extracted.  This includes
+///     SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not
+///     want to extract given parts (e.g. skip
+///     the lookups).
 /// </summary>
 public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
 {
     //The main dataset being extracted
-    public IExtractableDataSet DataSet { get; private set; }
+    public IExtractableDataSet DataSet { get; }
 
     //all the rest of the stuff that goes with the dataset
-    public List<SupportingDocument> Documents { get; private set; }
-    public List<SupportingSQLTable> SupportingSQL { get; private set; }
-    public List<IBundledLookupTable> LookupTables { get; private set; }
+    public List<SupportingDocument> Documents { get; }
+    public List<SupportingSQLTable> SupportingSQL { get; }
+    public List<IBundledLookupTable> LookupTables { get; }
 
 
     public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents,
@@ -46,7 +48,10 @@ public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
     {
     }
 
-    public override string ToString() => $"{DataSet} Bundle";
+    public override string ToString()
+    {
+        return $"{DataSet} Bundle";
+    }
 
     protected override void OnDropContent(object toDrop)
     {

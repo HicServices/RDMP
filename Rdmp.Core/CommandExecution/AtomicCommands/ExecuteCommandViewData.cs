@@ -28,7 +28,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     #region Constructors
 
     /// <summary>
-    /// Provides a view of a sample of records in a column/table
+    ///     Provides a view of a sample of records in a column/table
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="viewType"></param>
@@ -102,12 +102,14 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         return collection;
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec) =>
-        new ViewCohortExtractionUICollection(ec)
+    private IViewSQLAndResultsCollection CreateCollection(ExtractableCohort ec)
+    {
+        return new ViewCohortExtractionUICollection(ec)
         {
             Top = _viewType == ViewType.TOP_100 ? 100 : -1,
             IncludeCohortID = false
         };
+    }
 
     private IViewSQLAndResultsCollection CreateCollection(CohortIdentificationConfiguration cic)
     {
@@ -129,14 +131,16 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
                 $"Only '{nameof(ViewType.TOP_100)}' or '{nameof(ViewType.All)}' can be used for this object Type");
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata) =>
-        new ViewCatalogueDataCollection(cata)
+    private IViewSQLAndResultsCollection CreateCollection(Catalogue cata)
+    {
+        return new ViewCatalogueDataCollection(cata)
         {
             TopX = _viewType == ViewType.All ? null : 100
         };
+    }
 
     /// <summary>
-    /// Fetches the <paramref name="viewType"/> of the data in <see cref="ColumnInfo"/> <paramref name="c"/>
+    ///     Fetches the <paramref name="viewType" /> of the data in <see cref="ColumnInfo" /> <paramref name="c" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="viewType"></param>
@@ -156,7 +160,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
     }
 
     /// <summary>
-    /// Views the top 100 records of the <paramref name="tableInfo"/>
+    ///     Views the top 100 records of the <paramref name="tableInfo" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="tableInfo"></param>
@@ -198,5 +202,8 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
             : $"View {_viewType.ToString().Replace("_", " ")}";
     }
 
-    protected override IViewSQLAndResultsCollection GetCollection() => _collection;
+    protected override IViewSQLAndResultsCollection GetCollection()
+    {
+        return _collection;
+    }
 }

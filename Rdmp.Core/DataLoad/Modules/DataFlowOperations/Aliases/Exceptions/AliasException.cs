@@ -9,7 +9,8 @@ using System;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 
 /// <summary>
-/// Exception thrown by pipeline component AliasHandler when the AliasResolutionStrategy is CrashIfAliasesFound and Aliases exist for one or more records
+///     Exception thrown by pipeline component AliasHandler when the AliasResolutionStrategy is CrashIfAliasesFound and
+///     Aliases exist for one or more records
 /// </summary>
 public class AliasException : Exception
 {

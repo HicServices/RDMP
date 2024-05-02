@@ -32,17 +32,17 @@ public class CommandInvoker
     private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     /// <summary>
-    /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
+    ///     Delegates provided by <see cref="_basicActivator" /> for fulfilling constructor arguments of the key Type
     /// </summary>
-    private List<CommandInvokerDelegate> _argumentDelegates;
+    private readonly List<CommandInvokerDelegate> _argumentDelegates;
 
     /// <summary>
-    /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
+    ///     Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible" />
     /// </summary>
     public event EventHandler<CommandEventArgs> CommandImpossible;
 
     /// <summary>
-    /// Called when a command completes successfully
+    ///     Called when a command completes successfully
     /// </summary>
     public event EventHandler<CommandEventArgs> CommandCompleted;
 
@@ -89,7 +89,7 @@ public class CommandInvoker
                 {
                     WindowTitle = GetPromptFor(p),
                     InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m
-                        ? new IMapsDirectlyToDatabaseTable[] { m }
+                        ? new[] { m }
                         : null,
                     InitialSearchText = p.DefaultValue?.ToString()
                 }, GetAllObjectsOfType(p.Type)));
@@ -177,8 +177,9 @@ public class CommandInvoker
                 : throw new OperationCanceledException()));
     }
 
-    private string SelectText(RequiredArgument p) =>
-        _basicActivator.TypeText(
+    private string SelectText(RequiredArgument p)
+    {
+        return _basicActivator.TypeText(
             new DialogArgs
             {
                 WindowTitle = "Value needed for parameter",
@@ -187,11 +188,18 @@ public class CommandInvoker
             , 1000, p.DefaultValue?.ToString(), out var result, false)
             ? result
             : throw new OperationCanceledException();
+    }
 
-    private IPipeline SelectPipeline(RequiredArgument arg) => (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg),
-        _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
+    private IPipeline SelectPipeline(RequiredArgument arg)
+    {
+        return (IPipeline)_basicActivator.SelectOne(GetPromptFor(arg),
+            _basicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().ToArray());
+    }
 
-    private static string GetPromptFor(RequiredArgument p) => $"Value needed for {p.Name} ({p.Type.Name})";
+    private static string GetPromptFor(RequiredArgument p)
+    {
+        return $"Value needed for {p.Name} ({p.Type.Name})";
+    }
 
     private void AddDelegate(Type type, bool isAuto, Func<RequiredArgument, object> func,
         bool requireExactMatch = false)
@@ -210,8 +218,8 @@ public class CommandInvoker
     }
 
     /// <summary>
-    /// Constructs an instance of the <see cref="IAtomicCommand"/> and executes it.  Constructor parameters
-    /// are populated from the (optional) <paramref name="picker"/> or the <see cref="IBasicActivateItems"/>
+    ///     Constructs an instance of the <see cref="IAtomicCommand" /> and executes it.  Constructor parameters
+    ///     are populated from the (optional) <paramref name="picker" /> or the <see cref="IBasicActivateItems" />
     /// </summary>
     /// <param name="type"></param>
     /// <param name="picker"></param>
@@ -240,7 +248,7 @@ public class CommandInvoker
                 parameterValues.Add(argDelegate.Run(required));
             }
             else
-            //if the constructor argument is a picker, use the one passed in
+                //if the constructor argument is a picker, use the one passed in
             if (parameterInfo.ParameterType == typeof(CommandLineObjectPicker))
             {
                 if (picker == null)
@@ -251,10 +259,9 @@ public class CommandInvoker
 
                 //the parameters are expected to be consumed by the target constructors so its not really a problem if there are extra
                 complainAboutExtraParameters = false;
-                continue;
             }
             else
-            //if we have argument values specified
+                //if we have argument values specified
             if (picker != null)
             {
                 //and the specified value matches the expected parameter type
@@ -299,13 +306,20 @@ public class CommandInvoker
         CommandCompleted?.Invoke(this, new CommandEventArgs(instance));
     }
 
-    public object GetValueForParameterOfType(PropertyInfo propertyInfo) =>
-        GetValueForParameterOfType(new RequiredArgument(propertyInfo));
+    public object GetValueForParameterOfType(PropertyInfo propertyInfo)
+    {
+        return GetValueForParameterOfType(new RequiredArgument(propertyInfo));
+    }
 
-    public object GetValueForParameterOfType(ParameterInfo parameterInfo) =>
-        GetValueForParameterOfType(new RequiredArgument(parameterInfo));
+    public object GetValueForParameterOfType(ParameterInfo parameterInfo)
+    {
+        return GetValueForParameterOfType(new RequiredArgument(parameterInfo));
+    }
 
-    public object GetValueForParameterOfType(RequiredArgument a) => GetDelegate(a)?.Run(a);
+    public object GetValueForParameterOfType(RequiredArgument a)
+    {
+        return GetDelegate(a)?.Run(a);
+    }
 
     private T SelectOne<T>(RequiredArgument p)
     {
@@ -314,36 +328,44 @@ public class CommandInvoker
             {
                 WindowTitle = GetPromptFor(p),
                 InitialObjectSelection = p.DefaultValue is IMapsDirectlyToDatabaseTable m
-                    ? new IMapsDirectlyToDatabaseTable[] { m }
+                    ? new[] { m }
                     : null,
                 InitialSearchText = p.DefaultValue?.ToString()
             }
-            , _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+            , _basicActivator.GetAll(p.Type).ToArray());
     }
 
-    private T[] SelectMany<T>(RequiredArgument p) =>
-        _basicActivator.SelectMany(
+    private T[] SelectMany<T>(RequiredArgument p)
+    {
+        return _basicActivator.SelectMany(
                 new DialogArgs
                 {
                     WindowTitle = p.Name,
                     InitialObjectSelection =
                         ((IEnumerable<T>)p.DefaultValue)?.Cast<IMapsDirectlyToDatabaseTable>().ToArray()
-                }, typeof(T), _basicActivator.GetAll(p.Type).Cast<IMapsDirectlyToDatabaseTable>().ToArray())
+                }, typeof(T), _basicActivator.GetAll(p.Type).ToArray())
             ?.Cast<T>()?.ToArray() ?? throw new OperationCanceledException();
+    }
 
-    public string WhyCommandNotSupported(ConstructorInfo c) =>
-        c.GetCustomAttribute<UseWithCommandLineAttribute>() != null
+    public string WhyCommandNotSupported(ConstructorInfo c)
+    {
+        return c.GetCustomAttribute<UseWithCommandLineAttribute>() != null
             ? null
             : c.GetParameters().Select(WhyCommandNotSupported).SkipWhile(string.IsNullOrEmpty).FirstOrDefault();
+    }
 
-    public string WhyCommandNotSupported(ParameterInfo p) =>
-        GetDelegate(new RequiredArgument(p)) != null ? "" : $"No delegate for {p.ParameterType}";
+    public string WhyCommandNotSupported(ParameterInfo p)
+    {
+        return GetDelegate(new RequiredArgument(p)) != null ? "" : $"No delegate for {p.ParameterType}";
+    }
 
     private readonly ConcurrentDictionary<RequiredArgument, CommandInvokerDelegate> _delegateCache =
         new();
 
-    public CommandInvokerDelegate GetDelegate(RequiredArgument argument) =>
-        _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);
+    public CommandInvokerDelegate GetDelegate(RequiredArgument argument)
+    {
+        return _delegateCache.GetOrAdd(argument, GetDelegateCacheMiss);
+    }
 
     private CommandInvokerDelegate GetDelegateCacheMiss(RequiredArgument required)
     {
@@ -396,17 +418,25 @@ public class CommandInvoker
     }
 
     /// <summary>
-    /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithObjectConstructorAttribute"/>
+    ///     Returns the first best constructor on the <paramref name="type" /> preferring those decorated with
+    ///     <see cref="UseWithObjectConstructorAttribute" />
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public virtual ConstructorInfo GetConstructor(Type type) => GetConstructor(type, null);
+    public virtual ConstructorInfo GetConstructor(Type type)
+    {
+        return GetConstructor(type, null);
+    }
 
     /// <summary>
-    /// Returns the first best constructor on the <paramref name="type"/> preferring those decorated with <see cref="UseWithCommandLineAttribute"/>
+    ///     Returns the first best constructor on the <paramref name="type" /> preferring those decorated with
+    ///     <see cref="UseWithCommandLineAttribute" />
     /// </summary>
     /// <param name="type">The type of command you want to fetch the constructor from</param>
-    /// <param name="picker">The command line arguments that you want to use to hydrate the <paramref name="type"/> constructor</param>
+    /// <param name="picker">
+    ///     The command line arguments that you want to use to hydrate the <paramref name="type" />
+    ///     constructor
+    /// </param>
     /// <returns></returns>
     public virtual ConstructorInfo GetConstructor(Type type, CommandLineObjectPicker picker = null)
     {

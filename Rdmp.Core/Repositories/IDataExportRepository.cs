@@ -14,7 +14,7 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// See DataExportRepository
+///     See DataExportRepository
 /// </summary>
 public interface IDataExportRepository : IRepository, IExtractableDataSetPackageManager
 {
@@ -24,13 +24,13 @@ public interface IDataExportRepository : IRepository, IExtractableDataSetPackage
     ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
 
     /// <summary>
-    /// Manager for AND/OR WHERE containers and filters
+    ///     Manager for AND/OR WHERE containers and filters
     /// </summary>
     IFilterManager FilterManager { get; }
 
 
     /// <summary>
-    /// Handles forbidding deleting stuff / cascading deletes into other objects
+    ///     Handles forbidding deleting stuff / cascading deletes into other objects
     /// </summary>
     IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 

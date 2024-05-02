@@ -17,8 +17,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// DataLoadJob that is part of an ongoing data load where only specific dates are loaded.  Typically this involves advancing the head of a LoadProgress
-/// (e.g. 'Load the next 5 days of LoadProgress - Tayside Biochemistry Load').
+///     DataLoadJob that is part of an ongoing data load where only specific dates are loaded.  Typically this involves
+///     advancing the head of a LoadProgress
+///     (e.g. 'Load the next 5 days of LoadProgress - Tayside Biochemistry Load').
 /// </summary>
 public class ScheduledDataLoadJob : DataLoadJob
 {

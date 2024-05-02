@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
 /// <summary>
-/// IDataProvider that announces itself to the event stream during data load Fetch but otherwise does nothing.
+///     IDataProvider that announces itself to the event stream during data load Fetch but otherwise does nothing.
 /// </summary>
 public class DoNothingDataProvider : IDataProvider
 {

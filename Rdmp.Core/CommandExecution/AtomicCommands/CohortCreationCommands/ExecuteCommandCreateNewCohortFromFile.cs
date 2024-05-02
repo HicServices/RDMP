@@ -18,7 +18,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Loads private identifiers from a file using the given <see cref="Pipeline"/> to create a new <see cref="ExtractableCohort"/> for a given <see cref="Project"/> (which must have a ProjectNumber specified)
+///     Loads private identifiers from a file using the given <see cref="Pipeline" /> to create a new
+///     <see cref="ExtractableCohort" /> for a given <see cref="Project" /> (which must have a ProjectNumber specified)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecution
 {
@@ -55,10 +56,15 @@ public class ExecuteCommandCreateNewCohortFromFile : CohortCreationCommandExecut
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp() =>
-        "Create a cohort containing ALL the patient identifiers in the chosen file";
+    public override string GetCommandHelp()
+    {
+        return "Create a cohort containing ALL the patient identifiers in the chosen file";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.ImportFile);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.ImportFile);
+    }
 
     public override void Execute()
     {

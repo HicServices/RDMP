@@ -17,10 +17,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// Executes a caching configuration (ICacheProgress) for the specified arbitrary date/time range using either a SingleDayCacheFetchRequestProvider or a
-/// MultiDayCacheFetchRequestProvider.  Note that this uses a <see cref="BackfillCacheFetchRequest"/> which should mean that the actual progress head pointer (how far
-/// we think we have cached up to) does not change.  The reason we use a  <see cref="BackfillCacheFetchRequest"/> is to allow us to run a given day/week again without
-/// resetting our entire progress back to that date.
+///     Executes a caching configuration (ICacheProgress) for the specified arbitrary date/time range using either a
+///     SingleDayCacheFetchRequestProvider or a
+///     MultiDayCacheFetchRequestProvider.  Note that this uses a <see cref="BackfillCacheFetchRequest" /> which should
+///     mean that the actual progress head pointer (how far
+///     we think we have cached up to) does not change.  The reason we use a  <see cref="BackfillCacheFetchRequest" /> is
+///     to allow us to run a given day/week again without
+///     resetting our entire progress back to that date.
 /// </summary>
 public class CustomDateCaching
 {

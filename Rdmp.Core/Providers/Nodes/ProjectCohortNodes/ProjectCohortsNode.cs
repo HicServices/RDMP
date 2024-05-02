@@ -18,7 +18,10 @@ public class ProjectCohortsNode : Node, IOrderable
         Project = project;
     }
 
-    public override string ToString() => "Project Cohorts";
+    public override string ToString()
+    {
+        return "Project Cohorts";
+    }
 
     public int Order
     {
@@ -26,7 +29,10 @@ public class ProjectCohortsNode : Node, IOrderable
         set { }
     }
 
-    protected bool Equals(ProjectCohortsNode other) => Project.Equals(other.Project);
+    protected bool Equals(ProjectCohortsNode other)
+    {
+        return Project.Equals(other.Project);
+    }
 
     public override bool Equals(object obj)
     {
@@ -36,9 +42,18 @@ public class ProjectCohortsNode : Node, IOrderable
         return Equals((ProjectCohortsNode)obj);
     }
 
-    public override int GetHashCode() => Project.GetHashCode();
+    public override int GetHashCode()
+    {
+        return Project.GetHashCode();
+    }
 
-    public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right) => Equals(left, right);
+    public static bool operator ==(ProjectCohortsNode left, ProjectCohortsNode right)
+    {
+        return Equals(left, right);
+    }
 
-    public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right) => !Equals(left, right);
+    public static bool operator !=(ProjectCohortsNode left, ProjectCohortsNode right)
+    {
+        return !Equals(left, right);
+    }
 }

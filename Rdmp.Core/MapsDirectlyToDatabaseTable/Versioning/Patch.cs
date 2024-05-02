@@ -12,8 +12,10 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher"/>.  Used during patching
-/// to ensure that the live database that is about to be patched is in the expected state and ready for new patches to be applied.
+///     Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher" />.  Used
+///     during patching
+///     to ensure that the live database that is about to be patched is in the expected state and ready for new patches to
+///     be applied.
 /// </summary>
 public class Patch : IComparable
 {
@@ -21,7 +23,7 @@ public class Patch : IComparable
     public const string DescriptionKey = "--Description:";
 
     public string EntireScript { get; set; }
-    public string locationInAssembly { get; private set; }
+    public string locationInAssembly { get; }
 
     public Version DatabaseVersionNumber { get; set; }
     public string Description { get; set; }
@@ -81,7 +83,7 @@ public class Patch : IComparable
     }
 
     /// <summary>
-    /// Returns the body without the header text "--Version:1.2.0 etc".
+    ///     Returns the body without the header text "--Version:1.2.0 etc".
     /// </summary>
     /// <returns></returns>
     public string GetScriptBody()
@@ -90,7 +92,10 @@ public class Patch : IComparable
             EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
     }
 
-    public override int GetHashCode() => locationInAssembly.GetHashCode();
+    public override int GetHashCode()
+    {
+        return locationInAssembly.GetHashCode();
+    }
 
     public override bool Equals(object obj)
     {
@@ -108,8 +113,7 @@ public class Patch : IComparable
         return x.DatabaseVersionNumber.Equals(y.DatabaseVersionNumber)
             ? true
             : throw new InvalidPatchException(x.locationInAssembly,
-                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers",
-                null);
+                $"Patches x and y are being compared and they have the same location in assembly ({x.locationInAssembly})  but different Version numbers");
     }
 
     public int CompareTo(object obj)
@@ -122,25 +126,25 @@ public class Patch : IComparable
     }
 
     /// <summary>
-    /// Describes the state of a database schema when compared to the <see cref="IPatcher"/> which manages its schema
+    ///     Describes the state of a database schema when compared to the <see cref="IPatcher" /> which manages its schema
     /// </summary>
     public enum PatchingState
     {
         /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> has not detected any patches that require to be run on
-        /// the database schema
+        ///     Indicates that the running <see cref="IPatcher" /> has not detected any patches that require to be run on
+        ///     the database schema
         /// </summary>
         NotRequired,
 
         /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> has identified patches that should be applied to the
-        /// database schema
+        ///     Indicates that the running <see cref="IPatcher" /> has identified patches that should be applied to the
+        ///     database schema
         /// </summary>
         Required,
 
         /// <summary>
-        /// Indicates that the running <see cref="IPatcher"/> is older than the current database schema that is being
-        /// connected to
+        ///     Indicates that the running <see cref="IPatcher" /> is older than the current database schema that is being
+        ///     connected to
         /// </summary>
         SoftwareBehindDatabase
     }

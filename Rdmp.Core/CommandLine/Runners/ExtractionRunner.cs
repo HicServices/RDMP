@@ -27,21 +27,22 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Runs the extraction process for an <see cref="ExtractionConfiguration"/> in which all the datasets are linked and extracted to appropriate destination
-/// (e.g. CSV, remote database etc)
+///     Runs the extraction process for an <see cref="ExtractionConfiguration" /> in which all the datasets are linked and
+///     extracted to appropriate destination
+///     (e.g. CSV, remote database etc)
 /// </summary>
 public class ExtractionRunner : ManyRunner
 {
-    private ExtractionOptions _options;
-    private IBasicActivateItems _activator;
+    private readonly ExtractionOptions _options;
+    private readonly IBasicActivateItems _activator;
     private ExtractionConfiguration _configuration;
     private IProject _project;
 
     private ExtractGlobalsCommand _globalsCommand;
     private Pipeline _pipeline;
     private LogManager _logManager;
-    private object _oLock = new();
-    public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; private set; }
+    private readonly object _oLock = new();
+    public Dictionary<ISelectedDataSets, ExtractCommand> ExtractCommands { get; }
 
     public ExtractionRunner(IBasicActivateItems activator, ExtractionOptions extractionOpts) : base(extractionOpts)
     {
@@ -114,7 +115,7 @@ public class ExtractionRunner : ManyRunner
         if (runnable is ExtractGlobalsCommand)
         {
             var useCase = new ExtractionPipelineUseCase(_activator, _project, _globalsCommand, _pipeline, dataLoadInfo)
-            { Token = Token };
+                { Token = Token };
             useCase.Execute(fork);
         }
 
@@ -122,7 +123,7 @@ public class ExtractionRunner : ManyRunner
         {
             var executeUseCase =
                 new ExtractionPipelineUseCase(_activator, _project, datasetCommand, _pipeline, dataLoadInfo)
-                { Token = Token };
+                    { Token = Token };
             executeUseCase.Execute(fork);
         }
 
@@ -176,7 +177,10 @@ public class ExtractionRunner : ManyRunner
         return _configuration.SelectedDataSets.Where(ds => datasetIds.Contains(ds.ExtractableDataSet_ID)).ToArray();
     }
 
-    public ToMemoryCheckNotifier GetGlobalCheckNotifier() => GetSingleCheckerResults<GlobalExtractionChecker>();
+    public ToMemoryCheckNotifier GetGlobalCheckNotifier()
+    {
+        return GetSingleCheckerResults<GlobalExtractionChecker>();
+    }
 
     public ToMemoryCheckNotifier GetCheckNotifier(IExtractableDataSet extractableData)
     {

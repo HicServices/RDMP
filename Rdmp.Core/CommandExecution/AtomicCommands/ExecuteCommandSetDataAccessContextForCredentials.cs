@@ -13,7 +13,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
 {
-    private DataAccessCredentialUsageNode _node;
+    private readonly DataAccessCredentialUsageNode _node;
     private readonly DataAccessContext _newContext;
 
     public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator,
@@ -36,10 +36,15 @@ public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExec
                 $"DataAccessCredentials '{existingCredential}' are used for accessing table under context {newContext}");
     }
 
-    public override string GetCommandHelp() =>
-        "Changes which contexts the credentials can be used under e.g. DataLoad only";
+    public override string GetCommandHelp()
+    {
+        return "Changes which contexts the credentials can be used under e.g. DataLoad only";
+    }
 
-    public override string GetCommandName() => _newContext.ToString();
+    public override string GetCommandName()
+    {
+        return _newContext.ToString();
+    }
 
     public override void Execute()
     {

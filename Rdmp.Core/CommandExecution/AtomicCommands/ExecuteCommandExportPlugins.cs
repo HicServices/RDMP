@@ -21,7 +21,8 @@ public sealed class ExecuteCommandExportPlugins : BasicCommandExecution
     private DirectoryInfo _outDir;
 
     [UseWithObjectConstructor]
-    public ExecuteCommandExportPlugins(IBasicActivateItems activator, [CanBeNull] DirectoryInfo outputDirectory=null) : base(activator)
+    public ExecuteCommandExportPlugins(IBasicActivateItems activator, [CanBeNull] DirectoryInfo outputDirectory = null)
+        : base(activator)
     {
         _outDir = outputDirectory;
         if (!LoadModuleAssembly.Assemblies.Any())
@@ -29,8 +30,10 @@ public sealed class ExecuteCommandExportPlugins : BasicCommandExecution
     }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Shortcut);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Shortcut);
+    }
 
     public override void Execute()
     {

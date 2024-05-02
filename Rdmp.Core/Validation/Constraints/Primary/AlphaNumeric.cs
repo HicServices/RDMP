@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
 /// <summary>
-/// Field can contain only letters and numbers (but no spaces or symbols)
+///     Field can contain only letters and numbers (but no spaces or symbols)
 /// </summary>
 public class AlphaNumeric : PrimaryConstraint
 {
@@ -32,6 +32,8 @@ public class AlphaNumeric : PrimaryConstraint
     {
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() =>
-        "Checks that values have 1 or more characters/numbers in a sequence with no spaces or other punctuation";
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return "Checks that values have 1 or more characters/numbers in a sequence with no spaces or other punctuation";
+    }
 }

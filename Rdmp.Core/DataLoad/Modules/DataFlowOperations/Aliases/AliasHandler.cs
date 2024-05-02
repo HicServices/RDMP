@@ -18,8 +18,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 
 /// <summary>
-/// Pipeline component for resolving the situation where a given unique patient identifier isn't unique (i.e. a person has aliases) by applying an
-/// AliasResolutionStrategy (See AliasHandler.docx)
+///     Pipeline component for resolving the situation where a given unique patient identifier isn't unique (i.e. a person
+///     has aliases) by applying an
+///     AliasResolutionStrategy (See AliasHandler.docx)
 /// </summary>
 public class AliasHandler : IPluginDataFlowComponent<DataTable>
 {

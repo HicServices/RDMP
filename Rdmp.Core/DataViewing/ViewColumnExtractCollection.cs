@@ -20,20 +20,20 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
+///     Builds a query to fetch data in a <see cref="ColumnInfo" /> (Based on the <see cref="ViewType" />)
 /// </summary>
 public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public ViewType ViewType { get; private set; }
 
     /// <summary>
-    /// The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo"/>)
+    ///     The SELECT column (can be null if this instance was constructed using a <see cref="ColumnInfo" />)
     /// </summary>
     public ExtractionInformation ExtractionInformation =>
         DatabaseObjects.OfType<ExtractionInformation>().SingleOrDefault();
 
     /// <summary>
-    /// The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation"/>)
+    ///     The SELECT column (can be null if this instance was constructed using a <see cref="ExtractionInformation" />)
     /// </summary>
     public ColumnInfo ColumnInfo => DatabaseObjects.OfType<ColumnInfo>().SingleOrDefault();
 
@@ -41,7 +41,7 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     #region Constructors
 
     /// <summary>
-    /// for persistence, do not use
+    ///     for persistence, do not use
     /// </summary>
     public ViewColumnExtractCollection()
     {
@@ -81,8 +81,11 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
 
     #endregion
 
-    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
-        { { "ViewType", ViewType.ToString() } });
+    public override string SaveExtraText()
+    {
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+            { { "ViewType", ViewType.ToString() } });
+    }
 
     public override void LoadExtraText(string s)
     {
@@ -101,11 +104,17 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
         yield return GetTableInfo() as TableInfo;
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => GetTableInfo();
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return GetTableInfo();
+    }
 
-    private ITableInfo GetTableInfo() => ExtractionInformation != null
-        ? ExtractionInformation.ColumnInfo?.TableInfo
-        : (ITableInfo)ColumnInfo?.TableInfo;
+    private ITableInfo GetTableInfo()
+    {
+        return ExtractionInformation != null
+            ? ExtractionInformation.ColumnInfo?.TableInfo
+            : (ITableInfo)ColumnInfo?.TableInfo;
+    }
 
     public string GetSql()
     {
@@ -179,12 +188,18 @@ public class ViewColumnExtractCollection : PersistableObjectCollection, IViewSQL
     }
 
     /// <summary>
-    /// Returns the column Select SQL (without alias) for use in query building
+    ///     Returns the column Select SQL (without alias) for use in query building
     /// </summary>
     /// <returns></returns>
-    private string GetColumnSelectSql() => GetIColumn().SelectSQL;
+    private string GetColumnSelectSql()
+    {
+        return GetIColumn().SelectSQL;
+    }
 
-    public string GetTabName() => $"{GetIColumn()}({ViewType})";
+    public string GetTabName()
+    {
+        return $"{GetIColumn()}({ViewType})";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {

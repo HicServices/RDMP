@@ -13,12 +13,12 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Dashboarding;
 
 /// <summary>
-/// Records position and Type of an IDashboardableControl on a DashboardLayout.  The lifecycle goes:
-/// 1. Control instance created (must have a blank constructor)
-/// 2. ConstructEmptyCollection called on instance of control
-/// 3. Step2 collection Hydrated witht he PersistenceString (which can be null/empty)
-/// 4. Step2 collection given the Objects referenced by ObjectsUsed
-/// 5. Control instance given the Hydrated collection with SetCollection method
+///     Records position and Type of an IDashboardableControl on a DashboardLayout.  The lifecycle goes:
+///     1. Control instance created (must have a blank constructor)
+///     2. ConstructEmptyCollection called on instance of control
+///     3. Step2 collection Hydrated witht he PersistenceString (which can be null/empty)
+///     4. Step2 collection given the Objects referenced by ObjectsUsed
+///     5. Control instance given the Hydrated collection with SetCollection method
 /// </summary>
 public class DashboardControl : DatabaseEntity
 {
@@ -33,7 +33,7 @@ public class DashboardControl : DatabaseEntity
     private string _persistenceString;
 
     /// <summary>
-    /// Records which <see cref="DashboardLayout"/> the control exists on
+    ///     Records which <see cref="DashboardLayout" /> the control exists on
     /// </summary>
     public int DashboardLayout_ID
     {
@@ -42,7 +42,7 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// The X Coordinate of the control within the <see cref="DashboardLayout"/> window
+    ///     The X Coordinate of the control within the <see cref="DashboardLayout" /> window
     /// </summary>
     public int X
     {
@@ -51,7 +51,7 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// The Y Coordinate of the control within the <see cref="DashboardLayout"/> window
+    ///     The Y Coordinate of the control within the <see cref="DashboardLayout" /> window
     /// </summary>
     public int Y
     {
@@ -60,7 +60,7 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// The Width of the control within the <see cref="DashboardLayout"/> window
+    ///     The Width of the control within the <see cref="DashboardLayout" /> window
     /// </summary>
     public int Width
     {
@@ -69,7 +69,7 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// The Height of the control within the <see cref="DashboardLayout"/> window
+    ///     The Height of the control within the <see cref="DashboardLayout" /> window
     /// </summary>
     public int Height
     {
@@ -78,7 +78,7 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// The C# Class name of an IDashboardableControl which this class documents the existence of
+    ///     The C# Class name of an IDashboardableControl which this class documents the existence of
     /// </summary>
     public string ControlType
     {
@@ -87,7 +87,8 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// Serialized settings as configured by the user for the IDashboardableControl referenced by <see cref="ControlType"/>
+    ///     Serialized settings as configured by the user for the IDashboardableControl referenced by
+    ///     <see cref="ControlType" />
     /// </summary>
     public string PersistenceString
     {
@@ -100,13 +101,14 @@ public class DashboardControl : DatabaseEntity
     #region Relationships
 
     /// <summary>
-    /// Gets all <see cref="IMapsDirectlyToDatabaseTable"/> objects used by the IDashboardableControl.  E.g. if the control is a pie chart of which columns in a dataset
-    /// are missing column descriptions then this will return the <see cref="ICatalogue"/> which represents that dataset
+    ///     Gets all <see cref="IMapsDirectlyToDatabaseTable" /> objects used by the IDashboardableControl.  E.g. if the
+    ///     control is a pie chart of which columns in a dataset
+    ///     are missing column descriptions then this will return the <see cref="ICatalogue" /> which represents that dataset
     /// </summary>
     [NoMappingToDatabase]
     public DashboardObjectUse[] ObjectsUsed => Repository.GetAllObjectsWithParent<DashboardObjectUse>(this);
 
-    /// <inheritdoc cref="DashboardLayout_ID"/>
+    /// <inheritdoc cref="DashboardLayout_ID" />
     [NoMappingToDatabase]
     public DashboardLayout ParentLayout => Repository.GetObjectByID<DashboardLayout>(DashboardLayout_ID);
 
@@ -130,7 +132,8 @@ public class DashboardControl : DatabaseEntity
     }
 
     /// <summary>
-    /// Adds a new IDashboardableControl (<paramref name="controlType"/>) to the given <see cref="DashboardLayout"/> (<paramref name="parent"/>) at the specified position.
+    ///     Adds a new IDashboardableControl (<paramref name="controlType" />) to the given <see cref="DashboardLayout" /> (
+    ///     <paramref name="parent" />) at the specified position.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -157,11 +160,14 @@ public class DashboardControl : DatabaseEntity
         });
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{ControlType}( {ID} )";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ControlType}( {ID} )";
+    }
 
     /// <summary>
-    /// Serializes the current state settings of the IDashboardableControl into <see cref="PersistenceString"/>
+    ///     Serializes the current state settings of the IDashboardableControl into <see cref="PersistenceString" />
     /// </summary>
     /// <param name="collection"></param>
     public void SaveCollectionState(IPersistableObjectCollection collection)

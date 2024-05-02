@@ -29,9 +29,15 @@ public abstract class Compileable : ICompileable
         _compiler = compiler;
     }
 
-    public override string ToString() => Child.ToString();
+    public override string ToString()
+    {
+        return Child.ToString();
+    }
 
-    public string GetStateDescription() => State.ToString();
+    public string GetStateDescription()
+    {
+        return State.ToString();
+    }
 
     public abstract string GetCatalogueName();
 
@@ -73,9 +79,15 @@ public abstract class Compileable : ICompileable
 
     public abstract bool IsEnabled();
 
-    public string GetCachedQueryUseCount() => _compiler.GetCachedQueryUseCount(this);
+    public string GetCachedQueryUseCount()
+    {
+        return _compiler.GetCachedQueryUseCount(this);
+    }
 
-    public bool AreaAllQueriesCached() => _compiler.AreaAllQueriesCached(this);
+    public bool AreaAllQueriesCached()
+    {
+        return _compiler.AreaAllQueriesCached(this);
+    }
 
     public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
     {

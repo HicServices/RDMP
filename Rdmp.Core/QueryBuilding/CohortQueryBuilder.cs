@@ -17,26 +17,36 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Builds complex cohort identification queries by combining subqueries with SQL set operations (UNION / INTERSECT / EXCEPT).  Cohort identification
-/// sub queries fundamentally take the form of 'Select distinct patientId from TableX'.  All the complexity comes in the form of IFilters (WHERE Sql),
-/// parameters, using cached query results, patient index tables etc.
-/// 
-/// <para>User cohort identification queries are all create under a CohortIdentificationConfiguration which will have a single root CohortAggregateContainer.  A
-/// final count for the number of patients in the cohort can be determined by running the root CohortAggregateContainer.  The user will often want to run each
-/// sub query independently however to get counts for each dataset involved.  Sub queries are defined in AggregateConfigurations.</para>
-/// 
-/// <para>In order to build complex multi table queries across multiple datasets with complex where/parameter/join logic with decent performance RDMP supports
-/// caching.  Caching involves executing each sub query (AggregateConfiguration) and storing the resulting patient identifier list in an indexed table on
-/// the caching server (See CachedAggregateConfigurationResultsManager).  These cached queries are versioned by the SQL used to generate them (to avoid stale
-/// result lists).  Where available CohortQueryBuilder will use the cached result list instead of running the full query since it runs drastically faster.</para>
-/// 
-/// <para>The SQL code for individual queries is created by CohortQueryBuilderHelper (using AggregateBuilder).</para>
+///     Builds complex cohort identification queries by combining subqueries with SQL set operations (UNION / INTERSECT /
+///     EXCEPT).  Cohort identification
+///     sub queries fundamentally take the form of 'Select distinct patientId from TableX'.  All the complexity comes in
+///     the form of IFilters (WHERE Sql),
+///     parameters, using cached query results, patient index tables etc.
+///     <para>
+///         User cohort identification queries are all create under a CohortIdentificationConfiguration which will have a
+///         single root CohortAggregateContainer.  A
+///         final count for the number of patients in the cohort can be determined by running the root
+///         CohortAggregateContainer.  The user will often want to run each
+///         sub query independently however to get counts for each dataset involved.  Sub queries are defined in
+///         AggregateConfigurations.
+///     </para>
+///     <para>
+///         In order to build complex multi table queries across multiple datasets with complex where/parameter/join logic
+///         with decent performance RDMP supports
+///         caching.  Caching involves executing each sub query (AggregateConfiguration) and storing the resulting patient
+///         identifier list in an indexed table on
+///         the caching server (See CachedAggregateConfigurationResultsManager).  These cached queries are versioned by the
+///         SQL used to generate them (to avoid stale
+///         result lists).  Where available CohortQueryBuilder will use the cached result list instead of running the full
+///         query since it runs drastically faster.
+///     </para>
+///     <para>The SQL code for individual queries is created by CohortQueryBuilderHelper (using AggregateBuilder).</para>
 /// </summary>
 public class CohortQueryBuilder
 {
     private ICoreChildProvider _childProvider;
     private readonly ISqlParameter[] _globals;
-    private object oSQLLock = new();
+    private readonly object oSQLLock = new();
     private string _sql;
 
     public string SQL
@@ -54,8 +64,8 @@ public class CohortQueryBuilder
 
     public int TopX { get; set; }
 
-    private CohortAggregateContainer container;
-    private AggregateConfiguration configuration;
+    private readonly CohortAggregateContainer container;
+    private readonly AggregateConfiguration configuration;
 
     public ExternalDatabaseServer CacheServer
     {
@@ -206,7 +216,8 @@ public class CohortQueryBuilder
     }
 
     /// <summary>
-    /// Tells the Builder not to write out parameter SQL, unlike AggregateBuilder this will not clear the ParameterManager it will just hide them from the SQL output
+    ///     Tells the Builder not to write out parameter SQL, unlike AggregateBuilder this will not clear the ParameterManager
+    ///     it will just hide them from the SQL output
     /// </summary>
     public bool DoNotWriteOutParameters
     {

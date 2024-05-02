@@ -16,11 +16,11 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Checks that a logging database is accessible and that the default system statuses and dataset names are present.
+///     Checks that a logging database is accessible and that the default system statuses and dataset names are present.
 /// </summary>
 public class LoggingDatabaseChecker : ICheckable
 {
-    private DiscoveredServer _server;
+    private readonly DiscoveredServer _server;
 
 
     public LoggingDatabaseChecker(DiscoveredServer server)
@@ -110,7 +110,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (found != null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Found default dataset: {dataSetID}",
-                CheckResult.Success, null));
+                CheckResult.Success));
             return;
         }
 
@@ -139,8 +139,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (lm.ListDataTasks().Contains(dataSetID))
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"Found default DataLoadTask for '{dataSetID}'",
-                CheckResult.Success,
-                null));
+                CheckResult.Success));
         }
         else
         {
@@ -171,7 +170,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (!missing.Any() && !collisions.Any() && !misnomers.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"{tableName} contains the correct lookup values",
-                CheckResult.Success, null));
+                CheckResult.Success));
             return;
         }
 
@@ -180,7 +179,7 @@ public class LoggingDatabaseChecker : ICheckable
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}{collisions}",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
             return;
         }
 
@@ -188,7 +187,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (misnomers.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"{tableName} the following ID conflicts were found:{Environment.NewLine}{string.Join(Environment.NewLine, misnomers)}",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
 
 
         if (missing.Any() && notifier.OnCheckPerformed(new CheckEventArgs(

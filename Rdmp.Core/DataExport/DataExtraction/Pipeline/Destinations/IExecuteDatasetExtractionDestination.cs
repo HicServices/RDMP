@@ -20,8 +20,10 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
 /// <summary>
-/// Destination for Extraction Pipelines.  Saves the extracted (anonymous) data contained in the DataTables received (which arrive in batches) to some location
-/// (depending on implementation).  Destinations must also support one off calls (per ExtractionConfiguration) to ExtractGlobals
+///     Destination for Extraction Pipelines.  Saves the extracted (anonymous) data contained in the DataTables received
+///     (which arrive in batches) to some location
+///     (depending on implementation).  Destinations must also support one off calls (per ExtractionConfiguration) to
+///     ExtractGlobals
 /// </summary>
 public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent<DataTable>,
     IDataFlowDestination<DataTable>, IPipelineRequirement<IExtractCommand>, IPipelineRequirement<DataLoadInfo>
@@ -34,21 +36,23 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
     string DateFormat { get; }
 
     /// <summary>
-    /// Returns a string suitable for naming the extracted artifact e.g. "Biochemistry", or "BIO".  Should not contain a file extension.
+    ///     Returns a string suitable for naming the extracted artifact e.g. "Biochemistry", or "BIO".  Should not contain a
+    ///     file extension.
     /// </summary>
     /// <returns></returns>
     string GetFilename();
 
 
     /// <summary>
-    /// Provide a short description of where the <see cref="ExtractionDestination"/> puts rows e.g. a file path for a csv
+    ///     Provide a short description of where the <see cref="ExtractionDestination" /> puts rows e.g. a file path for a csv
     /// </summary>
     /// <returns></returns>
     string GetDestinationDescription();
 
     /// <summary>
-    /// Returns an assessment of how complete the <paramref name="selectedDataSet"/> extraction process is (e.g. does the current configuration
-    /// match the live system, does the extracted file exist on disk / in a database)
+    ///     Returns an assessment of how complete the <paramref name="selectedDataSet" /> extraction process is (e.g. does the
+    ///     current configuration
+    ///     match the live system, does the extracted file exist on disk / in a database)
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <param name="selectedDataSet"></param>
@@ -58,16 +62,18 @@ public interface IExecuteDatasetExtractionDestination : IPluginDataFlowComponent
 
 
     /// <summary>
-    /// Factory method, returns a source component (for a release pipeline) which is capable of detecting and packaging up the artifacts created
-    /// by this <see cref="IExecuteDatasetExtractionDestination"/> (destination component for the extraction pipeline)
+    ///     Factory method, returns a source component (for a release pipeline) which is capable of detecting and packaging up
+    ///     the artifacts created
+    ///     by this <see cref="IExecuteDatasetExtractionDestination" /> (destination component for the extraction pipeline)
     /// </summary>
     /// <param name="catalogueRepository"></param>
     /// <returns></returns>
     FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
 
     /// <summary>
-    /// Returns an assessment of how complete the <paramref name="globalResult"/> extraction process is (e.g. does the extracted file exist on disk /
-    /// in a database)
+    ///     Returns an assessment of how complete the <paramref name="globalResult" /> extraction process is (e.g. does the
+    ///     extracted file exist on disk /
+    ///     in a database)
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <param name="globalResult"></param>

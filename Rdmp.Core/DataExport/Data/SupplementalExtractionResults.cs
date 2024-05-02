@@ -14,7 +14,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="ISupplementalExtractionResults"/>
+/// <inheritdoc cref="ISupplementalExtractionResults" />
 public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity, ISupplementalExtractionResults
 {
     #region Database Properties
@@ -29,63 +29,63 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     private string _extractedName;
     private string _destinationType;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? CumulativeExtractionResults_ID
     {
         get => _cumulativeExtractionResults_ID;
         set => SetField(ref _cumulativeExtractionResults_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? ExtractionConfiguration_ID
     {
         get => _extractionConfiguration_ID;
         set => SetField(ref _extractionConfiguration_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string DestinationDescription
     {
         get => _destinationDescription;
         set => SetField(ref _destinationDescription, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int RecordsExtracted
     {
         get => _recordsExtracted;
         set => SetField(ref _recordsExtracted, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime DateOfExtraction
     {
         get => _dateOfExtraction;
         private set => SetField(ref _dateOfExtraction, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Exception
     {
         get => _exception;
         set => SetField(ref _exception, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string SQLExecuted
     {
         get => _sQLExecuted;
         set => SetField(ref _sQLExecuted, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ExtractedName
     {
         get => _extractedName;
         set => SetField(ref _extractedName, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string DestinationType
     {
         get => _destinationType;
@@ -94,22 +94,29 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
-    public bool IsGlobal { get; private set; }
+    public bool IsGlobal { get; }
 
     public SupplementalExtractionResults()
     {
     }
 
     /// <summary>
-    /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a GLOBAL artifact that is not associated
-    /// with any one dataset but with the extraction as a whole.
+    ///     Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject" />).  This is a
+    ///     GLOBAL artifact that is not associated
+    ///     with any one dataset but with the extraction as a whole.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="configuration">The configuration being extracted</param>
-    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
-    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
+    /// <param name="sql">
+    ///     The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a
+    ///     <see cref="SupportingDocument" />)
+    /// </param>
+    /// <param name="extractedObject">
+    ///     The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument" /> or
+    ///     <see cref="SupportingSQLTable" />)
+    /// </param>
     public SupplementalExtractionResults(IDataExportRepository repository, IExtractionConfiguration configuration,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
@@ -133,13 +140,20 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     }
 
     /// <summary>
-    /// Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject"/>).  This is a NON GLOBAL artifact that is associated only
-    /// with the dataset being extracted.
+    ///     Starts a new audit in the database of a supplemental artifact (<paramref name="extractedObject" />).  This is a NON
+    ///     GLOBAL artifact that is associated only
+    ///     with the dataset being extracted.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="mainAudit">The dataset extraction audit for the dataset to which this supplemental artifact belongs</param>
-    /// <param name="sql">The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a <see cref="SupportingDocument"/>)</param>
-    /// <param name="extractedObject">The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument"/> or <see cref="SupportingSQLTable"/>)</param>
+    /// <param name="sql">
+    ///     The SQL executed to generate the artifact or null if not appropriate (e.g. if it is a
+    ///     <see cref="SupportingDocument" />)
+    /// </param>
+    /// <param name="extractedObject">
+    ///     The owner of the artifact being extracted (e.g. a <see cref="SupportingDocument" /> or
+    ///     <see cref="SupportingSQLTable" />)
+    /// </param>
     public SupplementalExtractionResults(IDataExportRepository repository, ICumulativeExtractionResults mainAudit,
         string sql, IMapsDirectlyToDatabaseTable extractedObject)
     {
@@ -164,7 +178,7 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     }
 
     /// <summary>
-    /// Reads an existing audit record out of the data export database
+    ///     Reads an existing audit record out of the data export database
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
@@ -184,10 +198,13 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
         IsGlobal = CumulativeExtractionResults_ID == null && ExtractionConfiguration_ID != null;
     }
 
-    /// <inheritdoc/>
-    public Type GetDestinationType() => MEF.GetType(DestinationType);
+    /// <inheritdoc />
+    public Type GetDestinationType()
+    {
+        return MEF.GetType(DestinationType);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void CompleteAudit(Type destinationType, string destinationDescription, int distinctIdentifiers,
         bool isBatchResume, bool failed)
     {
@@ -199,8 +216,11 @@ public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity,
     }
 
     /// <summary>
-    /// Returns <see cref="ExtractedName"/>
+    ///     Returns <see cref="ExtractedName" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => ExtractedName;
+    public override string ToString()
+    {
+        return ExtractedName;
+    }
 }

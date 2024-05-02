@@ -22,15 +22,18 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.ImportExport;
 
 /// <summary>
-/// Handles querying/updating the ObjectExport and ObjectImport tables (See ObjectExport and ObjectImport classes).  These tables record which objects have
-/// been shared externally (with a SharingUID) or imported locally.  This table handles tasks such as identifying whether a given object is shared or not
-/// as well as handling the import process (in which a MapsDirectlyToDatabaseTableStatelessDefinition is translated into a local object and an ObjectImport
-/// record is created - to allow updating/synchronising later on).
+///     Handles querying/updating the ObjectExport and ObjectImport tables (See ObjectExport and ObjectImport classes).
+///     These tables record which objects have
+///     been shared externally (with a SharingUID) or imported locally.  This table handles tasks such as identifying
+///     whether a given object is shared or not
+///     as well as handling the import process (in which a MapsDirectlyToDatabaseTableStatelessDefinition is translated
+///     into a local object and an ObjectImport
+///     record is created - to allow updating/synchronising later on).
 /// </summary>
 public class ShareManager
 {
     /// <summary>
-    /// Tells the location of the platform databases to create objects/import references in
+    ///     Tells the location of the platform databases to create objects/import references in
     /// </summary>
     public readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
 
@@ -39,13 +42,14 @@ public class ShareManager
     private const char PersistenceSeparator = '|';
 
     /// <summary>
-    /// Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID"/> when importing
-    /// <see cref="ShareDefinition"/> since this ID will be different from the origin.
+    ///     Delegate method for populating environment specific properties e.g. <see cref="ICatalogue.LiveLoggingServer_ID" />
+    ///     when importing
+    ///     <see cref="ShareDefinition" /> since this ID will be different from the origin.
     /// </summary>
     internal LocalReferenceGetterDelegate LocalReferenceGetter;
 
     /// <summary>
-    /// Creates a new manager for importing and exporting objects from the given platform databases
+    ///     Creates a new manager for importing and exporting objects from the given platform databases
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <param name="localReferenceGetter"></param>
@@ -75,7 +79,8 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Gets a serialized representation of the object, this is a reference to the object by ID / SharingUID (if it has one) not a list of all its property values.
+    ///     Gets a serialized representation of the object, this is a reference to the object by ID / SharingUID (if it has
+    ///     one) not a list of all its property values.
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -96,9 +101,11 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Deserializes the given persistence string (created by <see cref="GetPersistenceString"/>) into an actual database object.  The
-    /// <paramref name="persistenceString"/> is a pointer (ID / SharingUI) of the object not a value serialization.  If you want to export the
-    /// definition use <see cref="ShareDefinition"/> or Gatherer instead
+    ///     Deserializes the given persistence string (created by <see cref="GetPersistenceString" />) into an actual database
+    ///     object.  The
+    ///     <paramref name="persistenceString" /> is a pointer (ID / SharingUI) of the object not a value serialization.  If
+    ///     you want to export the
+    ///     definition use <see cref="ShareDefinition" /> or Gatherer instead
     /// </summary>
     /// <param name="persistenceString"></param>
     /// <returns></returns>
@@ -134,35 +141,44 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Returns true if there is an <see cref="ObjectExport"/> declared which matches the provided object <paramref name="o"/>
+    ///     Returns true if there is an <see cref="ObjectExport" /> declared which matches the provided object
+    ///     <paramref name="o" />
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public bool IsExportedObject(IMapsDirectlyToDatabaseTable o) =>
-        _catalogueRepository.GetReferencesTo<ObjectExport>(o).Any();
+    public bool IsExportedObject(IMapsDirectlyToDatabaseTable o)
+    {
+        return _catalogueRepository.GetReferencesTo<ObjectExport>(o).Any();
+    }
 
 
     /// <summary>
-    /// Returns true if there is an <see cref="ObjectImport"/> declared which matches the provided object <paramref name="o"/>
+    ///     Returns true if there is an <see cref="ObjectImport" /> declared which matches the provided object
+    ///     <paramref name="o" />
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public bool IsImportedObject(IMapsDirectlyToDatabaseTable o) =>
-        _catalogueRepository.GetReferencesTo<ObjectImport>(o).Any();
+    public bool IsImportedObject(IMapsDirectlyToDatabaseTable o)
+    {
+        return _catalogueRepository.GetReferencesTo<ObjectImport>(o).Any();
+    }
 
     /// <summary>
-    /// Returns true if an <see cref="ObjectImport"/> has been declared for the given shared object identified by its <paramref name="sharingUID"/>
+    ///     Returns true if an <see cref="ObjectImport" /> has been declared for the given shared object identified by its
+    ///     <paramref name="sharingUID" />
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public bool IsImported(string sharingUID) =>
+    public bool IsImported(string sharingUID)
+    {
         //empty guids are never imported
-        !Guid.Empty.ToString().Equals(sharingUID) &&
-        _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
+        return !Guid.Empty.ToString().Equals(sharingUID) &&
+               _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
+    }
 
     /// <summary>
-    /// Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and
-    /// enable the object for sharing with other users who have RDMP.
+    ///     Returns an existing export definition for the object o or generates a new one.  This will give you a SharingUID and
+    ///     enable the object for sharing with other users who have RDMP.
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -184,8 +200,9 @@ public class ShareManager
 
 
     /// <summary>
-    /// Returns the local object which was imported under the given <paramref name="sharingUID"/> (or null if the object has never
-    /// been imported)
+    ///     Returns the local object which was imported under the given <paramref name="sharingUID" /> (or null if the object
+    ///     has never
+    ///     been imported)
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
@@ -196,12 +213,16 @@ public class ShareManager
         return import?.GetReferencedObject(RepositoryLocator);
     }
 
-    /// <inheritdoc cref="GetExistingImportObject(string)"/>
-    public object GetExistingImportObject(Guid sharingGuid) => GetExistingImportObject(sharingGuid.ToString());
+    /// <inheritdoc cref="GetExistingImportObject(string)" />
+    public object GetExistingImportObject(Guid sharingGuid)
+    {
+        return GetExistingImportObject(sharingGuid.ToString());
+    }
 
     /// <summary>
-    /// Returns the local object which was exported under the given <paramref name="sharingUID"/> (or null if the object has never
-    /// been exported)
+    ///     Returns the local object which was exported under the given <paramref name="sharingUID" /> (or null if the object
+    ///     has never
+    ///     been exported)
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
@@ -212,49 +233,71 @@ public class ShareManager
         return export?.GetReferencedObject(RepositoryLocator);
     }
 
-    /// <inheritdoc cref="GetExistingExportObject(string)"/>
-    public object GetExistingExportObject(Guid sharingGuid) => GetExistingExportObject(sharingGuid.ToString());
+    /// <inheritdoc cref="GetExistingExportObject(string)" />
+    public object GetExistingExportObject(Guid sharingGuid)
+    {
+        return GetExistingExportObject(sharingGuid.ToString());
+    }
 
 
     /// <summary>
-    /// Returns a matching ObjectImport for the provided sharingUID or null if the UID has never been imported
+    ///     Returns a matching ObjectImport for the provided sharingUID or null if the UID has never been imported
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public ObjectImport GetExistingImport(string sharingUID) => _catalogueRepository
-        .GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
+    public ObjectImport GetExistingImport(string sharingUID)
+    {
+        return _catalogueRepository
+            .GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
+    }
 
-    /// <inheritdoc cref="GetExistingImport(string)"/>
-    public ObjectImport GetExistingImport(Guid sharingUID) => GetExistingImport(sharingUID.ToString());
+    /// <inheritdoc cref="GetExistingImport(string)" />
+    public ObjectImport GetExistingImport(Guid sharingUID)
+    {
+        return GetExistingImport(sharingUID.ToString());
+    }
 
     /// <summary>
-    /// Returns a matching ObjectExport for the provided sharingUID or null if the UID has never been imported
+    ///     Returns a matching ObjectExport for the provided sharingUID or null if the UID has never been imported
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <returns></returns>
-    public ObjectExport GetExistingExport(string sharingUID) => _catalogueRepository
-        .GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
+    public ObjectExport GetExistingExport(string sharingUID)
+    {
+        return _catalogueRepository
+            .GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
+    }
 
-    /// <inheritdoc cref="GetExistingExport(string)"/>
-    public ObjectExport GetExistingExport(Guid sharingUID) => GetExistingExport(sharingUID.ToString());
+    /// <inheritdoc cref="GetExistingExport(string)" />
+    public ObjectExport GetExistingExport(Guid sharingUID)
+    {
+        return GetExistingExport(sharingUID.ToString());
+    }
 
     /// <summary>
-    /// Marks the given local object <paramref name="o"/> as an imported instance of a shared object (identified by its <paramref name="sharingUID"/>)
+    ///     Marks the given local object <paramref name="o" /> as an imported instance of a shared object (identified by its
+    ///     <paramref name="sharingUID" />)
     /// </summary>
     /// <param name="sharingUID"></param>
     /// <param name="o"></param>
     /// <returns></returns>
-    public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o) =>
-        GetExistingImport(sharingUID) ?? new ObjectImport(_catalogueRepository, sharingUID, o);
+    public ObjectImport GetImportAs(string sharingUID, IMapsDirectlyToDatabaseTable o)
+    {
+        return GetExistingImport(sharingUID) ?? new ObjectImport(_catalogueRepository, sharingUID, o);
+    }
 
     /// <summary>
-    /// Gets all import definitions (ObjectImport) defined in the Catalogue database
+    ///     Gets all import definitions (ObjectImport) defined in the Catalogue database
     /// </summary>
     /// <returns></returns>
-    public ObjectImport[] GetAllImports() => _catalogueRepository.GetAllObjects<ObjectImport>();
+    public ObjectImport[] GetAllImports()
+    {
+        return _catalogueRepository.GetAllObjects<ObjectImport>();
+    }
 
     /// <summary>
-    /// Deletes all import definitions (ObjectImport) for which the referenced object (IMapsDirectlyToDatabaseTable) no longer exists (has been deleted)
+    ///     Deletes all import definitions (ObjectImport) for which the referenced object (IMapsDirectlyToDatabaseTable) no
+    ///     longer exists (has been deleted)
     /// </summary>
     public void DeleteAllOrphanImportDefinitions()
     {
@@ -264,7 +307,7 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Reads and deserializes the .so file into objects in the database
+    ///     Reads and deserializes the .so file into objects in the database
     /// </summary>
     /// <param name="sharedObjectsFile"></param>
     /// <param name="deleteExisting"></param>
@@ -279,7 +322,8 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See Sharing.Dependency.Gathering.Gatherer)
+    ///     Creates imported objects from a serialized list of <see cref="ShareDefinition" /> - usually loaded from a .so file
+    ///     (See Sharing.Dependency.Gathering.Gatherer)
     /// </summary>
     /// <param name="sharedObjectsFileText"></param>
     /// <param name="deleteExisting"></param>
@@ -293,24 +337,30 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Deserializes the json which must be the contents of a .sd file i.e. a ShareDefinitionList
+    ///     Deserializes the json which must be the contents of a .sd file i.e. a ShareDefinitionList
     /// </summary>
     /// <param name="json"></param>
     /// <returns></returns>
-    public List<ShareDefinition> GetShareDefinitionList(string json) =>
-        (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof(List<ShareDefinition>),
+    public List<ShareDefinition> GetShareDefinitionList(string json)
+    {
+        return (List<ShareDefinition>)JsonConvertExtensions.DeserializeObject(json, typeof(List<ShareDefinition>),
             RepositoryLocator);
+    }
 
     /// <summary>
-    /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+    ///     Imports a list of shared objects and creates local copies of the objects as well as marking them as
+    ///     <see cref="ObjectImport" />s
     /// </summary>
     /// <param name="toImport"></param>
     /// <returns></returns>
-    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport) =>
-        ImportSharedObject(toImport, false);
+    public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(List<ShareDefinition> toImport)
+    {
+        return ImportSharedObject(toImport, false);
+    }
 
     /// <summary>
-    /// Imports a list of shared objects and creates local copies of the objects as well as marking them as <see cref="ObjectImport"/>s
+    ///     Imports a list of shared objects and creates local copies of the objects as well as marking them as
+    ///     <see cref="ObjectImport" />s
     /// </summary>
     /// <param name="toImport"></param>
     /// <param name="deleteExisting">Deletes the object if the object has already been imported previously (not a good idea).</param>
@@ -340,31 +390,33 @@ public class ShareManager
                     {
                         var index = created.IndexOf(latestLMD);
                         var cataloguesToLink = created.Skip(index).OfType<Catalogue>();
-                        foreach (var catalogue in cataloguesToLink)
-                        {
-                            latestLMD.LinkToCatalogue(catalogue);
-
-                        }
+                        foreach (var catalogue in cataloguesToLink) latestLMD.LinkToCatalogue(catalogue);
                         continue;
                     }
                 }
-                created.Add(instance);
 
+                created.Add(instance);
             }
             catch (Exception e)
             {
                 throw new Exception($"Error constructing {sd.Type}", e);
             }
+
         return created;
     }
 
     /// <summary>
-    /// When importing a <paramref name="shareDefinition"/> for a child class with a parent, this method will return the ID of parent for the given <paramref name="property"/>
-    /// on the child.  For example if you are importing a <see cref="ShareDefinition"/> for a <see cref="CatalogueItem"/> then the property <see cref="CatalogueItem.Catalogue_ID"/> should
-    /// have the ID of the locally held <see cref="Catalogue"/> to which it will become a part of.
+    ///     When importing a <paramref name="shareDefinition" /> for a child class with a parent, this method will return the
+    ///     ID of parent for the given <paramref name="property" />
+    ///     on the child.  For example if you are importing a <see cref="ShareDefinition" /> for a <see cref="CatalogueItem" />
+    ///     then the property <see cref="CatalogueItem.Catalogue_ID" /> should
+    ///     have the ID of the locally held <see cref="Catalogue" /> to which it will become a part of.
     /// </summary>
-    /// <param name="property">The child class property you need to fill e.g. <see cref="CatalogueItem.Catalogue_ID"/></param>
-    /// <param name="relationshipAttribute">The attribute that decorates the <paramref name="property"/> which indicates what type of object the parent is etc</param>
+    /// <param name="property">The child class property you need to fill e.g. <see cref="CatalogueItem.Catalogue_ID" /></param>
+    /// <param name="relationshipAttribute">
+    ///     The attribute that decorates the <paramref name="property" /> which indicates what
+    ///     type of object the parent is etc
+    /// </param>
     /// <param name="shareDefinition">The serialization of the child you are trying to import</param>
     /// <returns></returns>
     public int? GetLocalReference(PropertyInfo property, RelationshipAttribute relationshipAttribute,
@@ -384,7 +436,8 @@ public class ShareManager
     }
 
     /// <summary>
-    /// Updates the user configurable (non ID) properties of the object <pararef name="o"/> to match the <paramref name="shareDefinition"/>
+    ///     Updates the user configurable (non ID) properties of the object <pararef name="o" /> to match the
+    ///     <paramref name="shareDefinition" />
     /// </summary>
     /// <param name="o"></param>
     /// <param name="shareDefinition"></param>
@@ -464,9 +517,7 @@ public class ShareManager
             foreach (var prop in TableRepository.GetPropertyInfos(typeof(T)))
                 //don't update any ID columns or any with relationships on UPDATE
                 if (propertiesDictionary.TryGetValue(prop.Name, out var value) && finder.GetAttribute(prop) == null)
-                {
                     SetValue(prop, value, toCreate);
-                }
                 else
                     prop.SetValue(toCreate,
                         prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
@@ -505,7 +556,7 @@ public class ShareManager
                                     break;
                                 }
                                 else
-                                //otherwise we are missing a required shared object being referenced. That's bad news.
+                                    //otherwise we are missing a required shared object being referenced. That's bad news.
                                 {
                                     throw new Exception(
                                         $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");
@@ -574,6 +625,6 @@ public class ShareManager
     }
 }
 
-/// <inheritdoc cref="ShareManager.LocalReferenceGetter"/>
+/// <inheritdoc cref="ShareManager.LocalReferenceGetter" />
 public delegate int? LocalReferenceGetterDelegate(PropertyInfo property, RelationshipAttribute relationshipAttribute,
     ShareDefinition shareDefinition);

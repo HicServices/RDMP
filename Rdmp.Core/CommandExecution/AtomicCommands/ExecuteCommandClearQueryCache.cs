@@ -17,15 +17,15 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Clears cached cohort set data stored in an <see cref="ExternalDatabaseServer"/> that is acting
-/// as a <see cref="QueryCachingPatcher"/>
+///     Clears cached cohort set data stored in an <see cref="ExternalDatabaseServer" /> that is acting
+///     as a <see cref="QueryCachingPatcher" />
 /// </summary>
 public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
 {
     private readonly CohortIdentificationConfiguration _cic;
 
     /// <summary>
-    /// Clears all cache entries in the cache used by <paramref name="cic"/>
+    ///     Clears all cache entries in the cache used by <paramref name="cic" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="cic"></param>
@@ -50,9 +50,11 @@ public sealed class ExecuteCommandClearQueryCache : BasicCommandExecution
         if (GetCacheCount() == 0) SetImpossible($"There are no cache entries for {cic}");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return IconOverlayProvider.GetOverlayNoCache(Image.Load<Rgba32>(CatalogueIcons.ExternalDatabaseServer_Cache),
             OverlayKind.Delete);
+    }
 
     public override void Execute()
     {

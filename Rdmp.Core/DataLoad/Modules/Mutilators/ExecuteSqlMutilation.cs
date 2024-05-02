@@ -16,8 +16,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// Similar to <see cref="ExecuteSqlFileRuntimeTask"/> but doesn't require the Sql to be stored on disk.  Instead the SQL is stored
-/// in the property <see cref="Sql"/> (i.e. in the RMDP platform database).
+///     Similar to <see cref="ExecuteSqlFileRuntimeTask" /> but doesn't require the Sql to be stored on disk.  Instead the
+///     SQL is stored
+///     in the property <see cref="Sql" /> (i.e. in the RMDP platform database).
 /// </summary>
 public class ExecuteSqlMutilation : IPluginMutilateDataTables
 {

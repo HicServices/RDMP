@@ -23,15 +23,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading RAW tables with records read from a remote database server.
-/// Fetches all table from the specified database to load all catalogues specified.
+///     Data load component for loading RAW tables with records read from a remote database server.
+///     Fetches all table from the specified database to load all catalogues specified.
 /// </summary>
 public class RemoteDatabaseAttacher : RemoteAttacher
 {
-    public RemoteDatabaseAttacher() : base()
-    {
-    }
-
     [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory = true)]
     public ExternalDatabaseServer RemoteSource { get; set; }
 
@@ -54,15 +50,14 @@ False - Trigger an error reporting the missing table(s)
     public bool IgnoreMissingTables { get; set; }
 
 
-
-
     public override void Check(ICheckNotifier notifier)
     {
         if (!RemoteSource.Discover(DataAccessContext.DataLoad).Exists())
             throw new Exception($"Database {RemoteSource.Database} did not exist on the remote server");
 
         if (HistoricalFetchDuration is not AttacherHistoricalDurations.AllTime && RemoteTableDateColumn is null)
-            throw new Exception("No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
+            throw new Exception(
+                "No Remote Table Date Column is set, but a historical duration is. Add a date column to continue.");
     }
 
     public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -108,8 +103,10 @@ False - Trigger an error reporting the missing table(s)
             }
             else
             {
-                sql = $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata,RemoteSource.DatabaseType)}";
+                sql =
+                    $"SELECT * FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, RemoteSource.DatabaseType)}";
             }
+
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"About to execute SQL:{Environment.NewLine}{sql}"));
 
@@ -144,12 +141,8 @@ False - Trigger an error reporting the missing table(s)
                 $"Finished after reading {source.TotalRowsRead} rows"));
 
             if (SetDeltaReadingToLatestSeenDatePostLoad)
-            {
-                FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType ,table, job);
-            }
-
+                FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType, table, job);
         }
-
 
 
         return ExitCodeType.Success;

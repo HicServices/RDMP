@@ -30,8 +30,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
             SetImpossible("Catalogue has no extractable columns");
     }
 
-    public override string GetCommandHelp() =>
-        "Add a new graph for understanding the data in a dataset e.g. number of records per year";
+    public override string GetCommandHelp()
+    {
+        return "Add a new graph for understanding the data in a dataset e.g. number of records per year";
+    }
 
     public override void Execute()
     {
@@ -43,10 +45,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add Aggregate Graph",
-                TaskDescription = "Select which Catalogue you want to add the graph to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add Aggregate Graph",
+                    TaskDescription = "Select which Catalogue you want to add the graph to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -55,10 +57,10 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
 
         if (name == null && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = "Graph Name",
-                EntryLabel = "Name"
-            }, 255, null, out name, false))
+                {
+                    WindowTitle = "Graph Name",
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
                 // user cancelled typing a name for the graph
                 return;
 
@@ -68,6 +70,8 @@ public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomic
         Activate(newAggregate);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
+    }
 }

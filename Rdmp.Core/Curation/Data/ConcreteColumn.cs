@@ -17,11 +17,15 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn (clone into data export database of an
-/// ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an ExtractionInformation defined in the Catalogue
-/// database and copied out for use in the data extraction configuration).
-/// 
-/// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
+///     Common abstract base class for ExtractionInformation (how to extract a given ColumnInfo) and ExtractableColumn
+///     (clone into data export database of an
+///     ExtractionInformation - i.e. 'extract column A on for Project B Configuration 'Cases' where A would be an
+///     ExtractionInformation defined in the Catalogue
+///     database and copied out for use in the data extraction configuration).
+///     <para>
+///         Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database
+///         repository etc)
+///     </para>
 /// </summary>
 public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, IComparable
 {
@@ -35,7 +39,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     private int _order;
 
     /// <summary>
-    /// The order the column should be in when part of a SELECT statement built by an <see cref="ISqlQueryBuilder"/>
+    ///     The order the column should be in when part of a SELECT statement built by an <see cref="ISqlQueryBuilder" />
     /// </summary>
     public int Order
     {
@@ -43,7 +47,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         set => SetField(ref _order, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string SelectSQL
     {
@@ -57,28 +61,28 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Alias
     {
         get => _alias;
         set => SetField(ref _alias, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool HashOnDataRelease
     {
         get => _hashOnDataRelease;
         set => SetField(ref _hashOnDataRelease, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsExtractionIdentifier
     {
         get => _isExtractionIdentifier;
         set => SetField(ref _isExtractionIdentifier, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsPrimaryKey
     {
         get => _isPrimaryKey;
@@ -89,23 +93,23 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public abstract ColumnInfo ColumnInfo { get; }
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected ConcreteColumn(IRepository repository, DbDataReader r) : base(repository, r)
     {
     }
 
-    /// <inheritdoc/>
-    protected ConcreteColumn() : base()
+    /// <inheritdoc />
+    protected ConcreteColumn()
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetRuntimeName()
     {
         var helper = ColumnInfo == null ? MicrosoftQuerySyntaxHelper.Instance : ColumnInfo.GetQuerySyntaxHelper();
@@ -115,16 +119,19 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         return !string.IsNullOrWhiteSpace(SelectSQL) ? helper.GetRuntimeName(SelectSQL) : ColumnInfo.GetRuntimeName();
     }
 
-    /// <inheritdoc cref="ColumnSyntaxChecker"/>
+    /// <inheritdoc cref="ColumnSyntaxChecker" />
     public void Check(ICheckNotifier notifier)
     {
         new ColumnSyntaxChecker(this).Check(notifier);
     }
 
     /// <summary>
-    /// Compares columns by <see cref="ConcreteColumn.Order"/>
+    ///     Compares columns by <see cref="ConcreteColumn.Order" />
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public int CompareTo(object obj) => obj is IColumn ? Order - (obj as IColumn).Order : 0;
+    public int CompareTo(object obj)
+    {
+        return obj is IColumn ? Order - (obj as IColumn).Order : 0;
+    }
 }

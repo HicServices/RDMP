@@ -12,10 +12,13 @@ using System.Text;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Core RDMP implementation of RSA public/private key encryption.  In order to be secure you should create a private key (See PasswordEncryptionKeyLocationUI).  If
-/// no private key is configured then the default Key will be used (this is not secure and anyone with access to the RDMP source code could decrypt your strings - which
-///  is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption technique you will get a different output (encrypted) string
-/// value for repeated calls to Encrypt even with the same input string.
+///     Core RDMP implementation of RSA public/private key encryption.  In order to be secure you should create a private
+///     key (See PasswordEncryptionKeyLocationUI).  If
+///     no private key is configured then the default Key will be used (this is not secure and anyone with access to the
+///     RDMP source code could decrypt your strings - which
+///     is open source!). Strings are encrypted based on the key file.  Note that because RSA is a good encryption
+///     technique you will get a different output (encrypted) string
+///     value for repeated calls to Encrypt even with the same input string.
 /// </summary>
 public class SimpleStringValueEncryption : IEncryptStrings
 {
@@ -40,8 +43,10 @@ public class SimpleStringValueEncryption : IEncryptStrings
     }
 
     /// <summary>
-    /// Encrypt the payload using a new AES key and IV.  The AES key is then encrypted using the RSA public key and the IV is prepended to the encrypted payload.
-    /// A prefix '$js1$' is added to the encrypted string to indicate that it is encrypted using the new (2023) RDMP default encryption algorithm.
+    ///     Encrypt the payload using a new AES key and IV.  The AES key is then encrypted using the RSA public key and the IV
+    ///     is prepended to the encrypted payload.
+    ///     A prefix '$js1$' is added to the encrypted string to indicate that it is encrypted using the new (2023) RDMP
+    ///     default encryption algorithm.
     /// </summary>
     /// <returns></returns>
     public string Encrypt(string toEncrypt)
@@ -64,13 +69,13 @@ public class SimpleStringValueEncryption : IEncryptStrings
     }
 
     /// <summary>
-    /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString()
+    ///     Takes an encrypted byte[] (in string format as produced by BitConverter.ToString()
     /// </summary>
     /// <param name="toDecrypt"></param>
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
-        if (toDecrypt.StartsWith($"$js1$") && toDecrypt.EndsWith("$"))
+        if (toDecrypt.StartsWith("$js1$") && toDecrypt.EndsWith("$"))
         {
             // Good, it's a new-style AES+RSA encrypted string
             var parts = toDecrypt.Split('$');

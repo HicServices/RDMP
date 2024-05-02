@@ -34,7 +34,7 @@ using Rdmp.Core.Ticketing;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <inheritdoc cref="ICatalogue"/>
+/// <inheritdoc cref="ICatalogue" />
 public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<CatalogueItem[]>,
     IInjectKnown<CatalogueExtractabilityStatus>
 {
@@ -90,7 +90,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     private Lazy<CatalogueItem[]> _knownCatalogueItems;
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Unique]
     [DoNotImportDescriptions(AllowOverwriteIfBlank = true)]
     public string Acronym
@@ -100,8 +100,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// The full human-readable name of the dataset.  This should usually match the name of the underlying <see cref="TableInfo"/> but might differ
-    /// if there are multiple tables powering the Catalogue, osr they don't have user accessible names.
+    ///     The full human-readable name of the dataset.  This should usually match the name of the underlying
+    ///     <see cref="TableInfo" /> but might differ
+    ///     if there are multiple tables powering the Catalogue, osr they don't have user accessible names.
     /// </summary>
     [Unique]
     [NotNull]
@@ -112,7 +113,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotImportDescriptions]
     [UsefulProperty]
     public string Folder
@@ -122,7 +123,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [UsefulProperty]
     public string Description
     {
@@ -131,7 +132,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User defined Uri for a website page which describes the dataset (probably null)
+    ///     User defined Uri for a website page which describes the dataset (probably null)
     /// </summary>
     public Uri Detail_Page_URL
     {
@@ -140,7 +141,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
+    ///     User defined classification of the Type of dataset the Catalogue is e.g. Cohort, ResearchStudy etc
     /// </summary>
     public CatalogueType Type
     {
@@ -148,7 +149,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _type, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CataloguePeriodicity Periodicity
     {
         get => _periodicity;
@@ -156,7 +157,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field describing how the dataset is subdivided/bounded e.g. relates to a multiple 'HealthBoards' / 'Clinics' / 'Hosptials' etc.
+    ///     User specified field describing how the dataset is subdivided/bounded e.g. relates to a multiple 'HealthBoards' /
+    ///     'Clinics' / 'Hosptials' etc.
     /// </summary>
     public CatalogueGranularity Granularity
     {
@@ -165,7 +167,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Geographical_coverage
     {
@@ -174,7 +176,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Background_summary
     {
@@ -183,7 +185,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified list of keywords that are intended to help in finding the Catalogue
+    ///     User specified list of keywords that are intended to help in finding the Catalogue
     /// </summary>
     public string Search_keywords
     {
@@ -192,8 +194,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
-    /// <seealso cref="Periodicity"/>
+    ///     User specified free text field.  Not used for anything by RDMP.
+    ///     <seealso cref="Periodicity" />
     /// </summary>
     public string Update_freq
     {
@@ -202,8 +204,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
-    /// <seealso cref="Periodicity"/>
+    ///     User specified free text field.  Not used for anything by RDMP.
+    ///     <seealso cref="Periodicity" />
     /// </summary>
     public string Update_sched
     {
@@ -212,7 +214,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public string Time_coverage
     {
         get => _timeCoverage;
@@ -220,7 +222,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified date that user alledgedly reviewed the contents of the Catalogue / Metadata
+    ///     User specified date that user alledgedly reviewed the contents of the Catalogue / Metadata
     /// </summary>
     public DateTime? Last_revision_date
     {
@@ -229,7 +231,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Contact_details
     {
@@ -238,7 +240,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Resource_owner
     {
@@ -247,7 +249,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Attribution_citation
     {
@@ -256,7 +258,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Access_options
     {
@@ -265,7 +267,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string SubjectNumbers
     {
@@ -274,7 +276,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Supposedly a URL for a webservice for accessing the dataset? Not used for anything by RDMP.
+    ///     User specified field.  Supposedly a URL for a webservice for accessing the dataset? Not used for anything by RDMP.
     /// </summary>
     public Uri API_access_URL
     {
@@ -283,7 +285,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Supposedly a URL for a webservice for browsing the dataset? Not used for anything by RDMP.
+    ///     User specified field.  Supposedly a URL for a webservice for browsing the dataset? Not used for anything by RDMP.
     /// </summary>
     public Uri Browse_URL
     {
@@ -292,7 +294,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Supposedly a URL for a webservice for bulk downloading the dataset? Not used for anything by RDMP.
+    ///     User specified field.  Supposedly a URL for a webservice for bulk downloading the dataset? Not used for anything by
+    ///     RDMP.
     /// </summary>
     public Uri Bulk_Download_URL
     {
@@ -301,7 +304,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Supposedly a URL for a webservice for querying the dataset? Not used for anything by RDMP.
+    ///     User specified field.  Supposedly a URL for a webservice for querying the dataset? Not used for anything by RDMP.
     /// </summary>
     public Uri Query_tool_URL
     {
@@ -310,7 +313,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Supposedly a URL for a website describing where you procured the data from? Not used for anything by RDMP.
+    ///     User specified field.  Supposedly a URL for a website describing where you procured the data from? Not used for
+    ///     anything by RDMP.
     /// </summary>
     public Uri Source_URL
     {
@@ -319,7 +323,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Country_of_origin
     {
@@ -328,7 +332,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Data_standards
     {
@@ -337,7 +341,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Administrative_contact_name
     {
@@ -346,7 +350,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Administrative_contact_email
     {
@@ -355,7 +359,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Administrative_contact_telephone
     {
@@ -364,7 +368,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Administrative_contact_address
     {
@@ -373,7 +377,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified field.  Not used for anything by RDMP.
+    ///     User specified field.  Not used for anything by RDMP.
     /// </summary>
     public bool? Explicit_consent
     {
@@ -382,7 +386,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Ethics_approver
     {
@@ -391,7 +395,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Source_of_data_collection
     {
@@ -400,8 +404,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for
-    /// recording issues (if you are not using the RDMP issue system (see CatalogueItemIssue))
+    ///     Identifier for a ticket in your <see cref="ITicketingSystem" /> for documenting / auditing work on the Catalogue
+    ///     and for
+    ///     recording issues (if you are not using the RDMP issue system (see CatalogueItemIssue))
     /// </summary>
     public string Ticket
     {
@@ -409,7 +414,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _ticket, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     public string LoggingDataTask
     {
@@ -417,7 +422,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _loggingDataTask, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     public string ValidatorXML
     {
@@ -425,7 +430,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _validatorXml, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference,
         ValueGetter = nameof(GetAllExtractionInformation))] //todo do we want to share this?
     [DoNotExtractProperty]
@@ -435,7 +440,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _timeCoverageExtractionInformationID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     [Relationship(typeof(ExtractionInformation), RelationshipType.IgnoreableLocalReference,
         ValueGetter = nameof(GetAllExtractionInformation))]
@@ -445,7 +450,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _pivotCategoryExtractionInformationID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     [DoNotImportDescriptions]
     public bool IsDeprecated
@@ -454,7 +459,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _isDeprecated, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     [DoNotImportDescriptions]
     public bool IsInternalDataset
@@ -463,7 +468,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _isInternalDataset, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotExtractProperty]
     [DoNotImportDescriptions]
     public bool IsColdStorageDataset
@@ -472,7 +477,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _isColdStorageDataset, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
     [DoNotExtractProperty]
     public int? LiveLoggingServer_ID
@@ -481,7 +486,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         set => SetField(ref _liveLoggingServerID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? DatasetStartDate
     {
         get => _datasetStartDate;
@@ -492,38 +497,39 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public CatalogueItem[] CatalogueItems => _knownCatalogueItems.Value;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public LoadMetadata[] LoadMetadatas()
     {
-        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID",ID).Select(l => l.LoadMetadataID);
+        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID)
+            .Select(l => l.LoadMetadataID);
 
         return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public AggregateConfiguration[] AggregateConfigurations =>
         Repository.GetAllObjectsWithParent<AggregateConfiguration>(this);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
-     public ExternalDatabaseServer LiveLoggingServer =>
-       LiveLoggingServer_ID == null
-                   ? null
-                   : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
+    public ExternalDatabaseServer LiveLoggingServer =>
+        LiveLoggingServer_ID == null
+            ? null
+            : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ExtractionInformation TimeCoverage_ExtractionInformation =>
         TimeCoverage_ExtractionInformation_ID == null
             ? null
             : Repository.GetObjectByID<ExtractionInformation>(TimeCoverage_ExtractionInformation_ID.Value);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ExtractionInformation PivotCategory_ExtractionInformation =>
         PivotCategory_ExtractionInformation_ID == null
@@ -535,120 +541,121 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     #region Enums
 
     /// <summary>
-    /// Somewhat arbitrary concepts for defining the limitations of a Catalogues data
+    ///     Somewhat arbitrary concepts for defining the limitations of a Catalogues data
     /// </summary>
     public enum CatalogueType
     {
         /// <summary>
-        /// No CatalogueType has been specified
+        ///     No CatalogueType has been specified
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// Catalogue data relates to a research study
+        ///     Catalogue data relates to a research study
         /// </summary>
         ResearchStudy,
 
         /// <summary>
-        /// Catalogue data relates to or defines a Cohort
+        ///     Catalogue data relates to or defines a Cohort
         /// </summary>
         Cohort,
 
         /// <summary>
-        /// Catalogue data is collected by a national registry
+        ///     Catalogue data is collected by a national registry
         /// </summary>
         NationalRegistry,
 
         /// <summary>
-        /// Catalogue data is collected by a healthcare provider
+        ///     Catalogue data is collected by a healthcare provider
         /// </summary>
         HealthcareProviderRegistry,
 
         /// <summary>
-        /// Catalogue data can be classified as Electronic Health Records (prescriptions, hospital records etc.)
+        ///     Catalogue data can be classified as Electronic Health Records (prescriptions, hospital records etc.)
         /// </summary>
         EHRExtract
     }
 
     /// <summary>
-    /// Notional user declared period on which the data in the Catalogue is refreshed.  This may not have any bearing
-    /// on reality.  Not used by RDMP for any technical processes.
+    ///     Notional user declared period on which the data in the Catalogue is refreshed.  This may not have any bearing
+    ///     on reality.  Not used by RDMP for any technical processes.
     /// </summary>
     public enum CataloguePeriodicity
     {
         /// <summary>
-        /// No period for the dataset has been specified
+        ///     No period for the dataset has been specified
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// Data is updated on a daily basis
+        ///     Data is updated on a daily basis
         /// </summary>
         Daily,
 
         /// <summary>
-        /// Data is updated on a weekly basis
+        ///     Data is updated on a weekly basis
         /// </summary>
         Weekly,
 
         /// <summary>
-        /// Data is updated every 2 weeks
+        ///     Data is updated every 2 weeks
         /// </summary>
         Fortnightly,
 
         /// <summary>
-        /// Data is updated every month
+        ///     Data is updated every month
         /// </summary>
         Monthly,
 
         /// <summary>
-        /// Data is updated every 2 months
+        ///     Data is updated every 2 months
         /// </summary>
         BiMonthly,
 
         /// <summary>
-        /// Data is updated every 4 months
+        ///     Data is updated every 4 months
         /// </summary>
         Quarterly,
 
         /// <summary>
-        /// Data is updated on a yearly basis
+        ///     Data is updated on a yearly basis
         /// </summary>
         Yearly
     }
 
     /// <summary>
-    /// Notional user declared boundary for the dataset defined by the Catalogue.  The data should be isolated to this Granularity
+    ///     Notional user declared boundary for the dataset defined by the Catalogue.  The data should be isolated to this
+    ///     Granularity
     /// </summary>
     public enum CatalogueGranularity
     {
         /// <summary>
-        /// No granularity has been specified
+        ///     No granularity has been specified
         /// </summary>
         Unknown,
 
         /// <summary>
-        /// Contains data relating to multiple nations
+        ///     Contains data relating to multiple nations
         /// </summary>
         National,
 
         /// <summary>
-        /// Contains data relating to multiple regions (e.g. Scotland / England)
+        ///     Contains data relating to multiple regions (e.g. Scotland / England)
         /// </summary>
         Regional,
 
         /// <summary>
-        /// Contains data relating to multiple healthboards (e.g. Tayside / Fife)
+        ///     Contains data relating to multiple healthboards (e.g. Tayside / Fife)
         /// </summary>
         HealthBoard,
 
         /// <summary>
-        /// Contains data relating to multiple hospitals (e.g. Ninewells)
+        ///     Contains data relating to multiple hospitals (e.g. Ninewells)
         /// </summary>
         Hospital,
 
         /// <summary>
-        /// Contains data relating to multiple clinics (e.g. Radiology)
+        ///     Contains data relating to multiple clinics (e.g. Radiology)
         /// </summary>
         Clinic
     }
@@ -656,9 +663,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     #endregion
 
     /// <summary>
-    /// Creates a new instance from an unknown repository (for use with serialization).  You must set
-    /// <see cref="IMapsDirectlyToDatabaseTable.Repository"/> before Methods that retrieve other objects or
-    /// save state can be called (e.g. <see cref="ISaveable.SaveToDatabase"/>)
+    ///     Creates a new instance from an unknown repository (for use with serialization).  You must set
+    ///     <see cref="IMapsDirectlyToDatabaseTable.Repository" /> before Methods that retrieve other objects or
+    ///     save state can be called (e.g. <see cref="ISaveable.SaveToDatabase" />)
     /// </summary>
     public Catalogue()
     {
@@ -666,9 +673,12 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.
-    /// 
-    /// <para>The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
+    ///     Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be
+    ///     tied to any underlying tables.
+    ///     <para>
+    ///         The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter" /> and
+    ///         <see cref="ForwardEngineerCatalogue" />
+    ///     </para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -699,14 +709,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
+    ///     Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader
+    ///     (does not advance the reader)
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
     internal Catalogue(ICatalogueRepository repository, DbDataReader r)
         : base(repository, r)
     {
-
         Acronym = r["Acronym"].ToString();
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();
@@ -830,11 +840,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Sorts alphabetically based on <see cref="Name"/>
+    ///     Sorts alphabetically based on <see cref="Name" />
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
@@ -848,7 +861,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos
+    ///     Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)" />).  Then checks that
+    ///     there are no missing ColumnInfos
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -948,7 +962,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         f.Check(notifier);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITableInfo[] GetTableInfoList(bool includeLookupTables)
     {
         GetTableInfos(out var normalTables, out var lookupTables);
@@ -956,7 +970,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return includeLookupTables ? normalTables.Union(lookupTables).ToArray() : normalTables.ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITableInfo[] GetLookupTableInfoList()
     {
         GetTableInfos(out _, out var lookupTables);
@@ -964,13 +978,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return lookupTables.ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void GetTableInfos(out List<ITableInfo> normalTables, out List<ITableInfo> lookupTables)
     {
         GetAllTableInfos(t => t.IsLookupTable(), out normalTables, out lookupTables);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void GetTableInfos(ICoreChildProvider provider, out List<ITableInfo> normalTables,
         out List<ITableInfo> lookupTables)
     {
@@ -994,20 +1008,20 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 .Select(ci => ci.ColumnInfo_ID.Value).Distinct().ToList());
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionFilter[] GetAllMandatoryFilters()
     {
         return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters)
             .Where(f => f.IsMandatory).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionFilter[] GetAllFilters()
     {
         return GetAllExtractionInformation(ExtractionCategory.Any).SelectMany(f => f.ExtractionFilters).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase,
         out IDataAccessPoint distinctAccessPoint)
     {
@@ -1018,11 +1032,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return DataAccessPortal.ExpectDistinctServer(tables, context, setInitialDatabase);
     }
 
-    /// <inheritdoc/>
-    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase) =>
-        DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
+    /// <inheritdoc />
+    public DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase)
+    {
+        return DataAccessPortal.ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context,
+            setInitialDatabase);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
     {
         //try with only the normal tables
@@ -1035,7 +1052,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return tables;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DatabaseType? GetDistinctLiveDatabaseServerType()
     {
         var tables = GetTableInfosIdeallyJustFromMainTables();
@@ -1052,8 +1069,9 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / its LoadMetadata (if it has one).  This will throw if no
-    /// logging server has been configured.
+    ///     Gets the <see cref="LogManager" /> for logging load events related to this Catalogue / its LoadMetadata (if it has
+    ///     one).  This will throw if no
+    ///     logging server has been configured.
     /// </summary>
     /// <returns></returns>
     public LogManager GetLogManager()
@@ -1066,7 +1084,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return new LogManager(server);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         var iDependOn = new List<IHasDependencies>();
@@ -1075,23 +1093,24 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         var lmdList = LoadMetadatas();
         if (lmdList.Length > 0)
             foreach (var lmd in lmdList)
-            {
                 iDependOn.Add(lmd);
-            }
 
         return iDependOn.ToArray();
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => AggregateConfigurations;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return AggregateConfigurations;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
     {
         return Repository.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
     {
         return Repository.GetAllObjects<SupportingSQLTable>().Where(o => Fetch(o, fetch)).ToArray();
@@ -1128,10 +1147,13 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         };
     }
 
-    /// <inheritdoc/>
-    public ExtractionInformation[] GetAllExtractionInformation() => GetAllExtractionInformation(ExtractionCategory.Any);
+    /// <inheritdoc />
+    public ExtractionInformation[] GetAllExtractionInformation()
+    {
+        return GetAllExtractionInformation(ExtractionCategory.Any);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionInformation[] GetAllExtractionInformation(ExtractionCategory category)
     {
         return
@@ -1144,7 +1166,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     private CatalogueExtractabilityStatus _extractabilityStatus;
 
     /// <summary>
-    /// Records the known extractability status (as a cached answer for <see cref="GetExtractabilityStatus"/>)
+    ///     Records the known extractability status (as a cached answer for <see cref="GetExtractabilityStatus" />)
     /// </summary>
     /// <param name="instance"></param>
     public void InjectKnown(CatalogueExtractabilityStatus instance)
@@ -1152,14 +1174,14 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         _extractabilityStatus = instance;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(CatalogueItem[] instance)
     {
         _knownCatalogueItems = new Lazy<CatalogueItem[]>(instance);
     }
 
     /// <summary>
-    /// Cleares the cached answer of <see cref="GetExtractabilityStatus"/>
+    ///     Cleares the cached answer of <see cref="GetExtractabilityStatus" />
     /// </summary>
     public void ClearAllInjections()
     {
@@ -1168,7 +1190,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             new Lazy<CatalogueItem[]>(() => Repository.GetAllObjectsWithParent<CatalogueItem, Catalogue>(this));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
     {
         if (_extractabilityStatus != null)
@@ -1181,7 +1203,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return _extractabilityStatus;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsProjectSpecific(IDataExportRepository dataExportRepository)
     {
         var e = GetExtractabilityStatus(dataExportRepository);
@@ -1189,7 +1211,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
     /// <summary>
-    /// Gets an IQuerySyntaxHelper for the <see cref="GetDistinctLiveDatabaseServerType"/> amongst all underlying <see cref="TableInfo"/>.  This can be used to assist query building.
+    ///     Gets an IQuerySyntaxHelper for the <see cref="GetDistinctLiveDatabaseServerType" /> amongst all underlying
+    ///     <see cref="TableInfo" />.  This can be used to assist query building.
     /// </summary>
     /// <returns></returns>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
@@ -1202,8 +1225,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     #region Static Methods
 
     /// <summary>
-    /// Returns true if the given name would be sensible for a Catalogue.  This means no slashes, hashes @ symbols etc and other things which make XML serialization hard
-    /// or prevent naming a database table after a Catalogue (all things we might want to do with the <see cref="Catalogue.Name"/>).
+    ///     Returns true if the given name would be sensible for a Catalogue.  This means no slashes, hashes @ symbols etc and
+    ///     other things which make XML serialization hard
+    ///     or prevent naming a database table after a Catalogue (all things we might want to do with the
+    ///     <see cref="Catalogue.Name" />).
     /// </summary>
     /// <param name="name"></param>
     /// <param name="reason"></param>
@@ -1230,13 +1255,16 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         return true;
     }
 
-    /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)"/>
-    public static bool IsAcceptableName(string name) => IsAcceptableName(name, out _);
+    /// <inheritdoc cref="Catalogue.IsAcceptableName(string,out string)" />
+    public static bool IsAcceptableName(string name)
+    {
+        return IsAcceptableName(name, out _);
+    }
 
     #endregion
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ICatalogue ShallowClone()
     {
         var clone = new Catalogue(CatalogueRepository, $"{Name} Clone");
@@ -1245,7 +1273,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     }
 
 
-    public bool IsApiCall() => Name.StartsWith(PluginCohortCompiler.ApiPrefix);
+    public bool IsApiCall()
+    {
+        return Name.StartsWith(PluginCohortCompiler.ApiPrefix);
+    }
 
     public bool IsApiCall(out IPluginCohortCompiler plugin)
     {

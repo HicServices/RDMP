@@ -12,18 +12,18 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates the expected and required flat file layout for a <see cref="LoadMetadata"/>
+///     Creates the expected and required flat file layout for a <see cref="LoadMetadata" />
 /// </summary>
 public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
 {
     /// <summary>
-    /// The load if any to create the folder structure for
+    ///     The load if any to create the folder structure for
     /// </summary>
     public LoadMetadata LoadMetadata { get; }
 
     /// <summary>
-    /// The directory to create or null to do the operation
-    /// interactively.
+    ///     The directory to create or null to do the operation
+    ///     interactively.
     /// </summary>
     public DirectoryInfo Dir { get; }
 

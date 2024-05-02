@@ -37,7 +37,7 @@ public sealed class QueryCachingPatcher : Patcher
             new DatabaseColumnRequest("Operation", new DatabaseTypeRequest(typeof(string), 50)) { IsPrimaryKey = true },
 
             new DatabaseColumnRequest("TableName", new DatabaseTypeRequest(typeof(string), 500) { Unicode = true })
-        }, null, false, null);
+        }, null, false);
 
         return new Patch(InitialScriptName, header + body);
     }

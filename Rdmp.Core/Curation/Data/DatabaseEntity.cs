@@ -27,55 +27,65 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Base class for all objects which are stored in database repositories (e.g. Catalogue database , Data Export database).  This is the abstract implementation of
-/// IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is responsible for constructing an instance from a
-/// record in the database and one that takes the minimum parameters required to satisfy database constraints and is used to create new objects.
-/// 
-/// <para>A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This is the RDMP design pattern for object permenance,
-/// sharing and allowing advanced users to update the data model via database queries running directly on the object repository database.</para>
-/// 
-/// <para>A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties that match columns in that table.  This enforces
-/// a transparent mapping between code and database.  If you need to add other public properties you must decorate them with [NoMappingToDatabase]</para>
+///     Base class for all objects which are stored in database repositories (e.g. Catalogue database , Data Export
+///     database).  This is the abstract implementation of
+///     IMapsDirectlyToDatabaseTable.  You must always have two constructors, one that takes a DbDataReader and is
+///     responsible for constructing an instance from a
+///     record in the database and one that takes the minimum parameters required to satisfy database constraints and is
+///     used to create new objects.
+///     <para>
+///         A DatabaseEntity instance cannot exist without there being a matching record in the database repository.  This
+///         is the RDMP design pattern for object permenance,
+///         sharing and allowing advanced users to update the data model via database queries running directly on the
+///         object repository database.
+///     </para>
+///     <para>
+///         A DatabaseEntity must have the same name as a Table in in the IRepository and must only have public properties
+///         that match columns in that table.  This enforces
+///         a transparent mapping between code and database.  If you need to add other public properties you must decorate
+///         them with [NoMappingToDatabase]
+///     </para>
 /// </summary>
 public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
 {
     /// <summary>
-    /// The maximum length for any given line in return value of <see cref="GetSummary"/>
+    ///     The maximum length for any given line in return value of <see cref="GetSummary" />
     /// </summary>
     public const int MAX_SUMMARY_ITEM_LENGTH = 100;
 
     protected const string SUMMARY_LINE_DIVIDER = "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯";
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ID { get; set; }
 
     private bool _readonly;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IRepository Repository { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ICatalogueRepository CatalogueRepository => Repository as ICatalogueRepository;
 
 
     /// <summary>
-    /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
+    ///     Returns <see cref="Repository" /> as <see cref="IDataExportRepository" /> or null if the object does not exist in a
+    ///     data export repository.
     /// </summary>
     [NoMappingToDatabase]
     public IDataExportRepository DataExportRepository => Repository as IDataExportRepository;
 
     /// <summary>
-    /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
-    /// and you are trying to create it into the db
+    ///     Constructs a new instance.  You should only use this when your object does not yet exist in the database
+    ///     and you are trying to create it into the db
     /// </summary>
     protected DatabaseEntity()
     {
     }
 
     /// <summary>
-    /// Creates a new instance and hydrates it from the current values of <paramref name="r"/>
+    ///     Creates a new instance and hydrates it from the current values of <paramref name="r" />
     /// </summary>
     /// <param name="repository">The database which the record/object was read from</param>
     /// <param name="r">Data reader with values for hydrating this object</param>
@@ -101,7 +111,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     }
 
     /// <summary>
-    /// Converts the <paramref name="fieldName"/> into a <see cref="Uri"/>.  DBNull.Value and null are returned as null;
+    ///     Converts the <paramref name="fieldName" /> into a <see cref="Uri" />.  DBNull.Value and null are returned as null;
     /// </summary>
     /// <param name="r"></param>
     /// <param name="fieldName"></param>
@@ -115,25 +125,31 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             : new Uri(uri.ToString());
     }
 
-    /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)"/>
-    public override int GetHashCode() => Repository.GetHashCode(this);
+    /// <inheritdoc cref="IRepository.GetHashCode(IMapsDirectlyToDatabaseTable)" />
+    public override int GetHashCode()
+    {
+        return Repository.GetHashCode(this);
+    }
 
-    /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)"/>
-    public override bool Equals(object obj) => Repository.AreEqual(this, obj);
+    /// <inheritdoc cref="IRepository.AreEqual(IMapsDirectlyToDatabaseTable,object)" />
+    public override bool Equals(object obj)
+    {
+        return Repository.AreEqual(this, obj);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual void SaveToDatabase()
     {
         Repository.SaveToDatabase(this);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual void DeleteInDatabase()
     {
         Repository.DeleteFromDatabase(this);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual void RevertToDatabaseState()
     {
         Repository.RevertToDatabaseState(this);
@@ -142,41 +158,53 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             ii.ClearAllInjections();
     }
 
-    /// <inheritdoc/>
-    public RevertableObjectReport HasLocalChanges() => Repository.HasLocalChanges(this);
+    /// <inheritdoc />
+    public RevertableObjectReport HasLocalChanges()
+    {
+        return Repository.HasLocalChanges(this);
+    }
 
-    /// <inheritdoc/>
-    public virtual bool Exists() => Repository.StillExists(this);
+    /// <inheritdoc />
+    public virtual bool Exists()
+    {
+        return Repository.StillExists(this);
+    }
 
     /// <summary>
-    /// Converts the supplied object to a <see cref="DateTime"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="DateTime" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static DateTime? ObjectToNullableDateTime(object o) =>
-        o == null || o == DBNull.Value ? null : (DateTime)o;
+    protected static DateTime? ObjectToNullableDateTime(object o)
+    {
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
+    }
 
     /// <summary>
-    /// Converts the supplied object to a <see cref="int"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="int" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static int? ObjectToNullableInt(object o) =>
-        o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
+    protected static int? ObjectToNullableInt(object o)
+    {
+        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
+    }
 
     /// <summary>
-    /// Converts the supplied object to a <see cref="bool"/> or null if o is null/DBNull.Value
+    ///     Converts the supplied object to a <see cref="bool" /> or null if o is null/DBNull.Value
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    protected static bool? ObjectToNullableBool(object o) =>
-        o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
+    protected static bool? ObjectToNullableBool(object o)
+    {
+        return o == null || o == DBNull.Value ? null : Convert.ToBoolean(o);
+    }
 
-    /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
+    /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged" />
     public event PropertyChangedEventHandler PropertyChanged;
 
     /// <summary>
-    /// Fired when any database tied property is changed in memory.
+    ///     Fired when any database tied property is changed in memory.
     /// </summary>
     /// <param name="oldValue"></param>
     /// <param name="newValue"></param>
@@ -189,8 +217,10 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     }
 
     /// <summary>
-    /// Changes the value of <paramref name="field"/> to <paramref name="value"/> and triggers <see cref="OnPropertyChanged"/>.  You should have a public Property and
-    /// a backing field for all database fields on your object.  The Property should use this method to change the underlying fields value.
+    ///     Changes the value of <paramref name="field" /> to <paramref name="value" /> and triggers
+    ///     <see cref="OnPropertyChanged" />.  You should have a public Property and
+    ///     a backing field for all database fields on your object.  The Property should use this method to change the
+    ///     underlying fields value.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="field"></param>
@@ -217,15 +247,16 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
         return true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetReadOnly()
     {
         _readonly = true;
     }
 
     /// <summary>
-    /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object.
-    /// Also skips 'Name' and 'ID'
+    ///     Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the
+    ///     <paramref name="to" /> object.
+    ///     Also skips 'Name' and 'ID'
     /// </summary>
     /// <param name="to"></param>
     /// <param name="copyName"></param>
@@ -257,7 +288,7 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
             to.SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual string GetSummary(bool includeName, bool includeID)
     {
         var sbPart1 = new StringBuilder();
@@ -331,17 +362,22 @@ public abstract class DatabaseEntity : IRevertable, ICanBeSummarised
     }
 
     /// <summary>
-    /// Returns the human readable property name adjusted to be elegant to read (e.g. with spaces not pascal case)
+    ///     Returns the human readable property name adjusted to be elegant to read (e.g. with spaces not pascal case)
     /// </summary>
     /// <param name="prop"></param>
     /// <returns></returns>
-    protected virtual string FormatPropertyNameForSummary(PropertyInfo prop) =>
-        UsefulStuff.PascalCaseStringToHumanReadable(prop.Name);
+    protected virtual string FormatPropertyNameForSummary(PropertyInfo prop)
+    {
+        return UsefulStuff.PascalCaseStringToHumanReadable(prop.Name);
+    }
 
     /// <summary>
-    /// Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)"/>
+    ///     Formats a given value for user readability in the results of <see cref="GetSummary(bool,bool)" />
     /// </summary>
     /// <param name="val"></param>
     /// <returns></returns>
-    protected static string FormatForSummary(object val) => val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
+    protected static string FormatForSummary(object val)
+    {
+        return val is bool b ? b ? "Yes" : "No" : val.ToString()?.Trim();
+    }
 }

@@ -7,29 +7,31 @@
 namespace Rdmp.Core.QueryBuilding.Parameters;
 
 /// <summary>
-/// Describes the hierarchical level at which an ISqlParameter was found at by a ParameterManager.
-/// 
-/// <para>Do not reorder these!</para>
+///     Describes the hierarchical level at which an ISqlParameter was found at by a ParameterManager.
+///     <para>Do not reorder these!</para>
 /// </summary>
 public enum ParameterLevel
 {
     /// <summary>
-    /// lowest, these are table valued function default values
+    ///     lowest, these are table valued function default values
     /// </summary>
     TableInfo,
 
     /// <summary>
-    /// higher these are explicitly declared properties at the query level e.g. filters, aggregation level (e.g. in the WHERE statements of an AggregateConfiguration on extraction query )
+    ///     higher these are explicitly declared properties at the query level e.g. filters, aggregation level (e.g. in the
+    ///     WHERE statements of an AggregateConfiguration on extraction query )
     /// </summary>
     QueryLevel,
 
     /// <summary>
-    /// These are done when joining multiple queries together in an super query (usually separated with set operations such as UNION, EXCEPT etc). See CohortQueryBuilder
+    ///     These are done when joining multiple queries together in an super query (usually separated with set operations such
+    ///     as UNION, EXCEPT etc). See CohortQueryBuilder
     /// </summary>
     CompositeQueryLevel,
 
     /// <summary>
-    /// highest, these are added to the QueryBuilder by the code and should always be preserved, e.g. CohortID is explicitly added by the data export manager.
+    ///     highest, these are added to the QueryBuilder by the code and should always be preserved, e.g. CohortID is
+    ///     explicitly added by the data export manager.
     /// </summary>
     Global
 }

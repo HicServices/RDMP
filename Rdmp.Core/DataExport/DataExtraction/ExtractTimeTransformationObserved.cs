@@ -10,8 +10,10 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Documents the extraction time data type of an extracted column.  This is done by inspecting the Type of the DataTable column fetched when executing the
-/// extraction SQL.  This can be different from the Database/Catalogue Type because there can be transformation SQL entered (e.g. LEFT etc).
+///     Documents the extraction time data type of an extracted column.  This is done by inspecting the Type of the
+///     DataTable column fetched when executing the
+///     extraction SQL.  This can be different from the Database/Catalogue Type because there can be transformation SQL
+///     entered (e.g. LEFT etc).
 /// </summary>
 public class ExtractTimeTransformationObserved
 {

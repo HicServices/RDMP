@@ -11,20 +11,23 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Checks;
 
 /// <summary>
-/// Lists all plugin/dll load exceptions generated during Startup (when MEF is processed).  Also checks that all Types declared as ICheckable
-/// can be constructed
+///     Lists all plugin/dll load exceptions generated during Startup (when MEF is processed).  Also checks that all Types
+///     declared as ICheckable
+///     can be constructed
 /// </summary>
 public class BadAssembliesChecker : ICheckable
 {
     /// <summary>
-    /// Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueRepository.MEF to get the MEF), call Check to start the checking process
+    ///     Prepares to check the currently loaded assemblies defined in the MEF (Call CatalogueRepository.MEF to get the MEF),
+    ///     call Check to start the checking process
     /// </summary>
     public BadAssembliesChecker()
     {
     }
 
     /// <summary>
-    /// Lists assembly load errors and attempts to construct instances of all Types declared as Exports (which are ICheckable)
+    ///     Lists assembly load errors and attempts to construct instances of all Types declared as Exports (which are
+    ///     ICheckable)
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -35,7 +38,7 @@ public class BadAssembliesChecker : ICheckable
 
         foreach (var t in MEF.GetAllTypes())
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found Type {t}", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found Type {t}", CheckResult.Success));
 
             if (typeof(ICheckable).IsAssignableFrom(t))
                 try

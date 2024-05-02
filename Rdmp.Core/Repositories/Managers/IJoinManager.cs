@@ -9,8 +9,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subcomponent of <see cref="ICatalogueRepository"/> which manages the objects which describe how to
-/// link two <see cref="ITableInfo"/> using joins on column sets between the two tables.
+///     Subcomponent of <see cref="ICatalogueRepository" /> which manages the objects which describe how to
+///     link two <see cref="ITableInfo" /> using joins on column sets between the two tables.
 /// </summary>
 public interface IJoinManager
 {

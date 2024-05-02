@@ -12,8 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
-/// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given
-/// Catalogue and running it.
+///     Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming
+///     that the report can be run on a given
+///     Catalogue and running it.
 /// </summary>
 public interface IDataQualityReport : ICheckable
 {

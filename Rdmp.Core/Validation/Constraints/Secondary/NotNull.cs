@@ -9,9 +9,11 @@ using System;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values must appear in this column, if there are nulls (or whitespace) then the validation will fail.  While this kind of thing is trivially easy to implement
-/// at database level you might decided that (especially for unimportant columns) you are happy to load missing data rather than crash the data load.  That
-/// is why this constraint exists.
+///     Values must appear in this column, if there are nulls (or whitespace) then the validation will fail.  While this
+///     kind of thing is trivially easy to implement
+///     at database level you might decided that (especially for unimportant columns) you are happy to load missing data
+///     rather than crash the data load.  That
+///     is why this constraint exists.
 /// </summary>
 public class NotNull : SecondaryConstraint
 {
@@ -29,5 +31,8 @@ public class NotNull : SecondaryConstraint
     {
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() => "not null";
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return "not null";
+    }
 }

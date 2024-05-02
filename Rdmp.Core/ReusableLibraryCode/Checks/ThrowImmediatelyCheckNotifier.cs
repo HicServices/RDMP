@@ -9,10 +9,13 @@ using System;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// ICheckNotifier which converts failed CheckEventArgs into Exceptions.  Can optionally also throw on Warning messages.  By default all messages are written
-/// to the Console.  The use case for this is any time you want to run Checks programmatically (i.e. without user intervention via a UI component) before running
-/// and you don't expect any Checks to fail but want to make sure.  Or when you are in a Test and you want to make sure that a specific configuration bombs
-/// when Checked with an appropriate failure message.
+///     ICheckNotifier which converts failed CheckEventArgs into Exceptions.  Can optionally also throw on Warning
+///     messages.  By default all messages are written
+///     to the Console.  The use case for this is any time you want to run Checks programmatically (i.e. without user
+///     intervention via a UI component) before running
+///     and you don't expect any Checks to fail but want to make sure.  Or when you are in a Test and you want to make sure
+///     that a specific configuration bombs
+///     when Checked with an appropriate failure message.
 /// </summary>
 public class ThrowImmediatelyCheckNotifier : ICheckNotifier
 {
@@ -47,12 +50,13 @@ public class ThrowImmediatelyCheckNotifier : ICheckNotifier
     }
 
     /// <summary>
-    /// By default this class will only throw Fail results but if you set this flag then it will also throw warning messages
+    ///     By default this class will only throw Fail results but if you set this flag then it will also throw warning
+    ///     messages
     /// </summary>
     public readonly bool ThrowOnWarning;
 
     /// <summary>
-    /// By default this class will not log to the Console. Set to true to get a console flood
+    ///     By default this class will not log to the Console. Set to true to get a console flood
     /// </summary>
     public readonly bool WriteToConsole;
 }

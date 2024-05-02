@@ -15,13 +15,19 @@ using Rdmp.Core.Validation;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which
-/// are extracted can be a subset of the columns in the Catalogue and can include transforms the validation rules have to be adjusted (some are not applied).
-///
-/// <para>A count of the number of rows failing validation is stored in VerboseValidationResults (divided by column) and is available for writing to the word
-/// metadata document that accompanies the extracted records (See WordDataWriter). </para>
-///
-/// <para>This is similar to CatalogueConstraintReport (DQE) but is applied to a researchers extract instead of the Catalogue as a whole.</para>
+///     Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See
+///     ExecuteDatasetExtractionSource).  Because the columns which
+///     are extracted can be a subset of the columns in the Catalogue and can include transforms the validation rules have
+///     to be adjusted (some are not applied).
+///     <para>
+///         A count of the number of rows failing validation is stored in VerboseValidationResults (divided by column) and
+///         is available for writing to the word
+///         metadata document that accompanies the extracted records (See WordDataWriter).
+///     </para>
+///     <para>
+///         This is similar to CatalogueConstraintReport (DQE) but is applied to a researchers extract instead of the
+///         Catalogue as a whole.
+///     </para>
 /// </summary>
 public class ExtractionTimeValidator
 {
@@ -32,7 +38,7 @@ public class ExtractionTimeValidator
     public Validator Validator { get; set; }
     public VerboseValidationResults Results { get; set; }
 
-    public List<ItemValidator> IgnoredBecauseColumnHashed { get; private set; }
+    public List<ItemValidator> IgnoredBecauseColumnHashed { get; }
 
     public ExtractionTimeValidator(ICatalogue catalogue, List<IColumn> columnsToExtract)
     {
@@ -61,6 +67,7 @@ public class ExtractionTimeValidator
             if (validationColumnToPopulateIfAny != null)
                 r[validationColumnToPopulateIfAny] = consequenceOnLastRowProcessed;
         }
+
         dt.EndLoadData();
     }
 

@@ -12,12 +12,12 @@ using Rdmp.Core.QueryBuilding.Options;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class AggregateFilterUIOptions : FilterUIOptions
 {
-    private ISqlParameter[] _globals;
-    private ITableInfo[] _tables;
-    private IColumn[] _columns;
+    private readonly ISqlParameter[] _globals;
+    private readonly ITableInfo[] _tables;
+    private readonly IColumn[] _columns;
 
     public AggregateFilterUIOptions(AggregateFilter aggregateFilter) : base(aggregateFilter)
     {
@@ -35,9 +35,18 @@ public class AggregateFilterUIOptions : FilterUIOptions
         _columns = options.GetAvailableWHEREColumns(aggregateConfiguration);
     }
 
-    public override ITableInfo[] GetTableInfos() => _tables;
+    public override ITableInfo[] GetTableInfos()
+    {
+        return _tables;
+    }
 
-    public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
+    public override ISqlParameter[] GetGlobalParametersInFilterScope()
+    {
+        return _globals;
+    }
 
-    public override IColumn[] GetIColumnsInFilterScope() => _columns;
+    public override IColumn[] GetIColumnsInFilterScope()
+    {
+        return _columns;
+    }
 }

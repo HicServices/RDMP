@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.IO;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
@@ -13,8 +14,9 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk
-/// e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination"/>).
+///     Location on disk in which linked project extracts are generated for a given <see cref="Project" /> (assuming you
+///     are extracting to disk
+///     e.g. with an <see cref="ExecuteDatasetExtractionFlatFileDestination" />).
 /// </summary>
 public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
 {
@@ -25,10 +27,15 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         Project = project;
     }
 
-    public override string ToString() =>
-        string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
+    public override string ToString()
+    {
+        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory) ? "???" : Project.ExtractionDirectory;
+    }
 
-    protected bool Equals(ExtractionDirectoryNode other) => Equals(Project, other.Project);
+    protected bool Equals(ExtractionDirectoryNode other)
+    {
+        return Equals(Project, other.Project);
+    }
 
     public override bool Equals(object obj)
     {
@@ -38,11 +45,17 @@ public class ExtractionDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         return Equals((ExtractionDirectoryNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Project);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Project);
+    }
 
-    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
-        ? null
-        : new DirectoryInfo(Project.ExtractionDirectory);
+    public DirectoryInfo GetDirectoryInfoIfAny()
+    {
+        return string.IsNullOrWhiteSpace(Project.ExtractionDirectory)
+            ? null
+            : new DirectoryInfo(Project.ExtractionDirectory);
+    }
 
     public int Order
     {

@@ -14,13 +14,15 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
-/// or changing it only for a specific <see cref="ExtractionConfiguration"/>
+///     Change which column is used to perform linkage against a cohort.  This command supports both changing the global
+///     setting on a <see cref="Catalogue" />
+///     or changing it only for a specific <see cref="ExtractionConfiguration" />
 /// </summary>
 public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
 {
     /// <summary>
-    /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>
+    ///     Change which column is the linkage identifier in a <see cref="Catalogue" /> either at a global level or for a
+    ///     specific <paramref name="inConfiguration" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="catalogue"></param>
@@ -42,20 +44,29 @@ public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetCol
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Key);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Key);
+    }
 
-    public override string GetCommandHelp() =>
-        "Change which column(s) contain the patient id / linkage column e.g. CHI";
+    public override string GetCommandHelp()
+    {
+        return "Change which column(s) contain the patient id / linkage column e.g. CHI";
+    }
 
-    protected override bool IsValidSelection(ConcreteColumn[] selected) =>
-        selected is not { Length: > 1 } // if multiple selected warn user
-        ||
-        YesNo(
-            "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
-            "Multiple IsExtractionIdentifier columns?");
+    protected override bool IsValidSelection(ConcreteColumn[] selected)
+    {
+        return selected is not { Length: > 1 } // if multiple selected warn user
+               ||
+               YesNo(
+                   "Are you sure you want multiple linkable extraction identifier columns (most datasets only have 1 person ID column in them)?",
+                   "Multiple IsExtractionIdentifier columns?");
+    }
 
-    protected override bool Getter(ConcreteColumn c) => c.IsExtractionIdentifier;
+    protected override bool Getter(ConcreteColumn c)
+    {
+        return c.IsExtractionIdentifier;
+    }
 
     protected override void Setter(ConcreteColumn c, bool newValue)
     {

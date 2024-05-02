@@ -32,9 +32,9 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Finds the all the objects required for data export tree rendering including which objects are children of others
-/// and the descendancy for each object etc.  This class inherits from CatalogueChildProvider because you cannot have
-/// one without the other and one Data Export database always maps to one (and only one) Catalogue database.
+///     Finds the all the objects required for data export tree rendering including which objects are children of others
+///     and the descendancy for each object etc.  This class inherits from CatalogueChildProvider because you cannot have
+///     one without the other and one Data Export database always maps to one (and only one) Catalogue database.
 /// </summary>
 public class DataExportChildProvider : CatalogueChildProvider
 {
@@ -79,19 +79,21 @@ public class DataExportChildProvider : CatalogueChildProvider
     public GlobalExtractionFilterParameter[] AllGlobalExtractionFilterParameters;
 
     /// <summary>
-    /// ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation declared on them (i.e. the CIC is used with one or more Projects)
+    ///     ID of all CohortIdentificationConfiguration which have an ProjectCohortIdentificationConfigurationAssociation
+    ///     declared on them (i.e. the CIC is used with one or more Projects)
     /// </summary>
     private HashSet<int> _cicAssociations;
 
     private HashSet<ISelectedDataSets> _selectedDataSetsWithNoIsExtractionIdentifier;
 
     /// <summary>
-    /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
+    ///     All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container
+    ///     (for rapid random access)
     /// </summary>
     public Dictionary<int, FilterContainer> AllContainers;
 
     /// <summary>
-    /// All data export filters that existed when this child provider was constructed
+    ///     All data export filters that existed when this child provider was constructed
     /// </summary>
     public DeployedExtractionFilter[] AllDeployedExtractionFilters { get; private set; }
 
@@ -593,9 +595,9 @@ public class DataExportChildProvider : CatalogueChildProvider
     }
 
     /// <summary>
-    /// Marks the <paramref name="source"/> as unreachable and prevents future
-    /// attempts to retrieve it.  This is important as it can take multiple seconds
-    /// to determine that a server doesn't exist (e.g. network TCP timeout).
+    ///     Marks the <paramref name="source" /> as unreachable and prevents future
+    ///     attempts to retrieve it.  This is important as it can take multiple seconds
+    ///     to determine that a server doesn't exist (e.g. network TCP timeout).
     /// </summary>
     /// <param name="source"></param>
     /// <param name="ex"></param>
@@ -613,8 +615,8 @@ public class DataExportChildProvider : CatalogueChildProvider
     }
 
     /// <summary>
-    /// Returns all cohort sources used by a <see cref="Project"/>.  Returned object
-    /// contains references to the cohorts being used.
+    ///     Returns all cohort sources used by a <see cref="Project" />.  Returned object
+    ///     contains references to the cohorts being used.
     /// </summary>
     /// <param name="project"></param>
     /// <returns></returns>
@@ -673,7 +675,7 @@ public class DataExportChildProvider : CatalogueChildProvider
         lock (WriteLock)
         {
             return _configurationToDatasetMapping.TryGetValue(extractionConfiguration, out var result)
-                ? (IEnumerable<SelectedDataSets>)result
+                ? result
                 : Array.Empty<SelectedDataSets>();
         }
     }
@@ -736,7 +738,7 @@ public class DataExportChildProvider : CatalogueChildProvider
     }
 
     /// <summary>
-    /// Returns all <see cref="ExtractableColumn"/> Injected with thier corresponding <see cref="ExtractionInformation"/>
+    ///     Returns all <see cref="ExtractableColumn" /> Injected with thier corresponding <see cref="ExtractionInformation" />
     /// </summary>
     /// <param name="repository"></param>
     /// <returns></returns>

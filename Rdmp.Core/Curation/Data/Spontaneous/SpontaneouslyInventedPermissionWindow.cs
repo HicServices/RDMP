@@ -13,8 +13,9 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime only (in memory) window of execution for
-/// caching / loading etc.  SpontaneouslyInventedPermissionWindow are never locked.
+///     Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime
+///     only (in memory) window of execution for
+///     caching / loading etc.  SpontaneouslyInventedPermissionWindow are never locked.
 /// </summary>
 public class SpontaneouslyInventedPermissionWindow : SpontaneousObject, IPermissionWindow
 {

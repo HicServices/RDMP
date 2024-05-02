@@ -11,7 +11,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Use when you have an already initialized set of repositories and only want to fetch objects from the catalogue/data export repositories
+///     Use when you have an already initialized set of repositories and only want to fetch objects from the catalogue/data
+///     export repositories
 /// </summary>
 public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
 {
@@ -19,10 +20,12 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     public IDataExportRepository DataExportRepository { get; protected init; }
 
     /// <summary>
-    /// Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the Catalogue/Data export databases only.
-    /// 
-    /// <para>If possible consider using LinkedRepositoryProvider or Startup (these support plugin repositories, DQE repository etc)</para>
-    /// 
+    ///     Use when you have an already initialized set of repositories.  Sets up the class to fetch objects from the
+    ///     Catalogue/Data export databases only.
+    ///     <para>
+    ///         If possible consider using LinkedRepositoryProvider or Startup (these support plugin repositories, DQE
+    ///         repository etc)
+    ///     </para>
     /// </summary>
     /// <param name="dataExportRepository"></param>
     public RepositoryProvider(IDataExportRepository dataExportRepository)
@@ -69,11 +72,14 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
                 $"Did not know what instance of IRepository to use for IRepository Type '{repoType}' , expected it to either be CatalogueRepository or DataExportRepository");
     }
 
-    private static Type GetTypeByName(string s, Type expectedBaseClassType) => MEF.GetType(s, expectedBaseClassType) ??
-                                                                               throw new TypeLoadException(
-                                                                                   $"Could not find Type called '{s}'");
+    private static Type GetTypeByName(string s, Type expectedBaseClassType)
+    {
+        return MEF.GetType(s, expectedBaseClassType) ??
+               throw new TypeLoadException(
+                   $"Could not find Type called '{s}'");
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
     {
         if (CatalogueRepository.SupportsObjectType(typeof(T)))
@@ -84,7 +90,7 @@ public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
                 $"Did not know what repository to use to fetch objects of Type '{typeof(T)}'");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
     {
         if (CatalogueRepository.SupportsObjectType(t))

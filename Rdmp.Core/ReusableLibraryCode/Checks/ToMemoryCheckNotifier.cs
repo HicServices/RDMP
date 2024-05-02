@@ -9,9 +9,11 @@ using System.Collections.Generic;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// ICheckNotifier which records all CheckEventArgs received into a public List for later evaluation.  Primarily for use in testing to check for specific
-/// messages.  Can also be used with a ReplayCheckable in order to check a component (or multiple components) and then at a later time replay the events into
-/// a UI.
+///     ICheckNotifier which records all CheckEventArgs received into a public List for later evaluation.  Primarily for
+///     use in testing to check for specific
+///     messages.  Can also be used with a ReplayCheckable in order to check a component (or multiple components) and then
+///     at a later time replay the events into
+///     a UI.
 /// </summary>
 public class ToMemoryCheckNotifier : ICheckNotifier
 {
@@ -23,9 +25,11 @@ public class ToMemoryCheckNotifier : ICheckNotifier
     private CheckResult _worst = CheckResult.Success;
 
     /// <summary>
-    /// Sometimes you want to know what the messages and the worst event encountered were but you still want to pass the messages to a third party e.g.
-    /// checksUI, use this constructor to record all messages in memory as they go through but also let the supplied child check notifier actually handle
-    /// those events and pass back the bool that child supplies for proposed fixes
+    ///     Sometimes you want to know what the messages and the worst event encountered were but you still want to pass the
+    ///     messages to a third party e.g.
+    ///     checksUI, use this constructor to record all messages in memory as they go through but also let the supplied child
+    ///     check notifier actually handle
+    ///     those events and pass back the bool that child supplies for proposed fixes
     /// </summary>
     /// <param name="childToPassEventsTo"></param>
     public ToMemoryCheckNotifier(ICheckNotifier childToPassEventsTo)
@@ -60,5 +64,8 @@ public class ToMemoryCheckNotifier : ICheckNotifier
         return fix;
     }
 
-    public CheckResult GetWorst() => _worst;
+    public CheckResult GetWorst()
+    {
+        return _worst;
+    }
 }

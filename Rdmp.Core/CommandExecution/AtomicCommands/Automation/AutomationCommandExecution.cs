@@ -41,7 +41,7 @@ public abstract class AutomationCommandExecution : BasicCommandExecution
     }
 
     /// <summary>
-    /// Generates command line arguments for the current engine
+    ///     Generates command line arguments for the current engine
     /// </summary>
     /// <param name="argsOnly"></param>
     /// <returns></returns>

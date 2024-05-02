@@ -19,7 +19,10 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Generates and runs an SQL query to fetch all private identifiers contained in a dataset and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/> if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
+///     Generates and runs an SQL query to fetch all private identifiers contained in a dataset and commits them as a new
+///     cohort using the specified <see cref="Pipeline" />.  Note that this command will query an entire table, use
+///     <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration" /> if you want to generate a
+///     proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandExecution
 {
@@ -75,8 +78,10 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         }
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
+    public override string GetCommandHelp()
+    {
+        return "Creates a cohort using ALL of the patient identifiers in the referenced dataset";
+    }
 
     public ExecuteCommandCreateNewCohortFromCatalogue(IBasicActivateItems activator)
         : this(activator, null, null, null, null, null)
@@ -154,6 +159,8 @@ public class ExecuteCommandCreateNewCohortFromCatalogue : CohortCreationCommandE
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+    }
 }

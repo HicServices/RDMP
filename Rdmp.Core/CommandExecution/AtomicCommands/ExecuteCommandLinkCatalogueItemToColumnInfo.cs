@@ -28,8 +28,10 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
             SetImpossible("ColumnInfo is already set");
     }
 
-    public override string GetCommandHelp() =>
-        "Resolve an orphaned virtual column by matching it up to an actual column in the underlying database";
+    public override string GetCommandHelp()
+    {
+        return "Resolve an orphaned virtual column by matching it up to an actual column in the underlying database";
+    }
 
     public ExecuteCommandLinkCatalogueItemToColumnInfo(IBasicActivateItems activator, ColumnInfoCombineable cmd,
         CatalogueItem catalogueItem) : base(activator)
@@ -72,9 +74,13 @@ public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
         Publish(_catalogueItem);
     }
 
-    public override string GetCommandName() =>
-        $"Set Column Info{(_catalogueItem.ColumnInfo_ID == null ? "(Currently MISSING)" : "")}";
+    public override string GetCommandName()
+    {
+        return $"Set Column Info{(_catalogueItem.ColumnInfo_ID == null ? "(Currently MISSING)" : "")}";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
+    }
 }

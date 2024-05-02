@@ -24,8 +24,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata
-/// sharing.
+///     Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is
+///     apparently all the rage when it comes to metadata
+///     sharing.
 /// </summary>
 public class DitaCatalogueExtractor : ICheckable
 {
@@ -36,7 +37,8 @@ public class DitaCatalogueExtractor : ICheckable
     private readonly DirectoryInfo _folderToCreateIn;
 
     /// <summary>
-    /// Prepares class to convert all <see cref="Catalogue"/> stored in the <paramref name="repository"/> into .dita files containing dataset/column descriptions.
+    ///     Prepares class to convert all <see cref="Catalogue" /> stored in the <paramref name="repository" /> into .dita
+    ///     files containing dataset/column descriptions.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="folderToCreateIn"></param>
@@ -47,13 +49,13 @@ public class DitaCatalogueExtractor : ICheckable
     }
 
     /// <summary>
-    /// Generates the dita files and logs progress / errors to the <paramref name="listener"/>
+    ///     Generates the dita files and logs progress / errors to the <paramref name="listener" />
     /// </summary>
     /// <param name="listener"></param>
     public void Extract(IDataLoadEventListener listener)
     {
         var xml = new StringBuilder();
-        xml.Append($@"<?xml version=""1.0"" encoding=""UTF-8""?>
+        xml.Append(@"<?xml version=""1.0"" encoding=""UTF-8""?>
 <!DOCTYPE map PUBLIC ""-//OASIS//DTD DITA Map//EN""
 ""map.dtd"">
 <map>
@@ -105,7 +107,7 @@ public class DitaCatalogueExtractor : ICheckable
                 CreateCatalogueItemFile(c, ci);
             }
 
-            xml.AppendLine($"</topicref>");
+            xml.AppendLine("</topicref>");
         }
 
         listener.OnProgress(this,
@@ -125,7 +127,10 @@ public class DitaCatalogueExtractor : ICheckable
         return $"{parentName}_{childName}.dita";
     }
 
-    private static string GetFileNameForCatalogue(Catalogue catalogue) => $"{FixName(catalogue.Name)}.dita";
+    private static string GetFileNameForCatalogue(Catalogue catalogue)
+    {
+        return $"{FixName(catalogue.Name)}.dita";
+    }
 
     private static string FixName(string name)
     {
@@ -263,7 +268,7 @@ public class DitaCatalogueExtractor : ICheckable
 
 
     /// <summary>
-    /// Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
+    ///     Checks whether the dita file generation is likely to work e.g. that all datasets have unique acronymns etc
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -295,12 +300,12 @@ public class DitaCatalogueExtractor : ICheckable
                 if (catas[j].Acronym.Equals(acronym))
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Duplication in acronym between Catalogues {catas[i]} and {catas[j]}, duplicate acronym value is {acronym}",
-                        CheckResult.Fail, null));
+                        CheckResult.Fail));
         }
     }
 
     /// <summary>
-    /// Suggests an appropriate short acronym based on the supplied full <paramref name="name"/> e.g. BIO for Biochemistry
+    ///     Suggests an appropriate short acronym based on the supplied full <paramref name="name" /> e.g. BIO for Biochemistry
     /// </summary>
     /// <param name="name"></param>
     /// <returns></returns>

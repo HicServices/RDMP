@@ -15,30 +15,30 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Tracks changes made by the user to one or more objects.  Changes are tracked from
-/// the moment the class is constructed until <see cref="TryFinish(IBasicActivateItems)"/>
-/// completes successfully.  This helps with cancellation
+///     Tracks changes made by the user to one or more objects.  Changes are tracked from
+///     the moment the class is constructed until <see cref="TryFinish(IBasicActivateItems)" />
+///     completes successfully.  This helps with cancellation
 /// </summary>
 public class CommitInProgress : IDisposable
 {
-    private Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
+    private readonly Dictionary<IMapsDirectlyToDatabaseTable, MementoInProgress> originalStates = new();
 
     public CommitInProgressSettings Settings { get; }
 
-    private IRDMPPlatformRepositoryServiceLocator _locator;
-    private List<IRepository> _repositories;
-    private ISerializer _serializer;
+    private readonly IRDMPPlatformRepositoryServiceLocator _locator;
+    private readonly List<IRepository> _repositories;
+    private readonly ISerializer _serializer;
 
     /// <summary>
-    /// True when <see cref="TryFinish(IBasicActivateItems)"/> is confirmed to definitely be happening.  Controls
-    /// save suppression
+    ///     True when <see cref="TryFinish(IBasicActivateItems)" /> is confirmed to definitely be happening.  Controls
+    ///     save suppression
     /// </summary>
     private bool _finishing;
 
     private bool _isDisposed;
 
     /// <summary>
-    /// Starts progress towards creating a <see cref="Commit"/>.
+    ///     Starts progress towards creating a <see cref="Commit" />.
     /// </summary>
     /// <param name="locator"></param>
     /// <param name="settings"></param>
@@ -119,8 +119,8 @@ public class CommitInProgress : IDisposable
     }
 
     /// <summary>
-    /// Returns a new <see cref="Commit"/> or null if nothing has changed with
-    /// the tracked objects since construction.
+    ///     Returns a new <see cref="Commit" /> or null if nothing has changed with
+    ///     the tracked objects since construction.
     /// </summary>
     /// <returns></returns>
     public Commit TryFinish(IBasicActivateItems activator)
@@ -159,10 +159,10 @@ public class CommitInProgress : IDisposable
                 changes.Count == 1 ? changes.Single().Key.ToString() : $"{changes.Count} object(s)";
 
             if (activator.TypeText(new DialogArgs
-            {
-                WindowTitle = transaction.ToString(),
-                TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
-            }, int.MaxValue, description, out var newDescription, false))
+                {
+                    WindowTitle = transaction.ToString(),
+                    TaskDescription = $"Enter a description of what changes you have made to {collectionDescription}"
+                }, int.MaxValue, description, out var newDescription, false))
                 description = newDescription;
             else
                 // user cancelled creating Commit

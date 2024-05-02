@@ -10,8 +10,8 @@ using System.Text;
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Decides which records to fetch from the hierarchical logging database including row filter for specific
-/// run, table loaded etc.
+///     Decides which records to fetch from the hierarchical logging database including row filter for specific
+///     run, table loaded etc.
 /// </summary>
 public class LogViewerFilter
 {
@@ -21,9 +21,11 @@ public class LogViewerFilter
     }
 
     /// <summary>
-    /// Creates a new filter showing records in the <paramref name="loggingTable"/> that belong to a parent Type (share foreign key
-    /// <paramref name="id"/> e.g. applying a filter on <see cref="LoggingTables.ProgressLog"/> will show all log entries for
-    /// the parent <see cref="LoggingTables.TableLoadRun"/> with that <paramref name="id"/>.  Pass null to not filter.
+    ///     Creates a new filter showing records in the <paramref name="loggingTable" /> that belong to a parent Type (share
+    ///     foreign key
+    ///     <paramref name="id" /> e.g. applying a filter on <see cref="LoggingTables.ProgressLog" /> will show all log entries
+    ///     for
+    ///     the parent <see cref="LoggingTables.TableLoadRun" /> with that <paramref name="id" />.  Pass null to not filter.
     /// </summary>
     /// <param name="loggingTable"></param>
     /// <param name="id">ID of the parent object for which to extract a matching row collection</param>
@@ -62,7 +64,7 @@ public class LogViewerFilter
     public int? Table { get; set; }
 
     /// <summary>
-    /// An object that contains data about the filter or supplementary information.  The default is null.
+    ///     An object that contains data about the filter or supplementary information.  The default is null.
     /// </summary>
     public object Tag { get; set; }
 

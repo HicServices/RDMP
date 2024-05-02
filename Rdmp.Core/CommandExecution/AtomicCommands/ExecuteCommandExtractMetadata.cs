@@ -12,7 +12,8 @@ using Rdmp.Core.Reports;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Extract metadata from one or more Catalogues based on a template file using string replacement e.g. $Name for the catalogue's name
+///     Extract metadata from one or more Catalogues based on a template file using string replacement e.g. $Name for the
+///     catalogue's name
 /// </summary>
 public class ExecuteCommandExtractMetadata : BasicCommandExecution
 {

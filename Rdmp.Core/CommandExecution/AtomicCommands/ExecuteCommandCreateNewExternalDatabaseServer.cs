@@ -93,16 +93,18 @@ public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecuti
         {
             ServerCreatedIfAny = new ExternalDatabaseServer(BasicActivator.RepositoryLocator.CatalogueRepository,
                 $"New ExternalDatabaseServer {Guid.NewGuid()}", _patcher);
-            if(_database is not null)
+            if (_database is not null)
                 ServerCreatedIfAny.SetProperties(_database);
         }
         else
             //create the new server
+        {
             ServerCreatedIfAny = BasicActivator.CreateNewPlatformDatabase(
                 BasicActivator.RepositoryLocator.CatalogueRepository,
                 _defaultToSet,
                 _patcher,
                 _database);
+        }
 
         //user cancelled creating a server
         if (ServerCreatedIfAny == null)

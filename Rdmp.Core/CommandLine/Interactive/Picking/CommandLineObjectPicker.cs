@@ -13,8 +13,10 @@ using Rdmp.Core.CommandExecution;
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-/// Parses arguments given along with the "cmd" command to rdmp.exe (<see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions"/>).  This
-/// allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution"/>) from the CLI.
+///     Parses arguments given along with the "cmd" command to rdmp.exe (
+///     <see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions" />).  This
+///     allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution" />) from
+///     the CLI.
 /// </summary>
 public class CommandLineObjectPicker
 {
@@ -27,7 +29,7 @@ public class CommandLineObjectPicker
     private readonly HashSet<PickObjectBase> _pickers = new();
 
     /// <summary>
-    /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>
+    ///     Constructs a picker with all possible formats and immediately parse the provided <paramref name="args" />
     /// </summary>
     /// <param name="args"></param>
     /// <param name="activator"></param>
@@ -44,7 +46,8 @@ public class CommandLineObjectPicker
     }
 
     /// <summary>
-    /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
+    ///     Constructs a picker with only the passed format(s) (<paramref name="pickers" />) and immediately parse the provided
+    ///     <paramref name="args" />
     /// </summary>
     /// <param name="args"></param>
     /// <param name="pickers"></param>
@@ -70,12 +73,15 @@ public class CommandLineObjectPicker
     }
 
     /// <summary>
-    /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
+    ///     Returns true if the given <paramref name="idx" /> exists and is populated with a value of the expected
+    ///     <paramref name="paramType" />
     /// </summary>
     /// <param name="idx"></param>
     /// <param name="paramType"></param>
     /// <returns></returns>
-    public bool HasArgumentOfType(int idx, Type paramType) =>
+    public bool HasArgumentOfType(int idx, Type paramType)
+    {
         //if the index is greater than the number of arguments we have
-        idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
+        return idx < Arguments.Count && Arguments.ElementAt(idx).HasValueOfType(paramType);
+    }
 }

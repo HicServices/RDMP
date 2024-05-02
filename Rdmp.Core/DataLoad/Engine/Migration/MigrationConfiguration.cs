@@ -17,7 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataLoad.Engine.Migration;
 
 /// <summary>
-/// Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during a DLE execution.
+///     Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during
+///     a DLE execution.
 /// </summary>
 public class MigrationConfiguration
 {

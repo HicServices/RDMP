@@ -32,8 +32,11 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         _aggregateConfiguration = ac;
     }
 
-    public override string GetCommandHelp() =>
-        "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
+    public override string GetCommandHelp()
+    {
+        return
+            "Executes an existing cohort set, patient index table or graph and stores the results in a new table (which is imported as a new dataset)";
+    }
 
     public override void Execute()
     {
@@ -78,11 +81,11 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
         var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration, _cohort, _table);
 
         var runner = BasicActivator.GetPipelineRunner(new DialogArgs
-        {
-            WindowTitle = "Create Table from AggregateConfiguration",
-            TaskDescription =
+            {
+                WindowTitle = "Create Table from AggregateConfiguration",
+                TaskDescription =
                     "Select a Pipeline compatible with reading data from an AggregateConfiguration.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
-        }
+            }
             , useCase, null /*TODO inject Pipeline in CLI constructor*/);
 
         runner.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
@@ -104,8 +107,10 @@ public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration
     }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
+    }
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

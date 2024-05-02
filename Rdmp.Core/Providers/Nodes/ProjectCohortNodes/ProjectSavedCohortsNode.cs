@@ -4,14 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 
 /// <summary>
-/// Collection of all saved cohort lists (<see cref="ExtractableCohort"/>) which were saved against a <see cref="Project"/>.  Cohorts are
-/// associated with the <see cref="Project"/> via the project number.
+///     Collection of all saved cohort lists (<see cref="ExtractableCohort" />) which were saved against a
+///     <see cref="Project" />.  Cohorts are
+///     associated with the <see cref="Project" /> via the project number.
 /// </summary>
 public class ProjectSavedCohortsNode : Node, IOrderable
 {
@@ -22,9 +24,15 @@ public class ProjectSavedCohortsNode : Node, IOrderable
         Project = project;
     }
 
-    public override string ToString() => "Saved Cohorts";
+    public override string ToString()
+    {
+        return "Saved Cohorts";
+    }
 
-    protected bool Equals(ProjectSavedCohortsNode other) => Equals(Project, other.Project);
+    protected bool Equals(ProjectSavedCohortsNode other)
+    {
+        return Equals(Project, other.Project);
+    }
 
     public override bool Equals(object obj)
     {
@@ -34,7 +42,10 @@ public class ProjectSavedCohortsNode : Node, IOrderable
         return Equals((ProjectSavedCohortsNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Project);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Project);
+    }
 
     public int Order
     {

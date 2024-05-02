@@ -26,8 +26,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Checks that the <see cref="SelectedDataSets"/> can be built into a valid SQL extraction Query and that the SQL generated can be executed
-/// without syntax errors.
+///     Checks that the <see cref="SelectedDataSets" /> can be built into a valid SQL extraction Query and that the SQL
+///     generated can be executed
+///     without syntax errors.
 /// </summary>
 public class SelectedDataSetsChecker : ICheckable
 {
@@ -36,12 +37,13 @@ public class SelectedDataSetsChecker : ICheckable
     private readonly IBasicActivateItems _activator;
 
     /// <summary>
-    /// The selected dataset being checked
+    ///     The selected dataset being checked
     /// </summary>
-    public ISelectedDataSets SelectedDataSet { get; private set; }
+    public ISelectedDataSets SelectedDataSet { get; }
 
     /// <summary>
-    /// prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration"/>.  Optionally checks an extraction <see cref="Pipeline"/> and globals
+    ///     prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration" />.  Optionally checks an
+    ///     extraction <see cref="Pipeline" /> and globals
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="selectedDataSet"></param>
@@ -57,7 +59,7 @@ public class SelectedDataSetsChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks the <see cref="SelectedDataSet"/> and reports success/failures to the <paramref name="notifier"/>
+    ///     Checks the <see cref="SelectedDataSet" /> and reports success/failures to the <paramref name="notifier" />
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -127,7 +129,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         var request = new ExtractDatasetCommand(config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config))
-        { TopX = 1 };
+            { TopX = 1 };
 
         try
         {
@@ -180,7 +182,7 @@ public class SelectedDataSetsChecker : ICheckable
         var outOfSync = selectedcols.OfType<ExtractableColumn>().Where(c => c.IsOutOfSync()).ToArray();
         if (outOfSync.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"'{ds}' columns out of sync with CatalogueItem version(s): {Environment.NewLine + string.Join(',', outOfSync.Select(o => o.ToString() + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ",
+                $"'{ds}' columns out of sync with CatalogueItem version(s): {Environment.NewLine + string.Join(',', outOfSync.Select(o => o + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ",
                 CheckResult.Warning));
 
         var nonSelectedCore = cata.GetAllExtractionInformation(ExtractionCategory.Core)
@@ -191,7 +193,7 @@ public class SelectedDataSetsChecker : ICheckable
 
         if (nonSelectedCore.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"'{ds}' Core columns not selected for extractions: {Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o.ToString() + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ",
+                $"'{ds}' Core columns not selected for extractions: {Environment.NewLine + string.Join(',', nonSelectedCore.Select(o => o + Environment.NewLine))}{Environment.NewLine} Extraction Configuration: '{config}' ",
                 CheckResult.Warning));
 
         ComplainIfUserHasHotSwappedCohort(notifier, cohort);
@@ -292,8 +294,7 @@ public class SelectedDataSetsChecker : ICheckable
         }
         catch (Exception ex)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress, ex,
-                new object[] { progress }));
+            notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.NoSqlAuditedForExtractionProgress, ex, progress));
             return;
         }
 
@@ -310,7 +311,7 @@ public class SelectedDataSetsChecker : ICheckable
     }
 
     /// <summary>
-    /// Returns true if the <paramref name="arg"/> column is ntext or text
+    ///     Returns true if the <paramref name="arg" /> column is ntext or text
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
@@ -331,8 +332,9 @@ public class SelectedDataSetsChecker : ICheckable
     }
 
     /// <summary>
-    /// Warns the <paramref name="notifier"/> that one or more of the <paramref name="cols"/> have the sensitive <paramref name="category"/>
-    /// and should be warned/failed about (depending on user settings).
+    ///     Warns the <paramref name="notifier" /> that one or more of the <paramref name="cols" /> have the sensitive
+    ///     <paramref name="category" />
+    ///     and should be warned/failed about (depending on user settings).
     /// </summary>
     /// <param name="notifier"></param>
     /// <param name="configuration"></param>

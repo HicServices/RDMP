@@ -15,17 +15,18 @@ using Rdmp.Core.Startup.Events;
 namespace Rdmp.Core.Databases;
 
 /// <summary>
-/// Finds <see cref="IPatcher"/> implementations
+///     Finds <see cref="IPatcher" /> implementations
 /// </summary>
 public class PatcherManager
 {
     /// <summary>
-    /// All patchers that are not plugins (<see cref="PluginPatcher"/>) or the main rdmp patchers (<see cref="CataloguePatcher"/>)
+    ///     All patchers that are not plugins (<see cref="PluginPatcher" />) or the main rdmp patchers (
+    ///     <see cref="CataloguePatcher" />)
     /// </summary>
     public IReadOnlyCollection<IPatcher> Tier2Patchers;
 
     /// <summary>
-    /// Creates a new instance populated with the default <see cref="IPatcher"/> types (DQE, Logging etc).
+    ///     Creates a new instance populated with the default <see cref="IPatcher" /> types (DQE, Logging etc).
     /// </summary>
     public PatcherManager()
     {
@@ -65,8 +66,11 @@ public class PatcherManager
     }
 
     /// <summary>
-    /// Returns all Tier 2 and 3 patchers (that could be constructed)
+    ///     Returns all Tier 2 and 3 patchers (that could be constructed)
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<IPatcher> GetAllPatchers() => Tier2Patchers.Union(GetTier3Patchers(null));
+    public IEnumerable<IPatcher> GetAllPatchers()
+    {
+        return Tier2Patchers.Union(GetTier3Patchers(null));
+    }
 }

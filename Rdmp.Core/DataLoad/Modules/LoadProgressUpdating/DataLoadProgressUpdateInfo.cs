@@ -17,13 +17,19 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 
 /// <summary>
-/// Represents a user made descision about how to upload a LoadProgress after a succesful data load.  LoadProgress has a field DataLoadProgress which stores
-/// the last date that was loaded.  However you can overreach during a load e.g. run a load for 30 days but find only 5 days worth of data streamed through
-/// the load, in such cases you might want to update the DataLoadProgress to the 5 day mark on the assumption that there is a delay in data provision and it
-/// will arrive later.  There are multiple ways to determine what dates were actually loaded during a data load (See DataLoadProgressUpdateStrategy).
-/// 
-/// <para>You can declare a [DemandsInitialization] decorated property of this Type in a data load component (IAttacher) etc in order to illicit a decision about
-/// what to update the DataLoadProgress with from the user at design time.</para>
+///     Represents a user made descision about how to upload a LoadProgress after a succesful data load.  LoadProgress has
+///     a field DataLoadProgress which stores
+///     the last date that was loaded.  However you can overreach during a load e.g. run a load for 30 days but find only 5
+///     days worth of data streamed through
+///     the load, in such cases you might want to update the DataLoadProgress to the 5 day mark on the assumption that
+///     there is a delay in data provision and it
+///     will arrive later.  There are multiple ways to determine what dates were actually loaded during a data load (See
+///     DataLoadProgressUpdateStrategy).
+///     <para>
+///         You can declare a [DemandsInitialization] decorated property of this Type in a data load component (IAttacher)
+///         etc in order to illicit a decision about
+///         what to update the DataLoadProgress with from the user at design time.
+///     </para>
 /// </summary>
 public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 {
@@ -70,7 +76,8 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
 
 
     /// <summary>
-    /// Only call this method when you hav finished populating RAW (since the strategy ExecuteScalarSQLInRAW requires to calculate date from populated RAW database right now and it is known that RAW won't even exist post load time)
+    ///     Only call this method when you hav finished populating RAW (since the strategy ExecuteScalarSQLInRAW requires to
+    ///     calculate date from populated RAW database right now and it is known that RAW won't even exist post load time)
     /// </summary>
     /// <param name="job"></param>
     /// <param name="rawDatabase"></param>
@@ -112,8 +119,11 @@ public class DataLoadProgressUpdateInfo : ICustomUIDrivenClass, ICheckable
         return added;
     }
 
-    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job) =>
-        DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad, false);
+    private static DiscoveredServer GetLiveServer(ScheduledDataLoadJob job)
+    {
+        return DataAccessPortal.ExpectDistinctServer(job.RegularTablesToLoad.ToArray(), DataAccessContext.DataLoad,
+            false);
+    }
 
     private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
     {

@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// See AnySeparatorFileAttacher
+///     See AnySeparatorFileAttacher
 /// </summary>
 public abstract class DelimitedFlatFileAttacher : FlatFileAttacher
 {

@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// The number of unique patients and record count on a given day of an ExtractionTimeTimeCoverageAggregator.
+///     The number of unique patients and record count on a given day of an ExtractionTimeTimeCoverageAggregator.
 /// </summary>
 public class ExtractionTimeTimeCoverageAggregatorBucket
 {

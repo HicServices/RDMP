@@ -34,8 +34,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp() =>
-        "Restrict use of the dataset only to extractions of the specified Project";
+    public override string GetCommandHelp()
+    {
+        return "Restrict use of the dataset only to extractions of the specified Project";
+    }
 
     public override void Execute()
     {
@@ -59,7 +61,8 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
                 $"Cannot make {_catalogue} Project Specific because it is already a part of ExtractionConfiguration {alreadyInConfiguration} (Project={alreadyInConfiguration.Project}) and possibly others");
 
         eds.Project_ID = _project.ID;
-        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
+        foreach (var ei in _catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+                     .Where(ei => ei.ExtractionCategory is ExtractionCategory.Core))
         {
             ei.ExtractionCategory = ExtractionCategory.ProjectSpecific;
             ei.SaveToDatabase();
@@ -70,8 +73,10 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
         Publish(_catalogue);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.ProjectCatalogue);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -114,6 +119,5 @@ public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,
 
         if (ei.Count(e => e.IsExtractionIdentifier) < 1)
             SetImpossible("Catalogue must have at least 1 IsExtractionIdentifier column");
-
     }
 }

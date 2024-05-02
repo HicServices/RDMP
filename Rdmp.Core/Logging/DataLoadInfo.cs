@@ -10,73 +10,66 @@ using System.Collections.Generic;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible
-/// for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed (whether it has failed or succeeded).
-///
-/// <para>You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load audits
-/// (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this audit record e.g. when loading a live table
-/// you can store the ID of the load batch it appeared in. </para>
+///     Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class
+///     name that is primarily responsible
+///     for the activity), start time, description etc.  You must call CloseAndMarkComplete once your activity is completed
+///     (whether it has failed or succeeded).
+///     <para>
+///         You should maintain a reference to DataLoadInfo in order to create logs of Progress / Errors / and table load
+///         audits
+///         (TableLoadInfo) (create these via the LogManager).  The ID property can be used if you want to reference this
+///         audit record e.g. when loading a live table
+///         you can store the ID of the load batch it appeared in.
+///     </para>
 /// </summary>
 public sealed class DataLoadInfo : IDataLoadInfo
 {
-    private bool _isClosed = false;
-    private readonly string _packageName;
-    private readonly string _userAccount;
-    private readonly DateTime _startTime;
-    private DateTime _endTime;
-    private readonly string _description;
-    private readonly string _suggestedRollbackCommand;
-    private int _id;
-    private readonly bool _isTest;
-
-
     public DiscoveredServer DatabaseSettings { get; }
 
     private readonly object _oLock = new();
-    private Thread _logThread = null;
-    private BlockingCollection<LogEntry> _logQueue = null;
+    private Thread _logThread;
+    private BlockingCollection<LogEntry> _logQueue;
     private readonly object _logWaiter = new();
 
 
     #region Property setup (these throw exceptions if you try to read them after the record is closed)
 
-    public string PackageName => _packageName;
+    public string PackageName { get; }
 
 
-    public string UserAccount => _userAccount;
+    public string UserAccount { get; }
 
 
-    public DateTime StartTime => _startTime;
+    public DateTime StartTime { get; }
 
 
-    public DateTime EndTime => _endTime;
+    public DateTime EndTime { get; private set; }
 
 
-    public string Description => _description;
+    public string Description { get; }
 
 
-    public string SuggestedRollbackCommand => _suggestedRollbackCommand;
+    public string SuggestedRollbackCommand { get; }
 
 
-    public int ID => _id;
+    public int ID { get; private set; }
 
-    public bool IsTest => _isTest;
+    public bool IsTest { get; }
 
 
-    public bool IsClosed => _isClosed;
+    public bool IsClosed { get; private set; }
 
     #endregion
 
     public record LogEntry(string EventType, string Description, string Source, DateTime Time);
 
     /// <summary>
-    /// Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
-    /// Environment.  Also creates a new ID in the database.
+    ///     Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
+    ///     Environment.  Also creates a new ID in the database.
     /// </summary>
     /// <param name="dataLoadTaskName"></param>
     /// <param name="packageName">The SSIS package or executable that started the data load</param>
@@ -90,14 +83,14 @@ public sealed class DataLoadInfo : IDataLoadInfo
         if (settings != null)
             DatabaseSettings = settings;
 
-        _packageName = packageName;
-        _userAccount = Environment.UserName;
-        _description = description;
-        _startTime = DateTime.Now;
-        _suggestedRollbackCommand = suggestedRollbackCommand;
+        PackageName = packageName;
+        UserAccount = Environment.UserName;
+        Description = description;
+        StartTime = DateTime.Now;
+        SuggestedRollbackCommand = suggestedRollbackCommand;
 
-        _id = -1;
-        _isTest = isTest;
+        ID = -1;
+        IsTest = isTest;
 
         RecordNewDataLoadInDatabase(dataLoadTaskName);
         LogInit();
@@ -114,7 +107,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
             _logQueue?.CompleteAdding();
             _logThread?.Join();
             _logQueue = new BlockingCollection<LogEntry>();
-            _logThread = new Thread(new ThreadStart(LogWorker));
+            _logThread = new Thread(LogWorker);
             _logThread.Start();
         }
     }
@@ -127,13 +120,22 @@ public sealed class DataLoadInfo : IDataLoadInfo
             if (l.Count == 0)
             {
                 lock (_logWaiter)
+                {
                     Monitor.Wait(_logWaiter, 1000);
+                }
+
                 continue;
             }
+
             using var con = DatabaseSettings.BeginNewTransactedConnection();
             if (DatabaseSettings.DatabaseType == DatabaseType.MicrosoftSQLServer)
-                using (var lockQuery = DatabaseSettings.GetCommand("SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
+                using (var lockQuery =
+                       DatabaseSettings.GetCommand(
+                           "SELECT TOP 1 * FROM ProgressLog WITH (HOLDLOCK, UPDLOCK, TABLOCKX) WHERE 1=0", con))
+                {
                     lockQuery.ExecuteNonQuery();
+                }
+
             using var cmdRecordProgress = DatabaseSettings.GetCommand(
                 "INSERT INTO ProgressLog (dataLoadRunID,eventType,source,description,time) VALUES (@dataLoadRunID,LEFT(RTRIM(@eventType),50),LEFT(RTRIM(@source),100),LEFT(RTRIM(@description),8000),@time);",
                 con);
@@ -152,8 +154,10 @@ public sealed class DataLoadInfo : IDataLoadInfo
                 time.Value = entry.Time;
                 cmdRecordProgress.ExecuteNonQuery();
             }
+
             con.ManagedTransaction.CommitAndCloseConnection();
         }
+
         _logQueue = null;
     }
 
@@ -180,22 +184,24 @@ public sealed class DataLoadInfo : IDataLoadInfo
             SELECT @@IDENTITY;
             """, con);
 
-        DatabaseSettings.AddParameterWithValueToCommand("@description", cmd, _description);
-        DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, _startTime);
+        DatabaseSettings.AddParameterWithValueToCommand("@description", cmd, Description);
+        DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, StartTime);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadTaskID", cmd, parentTaskID);
-        DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, _isTest);
-        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd, _packageName.Substring(Math.Max(0, _packageName.Length - 750)));
-        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd, _userAccount.Substring(Math.Max(0, _packageName.Length - 500)));
+        DatabaseSettings.AddParameterWithValueToCommand("@isTest", cmd, IsTest);
+        DatabaseSettings.AddParameterWithValueToCommand("@packageName", cmd,
+            PackageName.Substring(Math.Max(0, PackageName.Length - 750)));
+        DatabaseSettings.AddParameterWithValueToCommand("@userAccount", cmd,
+            UserAccount.Substring(Math.Max(0, PackageName.Length - 500)));
         DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd,
-            _suggestedRollbackCommand ?? string.Empty);
+            SuggestedRollbackCommand ?? string.Empty);
 
 
         //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
-        _id = int.Parse(cmd.ExecuteScalar().ToString());
+        ID = int.Parse(cmd.ExecuteScalar().ToString());
     }
 
     /// <summary>
-    /// Marks that the data load ended
+    ///     Marks that the data load ended
     /// </summary>
     public void CloseAndMarkComplete()
     {
@@ -206,10 +212,10 @@ public sealed class DataLoadInfo : IDataLoadInfo
             _logThread?.Join();
 
             //prevent double closing - but only after flushing log entries
-            if (_isClosed)
+            if (IsClosed)
                 return;
 
-            _endTime = DateTime.Now;
+            EndTime = DateTime.Now;
 
             using var con = DatabaseSettings.BeginNewTransactedConnection();
             try
@@ -229,7 +235,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
                 con.ManagedTransaction.CommitAndCloseConnection();
 
-                _isClosed = true;
+                IsClosed = true;
             }
             catch (Exception)
             {
@@ -248,13 +254,14 @@ public sealed class DataLoadInfo : IDataLoadInfo
     }
 
 
-    private Dictionary<int, TableLoadInfo> _TableLoads = new();
-
-    public Dictionary<int, TableLoadInfo> TableLoads => _TableLoads;
+    public Dictionary<int, TableLoadInfo> TableLoads { get; } = new();
 
     public ITableLoadInfo CreateTableLoadInfo(string suggestedRollbackCommand, string destinationTable,
-        DataSource[] sources, int expectedInserts) => new TableLoadInfo(this, suggestedRollbackCommand,
-        destinationTable, sources, expectedInserts);
+        DataSource[] sources, int expectedInserts)
+    {
+        return new TableLoadInfo(this, suggestedRollbackCommand,
+            destinationTable, sources, expectedInserts);
+    }
 
     public static DataLoadInfo Empty = new();
 
@@ -278,7 +285,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
     }
 
     /// <summary>
-    /// Terminates the current DataLoadInfo and records that it resulted in a fatal error
+    ///     Terminates the current DataLoadInfo and records that it resulted in a fatal error
     /// </summary>
     /// <param name="errorSource">The component that generated the failure(in SSIS try System::SourceName)</param>
     /// <param name="errorDescription">A description of the error (in SSIS try System::ErrorDescription)</param>
@@ -291,7 +298,8 @@ public sealed class DataLoadInfo : IDataLoadInfo
         var initialErrorStatus = Enum.GetName(typeof(FatalErrorStates), FatalErrorStates.Outstanding);
 
 
-        var cmdLookupStatusID = DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
+        var cmdLookupStatusID =
+            DatabaseSettings.GetCommand("SELECT ID from z_FatalErrorStatus WHERE status=@status", con);
         DatabaseSettings.AddParameterWithValueToCommand("@status", cmdLookupStatusID, initialErrorStatus);
 
         var statusID = int.Parse(cmdLookupStatusID.ExecuteScalar().ToString());
@@ -332,7 +340,10 @@ public sealed class DataLoadInfo : IDataLoadInfo
 
             _logQueue.Add(new LogEntry(pevent.ToString(), Description, Source, DateTime.Now));
         }
+
         lock (_logWaiter)
+        {
             Monitor.Pulse(_logWaiter);
+        }
     }
 }

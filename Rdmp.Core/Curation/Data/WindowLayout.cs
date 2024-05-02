@@ -15,7 +15,8 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and can be shared between users.
+///     Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and
+///     can be shared between users.
 /// </summary>
 public class WindowLayout : DatabaseEntity, INamed
 {
@@ -26,7 +27,7 @@ public class WindowLayout : DatabaseEntity, INamed
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -36,7 +37,7 @@ public class WindowLayout : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// The Xml representation of the window layout being (e.g. what tabs are open, objects pinned etc)
+    ///     The Xml representation of the window layout being (e.g. what tabs are open, objects pinned etc)
     /// </summary>
     public string LayoutData
     {
@@ -49,7 +50,7 @@ public class WindowLayout : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// Record the new layout in the database
+    ///     Record the new layout in the database
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name">Human readable name for the layout</param>
@@ -66,13 +67,16 @@ public class WindowLayout : DatabaseEntity, INamed
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public WindowLayout(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"].ToString();
         LayoutData = r["LayoutData"].ToString();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 }

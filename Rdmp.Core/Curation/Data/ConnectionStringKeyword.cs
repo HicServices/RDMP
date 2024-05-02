@@ -17,11 +17,16 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a specific key/value pair that should always be used (unless overriden by an API requirement) in connection strings to servers of the given <see cref="DatabaseType"/>
-/// by RDMP.  For example you could specify Encrypt = true to force all connections made to go through SSL (requires certificates / certificate validation etc).  Be careful when creating
-/// these as they apply to all users of the system and can make servers unreachable if a syntactically valid but unresolvable connection string is created.
-/// 
-/// <para>Checks will ensure that the keyword is a valid connection string keyword for the given <see cref="DatabaseType"/> and thus you will not get syntactically illegal connection strings</para>
+///     Describes a specific key/value pair that should always be used (unless overriden by an API requirement) in
+///     connection strings to servers of the given <see cref="DatabaseType" />
+///     by RDMP.  For example you could specify Encrypt = true to force all connections made to go through SSL (requires
+///     certificates / certificate validation etc).  Be careful when creating
+///     these as they apply to all users of the system and can make servers unreachable if a syntactically valid but
+///     unresolvable connection string is created.
+///     <para>
+///         Checks will ensure that the keyword is a valid connection string keyword for the given
+///         <see cref="DatabaseType" /> and thus you will not get syntactically illegal connection strings
+///     </para>
 /// </summary>
 public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
 {
@@ -34,7 +39,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     #endregion
 
     /// <summary>
-    /// The DBMS (Oracle / MySql etc) which this keyword should be used when connecting to
+    ///     The DBMS (Oracle / MySql etc) which this keyword should be used when connecting to
     /// </summary>
     public DatabaseType DatabaseType
     {
@@ -43,7 +48,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     }
 
     /// <summary>
-    /// The name of the keyword.  Must be a valid connection string key for the <see cref="DatabaseType"/> e.g. IntegratedSecurity
+    ///     The name of the keyword.  Must be a valid connection string key for the <see cref="DatabaseType" /> e.g.
+    ///     IntegratedSecurity
     /// </summary>
     [NotNull]
     public string Name
@@ -53,7 +59,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     }
 
     /// <summary>
-    /// The value to write into the connection string for the keyword e.g.  sspi
+    ///     The value to write into the connection string for the keyword e.g.  sspi
     /// </summary>
     public string Value
     {
@@ -66,7 +72,8 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
     }
 
     /// <summary>
-    /// Defines a new keyword that should be set on all connections to databases of <see cref="DatabaseType"/> when making new connections
+    ///     Defines a new keyword that should be set on all connections to databases of <see cref="DatabaseType" /> when making
+    ///     new connections
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="databaseType"></param>
@@ -94,11 +101,15 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
         Value = r["Value"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Checks that the keyword is valid syntax for the <see cref="DatabaseType"/> and can be set on a <see cref="DbConnectionStringBuilder"/>
+    ///     Checks that the keyword is valid syntax for the <see cref="DatabaseType" /> and can be set on a
+    ///     <see cref="DbConnectionStringBuilder" />
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)

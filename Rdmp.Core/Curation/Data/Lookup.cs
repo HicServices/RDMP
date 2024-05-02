@@ -16,21 +16,32 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a relationship between 3 ColumnInfos in which 2 are from a lookup table (e.g. z_drugName), these are a primary
-/// key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table (e.g.
-/// Prescribing) which is a foreign key (e.g. DrugPrescribed).
-/// 
-/// <para>The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that it is possible
-/// to define the same lookup multiple times just with different foreign keys (e.g. Prescribing and DrugAbuse datasets might both
-/// share the same lookup table z_drugName).</para>
-/// 
-/// <para>It is not possible to create these lookup dependencies automatically because often an agency won't actually have relationships
-/// (referential integrity) between their lookup tables and main datasets due to dirty data / missing lookup values.  These are all
-/// concepts which the RDMP is familiar with and built to handle.</para>
-/// 
-/// <para>Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly lookups (e.g. if you
-/// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and
-/// prescriberHealthboard).</para>
+///     Describes a relationship between 3 ColumnInfos in which 2 are from a lookup table (e.g. z_drugName), these are a
+///     primary
+///     key (e.g. DrugCode) and a description (e.g. HumanReadableDrugName).  And a third ColumnInfo from a different table
+///     (e.g.
+///     Prescribing) which is a foreign key (e.g. DrugPrescribed).
+///     <para>
+///         The QueryBuilder uses this information to work out how to join together various tables in a query.  Note that
+///         it is possible
+///         to define the same lookup multiple times just with different foreign keys (e.g. Prescribing and DrugAbuse
+///         datasets might both
+///         share the same lookup table z_drugName).
+///     </para>
+///     <para>
+///         It is not possible to create these lookup dependencies automatically because often an agency won't actually
+///         have relationships
+///         (referential integrity) between their lookup tables and main datasets due to dirty data / missing lookup
+///         values.  These are all
+///         concepts which the RDMP is familiar with and built to handle.
+///     </para>
+///     <para>
+///         Note also that you can have one or more LookupCompositeJoinInfo for when you need to join particularly ugly
+///         lookups (e.g. if you
+///         have the same DrugCode meaning different things based on the prescribing board - you need to join on both
+///         drugName and
+///         prescriberHealthboard).
+///     </para>
 /// </summary>
 public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
 {
@@ -49,7 +60,8 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     private ExtractionJoinType _extractionJoinType;
 
     /// <summary>
-    /// The column in the lookup table containing the lookup description for the code e.g. [z_GenderLookup].[GenderCodeDescription]
+    ///     The column in the lookup table containing the lookup description for the code e.g.
+    ///     [z_GenderLookup].[GenderCodeDescription]
     /// </summary>
     public int Description_ID
     {
@@ -58,7 +70,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <summary>
-    /// The column in the lookup table containing the lookup code e.g. [z_GenderLookup].[Gender]
+    ///     The column in the lookup table containing the lookup code e.g. [z_GenderLookup].[Gender]
     /// </summary>
     public int ForeignKey_ID
     {
@@ -67,7 +79,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <summary>
-    /// The column in the main dataset containing the lookup code e.g. [Prescribing].[Gender]
+    ///     The column in the main dataset containing the lookup code e.g. [Prescribing].[Gender]
     /// </summary>
     public int PrimaryKey_ID
     {
@@ -75,15 +87,15 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         set => SetField(ref _primaryKey_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Collation
     {
         get => _collation;
         set => SetField(ref _collation, value);
     }
 
-    /// <inheritdoc/>
-    ///<remarks>For <see cref="Lookup"/> this should almost always be LEFT</remarks>
+    /// <inheritdoc />
+    /// <remarks>For <see cref="Lookup" /> this should almost always be LEFT</remarks>
     public ExtractionJoinType ExtractionJoinType
     {
         get => _extractionJoinType;
@@ -95,19 +107,22 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     #region Relationships
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
+    ///     These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change
+    ///     the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo Description => _description ??= Repository.GetObjectByID<ColumnInfo>(Description_ID);
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
+    ///     These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change
+    ///     the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => _foreignKey ??= Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
     /// <summary>
-    /// These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change the _ID version
+    ///     These are dereferenced cached versions of the entities to which the _ID properties refer to, to change them change
+    ///     the _ID version
     /// </summary>
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => _primaryKey ??= Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
@@ -119,7 +134,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <summary>
-    /// Declares that the columns provide form a foreign key join to lookup table relationship
+    ///     Declares that the columns provide form a foreign key join to lookup table relationship
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="description">The lookup table description column</param>
@@ -150,7 +165,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
             { "ForeignKey_ID", foreignKey.ID },
             { "PrimaryKey_ID", primaryKey.ID },
             { "ExtractionJoinType", type.ToString() },
-            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
+            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : collation }
         });
     }
 
@@ -172,8 +187,11 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
 
-    /// <inheritdoc/>
-    public override string ToString() => ToStringCached();
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return ToStringCached();
+    }
 
     private string _cachedToString;
 
@@ -183,12 +201,16 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <summary>
-    /// Returns all <see cref="Lookup"/> relationships that exist between the main dataset <paramref name="foreignKeyTable"/> and the
-    /// assumed lookup table <paramref name="primaryKeyTable"/>
+    ///     Returns all <see cref="Lookup" /> relationships that exist between the main dataset
+    ///     <paramref name="foreignKeyTable" /> and the
+    ///     assumed lookup table <paramref name="primaryKeyTable" />
     /// </summary>
     /// <param name="foreignKeyTable">The main dataset table</param>
     /// <param name="primaryKeyTable">The hypothesized lookup table</param>
-    /// <returns>All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation could both reference z_Location lookup</returns>
+    /// <returns>
+    ///     All lookup relationships, a given table could have 2+ of these e.g. SendingLocation and DischargeLocation
+    ///     could both reference z_Location lookup
+    /// </returns>
     public static Lookup[] GetAllLookupsBetweenTables(TableInfo foreignKeyTable, TableInfo primaryKeyTable)
     {
         var toReturn = new List<Lookup>();
@@ -223,7 +245,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     }
 
     /// <summary>
-    /// Checks that the Lookup configuration is legal (e.g. not a table linking against itself etc).
+    ///     Checks that the Lookup configuration is legal (e.g. not a table linking against itself etc).
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -238,7 +260,7 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
                 CheckResult.Fail));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void SaveToDatabase()
     {
         //do checks before it hits the database.
@@ -255,26 +277,35 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         base.SaveToDatabase();
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<ISupplementalJoin> GetSupplementalJoins() =>
-        Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID", ID);
+    /// <inheritdoc />
+    public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
+    {
+        return Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID", ID);
+    }
 
-    /// <inheritdoc/>
-    public ExtractionJoinType GetInvertedJoinType() => throw new NotSupportedException(
-        "Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
+    /// <inheritdoc />
+    public ExtractionJoinType GetInvertedJoinType()
+    {
+        throw new NotSupportedException(
+            "Lookup joins should never be inverted... can't see why you would want to do that... they are always LEFT joined ");
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { Description, ForeignKey, PrimaryKey };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => null;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return null;
+    }
 
     /// <summary>
-    /// Tells the the <see cref="Lookup"/> what the objects are referenced by <see cref="PrimaryKey_ID"/>, <see cref="ForeignKey_ID"/> and
-    /// <see cref="Description_ID"/> so that it doesn't have to fetch them from the database.
+    ///     Tells the the <see cref="Lookup" /> what the objects are referenced by <see cref="PrimaryKey_ID" />,
+    ///     <see cref="ForeignKey_ID" /> and
+    ///     <see cref="Description_ID" /> so that it doesn't have to fetch them from the database.
     /// </summary>
     /// <param name="primaryKey"></param>
     /// <param name="foreignKey"></param>
@@ -289,7 +320,10 @@ public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
         _description = descriptionColumn;
     }
 
-    /// <inheritdoc/>
-    public string GetCustomJoinSql() => CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
-        .FirstOrDefault()?.Value;
+    /// <inheritdoc />
+    public string GetCustomJoinSql()
+    {
+        return CatalogueRepository.GetExtendedProperties(ExtendedProperty.CustomJoinSql, this)
+            .FirstOrDefault()?.Value;
+    }
 }

@@ -14,11 +14,12 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation
-/// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
-/// takes place (only providing access to the key file location to users who should be able to use the passwords).
-/// 
-/// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
+///     The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.
+///     There can only ever be one PasswordEncryptionKeyLocation
+///     and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP
+///     database so long as suitable windows account management
+///     takes place (only providing access to the key file location to users who should be able to use the passwords).
+///     <para>See PasswordEncryptionKeyLocationUI for more information.</para>
 /// </summary>
 public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 {
@@ -27,7 +28,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     public const string RDMP_KEY_LOCATION = "RDMP_KEY_LOCATION";
 
     /// <summary>
-    /// Prepares to retrieve/create the key file for the given platform database
+    ///     Prepares to retrieve/create the key file for the given platform database
     /// </summary>
     /// <param name="catalogueRepository"></param>
     public PasswordEncryptionKeyLocation(ICatalogueRepository catalogueRepository)
@@ -37,17 +38,25 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
         ClearAllInjections();
     }
 
-    public IEncryptStrings GetEncrypter() => new SimpleStringValueEncryption(OpenKeyFile());
+    public IEncryptStrings GetEncrypter()
+    {
+        return new SimpleStringValueEncryption(OpenKeyFile());
+    }
 
     private Lazy<string> _knownKeyFileLocation;
 
     /// <summary>
-    /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
-    /// custom keyfile has been created yet.  The answer to this question is cached, call <see cref="ClearAllInjections"/> to reset
-    /// the cache
+    ///     Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null
+    ///     if no
+    ///     custom keyfile has been created yet.  The answer to this question is cached, call <see cref="ClearAllInjections" />
+    ///     to reset
+    ///     the cache
     /// </summary>
     /// <returns></returns>
-    public string GetKeyFileLocation() => _knownKeyFileLocation.Value;
+    public string GetKeyFileLocation()
+    {
+        return _knownKeyFileLocation.Value;
+    }
 
     private string GetKeyFileLocationImpl()
     {
@@ -59,7 +68,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
 
 
     /// <summary>
-    /// Connects to the private key location and returns the encryption/decryption parameters stored in it
+    ///     Connects to the private key location and returns the encryption/decryption parameters stored in it
     /// </summary>
     /// <returns></returns>
     public string OpenKeyFile()
@@ -85,8 +94,10 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     }
 
     /// <summary>
-    /// Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use it for encrypting passwords.
-    /// This will make any existing serialized passwords irretrievable unless you restore and reset the original key file location.
+    ///     Creates a new private RSA encryption key certificate at the given location and sets the catalogue repository to use
+    ///     it for encrypting passwords.
+    ///     This will make any existing serialized passwords irretrievable unless you restore and reset the original key file
+    ///     location.
     /// </summary>
     /// <param name="path"></param>
     /// <returns></returns>
@@ -123,7 +134,7 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     }
 
     /// <summary>
-    /// Changes the location of the RSA private key file to a physical location on disk (which must exist)
+    ///     Changes the location of the RSA private key file to a physical location on disk (which must exist)
     /// </summary>
     /// <param name="newLocation"></param>
     public void ChangeLocation(string newLocation)
@@ -142,8 +153,8 @@ public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     }
 
     /// <summary>
-    /// Deletes the location of the RSA private key file from the platform database (does not delete the physical
-    /// file).
+    ///     Deletes the location of the RSA private key file from the platform database (does not delete the physical
+    ///     file).
     /// </summary>
     public void DeleteKey()
     {

@@ -11,23 +11,31 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// <see cref="CommandInvokerDelegate"/> which handles arrays.  Delegate function <see cref="CanHandle"/> any array that is assignable
-/// to the element type the delegate is set up for (e.g. we could service a request for <see cref="Catalogue"/>[] when set up for
-/// <see cref="IMapsDirectlyToDatabaseTable"/> elements.
+///     <see cref="CommandInvokerDelegate" /> which handles arrays.  Delegate function <see cref="CanHandle" /> any array
+///     that is assignable
+///     to the element type the delegate is set up for (e.g. we could service a request for <see cref="Catalogue" />[] when
+///     set up for
+///     <see cref="IMapsDirectlyToDatabaseTable" /> elements.
 /// </summary>
 internal class CommandInvokerArrayDelegate : CommandInvokerDelegate
 {
     /// <summary>
-    /// Declares a new delegate method which returns specific implementations of a base array type
+    ///     Declares a new delegate method which returns specific implementations of a base array type
     /// </summary>
-    /// <param name="element">The base element type of your array e.g. <see cref="IMapsDirectlyToDatabaseTable"/>(should not be an array itself)</param>
-    /// <param name="isAuto">True if the <paramref name="run"/> never requires user input</param>
+    /// <param name="element">
+    ///     The base element type of your array e.g. <see cref="IMapsDirectlyToDatabaseTable" />(should not
+    ///     be an array itself)
+    /// </param>
+    /// <param name="isAuto">True if the <paramref name="run" /> never requires user input</param>
     /// <param name="run">Method to invoke to fetch an instance when needed</param>
     public CommandInvokerArrayDelegate(Type element, bool isAuto, Func<RequiredArgument, object> run) : base(element,
         isAuto, run)
     {
     }
 
-    /// <inheritdoc/>
-    public override bool CanHandle(Type t) => t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
+    /// <inheritdoc />
+    public override bool CanHandle(Type t)
+    {
+        return t.IsArray && HandledType.IsAssignableFrom(t.GetElementType());
+    }
 }

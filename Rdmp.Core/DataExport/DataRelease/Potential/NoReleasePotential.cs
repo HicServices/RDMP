@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Release Potential class to be used when nothing has ever been extracted
+///     Release Potential class to be used when nothing has ever been extracted
 /// </summary>
 public class NoReleasePotential : ReleasePotential
 {
@@ -22,10 +22,15 @@ public class NoReleasePotential : ReleasePotential
     }
 
     protected override Releaseability GetSupplementalSpecificAssessment(
-        IExtractionResults supplementalExtractionResults) => Releaseability.NeverBeenSuccessfullyExecuted;
+        IExtractionResults supplementalExtractionResults)
+    {
+        return Releaseability.NeverBeenSuccessfullyExecuted;
+    }
 
-    protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults) =>
-        Releaseability.NeverBeenSuccessfullyExecuted;
+    protected override Releaseability GetSpecificAssessment(IExtractionResults extractionResults)
+    {
+        return Releaseability.NeverBeenSuccessfullyExecuted;
+    }
 
     public override void Check(ICheckNotifier notifier)
     {

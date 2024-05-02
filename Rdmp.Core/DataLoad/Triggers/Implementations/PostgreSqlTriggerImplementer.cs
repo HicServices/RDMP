@@ -16,15 +16,15 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-/// Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
+///     Postgres triggers require an accompanying stored procedure.  This class handles creating the proc and trigger
 /// </summary>
 public class PostgreSqlTriggerImplementer : TriggerImplementer
 {
-    private string _triggerRuntimeName;
-    private string _procedureNameFullyQualified;
-    private string _procedureRuntimeName;
+    private readonly string _triggerRuntimeName;
+    private readonly string _procedureNameFullyQualified;
+    private readonly string _procedureRuntimeName;
 
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
     public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso) : base(table,
         createDataLoadRunIDAlso)
     {
@@ -153,6 +153,8 @@ LANGUAGE 'plpgsql';";
             END;";
     }
 
-    public override TriggerStatus GetTriggerStatus() =>
-        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
+    public override TriggerStatus GetTriggerStatus()
+    {
+        return string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
+    }
 }

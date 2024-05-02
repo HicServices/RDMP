@@ -10,7 +10,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider;
 
 /// <summary>
-/// Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request.
+///     Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request.
 /// </summary>
 public class MultiDayCacheFetchRequestProvider : ICacheFetchRequestProvider
 {

@@ -14,9 +14,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-/// Cache source component which does nothing.  Can be used by user to build a caching pipeline even when there is nothing to do.  Use this source only if
-/// you have some bespoke process for populating / updating the cache progress and you only want a caching pipeline to exist for validation reasons not to
-/// actually run it.
+///     Cache source component which does nothing.  Can be used by user to build a caching pipeline even when there is
+///     nothing to do.  Use this source only if
+///     you have some bespoke process for populating / updating the cache progress and you only want a caching pipeline to
+///     exist for validation reasons not to
+///     actually run it.
 /// </summary>
 public class DoNothingCacheSource : CacheSource<ICacheChunk>
 {
@@ -47,7 +49,10 @@ public class DoNothingCacheSource : CacheSource<ICacheChunk>
     {
     }
 
-    public override ICacheChunk TryGetPreview() => null;
+    public override ICacheChunk TryGetPreview()
+    {
+        return null;
+    }
 
     public override void Check(ICheckNotifier notifier)
     {

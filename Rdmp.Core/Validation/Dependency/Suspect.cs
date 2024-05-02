@@ -11,8 +11,9 @@ using System.Reflection;
 namespace Rdmp.Core.Validation.Dependency;
 
 /// <summary>
-/// Regex pattern for finding references in ValidatorXML without having to deserialize it.  This is used to identify rules which reference columns and ensure
-/// that they cannot be deleted (See ValidationXMLObscureDependencyFinder)
+///     Regex pattern for finding references in ValidatorXML without having to deserialize it.  This is used to identify
+///     rules which reference columns and ensure
+///     that they cannot be deleted (See ValidationXMLObscureDependencyFinder)
 /// </summary>
 public class Suspect
 {

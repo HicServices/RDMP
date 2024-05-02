@@ -19,15 +19,19 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Cohort;
 
 /// <summary>
-/// Cohort identification is achieved by identifying Sets of patients and performing set operations on them e.g. you might identify "all patients who have been prescribed Diazepam"
-/// and then EXCEPT "patients who have been prescribed Diazepam before 2000".  This is gives you DISTINCT patients who were FIRST prescribed Diazepam AFTER 2000.  A CohortAggregateContainer
-/// is a collection of sets (actually implemented as an AggregateConfiguration) (and optionally subcontainers) which are all separated with the given SetOperation.
-/// 
-/// <para>There are three SET operations:</para>
-/// <para>UNION - Match all patients in any of the child containers/aggregates</para>
-/// <para>INTERSECT - Match patients only if they appear in ALL child containers/aggregates</para>
-/// <para>EXCEPT - Take patients in the first child container/aggregate and discard any appearing in subsequent child containers/aggregates</para>
-/// 
+///     Cohort identification is achieved by identifying Sets of patients and performing set operations on them e.g. you
+///     might identify "all patients who have been prescribed Diazepam"
+///     and then EXCEPT "patients who have been prescribed Diazepam before 2000".  This is gives you DISTINCT patients who
+///     were FIRST prescribed Diazepam AFTER 2000.  A CohortAggregateContainer
+///     is a collection of sets (actually implemented as an AggregateConfiguration) (and optionally subcontainers) which
+///     are all separated with the given SetOperation.
+///     <para>There are three SET operations:</para>
+///     <para>UNION - Match all patients in any of the child containers/aggregates</para>
+///     <para>INTERSECT - Match patients only if they appear in ALL child containers/aggregates</para>
+///     <para>
+///         EXCEPT - Take patients in the first child container/aggregate and discard any appearing in subsequent child
+///         containers/aggregates
+///     </para>
 /// </summary>
 public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDisableable, IMightBeReadOnly
 {
@@ -39,8 +43,9 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     private bool _isDisabled;
 
     /// <summary>
-    /// Describes how patient identifier sets identified by children (subcontainers and <see cref="AggregateConfiguration"/>s) in this container are combined using
-    /// SQL operations (UNION / INTERSECT / EXCEPT).
+    ///     Describes how patient identifier sets identified by children (subcontainers and
+    ///     <see cref="AggregateConfiguration" />s) in this container are combined using
+    ///     SQL operations (UNION / INTERSECT / EXCEPT).
     /// </summary>
     public SetOperation Operation
     {
@@ -48,9 +53,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         set => SetField(ref _operation, value);
     }
 
-    /// <inheritdoc/>
-    /// <remarks>Starts out as simply the name of the <see cref="Operation"/> but can be changed by the user e.g. 'EXCEPT - Study Exclusion Criteria
-    /// <para>This property should always start with the <see cref="Operation"/> to avoid confusion</para>
+    /// <inheritdoc />
+    /// <remarks>
+    ///     Starts out as simply the name of the <see cref="Operation" /> but can be changed by the user e.g. 'EXCEPT - Study
+    ///     Exclusion Criteria
+    ///     <para>This property should always start with the <see cref="Operation" /> to avoid confusion</para>
     /// </remarks>
     [NotNull]
     public string Name
@@ -60,9 +67,10 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// The order within the parent <see cref="CohortAggregateContainer"/> (if it is not a Root level container / orphan).  Symantically this position is relevant only for
-    /// the <see cref="SetOperation.EXCEPT"/> which takes the first set and throws out all subsequent sets.
-    /// <remarks>Also affects the order of IncludeCumulativeTotals</remarks>
+    ///     The order within the parent <see cref="CohortAggregateContainer" /> (if it is not a Root level container / orphan).
+    ///     Symantically this position is relevant only for
+    ///     the <see cref="SetOperation.EXCEPT" /> which takes the first set and throws out all subsequent sets.
+    ///     <remarks>Also affects the order of IncludeCumulativeTotals</remarks>
     /// </summary>
     public int Order
     {
@@ -70,7 +78,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         set => SetField(ref _order, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsDisabled
     {
         get => _isDisabled;
@@ -95,9 +103,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Creates a new container (which starts out as an orphan) with the given <see cref="SetOperation"/>.  You should either set a
-    ///  <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID"/> to this.<see cref="IMapsDirectlyToDatabaseTable.ID"/> to make this container the root container
-    /// or use <see cref="AddChild(CohortAggregateContainer)"/>  on another container to make this a subcontainer of it.
+    ///     Creates a new container (which starts out as an orphan) with the given <see cref="SetOperation" />.  You should
+    ///     either set a
+    ///     <see cref="CohortIdentificationConfiguration.RootCohortAggregateContainer_ID" /> to this.
+    ///     <see cref="IMapsDirectlyToDatabaseTable.ID" /> to make this container the root container
+    ///     or use <see cref="AddChild(CohortAggregateContainer)" />  on another container to make this a subcontainer of it.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
@@ -113,31 +123,41 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
 
 
     /// <summary>
-    /// Gets all the subcontainers of the current container (if any)
-    /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
+    ///     Gets all the subcontainers of the current container (if any)
+    ///     <para>You might want to instead use <seealso cref="GetOrderedContents" /></para>
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer[] GetSubContainers() => CatalogueRepository.CohortContainerManager.GetChildren(this)
-        .OfType<CohortAggregateContainer>().ToArray();
+    public CohortAggregateContainer[] GetSubContainers()
+    {
+        return CatalogueRepository.CohortContainerManager.GetChildren(this)
+            .OfType<CohortAggregateContainer>().ToArray();
+    }
 
     /// <summary>
-    /// Gets the parent container of the current container (if it is not a root / orphan container)
+    ///     Gets the parent container of the current container (if it is not a root / orphan container)
     /// </summary>
     /// <returns></returns>
-    public CohortAggregateContainer GetParentContainerIfAny() =>
-        CatalogueRepository.CohortContainerManager.GetParent(this);
+    public CohortAggregateContainer GetParentContainerIfAny()
+    {
+        return CatalogueRepository.CohortContainerManager.GetParent(this);
+    }
 
     /// <summary>
-    /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in
-    /// order defined by <see cref="IOrderable.Order"/> and can be interspersed with subcontainers (<see cref="GetSubContainers"/>).
-    /// <para>You might want to instead use <seealso cref="GetOrderedContents"/></para>
+    ///     Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration" />) declared as immediate
+    ///     children of the container.  These exist in
+    ///     order defined by <see cref="IOrderable.Order" /> and can be interspersed with subcontainers (
+    ///     <see cref="GetSubContainers" />).
+    ///     <para>You might want to instead use <seealso cref="GetOrderedContents" /></para>
     /// </summary>
     /// <returns></returns>
-    public AggregateConfiguration[] GetAggregateConfigurations() => CatalogueRepository.CohortContainerManager
-        .GetChildren(this).OfType<AggregateConfiguration>().ToArray();
+    public AggregateConfiguration[] GetAggregateConfigurations()
+    {
+        return CatalogueRepository.CohortContainerManager
+            .GetChildren(this).OfType<AggregateConfiguration>().ToArray();
+    }
 
     /// <summary>
-    /// Makes the configuration a member of this container.
+    ///     Makes the configuration a member of this container.
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="order"></param>
@@ -150,8 +170,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
 
 
     /// <summary>
-    /// Removes the given <see cref="AggregateConfiguration"/> from this container if it is an immediate child.
-    /// <para>Has no effect if if the <see cref="AggregateConfiguration"/> is not an immediate child</para>
+    ///     Removes the given <see cref="AggregateConfiguration" /> from this container if it is an immediate child.
+    ///     <para>Has no effect if if the <see cref="AggregateConfiguration" /> is not an immediate child</para>
     /// </summary>
     /// <param name="configuration"></param>
     public void RemoveChild(AggregateConfiguration configuration)
@@ -161,7 +181,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
 
 
     /// <summary>
-    /// Deletes all relationships in which this has a parent - kills all containers parents
+    ///     Deletes all relationships in which this has a parent - kills all containers parents
     /// </summary>
     public void MakeIntoAnOrphan()
     {
@@ -172,7 +192,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
 
 
     /// <summary>
-    /// Makes the other <see cref="CohortAggregateContainer"/> into a subcontainer of this container
+    ///     Makes the other <see cref="CohortAggregateContainer" /> into a subcontainer of this container
     /// </summary>
     /// <param name="child"></param>
     public void AddChild(CohortAggregateContainer child)
@@ -184,7 +204,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         CatalogueRepository.CohortContainerManager.Add(this, child);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     /// <remarks>Also deletes subcontainers to avoid leaving orphans in the database</remarks>
     public override void DeleteInDatabase()
     {
@@ -200,8 +220,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
         base.DeleteInDatabase();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -217,7 +240,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns true if this.Children contains the thing you are looking for - IMPORTANT: also returns true if we are the thing you are looking for
+    ///     Returns true if this.Children contains the thing you are looking for - IMPORTANT: also returns true if we are the
+    ///     thing you are looking for
     /// </summary>
     /// <param name="potentialChild"></param>
     /// <returns></returns>
@@ -236,7 +260,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns true if the supplied <seealso cref="AggregateConfiguration"/> is a child of this container or any of its subcontainers (recursively)
+    ///     Returns true if the supplied <seealso cref="AggregateConfiguration" /> is a child of this container or any of its
+    ///     subcontainers (recursively)
     /// </summary>
     /// <param name="configuration"></param>
     /// <returns></returns>
@@ -257,7 +282,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns all subcontainers and identifier sets (<see cref="AggregateConfiguration"/>) of this container in order (See <see cref="Order"/>)
+    ///     Returns all subcontainers and identifier sets (<see cref="AggregateConfiguration" />) of this container in order
+    ///     (See <see cref="Order" />)
     /// </summary>
     /// <returns></returns>
     public IOrderedEnumerable<IOrderable> GetOrderedContents()
@@ -266,7 +292,7 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns all <see cref="AggregateConfiguration"/> identifier sets in this container or any subcontainers
+    ///     Returns all <see cref="AggregateConfiguration" /> identifier sets in this container or any subcontainers
     /// </summary>
     /// <returns></returns>
     public List<AggregateConfiguration> GetAllAggregateConfigurationsRecursively()
@@ -283,9 +309,11 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
 
 
     /// <summary>
-    /// Creates a new CohortAggregateContainer tree containing a clone container for each container in the original tree and a clone AggregateConfiguration for each in the original tree
-    /// but with a rename in which AggregateConfigurations in the first tree are expected to start cic_X where X is the original cohort identification configuration ID, this will be replaced
-    /// with the new clone's ID
+    ///     Creates a new CohortAggregateContainer tree containing a clone container for each container in the original tree
+    ///     and a clone AggregateConfiguration for each in the original tree
+    ///     but with a rename in which AggregateConfigurations in the first tree are expected to start cic_X where X is the
+    ///     original cohort identification configuration ID, this will be replaced
+    ///     with the new clone's ID
     /// </summary>
     /// <param name="notifier"></param>
     /// <param name="original"></param>
@@ -373,9 +401,10 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns the <see cref="CohortIdentificationConfiguration"/> that this container is a part of either as a root container or contained with in a subcontainer of
-    /// the root container.
-    /// <para>Returns null if the container is an orphan</para>
+    ///     Returns the <see cref="CohortIdentificationConfiguration" /> that this container is a part of either as a root
+    ///     container or contained with in a subcontainer of
+    ///     the root container.
+    ///     <para>Returns null if the container is an orphan</para>
     /// </summary>
     /// <returns></returns>
     public CohortIdentificationConfiguration GetCohortIdentificationConfiguration()
@@ -402,8 +431,9 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Moves all children containers/identifier lists (See <see cref="GetOrderedContents"/>) to make space for inserting a new one at the specified
-    /// Order (See <see cref="Order"/>).
+    ///     Moves all children containers/identifier lists (See <see cref="GetOrderedContents" />) to make space for inserting
+    ///     a new one at the specified
+    ///     Order (See <see cref="Order" />).
     /// </summary>
     /// <param name="makeRoomFor"></param>
     /// <param name="order"></param>
@@ -429,8 +459,9 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns a list of all the <see cref="CohortAggregateContainer"/> that are subcontainers of the this.  This includes all children and children
-    /// of children etc recursively.
+    ///     Returns a list of all the <see cref="CohortAggregateContainer" /> that are subcontainers of the this.  This
+    ///     includes all children and children
+    ///     of children etc recursively.
     /// </summary>
     /// <returns></returns>
     public List<CohortAggregateContainer> GetAllSubContainersRecursively()
@@ -447,7 +478,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns true if this a cohort set and is the topmost (root) SET container of a <see cref="CohortIdentificationConfiguration"/>.
+    ///     Returns true if this a cohort set and is the topmost (root) SET container of a
+    ///     <see cref="CohortIdentificationConfiguration" />.
     /// </summary>
     /// <returns></returns>
     public bool IsRootContainer()
@@ -457,7 +489,8 @@ public class CohortAggregateContainer : DatabaseEntity, IOrderable, INamed, IDis
     }
 
     /// <summary>
-    /// Returns all containers that exist above the current container (up to the root container of the CohortIdentificationConfiguration)
+    ///     Returns all containers that exist above the current container (up to the root container of the
+    ///     CohortIdentificationConfiguration)
     /// </summary>
     /// <returns></returns>
     public IEnumerable<CohortAggregateContainer> GetAllParentContainers()

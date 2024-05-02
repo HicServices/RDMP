@@ -13,7 +13,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
+///     Readonly audit of a historical logged event which was noteworthy during the logged activity (See
+///     ArchivalDataLoadInfo)
 /// </summary>
 public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
 {
@@ -33,7 +34,10 @@ public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparabl
         Description = r["description"] as string;
     }
 
-    public override string ToString() => $"{Date} - {Description}";
+    public override string ToString()
+    {
+        return $"{Date} - {Description}";
+    }
 
     public int CompareTo(object obj)
     {

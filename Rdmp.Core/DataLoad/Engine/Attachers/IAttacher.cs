@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Attachers;
 
 /// <summary>
-/// See Attacher
+///     See Attacher
 /// </summary>
 public interface IAttacher : IDisposeAfterDataLoad, ICheckable
 {

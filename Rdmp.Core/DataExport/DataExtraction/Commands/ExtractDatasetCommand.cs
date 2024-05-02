@@ -19,16 +19,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content
-/// (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can realise the request by running the
-/// QueryBuilder SQL.
+///     Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction
+///     pipeline.  This includes bundled content
+///     (Lookup tables, SupportingDocuments etc).  Also includes optional settings (e.g. IncludeValidation) etc.  You can
+///     realise the request by running the
+///     QueryBuilder SQL.
 /// </summary>
 public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 {
     public ISelectedDataSets SelectedDataSets { get; set; }
 
     private IExtractableDatasetBundle _datasetBundle;
-    private List<IColumn> _origColumnsToExtract;
+    private readonly List<IColumn> _origColumnsToExtract;
 
     public IExtractableCohort ExtractableCohort { get; set; }
 
@@ -60,10 +62,10 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     public List<IExtractionResults> ExtractionResults { get; private set; }
     public int TopX { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? BatchStart { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? BatchEnd { get; set; }
 
     public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableCohort extractableCohort,
@@ -87,8 +89,9 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
 
 
     /// <summary>
-    /// This version has less arguments because it goes back to the database and queries the configuration and explores who the cohort is etc, it will result in more database
-    /// queries than the more explicit constructor
+    ///     This version has less arguments because it goes back to the database and queries the configuration and explores who
+    ///     the cohort is etc, it will result in more database
+    ///     queries than the more explicit constructor
     /// </summary>
     /// <param name="configuration"></param>
     /// <param name="datasetBundle"></param>
@@ -135,7 +138,7 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     }
 
     /// <summary>
-    /// Resets the state of the command to when it was first constructed
+    ///     Resets the state of the command to when it was first constructed
     /// </summary>
     public void Reset()
     {
@@ -150,15 +153,24 @@ public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
         ReleaseIdentifierSubstitutions = substitutions;
     }
 
-    public override string ToString() => this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
+    public override string ToString()
+    {
+        return this == EmptyCommand ? "EmptyCommand" : DatasetBundle.DataSet.ToString();
+    }
 
-    public override DirectoryInfo GetExtractionDirectory() => this == EmptyCommand
-        ? new DirectoryInfo(Path.GetTempPath())
-        : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
+    public override DirectoryInfo GetExtractionDirectory()
+    {
+        return this == EmptyCommand
+            ? new DirectoryInfo(Path.GetTempPath())
+            : Directory.GetDirectoryForDataset(DatasetBundle.DataSet);
+    }
 
-    public override string DescribeExtractionImplementation() => QueryBuilder.SQL;
+    public override string DescribeExtractionImplementation()
+    {
+        return QueryBuilder.SQL;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
         IDataAccessPoint[] points = QueryBuilder?.TablesUsedInQuery != null

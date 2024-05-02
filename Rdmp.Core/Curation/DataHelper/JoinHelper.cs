@@ -11,12 +11,13 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Curation.DataHelper;
 
 /// <summary>
-/// Generates ANSI Sql for joining tables together in the FROM line of an SQL query
+///     Generates ANSI Sql for joining tables together in the FROM line of an SQL query
 /// </summary>
 public class JoinHelper
 {
     /// <summary>
-    /// Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on T1.A = T2.A AND T1.B = T2.B)
+    ///     Assembles ANSI Sql for the JOIN section of a query including any supplemental join columns (e.g. T1 LEFT JOIN T2 on
+    ///     T1.A = T2.A AND T1.B = T2.B)
     /// </summary>
     /// <param name="join"></param>
     /// <returns></returns>
@@ -74,10 +75,11 @@ public class JoinHelper
     }
 
     /// <summary>
-    /// Returns the first half of the join with an inverted join type
-    /// 
-    /// <para>Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT</para>
-    /// 
+    ///     Returns the first half of the join with an inverted join type
+    ///     <para>
+    ///         Explanation:joins are defined as FK table JOIN_TYPE PK table so if you are requesting a join to the FK table
+    ///         it is assumed you are coming from the pk table therefore the join type is INVERTED i.e. LEFT becomes RIGHT
+    ///     </para>
     /// </summary>
     /// <param name="join"></param>
     /// <returns></returns>
@@ -113,11 +115,13 @@ public class JoinHelper
 
 
     /// <summary>
-    /// Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
-    /// in order to have the primary key table be assigned an alias e.g. 1 to give it t1
-    /// 
-    /// <para>Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is inverted e.g. LEFT => RIGHT and RIGHT => LEFT
-    /// unless it is a lookup join which is always LEFT</para>
+    ///     Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
+    ///     in order to have the primary key table be assigned an alias e.g. 1 to give it t1
+    ///     <para>
+    ///         Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is
+    ///         inverted e.g. LEFT => RIGHT and RIGHT => LEFT
+    ///         unless it is a lookup join which is always LEFT
+    ///     </para>
     /// </summary>
     /// <param name="join"></param>
     /// <param name="aliasNumber"></param>
@@ -168,13 +172,18 @@ public class JoinHelper
     }
 
     /// <summary>
-    /// Gets the suffix for a given lookup table number
+    ///     Gets the suffix for a given lookup table number
     /// </summary>
     /// <param name="aliasNumber">the lookup number e.g. 1 gives lookup_1</param>
-    /// <param name="requirePrefix">pass in true if you require the prefix " AS " (may vary depending on database context in future e.g. perhaps MySql refers to tables by different alias syntax)</param>
+    /// <param name="requirePrefix">
+    ///     pass in true if you require the prefix " AS " (may vary depending on database context in
+    ///     future e.g. perhaps MySql refers to tables by different alias syntax)
+    /// </param>
     /// <returns></returns>
-    public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false) =>
-        requirePrefix ? $" AS lookup_{aliasNumber}" : $"lookup_{aliasNumber}";
+    public static string GetLookupTableAlias(int aliasNumber, bool requirePrefix = false)
+    {
+        return requirePrefix ? $" AS lookup_{aliasNumber}" : $"lookup_{aliasNumber}";
+    }
 
 
     [Pure]
@@ -203,13 +212,20 @@ public class JoinHelper
 
 
     [Pure]
-    private static string AppendCollation(string sql, ISupplementalJoin supplementalJoin) =>
-        AppendCollation(sql, supplementalJoin.Collation);
+    private static string AppendCollation(string sql, ISupplementalJoin supplementalJoin)
+    {
+        return AppendCollation(sql, supplementalJoin.Collation);
+    }
 
     [Pure]
-    private static string AppendCollation(string sql, IJoin join) => AppendCollation(sql, join.Collation);
+    private static string AppendCollation(string sql, IJoin join)
+    {
+        return AppendCollation(sql, join.Collation);
+    }
 
     [Pure]
-    private static string AppendCollation(string sql, string collation) =>
-        !string.IsNullOrWhiteSpace(collation) ? $"{sql} collate {collation}" : sql;
+    private static string AppendCollation(string sql, string collation)
+    {
+        return !string.IsNullOrWhiteSpace(collation) ? $"{sql} collate {collation}" : sql;
+    }
 }

@@ -44,8 +44,10 @@ public sealed class ExecuteCommandAddNewFilterContainer : BasicCommandExecution
         SetImpossibleIfReadonly(host);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Add);
+    }
 
     public ExecuteCommandAddNewFilterContainer(IBasicActivateItems activator, IContainer container) : base(activator)
     {

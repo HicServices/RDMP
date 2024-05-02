@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 
@@ -18,9 +19,15 @@ public class LoadMetadataScheduleNode : Node, IOrderable
         LoadMetadata = loadMetadata;
     }
 
-    public override string ToString() => "Scheduling";
+    public override string ToString()
+    {
+        return "Scheduling";
+    }
 
-    protected bool Equals(LoadMetadataScheduleNode other) => Equals(LoadMetadata, other.LoadMetadata);
+    protected bool Equals(LoadMetadataScheduleNode other)
+    {
+        return Equals(LoadMetadata, other.LoadMetadata);
+    }
 
     public override bool Equals(object obj)
     {
@@ -30,7 +37,10 @@ public class LoadMetadataScheduleNode : Node, IOrderable
         return Equals((LoadMetadataScheduleNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(LoadMetadata);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(LoadMetadata);
+    }
 
     public int Order
     {

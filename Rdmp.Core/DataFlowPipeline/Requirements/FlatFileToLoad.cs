@@ -9,14 +9,16 @@ using System.IO;
 namespace Rdmp.Core.DataFlowPipeline.Requirements;
 
 /// <summary>
-/// Wrapper for FileInfo that can be used in the IPipelineRequirement interface to indicate that component expects a FileInfo that is specifically going to have data loaded
-/// out of it.  Having an IPipelineRequirement for a FileInfo on a component could be confusing, we might also want to allow multiple different types of FileInfo.  Having
-/// this wrapper ensures that there is no confusion about what a FlatFileToLoad Initialization Object is for.
+///     Wrapper for FileInfo that can be used in the IPipelineRequirement interface to indicate that component expects a
+///     FileInfo that is specifically going to have data loaded
+///     out of it.  Having an IPipelineRequirement for a FileInfo on a component could be confusing, we might also want to
+///     allow multiple different types of FileInfo.  Having
+///     this wrapper ensures that there is no confusion about what a FlatFileToLoad Initialization Object is for.
 /// </summary>
 public class FlatFileToLoad
 {
     /// <summary>
-    /// Creates a new instance pointed at the given <paramref name="file"/>
+    ///     Creates a new instance pointed at the given <paramref name="file" />
     /// </summary>
     /// <param name="file"></param>
     public FlatFileToLoad(FileInfo file)
@@ -25,13 +27,16 @@ public class FlatFileToLoad
     }
 
     /// <summary>
-    /// The file you are trying to load
+    ///     The file you are trying to load
     /// </summary>
     public FileInfo File { get; set; }
 
     /// <summary>
-    /// Returns the filename of the file you are trying to load
+    ///     Returns the filename of the file you are trying to load
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => File == null ? base.ToString() : File.Name;
+    public override string ToString()
+    {
+        return File == null ? base.ToString() : File.Name;
+    }
 }

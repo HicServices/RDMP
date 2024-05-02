@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Empty implementation of IDataLoadJob that can be used during Checking / Tests etc
+///     Empty implementation of IDataLoadJob that can be used during Checking / Tests etc
 /// </summary>
 public class ThrowImmediatelyDataLoadJob : IDataLoadJob
 {
@@ -48,13 +48,13 @@ public class ThrowImmediatelyDataLoadJob : IDataLoadJob
         Configuration = configuration;
     }
 
-    public string Description { get; private set; }
+    public string Description { get; }
     public IDataLoadInfo DataLoadInfo { get; set; }
     public ILoadDirectory LoadDirectory { get; set; }
     public int JobID { get; set; }
     public ILoadMetadata LoadMetadata { get; set; }
-    public bool DisposeImmediately { get; private set; }
-    public string ArchiveFilepath { get; private set; }
+    public bool DisposeImmediately { get; }
+    public string ArchiveFilepath { get; }
     public List<ITableInfo> RegularTablesToLoad { get; set; } = new();
     public List<ITableInfo> LookupTablesToLoad { get; set; } = new();
     public IRDMPPlatformRepositoryServiceLocator RepositoryLocator => null;
@@ -72,9 +72,9 @@ public class ThrowImmediatelyDataLoadJob : IDataLoadJob
     public object Payload { get; set; }
     public bool PersistentRaw { get; set; }
 
-    private List<NotifyEventArgs> _crashAtEnd = new();
+    private readonly List<NotifyEventArgs> _crashAtEnd = new();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages => _crashAtEnd.AsReadOnly();
 
 
@@ -110,7 +110,7 @@ public class ThrowImmediatelyDataLoadJob : IDataLoadJob
             .Union(LookupTablesToLoad.SelectMany(t => t.ColumnInfos)).Distinct().ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void CrashAtEnd(NotifyEventArgs because)
     {
         _crashAtEnd.Add(because);

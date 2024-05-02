@@ -20,10 +20,12 @@ internal class AggregateFilterManager : IFilterManager
         _catalogueRepository = catalogueRepository;
     }
 
-    public virtual IContainer[] GetSubContainers(IContainer container) =>
-        _catalogueRepository.SelectAll<AggregateFilterContainer>(
+    public virtual IContainer[] GetSubContainers(IContainer container)
+    {
+        return _catalogueRepository.SelectAll<AggregateFilterContainer>(
             $"SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID={container.ID}",
             "AggregateFilterContainer_ChildID").ToArray();
+    }
 
     public void MakeIntoAnOrphan(IContainer container)
     {
@@ -35,13 +37,18 @@ internal class AggregateFilterManager : IFilterManager
             }, false);
     }
 
-    public IContainer GetParentContainerIfAny(IContainer container) =>
-        _catalogueRepository.SelectAll<AggregateFilterContainer>(
+    public IContainer GetParentContainerIfAny(IContainer container)
+    {
+        return _catalogueRepository.SelectAll<AggregateFilterContainer>(
             $"SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID={container.ID}",
             "AggregateFilterContainer_ParentID").SingleOrDefault();
+    }
 
-    public virtual IFilter[] GetFilters(IContainer container) => _catalogueRepository
-        .GetAllObjectsWhere<AggregateFilter>("FilterContainer_ID", container.ID).ToArray();
+    public virtual IFilter[] GetFilters(IContainer container)
+    {
+        return _catalogueRepository
+            .GetAllObjectsWhere<AggregateFilter>("FilterContainer_ID", container.ID).ToArray();
+    }
 
     public void AddSubContainer(IContainer parent, IContainer child)
     {

@@ -11,8 +11,10 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database table).  A Catalogue is an extractable dataset
-/// which can be made by joining multiple underlying tables and often contains only a subset of columns (those that are extractable to researchers).
+///     Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database
+///     table).  A Catalogue is an extractable dataset
+///     which can be made by joining multiple underlying tables and often contains only a subset of columns (those that are
+///     extractable to researchers).
 /// </summary>
 public class ForwardEngineerCatalogue
 {
@@ -27,7 +29,7 @@ public class ForwardEngineerCatalogue
     }
 
     /// <summary>
-    /// Sets up the class to create a new <see cref="Catalogue"/> from the supplied table reference
+    ///     Sets up the class to create a new <see cref="Catalogue" /> from the supplied table reference
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <param name="columnInfos"></param>
@@ -38,7 +40,7 @@ public class ForwardEngineerCatalogue
     }
 
 
-    /// <inheritdoc cref="ExecuteForwardEngineering()"/>
+    /// <inheritdoc cref="ExecuteForwardEngineering()" />
     public void ExecuteForwardEngineering(out ICatalogue catalogue, out CatalogueItem[] items,
         out ExtractionInformation[] extractionInformations)
     {
@@ -46,8 +48,9 @@ public class ForwardEngineerCatalogue
     }
 
     /// <summary>
-    /// Creates a new <see cref="Catalogue"/> with <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to
-    ///  the <see cref="ColumnInfo"/> this class was constructed with.
+    ///     Creates a new <see cref="Catalogue" /> with <see cref="CatalogueItem" /> and <see cref="ExtractionInformation" />
+    ///     with a one-to-one mapping to
+    ///     the <see cref="ColumnInfo" /> this class was constructed with.
     /// </summary>
     public void ExecuteForwardEngineering()
     {
@@ -55,9 +58,12 @@ public class ForwardEngineerCatalogue
     }
 
     /// <summary>
-    /// Creates new <see cref="CatalogueItem"/> and <see cref="ExtractionInformation"/> with a one-to-one mapping to the <see cref="ColumnInfo"/> this class was constructed with.
-    /// 
-    /// <para>These new columns are added to an existing <see cref="Catalogue"/>.  Use this if you want a dataset that draws data from 2 tables using a <see cref="JoinInfo"/></para>
+    ///     Creates new <see cref="CatalogueItem" /> and <see cref="ExtractionInformation" /> with a one-to-one mapping to the
+    ///     <see cref="ColumnInfo" /> this class was constructed with.
+    ///     <para>
+    ///         These new columns are added to an existing <see cref="Catalogue" />.  Use this if you want a dataset that
+    ///         draws data from 2 tables using a <see cref="JoinInfo" />
+    ///     </para>
     /// </summary>
     /// <param name="intoExistingCatalogue"></param>
     public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue)
@@ -65,7 +71,7 @@ public class ForwardEngineerCatalogue
         ExecuteForwardEngineering(intoExistingCatalogue, out _, out _, out _);
     }
 
-    /// <inheritdoc cref="ExecuteForwardEngineering()"/>
+    /// <inheritdoc cref="ExecuteForwardEngineering()" />
     public void ExecuteForwardEngineering(ICatalogue intoExistingCatalogue, out ICatalogue catalogue,
         out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
     {

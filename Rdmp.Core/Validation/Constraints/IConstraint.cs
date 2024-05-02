@@ -7,26 +7,26 @@
 namespace Rdmp.Core.Validation.Constraints;
 
 /// <summary>
-/// Base interface for all validation rules (and accompanying failure Consqeuences)
+///     Base interface for all validation rules (and accompanying failure Consqeuences)
 /// </summary>
 public interface IConstraint
 {
     /// <summary>
-    /// The consequences of the rule being broken
+    ///     The consequences of the rule being broken
     /// </summary>
     Consequence? Consequence { get; set; }
 
     /// <summary>
-    /// Updates the state / persistence of the <see cref="IConstraint"/> to reflect that it's currently
-    /// referencing column (<paramref name="originalName"/>) has been renamed (<paramref name="newName"/>)
-    /// and it needs to update its persistence / state.
+    ///     Updates the state / persistence of the <see cref="IConstraint" /> to reflect that it's currently
+    ///     referencing column (<paramref name="originalName" />) has been renamed (<paramref name="newName" />)
+    ///     and it needs to update its persistence / state.
     /// </summary>
     /// <param name="originalName">The name that this constraint is currently pointing at</param>
     /// <param name="newName">The replacement name that the constraint should update itself to reference</param>
     void RenameColumn(string originalName, string newName);
 
     /// <summary>
-    /// Human readable description of the validation rule and what it does
+    ///     Human readable description of the validation rule and what it does
     /// </summary>
     /// <returns></returns>
     string GetHumanReadableDescriptionOfValidation();

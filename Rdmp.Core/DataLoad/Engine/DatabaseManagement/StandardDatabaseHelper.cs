@@ -12,7 +12,7 @@ using Rdmp.Core.Curation.Data.EntityNaming;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 
 /// <summary>
-/// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
+///     Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).
 /// </summary>
 public class StandardDatabaseHelper
 {

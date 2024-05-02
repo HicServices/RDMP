@@ -16,12 +16,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
+///     RuntimeTask that executes a single .sql file specified by the user in a ProcessTask with ProcessTaskType SQLFile.
 /// </summary>
 public class ExecuteSqlFileRuntimeTask : RuntimeTask
 {
     public string Filepath;
-    private IProcessTask _task;
+    private readonly IProcessTask _task;
 
     private LoadStage _loadStage;
 
@@ -72,7 +72,10 @@ public class ExecuteSqlFileRuntimeTask : RuntimeTask
     }
 
 
-    public override bool Exists() => File.Exists(Filepath);
+    public override bool Exists()
+    {
+        return File.Exists(Filepath);
+    }
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

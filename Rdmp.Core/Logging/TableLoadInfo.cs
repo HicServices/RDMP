@@ -7,32 +7,30 @@
 using System;
 using System.Data;
 using System.Threading;
-using Amazon.Auth.AccessControlPolicy;
-using BadMedicine;
 using FAnsi.Connections;
 using FAnsi.Discovery;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// A 'table' that is being loaded as part of a logged activity (See DataLoadInfo).  While it is called a table you can actually audit any endpoint for records
-/// e.g. a targetTable of 'bob.csv' would be absolutely fine.  As long as the count of inserts is useful and you want to preserve the information then go ahead
-/// and create a TableLoadInfo.
-/// 
-/// <para>You can increment Inserts / Deletes etc as often as you want but do not decrease them.  When you are sure you have finished loading the target table
-/// (even if there were errors) you should call CloseAndArchive to write the final insert/update/delete count into the database.  After this is called you
-/// won't be able to change the counts any more.</para>
+///     A 'table' that is being loaded as part of a logged activity (See DataLoadInfo).  While it is called a table you can
+///     actually audit any endpoint for records
+///     e.g. a targetTable of 'bob.csv' would be absolutely fine.  As long as the count of inserts is useful and you want
+///     to preserve the information then go ahead
+///     and create a TableLoadInfo.
+///     <para>
+///         You can increment Inserts / Deletes etc as often as you want but do not decrease them.  When you are sure you
+///         have finished loading the target table
+///         (even if there were errors) you should call CloseAndArchive to write the final insert/update/delete count into
+///         the database.  After this is called you
+///         won't be able to change the counts any more.
+///     </para>
 /// </summary>
 public class TableLoadInfo : ITableLoadInfo
 {
     public bool IsClosed { get; private set; }
 
     private int _errorRows; // incremented only through RowErrorLogging class
-    private readonly string _suggestedRollbackCommand;
-    private int _id;
-    private readonly DateTime _startTime;
-    private DateTime _endTime;
     public DataLoadInfo DataLoadInfoParent { get; private set; }
 
     public DataSource[] DataSources { get; internal set; }
@@ -40,14 +38,15 @@ public class TableLoadInfo : ITableLoadInfo
 
     #region Database Connection Setup
 
-    private string _notes;
-
     public DiscoveredServer DatabaseSettings { get; }
 
     #endregion
 
     /// <param name="parent"></param>
-    /// <param name="suggestedRollbackCommand">Human readable text indicating how this load might be rolled back, may contain specific SQL or just general advice.</param>
+    /// <param name="suggestedRollbackCommand">
+    ///     Human readable text indicating how this load might be rolled back, may contain
+    ///     specific SQL or just general advice.
+    /// </param>
     /// <param name="destinationTable"></param>
     /// <param name="sources"></param>
     /// <param name="expectedInserts"></param>
@@ -56,14 +55,14 @@ public class TableLoadInfo : ITableLoadInfo
     {
         DatabaseSettings = parent.DatabaseSettings;
 
-        _startTime = DateTime.Now;
+        StartTime = DateTime.Now;
         Inserts = 0;
         Updates = 0;
         Deletes = 0;
         DiscardedDuplicates = 0;
         _errorRows = 0;
 
-        _suggestedRollbackCommand = suggestedRollbackCommand;
+        SuggestedRollbackCommand = suggestedRollbackCommand;
 
         DataLoadInfoParent = parent;
 
@@ -88,13 +87,15 @@ public class TableLoadInfo : ITableLoadInfo
 
         DatabaseSettings.AddParameterWithValueToCommand("@startTime", cmd, DateTime.Now);
         DatabaseSettings.AddParameterWithValueToCommand("@dataLoadRunID", cmd, parent.ID);
-        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd, destinationTable.Substring(Math.Max(0, destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
+        DatabaseSettings.AddParameterWithValueToCommand("@targetTable", cmd,
+            destinationTable.Substring(Math.Max(0,
+                destinationTable.Length - 200))); //200 char limit on this table, just pull the rightmost 200 chars
         DatabaseSettings.AddParameterWithValueToCommand("@expectedInserts", cmd, expectedInserts);
-        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, _suggestedRollbackCommand);
+        DatabaseSettings.AddParameterWithValueToCommand("@suggestedRollbackCommand", cmd, SuggestedRollbackCommand);
 
 
         //get the ID, can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
-        _id = int.Parse(cmd.ExecuteScalar().ToString());
+        ID = int.Parse(cmd.ExecuteScalar().ToString());
 
 
         //keep a record of all data sources
@@ -107,7 +108,7 @@ public class TableLoadInfo : ITableLoadInfo
                 "INSERT INTO DataSource (source,tableLoadRunID,originDate,MD5) " +
                 "VALUES (@source,@tableLoadRunID,@originDate,@MD5); SELECT @@IDENTITY;", con);
             DatabaseSettings.AddParameterWithValueToCommand("@source", cmdInsertDs, s.Source);
-            DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, _id);
+            DatabaseSettings.AddParameterWithValueToCommand("@tableLoadRunID", cmdInsertDs, ID);
             DatabaseSettings.AddParameterWithValueToCommand("@originDate", cmdInsertDs,
                 s.UnknownOriginDate ? DBNull.Value : s.OriginDate);
 
@@ -135,48 +136,47 @@ public class TableLoadInfo : ITableLoadInfo
     #region Property setup
 
     /// <summary>
-    /// Increases or Gets the number of Updated records, use += instead of trying to set a specific value.  Important:Make sure you increment with Affected Rows, not just UPDATE commands sent)
+    ///     Increases or Gets the number of Updated records, use += instead of trying to set a specific value.  Important:Make
+    ///     sure you increment with Affected Rows, not just UPDATE commands sent)
     /// </summary>
     public int Updates { get; set; }
 
 
     /// <summary>
-    /// Increases or Gets the number of Deleted records, use += instead of trying to set a specific value.  Important:Make sure you increment with Affected Rows, not just DELETE commands sent)
+    ///     Increases or Gets the number of Deleted records, use += instead of trying to set a specific value.  Important:Make
+    ///     sure you increment with Affected Rows, not just DELETE commands sent)
     /// </summary>
     public int Deletes { get; set; }
 
     /// <summary>
-    /// Increases or Gets the number of Inserted records, use += instead of trying to set a specific value
+    ///     Increases or Gets the number of Inserted records, use += instead of trying to set a specific value
     /// </summary>
     public int Inserts { get; set; }
 
     /// <summary>
-    /// Increases or Gets the number of Discarded Duplicate records, use += instead of trying to set a specific value
+    ///     Increases or Gets the number of Discarded Duplicate records, use += instead of trying to set a specific value
     /// </summary>
     public int DiscardedDuplicates { get; set; }
 
     /// <summary>
-    /// Gets the number of ErrorRows during this data run so far, this is automatically increased by the RowErrorLogging class
+    ///     Gets the number of ErrorRows during this data run so far, this is automatically increased by the RowErrorLogging
+    ///     class
     /// </summary>
     public int ErrorRows => _errorRows;
 
 
-    public string SuggestedRollbackCommand => _suggestedRollbackCommand;
+    public string SuggestedRollbackCommand { get; }
 
 
-    public int ID => _id;
+    public int ID { get; private set; }
 
-    public DateTime StartTime => _startTime;
-
-
-    public DateTime EndTime => _endTime;
+    public DateTime StartTime { get; }
 
 
-    public string Notes
-    {
-        get => _notes;
-        set => _notes = value;
-    }
+    public DateTime EndTime { get; private set; }
+
+
+    public string Notes { get; set; }
 
     public bool IsLegacyLoggingSchema { get; }
 
@@ -209,7 +209,7 @@ public class TableLoadInfo : ITableLoadInfo
 
             con.ManagedTransaction.CommitAndCloseConnection();
 
-            _endTime = DateTime.Now;
+            EndTime = DateTime.Now;
             IsClosed = true;
         }
         catch (Exception)

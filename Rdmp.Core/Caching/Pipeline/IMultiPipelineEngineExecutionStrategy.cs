@@ -12,7 +12,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline;
 
 /// <summary>
-/// Logic for locking and executing multiple IDataFlowPipelineEngine at once (single threaded loop is valid, it doesn't have to be async)
+///     Logic for locking and executing multiple IDataFlowPipelineEngine at once (single threaded loop is valid, it doesn't
+///     have to be async)
 /// </summary>
 public interface IMultiPipelineEngineExecutionStrategy
 {

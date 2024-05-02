@@ -27,7 +27,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// See ITableRepository
+///     See ITableRepository
 /// </summary>
 public abstract class TableRepository : ITableRepository
 {
@@ -35,8 +35,8 @@ public abstract class TableRepository : ITableRepository
     protected DbConnectionStringBuilder _connectionStringBuilder;
     public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-    private static object _oLockUpdateCommands = new();
-    private UpdateCommandStore _updateCommandStore = new();
+    private static readonly object _oLockUpdateCommands = new();
+    private readonly UpdateCommandStore _updateCommandStore = new();
     public bool SupportsCommits => true;
 
     //'accessors'
@@ -46,13 +46,14 @@ public abstract class TableRepository : ITableRepository
     public DiscoveredServer DiscoveredServer { get; protected set; }
 
     /// <summary>
-    /// Constructors for quickly resolving <see cref="ConstructEntity"/> calls rather than relying on reflection e.g. ObjectConstructor
+    ///     Constructors for quickly resolving <see cref="ConstructEntity" /> calls rather than relying on reflection e.g.
+    ///     ObjectConstructor
     /// </summary>
     protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new();
 
     private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-    private Lazy<DiscoveredTable[]> _tables;
+    private readonly Lazy<DiscoveredTable[]> _tables;
 
     //If you are calling this constructor then make sure to set the connection strings in your derived class constructor
     public TableRepository()
@@ -68,7 +69,7 @@ public abstract class TableRepository : ITableRepository
         DiscoveredServer = new DiscoveredServer(connectionStringBuilder);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         //do not log information about access credentials
@@ -99,7 +100,7 @@ public abstract class TableRepository : ITableRepository
         Deleting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(oTableWrapperObject));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2>
         where T2 : IMapsDirectlyToDatabaseTable
     {
@@ -111,7 +112,7 @@ public abstract class TableRepository : ITableRepository
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
     {
         var r = (IRevertable)oTableWrapperObject;
@@ -194,9 +195,15 @@ public abstract class TableRepository : ITableRepository
         };
     }
 
-    public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable => StillExists(typeof(T), id);
+    public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
+    {
+        return StillExists(typeof(T), id);
+    }
 
-    public bool StillExists(IMapsDirectlyToDatabaseTable o) => StillExists(o.GetType(), o.ID);
+    public bool StillExists(IMapsDirectlyToDatabaseTable o)
+    {
+        return StillExists(o.GetType(), o.ID);
+    }
 
     public bool StillExists(Type type, int id)
     {
@@ -209,20 +216,25 @@ public abstract class TableRepository : ITableRepository
     }
 
     /// <summary>
-    /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
+    ///     Get's all the objects of type T that have the parent 'parent' (which will be interrogated by its ID).  Note that
+    ///     for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="parent"></param>
     /// <returns></returns>
-    public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable =>
+    public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
+    {
         //no cached result so fallback on regular method
-        GetAllObjectsWhere<T>($"{parent.GetType().Name}_ID", parent.ID);
+        return GetAllObjectsWhere<T>($"{parent.GetType().Name}_ID", parent.ID);
+    }
 
-    public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable =>
-        typeof(T).IsInterface
+    public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
+    {
+        return typeof(T).IsInterface
             ? throw new Exception(
                 "GetObjectByID<T> requires a proper class not an interface so that it can access the correct table")
             : (T)GetObjectByID(typeof(T), id);
+    }
 
     public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
     {
@@ -241,7 +253,10 @@ public abstract class TableRepository : ITableRepository
         return ConstructEntity(type, r);
     }
 
-    public string Wrap(string name) => DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
+    public string Wrap(string name)
+    {
+        return DiscoveredServer.GetQuerySyntaxHelper().EnsureWrapped(name);
+    }
 
     protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
 
@@ -259,7 +274,10 @@ public abstract class TableRepository : ITableRepository
         }
     }
 
-    public virtual T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable => GetAllObjects<T>(null);
+    public virtual T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjects<T>(null);
+    }
 
     public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
     {
@@ -283,10 +301,15 @@ public abstract class TableRepository : ITableRepository
     }
 
     public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
-        where T : IMapsDirectlyToDatabaseTable => GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
+        where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
+    }
 
-    public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable =>
-        GetAllObjectsWhere<T>($"WHERE {property} = @val", new Dictionary<string, object> { { "@val", value1 } });
+    public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjectsWhere<T>($"WHERE {property} = @val", new Dictionary<string, object> { { "@val", value1 } });
+    }
 
     public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,
         object value2) where T : IMapsDirectlyToDatabaseTable
@@ -353,11 +376,15 @@ public abstract class TableRepository : ITableRepository
         return _updateCommandStore[type];
     }
 
-    public Version GetVersion() =>
-        DatabaseVersionProvider.GetVersionFromDatabase(DiscoveredServer.GetCurrentDatabase());
+    public Version GetVersion()
+    {
+        return DatabaseVersionProvider.GetVersionFromDatabase(DiscoveredServer.GetCurrentDatabase());
+    }
 
-    public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable =>
-        GetAllObjectsInIDList(typeof(T), ids).Cast<T>();
+    public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjectsInIDList(typeof(T), ids).Cast<T>();
+    }
 
     public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
     {
@@ -368,7 +395,7 @@ public abstract class TableRepository : ITableRepository
             : GetAllObjects(elementType, $" WHERE ID in ({inList})");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2)
     {
         if (obj1 == null && obj2 != null)
@@ -385,11 +412,14 @@ public abstract class TableRepository : ITableRepository
                obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
     }
 
-    /// <inheritdoc/>
-    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1) => obj1.GetType().GetHashCode() * obj1.ID;
+    /// <inheritdoc />
+    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
+    {
+        return obj1.GetType().GetHashCode() * obj1.ID;
+    }
 
     /// <summary>
-    /// Gets all public properties of the class that are not decorated with [<see cref="NoMappingToDatabase"/>]
+    ///     Gets all public properties of the class that are not decorated with [<see cref="NoMappingToDatabase" />]
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -398,7 +428,7 @@ public abstract class TableRepository : ITableRepository
         return type.GetProperties().Where(prop => !Attribute.IsDefined(prop, typeof(NoMappingToDatabase))).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable localCopy)
     {
         //get new copy out of database
@@ -421,7 +451,7 @@ public abstract class TableRepository : ITableRepository
             inject.ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable localCopy)
     {
         IMapsDirectlyToDatabaseTable dbCopy;
@@ -506,11 +536,16 @@ public abstract class TableRepository : ITableRepository
     }
 
     /// <summary>
-    /// Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It expects the query result set to include
-    /// a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a dbNullSubstition (which must also be of type
-    /// T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the returned list instead.
-    /// 
-    /// <para>IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into your select query </para>
+    ///     Runs the selectQuery (which must be a FULL QUERY) and uses @parameters for each of the kvps in the dictionary.  It
+    ///     expects the query result set to include
+    ///     a field which is named whatever your value in parameter columnWithObjectID is.  If you hate life you can pass a
+    ///     dbNullSubstition (which must also be of type
+    ///     T) in which case whenever a record in the result set is found with a DBNull in it, the substitute appears in the
+    ///     returned list instead.
+    ///     <para>
+    ///         IMPORTANT: Order is NOT PERSERVED by this method so don't bother trying to sneak an Order by command into
+    ///         your select query
+    ///     </para>
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="selectQuery"></param>
@@ -666,7 +701,7 @@ public abstract class TableRepository : ITableRepository
         Inserting?.Invoke(this, new IMapsDirectlyToDatabaseTableEventArgs(toCreate));
     }
 
-    private object ongoingConnectionsLock = new();
+    private readonly object ongoingConnectionsLock = new();
     private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new();
     private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new();
 
@@ -739,7 +774,7 @@ public abstract class TableRepository : ITableRepository
     }
 
     /// <summary>
-    /// True to commit, false to abandon
+    ///     True to commit, false to abandon
     /// </summary>
     /// <param name="commit"></param>
     public void EndTransactedConnection(bool commit)
@@ -768,12 +803,18 @@ public abstract class TableRepository : ITableRepository
         }
     }
 
-    public int? ObjectToNullableInt(object o) => o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
+    public int? ObjectToNullableInt(object o)
+    {
+        return o == null || o == DBNull.Value ? null : int.Parse(o.ToString());
+    }
 
-    public DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
+    public DateTime? ObjectToNullableDateTime(object o)
+    {
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
+    }
 
-    private Dictionary<Type, bool> _knownSupportedTypes = new();
-    private object oLockKnownTypes = new();
+    private readonly Dictionary<Type, bool> _knownSupportedTypes = new();
+    private readonly object oLockKnownTypes = new();
 
     public bool SupportsObjectType(Type type)
     {
@@ -837,7 +878,7 @@ public abstract class TableRepository : ITableRepository
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Type[] GetCompatibleTypes()
     {
         return
@@ -858,9 +899,11 @@ public abstract class TableRepository : ITableRepository
     }
 
     /// <summary>
-    /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
-    /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces.  Types are only
-    /// compatible if an accompanying <see cref="DiscoveredTable"/> exists in the database to store the objects.
+    ///     Returns True if the type is one for objects that are held in the database.  Types will come from your repository
+    ///     assembly
+    ///     and will include only <see cref="IMapsDirectlyToDatabaseTable" /> Types that are not abstract/interfaces.  Types
+    ///     are only
+    ///     compatible if an accompanying <see cref="DiscoveredTable" /> exists in the database to store the objects.
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -869,9 +912,15 @@ public abstract class TableRepository : ITableRepository
         return _tables.Value.Any(t => t.GetRuntimeName().Equals(type.Name));
     }
 
-    public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable => GetAllObjects<T>();
+    public virtual T[] GetAllObjectsNoCache<T>() where T : IMapsDirectlyToDatabaseTable
+    {
+        return GetAllObjects<T>();
+    }
 
-    public IDisposable BeginNewTransaction() => BeginNewTransactedConnection();
+    public IDisposable BeginNewTransaction()
+    {
+        return BeginNewTransactedConnection();
+    }
 
     public void EndTransaction(bool commit)
     {

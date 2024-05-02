@@ -18,10 +18,10 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds a new cohort set to <see cref="CohortAggregateContainer"/> (A UNION/INETERSECT/EXCEPT container).
-/// The cohort set will return all identifiers in the <see cref="ConcreteColumn.IsExtractionIdentifier"/>
-/// column of the dataset constrained by any <see cref="ConcreteFilter.IsMandatory"/> filters.  More filters
-/// can be added later to further restrict the identifiers matched.
+///     Adds a new cohort set to <see cref="CohortAggregateContainer" /> (A UNION/INETERSECT/EXCEPT container).
+///     The cohort set will return all identifiers in the <see cref="ConcreteColumn.IsExtractionIdentifier" />
+///     column of the dataset constrained by any <see cref="ConcreteFilter.IsMandatory" /> filters.  More filters
+///     can be added later to further restrict the identifiers matched.
 /// </summary>
 public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicCommandExecution
 {
@@ -101,8 +101,10 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
                 $"Catalogue {catalogueCombineable.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    }
 
     public override void Execute()
     {
@@ -112,11 +114,11 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : Basi
         if (_catalogueCombineable == null)
         {
             if (!BasicActivator.SelectObjects(new DialogArgs
-            {
-                WindowTitle = "Add Catalogue(s) to Container",
-                TaskDescription =
+                {
+                    WindowTitle = "Add Catalogue(s) to Container",
+                    TaskDescription =
                         $"Choose which Catalogues to add to the cohort container '{_targetCohortAggregateContainer.Name}'.  Catalogues must have at least one IsExtractionIdentifier column."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 // user didn't pick one
                 return;
 

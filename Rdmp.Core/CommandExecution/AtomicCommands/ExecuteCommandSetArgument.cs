@@ -15,7 +15,7 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Sets the value of a named parameter on an RDMP module e.g. <see cref="ProcessTask"/>
+///     Sets the value of a named parameter on an RDMP module e.g. <see cref="ProcessTask" />
 /// </summary>
 public class ExecuteCommandSetArgument : BasicCommandExecution
 {
@@ -33,7 +33,7 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
 
 
     /// <summary>
-    /// Interactive constructor that prompts for value at execution time
+    ///     Interactive constructor that prompts for value at execution time
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="arg"></param>
@@ -48,7 +48,7 @@ public class ExecuteCommandSetArgument : BasicCommandExecution
     }
 
     /// <summary>
-    /// Automatic/Unattended constructor, construction values will come from <paramref name="picker"/>
+    ///     Automatic/Unattended constructor, construction values will come from <paramref name="picker" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="picker"></param>

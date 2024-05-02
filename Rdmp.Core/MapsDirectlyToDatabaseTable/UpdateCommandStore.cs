@@ -14,15 +14,18 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
-/// 
-/// <para>Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is created for saving the object back to
-/// the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we might be saving lots of objects we cache
-/// the command so that we can apply it to all objects of that Type as they are saved.</para>
+///     Stores DbCommands for saving IMapsDirectlyToDatabaseTable objects to the database.
+///     <para>
+///         Each time a novel IMapsDirectlyToDatabaseTable object Type is encountered an UPDATE sql command (DbCommand) is
+///         created for saving the object back to
+///         the database (using DbCommandBuilder).  Since this operation (figuring out the UPDATE command) is slow and we
+///         might be saving lots of objects we cache
+///         the command so that we can apply it to all objects of that Type as they are saved.
+///     </para>
 /// </summary>
 public class UpdateCommandStore
 {
-    public Dictionary<Type, DbCommand> UpdateCommands { get; private set; }
+    public Dictionary<Type, DbCommand> UpdateCommands { get; }
 
     public UpdateCommandStore()
     {
@@ -52,8 +55,15 @@ public class UpdateCommandStore
         UpdateCommands.Add(o, command);
     }
 
-    public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate) => UpdateCommands.ContainsKey(toCreate.GetType());
-    public bool ContainsKey(Type toCreate) => UpdateCommands.ContainsKey(toCreate);
+    public bool ContainsKey(IMapsDirectlyToDatabaseTable toCreate)
+    {
+        return UpdateCommands.ContainsKey(toCreate.GetType());
+    }
+
+    public bool ContainsKey(Type toCreate)
+    {
+        return UpdateCommands.ContainsKey(toCreate);
+    }
 
     public void Clear()
     {

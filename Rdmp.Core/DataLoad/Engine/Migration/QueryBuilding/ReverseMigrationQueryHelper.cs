@@ -10,8 +10,9 @@ using System.Linq;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Reverse  of LiveMigrationQueryHelper.  Builds 'migration' query for updating STAGING to match LIVE when doing a backfill data load (See
-/// StagingBackfillMutilator).
+///     Reverse  of LiveMigrationQueryHelper.  Builds 'migration' query for updating STAGING to match LIVE when doing a
+///     backfill data load (See
+///     StagingBackfillMutilator).
 /// </summary>
 public class ReverseMigrationQueryHelper : MigrationQueryHelper
 {
@@ -25,6 +26,9 @@ public class ReverseMigrationQueryHelper : MigrationQueryHelper
             string.Format(destAlias + ".[" + col + "] = " + sourceAlias + ".[" + col + "]", col.GetRuntimeName())));
     }
 
-    public override string BuildInsertClause() => throw new NotImplementedException(
-        "Do not attempt to insert data into staging from live, this query helper is purely for updating the destination.");
+    public override string BuildInsertClause()
+    {
+        throw new NotImplementedException(
+            "Do not attempt to insert data into staging from live, this query helper is purely for updating the destination.");
+    }
 }

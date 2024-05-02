@@ -12,8 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-/// Checker for validating the anonymisation configuration of a TableInfo.  This includes iterating all columns which have ANOTables configured (See ANOTable)
-/// and checking that the database has the correct columns / datatypes etc).  Also checks the IdentifierDumper.
+///     Checker for validating the anonymisation configuration of a TableInfo.  This includes iterating all columns which
+///     have ANOTables configured (See ANOTable)
+///     and checking that the database has the correct columns / datatypes etc).  Also checks the IdentifierDumper.
 /// </summary>
 public class ANOTableInfoSynchronizer
 {

@@ -11,8 +11,9 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataQualityEngine.Data;
 
 /// <summary>
-/// Runtime class for DQE used to record the number of records passing/failing validation/null for a given column in a dataset.  These counts are incremented
-/// during the DQE evaluation process then finally saved into the ColumnState table in DQE database.
+///     Runtime class for DQE used to record the number of records passing/failing validation/null for a given column in a
+///     dataset.  These counts are incremented
+///     during the DQE evaluation process then finally saved into the ColumnState table in DQE database.
 /// </summary>
 public class ColumnState
 {
@@ -124,7 +125,7 @@ public class ColumnState
     }
 
     /// <summary>
-    /// Constructor for mocks and tests
+    ///     Constructor for mocks and tests
     /// </summary>
     protected ColumnState()
     {

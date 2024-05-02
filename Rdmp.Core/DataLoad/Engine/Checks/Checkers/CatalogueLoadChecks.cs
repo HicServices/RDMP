@@ -53,20 +53,20 @@ internal class CatalogueLoadChecks : ICheckable
         //there no catalogues
         if (catalogueMetadatas.Length == 0)
             notifier.OnCheckPerformed(new CheckEventArgs("There are no Catalogues associated with this metadata",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
 
         var tablesFound = new List<ITableInfo>();
 
         //check each catalogue is sufficiently configured to perform a migration
         foreach (var catalogue in catalogueMetadatas)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs($"Found Catalogue:{catalogue}", CheckResult.Success, null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Found Catalogue:{catalogue}", CheckResult.Success));
 
             var tableInfos = catalogue.GetTableInfoList(true).Distinct().ToArray();
 
             if (tableInfos.Length == 0)
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Catalogue {catalogue.Name} does not have any TableInfos", CheckResult.Fail, null));
+                    $"Catalogue {catalogue.Name} does not have any TableInfos", CheckResult.Fail));
 
             tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
         }
@@ -76,7 +76,7 @@ internal class CatalogueLoadChecks : ICheckable
         foreach (TableInfo regularTable in tablesFound)
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"About To check configuration of TableInfo:{regularTable}",
-                CheckResult.Success, null));
+                CheckResult.Success));
             CheckTableInfo(regularTable, notifier);
 
             //check anonymisation
@@ -165,7 +165,7 @@ internal class CatalogueLoadChecks : ICheckable
         if (tableInfoSynchronizer.Synchronize(notifier))
         {
             notifier.OnCheckPerformed(new CheckEventArgs($"TableInfo {tableInfo} passed Synchronization check",
-                CheckResult.Success, null)); //passed synchronization
+                CheckResult.Success)); //passed synchronization
         }
         else
         {
@@ -182,8 +182,8 @@ internal class CatalogueLoadChecks : ICheckable
 
                 if (!userFixed)
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"TableInfo {tableInfo} still failed Synchronization check", CheckResult.Fail,
-                        null)); //passed synchronization
+                        $"TableInfo {tableInfo} still failed Synchronization check",
+                        CheckResult.Fail)); //passed synchronization
             }
         }
     }
@@ -198,12 +198,12 @@ internal class CatalogueLoadChecks : ICheckable
         //confirm there are at least 1
         if (!columnInfos.Any())
             notifier.OnCheckPerformed(new CheckEventArgs($"TableInfo {tableInfo.Name} has no columninfos",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
 
 
         if (!columnInfosWhichArePrimaryKeys.Any())
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {tableInfo.Name} has no IsPrimaryKey columns", CheckResult.Fail, null));
+                $"TableInfo {tableInfo.Name} has no IsPrimaryKey columns", CheckResult.Fail));
 
         var primaryKeys = live.ExpectTable(tableInfo.GetRuntimeName(), tableInfo.Schema).DiscoverColumns()
             .Where(c => c.IsPrimaryKey).ToArray();
@@ -222,17 +222,17 @@ internal class CatalogueLoadChecks : ICheckable
         if (actualPks.Length != pksWeExpect.Length)
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Primary keys in Catalogue for database table {tableInfo.GetRuntimeName()} does not match Catalogue entry (difference in number of keys)",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
         else
             for (var i = 0; i < pksWeExpect.Length; i++)
                 if (!pksWeExpect[i].Equals(actualPks[i]))
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Mismatch between primary key defined in Catalogue {pksWeExpect[i]} and one found in live table {tableInfo.GetRuntimeName()}",
-                        CheckResult.Fail, null));
+                        CheckResult.Fail));
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"Found primary key {pksWeExpect[i]} in LIVE table {tableInfo.GetRuntimeName()}",
-                        CheckResult.Success, null));
+                        CheckResult.Success));
     }
 
     private static void CheckTriggerIntact(DiscoveredTable table, ICheckNotifier notifier,
@@ -256,12 +256,12 @@ internal class CatalogueLoadChecks : ICheckable
                 continue;
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Column {missingColumn} is missing from STAGING", CheckResult.Fail, null));
+                    $"Column {missingColumn} is missing from STAGING", CheckResult.Fail));
 
         //in STAGING but not LIVE
         foreach (var missingColumn in stagingCols.Except(liveCols))
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Column {missingColumn} is in STAGING but not LIVE", CheckResult.Fail, null));
+                $"Column {missingColumn} is in STAGING but not LIVE", CheckResult.Fail));
 
 
         if (requireSameNumberAndOrder)
@@ -271,18 +271,18 @@ internal class CatalogueLoadChecks : ICheckable
             if (stagingCols.Length != liveCols.Length)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Column count mismatch between staging and live in table {tableName}", CheckResult.Fail, null));
+                    $"Column count mismatch between staging and live in table {tableName}", CheckResult.Fail));
                 passedColumnOrderCheck = false;
             }
             else
-            //check they are in the same order
+                //check they are in the same order
             {
                 for (var i = 0; i < stagingCols.Length; i++)
                     if (!stagingCols[i].Equals(liveCols[i]))
                     {
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Column name/order mismatch between staging and live in table {tableName}, column {i} is {stagingCols[i]} in staging but is {liveCols[i]} in live.",
-                            CheckResult.Fail, null));
+                            CheckResult.Fail));
                         passedColumnOrderCheck = false;
                         break;
                     }
@@ -290,8 +290,8 @@ internal class CatalogueLoadChecks : ICheckable
 
             if (passedColumnOrderCheck)
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Column order match confirmed between staging and live on table {tableName}", CheckResult.Success,
-                    null));
+                    $"Column order match confirmed between staging and live on table {tableName}",
+                    CheckResult.Success));
         }
     }
 
@@ -305,7 +305,7 @@ internal class CatalogueLoadChecks : ICheckable
                 NoBackupTrigger = _loadMetadata.IgnoreTrigger
             });
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success, null));
+                $"TableInfo {liveTable} passed {nameof(MigrationColumnSet)} check ", CheckResult.Success));
         }
         catch (Exception e)
         {
@@ -319,15 +319,15 @@ internal class CatalogueLoadChecks : ICheckable
             if (!SpecialFieldNames.IsHicPrefixed(col) && col.IsAutoIncrement) //must start hic_ if they are identities
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Column {col} is an identity column in the LIVE database but does not start with hic_",
-                    CheckResult.Fail, null)); //this one does not
+                    CheckResult.Fail)); //this one does not
 
         //staging columns
         foreach (var col in stagingCols) //staging columns
             if (col.IsAutoIncrement) //if there are any auto increments
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Column {col} is an identity column and is in STAGING, the identity flag must be removed from the STAGING table",
-                    CheckResult.Fail,
-                    null)); //complain since don't want a mismatch between IDs in staging and live or complaints about identity insert from SQL server
+                    CheckResult
+                        .Fail)); //complain since don't want a mismatch between IDs in staging and live or complaints about identity insert from SQL server
 
         //staging must allow null dataloadrunids and validfroms
         ConfirmNullability(stagingTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID), true, notifier);
@@ -342,7 +342,7 @@ internal class CatalogueLoadChecks : ICheckable
         var nullability = column.AllowNulls;
         notifier.OnCheckPerformed(new CheckEventArgs(
             $"Nullability of {column} is AllowNulls={nullability}, (expected {expectedNullability})",
-            nullability == expectedNullability ? CheckResult.Success : CheckResult.Fail, null));
+            nullability == expectedNullability ? CheckResult.Success : CheckResult.Fail));
     }
 
     #endregion

@@ -28,15 +28,17 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.
+///     <see cref="IRunner" /> for the Data Load Engine.  Supports both check and execute commands.
 /// </summary>
 public class DleRunner : Runner
 {
     private readonly DleOptions _options;
+
     public DleRunner(DleOptions options)
     {
         _options = options;
     }
+
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
         ICheckNotifier checkNotifier, GracefulCancellationToken token)
     {
@@ -87,7 +89,7 @@ public class DleRunner : Runner
                     var jobDateFactory = new JobDateGenerationStrategyFactory(whichLoadProgress);
 
                     dataLoadProcess = _options.Iterative
-                        ? (IDataLoadProcess)new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable,
+                        ? new IterativeScheduledDataLoadProcess(locator, loadMetadata, checkable,
                             execution, jobDateFactory, whichLoadProgress, _options.DaysToLoad, logManager, listener,
                             databaseConfiguration)
                         : new SingleJobScheduledDataLoadProcess(locator, loadMetadata, checkable, execution,
@@ -95,7 +97,7 @@ public class DleRunner : Runner
                             databaseConfiguration);
                 }
                 else
-                //OnDemand
+                    //OnDemand
                 {
                     dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener,
                         execution, databaseConfiguration);
@@ -109,28 +111,31 @@ public class DleRunner : Runner
                     //Store the date of the last successful load
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
-                    List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
+                    var processTasks = loadMetadata.ProcessTasks.Where(ipt =>
+                        ipt.Path == typeof(RemoteDatabaseAttacher).FullName ||
+                        ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
                     if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
-                    {
                         foreach (IEnumerable<Argument> arguments in processTasks.Select(task => task.GetAllArguments()))
+                        foreach (var argument in arguments.Where(arg =>
+                                     arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") &&
+                                     arg.Value is not null))
                         {
-                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
+                            var scanForwardDate = arguments.Where(a =>
+                                a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
+                            var arg = (ProcessTaskArgument)argument;
+                            arg.Value = DateTime.Parse(argument.Value).AddDays(int.Parse(scanForwardDate.Value))
+                                .ToString();
+                            if (arguments.Where(a =>
+                                    a.Name == RemoteAttacherPropertiesValidator(
+                                        "SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
                             {
-                                var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
-                                var arg = (ProcessTaskArgument)argument;
-                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
-                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
-                                {
-                                    var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
-                                    if (mostRecentValue is not null)
-                                    {
-                                        arg.Value = DateTime.Parse(mostRecentValue).ToString();
-                                    }
-                                }
-                                arg.SaveToDatabase();
+                                var mostRecentValue = arguments.Single(a =>
+                                    a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
+                                if (mostRecentValue is not null) arg.Value = DateTime.Parse(mostRecentValue).ToString();
                             }
+
+                            arg.SaveToDatabase();
                         }
-                    }
                 }
 
                 //return 0 for success or load not required otherwise return the exit code (which will be non zero so error)
@@ -149,11 +154,8 @@ public class DleRunner : Runner
     {
         var properties = typeof(RemoteAttacher).GetProperties();
         var foundProperties = properties.Where(p => p.Name == propertyName);
-        if (foundProperties.Any())
-        {
-            return foundProperties.First().Name;
-        }
-        throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
-
+        if (foundProperties.Any()) return foundProperties.First().Name;
+        throw new Exception(
+            $"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
     }
 }

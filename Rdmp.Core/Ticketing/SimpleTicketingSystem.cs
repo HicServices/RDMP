@@ -12,9 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Ticketing;
 
 /// <summary>
-/// Simple implementation of an RDMP ticketing system.  Opens a browser
-/// at the Url + ticket name.  Has no validation restrictions based on
-/// ticket states.
+///     Simple implementation of an RDMP ticketing system.  Opens a browser
+///     at the Url + ticket name.  Has no validation restrictions based on
+///     ticket states.
 /// </summary>
 public class SimpleTicketingSystem : ICheckable, ITicketingSystem
 {
@@ -30,12 +30,13 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     public void Check(ICheckNotifier notifier)
     {
         // all ticket names are valid
-        return;
     }
 
-    public bool IsValidTicketName(string ticketName) =>
+    public bool IsValidTicketName(string ticketName)
+    {
         // all ticket names are valid
-        true;
+        return true;
+    }
 
     public void NavigateToTicket(string ticketName)
     {
@@ -54,6 +55,8 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
         return TicketingReleaseabilityEvaluation.Releaseable;
     }
 
-    public string GetProjectFolderName(string masterTicket) =>
-        UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
+    public string GetProjectFolderName(string masterTicket)
+    {
+        return UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
+    }
 }

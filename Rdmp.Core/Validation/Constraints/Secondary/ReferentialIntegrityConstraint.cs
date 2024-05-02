@@ -19,9 +19,11 @@ using Rdmp.Core.Validation.UIAttributes;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Specifies that values in the column must (or must not - see InvertLogic) appear in another column.  This lets you have a database table which contains a
-/// always allowed (or forbidden) of expected values.  This is particularly useful if you want to create a Lookup table but you don't want to create a constraint
-/// at database level because you expect dirty data and don't want to crash the data load.
+///     Specifies that values in the column must (or must not - see InvertLogic) appear in another column.  This lets you
+///     have a database table which contains a
+///     always allowed (or forbidden) of expected values.  This is particularly useful if you want to create a Lookup table
+///     but you don't want to create a constraint
+///     at database level because you expect dirty data and don't want to crash the data load.
 /// </summary>
 public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
 {
@@ -62,7 +64,7 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     }
 
     /// <summary>
-    /// Only for XmlSerializer, do not use otherwise
+    ///     Only for XmlSerializer, do not use otherwise
     /// </summary>
     public ReferentialIntegrityConstraint()
     {
@@ -100,7 +102,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     }
 
     /// <summary>
-    /// The first call to this will load all values from the validation column, which may take an appreciable amount of time for large datasets (such as when validating against CHI).
+    ///     The first call to this will load all values from the validation column, which may take an appreciable amount of
+    ///     time for large datasets (such as when validating against CHI).
     /// </summary>
     /// <param name="value"></param>
     /// <param name="otherColumns"></param>
@@ -199,7 +202,8 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
     }
 
     /// <summary>
-    /// Loads the entire (distinct) contents of the validation column into a hashset. This operation will take some time for very large datasets, e.g. validating against CHI, so be careful when calling.
+    ///     Loads the entire (distinct) contents of the validation column into a hashset. This operation will take some time
+    ///     for very large datasets, e.g. validating against CHI, so be careful when calling.
     /// </summary>
     private void GetUniqueValues()
     {
@@ -242,8 +246,10 @@ public class ReferentialIntegrityConstraint : SecondaryConstraint, ICheckable
         }
     }
 
-    private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo) =>
-        DataAccessPortal
+    private static DbConnection GetConnectionToOtherTable(IDataAccessPoint tableInfo)
+    {
+        return DataAccessPortal
             .ExpectServer(tableInfo, DataAccessContext.InternalDataProcessing)
             .GetConnection();
+    }
 }

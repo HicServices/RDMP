@@ -10,9 +10,9 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// Makes <see cref="LoadMetadata"/> objects draggable.  Cache any relevant slow to fetch
-/// info here so that it is available for rapid query as user waves it around over
-/// potential drop targets
+///     Makes <see cref="LoadMetadata" /> objects draggable.  Cache any relevant slow to fetch
+///     info here so that it is available for rapid query as user waves it around over
+///     potential drop targets
 /// </summary>
 public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
@@ -25,5 +25,8 @@ public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombinea
         LoadMetadata = lmd;
     }
 
-    public string GetSqlString() => "";
+    public string GetSqlString()
+    {
+        return "";
+    }
 }

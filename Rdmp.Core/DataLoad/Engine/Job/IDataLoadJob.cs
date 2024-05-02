@@ -17,8 +17,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration (LoadMetadata), Logging object (DataLoadInfo),
-/// file system (LoadDirectory) etc.
+///     Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration
+///     (LoadMetadata), Logging object (DataLoadInfo),
+///     file system (LoadDirectory) etc.
 /// </summary>
 public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
 {
@@ -30,15 +31,17 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     string ArchiveFilepath { get; }
 
     /// <summary>
-    /// Optional externally provided object to drive the data load.  For example if you have an explicit list of objects in memory to process and
-    /// a custom Attacher which expects to be magically provided with this list then communicate the list to the Attacher via this property.
+    ///     Optional externally provided object to drive the data load.  For example if you have an explicit list of objects in
+    ///     memory to process and
+    ///     a custom Attacher which expects to be magically provided with this list then communicate the list to the Attacher
+    ///     via this property.
     /// </summary>
     object Payload { get; set; }
 
     /// <summary>
-    /// Collection of all calls to <see cref="CrashAtEnd"/>.  If there are any
-    /// of these at the end of the load they will be notified and a crash exit code will be
-    /// returned (but otherwise the load will complete normally).
+    ///     Collection of all calls to <see cref="CrashAtEnd" />.  If there are any
+    ///     of these at the end of the load they will be notified and a crash exit code will be
+    ///     returned (but otherwise the load will complete normally).
     /// </summary>
     IReadOnlyCollection<NotifyEventArgs> CrashAtEndMessages { get; }
 
@@ -53,13 +56,14 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     HICDatabaseConfiguration Configuration { get; }
 
     /// <summary>
-    /// True to automatically skip creating/dropping the RAW database
+    ///     True to automatically skip creating/dropping the RAW database
     /// </summary>
     bool PersistentRaw { get; set; }
 
     /// <summary>
-    /// Orders the job to create the tables it requires in the given stage (e.g. RAW/STAGING), the job will also take ownership of the cloner for the purposes
-    /// of disposal (DO NOT DISPOSE OF CLONER YOURSELF)
+    ///     Orders the job to create the tables it requires in the given stage (e.g. RAW/STAGING), the job will also take
+    ///     ownership of the cloner for the purposes
+    ///     of disposal (DO NOT DISPOSE OF CLONER YOURSELF)
     /// </summary>
     /// <param name="cloner"></param>
     /// <param name="stage"></param>
@@ -68,16 +72,16 @@ public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     void PushForDisposal(IDisposeAfterDataLoad disposeable);
 
     /// <summary>
-    /// Returns all <see cref="ColumnInfo"/> in <see cref="RegularTablesToLoad "/> and <see cref="LookupTablesToLoad"/>
+    ///     Returns all <see cref="ColumnInfo" /> in <see cref="RegularTablesToLoad " /> and <see cref="LookupTablesToLoad" />
     /// </summary>
     /// <returns></returns>
     ColumnInfo[] GetAllColumns();
 
     /// <summary>
-    /// Call you see that something has gone horribly wrong but want to keep going
-    /// with the load anyway.  Once the load has been completed these will crash
-    /// the process and result in a non 0 exit code.  Archiving and postload operations
-    /// will still occur.
+    ///     Call you see that something has gone horribly wrong but want to keep going
+    ///     with the load anyway.  Once the load has been completed these will crash
+    ///     the process and result in a non 0 exit code.  Archiving and postload operations
+    ///     will still occur.
     /// </summary>
     /// <param name="because"></param>
     void CrashAtEnd(NotifyEventArgs because);

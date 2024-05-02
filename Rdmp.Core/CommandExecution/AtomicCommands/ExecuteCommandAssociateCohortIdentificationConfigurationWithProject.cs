@@ -32,8 +32,11 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
             .GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
     }
 
-    public override string GetCommandHelp() =>
-        "Specifies that the Cohort Identification Configuration (query) is only for use generating cohorts for extractions of the specified project";
+    public override string GetCommandHelp()
+    {
+        return
+            "Specifies that the Cohort Identification Configuration (query) is only for use generating cohorts for extractions of the specified project";
+    }
 
     public override void Execute()
     {
@@ -89,13 +92,15 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
         Emphasise(_cic);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
         //if we know the cic the context is 'pick a project'
-        _cic != null
+        return _cic != null
             ? iconProvider.GetImage(RDMPConcept.Project, OverlayKind.Add)
             :
             //if we know the _project the context is 'pick a cic'  (or if we don't know either then just use this icon too)
             iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

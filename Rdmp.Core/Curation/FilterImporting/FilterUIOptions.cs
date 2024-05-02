@@ -10,7 +10,7 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Determines which parameters should be presented and which tables are available for autocomplete etc.
+///     Determines which parameters should be presented and which tables are available for autocomplete etc.
 /// </summary>
 public abstract class FilterUIOptions
 {

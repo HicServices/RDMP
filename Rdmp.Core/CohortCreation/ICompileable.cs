@@ -15,8 +15,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation;
 
 /// <summary>
-/// A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a CohortCompiler and will be
-/// given the results of the execution (CohortIdentificationTaskExecution).
+///     A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a
+///     CohortCompiler and will be
+///     given the results of the execution (CohortIdentificationTaskExecution).
 /// </summary>
 public interface ICompileable : IOrderable
 {

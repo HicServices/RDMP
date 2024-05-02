@@ -11,7 +11,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 
 /// <summary>
-/// Provides overlay and basic icons for all DatabaseTypes
+///     Provides overlay and basic icons for all DatabaseTypes
 /// </summary>
 public class DatabaseTypeIconProvider
 {

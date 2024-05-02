@@ -11,12 +11,19 @@ using System.IO;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-/// Checks whether two DirectoryInfo objects are the same based on FullName
+///     Checks whether two DirectoryInfo objects are the same based on FullName
 /// </summary>
 internal sealed class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
 {
-    public bool Equals(DirectoryInfo x, DirectoryInfo y) => ReferenceEquals(x, y) || x?.FullName == y?.FullName;
-    public int GetHashCode(DirectoryInfo obj) => obj.FullName.GetHashCode();
+    public bool Equals(DirectoryInfo x, DirectoryInfo y)
+    {
+        return ReferenceEquals(x, y) || x?.FullName == y?.FullName;
+    }
+
+    public int GetHashCode(DirectoryInfo obj)
+    {
+        return obj.FullName.GetHashCode();
+    }
 }
 
 internal static class DirectoryInfoExtensions

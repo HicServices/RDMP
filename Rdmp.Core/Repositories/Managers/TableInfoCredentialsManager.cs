@@ -16,11 +16,12 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials
-/// called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then have a seperate DataAccessCredentials called
-/// 'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
-/// 
-/// <para></para>
+///     Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context
+///     X).  For example you might have a DataAccessCredentials
+///     called 'RoutineLoaderAccount' and give tables A,B and C permission to use it under DataAccessContext.DataLoad then
+///     have a seperate DataAccessCredentials called
+///     'ReadonlyUserAccount' and give tables A,B,C and D permission to use it under DataAccessContext.Any
+///     <para></para>
 /// </summary>
 internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
 {
@@ -33,7 +34,8 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     //Cannot query Find all links between [collection of access points] and [collection of credentials] yet (probably never need to do this)
 
     /// <summary>
-    /// Creates a new helper class instance for writing/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
+    ///     Creates a new helper class instance for writing/deleting credential usages for <see cref="TableInfo" /> objects in
+    ///     the <paramref name="repository" />
     /// </summary>
     /// <param name="repository"></param>
     public TableInfoCredentialsManager(CatalogueRepository repository)
@@ -42,7 +44,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void CreateLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
         using (var con = _repository.GetConnection())
@@ -64,7 +66,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         tableInfo.ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void BreakLinkBetween(DataAccessCredentials credentials, ITableInfo tableInfo, DataAccessContext context)
     {
         _repository.Delete(
@@ -79,7 +81,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         tableInfo.ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void BreakAllLinksBetween(DataAccessCredentials credentials, ITableInfo tableInfo)
     {
         _repository.Delete(
@@ -91,7 +93,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
             }, false);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DataAccessCredentials GetCredentialsIfExistsFor(ITableInfo tableInfo, DataAccessContext context)
     {
         var toReturn = -1;
@@ -126,7 +128,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo)
     {
         Dictionary<DataAccessContext, int> toReturn;
@@ -146,7 +148,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
         DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)
     {
@@ -184,7 +186,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return toReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Dictionary<DataAccessContext, List<ITableInfo>> GetAllTablesUsingCredentials(
         DataAccessCredentials credentials)
     {
@@ -221,7 +223,8 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
     }
 
     /// <summary>
-    /// Helper that returns 1-M results (where there is only one originating TableInfo, if there are more than 1 table info in your SQL query you will get key collisions)
+    ///     Helper that returns 1-M results (where there is only one originating TableInfo, if there are more than 1 table info
+    ///     in your SQL query you will get key collisions)
     /// </summary>
     /// <param name="r"></param>
     /// <returns></returns>
@@ -243,7 +246,7 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return toReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
     {
         //see if we already have a record of this user
@@ -271,9 +274,11 @@ internal class TableInfoCredentialsManager : ITableInfoCredentialsManager
         return null;
     }
 
-    private static DataAccessContext GetContext(DbDataReader r) =>
+    private static DataAccessContext GetContext(DbDataReader r)
+    {
         //if it's not a valid context something has gone very wrong
-        !Enum.TryParse((string)r["Context"], out DataAccessContext context)
+        return !Enum.TryParse((string)r["Context"], out DataAccessContext context)
             ? throw new Exception($"Invalid DataAccessContext {r["Context"]}")
             : context;
+    }
 }

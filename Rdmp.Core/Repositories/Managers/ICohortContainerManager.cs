@@ -10,25 +10,29 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
+///     Manages information about what set containers / subcontainers exist under a
+///     <see cref="CohortIdentificationConfiguration" />
 /// </summary>
 public interface ICohortContainerManager
 {
     /// <summary>
-    /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
-    /// (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a <see cref="CohortAggregateContainer"/>.
+    ///     If the AggregateConfiguration is set up as a cohort identification set in a
+    ///     <see cref="CohortIdentificationConfiguration" /> then this method will return the set container
+    ///     (e.g. UNION / INTERSECT / EXCEPT) that it is in.  Returns null if it is not in a
+    ///     <see cref="CohortAggregateContainer" />.
     /// </summary>
     /// <returns></returns>
     CohortAggregateContainer GetParent(AggregateConfiguration child);
 
     /// <summary>
-    /// Gets the parent container of the current container (if it is not a root / orphan container)
+    ///     Gets the parent container of the current container (if it is not a root / orphan container)
     /// </summary>
     /// <returns></returns>
     CohortAggregateContainer GetParent(CohortAggregateContainer child);
 
     /// <summary>
-    /// Makes the configuration a member of the given container with the given <paramref name="order"/> relative to other things (if any) in the container.
+    ///     Makes the configuration a member of the given container with the given <paramref name="order" /> relative to other
+    ///     things (if any) in the container.
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="child"></param>
@@ -36,41 +40,43 @@ public interface ICohortContainerManager
     void Add(CohortAggregateContainer parent, AggregateConfiguration child, int order);
 
     /// <summary>
-    /// Removes the <paramref name="child"/> configuration from the given container (to which it must belong already)
+    ///     Removes the <paramref name="child" /> configuration from the given container (to which it must belong already)
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="child"></param>
     void Remove(CohortAggregateContainer parent, AggregateConfiguration child);
 
     /// <summary>
-    /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
+    ///     If the configuration is part of any aggregate container anywhere this method will return the order within that
+    ///     container
     /// </summary>
     /// <param name="configuration"></param>
     /// <returns></returns>
     int? GetOrderIfExistsFor(AggregateConfiguration configuration);
 
     /// <summary>
-    /// Gets all the subcontainers of the current container (if any)
+    ///     Gets all the subcontainers of the current container (if any)
     /// </summary>
     /// <returns></returns>
     IOrderable[] GetChildren(CohortAggregateContainer parent);
 
     /// <summary>
-    /// Removes the given <paramref name="child"/> container from its host parent container
+    ///     Removes the given <paramref name="child" /> container from its host parent container
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="child"></param>
     void Remove(CohortAggregateContainer parent, CohortAggregateContainer child);
 
     /// <summary>
-    /// Reorders the <paramref name="child"/> to appear in the new location within its parent container (relative to other things in the container).
+    ///     Reorders the <paramref name="child" /> to appear in the new location within its parent container (relative to other
+    ///     things in the container).
     /// </summary>
     /// <param name="child"></param>
     /// <param name="newOrder"></param>
     void SetOrder(AggregateConfiguration child, int newOrder);
 
     /// <summary>
-    /// Adds the given <paramref name="child"/> to the <paramref name="parent"/> container.
+    ///     Adds the given <paramref name="child" /> to the <paramref name="parent" /> container.
     /// </summary>
     /// <param name="parent"></param>
     /// <param name="child"></param>

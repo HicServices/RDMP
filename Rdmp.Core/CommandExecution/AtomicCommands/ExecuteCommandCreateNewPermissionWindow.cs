@@ -11,7 +11,6 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IAtomicCommandWithTarget
@@ -22,10 +21,15 @@ public class ExecuteCommandCreateNewPermissionWindow : BasicCommandExecution, IA
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Add);
+    }
 
-    public override string GetCommandHelp() => "Creates a new time window restriction on when loads can occur";
+    public override string GetCommandHelp()
+    {
+        return "Creates a new time window restriction on when loads can occur";
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

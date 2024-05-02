@@ -19,30 +19,38 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Pointer to the Data Export Repository database in which all export related DatabaseEntities are stored (e.g. ExtractionConfiguration).  Every DatabaseEntity class must exist in a
-/// Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository (i.e. the database that contains the
-/// table matching their name).
-/// 
-/// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Data Export database.  This includes extraction
-/// Projects, ExtractionConfigurations, ExtractableCohorts etc.</para>
-/// 
-/// <para>Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to a specific CatalogueRepository database (i.e. there are
-/// IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the CatalogueRepository property to fetch/create objects
-/// in the paired Catalogue database.</para>
+///     Pointer to the Data Export Repository database in which all export related DatabaseEntities are stored (e.g.
+///     ExtractionConfiguration).  Every DatabaseEntity class must exist in a
+///     Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of
+///     TableRepository (i.e. the database that contains the
+///     table matching their name).
+///     <para>
+///         This class allows you to fetch objects and should be passed into constructors of classes you want to construct
+///         in the Data Export database.  This includes extraction
+///         Projects, ExtractionConfigurations, ExtractableCohorts etc.
+///     </para>
+///     <para>
+///         Data Export databases are only valid when you have a CatalogueRepository database too and are always paired to
+///         a specific CatalogueRepository database (i.e. there are
+///         IDs in the data export database that specifically map to objects in the Catalogue database).  You can use the
+///         CatalogueRepository property to fetch/create objects
+///         in the paired Catalogue database.
+///     </para>
 /// </summary>
 public class DataExportRepository : TableRepository, IDataExportRepository
 {
     /// <summary>
-    /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
-    /// contain references to objects in the CatalogueRepository.
+    ///     The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).
+    ///     Some objects in this database
+    ///     contain references to objects in the CatalogueRepository.
     /// </summary>
-    public ICatalogueRepository CatalogueRepository { get; private set; }
+    public ICatalogueRepository CatalogueRepository { get; }
 
-    public IFilterManager FilterManager { get; private set; }
+    public IFilterManager FilterManager { get; }
 
-    public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+    public IDataExportPropertyManager DataExportPropertyManager { get; }
 
-    private Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
+    private readonly Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
     public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) :
         base(null, connectionString)
@@ -84,16 +92,20 @@ public class DataExportRepository : TableRepository, IDataExportRepository
     }
 
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(
-        IExtractionConfiguration configuration, IExtractableDataSet dataset) =>
-        GetAllObjects<CumulativeExtractionResults>(
+        IExtractionConfiguration configuration, IExtractableDataSet dataset)
+    {
+        return GetAllObjects<CumulativeExtractionResults>(
             $"WHERE ExtractionConfiguration_ID={configuration.ID}AND ExtractableDataSet_ID={dataset.ID}");
+    }
 
     private readonly ObjectConstructor _constructor = new();
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
-        Constructors.TryGetValue(t, out var constructor)
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
+    {
+        return Constructors.TryGetValue(t, out var constructor)
             ? constructor(this, reader)
             : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<IDataExportRepository>(t, this, reader);
+    }
 
     public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
     {
@@ -101,8 +113,9 @@ public class DataExportRepository : TableRepository, IDataExportRepository
         return eds == null ? new CatalogueExtractabilityStatus(false, false) : eds.GetCatalogueExtractabilityStatus();
     }
 
-    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers() =>
-        SelectAll<SelectedDataSets>(@"
+    public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+    {
+        return SelectAll<SelectedDataSets>(@"
 SELECT ID  FROM SelectedDataSets sds
 where not exists (
 select 1 FROM ExtractableColumn ec where 
@@ -112,6 +125,7 @@ ec.IsExtractionIdentifier = 1
 AND
 ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 )", "ID").ToArray();
+    }
 
     private readonly Dictionary<Type, IRowVerCache> _caches = new();
 
@@ -123,10 +137,13 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
         return _caches[typeof(T)].GetAllObjects<T>();
     }
 
-    public override T[] GetAllObjectsNoCache<T>() => base.GetAllObjects<T>();
+    public override T[] GetAllObjectsNoCache<T>()
+    {
+        return base.GetAllObjects<T>();
+    }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
     {
         //we know of no children
@@ -165,12 +182,11 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
     }
 
     /// <summary>
-    /// Adds the given <paramref name="dataSet"/> to the <paramref name="package"/> and updates the cached package contents
-    /// in memory.
-    /// 
-    /// <para>This change is immediately written to the database</para>
-    ///
-    ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is already part of the package</para>
+    ///     Adds the given <paramref name="dataSet" /> to the <paramref name="package" /> and updates the cached package
+    ///     contents
+    ///     in memory.
+    ///     <para>This change is immediately written to the database</para>
+    ///     <para>Throws ArgumentException if the <paramref name="dataSet" /> is already part of the package</para>
     /// </summary>
     /// <param name="package"></param>
     /// <param name="dataSet"></param>
@@ -199,12 +215,11 @@ ec.ExtractionConfiguration_ID = sds.ExtractionConfiguration_ID
 
 
     /// <summary>
-    /// Removes the given <paramref name="dataSet"/> from the <paramref name="package"/> and updates the cached package contents
-    /// in memory.
-    /// 
-    /// <para>This change is immediately written to the database</para>
-    ///
-    ///  <para>Throws ArgumentException if the <paramref name="dataSet"/> is not part of the package</para>
+    ///     Removes the given <paramref name="dataSet" /> from the <paramref name="package" /> and updates the cached package
+    ///     contents
+    ///     in memory.
+    ///     <para>This change is immediately written to the database</para>
+    ///     <para>Throws ArgumentException if the <paramref name="dataSet" /> is not part of the package</para>
     /// </summary>
     /// <param name="package"></param>
     /// <param name="dataSet"></param>

@@ -20,9 +20,15 @@ public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAto
     {
     }
 
-    public override string GetCommandHelp() => "Generates the execute command line invocation (including arguments)";
+    public override string GetCommandHelp()
+    {
+        return "Generates the execute command line invocation (including arguments)";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Clipboard);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Clipboard);
+    }
 
     public override void Execute()
     {

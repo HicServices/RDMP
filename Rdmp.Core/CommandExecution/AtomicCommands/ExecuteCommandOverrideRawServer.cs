@@ -18,7 +18,7 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
 {
     private readonly LoadMetadata _loadMetadata;
     private ExternalDatabaseServer _server;
-    private ExternalDatabaseServer[] _available;
+    private readonly ExternalDatabaseServer[] _available;
 
     public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
@@ -49,8 +49,10 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
         Publish(_loadMetadata);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Link);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

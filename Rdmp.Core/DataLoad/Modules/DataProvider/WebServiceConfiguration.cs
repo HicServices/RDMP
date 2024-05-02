@@ -16,15 +16,16 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
 /// <summary>
-/// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]
-/// property on a component (e.g. IAttacher) which is a remote website/webservice.
+///     Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this
+///     Type when you need a [DemandsInitialization]
+///     property on a component (e.g. IAttacher) which is a remote website/webservice.
 /// </summary>
 public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
 {
-    private ICatalogueRepository _repository;
+    private readonly ICatalogueRepository _repository;
 
     /// <summary>
-    /// For XML Serialization
+    ///     For XML Serialization
     /// </summary>
     private WebServiceConfiguration()
     {
@@ -81,8 +82,10 @@ public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenCla
         return sb.ToString();
     }
 
-    public bool IsValid() =>
-        !string.IsNullOrWhiteSpace(Endpoint) &&
-        !string.IsNullOrWhiteSpace(Username) &&
-        !string.IsNullOrWhiteSpace(Password);
+    public bool IsValid()
+    {
+        return !string.IsNullOrWhiteSpace(Endpoint) &&
+               !string.IsNullOrWhiteSpace(Username) &&
+               !string.IsNullOrWhiteSpace(Password);
+    }
 }

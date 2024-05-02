@@ -42,8 +42,11 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
     {
         _loadMetadata = loadMetadata;
 
-        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID).Select(l => l.CatalogueID);
-        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues.Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
+        var cataloguesAlreadyUsedByLoadMetadata = _loadMetadata.CatalogueRepository
+            .GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID)
+            .Select(l => l.CatalogueID);
+        _availableCatalogues = BasicActivator.CoreChildProvider.AllCatalogues
+            .Where(c => !cataloguesAlreadyUsedByLoadMetadata.Contains(c.ID)).ToArray();
         //Ensure logging task is correct
         _otherCatalogues = _loadMetadata.GetAllCatalogues().ToArray();
 
@@ -51,8 +54,11 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
             SetImpossible("There are no Catalogues that are not associated with another Load already");
     }
 
-    public override string GetCommandHelp() =>
-        "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";
+    public override string GetCommandHelp()
+    {
+        return
+            "Specifies that the table(s) underlying the dataset are loaded by the load configuration.  The union of all catalogue(s) table(s) will be used for RAW=>STAGING=>LIVE migration during DLE execution";
+    }
 
     public override void Execute()
     {
@@ -98,6 +104,7 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
                     cata.LoggingDataTask = $"Loading {_loadMetadata.Name}";
                 }
             }
+
             cata.SaveToDatabase();
             //associate them
             _loadMetadata.LinkToCatalogue(cata);
@@ -106,8 +113,10 @@ public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExec
         Publish(_loadMetadata);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    }
 
     public ICommandExecution SetTarget(Catalogue[] catalogues)
     {

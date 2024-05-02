@@ -27,10 +27,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.FTP;
 
 /// <summary>
-/// load component which downloads files from a remote FTP server to the ForLoading directory
-/// 
-/// <para>Attempts to connect to the FTP server and download all files in the landing folder of the FTP (make sure you really want everything in the
-///  root folder - if not then configure redirection on the FTP, so you land in the correct directory).  Files are downloaded into the ForLoading folder</para>
+///     load component which downloads files from a remote FTP server to the ForLoading directory
+///     <para>
+///         Attempts to connect to the FTP server and download all files in the landing folder of the FTP (make sure you
+///         really want everything in the
+///         root folder - if not then configure redirection on the FTP, so you land in the correct directory).  Files are
+///         downloaded into the ForLoading folder
+///     </para>
 /// </summary>
 public class FTPDownloader : IPluginDataProvider
 {
@@ -95,7 +98,7 @@ public class FTPDownloader : IPluginDataProvider
         var files = GetFileList().ToArray();
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Identified the following files on the FTP server:{string.Join(',',files)}"));
+            $"Identified the following files on the FTP server:{string.Join(',', files)}"));
 
         var forLoadingContainedCachedFiles = false;
 
@@ -140,7 +143,7 @@ public class FTPDownloader : IPluginDataProvider
 
     protected SkipReason GetSkipActionForFile(string file, ILoadDirectory destination)
     {
-        if (file.StartsWith(".",StringComparison.Ordinal))
+        if (file.StartsWith(".", StringComparison.Ordinal))
             return SkipReason.IsImaginaryFile;
 
         //if there is a regex pattern
@@ -153,7 +156,11 @@ public class FTPDownloader : IPluginDataProvider
 
 
     private static bool ValidateServerCertificate(object _1, X509Certificate _2, X509Chain _3,
-        SslPolicyErrors _4) => true; //any cert will do! yay
+        SslPolicyErrors _4)
+    {
+        return true;
+        //any cert will do! yay
+    }
 
 
     protected virtual IEnumerable<string> GetFileList()

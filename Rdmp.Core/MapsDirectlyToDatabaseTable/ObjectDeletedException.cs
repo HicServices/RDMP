@@ -9,9 +9,11 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Thrown when you attempt an operation on an IMapsDirectlyToDatabaseTable object that has had its database entry deleted (either by you or another system
-/// user).  All IMapsDirectlyToDatabaseTable objects must exist both in memory and in the database and once DeleteInDatabase is called on an IDeletable (or
-/// however else the database copy disapears) then the memory copy becomes invalid and should not be used for anything.
+///     Thrown when you attempt an operation on an IMapsDirectlyToDatabaseTable object that has had its database entry
+///     deleted (either by you or another system
+///     user).  All IMapsDirectlyToDatabaseTable objects must exist both in memory and in the database and once
+///     DeleteInDatabase is called on an IDeletable (or
+///     however else the database copy disapears) then the memory copy becomes invalid and should not be used for anything.
 /// </summary>
 public class ObjectDeletedException : Exception
 {

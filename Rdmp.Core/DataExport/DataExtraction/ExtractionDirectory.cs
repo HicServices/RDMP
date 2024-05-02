@@ -15,9 +15,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when
-/// an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from when it bundles together a
-/// release package.
+///     The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project
+///     extracts will appear when
+///     an ExtractionConfiguration is executed.  It is also the location where the Release Engine will pick them up from
+///     when it bundles together a
+///     release package.
 /// </summary>
 public class ExtractionDirectory : IExtractionDirectory
 {
@@ -28,7 +30,7 @@ public class ExtractionDirectory : IExtractionDirectory
     public const string MASTER_DATA_FOLDER_NAME = "MasterData";
     public const string METADATA_FOLDER_NAME = "MetadataShareDefs";
 
-    public DirectoryInfo ExtractionDirectoryInfo { get; private set; }
+    public DirectoryInfo ExtractionDirectoryInfo { get; }
 
     public ExtractionDirectory(string rootExtractionDirectory, IExtractionConfiguration configuration)
         : this(rootExtractionDirectory, configuration, DateTime.Now)
@@ -56,8 +58,10 @@ public class ExtractionDirectory : IExtractionDirectory
             : root.CreateSubdirectory(subdirectoryName);
     }
 
-    public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration) =>
-        STANDARD_EXTRACTION_PREFIX + configuration.ID;
+    public static string GetExtractionDirectoryPrefix(IExtractionConfiguration configuration)
+    {
+        return STANDARD_EXTRACTION_PREFIX + configuration.ID;
+    }
 
     public DirectoryInfo GetDirectoryForDataset(IExtractableDataSet dataset)
     {
@@ -82,7 +86,10 @@ public class ExtractionDirectory : IExtractionDirectory
         }
     }
 
-    public DirectoryInfo GetGlobalsDirectory() => ExtractionDirectoryInfo.CreateSubdirectory(GLOBALS_DATA_NAME);
+    public DirectoryInfo GetGlobalsDirectory()
+    {
+        return ExtractionDirectoryInfo.CreateSubdirectory(GLOBALS_DATA_NAME);
+    }
 
     public static bool IsOwnerOf(IExtractionConfiguration configuration, DirectoryInfo directory)
     {
@@ -97,11 +104,15 @@ public class ExtractionDirectory : IExtractionDirectory
                directory.Name.StartsWith(STANDARD_EXTRACTION_PREFIX + configuration.ID);
     }
 
-    public DirectoryInfo GetDirectoryForCohortCustomData() =>
-        ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
+    public DirectoryInfo GetDirectoryForCohortCustomData()
+    {
+        return ExtractionDirectoryInfo.CreateSubdirectory(CUSTOM_COHORT_DATA_FOLDER_NAME);
+    }
 
-    public DirectoryInfo GetDirectoryForMasterData() =>
-        ExtractionDirectoryInfo.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
+    public DirectoryInfo GetDirectoryForMasterData()
+    {
+        return ExtractionDirectoryInfo.CreateSubdirectory(MASTER_DATA_FOLDER_NAME);
+    }
 
     public static void CleanupExtractionDirectory(object sender, string extractionDirectory,
         IEnumerable<IExtractionConfiguration> configurations, IDataLoadEventListener listener)

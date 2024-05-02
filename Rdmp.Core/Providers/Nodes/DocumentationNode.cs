@@ -4,12 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables
+///     Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and
+///     SupportingSQLTables
 /// </summary>
 public class DocumentationNode : Node
 {
@@ -25,9 +27,15 @@ public class DocumentationNode : Node
         SupportingSQLTables = supportingSQLTables;
     }
 
-    public override string ToString() => "Documentation";
+    public override string ToString()
+    {
+        return "Documentation";
+    }
 
-    protected bool Equals(DocumentationNode other) => Equals(Catalogue, other.Catalogue);
+    protected bool Equals(DocumentationNode other)
+    {
+        return Equals(Catalogue, other.Catalogue);
+    }
 
     public override bool Equals(object obj)
     {
@@ -37,5 +45,8 @@ public class DocumentationNode : Node
         return Equals((DocumentationNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Catalogue);
+    }
 }

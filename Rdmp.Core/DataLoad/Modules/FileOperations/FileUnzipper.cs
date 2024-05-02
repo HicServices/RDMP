@@ -24,9 +24,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.FileOperations;
 
 /// <summary>
-/// load component which Unzips files in ForLoading
-/// <para>Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the forLoading directory already contains a file with the same name then
-/// it is overwritten (unless the file size is also the same in which case the entry is skipped)</para>
+///     load component which Unzips files in ForLoading
+///     <para>
+///         Searches the forLoading directory for *.zip and unzips all entries in all zip archives found.  If the
+///         forLoading directory already contains a file with the same name then
+///         it is overwritten (unless the file size is also the same in which case the entry is skipped)
+///     </para>
 /// </summary>
 public class FileUnzipper : IPluginDataProvider
 {
@@ -101,9 +104,15 @@ public class FileUnzipper : IPluginDataProvider
         }
     }
 
-    public string GetDescription() => throw new NotImplementedException();
+    public string GetDescription()
+    {
+        throw new NotImplementedException();
+    }
 
-    public static IDataProvider Clone() => new FileUnzipper();
+    public static IDataProvider Clone()
+    {
+        return new FileUnzipper();
+    }
 
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)

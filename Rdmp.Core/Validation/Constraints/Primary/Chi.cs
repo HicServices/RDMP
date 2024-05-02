@@ -11,8 +11,10 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Validation.Constraints.Primary;
 
 /// <summary>
-/// Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of birth and the last 2 digits are
-/// a gender digit and a checksum.  Validation will fail if the checksum is invalid or the value does not match the pattern.
+///     Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of
+///     birth and the last 2 digits are
+///     a gender digit and a checksum.  Validation will fail if the checksum is invalid or the value does not match the
+///     pattern.
 /// </summary>
 public partial class Chi : PrimaryConstraint
 {
@@ -34,8 +36,11 @@ public partial class Chi : PrimaryConstraint
     {
     }
 
-    public override string GetHumanReadableDescriptionOfValidation() =>
-        "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
+    public override string GetHumanReadableDescriptionOfValidation()
+    {
+        return
+            "Checks that the input value is 10 characters long and the first 6 characters are a valid date and that the final digit checksum matches";
+    }
 
     public static bool IsValidChi([NotNull] string columnValueAsString, [CanBeNull] out string reason)
     {
@@ -69,7 +74,7 @@ public partial class Chi : PrimaryConstraint
     }
 
     /// <summary>
-    /// Does the CHI check digit calculation
+    ///     Does the CHI check digit calculation
     /// </summary>
     /// <param name="sCHI"></param>
     /// <returns></returns>
@@ -83,7 +88,7 @@ public partial class Chi : PrimaryConstraint
         var sum = 0;
         int c = '0';
         for (var i = 0; i < lsCHI - 1; i++)
-            sum += ((int)sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
+            sum += (sCHI.Substring(i, 1)[0] - c) * (lsCHI - i);
         sum %= 11;
 
         c = 11 - sum;
@@ -93,7 +98,7 @@ public partial class Chi : PrimaryConstraint
     }
 
     /// <summary>
-    /// Return the sex indicated by the supplied CHI
+    ///     Return the sex indicated by the supplied CHI
     /// </summary>
     /// <param name="chi"></param>
     /// <returns>1 for male and 0 for female</returns>
@@ -108,7 +113,7 @@ public partial class Chi : PrimaryConstraint
     }
 
     /// <summary>
-    /// Check the validity of the supplied CHI
+    ///     Check the validity of the supplied CHI
     /// </summary>
     /// <param name="strChi"></param>
     /// <param name="errorReport"></param>

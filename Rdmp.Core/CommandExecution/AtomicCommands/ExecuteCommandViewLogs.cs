@@ -49,7 +49,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
                     RootObject = root;
                     break;
                 case ExternalDatabaseServer eds:
-                    _loggingServers = new ExternalDatabaseServer[] { eds };
+                    _loggingServers = new[] { eds };
                     break;
                 default:
                     throw new Exception(
@@ -82,7 +82,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = new ExternalDatabaseServer[] { loggingServer };
+        _loggingServers = new[] { loggingServer };
     }
 
     public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
@@ -95,8 +95,11 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
             SetImpossible("There are no logging servers");
     }
 
-    public override string GetCommandHelp() =>
-        "View the hierarchical audit log of all data flows through RDMP (data load, extraction, dqe runs etc) including progress, errors etc";
+    public override string GetCommandHelp()
+    {
+        return
+            "View the hierarchical audit log of all data flows through RDMP (data load, extraction, dqe runs etc) including progress, errors etc";
+    }
 
     public override void Execute()
     {
@@ -114,12 +117,17 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         }
     }
 
-    public override string GetCommandName() =>
-        !string.IsNullOrWhiteSpace(OverrideCommandName)
+    public override string GetCommandName()
+    {
+        return !string.IsNullOrWhiteSpace(OverrideCommandName)
             ? OverrideCommandName
             : _filter != null
                 ? UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString())
                 : base.GetCommandName();
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Logging);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Logging);
+    }
 }

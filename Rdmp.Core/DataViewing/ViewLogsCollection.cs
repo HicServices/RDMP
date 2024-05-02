@@ -14,12 +14,12 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Collection that builds SQL for querying the logging database tables
+///     Collection that builds SQL for querying the logging database tables
 /// </summary>
 public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
-    private ExternalDatabaseServer _loggingServer;
-    private LogViewerFilter _filter;
+    private readonly ExternalDatabaseServer _loggingServer;
+    private readonly LogViewerFilter _filter;
 
     public ViewLogsCollection(ExternalDatabaseServer loggingServer, LogViewerFilter filter)
     {
@@ -31,16 +31,27 @@ public class ViewLogsCollection : PersistableObjectCollection, IViewSQLAndResult
     {
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => _loggingServer;
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return _loggingServer;
+    }
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _loggingServer.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _loggingServer.GetQuerySyntaxHelper();
+    }
 
-    public string GetSql() =>
-        $@"Select * from {_filter.LoggingTable}
+    public string GetSql()
+    {
+        return $@"Select * from {_filter.LoggingTable}
 
 {_filter.GetWhereSql()}";
+    }
 
-    public string GetTabName() => _filter.ToString();
+    public string GetTabName()
+    {
+        return _filter.ToString();
+    }
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

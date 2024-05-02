@@ -7,7 +7,9 @@
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -43,21 +45,23 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if (f != null)
-                _files = new FileInfo[] { f };
+                _files = new[] { f };
             else return;
         }
 
 
         foreach (var f in _files)
         {
-            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName });
+            var runner = new PackPluginRunner(new PackOptions { File = f.FullName });
             runner.Run(BasicActivator.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
-                ThrowImmediatelyCheckNotifier.Quiet, new DataFlowPipeline.GracefulCancellationToken());
+                ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken());
         }
 
         Show("Changes will take effect on restart");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Add);
+    }
 }

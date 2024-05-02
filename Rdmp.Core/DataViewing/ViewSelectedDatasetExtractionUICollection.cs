@@ -68,7 +68,10 @@ internal class ViewSelectedDatasetExtractionUICollection : PersistableObjectColl
         yield return (DatabaseEntity)SelectedDataset;
     }
 
-    public string GetTabName() => $"Extract {SelectedDataset}";
+    public string GetTabName()
+    {
+        return $"Extract {SelectedDataset}";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {

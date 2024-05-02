@@ -11,8 +11,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Records as an ExtendedProperty that a given object is replaced by another.
-/// Typically used to forward users of Deprecated items to the new live version
+///     Records as an ExtendedProperty that a given object is replaced by another.
+///     Typically used to forward users of Deprecated items to the new live version
 /// </summary>
 public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 {
@@ -21,7 +21,7 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
 
     /// <summary>
-    /// True to prompt user to pick and replacement at execute time
+    ///     True to prompt user to pick and replacement at execute time
     /// </summary>
     public bool PromptToPickReplacement { get; set; }
 
@@ -55,9 +55,9 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
         if (PromptToPickReplacement && rep == null)
             if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                AllowSelectingNull = true
-            }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
+                {
+                    AllowSelectingNull = true
+                }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
                 // user cancelled
                 return;
 

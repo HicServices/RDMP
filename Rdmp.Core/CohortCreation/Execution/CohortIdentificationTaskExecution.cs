@@ -12,8 +12,9 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the
-/// identifiers themselves (once complete), cancellation token etc.
+///     An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to
+///     fetch the cohort identifiers, the
+///     identifiers themselves (once complete), cancellation token etc.
 /// </summary>
 public sealed class CohortIdentificationTaskExecution : IDisposable
 {
@@ -30,7 +31,7 @@ public sealed class CohortIdentificationTaskExecution : IDisposable
     internal bool IsExecuting { get; private set; }
 
     /// <summary>
-    /// Although this is called CountSQL it is actually a select distinct identifiers!
+    ///     Although this is called CountSQL it is actually a select distinct identifiers!
     /// </summary>
     public string CountSQL { get; set; }
 

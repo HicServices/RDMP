@@ -12,7 +12,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 
 /// <summary>
-/// Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.  See Dilution.
+///     Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.
+///     See Dilution.
 /// </summary>
 public class DilutionOperationFactory
 {

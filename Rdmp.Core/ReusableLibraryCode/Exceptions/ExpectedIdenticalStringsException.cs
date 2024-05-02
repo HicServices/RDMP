@@ -10,7 +10,8 @@ using System.Text;
 namespace Rdmp.Core.ReusableLibraryCode.Exceptions;
 
 /// <summary>
-/// Thrown when two strings that were expected to be identical are different.  Includes ASCII art to show where they are different.
+///     Thrown when two strings that were expected to be identical are different.  Includes ASCII art to show where they
+///     are different.
 /// </summary>
 public class ExpectedIdenticalStringsException : Exception
 {

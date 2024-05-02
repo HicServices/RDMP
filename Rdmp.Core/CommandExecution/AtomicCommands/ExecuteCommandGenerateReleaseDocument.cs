@@ -15,7 +15,6 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IAtomicCommand
@@ -47,8 +46,11 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
             }
     }
 
-    public override string GetCommandHelp() =>
-        "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
+    public override string GetCommandHelp()
+    {
+        return
+            "Generate a document describing what has been extracted so far for each dataset in the extraction configuration including number of rows, distinct patient counts etc";
+    }
 
     public override void Execute()
     {
@@ -78,6 +80,8 @@ internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IA
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_word);
+    }
 }

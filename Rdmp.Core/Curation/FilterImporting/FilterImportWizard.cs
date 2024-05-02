@@ -19,9 +19,11 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Handles deploying <see cref="ExtractionFilter"/> instances into cohort identification / data extraction <see cref="IContainer"/>s.
-/// This adds WHERE logic to the query the user is building.  The interactive bits of this class only come into effect when there are
-/// one or more <see cref="ExtractionFilterParameterSet"/> configured that they can select from.
+///     Handles deploying <see cref="ExtractionFilter" /> instances into cohort identification / data extraction
+///     <see cref="IContainer" />s.
+///     This adds WHERE logic to the query the user is building.  The interactive bits of this class only come into effect
+///     when there are
+///     one or more <see cref="ExtractionFilterParameterSet" /> configured that they can select from.
 /// </summary>
 public class FilterImportWizard
 {
@@ -32,8 +34,10 @@ public class FilterImportWizard
         _activator = activator;
     }
 
-    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport) =>
-        Import(containerToImportOneInto, filterToImport, null);
+    public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport)
+    {
+        return Import(containerToImportOneInto, filterToImport, null);
+    }
 
     public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport,
         ExtractionFilterParameterSet parameterSet)
@@ -167,7 +171,8 @@ public class FilterImportWizard
             var chosen = _activator.SelectOne(new DialogArgs
             {
                 WindowTitle = "Choose Parameter Set",
-                TaskDescription = @$"Filter '{filter}' has parameters ({string.Join(',', filter.GetAllParameters().Select(p => p.ParameterName))}).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
+                TaskDescription =
+                    @$"Filter '{filter}' has parameters ({string.Join(',', filter.GetAllParameters().Select(p => p.ParameterName))}).  There are existing parameter sets configured for these parameters.  Choose which parameter values to use with this filter"
             }, parameterSets);
 
             if (chosen != null)
@@ -184,32 +189,32 @@ public class FilterImportWizard
         switch (containerToImportOneInto)
         {
             case AggregateFilterContainer aggregatecontainer:
-                {
-                    var aggregate = aggregatecontainer.GetAggregate();
-                    var options = AggregateBuilderOptionsFactory.Create(aggregate);
+            {
+                var aggregate = aggregatecontainer.GetAggregate();
+                var options = AggregateBuilderOptionsFactory.Create(aggregate);
 
-                    globals = options.GetAllParameters(aggregate);
-                    var root = aggregate.RootFilterContainer;
-                    otherFilters = root == null
-                        ? Array.Empty<IFilter>()
-                        : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
-                    return;
-                }
+                globals = options.GetAllParameters(aggregate);
+                var root = aggregate.RootFilterContainer;
+                otherFilters = root == null
+                    ? Array.Empty<IFilter>()
+                    : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+                return;
+            }
             case FilterContainer filtercontainer:
-                {
-                    var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ??
-                                          throw new Exception(
-                                              $"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
-                    var config = selectedDataSet.ExtractionConfiguration;
-                    var root = selectedDataSet.RootFilterContainer;
+            {
+                var selectedDataSet = filtercontainer.GetSelectedDataSetsRecursively() ??
+                                      throw new Exception(
+                                          $"Cannot import filter container {filtercontainer} because it does not belong to any SelectedDataSets");
+                var config = selectedDataSet.ExtractionConfiguration;
+                var root = selectedDataSet.RootFilterContainer;
 
-                    globals = config.GlobalExtractionFilterParameters;
-                    otherFilters = root == null
-                        ? Array.Empty<IFilter>()
-                        : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
+                globals = config.GlobalExtractionFilterParameters;
+                otherFilters = root == null
+                    ? Array.Empty<IFilter>()
+                    : GetAllFiltersRecursively(root, new List<IFilter>()).ToArray();
 
-                    return;
-                }
+                return;
+            }
             default:
                 throw new Exception(
                     $"Container {containerToImportOneInto} was an unexpected Type:{containerToImportOneInto.GetType().Name}");

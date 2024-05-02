@@ -22,7 +22,8 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
     private FileInfo _shareDefinitionFile;
 
     /// <summary>
-    /// Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection"/> (pass null to have the user pick at Execute)
+    ///     Sets up the base command to read ShareDefinitions from the selected <paramref name="sourceFileCollection" /> (pass
+    ///     null to have the user pick at Execute)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="sourceFileCollection"></param>
@@ -38,8 +39,10 @@ public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomic
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    }
 
     public sealed override void Execute()
     {

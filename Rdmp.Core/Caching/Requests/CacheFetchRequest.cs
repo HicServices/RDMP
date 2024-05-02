@@ -13,8 +13,10 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Caching.Requests;
 
 /// <summary>
-/// Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start / end date which will be the next logical period
-/// of time to fetch to advance the head of an ICacheProgress (fetch the next date range and update the progress pointer).
+///     Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start
+///     / end date which will be the next logical period
+///     of time to fetch to advance the head of an ICacheProgress (fetch the next date range and update the progress
+///     pointer).
 /// </summary>
 public class CacheFetchRequest : ICacheFetchRequest
 {
@@ -29,7 +31,7 @@ public class CacheFetchRequest : ICacheFetchRequest
 
 
     /// <summary>
-    /// Is this CacheFetchRequest a retry of a previously failed fetch request?
+    ///     Is this CacheFetchRequest a retry of a previously failed fetch request?
     /// </summary>
     public bool IsRetry => PreviousFailure != null;
 
@@ -45,7 +47,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     }
 
     /// <summary>
-    /// Creates a CacheFetchRequest from a previous failure.
+    ///     Creates a CacheFetchRequest from a previous failure.
     /// </summary>
     /// <param name="cacheFetchFailure"></param>
     /// <param name="cacheProgress"></param>
@@ -86,7 +88,7 @@ public class CacheFetchRequest : ICacheFetchRequest
     }
 
     /// <summary>
-    /// Factory method which creates the 'next' logical fetch request using the request's chunk period
+    ///     Factory method which creates the 'next' logical fetch request using the request's chunk period
     /// </summary>
     /// <returns></returns>
     public ICacheFetchRequest GetNext()

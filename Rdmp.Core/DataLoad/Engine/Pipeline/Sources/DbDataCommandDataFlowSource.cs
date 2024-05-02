@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 {
     public string Sql { get; }
@@ -24,7 +24,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
     private DbConnection _con;
 
     private readonly string _taskBeingPerformed;
-    private Stopwatch timer = new();
+    private readonly Stopwatch timer = new();
 
     public int BatchSize { get; set; }
 
@@ -34,7 +34,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
     public int TotalRowsRead { get; set; }
 
     /// <summary>
-    /// Called after command sql has been set up, allows last minute changes by subscribers before it is executed
+    ///     Called after command sql has been set up, allows last minute changes by subscribers before it is executed
     /// </summary>
     public Action<DbCommand> CommandAdjuster { get; set; }
 
@@ -53,7 +53,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
 
     private bool _firstChunk = true;
 
-    private DataTable schema = null;
+    private DataTable schema;
 
     public DataTable GetChunk(IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
     {
@@ -95,6 +95,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
                 chunk.EndLoadData();
                 return chunk;
             }
+
             chunk.EndLoadData();
 
             //if data was read
@@ -141,10 +142,12 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         return chunk.LoadDataRow(values, LoadOption.Upsert);
     }
 
-    /// <inheritdoc/>
-    public DataRow ReadOneRow() =>
+    /// <inheritdoc />
+    public DataRow ReadOneRow()
+    {
         //return null if there are no more records to read
-        _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
+        return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
+    }
 
     private static DataTable GetChunkSchema(DbDataReader reader)
     {

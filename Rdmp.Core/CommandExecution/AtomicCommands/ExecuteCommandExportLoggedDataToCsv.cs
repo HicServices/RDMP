@@ -17,12 +17,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
 {
-    private LogViewerFilter _filter;
-    private ExternalDatabaseServer[] _loggingServers;
+    private readonly LogViewerFilter _filter;
+    private readonly ExternalDatabaseServer[] _loggingServers;
 
     [UseWithObjectConstructor]
     public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LoggingTables table, int idIfAny)
-        : this(activator, new LogViewerFilter(table, idIfAny <= 0 ? (int?)null : idIfAny))
+        : this(activator, new LogViewerFilter(table, idIfAny <= 0 ? null : idIfAny))
     {
     }
 
@@ -36,7 +36,10 @@ public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
             SetImpossible("There are no logging servers");
     }
 
-    public override string GetCommandName() => "Export to CSV";
+    public override string GetCommandName()
+    {
+        return "Export to CSV";
+    }
 
     public override void Execute()
     {

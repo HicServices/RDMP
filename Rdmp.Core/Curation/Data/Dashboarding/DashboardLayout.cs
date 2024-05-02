@@ -15,9 +15,12 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data.Dashboarding;
 
 /// <summary>
-/// Describes a named collection of windows helpful for achieving a given task (usually data summarisation).  This class is the root object and has name (e.g. Dave's Dashboard).  It then
-/// has a collection of DashboardControls which are IDashboardableControl instances that the user has configured on his Dashboard via DashboardLayoutUI.  This can include plugins. Not only
-/// does this class provide persistence for useful layouts of controls between application executions but it allows users to share their dashboards with one another.
+///     Describes a named collection of windows helpful for achieving a given task (usually data summarisation).  This
+///     class is the root object and has name (e.g. Dave's Dashboard).  It then
+///     has a collection of DashboardControls which are IDashboardableControl instances that the user has configured on his
+///     Dashboard via DashboardLayoutUI.  This can include plugins. Not only
+///     does this class provide persistence for useful layouts of controls between application executions but it allows
+///     users to share their dashboards with one another.
 /// </summary>
 public class DashboardLayout : DatabaseEntity, INamed
 {
@@ -27,7 +30,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     private DateTime _created;
     private string _username;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Unique]
     [NotNull]
     public string Name
@@ -37,7 +40,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// The time the new dashboard was created
+    ///     The time the new dashboard was created
     /// </summary>
     public DateTime Created
     {
@@ -46,7 +49,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// The user who created the dashboard
+    ///     The user who created the dashboard
     /// </summary>
     public string Username
     {
@@ -59,7 +62,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     #region Relationships
 
     /// <summary>
-    /// Returns all controls that should be rendered on the given dashboard
+    ///     Returns all controls that should be rendered on the given dashboard
     /// </summary>
     [NoMappingToDatabase]
     public DashboardControl[] Controls => Repository.GetAllObjectsWithParent<DashboardControl>(this);
@@ -79,7 +82,7 @@ public class DashboardLayout : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// Creates a new empty dashboard with the given name ready for controls to be added by the user
+    ///     Creates a new empty dashboard with the given name ready for controls to be added by the user
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -94,6 +97,9 @@ public class DashboardLayout : DatabaseEntity, INamed
         });
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 }

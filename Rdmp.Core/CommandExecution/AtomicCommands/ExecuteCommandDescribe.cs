@@ -23,10 +23,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandDescribe : BasicCommandExecution
 {
     private readonly IMapsDirectlyToDatabaseTable[] _databaseObjectToDescribe;
-    private object _nonDatabaseObjectToDescribe;
+    private readonly object _nonDatabaseObjectToDescribe;
 
     /// <summary>
-    /// The help that the command will/did show
+    ///     The help that the command will/did show
     /// </summary>
     public string HelpShown { get; private set; }
 
@@ -76,14 +76,19 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         _nonDatabaseObjectToDescribe = randomThing;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => _nonDatabaseObjectToDescribe != null
-        ? iconProvider.GetImage(_nonDatabaseObjectToDescribe)
-        : base.GetImage(iconProvider);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return _nonDatabaseObjectToDescribe != null
+            ? iconProvider.GetImage(_nonDatabaseObjectToDescribe)
+            : base.GetImage(iconProvider);
+    }
 
-    public override string GetCommandName() =>
-        _nonDatabaseObjectToDescribe != null
+    public override string GetCommandName()
+    {
+        return _nonDatabaseObjectToDescribe != null
             ? _nonDatabaseObjectToDescribe is Type t ? t.Name : _nonDatabaseObjectToDescribe.ToString()
             : base.GetCommandName();
+    }
 
     public override string GetCommandHelp()
     {
@@ -260,8 +265,8 @@ public class ExecuteCommandDescribe : BasicCommandExecution
 
             sbSyntaxes.AppendLine("Examples:");
             foreach (var p in pickers)
-                foreach (var e in p.Examples)
-                    sbSyntaxes.AppendLine(e);
+            foreach (var e in p.Examples)
+                sbSyntaxes.AppendLine(e);
 
             return true;
         }
@@ -365,7 +370,7 @@ public class ExecuteCommandDescribe : BasicCommandExecution
         sb.Append(EnvironmentInfo.IsLinux ? "./rdmp" : "./rdmp.exe");
         sb.Append(' ');
 
-        sb.Append(BasicCommandExecution.GetCommandName(commandType.Name));
+        sb.Append(GetCommandName(commandType.Name));
         sb.Append(' ');
     }
 }

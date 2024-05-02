@@ -20,8 +20,10 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataLoad.Triggers;
 
 /// <summary>
-/// Calculates the changes that occured during a given DLE execution (identified by the unique DataLoadRunID of the load).  This involves generating and running SELECT
-/// queries that merge _Archive and live tables data to produce 3 DataTables Inserts and Updates (2 tables - New and Replaced).
+///     Calculates the changes that occured during a given DLE execution (identified by the unique DataLoadRunID of the
+///     load).  This involves generating and running SELECT
+///     queries that merge _Archive and live tables data to produce 3 DataTables Inserts and Updates (2 tables - New and
+///     Replaced).
 /// </summary>
 public class DiffDatabaseDataFetcher
 {

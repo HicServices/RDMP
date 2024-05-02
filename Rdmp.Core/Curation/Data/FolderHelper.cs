@@ -10,18 +10,24 @@ using System.Linq;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// The virtual 'folder' in which to display objects.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"
-///  
-/// <para>CatalogueFolder are represented in the user interface as a tree of folders (calculated at runtime). You can't create an empty CatalogueFolder,
-/// just declare an <see cref="IHasFolder"/> (e.g. <see cref="Catalogue"/>) as being in a new folder and it will be automatically shown.</para>
-/// 
-/// <para>CatalogueFolder is a static class that contains helper methods to help prevent illegal paths and to calculate hierarchy based on multiple <see cref="IHasFolder"/>
-/// (See <see cref="BuildFolderTree{T}(T[], FolderNode{T})"/>)</para>
+///     The virtual 'folder' in which to display objects.  This should be a helpful subdivision e.g. "\core
+///     datasets\labsystems\"
+///     <para>
+///         CatalogueFolder are represented in the user interface as a tree of folders (calculated at runtime). You can't
+///         create an empty CatalogueFolder,
+///         just declare an <see cref="IHasFolder" /> (e.g. <see cref="Catalogue" />) as being in a new folder and it will
+///         be automatically shown.
+///     </para>
+///     <para>
+///         CatalogueFolder is a static class that contains helper methods to help prevent illegal paths and to calculate
+///         hierarchy based on multiple <see cref="IHasFolder" />
+///         (See <see cref="BuildFolderTree{T}(T[], FolderNode{T})" />)
+///     </para>
 /// </summary>
 public static class FolderHelper
 {
     /// <summary>
-    /// The topmost folder under which all other folders reside
+    ///     The topmost folder under which all other folders reside
     /// </summary>
     public const string Root = "\\";
 
@@ -56,11 +62,14 @@ public static class FolderHelper
     }
 
     /// <summary>
-    /// Returns true if the specified path is valid for a <see cref="IHasFolder"/>.  Not blank, starts with '\' etc.
+    ///     Returns true if the specified path is valid for a <see cref="IHasFolder" />.  Not blank, starts with '\' etc.
     /// </summary>
     /// <param name="candidatePath"></param>
     /// <returns></returns>
-    public static bool IsValidPath(string candidatePath) => IsValidPath(candidatePath, out _);
+    public static bool IsValidPath(string candidatePath)
+    {
+        return IsValidPath(candidatePath, out _);
+    }
 
     public static FolderNode<T> BuildFolderTree<T>(T[] objects, FolderNode<T> currentBranch = null)
         where T : class, IHasFolder

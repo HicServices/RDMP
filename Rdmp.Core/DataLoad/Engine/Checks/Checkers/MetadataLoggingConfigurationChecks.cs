@@ -131,7 +131,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
         {
             distinctLoggingTask = _loadMetadata.GetDistinctLoggingTask();
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"All Catalogues agreed on a single Logging Task:{distinctLoggingTask}", CheckResult.Success, null));
+                $"All Catalogues agreed on a single Logging Task:{distinctLoggingTask}", CheckResult.Success));
         }
         catch (Exception e)
         {
@@ -145,7 +145,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
             var settings = _loadMetadata.GetDistinctLoggingDatabase();
             settings.TestConnection();
             notifier.OnCheckPerformed(new CheckEventArgs("Connected to logging architecture successfully",
-                CheckResult.Success, null));
+                CheckResult.Success));
 
 
             if (distinctLoggingTask != null)
@@ -156,7 +156,7 @@ internal class MetadataLoggingConfigurationChecks : ICheckable
                 if (dataTasks.Contains(distinctLoggingTask))
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
-                        $"Found Logging Task {distinctLoggingTask} in Logging database", CheckResult.Success, null));
+                        $"Found Logging Task {distinctLoggingTask} in Logging database", CheckResult.Success));
                 }
                 else
                 {

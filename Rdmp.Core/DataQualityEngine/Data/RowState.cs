@@ -11,8 +11,9 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataQualityEngine.Data;
 
 /// <summary>
-/// Class for inserting/retrieving records into the RowState table of the DQE database.  This table stores counts of the total number of rows (divided by
-/// PivotCategory - if any) passing, failing validation during a DQE run on a dataset.
+///     Class for inserting/retrieving records into the RowState table of the DQE database.  This table stores counts of
+///     the total number of rows (divided by
+///     PivotCategory - if any) passing, failing validation during a DQE run on a dataset.
 /// </summary>
 public class RowState
 {

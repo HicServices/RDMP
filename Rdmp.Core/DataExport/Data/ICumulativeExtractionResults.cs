@@ -13,62 +13,69 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Audit record of the final SQL generated/used to perform an extraction of any <see cref="ExtractionConfiguration"/> and the number of extracted rows etc.
-/// This record is overwritten if you re-extract the ExtractionConfiguration again.  The record is used to ensure that you cannot release an extract if there have been changes
-/// to the configuration subsequent to your last extraction.  This is particularly useful if you have many large datasets that you are extracting over a long period of time either
-/// because they are very large, have complex filters or are unstable.  Under such circumstances you can extract half of your datasets one day and
-/// then adjust the others to correct issues and be confident that the system is tracking those changes to ensure that the current state of the system always matches the extracted
-/// files at release time.
+///     Audit record of the final SQL generated/used to perform an extraction of any <see cref="ExtractionConfiguration" />
+///     and the number of extracted rows etc.
+///     This record is overwritten if you re-extract the ExtractionConfiguration again.  The record is used to ensure that
+///     you cannot release an extract if there have been changes
+///     to the configuration subsequent to your last extraction.  This is particularly useful if you have many large
+///     datasets that you are extracting over a long period of time either
+///     because they are very large, have complex filters or are unstable.  Under such circumstances you can extract half
+///     of your datasets one day and
+///     then adjust the others to correct issues and be confident that the system is tracking those changes to ensure that
+///     the current state of the system always matches the extracted
+///     files at release time.
 /// </summary>
 public interface ICumulativeExtractionResults : IExtractionResults, IRevertable
 {
     /// <summary>
-    /// This class is the audit of a the latest extraction attempt of a given dataset in a given extraction configuration.
-    /// 
-    /// <para>This property is the ID of the <see cref="IExtractionConfiguration"/> being audited</para>
+    ///     This class is the audit of a the latest extraction attempt of a given dataset in a given extraction configuration.
+    ///     <para>This property is the ID of the <see cref="IExtractionConfiguration" /> being audited</para>
     /// </summary>
     int ExtractionConfiguration_ID { get; set; }
 
 
     /// <summary>
-    /// This class is the audit of a the latest extraction attempt of a given dataset in a given extraction configuration.
-    /// 
-    /// <para>This property is the ID of the <see cref="IExtractableDataSet"/> being audited</para>
+    ///     This class is the audit of a the latest extraction attempt of a given dataset in a given extraction configuration.
+    ///     <para>This property is the ID of the <see cref="IExtractableDataSet" /> being audited</para>
     /// </summary>
     int ExtractableDataSet_ID { get; }
 
     /// <summary>
-    /// Count of the number of unique anonymous release identifiers encountered during extraction.
+    ///     Count of the number of unique anonymous release identifiers encountered during extraction.
     /// </summary>
     int DistinctReleaseIdentifiersEncountered { get; set; }
 
 
     /// <summary>
-    /// Description of all the <see cref="IFilter"/> that existed on the dataset that was extracted (e.g. "Extract only Tayside records").
+    ///     Description of all the <see cref="IFilter" /> that existed on the dataset that was extracted (e.g. "Extract only
+    ///     Tayside records").
     /// </summary>
     string FiltersUsed { get; set; }
 
     /// <summary>
-    /// The ID of the <see cref="IExtractableCohort"/> that was linked against the dataset during extraction.
+    ///     The ID of the <see cref="IExtractableCohort" /> that was linked against the dataset during extraction.
     /// </summary>
     int CohortExtracted { get; }
 
-    /// <inheritdoc cref="ExtractableDataSet_ID"/>
+    /// <inheritdoc cref="ExtractableDataSet_ID" />
     IExtractableDataSet ExtractableDataSet { get; }
 
     /// <summary>
-    /// If the extracted artifacts have been packaged up and released then this method returns the audit object for that release.
+    ///     If the extracted artifacts have been packaged up and released then this method returns the audit object for that
+    ///     release.
     /// </summary>
     /// <returns>Release audit or null if artifacts have not been released</returns>
     IReleaseLog GetReleaseLogEntryIfAny();
 
     /// <summary>
-    /// If there are supplemental artifacts produced during extraction (e.g. lookup tables) then this method returns the audit object(s) for these
+    ///     If there are supplemental artifacts produced during extraction (e.g. lookup tables) then this method returns the
+    ///     audit object(s) for these
     /// </summary>
     List<ISupplementalExtractionResults> SupplementalExtractionResults { get; }
 
     /// <summary>
-    /// Records the fact that a given supplemental artifact has been produced by the extraction process (e.g. a lookup table)
+    ///     Records the fact that a given supplemental artifact has been produced by the extraction process (e.g. a lookup
+    ///     table)
     /// </summary>
     /// <param name="sqlExecuted"></param>
     /// <param name="extractedObject"></param>
@@ -77,7 +84,7 @@ public interface ICumulativeExtractionResults : IExtractionResults, IRevertable
         IMapsDirectlyToDatabaseTable extractedObject);
 
     /// <summary>
-    /// Returns true if the audit described by this class is for the given <see cref="ISelectedDataSets"/>
+    ///     Returns true if the audit described by this class is for the given <see cref="ISelectedDataSets" />
     /// </summary>
     /// <param name="selectedDataSet"></param>
     /// <returns></returns>

@@ -13,11 +13,11 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 
 /// <summary>
-/// See IDilutionOperation
+///     See IDilutionOperation
 /// </summary>
 public abstract class DilutionOperation : IPluginDilutionOperation
 {
-    public DatabaseTypeRequest ExpectedDestinationType { get; private set; }
+    public DatabaseTypeRequest ExpectedDestinationType { get; }
 
     protected DilutionOperation(DatabaseTypeRequest expectedDestinationType)
     {
@@ -38,7 +38,10 @@ public abstract class DilutionOperation : IPluginDilutionOperation
                 $"IPreLoadDiscardedColumn {ColumnToDilute} is of unknown datatype", CheckResult.Fail));
     }
 
-    public override string ToString() => GetType().Name;
+    public override string ToString()
+    {
+        return GetType().Name;
+    }
 
     public abstract string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer);
 }

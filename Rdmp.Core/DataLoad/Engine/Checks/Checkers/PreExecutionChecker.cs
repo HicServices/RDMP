@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 
 /// <summary>
-/// Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).
+///     Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).
 /// </summary>
 public class PreExecutionChecker : ICheckable
 {
@@ -27,8 +27,9 @@ public class PreExecutionChecker : ICheckable
     private readonly HICDatabaseConfiguration _databaseConfiguration;
 
     /// <summary>
-    /// True if when running <see cref="Check"/> there was a catastrophic problem e.g. unable to reach tables which means you shouldn't bother
-    /// running any other kinds of checks
+    ///     True if when running <see cref="Check" /> there was a catastrophic problem e.g. unable to reach tables which means
+    ///     you shouldn't bother
+    ///     running any other kinds of checks
     /// </summary>
     public bool HardFail { get; private set; }
 
@@ -72,7 +73,7 @@ public class PreExecutionChecker : ICheckable
         }
         else
         {
-            _notifier.OnCheckPerformed(new CheckEventArgs($"{successMessage}: {dbInfo}", CheckResult.Success, null));
+            _notifier.OnCheckPerformed(new CheckEventArgs($"{successMessage}: {dbInfo}", CheckResult.Success));
         }
     }
 
@@ -96,7 +97,7 @@ public class PreExecutionChecker : ICheckable
         }
         else
         {
-            _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
+            _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success));
         }
     }
 
@@ -111,7 +112,7 @@ public class PreExecutionChecker : ICheckable
                     CheckResult.Fail));
             else
                 _notifier.OnCheckPerformed(new CheckEventArgs($"Staging database is empty ({stagingDbInfo})",
-                    CheckResult.Success, null));
+                    CheckResult.Success));
     }
 
     // Check that the column infos from the catalogue match up with what is actually in the staging databases
@@ -125,7 +126,7 @@ public class PreExecutionChecker : ICheckable
 
             if (!columnNames.Any())
                 _notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Table '{tableInfo.GetRuntimeName()}' has no ColumnInfos", CheckResult.Fail, null));
+                    $"Table '{tableInfo.GetRuntimeName()}' has no ColumnInfos", CheckResult.Fail));
 
             var tableName = tableInfo.GetRuntimeName(deploymentStage, _databaseConfiguration.DatabaseNamer);
             var table = dbInfo.ExpectTable(tableName);
@@ -162,7 +163,7 @@ public class PreExecutionChecker : ICheckable
             {
                 var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs(
                     $"RAW database '{rawDbInfo}' does not exist but load is persistentRaw", CheckResult.Fail, null,
-                    $"Create RAW database?"));
+                    "Create RAW database?"));
                 if (shouldCreate) rawDbInfo.Create();
             }
 
@@ -272,7 +273,9 @@ public class PreExecutionChecker : ICheckable
             dbInfo.ExpectTable(tableName).Drop();
     }
 
-    private static bool IsNukable(DiscoveredDatabase dbInfo) =>
-        dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
-        dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    private static bool IsNukable(DiscoveredDatabase dbInfo)
+    {
+        return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) ||
+               dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+    }
 }

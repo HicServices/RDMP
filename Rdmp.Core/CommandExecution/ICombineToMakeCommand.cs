@@ -11,18 +11,26 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// A potentially executable object.  Can be translated into an <see cref="ICommandExecution"/> by an ICommandExecutionFactory.  For example the <see cref="ICombineToMakeCommand"/>
-/// <see cref="CatalogueCombineable"/> can  be translated into <see cref="ExecuteCommandPutIntoFolder"/> (an ICommandExecution) by combining it with a
-/// <see cref="IFolderNode"/>.  But you could equally turn it into an <see cref="ExecuteCommandAddCatalogueToCohortIdentificationSetContainer"/> (also an ICommandExecution) by combining it with a CohortAggregateContainer.
-/// 
-/// <para>ICommand should reflect a single object and contain all useful information discovered about the object so that the ICommandExecutionFactory can make a
-/// good decision about what ICommandExecution to create as the user drags it about the place.</para>
+///     A potentially executable object.  Can be translated into an <see cref="ICommandExecution" /> by an
+///     ICommandExecutionFactory.  For example the <see cref="ICombineToMakeCommand" />
+///     <see cref="CatalogueCombineable" /> can  be translated into <see cref="ExecuteCommandPutIntoFolder" /> (an
+///     ICommandExecution) by combining it with a
+///     <see cref="IFolderNode" />.  But you could equally turn it into an
+///     <see cref="ExecuteCommandAddCatalogueToCohortIdentificationSetContainer" /> (also an ICommandExecution) by
+///     combining it with a CohortAggregateContainer.
+///     <para>
+///         ICommand should reflect a single object and contain all useful information discovered about the object so that
+///         the ICommandExecutionFactory can make a
+///         good decision about what ICommandExecution to create as the user drags it about the place.
+///     </para>
 /// </summary>
 public interface ICombineToMakeCommand
 {
     /// <summary>
-    /// Returns the Sql (if any) for the object the user is seeking to combine (e.g. by dragging / copying etc).  This determines
-    /// what happens when the <see cref="ICombineableSource"/> is combined with an sql endpoint (e.g. SQL text editor in the UI).
+    ///     Returns the Sql (if any) for the object the user is seeking to combine (e.g. by dragging / copying etc).  This
+    ///     determines
+    ///     what happens when the <see cref="ICombineableSource" /> is combined with an sql endpoint (e.g. SQL text editor in
+    ///     the UI).
     /// </summary>
     /// <returns></returns>
     string GetSqlString();

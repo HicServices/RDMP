@@ -18,8 +18,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 
 /// <summary>
-/// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the
-/// ICohortCreationRequest.  This
+///     Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the
+///     cohort database specified in the
+///     ICohortCreationRequest.  This
 /// </summary>
 public class BasicCohortDestination : IPluginCohortDestination
 {
@@ -27,7 +28,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     private string _releaseIdentifier;
 
     /// <summary>
-    /// The cohort blueprint we are trying to create.
+    ///     The cohort blueprint we are trying to create.
     /// </summary>
     public ICohortCreationRequest Request { get; private set; }
 
@@ -49,14 +50,17 @@ public class BasicCohortDestination : IPluginCohortDestination
         DefaultValue = false)]
     public bool MigrateUsages { get; set; }
 
-    private IAllocateReleaseIdentifiers _allocator = null;
+    private IAllocateReleaseIdentifiers _allocator;
     private readonly Dictionary<object, object> _cohortDictionary = new();
 
     /// <summary>
-    /// Extracts private identifiers from table <paramref name="toProcess"/> and allocates release identifiers.  Cohort is only finalised and comitted into the database
-    /// in the <see cref="Dispose"/> method (to prevent incomplete cohorts existing in the database).
-    /// 
-    /// <para>Method can be called multiple times in the lifetime of a pipeline (e.g. if you have very large cohorts and the pipeline source is batching).</para>
+    ///     Extracts private identifiers from table <paramref name="toProcess" /> and allocates release identifiers.  Cohort is
+    ///     only finalised and comitted into the database
+    ///     in the <see cref="Dispose" /> method (to prevent incomplete cohorts existing in the database).
+    ///     <para>
+    ///         Method can be called multiple times in the lifetime of a pipeline (e.g. if you have very large cohorts and
+    ///         the pipeline source is batching).
+    ///     </para>
     /// </summary>
     /// <param name="toProcess">A batch of private identifiers</param>
     /// <param name="listener"></param>
@@ -137,10 +141,14 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
 
-    private static bool IsNull(object o) => o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
+    private static bool IsNull(object o)
+    {
+        return o == null || o == DBNull.Value || string.IsNullOrWhiteSpace(o.ToString());
+    }
 
     /// <summary>
-    /// Commits the cohort created into the database (assuming no error occured during pipeline processing - See <paramref name="pipelineFailureExceptionIfAny"/>).
+    ///     Commits the cohort created into the database (assuming no error occured during pipeline processing - See
+    ///     <paramref name="pipelineFailureExceptionIfAny" />).
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="pipelineFailureExceptionIfAny"></param>
@@ -209,7 +217,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
     /// <summary>
-    /// Does nothing
+    ///     Does nothing
     /// </summary>
     /// <param name="listener"></param>
     public virtual void Abort(IDataLoadEventListener listener)
@@ -217,7 +225,7 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
     /// <summary>
-    /// Initialises <see cref="Request"/>
+    ///     Initialises <see cref="Request" />
     /// </summary>
     /// <param name="value"></param>
     /// <param name="listener"></param>
@@ -240,7 +248,8 @@ public class BasicCohortDestination : IPluginCohortDestination
     }
 
     /// <summary>
-    /// Checks <see cref="ReleaseIdentifierAllocator"/> has been set up and that a properly populated <see cref="Request"/> has been set.
+    ///     Checks <see cref="ReleaseIdentifierAllocator" /> has been set up and that a properly populated
+    ///     <see cref="Request" /> has been set.
     /// </summary>
     /// <param name="notifier"></param>
     public virtual void Check(ICheckNotifier notifier)

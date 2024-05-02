@@ -16,7 +16,8 @@ using Rdmp.Core.Startup;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Abstract base class for all command line options that can be supplied to the rdmp cli (includes overriding app.config to get connection strings to platform metadata databases)
+///     Abstract base class for all command line options that can be supplied to the rdmp cli (includes overriding
+///     app.config to get connection strings to platform metadata databases)
 /// </summary>
 public abstract class RDMPCommandLineOptions
 {
@@ -73,9 +74,9 @@ public abstract class RDMPCommandLineOptions
     public bool SkipPatching { get; set; }
 
     /// <summary>
-    /// If <see cref="ConnectionStringsFile"/> was specified and that file existed and was succesfully loaded
-    /// using <see cref="PopulateConnectionStringsFromYamlIfMissing"/> then this property will store the
-    /// file used including name and description
+    ///     If <see cref="ConnectionStringsFile" /> was specified and that file existed and was succesfully loaded
+    ///     using <see cref="PopulateConnectionStringsFromYamlIfMissing" /> then this property will store the
+    ///     file used including name and description
     /// </summary>
     public ConnectionStringsYamlFile ConnectionStringsFileLoaded { get; private set; }
 
@@ -102,12 +103,18 @@ public abstract class RDMPCommandLineOptions
         return _repositoryLocator = new LinkedRepositoryProvider(c?.ConnectionString, d?.ConnectionString);
     }
 
-    protected virtual bool ShouldLoadHelp() => false;
+    protected virtual bool ShouldLoadHelp()
+    {
+        return false;
+    }
 
     /// <summary>
-    /// Gets the connection strings that have been defined on the command line or by providing a Databases.yaml file
+    ///     Gets the connection strings that have been defined on the command line or by providing a Databases.yaml file
     /// </summary>
-    /// <param name="c">Catalogue database connection string or null if no explicit value has been defined.  E.g. if consumers are expected to get this elsewhere like user settings</param>
+    /// <param name="c">
+    ///     Catalogue database connection string or null if no explicit value has been defined.  E.g. if consumers
+    ///     are expected to get this elsewhere like user settings
+    /// </param>
     /// <param name="d">Data export database connection string or null if no explicit value has been defined.</param>
     public void GetConnectionStrings(out SqlConnectionStringBuilder c, out SqlConnectionStringBuilder d)
     {
@@ -153,16 +160,19 @@ public abstract class RDMPCommandLineOptions
     }
 
     /// <summary>
-    /// Returns true if none of the settings relating to connection strings have been set.  This is used to determine whether system defaults should
-    /// be used (e.g. from Databases.yaml).
+    ///     Returns true if none of the settings relating to connection strings have been set.  This is used to determine
+    ///     whether system defaults should
+    ///     be used (e.g. from Databases.yaml).
     /// </summary>
     /// <returns></returns>
-    public bool NoConnectionStringsSpecified() =>
-        string.IsNullOrWhiteSpace(ServerName) &&
-        string.IsNullOrWhiteSpace(CatalogueDatabaseName) &&
-        string.IsNullOrWhiteSpace(DataExportDatabaseName) &&
-        string.IsNullOrWhiteSpace(CatalogueConnectionString) &&
-        string.IsNullOrWhiteSpace(DataExportConnectionString);
+    public bool NoConnectionStringsSpecified()
+    {
+        return string.IsNullOrWhiteSpace(ServerName) &&
+               string.IsNullOrWhiteSpace(CatalogueDatabaseName) &&
+               string.IsNullOrWhiteSpace(DataExportDatabaseName) &&
+               string.IsNullOrWhiteSpace(CatalogueConnectionString) &&
+               string.IsNullOrWhiteSpace(DataExportConnectionString);
+    }
 
     public void PopulateConnectionStringsFromYamlIfMissing(ICheckNotifier notifier)
     {

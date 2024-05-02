@@ -15,17 +15,22 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Cohort.Joinables;
 
 /// <summary>
-/// Relationship object which indicates that a given AggregateConfiguration is a 'PatientIndexTable'.  In order to be compatible as a 'PatientIndexTable' the
-/// AggregateConfiguration must have one IsExtractionIdentifier AggregateDimension and usually at least one other column which has useful values in it (e.g.
-/// admission dates).  The patient index table can then be used as part of other AggregateConfigurations in a CohortIdentificationConfiguration (e.g. 'find
-/// all people in Deaths dataset who died within 3 months of having a prescription for drug Y' - where Prescriptions is the 'PatientIndexTable'.
+///     Relationship object which indicates that a given AggregateConfiguration is a 'PatientIndexTable'.  In order to be
+///     compatible as a 'PatientIndexTable' the
+///     AggregateConfiguration must have one IsExtractionIdentifier AggregateDimension and usually at least one other
+///     column which has useful values in it (e.g.
+///     admission dates).  The patient index table can then be used as part of other AggregateConfigurations in a
+///     CohortIdentificationConfiguration (e.g. 'find
+///     all people in Deaths dataset who died within 3 months of having a prescription for drug Y' - where Prescriptions is
+///     the 'PatientIndexTable'.
 /// </summary>
 public class JoinableCohortAggregateConfiguration : DatabaseEntity
 {
     #region Database Properties
 
     /// <summary>
-    /// ID of the <see cref="CohortIdentificationConfiguration"/> for which the <see cref="AggregateConfiguration_ID"/> acts as a patient index table
+    ///     ID of the <see cref="CohortIdentificationConfiguration" /> for which the <see cref="AggregateConfiguration_ID" />
+    ///     acts as a patient index table
     /// </summary>
     public int CohortIdentificationConfiguration_ID
     {
@@ -34,7 +39,7 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     }
 
     /// <summary>
-    /// ID of the <see cref="AggregateConfiguration_ID"/> which this class is making act as a patient index table
+    ///     ID of the <see cref="AggregateConfiguration_ID" /> which this class is making act as a patient index table
     /// </summary>
     public int AggregateConfiguration_ID
     {
@@ -47,20 +52,25 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     #region Relationships
 
     /// <summary>
-    /// Gets all the users of the patient index table, these <see cref="AggregateConfiguration"/> will be joined against the patient index table at query generation time.
-    /// <para>The returned objects are <see cref="JoinableCohortAggregateConfigurationUse"/> which is the mandate to link against us.  Use
-    /// <see cref="JoinableCohortAggregateConfigurationUse.AggregateConfiguration"/> to fetch the actual <see cref="AggregateConfiguration"/></para>
+    ///     Gets all the users of the patient index table, these <see cref="AggregateConfiguration" /> will be joined against
+    ///     the patient index table at query generation time.
+    ///     <para>
+    ///         The returned objects are <see cref="JoinableCohortAggregateConfigurationUse" /> which is the mandate to link
+    ///         against us.  Use
+    ///         <see cref="JoinableCohortAggregateConfigurationUse.AggregateConfiguration" /> to fetch the actual
+    ///         <see cref="AggregateConfiguration" />
+    ///     </para>
     /// </summary>
     [NoMappingToDatabase]
     public JoinableCohortAggregateConfigurationUse[] Users =>
         Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(this).ToArray();
 
-    /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
+    /// <inheritdoc cref="CohortIdentificationConfiguration_ID" />
     [NoMappingToDatabase]
     public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
         Repository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID);
 
-    /// <inheritdoc cref="AggregateConfiguration_ID"/>
+    /// <inheritdoc cref="AggregateConfiguration_ID" />
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration =>
         Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
@@ -79,8 +89,9 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     }
 
     /// <summary>
-    /// Declares that the passed <see cref="AggregateConfiguration"/> should act as a patient index table and be joinable with other <see cref="AggregateConfiguration"/>s in
-    /// the <see cref="CohortIdentificationConfiguration"/>.
+    ///     Declares that the passed <see cref="AggregateConfiguration" /> should act as a patient index table and be joinable
+    ///     with other <see cref="AggregateConfiguration" />s in
+    ///     the <see cref="CohortIdentificationConfiguration" />.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="cic"></param>
@@ -106,8 +117,10 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     }
 
     /// <summary>
-    /// Mandates that the passed <see cref="AggregateConfiguration"/> should join with this patient index table at query generation time.  The <paramref name="user"/> must
-    /// be part of the same <see cref="CohortIdentificationConfiguration"/> as the patient index table (<see cref="CohortIdentificationConfiguration_ID"/>)
+    ///     Mandates that the passed <see cref="AggregateConfiguration" /> should join with this patient index table at query
+    ///     generation time.  The <paramref name="user" /> must
+    ///     be part of the same <see cref="CohortIdentificationConfiguration" /> as the patient index table (
+    ///     <see cref="CohortIdentificationConfiguration_ID" />)
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
@@ -139,8 +152,11 @@ public class JoinableCohortAggregateConfiguration : DatabaseEntity
     private int _cohortIdentificationConfigurationID;
     private int _aggregateConfigurationID;
 
-    /// <inheritdoc/>
-    public override string ToString() => _toStringName ?? GetCachedName();
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return _toStringName ?? GetCachedName();
+    }
 
     private string GetCachedName()
     {

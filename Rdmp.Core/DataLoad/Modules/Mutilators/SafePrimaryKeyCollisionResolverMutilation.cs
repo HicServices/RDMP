@@ -16,7 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// Attempts to resolves primary key collisions by ordering on a specific column and deleting rows which differ on this column
+///     Attempts to resolves primary key collisions by ordering on a specific column and deleting rows which differ on this
+///     column
 /// </summary>
 public class SafePrimaryKeyCollisionResolverMutilation : IPluginMutilateDataTables
 {

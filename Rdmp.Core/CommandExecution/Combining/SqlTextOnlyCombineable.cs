@@ -7,7 +7,7 @@
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> which contains only Sql and cannot otherwise be combined with other objects
+///     <see cref="ICombineToMakeCommand" /> which contains only Sql and cannot otherwise be combined with other objects
 /// </summary>
 public class SqlTextOnlyCombineable : ICombineToMakeCommand
 {
@@ -18,5 +18,8 @@ public class SqlTextOnlyCombineable : ICombineToMakeCommand
         _sql = sql;
     }
 
-    public string GetSqlString() => _sql;
+    public string GetSqlString()
+    {
+        return _sql;
+    }
 }

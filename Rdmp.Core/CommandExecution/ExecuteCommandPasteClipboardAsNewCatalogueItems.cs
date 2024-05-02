@@ -17,9 +17,9 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Split the contents of the OS clipboard by newlines and add the content of each
-/// line as new <see cref="CatalogueItem"/> to the <see cref="Catalogue"/>.  This
-/// lets user copy and paste a SELECT sql query column set to create objects in RDMP.
+///     Split the contents of the OS clipboard by newlines and add the content of each
+///     line as new <see cref="CatalogueItem" /> to the <see cref="Catalogue" />.  This
+///     lets user copy and paste a SELECT sql query column set to create objects in RDMP.
 /// </summary>
 public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecution
 {
@@ -45,8 +45,10 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         _clipboardContentGetter = clipboardContentGetter;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Clipboard, OverlayKind.Import);
+    }
 
     public override void Execute()
     {
@@ -62,9 +64,9 @@ public class ExecuteCommandPasteClipboardAsNewCatalogueItems : BasicCommandExecu
         {
             if (clipboard == null)
                 if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "Paste Columns"
-                }, int.MaxValue, null, out clipboard, false))
+                    {
+                        WindowTitle = "Paste Columns"
+                    }, int.MaxValue, null, out clipboard, false))
                     // user cancelled search
                     return;
         }

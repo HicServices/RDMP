@@ -20,20 +20,30 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation
-/// of what is described by a CatalogueItem.  Most ExtractionInformations in your database will just be direct extraction (verbatim) of the ColumnInfo
-/// however you might have simple transformations e.g. 'UPPER([MyDatabase]..[Users].[Name]' or even call complex SQL scalar functions for example
-/// 'fn_CleanDrugCode([Prescribing]..[Items].[DrugCode])'
-/// 
-/// <para>Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not have newlines in your SelectSQL
-/// since this will likely confuse QueryBuilder.</para>
-/// 
-/// <para>The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in ExtractionInformation is ExtractionCategory
-/// which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired</para>
-/// 
-/// <para>One (or more) ExtractionInformation in each CatalogueItem set (of parent Catalogue) can be flagged as <see cref="ConcreteColumn.IsExtractionIdentifier"/>.
-/// This is the column(s) which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify
-/// people in your datasets (e.g. Community Health Index or NHS Number).</para>
+///     Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation
+///     is the technical implementation
+///     of what is described by a CatalogueItem.  Most ExtractionInformations in your database will just be direct
+///     extraction (verbatim) of the ColumnInfo
+///     however you might have simple transformations e.g. 'UPPER([MyDatabase]..[Users].[Name]' or even call complex SQL
+///     scalar functions for example
+///     'fn_CleanDrugCode([Prescribing]..[Items].[DrugCode])'
+///     <para>
+///         Note that alias is stored separately because it is useful for GetRuntimeName().  Also note that you should not
+///         have newlines in your SelectSQL
+///         since this will likely confuse QueryBuilder.
+///     </para>
+///     <para>
+///         The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in
+///         ExtractionInformation is ExtractionCategory
+///         which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired
+///     </para>
+///     <para>
+///         One (or more) ExtractionInformation in each CatalogueItem set (of parent Catalogue) can be flagged as
+///         <see cref="ConcreteColumn.IsExtractionIdentifier" />.
+///         This is the column(s) which will be joined against cohorts in data extraction linkages.  This should be the
+///         private identifier you use to identify
+///         people in your datasets (e.g. Community Health Index or NHS Number).
+///     </para>
 /// </summary>
 public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,
     IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
@@ -44,7 +54,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     private ExtractionCategory _extractionCategory;
 
     /// <summary>
-    /// The virtual column (description, name etc) to which this <see cref="ExtractionInformation"/> provides extraction SELECT SQL for.
+    ///     The virtual column (description, name etc) to which this <see cref="ExtractionInformation" /> provides extraction
+    ///     SELECT SQL for.
     /// </summary>
     public int CatalogueItem_ID
     {
@@ -53,7 +64,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// Which governance conditions is this column/transform extractable under (e.g. Core, SpecialApprovalRequired etc)
+    ///     Which governance conditions is this column/transform extractable under (e.g. Core, SpecialApprovalRequired etc)
     /// </summary>
     public ExtractionCategory ExtractionCategory
     {
@@ -73,27 +84,34 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     #region Relationships
 
     //These fields are fetched (cached version) from lookup link table - ExtractionInformation can only exist where there is a relationship between a CatalogueItem and a ColumnInfo
-    /// <inheritdoc cref="CatalogueItem_ID"/>
+    /// <inheritdoc cref="CatalogueItem_ID" />
     [NoMappingToDatabase]
     public CatalogueItem CatalogueItem =>
         //Cache answer the first time it is requested (or injected)
         _knownCatalogueItem.Value;
 
     /// <summary>
-    /// The ColumnInfo that underlies this extractable column.  ExtractionInformation allows for transforms, governance rules and indicates extractability (Core / Supplemental etc)
-    /// while the ColumnInfo is the concrete/immutable reference to the underlying column in the database from which the SelectSQL is executed.  This determines what tables are
-    /// joined on during query generation and which servers are connected to during query execution etc.
-    /// 
-    /// <para>This field can be null only if the <see cref="ColumnInfo"/> has been deleted rendering this an orphan and broken.  This is considered a problem by
-    /// <see cref="CatalogueProblemProvider"/> and as such it is the users responsibility to fix it, you shouldn't worry too much about null
-    /// checking this field.</para>
+    ///     The ColumnInfo that underlies this extractable column.  ExtractionInformation allows for transforms, governance
+    ///     rules and indicates extractability (Core / Supplemental etc)
+    ///     while the ColumnInfo is the concrete/immutable reference to the underlying column in the database from which the
+    ///     SelectSQL is executed.  This determines what tables are
+    ///     joined on during query generation and which servers are connected to during query execution etc.
+    ///     <para>
+    ///         This field can be null only if the <see cref="ColumnInfo" /> has been deleted rendering this an orphan and
+    ///         broken.  This is considered a problem by
+    ///         <see cref="CatalogueProblemProvider" /> and as such it is the users responsibility to fix it, you shouldn't
+    ///         worry too much about null
+    ///         checking this field.
+    ///     </para>
     /// </summary>
     [NoMappingToDatabase]
     public override ColumnInfo ColumnInfo => _knownColumninfo.Value;
 
     /// <summary>
-    /// Gets all WHERE logic that can be used to reduce the number of records matched/extracted etc in cohort creation, project extractions etc.  These are master catalogue level
-    /// filters (<see cref="ExtractionFilter"/>) and act as templates that can be imported/cloned into other use cases (e.g. cohort identification, extraction etc).
+    ///     Gets all WHERE logic that can be used to reduce the number of records matched/extracted etc in cohort creation,
+    ///     project extractions etc.  These are master catalogue level
+    ///     filters (<see cref="ExtractionFilter" />) and act as templates that can be imported/cloned into other use cases
+    ///     (e.g. cohort identification, extraction etc).
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionFilter> ExtractionFilters =>
@@ -107,8 +125,9 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// Makes the given <see cref="CatalogueItem"/> which has an underlying column <see cref="ColumnInfo"/> in the data repository database extractable using the
-    /// provided SQL code which must be a single line of SELECT sql.
+    ///     Makes the given <see cref="CatalogueItem" /> which has an underlying column <see cref="ColumnInfo" /> in the data
+    ///     repository database extractable using the
+    ///     provided SQL code which must be a single line of SELECT sql.
     /// </summary>
     /// <param name="repository">Platform database to store the new object in</param>
     /// <param name="catalogueItem">The virtual column to make extractable (could be a transform e.g. YearOfBirth)</param>
@@ -136,7 +155,9 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// Returns the maximum Order from all <see cref="ExtractionInformation"/> in the parent <see cref="Catalogue"/> of <paramref name="catalogueItem"/>.  Returns 1 if anything goes wrong or if there are no other ExtractionInformation yet
+    ///     Returns the maximum Order from all <see cref="ExtractionInformation" /> in the parent <see cref="Catalogue" /> of
+    ///     <paramref name="catalogueItem" />.  Returns 1 if anything goes wrong or if there are no other ExtractionInformation
+    ///     yet
     /// </summary>
     /// <param name="catalogueItem"></param>
     /// <returns></returns>
@@ -181,26 +202,26 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     private Lazy<ColumnInfo> _knownColumninfo;
     private Lazy<CatalogueItem> _knownCatalogueItem;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _knownColumninfo = new Lazy<ColumnInfo>(() => CatalogueItem.ColumnInfo);
         _knownCatalogueItem = new Lazy<CatalogueItem>(() => Repository.GetObjectByID<CatalogueItem>(CatalogueItem_ID));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ColumnInfo instance)
     {
         _knownColumninfo = new Lazy<ColumnInfo>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(CatalogueItem instance)
     {
         _knownCatalogueItem = new Lazy<CatalogueItem>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string ToString()
     {
         //prefer alias, then prefer catalogue name
@@ -216,16 +237,19 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         }
     }
 
-    /// <inheritdoc/>
-    public override int GetHashCode() => ID.GetHashCode();
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        return ID.GetHashCode();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return ColumnInfo != null ? new IHasDependencies[] { ColumnInfo } : Array.Empty<IHasDependencies>();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         var dependencies = new List<IHasDependencies>();
@@ -237,9 +261,9 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     }
 
     /// <summary>
-    /// Returns true if the SELECT SQL is different from the fully qualified underlying column name e.g. 'UPPER(MyCol)' would return true.
-    /// 
-    /// <para>Also returns true if the column is hashed</para>
+    ///     Returns true if the SELECT SQL is different from the fully qualified underlying column name e.g. 'UPPER(MyCol)'
+    ///     would return true.
+    ///     <para>Also returns true if the column is hashed</para>
     /// </summary>
     /// <returns></returns>
     public bool IsProperTransform()
@@ -257,8 +281,11 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         return !SelectSQL.Equals(ColumnInfo.Name);
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ColumnInfo?.GetQuerySyntaxHelper();
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return ColumnInfo?.GetQuerySyntaxHelper();
+    }
 
     public override string GetSummary(bool includeName, bool includeID)
     {
@@ -270,7 +297,11 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         return sb.ToString();
     }
 
-    protected override string FormatPropertyNameForSummary(PropertyInfo prop) =>
+    protected override string FormatPropertyNameForSummary(PropertyInfo prop)
+    {
         // rebrand this property so it is clearer to the user that it applies only on extraction
-        prop.Name == nameof(IsPrimaryKey) ? "Is Extraction Primary Key" : base.FormatPropertyNameForSummary(prop);
+        return prop.Name == nameof(IsPrimaryKey)
+            ? "Is Extraction Primary Key"
+            : base.FormatPropertyNameForSummary(prop);
+    }
 }

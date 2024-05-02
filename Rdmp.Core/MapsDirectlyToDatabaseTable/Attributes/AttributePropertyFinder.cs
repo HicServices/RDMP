@@ -12,8 +12,8 @@ using System.Reflection;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 
 /// <summary>
-/// Implementation of <see cref="IAttributePropertyFinder"/> in which a specific Attribute only is looked for.  The
-/// Attribute is specified by the generic T
+///     Implementation of <see cref="IAttributePropertyFinder" /> in which a specific Attribute only is looked for.  The
+///     Attribute is specified by the generic T
 /// </summary>
 /// <typeparam name="T">The specific attribute you are looking for e.g. SqlAttribute</typeparam>
 public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Attribute
@@ -43,15 +43,23 @@ public class AttributePropertyFinder<T> : IAttributePropertyFinder where T : Att
     {
     }
 
-    public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o) =>
-        _properties.TryGetValue(o.GetType(), out var properties) ? properties : Array.Empty<PropertyInfo>();
+    public IEnumerable<PropertyInfo> GetProperties(IMapsDirectlyToDatabaseTable o)
+    {
+        return _properties.TryGetValue(o.GetType(), out var properties) ? properties : Array.Empty<PropertyInfo>();
+    }
 
     /// <summary>
-    /// Returns true if the provided object has a property that matches the expected attribute
+    ///     Returns true if the provided object has a property that matches the expected attribute
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg) => _properties.ContainsKey(arg.GetType());
+    public bool ObjectContainsProperty(IMapsDirectlyToDatabaseTable arg)
+    {
+        return _properties.ContainsKey(arg.GetType());
+    }
 
-    public T GetAttribute(PropertyInfo property) => (T)property.GetCustomAttributes(typeof(T), true).SingleOrDefault();
+    public T GetAttribute(PropertyInfo property)
+    {
+        return (T)property.GetCustomAttributes(typeof(T), true).SingleOrDefault();
+    }
 }

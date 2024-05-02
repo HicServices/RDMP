@@ -15,7 +15,8 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-/// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on name (e.g. "Catalogue:my*cata")
+///     Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity" />
+///     matching based on name (e.g. "Catalogue:my*cata")
 /// </summary>
 public partial class PickObjectByName : PickObjectBase
 {

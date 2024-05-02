@@ -12,7 +12,7 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IColumn.
+///     Spontaneous (memory only) implementation of IColumn.
 /// </summary>
 public class SpontaneouslyInventedColumn : ConcreteColumn, IColumn
 {

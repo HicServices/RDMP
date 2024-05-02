@@ -11,19 +11,21 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// See PipelineComponentArgument
+///     See PipelineComponentArgument
 /// </summary>
 public interface IPipelineComponentArgument : IArgument, IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable,
     IHasDependencies
 {
     /// <summary>
-    /// Component for whom this <see cref="IPipelineComponentArgument"/> provides a value for.  There will be one <see cref="IPipelineComponentArgument"/>
-    /// per public property with <see cref="DemandsInitializationAttribute"/> on the <see cref="PipelineComponent.Class"/>.
+    ///     Component for whom this <see cref="IPipelineComponentArgument" /> provides a value for.  There will be one
+    ///     <see cref="IPipelineComponentArgument" />
+    ///     per public property with <see cref="DemandsInitializationAttribute" /> on the
+    ///     <see cref="PipelineComponent.Class" />.
     /// </summary>
     int PipelineComponent_ID { get; set; }
 
     /// <summary>
-    /// Creates a new copy of the current argument and associates it with <paramref name="intoTargetComponent"/>
+    ///     Creates a new copy of the current argument and associates it with <paramref name="intoTargetComponent" />
     /// </summary>
     /// <param name="intoTargetComponent"></param>
     void Clone(PipelineComponent intoTargetComponent);

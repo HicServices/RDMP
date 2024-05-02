@@ -22,9 +22,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicCommand
 {
-    private IFilterFactory _factory;
-    private IContainer _container;
-    private IRootFilterContainerHost _host;
+    private readonly IFilterFactory _factory;
+    private readonly IContainer _container;
+    private readonly IRootFilterContainerHost _host;
     private const float DEFAULT_WEIGHT = 0.1f;
 
     public IFilter BasedOn { get; set; }
@@ -181,12 +181,17 @@ where    Optional SQL to set for the filter.  If <basedOn> is not null this will
     }
 
 
-    private ICatalogue GetCatalogue() => _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
+    private ICatalogue GetCatalogue()
+    {
+        return _host?.GetCatalogue() ?? _container?.GetCatalogueIfAny();
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        OfferCatalogueFilters
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return OfferCatalogueFilters
             ? iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Import)
             : iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
+    }
 
     public override void Execute()
     {

@@ -15,54 +15,58 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="AggregateConfiguration"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="AggregateConfiguration" />
 /// </summary>
 public class AggregateConfigurationCombineable : ICombineToMakeCommand
 {
     /// <summary>
-    /// The object selected for combining
+    ///     The object selected for combining
     /// </summary>
-    public AggregateConfiguration Aggregate { get; private set; }
+    public AggregateConfiguration Aggregate { get; }
 
     /// <summary>
-    /// The <see cref="CohortIdentificationConfiguration"/> that the <see cref="Aggregate"/> belongs to if it is part of cohort building
+    ///     The <see cref="CohortIdentificationConfiguration" /> that the <see cref="Aggregate" /> belongs to if it is part of
+    ///     cohort building
     /// </summary>
-    public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; private set; }
+    public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; }
 
     /// <summary>
-    /// The SET container (EXCEPT / UNION / INTERSECT) that the <see cref="Aggregate"/> is in if it is part of a <see cref="CohortIdentificationConfiguration"/>
+    ///     The SET container (EXCEPT / UNION / INTERSECT) that the <see cref="Aggregate" /> is in if it is part of a
+    ///     <see cref="CohortIdentificationConfiguration" />
     /// </summary>
     public CohortAggregateContainer ContainerIfAny { get; set; }
 
     /// <summary>
-    /// Comprehensive list of all <see cref="CohortAggregateContainer"/> in the tree hierarchy of the  <see cref="Aggregate"/> <see cref="CohortIdentificationConfigurationIfAny"/>
+    ///     Comprehensive list of all <see cref="CohortAggregateContainer" /> in the tree hierarchy of the
+    ///     <see cref="Aggregate" /> <see cref="CohortIdentificationConfigurationIfAny" />
     /// </summary>
-    public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; private set; }
+    public List<CohortAggregateContainer> AllContainersInTreeIfPartOfOne { get; }
 
     /// <summary>
-    /// True if the <see cref="Aggregate"/> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable"/>
+    ///     True if the <see cref="Aggregate" /> is <see cref="AggregateConfiguration.IsJoinablePatientIndexTable" />
     /// </summary>
     public bool IsPatientIndexTable { get; set; }
 
     /// <summary>
-    /// If the <see cref="Aggregate"/> is <see cref="IsPatientIndexTable"/> then this is the <see cref="JoinableCohortAggregateConfiguration"/>
-    /// declaration which makes it one (and links to the users of the patient index table - if any)
+    ///     If the <see cref="Aggregate" /> is <see cref="IsPatientIndexTable" /> then this is the
+    ///     <see cref="JoinableCohortAggregateConfiguration" />
+    ///     declaration which makes it one (and links to the users of the patient index table - if any)
     /// </summary>
     public JoinableCohortAggregateConfiguration JoinableDeclarationIfAny { get; set; }
 
     /// <summary>
-    /// If the <see cref="Aggregate"/> is <see cref="IsPatientIndexTable"/> then this is all the users that join to it
+    ///     If the <see cref="Aggregate" /> is <see cref="IsPatientIndexTable" /> then this is all the users that join to it
     /// </summary>
     public AggregateConfiguration[] JoinableUsersIfAny { get; set; }
 
     /// <summary>
-    /// True if the <see cref="Aggregate"/> has an <see cref="ExtendedProperty"/> declaring it as a reusable template
+    ///     True if the <see cref="Aggregate" /> has an <see cref="ExtendedProperty" /> declaring it as a reusable template
     /// </summary>
     public bool IsTemplate { get; set; }
 
     /// <summary>
-    /// Creates a new instance, populates <see cref="Aggregate"/> and discovers all other state cached fields (e.g.
-    /// <see cref="JoinableDeclarationIfAny"/> etc).
+    ///     Creates a new instance, populates <see cref="Aggregate" /> and discovers all other state cached fields (e.g.
+    ///     <see cref="JoinableDeclarationIfAny" /> etc).
     /// </summary>
     /// <param name="aggregate"></param>
     public AggregateConfigurationCombineable(AggregateConfiguration aggregate)
@@ -107,5 +111,8 @@ public class AggregateConfigurationCombineable : ICombineToMakeCommand
         ContainerIfAny = Aggregate.GetCohortAggregateContainerIfAny();
     }
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 }

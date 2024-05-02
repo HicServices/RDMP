@@ -19,8 +19,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Component for reproducibly pulling a random sample of records from a cohort being committed.  The random number generator
-/// is seeded on the Project number such that using the sampler again on the same input will produce the same random selection.
+///     Component for reproducibly pulling a random sample of records from a cohort being committed.  The random number
+///     generator
+///     is seeded on the Project number such that using the sampler again on the same input will produce the same random
+///     selection.
 /// </summary>
 public class CohortSampler : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<CohortCreationRequest>
 {

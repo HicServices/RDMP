@@ -18,20 +18,23 @@ using Rdmp.Core.Validation.Dependency.Exceptions;
 namespace Rdmp.Core.Validation.Dependency;
 
 /// <summary>
-/// Prevents deleting objects which are referenced in the ValidatorXML of Catalogues.  This is done by processing the ValidatorXML as a string for speed
-/// rather than deserializing every ValidationXml.
+///     Prevents deleting objects which are referenced in the ValidatorXML of Catalogues.  This is done by processing the
+///     ValidatorXML as a string for speed
+///     rather than deserializing every ValidationXml.
 /// </summary>
 public class ValidationXMLObscureDependencyFinder : IObscureDependencyFinder
 {
     /// <summary>
-    /// This is a list of regex patterns for identifying xml serialized classes that implement IMapsDirectlyToDatabaseTable in Xml strings
-    /// It is used to detect when you are trying to delete an object which has hidden references to it in important serialized bits of
-    /// text (e.g. Catalogue.ValidationXML).
+    ///     This is a list of regex patterns for identifying xml serialized classes that implement IMapsDirectlyToDatabaseTable
+    ///     in Xml strings
+    ///     It is used to detect when you are trying to delete an object which has hidden references to it in important
+    ///     serialized bits of
+    ///     text (e.g. Catalogue.ValidationXML).
     /// </summary>
     public List<Suspect> TheUsualSuspects = new();
 
     /// <summary>
-    /// Catalogues whose ValidationXML doesn't resolve properly
+    ///     Catalogues whose ValidationXML doesn't resolve properly
     /// </summary>
     public List<Catalogue> CataloguesWithBrokenValidationXml = new();
 

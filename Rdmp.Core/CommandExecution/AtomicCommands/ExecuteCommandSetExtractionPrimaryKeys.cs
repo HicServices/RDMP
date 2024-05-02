@@ -12,8 +12,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSettingBase, IAtomicCommand
 {
     /// <summary>
-    /// Change which column(s) should be marked as primary key on extraction to a destination that supports this feature (e.g. to database).
-    /// Operation can be applied either at global <see cref="Catalogue"/> level or for a specific <paramref name="inConfiguration"/>
+    ///     Change which column(s) should be marked as primary key on extraction to a destination that supports this feature
+    ///     (e.g. to database).
+    ///     Operation can be applied either at global <see cref="Catalogue" /> level or for a specific
+    ///     <paramref name="inConfiguration" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="catalogue"></param>
@@ -35,12 +37,20 @@ public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSet
     {
     }
 
-    public override string GetCommandHelp() =>
-        "Change which column(s) should be marked as primary key if extracting to database";
+    public override string GetCommandHelp()
+    {
+        return "Change which column(s) should be marked as primary key if extracting to database";
+    }
 
-    protected override bool IsValidSelection(ConcreteColumn[] selected) => true;
+    protected override bool IsValidSelection(ConcreteColumn[] selected)
+    {
+        return true;
+    }
 
-    protected override bool Getter(ConcreteColumn c) => c.IsPrimaryKey;
+    protected override bool Getter(ConcreteColumn c)
+    {
+        return c.IsPrimaryKey;
+    }
 
     protected override void Setter(ConcreteColumn ec, bool newValue)
     {

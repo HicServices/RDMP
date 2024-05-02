@@ -12,8 +12,9 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// Returns dates consecutively with reference to a LoadProgress, starting from the last successful load (DataLoadProgress) or OriginDate if no load has yet
-/// been successfully completed
+///     Returns dates consecutively with reference to a LoadProgress, starting from the last successful load
+///     (DataLoadProgress) or OriginDate if no load has yet
+///     been successfully completed
 /// </summary>
 public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
 {
@@ -36,10 +37,12 @@ public class SingleScheduleConsecutiveDateStrategy : IJobDateGenerationStrategy
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="batchSize"></param>
-    /// <param name="allowLoadingFutureDates">if true then dates can be loaded that are in the future otherwise the returned list of dates will only contain dates in teh past</param>
+    /// <param name="allowLoadingFutureDates">
+    ///     if true then dates can be loaded that are in the future otherwise the returned
+    ///     list of dates will only contain dates in teh past
+    /// </param>
     /// <returns></returns>
     public List<DateTime> GetDates(int batchSize, bool allowLoadingFutureDates)
     {

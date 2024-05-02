@@ -14,8 +14,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for responding to errors processing the file
-/// being loaded according to the <see cref="BadDataHandlingStrategy"/>. It also includes settings for how to respond to empty files.
+///     This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource" />, it is responsible for responding
+///     to errors processing the file
+///     being loaded according to the <see cref="BadDataHandlingStrategy" />. It also includes settings for how to respond
+///     to empty files.
 /// </summary>
 public class FlatFileEventHandlers
 {
@@ -28,7 +30,7 @@ public class FlatFileEventHandlers
     private readonly bool _ignoreBadDataEvents;
 
     /// <summary>
-    /// File where we put error rows
+    ///     File where we put error rows
     /// </summary>
     public FileInfo DivertErrorsFile;
 

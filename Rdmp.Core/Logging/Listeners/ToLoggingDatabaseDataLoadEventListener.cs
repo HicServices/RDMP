@@ -13,8 +13,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Logging.Listeners;
 
 /// <summary>
-/// Handles transparently all the logging complexity by using the IDataLoadEventListener interface.  Use this interface if you want to log to the
-/// logging database events that might otherwise go elsewhere or the component/system you are dealing with already uses IDataLoadEventListeners
+///     Handles transparently all the logging complexity by using the IDataLoadEventListener interface.  Use this interface
+///     if you want to log to the
+///     logging database events that might otherwise go elsewhere or the component/system you are dealing with already uses
+///     IDataLoadEventListeners
 /// </summary>
 public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 {
@@ -26,12 +28,14 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
     private readonly string _runDescription;
 
     /// <summary>
-    /// true if we were passed an IDataLoadInfo that was created by someone else (in which case we shouldn't just arbitrarily close it at any point).
+    ///     true if we were passed an IDataLoadInfo that was created by someone else (in which case we shouldn't just
+    ///     arbitrarily close it at any point).
     /// </summary>
-    private bool _wasAlreadyOpen;
+    private readonly bool _wasAlreadyOpen;
 
     /// <summary>
-    /// The root logging object under which all events will be stored, will be null if logging has not started yet (first call to OnNotify/StartLogging).
+    ///     The root logging object under which all events will be stored, will be null if logging has not started yet (first
+    ///     call to OnNotify/StartLogging).
     /// </summary>
     public IDataLoadInfo DataLoadInfo { get; private set; }
 
@@ -64,7 +68,10 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
 
     static ToLoggingDatabaseDataLoadEventListener()
     {
-        StrStringLengthLimit = int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit), out var limit) ? limit : int.MaxValue;
+        StrStringLengthLimit =
+            int.TryParse(Environment.GetEnvironmentVariable(RDMPLoggingStringLengthLimit), out var limit)
+                ? limit
+                : int.MaxValue;
     }
 
     private static string EnsureMessageAValidLength(string message)
@@ -72,11 +79,12 @@ public class ToLoggingDatabaseDataLoadEventListener : IDataLoadEventListener
         return StrStringLengthLimit < 4 ? "" :
             message.Length > StrStringLengthLimit ? message[..(StrStringLengthLimit - 3)] + "..." : message;
     }
+
     public virtual void OnNotify(object sender, NotifyEventArgs e)
     {
         if (DataLoadInfo == null)
             StartLogging();
-        if (StrStringLengthLimit < 4)   // Logging suppressed
+        if (StrStringLengthLimit < 4) // Logging suppressed
             return;
 
         switch (e.ProgressEventType)

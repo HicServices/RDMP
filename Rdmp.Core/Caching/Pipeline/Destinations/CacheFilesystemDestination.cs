@@ -17,7 +17,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline.Destinations;
 
 /// <summary>
-/// Time period for which cache chunks are stored / fetched.  Some caching tasks produce so many file system entries it is nessesary to subdivide the cache by Hour.
+///     Time period for which cache chunks are stored / fetched.  Some caching tasks produce so many file system entries it
+///     is nessesary to subdivide the cache by Hour.
 /// </summary>
 public enum CacheFileGranularity
 {
@@ -26,16 +27,17 @@ public enum CacheFileGranularity
 }
 
 /// <summary>
-/// Abstract implementation of ICacheFileSystemDestination. Includes checks for CacheLayout construction and read/write permissions to Cache directory.  To implement
-/// this class you should implement an ICacheLayout (or use an existing one) and then use ProcessPipelineData to populate the CacheDirectory with data according to the
-/// ICacheLayout
+///     Abstract implementation of ICacheFileSystemDestination. Includes checks for CacheLayout construction and read/write
+///     permissions to Cache directory.  To implement
+///     this class you should implement an ICacheLayout (or use an existing one) and then use ProcessPipelineData to
+///     populate the CacheDirectory with data according to the
+///     ICacheLayout
 /// </summary>
 public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, IPluginDataFlowComponent<ICacheChunk>,
     IDataFlowDestination<ICacheChunk>
 {
     [DemandsInitialization(
-        "Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",
-        DemandType.Unspecified, null)]
+        "Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.")]
     public DirectoryInfo CacheDirectory { get; set; }
 
     public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener,
@@ -50,7 +52,7 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     }
 
     /// <summary>
-    /// Use CacheDirectory to create a new layout, this method should only be called after PreInitialize
+    ///     Use CacheDirectory to create a new layout, this method should only be called after PreInitialize
     /// </summary>
     /// <returns></returns>
     public abstract ICacheLayout CreateCacheLayout();

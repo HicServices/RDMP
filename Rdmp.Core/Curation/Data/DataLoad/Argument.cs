@@ -26,19 +26,25 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Abstract base for all concrete IArgument objects.  An Argument is a stored value for a Property defined on a PipelineComponent or DLE component which has
-/// been decorated with [DemandsInitialization] and for which the user has picked a value.  The class includes both the Type of the argument (extracted from
-/// the class Property PropertyInfo via reflection) and the Value (stored in the database as a string).
-/// 
-/// <para>This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
-/// dle activities.  See ArgumentCollection for UI logic.</para>
+///     Abstract base for all concrete IArgument objects.  An Argument is a stored value for a Property defined on a
+///     PipelineComponent or DLE component which has
+///     been decorated with [DemandsInitialization] and for which the user has picked a value.  The class includes both the
+///     Type of the argument (extracted from
+///     the class Property PropertyInfo via reflection) and the Value (stored in the database as a string).
+///     <para>
+///         This allows simple UI driven population and persistence of configuration settings for plugin and system core
+///         components as they are used in all pipeline and
+///         dle activities.  See ArgumentCollection for UI logic.
+///     </para>
 /// </summary>
 public abstract class Argument : DatabaseEntity, IArgument
 {
     /// <summary>
-    /// All Types that are supported for <see cref="Type"/> and <see cref="Value"/> of <see cref="IArgument"/>s.
-    /// 
-    /// <para>Or to put it another way, don't decorate an <see cref="IArgumentHost"/> property with <see cref="DemandsInitializationAttribute"/> if its Type isn't on this list</para>
+    ///     All Types that are supported for <see cref="Type" /> and <see cref="Value" /> of <see cref="IArgument" />s.
+    ///     <para>
+    ///         Or to put it another way, don't decorate an <see cref="IArgumentHost" /> property with
+    ///         <see cref="DemandsInitializationAttribute" /> if its Type isn't on this list
+    ///     </para>
     /// </summary>
     public static readonly Type[] PermissableTypes =
     {
@@ -81,14 +87,14 @@ public abstract class Argument : DatabaseEntity, IArgument
     private string _type;
     private string _description;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Name
     {
         get => _name;
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [AdjustableLocation]
     public string Value
     {
@@ -96,14 +102,14 @@ public abstract class Argument : DatabaseEntity, IArgument
         set => SetField(ref _value, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Type
     {
         get => _type;
         protected set => SetField(ref _type, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Description
     {
         get => _description;
@@ -112,19 +118,22 @@ public abstract class Argument : DatabaseEntity, IArgument
 
     #endregion
 
-    /// <inheritdoc/>
-    protected Argument() : base()
+    /// <inheritdoc />
+    protected Argument()
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected Argument(ICatalogueRepository repository, DbDataReader dataReader)
         : base(repository, dataReader)
     {
     }
 
-    /// <inheritdoc/>
-    public object GetValueAsSystemType() => Deserialize(Value, Type);
+    /// <inheritdoc />
+    public object GetValueAsSystemType()
+    {
+        return Deserialize(Value, Type);
+    }
 
     private object Deserialize(string value, string type)
     {
@@ -268,8 +277,11 @@ public abstract class Argument : DatabaseEntity, IArgument
         return false;
     }
 
-    /// <inheritdoc/>
-    public Type GetSystemType() => GetSystemType(Type);
+    /// <inheritdoc />
+    public Type GetSystemType()
+    {
+        return GetSystemType(Type);
+    }
 
     private Type GetSystemType(string type)
     {
@@ -305,10 +317,13 @@ public abstract class Argument : DatabaseEntity, IArgument
         return anyType;
     }
 
-    /// <inheritdoc/>
-    public Type GetConcreteSystemType() => GetConcreteSystemType(Type);
+    /// <inheritdoc />
+    public Type GetConcreteSystemType()
+    {
+        return GetConcreteSystemType(Type);
+    }
 
-    /// <inheritdoc cref="GetConcreteSystemType()"/>
+    /// <inheritdoc cref="GetConcreteSystemType()" />
     public Type GetConcreteSystemType(string typeAsString)
     {
         var type = GetSystemType(typeAsString);
@@ -325,7 +340,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         return type;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetType(Type t)
     {
         //anything that is a child of a permissable type
@@ -335,7 +350,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         Type = t.ToString();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetValue(object o)
     {
         Value = Serialize(o, Type);

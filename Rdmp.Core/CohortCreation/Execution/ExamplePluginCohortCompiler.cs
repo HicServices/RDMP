@@ -17,10 +17,9 @@ using Rdmp.Core.QueryCaching.Aggregation;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// Demonstration class for how to implement a plugin cohort e.g. to a REST API.
-/// This class generates a number of random chis when prompted to query the 'api'.
-/// 
-/// <para>If deployed as a patient index table, also returns random dates of birth and death</para>
+///     Demonstration class for how to implement a plugin cohort e.g. to a REST API.
+///     This class generates a number of random chis when prompted to query the 'api'.
+///     <para>If deployed as a patient index table, also returns random dates of birth and death</para>
 /// </summary>
 public class ExamplePluginCohortCompiler : PluginCohortCompiler
 {
@@ -78,18 +77,24 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
         SubmitIdentifierList("chi", set, ac, cache);
     }
 
-    private static int GetNumberToGenerate(AggregateConfiguration ac) =>
+    private static int GetNumberToGenerate(AggregateConfiguration ac)
+    {
         // You can persist configuration info about how to query the API any way
         // you want.  Here we just use the Description field
-        int.TryParse(ac.Description, out var result) ? result : 5;
+        return int.TryParse(ac.Description, out var result) ? result : 5;
+    }
 
-    public override bool ShouldRun(ICatalogue cata) =>
+    public override bool ShouldRun(ICatalogue cata)
+    {
         // we will handle any dataset where the associated Catalogue has this name
         // you can customise how to spot your API calls however you want
-        cata.Name.Equals(ExampleAPIName);
+        return cata.Name.Equals(ExampleAPIName);
+    }
 
-    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo) =>
+    protected override string GetJoinColumnNameFor(AggregateConfiguration joinedTo)
+    {
         // when RunAsPatientIndexTable is being used the column that can be linked
         // to other datasets is called "chi"
-        "chi";
+        return "chi";
+    }
 }

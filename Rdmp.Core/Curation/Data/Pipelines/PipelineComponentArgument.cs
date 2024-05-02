@@ -15,10 +15,11 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship between ProcessTask and ProcessTaskArgument and
-/// reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by reflection from the PipelineComponent (serialization)
-/// 
-/// <para>See Pipeline and PipelineComponent for more information about this</para>
+///     Each PipelineComponent can have 0 or more PipelineComponentArguments, these function exactly like the relationship
+///     between ProcessTask and ProcessTaskArgument and
+///     reflect a [DemandsInitialization] property on a class of type IDataFlowComponent which is built and populated by
+///     reflection from the PipelineComponent (serialization)
+///     <para>See Pipeline and PipelineComponent for more information about this</para>
 /// </summary>
 public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 {
@@ -26,7 +27,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 
     private int _pipelineComponentID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int PipelineComponent_ID
     {
         get => _pipelineComponentID;
@@ -37,7 +38,7 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
 
     #region Relationships
 
-    /// <inheritdoc cref="PipelineComponent_ID"/>
+    /// <inheritdoc cref="PipelineComponent_ID" />
     [NoMappingToDatabase]
     public IPipelineComponent PipelineComponent => Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
 
@@ -48,9 +49,8 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
     }
 
     /// <summary>
-    /// Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent"/>.
-    /// 
-    /// <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}"/> intead</para>
+    ///     Creates a new argument storage object for one of the arguments in <see cref="PipelineComponent" />.
+    ///     <para>You should probably call <see cref="IArgumentHost.CreateArgumentsForClassIfNotExists{T}" /> intead</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -74,19 +74,25 @@ public class PipelineComponentArgument : Argument, IPipelineComponentArgument
         Description = r["Description"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { PipelineComponent };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Clone(PipelineComponent intoTargetComponent)
     {
         var cloneArg = new PipelineComponentArgument(intoTargetComponent.CatalogueRepository, intoTargetComponent)

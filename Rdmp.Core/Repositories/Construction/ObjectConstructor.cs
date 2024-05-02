@@ -16,12 +16,14 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories.Construction;
 
 /// <summary>
-/// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the
-/// provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'here's a TableInfo, construct class X with the TableInfo parameter or if
-/// it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.  If there are multiple matching constructors
-/// it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
-/// 
-/// <para>If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.</para>
+///     Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable
+///     Constructor on a class Type based on the
+///     provided parameters and invoking it.  Also implicitly supports hypotheticals e.g. 'here's a TableInfo, construct
+///     class X with the TableInfo parameter or if
+///     it has a blank constructor that's fine too or if it takes ITableInfo that's fine too... just use whatever works'.
+///     If there are multiple matching constructors
+///     it will attempt to find the 'best' (See InvokeBestConstructor for implementation).
+///     <para>If there are no compatible constructors you will get an ObjectLacksCompatibleConstructorException.</para>
 /// </summary>
 public class ObjectConstructor
 {
@@ -29,37 +31,47 @@ public class ObjectConstructor
         BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
     /// <summary>
-    /// Constructs a new instance of Type t using the blank constructor
+    ///     Constructs a new instance of Type t using the blank constructor
     /// </summary>
     /// <param name="t"></param>
     /// <returns></returns>
-    public static object Construct(Type t) => GetUsingBlankConstructor(t);
+    public static object Construct(Type t)
+    {
+        return GetUsingBlankConstructor(t);
+    }
 
     #region permissable constructor signatures for use with this class
 
     /// <summary>
-    /// Constructs a new instance of Type t using the default constructor or one that takes an IRDMPPlatformRepositoryServiceLocator (or any derived class)
+    ///     Constructs a new instance of Type t using the default constructor or one that takes an
+    ///     IRDMPPlatformRepositoryServiceLocator (or any derived class)
     /// </summary>
     /// <param name="t"></param>
     /// <param name="serviceLocator"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
     public static object
-        Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator, bool allowBlank = true) =>
-        Construct<IRDMPPlatformRepositoryServiceLocator>(t, serviceLocator, allowBlank);
+        Construct(Type t, IRDMPPlatformRepositoryServiceLocator serviceLocator, bool allowBlank = true)
+    {
+        return Construct<IRDMPPlatformRepositoryServiceLocator>(t, serviceLocator, allowBlank);
+    }
 
     /// <summary>
-    /// Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any derived class)
+    ///     Constructs a new instance of Type t using the default constructor or one that takes an ICatalogueRepository (or any
+    ///     derived class)
     /// </summary>
     /// <param name="t"></param>
     /// <param name="catalogueRepository"></param>
     /// <param name="allowBlank"></param>
     /// <returns></returns>
-    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true) =>
-        Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
+    public static object Construct(Type t, ICatalogueRepository catalogueRepository, bool allowBlank = true)
+    {
+        return Construct<ICatalogueRepository>(t, catalogueRepository, allowBlank);
+    }
 
     /// <summary>
-    /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="DatabaseEntity"/>).
+    ///     Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r)
+    ///     (See <see cref="DatabaseEntity" />).
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="objectType"></param>
@@ -83,12 +95,16 @@ public class ObjectConstructor
     #endregion
 
     /// <summary>
-    /// Constructs an instance of object of Type 'typeToConstruct' which should have a compatible constructor taking an object or interface compatible with T
-    /// or a blank constructor (optionally)
+    ///     Constructs an instance of object of Type 'typeToConstruct' which should have a compatible constructor taking an
+    ///     object or interface compatible with T
+    ///     or a blank constructor (optionally)
     /// </summary>
     /// <typeparam name="T">The parameter type expected to be in the constructor</typeparam>
     /// <param name="typeToConstruct">The type to construct an instance of</param>
-    /// <param name="constructorParameter1">a value to feed into the compatible constructor found for Type typeToConstruct in order to produce an instance</param>
+    /// <param name="constructorParameter1">
+    ///     a value to feed into the compatible constructor found for Type typeToConstruct in
+    ///     order to produce an instance
+    /// </param>
     /// <param name="allowBlank">true to allow calling the blank constructor if no matching constructor is found that takes a T</param>
     /// <returns></returns>
     public static object Construct<T>(Type typeToConstruct, T constructorParameter1, bool allowBlank = true)
@@ -126,13 +142,13 @@ public class ObjectConstructor
                 case 1 when p[0].ParameterType == typeof(T): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 1:
-                    {
-                        if (p[0].ParameterType
-                            .IsAssignableFrom(
-                                typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
-                            toReturn.Add(constructor);
-                        break;
-                    }
+                {
+                    if (p[0].ParameterType
+                        .IsAssignableFrom(
+                            typeof(T))) //is it a derived class match i.e. ctor(F bob) where F is a derived class of T
+                        toReturn.Add(constructor);
+                    break;
+                }
             }
         }
 
@@ -141,7 +157,7 @@ public class ObjectConstructor
 
 
     /// <summary>
-    /// Returns all constructors defined for class 'type' that are compatible with the parameters T and T2
+    ///     Returns all constructors defined for class 'type' that are compatible with the parameters T and T2
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="T2"></typeparam>
@@ -160,12 +176,12 @@ public class ObjectConstructor
                 case 2 when p[0].ParameterType == typeof(T) && p[1].ParameterType == typeof(T2): // Exact match found
                     return new List<ConstructorInfo>(new[] { constructor });
                 case 2:
-                    {
-                        if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
-                            p[1].ParameterType.IsAssignableFrom(typeof(T2)))
-                            toReturn.Add(constructor);
-                        break;
-                    }
+                {
+                    if (p[0].ParameterType.IsAssignableFrom(typeof(T)) &&
+                        p[1].ParameterType.IsAssignableFrom(typeof(T2)))
+                        toReturn.Add(constructor);
+                    break;
+                }
             }
         }
 
@@ -173,8 +189,9 @@ public class ObjectConstructor
     }
 
     /// <summary>
-    /// Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided parameters.  The return value is a dictionary
-    /// of all compatible constructors with the objects needed to invoke them.
+    ///     Returns all constructors defined for class 'type' which are compatible with any set or subset of the provided
+    ///     parameters.  The return value is a dictionary
+    ///     of all compatible constructors with the objects needed to invoke them.
     /// </summary>
     /// <param name="type"></param>
     /// <param name="allowBlankConstructor"></param>
@@ -230,11 +247,12 @@ public class ObjectConstructor
     }
 
     /// <summary>
-    /// Returns the best object from parameterObjects for populating an argument of the provided Type.  This is done by looking for an exact Type match first
-    /// then if none of those exist, it will look for a single object assignable to the parameter type.  If at any point there is two or more matching parameterObjects
-    /// then an <seealso cref="ObjectLacksCompatibleConstructorException"/> will be thrown.
-    /// 
-    /// <para>If there are no objects provided that match any of the provided parameterObjects then null gets returned.</para>
+    ///     Returns the best object from parameterObjects for populating an argument of the provided Type.  This is done by
+    ///     looking for an exact Type match first
+    ///     then if none of those exist, it will look for a single object assignable to the parameter type.  If at any point
+    ///     there is two or more matching parameterObjects
+    ///     then an <seealso cref="ObjectLacksCompatibleConstructorException" /> will be thrown.
+    ///     <para>If there are no objects provided that match any of the provided parameterObjects then null gets returned.</para>
     /// </summary>
     /// <param name="parameterType"></param>
     /// <param name="parameterObjects"></param>
@@ -280,12 +298,15 @@ public class ObjectConstructor
     }
 
     /// <summary>
-    /// Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on parameter number but ignores order
-    /// so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).
-    /// <para>Throws <see cref="ObjectLacksCompatibleConstructorException"/> if there are multiple constructors that match the constructorValues</para>
-    /// 
-    /// <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
-    /// <para>returns null if no compatible constructor is found</para>
+    ///     Attempts to construct an instance of Type typeToConstruct using the provided constructorValues.  This must match on
+    ///     parameter number but ignores order
+    ///     so if you pass new Obj1(),new Obj2() it could invoke either MyClass(Obj1 a,Obj2 b) or MyClass(Obj2 a, Obj1 b).
+    ///     <para>
+    ///         Throws <see cref="ObjectLacksCompatibleConstructorException" /> if there are multiple constructors that match
+    ///         the constructorValues
+    ///     </para>
+    ///     <para>Does not invoke the default constructor unless you leave constructorValues blank</para>
+    ///     <para>returns null if no compatible constructor is found</para>
     /// </summary>
     /// <param name="typeToConstruct"></param>
     /// <param name="constructorValues"></param>
@@ -325,8 +346,8 @@ public class ObjectConstructor
     }
 
     /// <summary>
-    /// Returns the most likely constructor for creating new instances of a <see cref="DatabaseEntity"/> class e.g.
-    /// for <see cref="Catalogue"/> it would return the constructor <see cref="Catalogue(ICatalogueRepository,string)"/>
+    ///     Returns the most likely constructor for creating new instances of a <see cref="DatabaseEntity" /> class e.g.
+    ///     for <see cref="Catalogue" /> it would return the constructor <see cref="Catalogue(ICatalogueRepository,string)" />
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -334,10 +355,10 @@ public class ObjectConstructor
     {
         var compatible = type.GetConstructors()
             .Select(constructorInfo => new { constructorInfo, parameters = constructorInfo.GetParameters() })
-            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(ShareManager)))
-            .Where(@t => @t.parameters.All(p => p.GetType() != typeof(DbDataReader)))
-            .Where(@t => @t.parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
-            .Select(@t => @t.constructorInfo).ToList();
+            .Where(t => t.parameters.All(p => p.GetType() != typeof(ShareManager)))
+            .Where(t => t.parameters.All(p => p.GetType() != typeof(DbDataReader)))
+            .Where(t => t.parameters.Any(p => typeof(IRepository).IsAssignableFrom(p.ParameterType)))
+            .Select(t => t.constructorInfo).ToList();
 
         return compatible.Count == 1
             ? compatible.Single()

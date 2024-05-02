@@ -16,26 +16,27 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Checks <see cref="ExtractionConfiguration"/> to ensure they are in a valid state for execution (have a cohort, linkable patient columns etc).  Optionally also checks
-/// each dataset in the configuration with a <see cref="SelectedDataSetsChecker"/>
+///     Checks <see cref="ExtractionConfiguration" /> to ensure they are in a valid state for execution (have a cohort,
+///     linkable patient columns etc).  Optionally also checks
+///     each dataset in the configuration with a <see cref="SelectedDataSetsChecker" />
 /// </summary>
 public class ExtractionConfigurationChecker : ICheckable
 {
-    private IExtractionConfiguration _config;
-    private IBasicActivateItems _activator;
+    private readonly IExtractionConfiguration _config;
+    private readonly IBasicActivateItems _activator;
 
     /// <summary>
-    /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+    ///     True to fetch all <see cref="ISelectedDataSets" /> and check with <see cref="SelectedDataSetsChecker" />
     /// </summary>
     public bool CheckDatasets { get; set; }
 
     /// <summary>
-    /// True to also check all globals with a <see cref="GlobalExtractionChecker"/>
+    ///     True to also check all globals with a <see cref="GlobalExtractionChecker" />
     /// </summary>
     public bool CheckGlobals { get; set; }
 
     /// <summary>
-    /// Prepares checking of the given <paramref name="config"/>
+    ///     Prepares checking of the given <paramref name="config" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="config"></param>
@@ -46,7 +47,8 @@ public class ExtractionConfigurationChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks that the configuration is in a valid state.  Supports both released (frozen) <see cref="ExtractionConfiguration"/> and unreleased ones.
+    ///     Checks that the configuration is in a valid state.  Supports both released (frozen)
+    ///     <see cref="ExtractionConfiguration" /> and unreleased ones.
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)

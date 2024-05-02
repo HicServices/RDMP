@@ -19,14 +19,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-/// Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables / PreLoadDiscardedColumn(s) in the TableInfo.
-/// Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
+///     Pipeline component for anonymising DataTable batches in memory according to the configuration of ANOTables /
+///     PreLoadDiscardedColumn(s) in the TableInfo.
+///     Actual functionality is implemented in IdentifierDumper and ANOTransformer(s).
 /// </summary>
 public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
     private bool _bInitialized;
 
-    private Dictionary<string, ANOTransformer> columnsToAnonymise = new();
+    private readonly Dictionary<string, ANOTransformer> columnsToAnonymise = new();
 
     private IdentifierDumper _dumper;
 
@@ -61,8 +62,8 @@ public class BasicAnonymisationEngine : IPluginDataFlowComponent<DataTable>, IPi
 
     private int recordsProcessedSoFar;
 
-    private Stopwatch stopwatch_TimeSpentTransforming = new();
-    private Stopwatch stopwatch_TimeSpentDumping = new();
+    private readonly Stopwatch stopwatch_TimeSpentTransforming = new();
+    private readonly Stopwatch stopwatch_TimeSpentDumping = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)

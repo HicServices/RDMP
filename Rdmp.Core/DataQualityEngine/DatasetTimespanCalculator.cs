@@ -14,16 +14,20 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataQualityEngine;
 
 /// <summary>
-/// Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this includes any dates in which there are
-/// 1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they would be discarded if you had
-///  an average of 3000+ records per month (after ignoring months where there are no records).
-/// 
-/// <para>IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on the last DQE run on the dataset not
-/// the live table</para>
+///     Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this
+///     includes any dates in which there are
+///     1000 times less records than the non zero average month.  For example if you have 3 records in 01/01/2090 then they
+///     would be discarded if you had
+///     an average of 3000+ records per month (after ignoring months where there are no records).
+///     <para>
+///         IMPORTANT: You must have run the DQE on the dataset before this class can be used and the results are based on
+///         the last DQE run on the dataset not
+///         the live table
+///     </para>
 /// </summary>
 public class DatasetTimespanCalculator : IDetermineDatasetTimespan
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetHumanReadableTimespanIfKnownOf(Catalogue catalogue, bool discardOutliers,
         out DateTime? accurateAsOf)
     {
@@ -87,7 +91,10 @@ public class DatasetTimespanCalculator : IDetermineDatasetTimespan
         return GetMachineReadableTimespanIfKnownOf(mostRecentEvaluation, discardOutliers);
     }
 
-    private static Tuple<DateTime?, DateTime?> Unknown() => Tuple.Create<DateTime?, DateTime?>(null, null);
+    private static Tuple<DateTime?, DateTime?> Unknown()
+    {
+        return Tuple.Create<DateTime?, DateTime?>(null, null);
+    }
 
     private static int GetDiscardThreshold(DataTable dt)
     {

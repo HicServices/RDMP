@@ -36,8 +36,11 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
             SetImpossible($"Catalogue {_catalogue.Catalogue} does not contain any IsExtractionIdentifier columns");
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a new patient index table query that fetches a subset of data from the chosen dataset.  This query will be used as part of a cohort identification configuration";
+    public override string GetCommandHelp()
+    {
+        return
+            "Creates a new patient index table query that fetches a subset of data from the chosen dataset.  This query will be used as part of a cohort identification configuration";
+    }
 
     public override void Execute()
     {
@@ -60,6 +63,8 @@ public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable
         joinableCommandExecution.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
+    }
 }

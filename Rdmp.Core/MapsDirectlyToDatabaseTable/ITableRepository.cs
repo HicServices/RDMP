@@ -13,8 +13,9 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// IRepository that uses a database to store IMapsDirectlyToDatabaseTable objects.  Realistically all IRepository are going to be these since the idea
-/// of building a non database IRepository would be virtually impossible.
+///     IRepository that uses a database to store IMapsDirectlyToDatabaseTable objects.  Realistically all IRepository are
+///     going to be these since the idea
+///     of building a non database IRepository would be virtually impossible.
 /// </summary>
 public interface ITableRepository : IRepository
 {

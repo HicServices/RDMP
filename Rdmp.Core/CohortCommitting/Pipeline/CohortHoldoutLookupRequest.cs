@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// All details required to create a holdout set from a cohort
+///     All details required to create a holdout set from a cohort
 /// </summary>
 public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummarised, ICohortHoldoutLookupRequest
 {
@@ -33,29 +33,39 @@ public sealed class CohortHoldoutLookupRequest : PipelineUseCase, ICanBeSummaris
     public DateTime MinDate { get; set; }
     public DateTime MaxDate { get; set; }
     public string DateColumnName { get; set; }
-    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent, string description = "", string minDate = null, string maxDate = null, string dateColumnName = null)
+
+    public CohortHoldoutLookupRequest(CohortIdentificationConfiguration cic, string name, int count, bool isPercent,
+        string description = "", string minDate = null, string maxDate = null, string dateColumnName = null)
     {
         CIC = cic;
         Name = name;
         Count = count;
         IsPercent = isPercent;
         Description = description;
-        if (DateTime.TryParseExact(minDate, "DD/MM/YYYY", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedMinDate))
+        if (DateTime.TryParseExact(minDate, "DD/MM/YYYY", CultureInfo.InvariantCulture, DateTimeStyles.None,
+                out var parsedMinDate))
             MinDate = parsedMinDate;
-        if (DateTime.TryParseExact(maxDate, "DD/MM/YYYY",  CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedMaxDate))
+        if (DateTime.TryParseExact(maxDate, "DD/MM/YYYY", CultureInfo.InvariantCulture, DateTimeStyles.None,
+                out var parsedMaxDate))
             MaxDate = parsedMaxDate;
         DateColumnName = dateColumnName;
         AddInitializationObject(this);
     }
-    public string GetSummary(bool includeName, bool includeId) => $"Cohort Holdout: {Name}";
+
+    public string GetSummary(bool includeName, bool includeId)
+    {
+        return $"Cohort Holdout: {Name}";
+    }
 
 
-    protected override IDataFlowPipelineContext GenerateContextImpl() =>
-            new DataFlowPipelineContext<CohortIdentificationConfiguration>
-            {
-                MustHaveDestination = typeof(ICohortPipelineDestination),
-                MustHaveSource = typeof(IDataFlowSource<CohortIdentificationConfiguration>)
-            };
+    protected override IDataFlowPipelineContext GenerateContextImpl()
+    {
+        return new DataFlowPipelineContext<CohortIdentificationConfiguration>
+        {
+            MustHaveDestination = typeof(ICohortPipelineDestination),
+            MustHaveSource = typeof(IDataFlowSource<CohortIdentificationConfiguration>)
+        };
+    }
 
     public void Check(ICheckNotifier notifier)
     {

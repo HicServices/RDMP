@@ -16,12 +16,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The component will crash the entire pipeline
-/// if it sees columns which match the forbidlist.  Use cases for this include when the user wants to prevent private identifiers being accidentally released
-/// due to system misconfiguration e.g. you might forbidlist all columns containing the strings starting "Patient" on the grounds that they are likely to be
-/// identifiable (PatientName, PatientDob etc).
-/// 
-/// <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
+///     Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The
+///     component will crash the entire pipeline
+///     if it sees columns which match the forbidlist.  Use cases for this include when the user wants to prevent private
+///     identifiers being accidentally released
+///     due to system misconfiguration e.g. you might forbidlist all columns containing the strings starting "Patient" on
+///     the grounds that they are likely to be
+///     identifiable (PatientName, PatientDob etc).
+///     <para>Crashes the pipeline if any column matches the regex e.g. '^(mCHI)|(chi)$'</para>
 /// </summary>
 public class ColumnForbidder : IPluginDataFlowComponent<DataTable>
 {

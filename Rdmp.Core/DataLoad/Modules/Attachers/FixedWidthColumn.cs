@@ -7,35 +7,37 @@
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Describes a fixed width column in a fixed width file being loaded by the RDMP DLE
+///     Describes a fixed width column in a fixed width file being loaded by the RDMP DLE
 /// </summary>
 public struct FixedWidthColumn
 {
     //order of these must match the order in the flat file!
     /// <summary>
-    /// The character index at which the column start.  This is inclusive and starts at 1.
+    ///     The character index at which the column start.  This is inclusive and starts at 1.
     /// </summary>
     public int From;
 
     /// <summary>
-    /// The character index at which the column ends.  This is inclusive and starts at 1.  If <see cref="From"/> and <see cref="To"/>
-    /// are the same number then a 1 character is allotted for that column
+    ///     The character index at which the column ends.  This is inclusive and starts at 1.  If <see cref="From" /> and
+    ///     <see cref="To" />
+    ///     are the same number then a 1 character is allotted for that column
     /// </summary>
     public int To;
 
     /// <summary>
-    /// The column name to ascribe to the column
+    ///     The column name to ascribe to the column
     /// </summary>
     public string Field;
 
     /// <summary>
-    /// The width (should be <see cref="To"/> - <see cref="From"/>) + 1.  This exists for validation purposes and is usually provided by
-    /// the user.  It helps prevent errors in reading
+    ///     The width (should be <see cref="To" /> - <see cref="From" />) + 1.  This exists for validation purposes and is
+    ///     usually provided by
+    ///     the user.  It helps prevent errors in reading
     /// </summary>
     public int Size;
 
     /// <summary>
-    /// The format to use when reading dates from the column (if any)
+    ///     The format to use when reading dates from the column (if any)
     /// </summary>
     public string DateFormat;
 }

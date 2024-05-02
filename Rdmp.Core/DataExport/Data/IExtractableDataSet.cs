@@ -12,41 +12,53 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Controls whether a given <see cref="Catalogue"/> is extractable or not.  Includes whether it is usable only with a specific <see cref="Project"/> or
-/// if extraction of the <see cref="Catalogue"/> has been temporarily disabled.
+///     Controls whether a given <see cref="Catalogue" /> is extractable or not.  Includes whether it is usable only with a
+///     specific <see cref="Project" /> or
+///     if extraction of the <see cref="Catalogue" /> has been temporarily disabled.
 /// </summary>
 public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
 {
     /// <summary>
-    /// The <see cref="Curation.Data.Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
-    /// the <see cref="ICatalogueRepository"/> database (while the <see cref="IExtractableDataSet"/> exists in the <see cref="IDataExportRepository"/>).
+    ///     The <see cref="Curation.Data.Catalogue" /> (dataset) which this object allows the extraction of.  The Catalogue
+    ///     object will exist in
+    ///     the <see cref="ICatalogueRepository" /> database (while the <see cref="IExtractableDataSet" /> exists in the
+    ///     <see cref="IDataExportRepository" />).
     /// </summary>
     int Catalogue_ID { get; set; }
 
     /// <summary>
-    /// True to temporarily disable extractions of the dataset.
+    ///     True to temporarily disable extractions of the dataset.
     /// </summary>
     bool DisableExtraction { get; set; }
 
-    /// <inheritdoc cref="Catalogue_ID"/>
+    /// <inheritdoc cref="Catalogue_ID" />
     ICatalogue Catalogue { get; }
 
     /// <summary>
-    /// Indicates that the referenced <see cref="Catalogue_ID"/> is associated only with one <see cref="IProject"/> and should not be used outside of that.
-    /// 
-    /// <para>Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data tables are treated exactly like regular Catalogues and
-    /// extracted in the same way as all the regular data.</para>
-    /// 
-    /// <para>In addition, you can use the columns in the referenced <see cref="Catalogue_ID"/> by joining them to any regular Catalogue being extracted in the Project.  These
-    /// selected columns will be bolted on as additional columns.  You can also reference them in the WhereSQL of filters which will trigger an similar Join>.</para>
-    /// 
-    /// <para>For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an extraction filters that only extracted records from
-    ///  Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.</para>
+    ///     Indicates that the referenced <see cref="Catalogue_ID" /> is associated only with one <see cref="IProject" /> and
+    ///     should not be used outside of that.
+    ///     <para>
+    ///         Usually this means the data is bespoke project data e.g. questionnaire answers for a cohort etc.  These data
+    ///         tables are treated exactly like regular Catalogues and
+    ///         extracted in the same way as all the regular data.
+    ///     </para>
+    ///     <para>
+    ///         In addition, you can use the columns in the referenced <see cref="Catalogue_ID" /> by joining them to any
+    ///         regular Catalogue being extracted in the Project.  These
+    ///         selected columns will be bolted on as additional columns.  You can also reference them in the WhereSQL of
+    ///         filters which will trigger an similar Join>.
+    ///     </para>
+    ///     <para>
+    ///         For example imagine you have a custom data set which is 'Patient ID,Date Consented' then you could configure an
+    ///         extraction filters that only extracted records from
+    ///         Prescribing, Demography, Biochemistry catalogues AFTER each patients consent date.
+    ///     </para>
     /// </summary>
     int? Project_ID { get; set; }
 
     /// <summary>
-    /// Returns true if the <see cref="ICatalogue"/> behind this dataset has been deleted or is marked <see cref="IMightBeDeprecated.IsDeprecated"/>
+    ///     Returns true if the <see cref="ICatalogue" /> behind this dataset has been deleted or is marked
+    ///     <see cref="IMightBeDeprecated.IsDeprecated" />
     /// </summary>
     bool IsCatalogueDeprecated { get; }
 }

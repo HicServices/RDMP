@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 /// <summary>
-/// This returns dates by examining cache filenames whilst honouring the Load and Cache Progress information
+///     This returns dates by examining cache filenames whilst honouring the Load and Cache Progress information
 /// </summary>
 public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrategy
 {
@@ -42,11 +42,13 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="loadProgress"></param>
     /// <returns></returns>
-    /// <exception cref="InvalidOperationException">Caching has not been configured correctly or the caching process has not begun</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Caching has not been configured correctly or the caching process has not
+    ///     begun
+    /// </exception>
     public static DateTime CalculateLastLoadDate(ILoadProgress loadProgress)
     {
         // Compute the last cache date from the CacheFillProgress date
@@ -66,7 +68,8 @@ public class SingleScheduleCacheDateTrackingStrategy : IJobDateGenerationStrateg
     }
 
     /// <summary>
-    /// Retrieves the destination component from the caching pipeline associated with the ICacheProgress object. The destination component is required to be an ICacheFileSystemDestination.
+    ///     Retrieves the destination component from the caching pipeline associated with the ICacheProgress object. The
+    ///     destination component is required to be an ICacheFileSystemDestination.
     /// </summary>
     /// <param name="cacheProgress"></param>
     /// <returns></returns>

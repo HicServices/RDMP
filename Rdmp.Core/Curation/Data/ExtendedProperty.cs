@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Referencing;
@@ -15,29 +16,29 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Repositories;
 
-
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Stores a single named value for a specific <see cref="DatabaseEntity"/>.  This can be used to store custom field values e.g. for plugins
+///     Stores a single named value for a specific <see cref="DatabaseEntity" />.  This can be used to store custom field
+///     values e.g. for plugins
 /// </summary>
 public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInjectKnown<IMapsDirectlyToDatabaseTable>,
     INamed
 {
     /// <summary>
-    /// Key for <see cref="ExtendedProperty"/> that indicates an object is replaced by another
+    ///     Key for <see cref="ExtendedProperty" /> that indicates an object is replaced by another
     /// </summary>
     public const string ReplacedBy = "ReplacedBy";
 
     /// <summary>
-    /// Key for <see cref="ExtendedProperty"/> that indicates an object is a reusable curated template
-    /// that can be reused in subsequently created configurations
+    ///     Key for <see cref="ExtendedProperty" /> that indicates an object is a reusable curated template
+    ///     that can be reused in subsequently created configurations
     /// </summary>
     public const string IsTemplate = "IsTemplate";
 
 
     /// <summary>
-    /// Key for use in <see cref="ExtendedProperty"/> for defining <see cref="IJoin.GetCustomJoinSql"/>
+    ///     Key for use in <see cref="ExtendedProperty" /> for defining <see cref="IJoin.GetCustomJoinSql" />
     /// </summary>
     public const string CustomJoinSql = "CustomJoinSql";
 
@@ -45,8 +46,8 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         "Enter the column comparison(s) SQL for the JOIN line.  Your string should include only the boolean comparison logic that follows the ON keyword.  E.g. col1=col2.  You can optionally use substitution tokens {0} and {1} for table name/alias (e.g. for lookup)";
 
     /// <summary>
-    /// Key used in <see cref="ExtendedProperty"/> to indicate that a <see cref="LoadMetadata"/> should not
-    /// attempt to DROP/CREATE its RAW database each time it is run
+    ///     Key used in <see cref="ExtendedProperty" /> to indicate that a <see cref="LoadMetadata" /> should not
+    ///     attempt to DROP/CREATE its RAW database each time it is run
     /// </summary>
     public const string PersistentRaw = "PersistentRaw";
 
@@ -54,7 +55,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         "Should the load leave old RAW databases in the RAW server and only cleanup/reload tables at runtime? Value must be 'true' or 'false'";
 
     /// <summary>
-    /// Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
+    ///     Collection of all known property names.  Plugins are free to add to these if desired but must do so pre startup
     /// </summary>
     public static List<string> KnownProperties = new();
 
@@ -79,21 +80,21 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     private int _referencedObjectID;
     private string _referencedObjectRepositoryType;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ReferencedObjectType
     {
         get => _referencedObjectType;
         set => SetField(ref _referencedObjectType, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ReferencedObjectID
     {
         get => _referencedObjectID;
         set => SetField(ref _referencedObjectID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ReferencedObjectRepositoryType
     {
         get => _referencedObjectRepositoryType;
@@ -128,7 +129,7 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
         SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtendedProperty(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         ReferencedObjectType = r["ReferencedObjectType"].ToString();
@@ -141,54 +142,68 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     }
 
     /// <summary>
-    /// True if the object referenced by this class is of Type <paramref name="type"/>
+    ///     True if the object referenced by this class is of Type <paramref name="type" />
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool IsReferenceTo(Type type) => AreProbablySameType(ReferencedObjectType, type);
+    public bool IsReferenceTo(Type type)
+    {
+        return AreProbablySameType(ReferencedObjectType, type);
+    }
 
     /// <summary>
-    /// True if the <paramref name="o"/> is the object that is explicitly referenced by this class instance
+    ///     True if the <paramref name="o" /> is the object that is explicitly referenced by this class instance
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o) =>
-        o.ID == ReferencedObjectID
-        &&
-        AreProbablySameType(ReferencedObjectType, o.GetType())
-        &&
-        AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
+    public bool IsReferenceTo(IMapsDirectlyToDatabaseTable o)
+    {
+        return o.ID == ReferencedObjectID
+               &&
+               AreProbablySameType(ReferencedObjectType, o.GetType())
+               &&
+               AreProbablySameType(ReferencedObjectRepositoryType, o.Repository.GetType());
+    }
 
-    private static bool AreProbablySameType(string storedTypeName, Type candidate) =>
-        storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
-        storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
+    private static bool AreProbablySameType(string storedTypeName, Type candidate)
+    {
+        return storedTypeName.Equals(candidate.Name, StringComparison.CurrentCultureIgnoreCase) ||
+               storedTypeName.Equals(candidate.FullName, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     /// <summary>
-    /// Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
+    ///     Returns the instance of the object referenced by this class or null if it no longer exists (e.g. has been deleted)
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
     public virtual IMapsDirectlyToDatabaseTable
-        GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator) =>
-        repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType,
+        GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType,
             ReferencedObjectID);
+    }
 
     /// <summary>
-    /// Returns true if the object referenced by this class still exists in the database
+    ///     Returns true if the object referenced by this class still exists in the database
     /// </summary>
     /// <param name="repositoryLocator"></param>
     /// <returns></returns>
-    public bool ReferencedObjectExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator) =>
-        repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType,
+    public bool ReferencedObjectExists(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+    {
+        return repositoryLocator.ArbitraryDatabaseObjectExists(ReferencedObjectRepositoryType, ReferencedObjectType,
             ReferencedObjectID);
+    }
 
     public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
     {
         _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(instance);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;
 
@@ -198,7 +213,8 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     }
 
     /// <summary>
-    /// Returns all <see cref="ExtendedProperty"/> defined <paramref name="forObject"/> in the <paramref name="repository"/>
+    ///     Returns all <see cref="ExtendedProperty" /> defined <paramref name="forObject" /> in the
+    ///     <paramref name="repository" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="forObject"></param>
@@ -208,13 +224,14 @@ public class ExtendedProperty : Argument, IReferenceOtherObjectWithPersist, IInj
     {
         return repository.GetAllObjectsWhere<ExtendedProperty>(
                 "ReferencedObjectID", forObject.ID,
-                System.Linq.Expressions.ExpressionType.And,
+                ExpressionType.And,
                 "ReferencedObjectType", forObject.GetType().Name)
             .Where(p => p.IsReferenceTo(forObject));
     }
 
     /// <summary>
-    /// Returns the <see cref="ExtendedProperty"/> <paramref name="named"/> or null if not defined <paramref name="forObject"/>
+    ///     Returns the <see cref="ExtendedProperty" /> <paramref name="named" /> or null if not defined
+    ///     <paramref name="forObject" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="named"></param>

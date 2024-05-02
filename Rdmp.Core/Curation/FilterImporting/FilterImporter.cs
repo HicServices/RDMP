@@ -13,30 +13,39 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Facilitates the import of one IFilter type into the scope of another IFilter collection.  IFilters are lines of WHERE Sql.  This class is what allows you to import
-/// a Catalogue level filter (ExtractionFilter) into specific deployment containers e.g. during cohort creation task you can import a copy of 'prescribed @drugX' into
-/// your AggregateFilterContainer (this will actually create an AggregateFilter) and then import 2 more copies of that IFilter.  This class ensures that parameter names
-/// are unique so you can change the value of @drugX for each new IFilter imported.
+///     Facilitates the import of one IFilter type into the scope of another IFilter collection.  IFilters are lines of
+///     WHERE Sql.  This class is what allows you to import
+///     a Catalogue level filter (ExtractionFilter) into specific deployment containers e.g. during cohort creation task
+///     you can import a copy of 'prescribed @drugX' into
+///     your AggregateFilterContainer (this will actually create an AggregateFilter) and then import 2 more copies of that
+///     IFilter.  This class ensures that parameter names
+///     are unique so you can change the value of @drugX for each new IFilter imported.
 /// </summary>
 public class FilterImporter
 {
     private readonly IFilterFactory _factory;
-    private ISqlParameter[] _globals;
+    private readonly ISqlParameter[] _globals;
 
     /// <summary>
-    /// Specifies overriding definitions for <see cref="ISqlParameter"/> which should be used with all <see cref="IFilter"/> built by this class.  When you import
-    /// a master filter that has parameters then this array will be consulted.  If a matching parameter name is found then the imported parameter will have that value
-    /// rather than its default.
-    /// 
-    /// <para><seealso cref="ExtractionFilterParameterSet"/></para>
+    ///     Specifies overriding definitions for <see cref="ISqlParameter" /> which should be used with all
+    ///     <see cref="IFilter" /> built by this class.  When you import
+    ///     a master filter that has parameters then this array will be consulted.  If a matching parameter name is found then
+    ///     the imported parameter will have that value
+    ///     rather than its default.
+    ///     <para>
+    ///         <seealso cref="ExtractionFilterParameterSet" />
+    ///     </para>
     /// </summary>
     public ISqlParameter[] AlternateValuesToUseForNewParameters { get; set; }
 
     /// <summary>
-    /// Sets up the factory to import filters which may or may not have parameters on them.
+    ///     Sets up the factory to import filters which may or may not have parameters on them.
     /// </summary>
-    /// <param name="factory">Determines which Type of <see cref="IFilter"/> is created</param>
-    /// <param name="globals">If filters being imported have parameters that match the names of these globals the global value will be used to override.</param>
+    /// <param name="factory">Determines which Type of <see cref="IFilter" /> is created</param>
+    /// <param name="globals">
+    ///     If filters being imported have parameters that match the names of these globals the global value
+    ///     will be used to override.
+    /// </param>
     public FilterImporter(IFilterFactory factory, ISqlParameter[] globals)
     {
         _factory = factory;
@@ -44,8 +53,9 @@ public class FilterImporter
     }
 
     /// <summary>
-    /// Creates a copy of the <paramref name="fromMaster"/> filter and any parameters it might have.  This will handle collisions on parameter name with
-    /// <paramref name="existingFiltersAlreadyInScope"/> and will respect any globals this class was constructed with.
+    ///     Creates a copy of the <paramref name="fromMaster" /> filter and any parameters it might have.  This will handle
+    ///     collisions on parameter name with
+    ///     <paramref name="existingFiltersAlreadyInScope" /> and will respect any globals this class was constructed with.
     /// </summary>
     /// <param name="containerToImportOneInto"></param>
     /// <param name="fromMaster"></param>
@@ -117,7 +127,8 @@ public class FilterImporter
 
 
     /// <summary>
-    /// Imports a collection of IFilters of one type into another type.  Destination type corresponds to the factory.  Returns the newly created filters.
+    ///     Imports a collection of IFilters of one type into another type.  Destination type corresponds to the factory.
+    ///     Returns the newly created filters.
     /// </summary>
     /// <param name="containerToImportInto"></param>
     /// <param name="allMasters"></param>
@@ -141,7 +152,8 @@ public class FilterImporter
     }
 
     /// <summary>
-    /// Returns true if the <paramref name="filter"/> has a proper description, name etc.  This helps prevent poorly documented master filters.
+    ///     Returns true if the <paramref name="filter" /> has a proper description, name etc.  This helps prevent poorly
+    ///     documented master filters.
     /// </summary>
     /// <param name="filter"></param>
     /// <param name="reason"></param>

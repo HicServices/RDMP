@@ -11,26 +11,26 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Tracks changes made to a single object.
+///     Tracks changes made to a single object.
 /// </summary>
 public class MementoInProgress
 {
     /// <summary>
-    /// Tracks the original serialized yaml of the object tracked .
+    ///     Tracks the original serialized yaml of the object tracked .
     /// </summary>
     public string OldYaml { get; }
 
     /// <summary>
-    /// The last modification to the object within a <see cref="CommitInProgress"/>.
+    ///     The last modification to the object within a <see cref="CommitInProgress" />.
     /// </summary>
     public int Order { get; set; }
 
     /// <summary>
-    /// What is happening to the object, defaults to <see cref="MementoType.Modify"/>
+    ///     What is happening to the object, defaults to <see cref="MementoType.Modify" />
     /// </summary>
     public MementoType Type { get; set; } = MementoType.Modify;
 
-    private Dictionary<PropertyInfo, object> _props = new();
+    private readonly Dictionary<PropertyInfo, object> _props = new();
 
     public MementoInProgress(IMapsDirectlyToDatabaseTable o, string oldYaml)
     {
@@ -39,8 +39,8 @@ public class MementoInProgress
     }
 
     /// <summary>
-    /// Returns all properties on <paramref name="currentState"/> which are different from
-    /// when this class was constructed.
+    ///     Returns all properties on <paramref name="currentState" /> which are different from
+    ///     when this class was constructed.
     /// </summary>
     /// <param name="currentState"></param>
     /// <returns></returns>

@@ -11,7 +11,7 @@ using Rdmp.Core.CommandLine.Options;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Constructs the respective <see cref="IRunner"/> based on the supplied <see cref="RDMPCommandLineOptions"/> Type
+///     Constructs the respective <see cref="IRunner" /> based on the supplied <see cref="RDMPCommandLineOptions" /> Type
 /// </summary>
 public class RunnerFactory
 {

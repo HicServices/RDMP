@@ -12,7 +12,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 
 /// <summary>
-/// Checks whether an IColumn has an alias and if so whether it is wrapped and whether it contains invalid characters or whitespace
+///     Checks whether an IColumn has an alias and if so whether it is wrapped and whether it contains invalid characters
+///     or whitespace
 /// </summary>
 public class ColumnSyntaxChecker : SyntaxChecker
 {
@@ -21,7 +22,7 @@ public class ColumnSyntaxChecker : SyntaxChecker
     private readonly IColumn _column;
 
     /// <summary>
-    /// Prepares the checker to check the IColumn supplied
+    ///     Prepares the checker to check the IColumn supplied
     /// </summary>
     /// <param name="column"></param>
     public ColumnSyntaxChecker(IColumn column)
@@ -30,7 +31,8 @@ public class ColumnSyntaxChecker : SyntaxChecker
     }
 
     /// <summary>
-    /// Checks to see if there is an alias and if there is whether it is wrapped. If it is not wrapped and there are invalid characters or whitespace in the alias this causes a SyntaxErrorException to be thrown.
+    ///     Checks to see if there is an alias and if there is whether it is wrapped. If it is not wrapped and there are
+    ///     invalid characters or whitespace in the alias this causes a SyntaxErrorException to be thrown.
     /// </summary>
     /// <param name="notifier"></param>
     public override void Check(ICheckNotifier notifier)

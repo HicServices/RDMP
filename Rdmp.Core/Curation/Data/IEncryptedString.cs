@@ -7,19 +7,20 @@
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A string which can be decrypted.  GetDecryptedValue might throw if the user doesn't have access  to the decryption algorithm / artifacts. Allows transmission of a
-/// string without nessesarily having access to the decrypted value.
+///     A string which can be decrypted.  GetDecryptedValue might throw if the user doesn't have access  to the decryption
+///     algorithm / artifacts. Allows transmission of a
+///     string without nessesarily having access to the decrypted value.
 /// </summary>
 public interface IEncryptedString
 {
-    /// <inheritdoc cref="Rdmp.Core.ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.Password"/>
+    /// <inheritdoc cref="Rdmp.Core.ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.Password" />
     string Value { get; set; }
 
-    /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.GetDecryptedPassword"/>
+    /// <inheritdoc cref="ReusableLibraryCode.DataAccess.IEncryptedPasswordHost.GetDecryptedPassword" />
     string GetDecryptedValue();
 
     /// <summary>
-    /// Returns true if the <paramref name="value"/> looks like it is encrypted
+    ///     Returns true if the <paramref name="value" /> looks like it is encrypted
     /// </summary>
     /// <param name="value"></param>
     /// <returns></returns>

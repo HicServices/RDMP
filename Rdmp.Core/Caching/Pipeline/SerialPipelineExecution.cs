@@ -12,8 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline;
 
 /// <summary>
-/// Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust each IDataFlowPipelineEngine one
-/// after the other.
+///     Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust
+///     each IDataFlowPipelineEngine one
+///     after the other.
 /// </summary>
 public class SerialPipelineExecution : IMultiPipelineEngineExecutionStrategy
 {

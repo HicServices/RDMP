@@ -32,39 +32,41 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories;
 
-/// <inheritdoc cref="ICatalogueRepository"/>
+/// <inheritdoc cref="ICatalogueRepository" />
 public class CatalogueRepository : TableRepository, ICatalogueRepository
 {
-    /// <inheritdoc/>
-    public IAggregateForcedJoinManager AggregateForcedJoinManager { get; private set; }
+    /// <inheritdoc />
+    public IAggregateForcedJoinManager AggregateForcedJoinManager { get; }
 
-    /// <inheritdoc/>
-    public IGovernanceManager GovernanceManager { get; private set; }
+    /// <inheritdoc />
+    public IGovernanceManager GovernanceManager { get; }
 
-    /// <inheritdoc/>
-    public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
+    /// <inheritdoc />
+    public ITableInfoCredentialsManager TableInfoCredentialsManager { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IJoinManager JoinManager { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CommentStore CommentStore { get; set; }
 
-    /// <inheritdoc/>
-    public ICohortContainerManager CohortContainerManager { get; private set; }
+    /// <inheritdoc />
+    public ICohortContainerManager CohortContainerManager { get; }
 
-    public IEncryptionManager EncryptionManager { get; private set; }
+    public IEncryptionManager EncryptionManager { get; }
 
     /// <summary>
-    /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files.
+    ///     Flag used by Startup processes to determine whether the <see cref="CommentStore" /> should be loaded with
+    ///     documentation from the xmldoc files.
     /// </summary>
     public static bool SuppressHelpLoading;
 
-    /// <inheritdoc/>
-    public IFilterManager FilterManager { get; private set; }
+    /// <inheritdoc />
+    public IFilterManager FilterManager { get; }
 
     /// <summary>
-    /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
+    ///     Sets up an <see cref="IRepository" /> which connects to the database <paramref name="catalogueConnectionString" />
+    ///     to fetch/create <see cref="DatabaseEntity" /> objects.
     /// </summary>
     /// <param name="catalogueConnectionString"></param>
     public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString) : base(null,
@@ -158,10 +160,13 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
     }
 
-    /// <inheritdoc/>
-    public LogManager GetDefaultLogManager() => new(GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+    /// <inheritdoc />
+    public LogManager GetDefaultLogManager()
+    {
+        return new LogManager(GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
     {
         var type = parent.GetType();
@@ -171,7 +176,7 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
             : (IEnumerable<AnyTableSqlParameter>)GetReferencesTo<AnyTableSqlParameter>(parent);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public TicketingSystemConfiguration GetTicketingSystem()
     {
         var configuration = GetAllObjects<TicketingSystemConfiguration>().Where(t => t.IsActive).ToArray();
@@ -185,10 +190,12 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
         };
     }
 
-    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader) =>
-        Constructors.TryGetValue(t, out var constructor)
+    protected override IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader)
+    {
+        return Constructors.TryGetValue(t, out var constructor)
             ? constructor(this, reader)
             : ObjectConstructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
+    }
 
     private readonly ConcurrentDictionary<Type, IRowVerCache> _caches = new();
 
@@ -198,7 +205,10 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
             .GetAllObjects<T>();
     }
 
-    public override T[] GetAllObjectsNoCache<T>() => base.GetAllObjects<T>();
+    public override T[] GetAllObjectsNoCache<T>()
+    {
+        return base.GetAllObjects<T>();
+    }
 
 
     public ExternalDatabaseServer[] GetAllDatabases<T>() where T : IPatcher, new()
@@ -209,13 +219,15 @@ public class CatalogueRepository : TableRepository, ICatalogueRepository
 
 
     /// <summary>
-    /// Returns all objects of Type T which reference the supplied object <paramref name="o"/>
+    ///     Returns all objects of Type T which reference the supplied object <paramref name="o" />
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
-    public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity =>
-        GetAllObjects<T>(
+    public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
+    {
+        return GetAllObjects<T>(
             $"WHERE ReferencedObjectID = {o.ID} AND ReferencedObjectType = '{o.GetType().Name}' AND ReferencedObjectRepositoryType = '{o.Repository.GetType().Name}'");
+    }
 
     public bool IsLookupTable(ITableInfo tableInfo)
     {
@@ -229,14 +241,16 @@ select 0", con.Connection, con.Transaction);
         return Convert.ToBoolean(cmd.ExecuteScalar());
     }
 
-    public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo) =>
-        GetAllObjects<Catalogue>(
+    public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
+    {
+        return GetAllObjects<Catalogue>(
             $@"Where
   Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
   CatalogueItem join
   ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
   where
   TableInfo_ID = {tableInfo.ID} )").ToArray();
+    }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
     {
@@ -273,7 +287,7 @@ select 0", con.Connection, con.Transaction);
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
     {
         if (toChange == PermissableDefaults.None)
@@ -362,18 +376,20 @@ select 0", con.Connection, con.Transaction);
             throw new Exception($"Delete from PasswordEncryptionKeyLocation resulted in {affectedRows}, expected 1");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName, IMapsDirectlyToDatabaseTable obj)
     {
         return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName)
             .Where(r => r.IsReferenceTo(obj));
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName) =>
-        GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
+    /// <inheritdoc />
+    public IEnumerable<ExtendedProperty> GetExtendedProperties(string propertyName)
+    {
+        return GetAllObjectsWhere<ExtendedProperty>("Name", propertyName);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IEnumerable<ExtendedProperty> GetExtendedProperties(IMapsDirectlyToDatabaseTable obj)
     {
         // First pass use SQL to pull only those with ReferencedObjectID ID that match our object

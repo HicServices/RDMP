@@ -20,7 +20,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Implementation of <see cref="IBasicActivateItems"/> that writes to console and throws
+///     Implementation of <see cref="IBasicActivateItems" /> that writes to console and throws
 /// </summary>
 public class ThrowImmediatelyActivator : BasicActivateItems
 {
@@ -32,31 +32,52 @@ public class ThrowImmediatelyActivator : BasicActivateItems
 
     public override bool IsInteractive => false;
 
-    public override bool YesNo(DialogArgs args, out bool chosen) => throw new InputDisallowedException(nameof(YesNo));
+    public override bool YesNo(DialogArgs args, out bool chosen)
+    {
+        throw new InputDisallowedException(nameof(YesNo));
+    }
 
-    public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription) =>
+    public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+    {
         throw new InputDisallowedException(nameof(SelectTable));
+    }
 
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
-        IMapsDirectlyToDatabaseTable[] availableObjects) =>
+        IMapsDirectlyToDatabaseTable[] availableObjects)
+    {
         throw new InputDisallowedException(nameof(SelectMany));
+    }
 
     public override IMapsDirectlyToDatabaseTable SelectOne(DialogArgs args,
-        IMapsDirectlyToDatabaseTable[] availableObjects) => throw new InputDisallowedException(nameof(SelectOne));
+        IMapsDirectlyToDatabaseTable[] availableObjects)
+    {
+        throw new InputDisallowedException(nameof(SelectOne));
+    }
 
-    public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected) =>
+    public override bool SelectObject<T>(DialogArgs args, T[] available, out T selected)
+    {
         throw new InputDisallowedException(nameof(SelectObject));
+    }
 
-    public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected) =>
+    public override bool SelectObjects<T>(DialogArgs args, T[] available, out T[] selected)
+    {
         throw new InputDisallowedException(nameof(SelectObjects));
+    }
 
-    public override DirectoryInfo SelectDirectory(string prompt) =>
+    public override DirectoryInfo SelectDirectory(string prompt)
+    {
         throw new InputDisallowedException(nameof(SelectDirectory));
+    }
 
-    public override FileInfo SelectFile(string prompt) => throw new InputDisallowedException(nameof(SelectFile));
+    public override FileInfo SelectFile(string prompt)
+    {
+        throw new InputDisallowedException(nameof(SelectFile));
+    }
 
-    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern) =>
+    public override FileInfo[] SelectFiles(string prompt, string patternDescription, string pattern)
+    {
         throw new InputDisallowedException(nameof(SelectFiles));
+    }
 
     public override void ShowData(IViewSQLAndResultsCollection collection)
     {
@@ -70,22 +91,29 @@ public class ThrowImmediatelyActivator : BasicActivateItems
     {
     }
 
-    public override void LaunchSubprocess(ProcessStartInfo startInfo) => throw new NotImplementedException();
+    public override void LaunchSubprocess(ProcessStartInfo startInfo)
+    {
+        throw new NotImplementedException();
+    }
 
     public override void ShowLogs(ILoggedActivityRootObject rootObject)
     {
     }
 
-    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern) =>
+    public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+    {
         throw new InputDisallowedException(nameof(SelectFile));
+    }
 
     public override void ShowException(string errorText, Exception exception)
     {
     }
 
     protected override bool
-        SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen) =>
+        SelectValueTypeImpl(DialogArgs args, Type paramType, object initialValue, out object chosen)
+    {
         throw new InputDisallowedException(nameof(SelectValueTypeImpl));
+    }
 
     public override void Show(string title, string message)
     {
@@ -98,12 +126,18 @@ public class ThrowImmediatelyActivator : BasicActivateItems
         return false;
     }
 
-    public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription) =>
+    public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+    {
         throw new InputDisallowedException(nameof(SelectDatabase));
+    }
 
-    public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen) =>
+    public override bool SelectEnum(DialogArgs args, Type enumType, out Enum chosen)
+    {
         throw new InputDisallowedException(nameof(SelectEnum));
+    }
 
-    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen) =>
+    public override bool SelectType(DialogArgs args, Type[] available, out Type chosen)
+    {
         throw new InputDisallowedException(nameof(SelectType));
+    }
 }

@@ -14,8 +14,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
 /// <summary>
-/// Pipeline which processes a single job through all stages before accepting another.  Execution involves running each DataLoadComponent with the current
-/// IDataLoadJob and then disposing them.
+///     Pipeline which processes a single job through all stages before accepting another.  Execution involves running each
+///     DataLoadComponent with the current
+///     IDataLoadJob and then disposing them.
 /// </summary>
 public class SingleJobExecution : IDataLoadExecution
 {
@@ -28,7 +29,6 @@ public class SingleJobExecution : IDataLoadExecution
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <returns></returns>
     /// <exception cref="OperationCanceledException"></exception>
@@ -92,10 +92,11 @@ public class SingleJobExecution : IDataLoadExecution
                 foreach (var m in
                          job.CrashAtEndMessages)
                     job.OnNotify(job, m); // depending on the listener these may break flow of control (e.g.
-                                          // return failed (even if the messages are all warnings)
+                // return failed (even if the messages are all warnings)
                 TryDispose(ExitCodeType.Error, job);
                 return ExitCodeType.Error;
             }
+
             //here
             TryDispose(ExitCodeType.Success, job);
             return ExitCodeType.Success;

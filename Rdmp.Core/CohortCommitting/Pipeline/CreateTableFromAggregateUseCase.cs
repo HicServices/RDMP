@@ -18,20 +18,30 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// Use case which describes creating a new table in the database containing all rows matched by the <see cref="AggregateConfiguration"/>.
-/// The source is fixed the destination and middle components are open.
+///     Use case which describes creating a new table in the database containing all rows matched by the
+///     <see cref="AggregateConfiguration" />.
+///     The source is fixed the destination and middle components are open.
 /// </summary>
 public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
 {
     /// <summary>
-    /// Defines a new use case in which the given <see cref="AggregateConfiguration"/> will be turned into an SQL query and used to generate rows
-    /// that will be released into the pipeline.  The source is fixed the destination and middle components are open.
+    ///     Defines a new use case in which the given <see cref="AggregateConfiguration" /> will be turned into an SQL query
+    ///     and used to generate rows
+    ///     that will be released into the pipeline.  The source is fixed the destination and middle components are open.
     /// </summary>
     /// <param name="aggregateConfiguration">The aggregate query that will be run to generate the rows</param>
-    /// <param name="constrainByCohort">Only applies if <see cref="AggregateConfiguration"/> is a patient index table, specifying a cohort will only commit rows
-    /// in which the patient id appears in the cohort</param>
-    /// <param name="table">The destination table in which to put the matched records.
-    /// <para> (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable"/> to obtain a reference to a non existant table)</para></param>
+    /// <param name="constrainByCohort">
+    ///     Only applies if <see cref="AggregateConfiguration" /> is a patient index table, specifying a cohort will only
+    ///     commit rows
+    ///     in which the patient id appears in the cohort
+    /// </param>
+    /// <param name="table">
+    ///     The destination table in which to put the matched records.
+    ///     <para>
+    ///         (table does not have to exist yet, you can use <see cref="DiscoveredDatabase.ExpectTable" /> to obtain a
+    ///         reference to a non existant table)
+    ///     </para>
+    /// </param>
     public CreateTableFromAggregateUseCase(AggregateConfiguration aggregateConfiguration,
         ExtractableCohort constrainByCohort, DiscoveredTable table)
     {
@@ -70,7 +80,7 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
     }
 
     /// <summary>
-    /// Design time types
+    ///     Design time types
     /// </summary>
     private CreateTableFromAggregateUseCase()
         : base(new[]
@@ -85,6 +95,8 @@ public sealed class CreateTableFromAggregateUseCase : PipelineUseCase
         GenerateContext();
     }
 
-    public static PipelineUseCase DesignTime(ICatalogueRepository catalogueRepository) =>
-        new CreateTableFromAggregateUseCase();
+    public static PipelineUseCase DesignTime(ICatalogueRepository catalogueRepository)
+    {
+        return new CreateTableFromAggregateUseCase();
+    }
 }

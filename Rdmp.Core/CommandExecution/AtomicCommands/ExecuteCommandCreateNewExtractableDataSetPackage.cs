@@ -22,8 +22,10 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExec
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
+    public override string GetCommandHelp()
+    {
+        return "Creates a new grouping of dataset which are commonly extracted together e.g. 'Core datasets on offer'";
+    }
 
     public override void Execute()
     {
@@ -37,6 +39,8 @@ public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExec
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
+    }
 }

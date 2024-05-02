@@ -20,9 +20,12 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Aggregation;
 
 /// <summary>
-/// This class allows you to associate a specific extractioninformation for use in aggregate generation.  For example a dataset might have a date field AdmissionDate which you
-/// want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows you to specify new SelectSQL which can change how the field
-/// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate"
+///     This class allows you to associate a specific extractioninformation for use in aggregate generation.  For example a
+///     dataset might have a date field AdmissionDate which you
+///     want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows
+///     you to specify new SelectSQL which can change how the field
+///     is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into
+///     "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate"
 /// </summary>
 public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies,
     IInjectKnown<ExtractionInformation>
@@ -37,8 +40,9 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
 
     /// <summary>
-    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.  This property returns
-    /// the ID of the <see cref="AggregateConfiguration"/> that this column is declared on.
+    ///     An <see cref="AggregateDimension" /> is a column in the SELECT, GROUP BY and ORDER BY sections of an
+    ///     <see cref="AggregateConfiguration" />.  This property returns
+    ///     the ID of the <see cref="AggregateConfiguration" /> that this column is declared on.
     /// </summary>
     public int AggregateConfiguration_ID
     {
@@ -47,11 +51,13 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     }
 
     /// <summary>
-    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  The column must have
-    /// come from an extractable column in the parent <see cref="Catalogue"/>.  The Catalogue column definition is an <see cref="ExtractionInformation"/> and documents the
-    /// master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying <see cref="ColumnInfo"/> / <see cref="TableInfo"/>.
-    /// 
-    /// <para>This property is the ID of the associated Catalogue master <see cref="ExtractionInformation"/>.</para>
+    ///     An <see cref="AggregateDimension" /> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an
+    ///     <see cref="AggregateConfiguration" />.  The column must have
+    ///     come from an extractable column in the parent <see cref="Catalogue" />.  The Catalogue column definition is an
+    ///     <see cref="ExtractionInformation" /> and documents the
+    ///     master SELECT Sql (which can be overriden in the current AggregateDimension) as well as what the underlying
+    ///     <see cref="ColumnInfo" /> / <see cref="TableInfo" />.
+    ///     <para>This property is the ID of the associated Catalogue master <see cref="ExtractionInformation" />.</para>
     /// </summary>
     public int ExtractionInformation_ID
     {
@@ -60,8 +66,10 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     }
 
     /// <summary>
-    /// Specifies the column alias section of the SELECT statement.  When building the query (See AggregateBuilder) the Alias will be added in the SELECT section
-    /// of the query generated e.g. if the Alias is 'Bob' and the SelectSQL is 'GetDate()' then the resultant line of SELECT in the query will be 'GetDate() as Bob'.
+    ///     Specifies the column alias section of the SELECT statement.  When building the query (See AggregateBuilder) the
+    ///     Alias will be added in the SELECT section
+    ///     of the query generated e.g. if the Alias is 'Bob' and the SelectSQL is 'GetDate()' then the resultant line of
+    ///     SELECT in the query will be 'GetDate() as Bob'.
     /// </summary>
     public string Alias
     {
@@ -70,10 +78,13 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     }
 
     /// <summary>
-    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  This property defines
-    /// the Sql that should appear in SELECT, GROUP BY and/or ORDER BY sections of the query when it is built by the AggregateBuilder.  This will start out
-    /// with the exact same string as the parent <see cref="ExtractionInformation_ID"/> but can be changed as needed e.g. wrapping in UPPER.  If you change the SelectSQL
-    /// to a scalar function you should add an <see cref="Alias"/>.
+    ///     An <see cref="AggregateDimension" /> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an
+    ///     <see cref="AggregateConfiguration" />.  This property defines
+    ///     the Sql that should appear in SELECT, GROUP BY and/or ORDER BY sections of the query when it is built by the
+    ///     AggregateBuilder.  This will start out
+    ///     with the exact same string as the parent <see cref="ExtractionInformation_ID" /> but can be changed as needed e.g.
+    ///     wrapping in UPPER.  If you change the SelectSQL
+    ///     to a scalar function you should add an <see cref="Alias" />.
     /// </summary>
     [Sql]
     public string SelectSQL
@@ -83,9 +94,11 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     }
 
     /// <summary>
-    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an <see cref="AggregateConfiguration"/>.  The Order property determines
-    /// where in the SELECT, GROUP BY and/or ORDER BY list the current <see cref="AggregateDimension"/> will appear relative to the other AggregateDimensions in the
-    ///  <see cref="AggregateConfiguration"/>.
+    ///     An <see cref="AggregateDimension" /> is a column in the SELECT, GROUP BY and/or ORDER BY sections of an
+    ///     <see cref="AggregateConfiguration" />.  The Order property determines
+    ///     where in the SELECT, GROUP BY and/or ORDER BY list the current <see cref="AggregateDimension" /> will appear
+    ///     relative to the other AggregateDimensions in the
+    ///     <see cref="AggregateConfiguration" />.
     /// </summary>
     public int Order
     {
@@ -98,36 +111,37 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
 
     #region Relationships
 
-    /// <inheritdoc cref="IColumn.HashOnDataRelease"/>
+    /// <inheritdoc cref="IColumn.HashOnDataRelease" />
     [NoMappingToDatabase]
     public bool HashOnDataRelease => _knownExtractionInformation.Value.HashOnDataRelease;
 
-    /// <inheritdoc cref="IColumn.IsExtractionIdentifier"/>
+    /// <inheritdoc cref="IColumn.IsExtractionIdentifier" />
     [NoMappingToDatabase]
     public bool IsExtractionIdentifier => _knownExtractionInformation.Value.IsExtractionIdentifier;
 
-    /// <inheritdoc cref="IColumn.IsPrimaryKey"/>
+    /// <inheritdoc cref="IColumn.IsPrimaryKey" />
     [NoMappingToDatabase]
     public bool IsPrimaryKey => _knownExtractionInformation.Value.IsPrimaryKey;
 
-    /// <inheritdoc cref="IColumn.ColumnInfo"/>
+    /// <inheritdoc cref="IColumn.ColumnInfo" />
     [NoMappingToDatabase]
     public ColumnInfo ColumnInfo => _knownExtractionInformation.Value.ColumnInfo;
 
     /// <summary>
-    /// An <see cref="AggregateConfiguration"/> can have a single <see cref="AggregateContinuousDateAxis"/> declared on it (if it is not functioning in a cohort identification
-    /// capacity).  This property will return the axis if this AggregateDimension has one declared on it.
+    ///     An <see cref="AggregateConfiguration" /> can have a single <see cref="AggregateContinuousDateAxis" /> declared on
+    ///     it (if it is not functioning in a cohort identification
+    ///     capacity).  This property will return the axis if this AggregateDimension has one declared on it.
     /// </summary>
-    /// <seealso cref="Aggregation.AggregateContinuousDateAxis.AggregateDimension_ID"/>
+    /// <seealso cref="Aggregation.AggregateContinuousDateAxis.AggregateDimension_ID" />
     [NoMappingToDatabase]
     public AggregateContinuousDateAxis AggregateContinuousDateAxis =>
         Repository.GetAllObjectsWithParent<AggregateContinuousDateAxis>(this).SingleOrDefault();
 
-    /// <inheritdoc cref="ExtractionInformation_ID"/>
+    /// <inheritdoc cref="ExtractionInformation_ID" />
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
 
-    /// <inheritdoc cref="AggregateConfiguration_ID"/>
+    /// <inheritdoc cref="AggregateConfiguration_ID" />
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration => _knownAggregateConfiguration.Value;
 
@@ -139,8 +153,9 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     }
 
     /// <summary>
-    /// Declares a new column in an <see cref="AggregateConfiguration"/> (GROUP BY query).  The new column will be based on the master Catalogue column
-    /// (<see cref="ExtractionInformation"/>).
+    ///     Declares a new column in an <see cref="AggregateConfiguration" /> (GROUP BY query).  The new column will be based
+    ///     on the master Catalogue column
+    ///     (<see cref="ExtractionInformation" />).
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="basedOnColumn"></param>
@@ -176,7 +191,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetRuntimeName()
     {
         if (string.IsNullOrWhiteSpace(Alias))
@@ -212,7 +227,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
             Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override string ToString()
     {
         try
@@ -225,27 +240,27 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         }
     }
 
-    /// <inheritdoc cref="ColumnSyntaxChecker"/>
+    /// <inheritdoc cref="ColumnSyntaxChecker" />
     public void Check(ICheckNotifier notifier)
     {
         new ColumnSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { ExtractionInformation };
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         return new[] { AggregateConfiguration };
     }
 
     /// <summary>
-    /// Returns true if the <see cref="AggregateDimension"/> is likely to return a date based on the underlying column
-    /// data type.  If the <see cref="SelectSQL"/> is a transform this may be inaccurate.
+    ///     Returns true if the <see cref="AggregateDimension" /> is likely to return a date based on the underlying column
+    ///     data type.  If the <see cref="SelectSQL" /> is a transform this may be inaccurate.
     /// </summary>
     /// <returns></returns>
     public bool IsDate()

@@ -10,15 +10,14 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandClearUserSettings : BasicCommandExecution
 {
-    public ExecuteCommandClearUserSettings(IBasicActivateItems activator):base(activator)
+    public ExecuteCommandClearUserSettings(IBasicActivateItems activator) : base(activator)
     {
-
     }
+
     public override void Execute()
     {
         base.Execute();
 
         UserSettings.ClearUserSettings();
     }
-
 }

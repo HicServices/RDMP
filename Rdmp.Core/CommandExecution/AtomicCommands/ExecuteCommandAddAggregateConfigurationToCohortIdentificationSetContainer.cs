@@ -28,8 +28,9 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
     /// <summary>
-    /// True if the <see cref="AggregateConfigurationCombineable"/> passed to the constructor was a newly created one and does
-    /// not need cloning.
+    ///     True if the <see cref="AggregateConfigurationCombineable" /> passed to the constructor was a newly created one and
+    ///     does
+    ///     not need cloning.
     /// </summary>
     public bool DoNotClone { get; set; }
 
@@ -68,7 +69,7 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
     }
 
     /// <summary>
-    /// Constructor for selecting one or more aggregates at execute time
+    ///     Constructor for selecting one or more aggregates at execute time
     /// </summary>
     /// <param name="basicActivator"></param>
     /// <param name="targetCohortAggregateContainer"></param>
@@ -98,9 +99,12 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
         SetCommandWeight();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => _offerCohortAggregates
-        ? iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Add)
-        : iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return _offerCohortAggregates
+            ? iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Add)
+            : iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
+    }
 
     public override string GetCommandName()
     {
@@ -138,11 +142,11 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             {
                 // ask user if they want to use a template
                 if (BasicActivator.YesNo(new DialogArgs
-                {
-                    WindowTitle = "Use Template?",
-                    TaskDescription =
+                    {
+                        WindowTitle = "Use Template?",
+                        TaskDescription =
                             $"You have {templates.Length} AggregateConfiguration templates, do you want to use one of these?"
-                }, out var useTemplate))
+                    }, out var useTemplate))
                     available = useTemplate ? templates : available.Except(templates).ToArray();
                 else
                     // cancel clicked?
@@ -150,11 +154,11 @@ public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetCon
             }
 
             if (!BasicActivator.SelectObjects(new DialogArgs
-            {
-                WindowTitle = "Add Aggregate Configuration(s) to Container",
-                TaskDescription =
+                {
+                    WindowTitle = "Add Aggregate Configuration(s) to Container",
+                    TaskDescription =
                         $"Choose which AggregateConfiguration(s) to add to the cohort container '{_targetCohortAggregateContainer.Name}'."
-            }, available, out var selected))
+                }, available, out var selected))
                 // user cancelled
                 return;
 

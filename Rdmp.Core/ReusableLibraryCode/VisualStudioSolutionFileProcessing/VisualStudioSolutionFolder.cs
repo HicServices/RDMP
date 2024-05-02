@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 /// <summary>
-/// A solution folder defined in a .sln file (See VisualStudioSolutionFile)
+///     A solution folder defined in a .sln file (See VisualStudioSolutionFile)
 /// </summary>
 public class VisualStudioSolutionFolder
 {

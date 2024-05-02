@@ -18,7 +18,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Creates instances of <see cref="ParameterCollectionUIOptions"/> based on the Type of <see cref="ICollectSqlParameters"/> host.
+///     Creates instances of <see cref="ParameterCollectionUIOptions" /> based on the Type of
+///     <see cref="ICollectSqlParameters" /> host.
 /// </summary>
 public class ParameterCollectionUIOptionsFactory
 {

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Sharing.Refactoring.Exceptions;
@@ -16,15 +17,18 @@ using Rdmp.Core.Sharing.Refactoring.Exceptions;
 namespace Rdmp.Core.Sharing.Refactoring;
 
 /// <summary>
-/// Handles making changes to SelectSQL properties that revolve around changing which underlying table/column drives the SQL.  For example when a user
-/// renames a TableInfo and wants to refactor the changes into all the ColumnInfos that underly it and all the ExtractionInformations that come from
-/// those ColumnInfos and then all the CohortIdentificationConfigurations, AggregateConfigurations etc etc.
+///     Handles making changes to SelectSQL properties that revolve around changing which underlying table/column drives
+///     the SQL.  For example when a user
+///     renames a TableInfo and wants to refactor the changes into all the ColumnInfos that underly it and all the
+///     ExtractionInformations that come from
+///     those ColumnInfos and then all the CohortIdentificationConfigurations, AggregateConfigurations etc etc.
 /// </summary>
 public class SelectSQLRefactorer
 {
     /// <summary>
-    /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-    /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
+    ///     Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the
+    ///     column.  Ensure
+    ///     that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
     /// </summary>
     /// <param name="column"></param>
     /// <param name="tableName"></param>
@@ -49,8 +53,9 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the column.    Ensure
-    /// that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
+    ///     Replaces all references to the given table with the new table name in a ColumnInfo.  This will also save the
+    ///     column.    Ensure
+    ///     that new tableName is in fact fully qualified e.g. '[db]..[tbl]'
     /// </summary>
     /// <param name="column"></param>
     /// <param name="tableName"></param>
@@ -79,13 +84,17 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the column.  Ensure
-    /// that newFullySpecifiedColumnName is in fact fully qualified too e.g. [mydb]..[mytable].[mycol]
+    ///     Replaces all references to the given table with the new table name in a columns SelectSQL.  This will also save the
+    ///     column.  Ensure
+    ///     that newFullySpecifiedColumnName is in fact fully qualified too e.g. [mydb]..[mytable].[mycol]
     /// </summary>
     /// <param name="column"></param>
     /// <param name="columnName"></param>
     /// <param name="newFullySpecifiedColumnName"></param>
-    /// <param name="strict">Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will throw a RefactoringException, false will return without making any changes</param>
+    /// <param name="strict">
+    ///     Determines behaviour when column SelectSQL does not contain a reference to columnName.  True will
+    ///     throw a RefactoringException, false will return without making any changes
+    /// </param>
     public static void RefactorColumnName(IColumn column, IHasFullyQualifiedNameToo columnName,
         string newFullySpecifiedColumnName, bool strict = true)
     {
@@ -108,16 +117,22 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Determines whether the SelectSQL of the specified IColumn includes fully specified refactorable references.  If the SelectSQL is properly
-    /// formed then the underlying column should appear fully specified at least once in the SelectSQL e.g. UPPER([db]..[tbl].[col])
+    ///     Determines whether the SelectSQL of the specified IColumn includes fully specified refactorable references.  If the
+    ///     SelectSQL is properly
+    ///     formed then the underlying column should appear fully specified at least once in the SelectSQL e.g.
+    ///     UPPER([db]..[tbl].[col])
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
-    public static bool IsRefactorable(IColumn column) => GetReasonNotRefactorable(column) == null;
+    public static bool IsRefactorable(IColumn column)
+    {
+        return GetReasonNotRefactorable(column) == null;
+    }
 
     /// <summary>
-    /// Determines whether the SelectSQL of the specified IColumn includes fully specified refactorable references.  Returns the reason why
-    /// the IColumn is not IsRefactorable (or null if it is).
+    ///     Determines whether the SelectSQL of the specified IColumn includes fully specified refactorable references.
+    ///     Returns the reason why
+    ///     the IColumn is not IsRefactorable (or null if it is).
     /// </summary>
     /// <param name="column"></param>
     /// <returns></returns>
@@ -140,16 +155,20 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Returns true if the <paramref name="tableInfo"/> supports refactoring (e.g. renaming). See <see cref="GetReasonNotRefactorable(ITableInfo)"/>
-    /// for the reason why
+    ///     Returns true if the <paramref name="tableInfo" /> supports refactoring (e.g. renaming). See
+    ///     <see cref="GetReasonNotRefactorable(ITableInfo)" />
+    ///     for the reason why
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <returns></returns>
-    public static bool IsRefactorable(ITableInfo tableInfo) => GetReasonNotRefactorable(tableInfo) == null;
+    public static bool IsRefactorable(ITableInfo tableInfo)
+    {
+        return GetReasonNotRefactorable(tableInfo) == null;
+    }
 
     /// <summary>
-    /// Returns the reason why <paramref name="table"/> is not refactorable e.g. if its name is not properly qualified
-    /// with database.  Returns null if it is refactorable
+    ///     Returns the reason why <paramref name="table" /> is not refactorable e.g. if its name is not properly qualified
+    ///     with database.  Returns null if it is refactorable
     /// </summary>
     /// <param name="table"></param>
     /// <returns></returns>
@@ -163,7 +182,7 @@ public class SelectSQLRefactorer
 
         //ensure database and Name match correctly
         var syntaxHelper = table.GetQuerySyntaxHelper();
-        var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
+        var db = table.GetDatabaseRuntimeName(LoadStage.PostLoad);
 
         if (!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
             return $"Table with Name '{table.Name}' has incorrect database property '{table.Database}'";
@@ -174,18 +193,23 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Changes the name of the <paramref name="tableInfo"/> to a new name (which must be fully qualified). This will also
-    /// update any <see cref="ColumnInfo"/> and <see cref="ExtractionInformation"/> objects declared against the <paramref name="tableInfo"/>.
-    /// 
-    /// <para>If you have transforms etc in <see cref="ExtractionInformation"/> then these may not be successfully refactored</para>
+    ///     Changes the name of the <paramref name="tableInfo" /> to a new name (which must be fully qualified). This will also
+    ///     update any <see cref="ColumnInfo" /> and <see cref="ExtractionInformation" /> objects declared against the
+    ///     <paramref name="tableInfo" />.
+    ///     <para>
+    ///         If you have transforms etc in <see cref="ExtractionInformation" /> then these may not be successfully
+    ///         refactored
+    ///     </para>
     /// </summary>
     /// <param name="tableInfo"></param>
     /// <param name="newFullyQualifiedTableName"></param>
     /// <returns>Total number of changes made in columns and table name</returns>
-    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName) =>
-        RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
+    public static int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
+    {
+        return RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
+    }
 
-    /// <inheritdoc cref="RefactorTableName(ITableInfo, string)"/>
+    /// <inheritdoc cref="RefactorTableName(ITableInfo, string)" />
     public static int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName,
         string newFullyQualifiedTableName)
     {
@@ -211,13 +235,17 @@ public class SelectSQLRefactorer
     }
 
     /// <summary>
-    /// Replaces the <paramref name="oldFullyQualifiedTableName"/> with the <paramref name="newFullyQualifiedTableName"/> in the
-    /// given <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared against it.
+    ///     Replaces the <paramref name="oldFullyQualifiedTableName" /> with the <paramref name="newFullyQualifiedTableName" />
+    ///     in the
+    ///     given <paramref name="columnInfo" /> and any <see cref="ExtractionInformation" /> declared against it.
     /// </summary>
     /// <param name="columnInfo"></param>
     /// <param name="oldFullyQualifiedTableName"></param>
     /// <param name="newFullyQualifiedTableName"></param>
-    /// <returns>Total number of changes made including <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared on it</returns>
+    /// <returns>
+    ///     Total number of changes made including <paramref name="columnInfo" /> and any
+    ///     <see cref="ExtractionInformation" /> declared on it
+    /// </returns>
     public static int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName,
         string newFullyQualifiedTableName)
     {

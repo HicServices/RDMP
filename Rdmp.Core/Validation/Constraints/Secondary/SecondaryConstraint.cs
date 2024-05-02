@@ -11,7 +11,7 @@ namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 public abstract class SecondaryConstraint : ISecondaryConstraint
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public Consequence? Consequence { get; set; }
 
     [Description("Optional, Allows you to record why you have set this rule as a future reminder")]

@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Abstract base implementation of <see cref="IRunner"/> with convenience methods
+///     Abstract base implementation of <see cref="IRunner" /> with convenience methods
 /// </summary>
 public abstract class Runner : IRunner
 {
@@ -27,14 +27,17 @@ public abstract class Runner : IRunner
         ICheckNotifier checkNotifier, GracefulCancellationToken token);
 
     /// <summary>
-    /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can
-    /// just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
+    ///     Translates a string <paramref name="arg" /> into an object of type <typeparamref name="T" />.  String can
+    ///     just be the ID e.g. "5" or could be an RDMP command line expression e.g. "LoadMetadata:*Load*Biochemistry*"
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="locator"></param>
     /// <param name="arg"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentException">Thrown if it is not possible to parse <paramref name="arg"/> into an existing object</exception>
+    /// <exception cref="ArgumentException">
+    ///     Thrown if it is not possible to parse <paramref name="arg" /> into an existing
+    ///     object
+    /// </exception>
     protected static T GetObjectFromCommandLineString<T>(IRDMPPlatformRepositoryServiceLocator locator, string arg)
         where T : IMapsDirectlyToDatabaseTable
     {

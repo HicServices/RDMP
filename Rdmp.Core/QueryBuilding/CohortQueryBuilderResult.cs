@@ -26,10 +26,13 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Builds a subset of a <see cref="CohortIdentificationConfiguration"/> e.g. a single <see cref="CohortAggregateContainer"/> (UNION / INTERSECT / EXCEPT) or a
-/// cohort set.  This includes identifying all <see cref="Dependencies"/> and resolving the dependencies servers / the <see cref="CacheServer"/> to determine
-/// whether a valid query can be assembled from the sub-components and deciding where it can be run (e.g. should the query run on the cache server or the data server
-/// or are they both the same server so query sections can be mixed depending on cache hit/miss for each bit).
+///     Builds a subset of a <see cref="CohortIdentificationConfiguration" /> e.g. a single
+///     <see cref="CohortAggregateContainer" /> (UNION / INTERSECT / EXCEPT) or a
+///     cohort set.  This includes identifying all <see cref="Dependencies" /> and resolving the dependencies servers / the
+///     <see cref="CacheServer" /> to determine
+///     whether a valid query can be assembled from the sub-components and deciding where it can be run (e.g. should the
+///     query run on the cache server or the data server
+///     or are they both the same server so query sections can be mixed depending on cache hit/miss for each bit).
 /// </summary>
 public class CohortQueryBuilderResult
 {
@@ -45,34 +48,35 @@ public class CohortQueryBuilderResult
     private readonly StringBuilder _log = new();
 
     /// <summary>
-    /// Log of all activities undertaken while building
+    ///     Log of all activities undertaken while building
     /// </summary>
     public string Log => _log.ToString();
 
     /// <summary>
-    /// The allowable caching state based on the <see cref="Dependencies"/>, whether there is a
-    /// <see cref="CacheServer"/> and if they are on the same or separate servers from one another
+    ///     The allowable caching state based on the <see cref="Dependencies" />, whether there is a
+    ///     <see cref="CacheServer" /> and if they are on the same or separate servers from one another
     /// </summary>
     public CacheUsage CacheUsageDecision { get; private set; }
 
-    private List<CohortQueryBuilderDependency> _dependencies = new();
+    private readonly List<CohortQueryBuilderDependency> _dependencies = new();
     private bool _alreadyBuilt;
 
     public IReadOnlyCollection<CohortQueryBuilderDependency> Dependencies => _dependencies;
 
     /// <summary>
-    /// Only Populated after Building.  If all <see cref="Dependencies"/> are on the same server as one another
-    /// then this will contain all tables that must be queried otherwise it will be null
+    ///     Only Populated after Building.  If all <see cref="Dependencies" /> are on the same server as one another
+    ///     then this will contain all tables that must be queried otherwise it will be null
     /// </summary>
     public DataAccessPointCollection DependenciesSingleServer { get; private set; }
 
     /// <summary>
-    /// The final SQL that should be executed on the <see cref="TargetServer"/>
+    ///     The final SQL that should be executed on the <see cref="TargetServer" />
     /// </summary>
     public string Sql { get; private set; }
 
     /// <summary>
-    /// The location at which the <see cref="Sql"/> should be run (may be a data server or a cache server or they may be one and the same!)
+    ///     The location at which the <see cref="Sql" /> should be run (may be a data server or a cache server or they may be
+    ///     one and the same!)
     /// </summary>
     public DiscoveredServer TargetServer { get; set; }
 
@@ -84,7 +88,7 @@ public class CohortQueryBuilderResult
         Array.Empty<PluginCohortCompiler>().ToList().AsReadOnly();
 
     /// <summary>
-    /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
+    ///     Creates a new result for a single <see cref="AggregateConfiguration" /> or <see cref="CohortAggregateContainer" />
     /// </summary>
     /// <param name="cacheServer"></param>
     /// <param name="childProvider"></param>
@@ -275,10 +279,14 @@ public class CohortQueryBuilderResult
         return sql;
     }
 
-    private bool IsEnabled(IOrderable arg) => IsEnabled(arg, ChildProvider);
+    private bool IsEnabled(IOrderable arg)
+    {
+        return IsEnabled(arg, ChildProvider);
+    }
 
     /// <summary>
-    /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
+    ///     Objects are enabled if they do not support disabling (<see cref="IDisableable" />) or are
+    ///     <see cref="IDisableable.IsDisabled" /> = false
     /// </summary>
     /// <returns></returns>
     public static bool IsEnabled(IOrderable arg, ICoreChildProvider childProvider)
@@ -303,7 +311,7 @@ public class CohortQueryBuilderResult
     }
 
     /// <summary>
-    /// Returns the SQL keyword for the <paramref name="currentContainerOperation"/>
+    ///     Returns the SQL keyword for the <paramref name="currentContainerOperation" />
     /// </summary>
     /// <param name="currentContainerOperation"></param>
     /// <param name="dbType"></param>
@@ -353,7 +361,10 @@ public class CohortQueryBuilderResult
         }
     }
 
-    private DiscoveredServer GetCacheServer() => CacheServer.Discover(DataAccessContext.InternalDataProcessing).Server;
+    private DiscoveredServer GetCacheServer()
+    {
+        return CacheServer.Discover(DataAccessContext.InternalDataProcessing).Server;
+    }
 
     private void BuildDependenciesSql(ISqlParameter[] globals)
     {

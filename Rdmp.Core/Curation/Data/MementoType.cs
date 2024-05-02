@@ -7,8 +7,8 @@
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes the operation that is stored in a
-/// <see cref="Memento"/> (A/M/D)
+///     Describes the operation that is stored in a
+///     <see cref="Memento" /> (A/M/D)
 /// </summary>
 public enum MementoType
 {

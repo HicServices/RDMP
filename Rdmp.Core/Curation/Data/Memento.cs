@@ -14,9 +14,11 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a point in time state of another <see cref="DatabaseEntity"/>.  Note that the state may be invalid if other
-/// objects have been since deleted.  e.g. if user updates the <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID"/>
-/// the memento would point to an old <see cref="ExtractionInformation"/> which may be subsequently deleted
+///     Describes a point in time state of another <see cref="DatabaseEntity" />.  Note that the state may be invalid if
+///     other
+///     objects have been since deleted.  e.g. if user updates the
+///     <see cref="Catalogue.TimeCoverage_ExtractionInformation_ID" />
+///     the memento would point to an old <see cref="ExtractionInformation" /> which may be subsequently deleted
 /// </summary>
 public class Memento : ReferenceOtherObjectDatabaseEntity
 {
@@ -68,7 +70,7 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
         BeforeYaml = r["BeforeYaml"].ToString();
         AfterYaml = r["AfterYaml"].ToString();
         Commit_ID = (int)r["Commit_ID"];
-        Type = (MementoType)Enum.Parse<MementoType>(r["Type"].ToString());
+        Type = Enum.Parse<MementoType>(r["Type"].ToString());
     }
 
     public Memento(ICatalogueRepository repository, Commit commit, MementoType type,
@@ -86,5 +88,8 @@ public class Memento : ReferenceOtherObjectDatabaseEntity
         });
     }
 
-    public override string ToString() => $"{ReferencedObjectType}:{ReferencedObjectID}";
+    public override string ToString()
+    {
+        return $"{ReferencedObjectType}:{ReferencedObjectID}";
+    }
 }

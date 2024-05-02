@@ -11,7 +11,7 @@ using System.Reflection;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// All standard <see cref="ErrorCode"/> which can be exposed by RDMP or plugins
+///     All standard <see cref="ErrorCode" /> which can be exposed by RDMP or plugins
 /// </summary>
 public static class ErrorCodes
 {
@@ -84,7 +84,7 @@ public static class ErrorCodes
     }
 
     /// <summary>
-    /// Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
+    ///     Collection of all known error codes.  Plugins are free to add to these if desired but must do so pre startup
     /// </summary>
     public static readonly List<ErrorCode> KnownCodes = new();
 }

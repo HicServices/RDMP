@@ -13,10 +13,10 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 internal class OracleTriggerImplementer : MySqlTriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
     public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
         createDataLoadRunIDAlso)
     {

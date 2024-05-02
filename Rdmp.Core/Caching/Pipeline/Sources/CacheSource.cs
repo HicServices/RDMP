@@ -17,8 +17,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline.Sources;
 
 /// <summary>
-/// Abstract base class for a pipeline component which makes time based fetch requests to produce time specific packets of data which will be packaged into files
-/// and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are supposed to handle within DoGetChunk.
+///     Abstract base class for a pipeline component which makes time based fetch requests to produce time specific packets
+///     of data which will be packaged into files
+///     and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are
+///     supposed to handle within DoGetChunk.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
@@ -33,9 +35,11 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     protected ICatalogueRepository CatalogueRepository;
 
     /// <summary>
-    /// Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent checks, so that the plugin author
-    /// doesn't need to remember to call Request[Succeeded|Failed] or do general checks.  Plugin author provides implementation-specific caching in
-    /// the 'DoGetChunk' function.
+    ///     Enforces behaviour required for logging unsuccessful cache requests and providing implementation-independent
+    ///     checks, so that the plugin author
+    ///     doesn't need to remember to call Request[Succeeded|Failed] or do general checks.  Plugin author provides
+    ///     implementation-specific caching in
+    ///     the 'DoGetChunk' function.
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
@@ -78,7 +82,8 @@ public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,
     }
 
     /// <summary>
-    /// Handles the current <paramref name="request"/> returning an appropriate <see cref="ICacheChunk"/> for the time range specified.
+    ///     Handles the current <paramref name="request" /> returning an appropriate <see cref="ICacheChunk" /> for the time
+    ///     range specified.
     /// </summary>
     /// <param name="request">The period of time we want to fetch</param>
     /// <param name="listener">For auditing progress during the fetch</param>

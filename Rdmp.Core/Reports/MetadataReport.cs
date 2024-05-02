@@ -21,16 +21,18 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Describes a method that generates images for a <seealso cref="Catalogue"/> e.g. aggregate graphs
+///     Describes a method that generates images for a <seealso cref="Catalogue" /> e.g. aggregate graphs
 /// </summary>
 /// <param name="catalogue"></param>
 /// <returns></returns>
 public delegate BitmapWithDescription[] RequestCatalogueImagesHandler(Catalogue catalogue);
 
 /// <summary>
-/// Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount, distinct patient count, description and descriptions
-/// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to
-/// the report (including heatmap if a dynamic pivot is included in the graph).
+///     Generates a high level summary Microsoft Word DocX file of one or more Catalogues.  This includes the rowcount,
+///     distinct patient count, description and descriptions
+///     of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration
+///     graphs will be run and screen captured and added to
+///     the report (including heatmap if a dynamic pivot is included in the graph).
 /// </summary>
 public class MetadataReport : DocXHelper
 {

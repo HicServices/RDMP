@@ -13,8 +13,9 @@ using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// Any ICompileable which can be cached once finished.  Typically any ICompileable in a CohortCompiler can be cached unless it is composed of multiple discrete
-/// sub queries (i.e. an AggregationContainerTask.)
+///     Any ICompileable which can be cached once finished.  Typically any ICompileable in a CohortCompiler can be cached
+///     unless it is composed of multiple discrete
+///     sub queries (i.e. an AggregationContainerTask.)
 /// </summary>
 public interface ICacheableTask : ICompileable
 {

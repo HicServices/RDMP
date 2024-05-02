@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// This entity wraps references to plugin .nupkg files on disk.
+///     This entity wraps references to plugin .nupkg files on disk.
 /// </summary>
 public sealed class LoadModuleAssembly
 {
@@ -32,7 +32,7 @@ public sealed class LoadModuleAssembly
     }
 
     /// <summary>
-    /// List the plugin files to load
+    ///     List the plugin files to load
     /// </summary>
     /// <returns></returns>
     internal static IEnumerable<string> PluginFiles()
@@ -44,7 +44,7 @@ public sealed class LoadModuleAssembly
     }
 
     /// <summary>
-    /// Unpack the plugin DLL files, excluding any Windows UI specific dlls when not running a Windows GUI
+    ///     Unpack the plugin DLL files, excluding any Windows UI specific dlls when not running a Windows GUI
     /// </summary>
     internal static IEnumerable<(string, MemoryStream)> GetContents(string path)
     {
@@ -71,7 +71,7 @@ public sealed class LoadModuleAssembly
     }
 
     /// <summary>
-    /// Copy the plugin nupkg to the given directory
+    ///     Copy the plugin nupkg to the given directory
     /// </summary>
     /// <param name="downloadDirectory"></param>
     public void DownloadAssembly(DirectoryInfo downloadDirectory)
@@ -83,7 +83,7 @@ public sealed class LoadModuleAssembly
     }
 
     /// <summary>
-    /// Delete the plugin file from disk, and remove it from rdmpplugins.txt if in use
+    ///     Delete the plugin file from disk, and remove it from rdmpplugins.txt if in use
     /// </summary>
     public void Delete()
     {
@@ -95,7 +95,10 @@ public sealed class LoadModuleAssembly
         File.Move(tmp, PluginsList, true);
     }
 
-    public override string ToString() => _file.Name;
+    public override string ToString()
+    {
+        return _file.Name;
+    }
 
     public static void UploadFile(ICheckNotifier checkNotifier, FileInfo toCommit)
     {

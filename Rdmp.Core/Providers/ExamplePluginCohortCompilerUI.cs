@@ -13,7 +13,7 @@ namespace Rdmp.Core.Providers;
 
 internal class ExamplePluginCohortCompilerUI : PluginUserInterface
 {
-    private ExamplePluginCohortCompiler compiler;
+    private readonly ExamplePluginCohortCompiler compiler;
 
     public ExamplePluginCohortCompilerUI(IBasicActivateItems activator) : base(activator)
     {

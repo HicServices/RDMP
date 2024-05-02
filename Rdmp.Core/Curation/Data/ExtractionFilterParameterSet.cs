@@ -15,11 +15,15 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Often an ExtractionFilter will have a parameter associated with it (or more than one).  In this case it can be that you want to curate various values and give them
-/// meaningful titles.  For example if you have a filter 'Hospitalised with condition X' which has parameter @ConditionList.  Then you decide that you want to curate
-/// a list 'A101.23,B21.1' as 'People hospitalised with drug dependency'.  This 'known meaningful parameter values set' is called a ExtractionFilterParameterSet.  You
-/// can provide a name and a description for the concept.  Then you create a value for each parameter in the associated filter.  See ExtractionFilterParameterSetValue for
-/// the value recordings.
+///     Often an ExtractionFilter will have a parameter associated with it (or more than one).  In this case it can be that
+///     you want to curate various values and give them
+///     meaningful titles.  For example if you have a filter 'Hospitalised with condition X' which has parameter
+///     @ConditionList.  Then you decide that you want to curate
+///     a list 'A101.23,B21.1' as 'People hospitalised with drug dependency'.  This 'known meaningful parameter values set'
+///     is called a ExtractionFilterParameterSet.  You
+///     can provide a name and a description for the concept.  Then you create a value for each parameter in the associated
+///     filter.  See ExtractionFilterParameterSetValue for
+///     the value recordings.
 /// </summary>
 public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameters, INamed
 {
@@ -29,7 +33,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     private string _description;
     private int _extractionFilterID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     public string Name
     {
@@ -38,7 +42,8 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
     /// <summary>
-    /// Human-readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting information about how it works, quirks etc
+    ///     Human-readable description of what the parameter set identifies e.g. 'Diabetes Drugs' and any supporting
+    ///     information about how it works, quirks etc
     /// </summary>
     public string Description
     {
@@ -47,7 +52,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
     /// <summary>
-    /// The filter which the parameter values are designed to work with
+    ///     The filter which the parameter values are designed to work with
     /// </summary>
     public int ExtractionFilter_ID
     {
@@ -59,12 +64,13 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
 
     #region Relationships
 
-    /// <inheritdoc cref ="ExtractionFilter_ID"/>
+    /// <inheritdoc cref="ExtractionFilter_ID" />
     [NoMappingToDatabase]
     public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
 
     /// <summary>
-    /// Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
+    ///     Gets all the individual parameter values required for populating the filter to achieve this concept (e.g. 'Diabetes
+    ///     Drugs' might have 2 parameter values @DrugList='123.122.1,1.2... etc' and @DrugCodeFormat='bnf')
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionFilterParameterSetValue> Values =>
@@ -85,8 +91,12 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
     /// <summary>
-    /// Defines a new set of known parameter values to achieve a given goal (e.g. identify 'diabetic drugs' in dataset prescriptions) in combination with a parent <see cref="IFilter"/>.
-    /// <para>A single <see cref="ExtractionFilter"/> (e.g. 'Drug Prescriptions of X' with parameter @DrugList) could have many <see cref="ExtractionFilterParameterSet"/></para>
+    ///     Defines a new set of known parameter values to achieve a given goal (e.g. identify 'diabetic drugs' in dataset
+    ///     prescriptions) in combination with a parent <see cref="IFilter" />.
+    ///     <para>
+    ///         A single <see cref="ExtractionFilter" /> (e.g. 'Drug Prescriptions of X' with parameter @DrugList) could have
+    ///         many <see cref="ExtractionFilterParameterSet" />
+    ///     </para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="filter"></param>
@@ -103,14 +113,20 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    /// <inheritdoc cref="Values"/>
-    public ISqlParameter[] GetAllParameters() => Values.ToArray();
+    /// <inheritdoc cref="Values" />
+    public ISqlParameter[] GetAllParameters()
+    {
+        return Values.ToArray();
+    }
 
     /// <summary>
-    /// Identifies all parameters which do not exist yet as declared values
+    ///     Identifies all parameters which do not exist yet as declared values
     /// </summary>
     /// <returns></returns>
     public IEnumerable<ExtractionFilterParameter> GetMissingEntries()
@@ -126,7 +142,7 @@ public class ExtractionFilterParameterSet : DatabaseEntity, ICollectSqlParameter
     }
 
     /// <summary>
-    /// Creates new value entries for each parameter in the filter that does not yet have a value in this value set
+    ///     Creates new value entries for each parameter in the filter that does not yet have a value in this value set
     /// </summary>
     /// <returns></returns>
     public ExtractionFilterParameterSetValue[] CreateNewValueEntries()

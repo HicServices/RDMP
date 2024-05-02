@@ -6,10 +6,8 @@
 
 using System;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics.Distributions;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -22,13 +20,18 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Data load component for loading a detached database file into RAW.  This attacher does not load RAW tables normally (like AnySeparatorFileAttacher etc)
-/// instead it specifies that it is itself going to act as RAW.  Using this component requires that the computer running the data load has file system access
-/// to the RAW Sql Server data directory (and that the path is the same).
-/// 
-/// <para>The mdf file will be copied to the Sql Server data directory of the RAW server and attached with the expected name of RAW.  From this point on the load
-/// will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match expected LIVE tables on your server (or
-/// write AdjustRAW scripts to harmonise).</para>
+///     Data load component for loading a detached database file into RAW.  This attacher does not load RAW tables normally
+///     (like AnySeparatorFileAttacher etc)
+///     instead it specifies that it is itself going to act as RAW.  Using this component requires that the computer
+///     running the data load has file system access
+///     to the RAW Sql Server data directory (and that the path is the same).
+///     <para>
+///         The mdf file will be copied to the Sql Server data directory of the RAW server and attached with the expected
+///         name of RAW.  From this point on the load
+///         will function normally.  It is up to the user to ensure that the table names/columns in the attached MDF match
+///         expected LIVE tables on your server (or
+///         write AdjustRAW scripts to harmonise).
+///     </para>
 /// </summary>
 public class MDFAttacher : Attacher, IPluginAttacher
 {
@@ -65,7 +68,9 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
 
     private void GetFileNames()
     {
-        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) && (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf"))) return;//don't need to fiddle with the paths
+        if ((string.IsNullOrWhiteSpace(OverrideAttachLdfPath) || OverrideAttachLdfPath.EndsWith(".ldf")) &&
+            (string.IsNullOrWhiteSpace(OverrideAttachMdfPath) || OverrideAttachMdfPath.EndsWith(".mdf")))
+            return; //don't need to fiddle with the paths
         var builder = new SqlConnectionStringBuilder(_dbInfo.Server.Builder.ConnectionString)
         {
             InitialCatalog = "master",
@@ -75,7 +80,8 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         using var con = new SqlConnection(builder.ConnectionString);
         con.Open();
         using var dt = new DataTable();
-        using (var cmd = DatabaseCommandHelper.GetCommand($"DBCC CHECKPRIMARYFILE (N'{_locations.AttachMdfPath}' , 3)", con))
+        using (var cmd = DatabaseCommandHelper.GetCommand($"DBCC CHECKPRIMARYFILE (N'{_locations.AttachMdfPath}' , 3)",
+                   con))
         using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
         {
             dt.BeginLoadData();
@@ -83,19 +89,26 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
             dt.EndLoadData();
         }
 
-        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf", StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) &&
+            !OverrideAttachLdfPath.EndsWith(".ldf", StringComparison.OrdinalIgnoreCase))
         {
             var _path = dt.Rows[1].ItemArray[3].ToString();
-            _locations.AttachLdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachLdfPath, _path); 
+            _locations.AttachLdfPath =
+                MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachLdfPath,
+                    _path);
         }
         else
         {
             _locations.AttachLdfPath = OverrideAttachLdfPath;
         }
-        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf", StringComparison.OrdinalIgnoreCase))
+
+        if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) &&
+            !OverrideAttachMdfPath.EndsWith(".mdf", StringComparison.OrdinalIgnoreCase))
         {
             var _path = dt.Rows[0].ItemArray[3].ToString();
-            _locations.AttachMdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachMdfPath, _path);
+            _locations.AttachMdfPath =
+                MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachMdfPath,
+                    _path);
         }
         else
         {
@@ -250,7 +263,7 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
     }
 
     /// <summary>
-    /// Determine if two files are 'similar' - timestamps, sizes, first and last 4K
+    ///     Determine if two files are 'similar' - timestamps, sizes, first and last 4K
     /// </summary>
     /// <param name="pathA"></param>
     /// <param name="pathB"></param>

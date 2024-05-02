@@ -14,8 +14,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 /// <summary>
-/// UpdateProgressIfLoadsuccessful (See UpdateProgressIfLoadsuccessful) which also deletes files in the ForLoading directory that were generated during the
-/// load e.g. by a CachedFileRetriever.  Files are only deleted if the ExitCodeType.Success otherwise they are left in ForLoading for debugging / inspection.
+///     UpdateProgressIfLoadsuccessful (See UpdateProgressIfLoadsuccessful) which also deletes files in the ForLoading
+///     directory that were generated during the
+///     load e.g. by a CachedFileRetriever.  Files are only deleted if the ExitCodeType.Success otherwise they are left in
+///     ForLoading for debugging / inspection.
 /// </summary>
 public class DeleteCachedFilesOperation : UpdateProgressIfLoadsuccessful
 {

@@ -9,7 +9,8 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all saved cohort lists (See <see cref="ExtractableCohort"/>).  These are divided by sources (<see cref="ExternalCohortTable"/>)
+///     Collection of all saved cohort lists (See <see cref="ExtractableCohort" />).  These are divided by sources (
+///     <see cref="ExternalCohortTable" />)
 /// </summary>
 public class AllCohortsNode : SingletonNode
 {

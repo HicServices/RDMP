@@ -19,9 +19,12 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-/// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in
-/// DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber and putting in the appropriate
-/// replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored procedure SubstitutionStoredProcedure.
+///     Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For
+///     example storing all LabNumbers stored in
+///     DataColumn LabNumber into the ANO Store database table and adding a new column to the DataTable called ANOLabNumber
+///     and putting in the appropriate
+///     replacement values.  All the heavy lifting (identifier allocation etc) is done by the stored procedure
+///     SubstitutionStoredProcedure.
 /// </summary>
 public class ANOTransformer
 {
@@ -113,7 +116,7 @@ public class ANOTransformer
             if (discardNulls && (o == null || o == DBNull.Value))
                 continue;
 
-            table.Rows.Add(new[] { r[column.ColumnName] });
+            table.Rows.Add(r[column.ColumnName]);
         }
 
         table.EndLoadData();
@@ -221,7 +224,10 @@ public class ANOTransformer
             Console.WriteLine(e.Message);
     }
 
-    public string GetDestinationColumnExpectedDataType() => _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+    public string GetDestinationColumnExpectedDataType()
+    {
+        return _anoTable.GetRuntimeDataType(LoadStage.PostLoad);
+    }
 
 
     public static void ConfirmDependencies(DiscoveredDatabase database, ICheckNotifier notifier)
@@ -230,10 +236,10 @@ public class ANOTransformer
         {
             if (database.DiscoverStoredprocedures().Any(p => p.Name.Equals(SubstitutionStoredProcedure)))
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"successfully found {SubstitutionStoredProcedure} on {database}", CheckResult.Success, null));
+                    $"successfully found {SubstitutionStoredProcedure} on {database}", CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Failed to find {SubstitutionStoredProcedure} on {database}", CheckResult.Fail, null));
+                    $"Failed to find {SubstitutionStoredProcedure} on {database}", CheckResult.Fail));
         }
         catch (Exception e)
         {

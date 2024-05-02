@@ -13,8 +13,9 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 /// <summary>
-/// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="Curation.Data.DataLoad.LoadMetadata"/>.  This governs
-/// which tables are created in RAW=>STAGING=>LIVE.
+///     Collection of all the <see cref="Catalogue" />s which are currently associated with a given
+///     <see cref="Curation.Data.DataLoad.LoadMetadata" />.  This governs
+///     which tables are created in RAW=>STAGING=>LIVE.
 /// </summary>
 public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
 {
@@ -33,9 +34,15 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
         LoadMetadata = lmd;
     }
 
-    public override string ToString() => "Catalogues";
+    public override string ToString()
+    {
+        return "Catalogues";
+    }
 
-    protected bool Equals(AllCataloguesUsedByLoadMetadataNode other) => Equals(LoadMetadata, other.LoadMetadata);
+    protected bool Equals(AllCataloguesUsedByLoadMetadataNode other)
+    {
+        return Equals(LoadMetadata, other.LoadMetadata);
+    }
 
     public override bool Equals(object obj)
     {
@@ -45,5 +52,8 @@ public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable
         return Equals((AllCataloguesUsedByLoadMetadataNode)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(LoadMetadata);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(LoadMetadata);
+    }
 }

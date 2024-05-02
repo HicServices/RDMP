@@ -11,8 +11,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates new parameters for <see cref="ExtractionFilterParameterSet"/> when they are
-/// in the parent filter but missing in the value set.
+///     Creates new parameters for <see cref="ExtractionFilterParameterSet" /> when they are
+///     in the parent filter but missing in the value set.
 /// </summary>
 public class ExecuteCommandAddMissingParameters : BasicCommandExecution
 {

@@ -15,7 +15,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Cohort;
 
 /// <summary>
-/// Handles combining 2 <see cref="CohortIdentificationConfiguration"/> into a single new combined config.  Also handles splitting 1 into 2 (i.e. the reverse).
+///     Handles combining 2 <see cref="CohortIdentificationConfiguration" /> into a single new combined config.  Also
+///     handles splitting 1 into 2 (i.e. the reverse).
 /// </summary>
 public class CohortIdentificationConfigurationMerger
 {
@@ -27,11 +28,13 @@ public class CohortIdentificationConfigurationMerger
     }
 
     /// <summary>
-    /// Clones and combines two or more <see cref="CohortIdentificationConfiguration"/> into a single new cic.
+    ///     Clones and combines two or more <see cref="CohortIdentificationConfiguration" /> into a single new cic.
     /// </summary>
     /// <param name="cics"></param>
     /// <param name="operation"></param>
-    /// <returns>The new merged CohortIdentificationConfiguration which contains all the provided <paramref name="cics"/> </returns>
+    /// <returns>
+    ///     The new merged CohortIdentificationConfiguration which contains all the provided <paramref name="cics" />
+    /// </returns>
     public CohortIdentificationConfiguration Merge(CohortIdentificationConfiguration[] cics, SetOperation operation)
     {
         if (cics.Length <= 1)
@@ -89,10 +92,11 @@ public class CohortIdentificationConfigurationMerger
     }
 
     /// <summary>
-    /// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into the target <paramref name="into"/>
+    ///     Clone and import one or more <see cref="CohortIdentificationConfiguration" /> into the target
+    ///     <paramref name="into" />
     /// </summary>
     /// <param name="cics"></param>
-    /// <param name="into">The container into which you want to add the <paramref name="cics"/></param>
+    /// <param name="into">The container into which you want to add the <paramref name="cics" /></param>
     public void Import(CohortIdentificationConfiguration[] cics, CohortAggregateContainer into)
     {
         var cicInto = into.GetCohortIdentificationConfiguration() ??
@@ -150,10 +154,10 @@ public class CohortIdentificationConfigurationMerger
     }
 
     /// <summary>
-    /// Splits the root container of a <see cref="CohortIdentificationConfiguration"/> into multiple new cic.
+    ///     Splits the root container of a <see cref="CohortIdentificationConfiguration" /> into multiple new cic.
     /// </summary>
     /// <param name="rootContainer"></param>
-    /// <returns>All new configurations unmerged out of the <paramref name="rootContainer"/></returns>
+    /// <returns>All new configurations unmerged out of the <paramref name="rootContainer" /></returns>
     public CohortIdentificationConfiguration[] UnMerge(CohortAggregateContainer rootContainer)
     {
         if (!rootContainer.IsRootContainer())

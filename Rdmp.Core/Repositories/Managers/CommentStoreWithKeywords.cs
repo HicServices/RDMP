@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Comments;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
+///     Subclass of <see cref="CommentStore" /> which also loads KeywordHelp.txt
 /// </summary>
 public sealed class CommentStoreWithKeywords : CommentStore
 {
@@ -19,9 +19,10 @@ public sealed class CommentStoreWithKeywords : CommentStore
     {
         base.ReadComments(directoriesToLookInForComments);
 
-        var assembly=typeof(CommentStoreWithKeywords).Assembly;
+        var assembly = typeof(CommentStoreWithKeywords).Assembly;
         using var stream = assembly.GetManifestResourceStream($"{assembly.GetName().Name}.Curation.KeywordHelp.txt");
-        using var reader = new StreamReader(stream ?? throw new ApplicationException("Unable to read KeywordHelp.txt resource"));
+        using var reader =
+            new StreamReader(stream ?? throw new ApplicationException("Unable to read KeywordHelp.txt resource"));
         AddToHelp(reader.ReadToEnd());
     }
 

@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
 /// <summary>
-/// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
+///     Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP
 /// </summary>
 public class ShareDefinitionImporter : IPluginDataProvider
 {

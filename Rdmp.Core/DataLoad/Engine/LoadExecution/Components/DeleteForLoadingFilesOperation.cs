@@ -12,8 +12,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the disposal stack and should be executed
-/// after the archiving of ForLoading (See ArchiveFiles).
+///     DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the
+///     disposal stack and should be executed
+///     after the archiving of ForLoading (See ArchiveFiles).
 /// </summary>
 public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
 {
@@ -71,5 +72,8 @@ public class DeleteForLoadingFilesOperation : IDisposeAfterDataLoad
         }
     }
 
-    private bool ArchiveHasBeenCreated() => new FileInfo(_job.ArchiveFilepath).Exists;
+    private bool ArchiveHasBeenCreated()
+    {
+        return new FileInfo(_job.ArchiveFilepath).Exists;
+    }
 }

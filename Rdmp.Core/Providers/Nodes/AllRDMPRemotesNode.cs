@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.Remoting;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all <see cref="RemoteRDMP"/>s you have configured.
+///     Collection of all <see cref="RemoteRDMP" />s you have configured.
 /// </summary>
 public class AllRDMPRemotesNode : SingletonNode
 {

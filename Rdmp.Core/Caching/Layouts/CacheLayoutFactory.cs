@@ -11,14 +11,17 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Creates <see cref="ICacheLayout"/> instances based on the <see cref="ICachedDataProvider"/>s declared in the load <see cref="ILoadMetadata"/>.  There
-/// can be multiple <see cref="ILoadProgress"/> in a load (e.g. Tayside / Fife) so you will also need to provide which <see cref="ILoadProgress"/> you are
-/// trying to execute.
+///     Creates <see cref="ICacheLayout" /> instances based on the <see cref="ICachedDataProvider" />s declared in the load
+///     <see cref="ILoadMetadata" />.  There
+///     can be multiple <see cref="ILoadProgress" /> in a load (e.g. Tayside / Fife) so you will also need to provide which
+///     <see cref="ILoadProgress" /> you are
+///     trying to execute.
 /// </summary>
 public class CacheLayoutFactory
 {
@@ -51,7 +54,7 @@ public class CacheLayoutFactory
                 continue;
 
 
-            var type = Repositories.MEF.GetType(task.Path);
+            var type = MEF.GetType(task.Path);
 
             if (typeof(ICachedDataProvider).IsAssignableFrom(type))
                 compatibleProviders.Add(task);

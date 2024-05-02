@@ -10,13 +10,14 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Providers.Nodes.CohortNodes;
 
 /// <summary>
-/// Collection of all <see cref="AggregateConfiguration"/> which are <see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/> but
-/// not associated with any <see cref="CohortIdentificationConfiguration"/>
+///     Collection of all <see cref="AggregateConfiguration" /> which are
+///     <see cref="AggregateConfiguration.IsCohortIdentificationAggregate" /> but
+///     not associated with any <see cref="CohortIdentificationConfiguration" />
 /// </summary>
 public class AllOrphanAggregateConfigurationsNode : SingletonNode
 {
     /// <summary>
-    /// Creates a new instance of the singleton node
+    ///     Creates a new instance of the singleton node
     /// </summary>
     public AllOrphanAggregateConfigurationsNode() : base("Orphan Cohort Sets")
     {

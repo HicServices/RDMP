@@ -14,8 +14,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Checks;
 
 /// <summary>
-/// Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks ExtractionConfigurations that are part of the project
-/// to see if valid queries can be built and rows read.
+///     Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks
+///     ExtractionConfigurations that are part of the project
+///     to see if valid queries can be built and rows read.
 /// </summary>
 public class ProjectChecker : ICheckable
 {
@@ -25,17 +26,18 @@ public class ProjectChecker : ICheckable
     private DirectoryInfo _projectDirectory;
 
     /// <summary>
-    /// True to fetch all <see cref="IExtractionConfiguration"/> and check with <see cref="ExtractionConfigurationChecker"/>
+    ///     True to fetch all <see cref="IExtractionConfiguration" /> and check with
+    ///     <see cref="ExtractionConfigurationChecker" />
     /// </summary>
     public bool CheckConfigurations { get; set; }
 
     /// <summary>
-    /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
+    ///     True to fetch all <see cref="ISelectedDataSets" /> and check with <see cref="SelectedDataSetsChecker" />
     /// </summary>
     public bool CheckDatasets { get; set; }
 
     /// <summary>
-    /// Sets up the class to check the state of the <paramref name="project"/>
+    ///     Sets up the class to check the state of the <paramref name="project" />
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="project"></param>
@@ -48,8 +50,9 @@ public class ProjectChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks the <see cref="IProject"/> has a valid <see cref="IProject.ExtractionDirectory"/>, <see cref="IProject.ProjectNumber"/> etc and runs additional
-    /// checkers (See <see cref="CheckConfigurations"/> and <see cref="CheckDatasets"/>).
+    ///     Checks the <see cref="IProject" /> has a valid <see cref="IProject.ExtractionDirectory" />,
+    ///     <see cref="IProject.ProjectNumber" /> etc and runs additional
+    ///     checkers (See <see cref="CheckConfigurations" /> and <see cref="CheckDatasets" />).
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -96,7 +99,7 @@ public class ProjectChecker : ICheckable
             {
                 var extractionConfigurationChecker =
                     new ExtractionConfigurationChecker(_activator, extractionConfiguration)
-                    { CheckDatasets = CheckDatasets };
+                        { CheckDatasets = CheckDatasets };
                 extractionConfigurationChecker.Check(notifier);
             }
 

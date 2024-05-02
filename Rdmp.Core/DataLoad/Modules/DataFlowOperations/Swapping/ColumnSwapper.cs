@@ -28,7 +28,7 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 
 /// <summary>
-/// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
+///     Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)
 /// </summary>
 internal class ColumnSwapper : IPluginDataFlowComponent<DataTable>, IPipelineOptionalRequirement<IExtractCommand>,
     IPipelineOptionalRequirement<ICohortCreationRequest>
@@ -90,7 +90,8 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
     private Dictionary<object, List<object>> _mappingTable;
 
     /// <summary>
-    /// The Type of objects that are stored in the Keys of <see cref="_mappingTable"/>.  For use when input types do not match the mapping table types
+    ///     The Type of objects that are stored in the Keys of <see cref="_mappingTable" />.  For use when input types do not
+    ///     match the mapping table types
     /// </summary>
     private Type _keyType;
 
@@ -324,7 +325,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
     {
         var repo = new MemoryCatalogueRepository();
 
-        var qb = new QueryBuilder("DISTINCT", null, null);
+        var qb = new QueryBuilder("DISTINCT", null);
         qb.AddColumn(new ColumnInfoToIColumn(repo, MappingFromColumn));
         qb.AddColumn(new ColumnInfoToIColumn(repo, MappingToColumn));
 
@@ -348,7 +349,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 throw new Exception("You cannot use $p in contexts where there is no Project available");
 
             mappingTableSql = mappingTableSql.Replace("$p",
-                _project.Name?.ToString() ?? throw new Exception("Project didn't have a Project Name"));
+                _project.Name ?? throw new Exception("Project didn't have a Project Name"));
         }
 
         if (mappingTableSql.Contains("$n"))
@@ -367,7 +368,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 throw new Exception("You cannot use $t in contexts where there is no Project available");
 
             mappingTableSql = mappingTableSql.Replace("$t",
-                _project.MasterTicket?.ToString() ??
+                _project.MasterTicket ??
                 throw new Exception($"Project '{_project.Name}' didn't have a Master Ticket"));
         }
 
@@ -378,7 +379,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                     "You cannot use $r in contexts where there is no ExtractionConfiguration available");
 
             mappingTableSql = mappingTableSql.Replace("$r",
-                _configuration.RequestTicket?.ToString() ??
+                _configuration.RequestTicket ??
                 throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Request Ticket"));
         }
 
@@ -389,7 +390,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                     "You cannot use $l in contexts where there is no ExtractionConfiguration available");
 
             mappingTableSql = mappingTableSql.Replace("$l",
-                _configuration.ReleaseTicket?.ToString() ??
+                _configuration.ReleaseTicket ??
                 throw new Exception($"Extraction Configuration '{_configuration.Name}' didn't have a Release Ticket"));
         }
 

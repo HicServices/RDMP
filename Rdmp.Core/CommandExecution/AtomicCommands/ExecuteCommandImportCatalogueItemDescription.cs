@@ -12,10 +12,13 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Allows you to copy descriptive metadata (CatalogueItems) between datasets.  This is useful for maintaining a 'single version of the truth' e.g. if every dataset has a field called
-/// 'NHS Number' then the description of this column should be the same in every case.  Using this form you can import/copy the description from another column.  While this covers you
-/// for setting up new fields, the synchronizing of this description over time (e.g. when a data analyst edits one of the other 'NHS Number' fields) is done through propagation
-/// (See PropagateCatalogueItemChangesToSimilarNamedUI)
+///     Allows you to copy descriptive metadata (CatalogueItems) between datasets.  This is useful for maintaining a
+///     'single version of the truth' e.g. if every dataset has a field called
+///     'NHS Number' then the description of this column should be the same in every case.  Using this form you can
+///     import/copy the description from another column.  While this covers you
+///     for setting up new fields, the synchronizing of this description over time (e.g. when a data analyst edits one of
+///     the other 'NHS Number' fields) is done through propagation
+///     (See PropagateCatalogueItemChangesToSimilarNamedUI)
 /// </summary>
 public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecution, IAtomicCommand
 {
@@ -37,7 +40,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
         if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
             initialSearchText = _toPopulate.Name;
 
-        if (SelectOne(available, out var selected, initialSearchText, false))
+        if (SelectOne(available, out var selected, initialSearchText))
         {
             CopyNonIDValuesAcross(selected, _toPopulate, true);
             _toPopulate.SaveToDatabase();
@@ -49,7 +52,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
     }
 
     /// <summary>
-    /// Copies all properties (Description etc) from one CatalogueItem into another (except ID properties).
+    ///     Copies all properties (Description etc) from one CatalogueItem into another (except ID properties).
     /// </summary>
     /// <param name="from"></param>
     /// <param name="to"></param>

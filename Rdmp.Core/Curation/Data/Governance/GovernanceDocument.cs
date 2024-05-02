@@ -18,9 +18,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.Governance;
 
 /// <summary>
-/// Contains the path to a useful file which reflects either a request or a granting of governance e.g. a letter from your local healthboard authorising you to host/use 1 or more
-/// datasets for a given period of time.  Also includes a name (which should really match the file name) and a description which should be a plain summary of what is in the document
-/// such that lay users can appreciate what the document contains/means for the system.
+///     Contains the path to a useful file which reflects either a request or a granting of governance e.g. a letter from
+///     your local healthboard authorising you to host/use 1 or more
+///     datasets for a given period of time.  Also includes a name (which should really match the file name) and a
+///     description which should be a plain summary of what is in the document
+///     such that lay users can appreciate what the document contains/means for the system.
 /// </summary>
 public class GovernanceDocument : DatabaseEntity, INamed
 {
@@ -32,7 +34,8 @@ public class GovernanceDocument : DatabaseEntity, INamed
     private string _url;
 
     /// <summary>
-    /// The <see cref="GovernancePeriod"/> for which this document is part of (either as a letter requesting approval, granting approval etc)
+    ///     The <see cref="GovernancePeriod" /> for which this document is part of (either as a letter requesting approval,
+    ///     granting approval etc)
     /// </summary>
     public int GovernancePeriod_ID
     {
@@ -40,7 +43,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
         private set => SetField(ref _governancePeriodID, value);
     } //every document belongs to only one period of governance knoweldge (via fk relationship)
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     public string Name
     {
@@ -49,7 +52,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// Human readable description/summary of the contents of the document, who sent it why it exists etc
+    ///     Human readable description/summary of the contents of the document, who sent it why it exists etc
     /// </summary>
     public string Description
     {
@@ -58,7 +61,7 @@ public class GovernanceDocument : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// The location of the referenced document on disk
+    ///     The location of the referenced document on disk
     /// </summary>
     [AdjustableLocation]
     public string URL
@@ -74,7 +77,8 @@ public class GovernanceDocument : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// Marks a given <paramref name="file"/> as being important in the obtaining of the <paramref name="parent"/> <see cref="GovernancePeriod"/>
+    ///     Marks a given <paramref name="file" /> as being important in the obtaining of the <paramref name="parent" />
+    ///     <see cref="GovernancePeriod" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -103,11 +107,14 @@ public class GovernanceDocument : DatabaseEntity, INamed
     }
 
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Checks that the file exists
+    ///     Checks that the file exists
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -137,8 +144,11 @@ public class GovernanceDocument : DatabaseEntity, INamed
     }
 
     /// <summary>
-    /// Returns the name of the file (See also <see cref="URL"/>)
+    ///     Returns the name of the file (See also <see cref="URL" />)
     /// </summary>
     /// <returns></returns>
-    public string GetFilenameOnly() => Path.GetFileName(URL);
+    public string GetFilenameOnly()
+    {
+        return Path.GetFileName(URL);
+    }
 }

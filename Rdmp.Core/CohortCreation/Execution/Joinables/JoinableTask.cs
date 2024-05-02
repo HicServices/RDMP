@@ -20,9 +20,12 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution.Joinables;
 
 /// <summary>
-/// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The
-/// AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where ...'.  The  query
-/// result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the CachedAggregateConfigurationResultsManager.
+///     A single AggregateConfiguration being executed by a CohortCompiler which is defined as a
+///     JoinableCohortAggregateConfiguration.  The
+///     AggregateConfiguration will be a query like 'select distinct patientId, drugName,prescribedDate from  TableX where
+///     ...'.  The  query
+///     result table can/will be committed as a CacheCommitJoinableInceptionQuery to  the
+///     CachedAggregateConfigurationResultsManager.
 /// </summary>
 public class JoinableTask : CacheableTask
 {
@@ -43,14 +46,22 @@ public class JoinableTask : CacheableTask
         RefreshIsUsedState();
     }
 
-    public override string GetCatalogueName() => _catalogueName;
+    public override string GetCatalogueName()
+    {
+        return _catalogueName;
+    }
 
     public override IMapsDirectlyToDatabaseTable Child => Joinable;
 
-    public override IDataAccessPoint[] GetDataAccessPoints() =>
-        Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
+    public override IDataAccessPoint[] GetDataAccessPoints()
+    {
+        return Joinable.AggregateConfiguration.Catalogue.GetTableInfoList(false);
+    }
 
-    public override bool IsEnabled() => !_aggregate.IsDisabled;
+    public override bool IsEnabled()
+    {
+        return !_aggregate.IsDisabled;
+    }
 
     public override string ToString()
     {
@@ -59,11 +70,17 @@ public class JoinableTask : CacheableTask
         return name.StartsWith(expectedTrimStart, StringComparison.Ordinal) ? name[expectedTrimStart.Length..] : name;
     }
 
-    public override AggregateConfiguration GetAggregateConfiguration() => Joinable.AggregateConfiguration;
+    public override AggregateConfiguration GetAggregateConfiguration()
+    {
+        return Joinable.AggregateConfiguration;
+    }
 
     public override CacheCommitArguments
-        GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes) =>
-        new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes, Timeout);
+        GetCacheArguments(string sql, DataTable results, DatabaseColumnRequest[] explicitTypes)
+    {
+        return new CacheCommitJoinableInceptionQuery(Joinable.AggregateConfiguration, sql, results, explicitTypes,
+            Timeout);
+    }
 
     public override void ClearYourselfFromCache(CachedAggregateConfigurationResultsManager manager)
     {
@@ -83,6 +100,8 @@ public class JoinableTask : CacheableTask
         IsUnused = !Joinable.Users.Any();
     }
 
-    public string GetUnusedWarningText() =>
-        $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
+    public string GetUnusedWarningText()
+    {
+        return $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
+    }
 }

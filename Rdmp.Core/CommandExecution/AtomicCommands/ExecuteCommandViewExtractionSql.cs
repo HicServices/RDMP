@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// View/run the extraction SQL for a given <see cref="Catalogue"/> in a given <see cref="ExtractionConfiguration"/>
+///     View/run the extraction SQL for a given <see cref="Catalogue" /> in a given <see cref="ExtractionConfiguration" />
 /// </summary>
 public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtomicCommandWithTarget
 {
@@ -60,11 +60,16 @@ public class ExecuteCommandViewExtractionSql : ExecuteCommandViewDataBase, IAtom
     {
     }
 
-    public override string GetCommandHelp() =>
-        "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
+    public override string GetCommandHelp()
+    {
+        return
+            "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

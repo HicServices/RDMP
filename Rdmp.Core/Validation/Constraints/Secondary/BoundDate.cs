@@ -11,8 +11,9 @@ using System.Globalization;
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Values (if present) in a column must be within a certain range of dates.  This can include referencing another column.  For example you could specify that
-///  Date of Birth must have an Inclusive Upper bound of Date of Death.
+///     Values (if present) in a column must be within a certain range of dates.  This can include referencing another
+///     column.  For example you could specify that
+///     Date of Birth must have an Inclusive Upper bound of Date of Death.
 /// </summary>
 public class BoundDate : Bound
 {
@@ -34,13 +35,13 @@ public class BoundDate : Bound
             case null:
                 return null;
             case string stringValue:
-                {
-                    value = SafeConvertToDate(stringValue);
+            {
+                value = SafeConvertToDate(stringValue);
 
-                    if (!((DateTime?)value).HasValue)
-                        return null;
-                    break;
-                }
+                if (!((DateTime?)value).HasValue)
+                    return null;
+                break;
+            }
         }
 
         var d = (DateTime)value;
@@ -161,16 +162,28 @@ public class BoundDate : Bound
             : throw new InvalidOperationException("Illegal state.");
     }
 
-    private string BetweenMessage(DateTime d, string l, string u) =>
-        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+    private string BetweenMessage(DateTime d, string l, string u)
+    {
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date between {Wrap(l)} and {Wrap(u)}{(Inclusive ? " inclusively" : " exclusively")}.";
+    }
 
-    private static string GreaterThanMessage(DateTime d, string s) =>
-        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
+    private static string GreaterThanMessage(DateTime d, string s)
+    {
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date greater than {Wrap(s)}.";
+    }
 
-    private static string LessThanMessage(DateTime d, string s) =>
-        $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
+    private static string LessThanMessage(DateTime d, string s)
+    {
+        return
+            $"Date {Wrap(d.ToString(CultureInfo.InvariantCulture))} out of range. Expected a date less than {Wrap(s)}.";
+    }
 
-    private static string Wrap(string s) => $"[{s}]";
+    private static string Wrap(string s)
+    {
+        return $"[{s}]";
+    }
 
     public override string GetHumanReadableDescriptionOfValidation()
     {

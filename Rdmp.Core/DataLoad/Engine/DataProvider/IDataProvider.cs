@@ -13,8 +13,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider;
 
 /// <summary>
-/// DLE component ostensibly responsible for 'fetching data'.  This typically involves fetching data and saving it into the ILoadDirectory (e.g. into
-/// ForLoading) ready for loading by later components.
+///     DLE component ostensibly responsible for 'fetching data'.  This typically involves fetching data and saving it into
+///     the ILoadDirectory (e.g. into
+///     ForLoading) ready for loading by later components.
 /// </summary>
 public interface IDataProvider : IDisposeAfterDataLoad, ICheckable
 {

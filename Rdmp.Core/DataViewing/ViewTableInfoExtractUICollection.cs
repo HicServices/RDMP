@@ -18,14 +18,14 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Builds a query to fetch data from a <see cref="TableInfo"/>
+///     Builds a query to fetch data from a <see cref="TableInfo" />
 /// </summary>
 public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
     public ViewType ViewType { get; private set; }
 
     /// <summary>
-    /// for persistence, do not use
+    ///     for persistence, do not use
     /// </summary>
     public ViewTableInfoExtractUICollection()
     {
@@ -41,8 +41,11 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
         ViewType = viewType;
     }
 
-    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
-        { { "ViewType", ViewType.ToString() } });
+    public override string SaveExtraText()
+    {
+        return PersistStringHelper.SaveDictionaryToString(new Dictionary<string, string>
+            { { "ViewType", ViewType.ToString() } });
+    }
 
     public override void LoadExtraText(string s)
     {
@@ -66,7 +69,10 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
             yield return filter;
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => TableInfo;
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return TableInfo;
+    }
 
     public string GetSql()
     {
@@ -91,7 +97,10 @@ public class ViewTableInfoExtractUICollection : PersistableObjectCollection, IVi
             : sql;
     }
 
-    public string GetTabName() => $"{TableInfo}({ViewType})";
+    public string GetTabName()
+    {
+        return $"{TableInfo}({ViewType})";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {

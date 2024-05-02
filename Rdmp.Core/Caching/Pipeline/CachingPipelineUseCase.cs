@@ -21,11 +21,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Pipeline;
 
 /// <summary>
-/// Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out the ICacheFetchRequestProvider,
-/// PermissionWindow etc.  Since the use case is used both for creating an engine for execution and for determining which IPipelines are compatible
-/// with the use case the class can be used at execution and design time.  Therefore it is legal to define the use case even when the ICacheProgress does
-/// not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in the first place (set throwIfNoPipeline
-/// to false under such circumstances).
+///     Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out
+///     the ICacheFetchRequestProvider,
+///     PermissionWindow etc.  Since the use case is used both for creating an engine for execution and for determining
+///     which IPipelines are compatible
+///     with the use case the class can be used at execution and design time.  Therefore it is legal to define the use case
+///     even when the ICacheProgress does
+///     not have a configured caching pipeline e.g. to facilitate the user selecting/creating an appropriate pipeline in
+///     the first place (set throwIfNoPipeline
+///     to false under such circumstances).
 /// </summary>
 public sealed class CachingPipelineUseCase : PipelineUseCase
 {
@@ -35,11 +39,15 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
     private readonly IPermissionWindow _permissionWindow;
 
     /// <summary>
-    /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects
+    ///     Class for helping you to construct a caching pipeline engine instance with the correct context and initialization
+    ///     objects
     /// </summary>
     /// <param name="cacheProgress">The cache that will be run</param>
     /// <param name="ignorePermissionWindow">Set to true to ignore the CacheProgress.PermissionWindow (if any)</param>
-    /// <param name="providerIfAny">The strategy for figuring out what dates to load the cache with e.g. failed cache fetches or new jobs from head of que?</param>
+    /// <param name="providerIfAny">
+    ///     The strategy for figuring out what dates to load the cache with e.g. failed cache fetches
+    ///     or new jobs from head of que?
+    /// </param>
     /// <param name="throwIfNoPipeline"></param>
     public CachingPipelineUseCase(ICacheProgress cacheProgress, bool ignorePermissionWindow = false,
         ICacheFetchRequestProvider providerIfAny = null, bool throwIfNoPipeline = true)
@@ -110,13 +118,16 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
             : systemDestination;
     }
 
-    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener) => GetEngine(_pipeline, listener);
+    public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener)
+    {
+        return GetEngine(_pipeline, listener);
+    }
 
 
     /// <summary>
-    /// Design time types
+    ///     Design time types
     /// </summary>
-    private CachingPipelineUseCase() : base(new Type[]
+    private CachingPipelineUseCase() : base(new[]
     {
         typeof(ICacheFetchRequestProvider),
         typeof(IPermissionWindow),
@@ -127,5 +138,8 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         GenerateContext();
     }
 
-    public static CachingPipelineUseCase DesignTime() => new();
+    public static CachingPipelineUseCase DesignTime()
+    {
+        return new CachingPipelineUseCase();
+    }
 }

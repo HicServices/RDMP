@@ -17,12 +17,16 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
 /// <summary>
-/// The described Object is only tenously related to the original object and you shouldn't worry too much if during refactoring you don't find any references.
-/// An example of this would be all Filters in a Catalogue where a single ColumnInfo is being renamed.  Any filter in the catalogue could contain a reference to
-/// the ColumnInfo but most won't.
-///
-/// <para>Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated with it.  This differs from IHasDependencies by the fact that
-/// it is a more constrained set rather than just spider webbing out everywhere.</para>
+///     The described Object is only tenously related to the original object and you shouldn't worry too much if during
+///     refactoring you don't find any references.
+///     An example of this would be all Filters in a Catalogue where a single ColumnInfo is being renamed.  Any filter in
+///     the catalogue could contain a reference to
+///     the ColumnInfo but most won't.
+///     <para>
+///         Describes an RDMP object that is related to another e.g. a ColumnInfo can have 0+ CatalogueItems associated
+///         with it.  This differs from IHasDependencies by the fact that
+///         it is a more constrained set rather than just spider webbing out everywhere.
+///     </para>
 /// </summary>
 public class GatheredObject : IHasDependencies, IMasqueradeAs
 {
@@ -36,17 +40,19 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     }
 
     /// <summary>
-    /// True if the gathered object is a data export object (e.g. it is an ExtractableColumn or DeployedExtractionFilter) and it is part of a frozen (released)
-    /// ExtractionConfiguration
+    ///     True if the gathered object is a data export object (e.g. it is an ExtractableColumn or DeployedExtractionFilter)
+    ///     and it is part of a frozen (released)
+    ///     ExtractionConfiguration
     /// </summary>
     public bool IsReleased { get; set; }
 
     /// <summary>
-    /// Creates a sharing export (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and then serializes it as a <see cref="ShareDefinition"/>.
-    /// This includes mapping any [<see cref="RelationshipAttribute"/>] properties on the <see cref="GatheredObject.Object"/> to the relevant Share Guid (which must
-    /// exist in branchParents).
-    /// 
-    /// <para>ToShareDefinitionWithChildren if you want a full list of shares for the whole tree</para>
+    ///     Creates a sharing export (<see cref="ObjectExport" />) for the current <see cref="GatheredObject.Object" /> and
+    ///     then serializes it as a <see cref="ShareDefinition" />.
+    ///     This includes mapping any [<see cref="RelationshipAttribute" />] properties on the
+    ///     <see cref="GatheredObject.Object" /> to the relevant Share Guid (which must
+    ///     exist in branchParents).
+    ///     <para>ToShareDefinitionWithChildren if you want a full list of shares for the whole tree</para>
     /// </summary>
     /// <param name="shareManager"></param>
     /// <param name="branchParents"></param>
@@ -111,13 +117,16 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
     }
 
     /// <summary>
-    /// Creates sharing exports (<see cref="ObjectExport"/>) for the current <see cref="GatheredObject.Object"/> and all <see cref="GatheredObject.Children"/> and
-    /// then serializes them as <see cref="ShareDefinition"/>
+    ///     Creates sharing exports (<see cref="ObjectExport" />) for the current <see cref="GatheredObject.Object" /> and all
+    ///     <see cref="GatheredObject.Children" /> and
+    ///     then serializes them as <see cref="ShareDefinition" />
     /// </summary>
     /// <param name="shareManager"></param>
     /// <returns></returns>
-    public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager) =>
-        ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
+    public List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager)
+    {
+        return ToShareDefinitionWithChildren(shareManager, new List<ShareDefinition>());
+    }
 
     private List<ShareDefinition> ToShareDefinitionWithChildren(ShareManager shareManager,
         List<ShareDefinition> branchParents)
@@ -136,7 +145,10 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
 
     #region Equality
 
-    protected bool Equals(GatheredObject other) => Equals(Object, other.Object);
+    protected bool Equals(GatheredObject other)
+    {
+        return Equals(Object, other.Object);
+    }
 
     public override bool Equals(object obj)
     {
@@ -146,17 +158,35 @@ public class GatheredObject : IHasDependencies, IMasqueradeAs
         return Equals((GatheredObject)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(Object);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Object);
+    }
 
-    public object MasqueradingAs() => Object;
+    public object MasqueradingAs()
+    {
+        return Object;
+    }
 
-    public static bool operator ==(GatheredObject left, GatheredObject right) => Equals(left, right);
+    public static bool operator ==(GatheredObject left, GatheredObject right)
+    {
+        return Equals(left, right);
+    }
 
-    public static bool operator !=(GatheredObject left, GatheredObject right) => !Equals(left, right);
+    public static bool operator !=(GatheredObject left, GatheredObject right)
+    {
+        return !Equals(left, right);
+    }
 
     #endregion
 
-    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    public IHasDependencies[] GetObjectsDependingOnThis() => Children.ToArray();
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Children.ToArray();
+    }
 }

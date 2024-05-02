@@ -25,8 +25,10 @@ public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomi
         if (container.ShouldBeReadOnly(out var reason)) SetImpossible(reason);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortAggregateContainer, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortAggregateContainer, OverlayKind.Add);
+    }
 
     public override void Execute()
     {

@@ -16,15 +16,15 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Deletes objects out of the RDMP database
+///     Deletes objects out of the RDMP database
 /// </summary>
 public class ExecuteCommandDelete : BasicCommandExecution
 {
     private readonly IList<IDeleteable> _deletables;
 
     /// <summary>
-    /// Flag applies only for deletion where the UI layer is non-interactive.  True to allow
-    /// multiple deletes to go ahead without asking.  False to throw exception
+    ///     Flag applies only for deletion where the UI layer is non-interactive.  True to allow
+    ///     multiple deletes to go ahead without asking.  False to throw exception
     /// </summary>
     private readonly bool _allowDeleteMany;
 
@@ -95,13 +95,17 @@ public class ExecuteCommandDelete : BasicCommandExecution
         }
     }
 
-    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable) =>
-        deleteable is CatalogueItem or ExtractionInformation;
+    private static bool ShouldUseTransactionsWhenDeleting(IDeleteable deleteable)
+    {
+        return deleteable is CatalogueItem or ExtractionInformation;
+    }
 
-    private string GetDescription() =>
-        _deletables.Count == 1
+    private string GetDescription()
+    {
+        return _deletables.Count == 1
             ? $"Delete '{_deletables.Single()}'"
             : $"Delete {_deletables.Count} objects ({_deletables.ToBeautifulString()})";
+    }
 
     private void ExecuteImpl()
     {
@@ -112,7 +116,7 @@ public class ExecuteCommandDelete : BasicCommandExecution
                 return;
             case <= 0:
                 return;
-                // Fall through if deleting multiple:
+            // Fall through if deleting multiple:
         }
 
         // if the command did not ask to delete many and it is not interactive (e.g. CLI) then

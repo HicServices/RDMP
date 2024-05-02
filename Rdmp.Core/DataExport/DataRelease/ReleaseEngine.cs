@@ -21,20 +21,24 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease;
 
 /// <summary>
-/// Facilitates the release of anonymous project extracts to researchers including the generation of the release documents / Audit.  This typically involves
-/// collecting all the extracted files (csv data extracts, docx metadata documents, custom data files and supporting documents etc) and moving them into a single
-/// release directory followed by deleting all redundant extraction artifacts.
-/// 
-/// <para>In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm they are in a releasable state (extracted files
-/// match current configuration, ticketing system says that the project has governance approval for release etc).  </para>
+///     Facilitates the release of anonymous project extracts to researchers including the generation of the release
+///     documents / Audit.  This typically involves
+///     collecting all the extracted files (csv data extracts, docx metadata documents, custom data files and supporting
+///     documents etc) and moving them into a single
+///     release directory followed by deleting all redundant extraction artifacts.
+///     <para>
+///         In order to DoRelease you will need to evaluate the environment and each ExtractionConfiguration to confirm
+///         they are in a releasable state (extracted files
+///         match current configuration, ticketing system says that the project has governance approval for release etc).
+///     </para>
 /// </summary>
 public class ReleaseEngine
 {
     protected readonly IDataLoadEventListener _listener;
     protected readonly IDataExportRepository _repository;
-    public Project Project { get; private set; }
+    public Project Project { get; }
     public bool ReleaseSuccessful { get; protected set; }
-    public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
+    public List<IExtractionConfiguration> ConfigurationsReleased { get; }
     public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; private set; }
 
     public ReleaseEngineSettings ReleaseSettings { get; set; }

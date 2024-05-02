@@ -38,16 +38,19 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         var cata = _extractionInformations.Select(static ei => ei.CatalogueItem.Catalogue).Distinct().ToArray();
         if (cata.Length == 1)
             _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
-
     }
 
-    public override string GetCommandName() =>
-        _extractionInformations is not { Length: > 1 }
+    public override string GetCommandName()
+    {
+        return _extractionInformations is not { Length: > 1 }
             ? "Set ExtractionCategory"
             : "Set ALL to ExtractionCategory";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractionInformation);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionInformation);
+    }
 
     public override void Execute()
     {
@@ -56,9 +59,7 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         var c = _category;
         if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory),
                 ExtractionCategory.Core, out var category))
-        {
             c = (ExtractionCategory)category;
-        }
 
         if (c == null)
             return;
@@ -66,7 +67,8 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         {
             // Don't allow project specific catalogue items to become core
             c = ExtractionCategory.ProjectSpecific;
-            Show("Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
+            Show(
+                "Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
         }
 
         if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))

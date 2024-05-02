@@ -14,15 +14,17 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Logging.PastEvents;
 
 /// <summary>
-/// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central
-/// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
-/// messages, Tables loaded etc).  See Logging.cd for more information
+///     Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites
+///     across all areas of the program in a central
+///     place.  You can process these records programatically via LogManager.  This class contains public properties for
+///     each of the sub concepts (Errors, Progress
+///     messages, Tables loaded etc).  See Logging.cd for more information
 /// </summary>
 public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
 {
     private readonly DiscoveredDatabase _loggingDatabase;
 
-    public int ID { get; private set; }
+    public int ID { get; }
     public int DataLoadTaskID { get; set; }
     public const int MaxDescriptionLength = 300;
 
@@ -52,17 +54,17 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
 
 
     /// <summary>
-    /// All tables loaded during the run
+    ///     All tables loaded during the run
     /// </summary>
     public List<ArchivalTableLoadInfo> TableLoadInfos => _knownTableInfos.Value;
 
     /// <summary>
-    /// All errors that occurred during the run
+    ///     All errors that occurred during the run
     /// </summary>
     public List<ArchivalFatalError> Errors => _knownErrors.Value;
 
     /// <summary>
-    /// All progress messages recorded during the run
+    ///     All progress messages recorded during the run
     /// </summary>
     public List<ArchivalProgressLog> Progress => _knownProgress.Value;
 
@@ -73,8 +75,8 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     public string Description { get; set; }
 
     /// <summary>
-    /// Creates a blank unknown instance not associated with a logging database
-    /// Use this constructor for testing only.
+    ///     Creates a blank unknown instance not associated with a logging database
+    ///     Use this constructor for testing only.
     /// </summary>
     internal ArchivalDataLoadInfo()
     {

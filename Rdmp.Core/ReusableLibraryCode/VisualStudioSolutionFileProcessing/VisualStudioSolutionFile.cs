@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 /// <summary>
-/// Reference to a .sln file in which we can extract all the solution folders and project references.
+///     Reference to a .sln file in which we can extract all the solution folders and project references.
 /// </summary>
 public class VisualStudioSolutionFile
 {
@@ -21,8 +21,8 @@ public class VisualStudioSolutionFile
     public VisualStudioSolutionFolder[] RootFolders { get; set; }
     public VisualStudioProjectReference[] RootProjects { get; set; }
 
-    public List<VisualStudioProjectReference> Projects { get; private set; }
-    public List<VisualStudioSolutionFolder> Folders { get; private set; }
+    public List<VisualStudioProjectReference> Projects { get; }
+    public List<VisualStudioSolutionFolder> Folders { get; }
 
     public VisualStudioSolutionFile(DirectoryInfo solutionDirectory, FileInfo slnFile)
     {

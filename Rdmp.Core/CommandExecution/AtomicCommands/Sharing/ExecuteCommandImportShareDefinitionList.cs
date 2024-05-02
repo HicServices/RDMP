@@ -17,7 +17,6 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
-
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IAtomicCommand
@@ -54,8 +53,11 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
     }
 
 
-    public override string GetCommandHelp() =>
-        "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
+    public override string GetCommandHelp()
+    {
+        return
+            "Import serialized RDMP objects that have been shared with you in a share definition file.  If you already have the objects then they will be updated to match the file.";
+    }
 
     private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
         ShareDefinition shareDefinition)
@@ -84,6 +86,8 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
         return null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_get);
+    }
 }

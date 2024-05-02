@@ -17,13 +17,18 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataExport.DataRelease.Audit;
 
 /// <summary>
-/// Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the environmental release potential,
-/// destination directory etc.
-/// 
-/// <para>This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet in an ExtractionConfiguration
-/// can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See CumulativeExtractionResult) and there can be
-/// only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it cannot be extracted/released again (this
-/// is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.</para>
+///     Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the
+///     environmental release potential,
+///     destination directory etc.
+///     <para>
+///         This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet
+///         in an ExtractionConfiguration
+///         can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See
+///         CumulativeExtractionResult) and there can be
+///         only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it
+///         cannot be extracted/released again (this
+///         is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.
+///     </para>
 /// </summary>
 public class ReleaseLog : DatabaseEntity, IReleaseLog
 {

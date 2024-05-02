@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
 {
-    private IDisableable[] _targets;
+    private readonly IDisableable[] _targets;
 
     public ExecuteCommandDisableOrEnable(IBasicActivateItems itemActivator, IDisableable target) : base(itemActivator)
     {
@@ -55,11 +55,11 @@ public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicComma
                 SetImpossible("Only cohort identification aggregates can be disabled");
                 break;
             case AggregateConfiguration aggregateConfiguration:
-                {
-                    if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
-                        SetImpossible("Joinable Patient Index Tables cannot be disabled");
-                    break;
-                }
+            {
+                if (aggregateConfiguration.IsJoinablePatientIndexTable() && !aggregateConfiguration.IsDisabled)
+                    SetImpossible("Joinable Patient Index Tables cannot be disabled");
+                break;
+            }
         }
 
         if (target is IMightBeReadOnly ro && ro.ShouldBeReadOnly(out var reason))

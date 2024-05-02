@@ -22,7 +22,8 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a single column DataTable.
+///     Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a
+///     single column DataTable.
 /// </summary>
 public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<DataTable>,
     IPipelineRequirement<CohortIdentificationConfiguration>
@@ -42,8 +43,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
     private readonly CancellationTokenSource _cancelGlobalOperations = new();
 
     /// <summary>
-    /// If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear out the cache.  This will mean that
-    /// when run you will get a view of the live tables (which might be recached as part of building the cic) rather than the (potentially stale) current cache
+    ///     If you are refreshing a cohort or running a cic which was run and cached a long time ago you might want to clear
+    ///     out the cache.  This will mean that
+    ///     when run you will get a view of the live tables (which might be recached as part of building the cic) rather than
+    ///     the (potentially stale) current cache
     /// </summary>
     public bool ClearCohortIdentificationConfigurationCacheBeforeRunning { get; set; }
 
@@ -73,7 +76,10 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         _cancelGlobalOperations.Cancel();
     }
 
-    public DataTable TryGetPreview() => GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
+    public DataTable TryGetPreview()
+    {
+        return GetDataTable(ThrowImmediatelyDataLoadEventListener.Quiet);
+    }
 
     private DataTable GetDataTable(IDataLoadEventListener listener)
     {

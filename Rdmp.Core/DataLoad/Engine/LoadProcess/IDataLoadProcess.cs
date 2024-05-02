@@ -10,7 +10,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution;
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess;
 
 /// <summary>
-/// See DataLoadProcess
+///     See DataLoadProcess
 /// </summary>
 public interface IDataLoadProcess
 {

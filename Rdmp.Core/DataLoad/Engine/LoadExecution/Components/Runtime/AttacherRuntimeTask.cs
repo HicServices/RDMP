@@ -18,12 +18,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IAttacher.  The instance is hydrated from the user's configuration (ProcessTask and ProcessTaskArguments) See
-/// RuntimeArgumentCollection
+///     RuntimeTask that hosts an IAttacher.  The instance is hydrated from the user's configuration (ProcessTask and
+///     ProcessTaskArguments) See
+///     RuntimeArgumentCollection
 /// </summary>
 public class AttacherRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
-    public IAttacher Attacher { get; private set; }
+    public IAttacher Attacher { get; }
     public ICheckable MEFPluginClassInstance => Attacher;
 
     public AttacherRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)

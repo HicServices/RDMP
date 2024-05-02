@@ -22,9 +22,10 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease.Potential;
 
 /// <summary>
-/// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.
-/// Extraction Destinations will return an implementation of this class which will run checks on the releasaility of the extracted datasets
-/// based on the extraction method used.
+///     Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release.
+///     Extraction Destinations will return an implementation of this class which will run checks on the releasaility of
+///     the extracted datasets
+///     based on the extraction method used.
 /// </summary>
 public abstract class ReleasePotential : ICheckable
 {
@@ -32,9 +33,9 @@ public abstract class ReleasePotential : ICheckable
     private readonly IRepository _repository;
     private List<IColumn> _columnsToExtract;
 
-    public ISelectedDataSets SelectedDataSet { get; private set; }
-    public IExtractionConfiguration Configuration { get; private set; }
-    public IExtractableDataSet DataSet { get; private set; }
+    public ISelectedDataSets SelectedDataSet { get; }
+    public IExtractionConfiguration Configuration { get; }
+    public IExtractableDataSet DataSet { get; }
 
     public Dictionary<ExtractableColumn, ExtractionInformation> ColumnsThatAreDifferentFromCatalogue
     {
@@ -42,27 +43,30 @@ public abstract class ReleasePotential : ICheckable
         private set;
     }
 
-    public Exception Exception { get; private set; }
+    public Exception Exception { get; }
     public ICumulativeExtractionResults DatasetExtractionResult { get; protected set; }
     public DateTime DateOfExtraction { get; private set; }
 
     /// <summary>
-    /// The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
+    ///     The SQL that was run when the extraction was last performed (or null if no extraction has ever been performed)
     /// </summary>
     public string SqlExtracted { get; private set; }
 
     /// <summary>
-    /// The SQL that would be generated if the configuration/dataset were executed today (if this differes from SqlExtracted then there is an Sql Desynchronisation)
+    ///     The SQL that would be generated if the configuration/dataset were executed today (if this differes from
+    ///     SqlExtracted then there is an Sql Desynchronisation)
     /// </summary>
     public string SqlCurrentConfiguration { get; private set; }
 
     /// <summary>
-    /// The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made this will be NULL
+    ///     The directory that the extraction configuration last extracted data to (for this dataset).  This may no longer
+    ///     exist if people have been monkeying with the filesystem so check .Exists().  If no extraction has ever been made
+    ///     this will be NULL
     /// </summary>
     public DirectoryInfo ExtractDirectory { get; protected set; }
 
     /// <summary>
-    /// The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
+    ///     The file that contains the dataset data e.g. biochemistry.csv (will be null if no extract files were found)
     /// </summary>
     public FileInfo ExtractFile { get; set; }
 
@@ -249,7 +253,7 @@ public abstract class ReleasePotential : ICheckable
 
         var existingReleaseLog = DatasetExtractionResult.GetReleaseLogEntryIfAny();
         if (existingReleaseLog != null)
-             if (notifier.OnCheckPerformed(new CheckEventArgs(
+            if (notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Dataset {DataSet} has probably already been released as per {existingReleaseLog}!",
                     CheckResult.Warning,
                     null,

@@ -4,12 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection node for all <see cref="Lookup"/> that exist under a <see cref="Catalogue"/>
+///     Collection node for all <see cref="Lookup" /> that exist under a <see cref="Catalogue" />
 /// </summary>
 public class CatalogueLookupsNode : Node
 {
@@ -22,9 +23,15 @@ public class CatalogueLookupsNode : Node
         Lookups = lookups;
     }
 
-    public override string ToString() => "Lookups";
+    public override string ToString()
+    {
+        return "Lookups";
+    }
 
-    protected bool Equals(CatalogueLookupsNode other) => Equals(Catalogue, other.Catalogue);
+    protected bool Equals(CatalogueLookupsNode other)
+    {
+        return Equals(Catalogue, other.Catalogue);
+    }
 
     public override bool Equals(object obj)
     {
@@ -33,5 +40,8 @@ public class CatalogueLookupsNode : Node
         return obj.GetType() == typeof(CatalogueLookupsNode) && Equals((CatalogueLookupsNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(Catalogue);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Catalogue);
+    }
 }

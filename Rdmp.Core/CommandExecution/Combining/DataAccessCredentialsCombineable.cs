@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="DataAccessCredentials"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="DataAccessCredentials" />
 /// </summary>
 public class DataAccessCredentialsCombineable : ICombineToMakeCommand
 {
@@ -20,5 +20,8 @@ public class DataAccessCredentialsCombineable : ICombineToMakeCommand
         DataAccessCredentials = dataAccessCredentials;
     }
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 }

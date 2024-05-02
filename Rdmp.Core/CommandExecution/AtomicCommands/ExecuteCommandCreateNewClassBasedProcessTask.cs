@@ -12,6 +12,7 @@ using Rdmp.Core.DataLoad.Engine;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -52,7 +53,7 @@ public class ExecuteCommandCreateNewClassBasedProcessTask : BasicCommandExecutio
 
     private static Type[] GetProcessTaskTypes()
     {
-        return Repositories.MEF.GetAllTypes().Where(static t =>
+        return MEF.GetAllTypes().Where(static t =>
             // must not be interface or abstract
             !(t.IsInterface || t.IsAbstract) &&
             (

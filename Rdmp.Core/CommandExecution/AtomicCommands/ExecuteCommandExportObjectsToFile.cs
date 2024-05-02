@@ -22,8 +22,10 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Gathers dependencies of the supplied objects and extracts the share definitions to a directory.  This will have the side effect of creating an ObjectExport declaration
-/// if none yet exists which will prevent accidental deletion of the object and enable updating people who receive the definition later on via the sharing Guid.
+///     Gathers dependencies of the supplied objects and extracts the share definitions to a directory.  This will have the
+///     side effect of creating an ObjectExport declaration
+///     if none yet exists which will prevent accidental deletion of the object and enable updating people who receive the
+///     definition later on via the sharing Guid.
 /// </summary>
 public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
 {
@@ -73,14 +75,21 @@ public class ExecuteCommandExportObjectsToFile : BasicCommandExecution
             SetImpossible($"Object {incompatible.GetType()} is not supported by Gatherer");
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a share file with definitions for the supplied objects and all children";
+    public override string GetCommandHelp()
+    {
+        return "Creates a share file with definitions for the supplied objects and all children";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(FamFamFamIcons.page_white_put);
+    }
 
 
-    public override string GetCommandName() => "Export Object(s) to File...";
+    public override string GetCommandName()
+    {
+        return "Export Object(s) to File...";
+    }
 
 
     public override void Execute()

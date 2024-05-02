@@ -69,8 +69,13 @@ public class ExecuteCommandImportTableInfo : BasicCommandExecution
         Publish((IMapsDirectlyToDatabaseTable)c ?? ti);
     }
 
-    public override string GetCommandName() => "Import existing table (as new TableInfo)";
+    public override string GetCommandName()
+    {
+        return "Import existing table (as new TableInfo)";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Add);
+    }
 }

@@ -13,7 +13,7 @@ namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 public static class NewObjectPool
 {
     private static Scope CurrentScope;
-    private static object currentScopeLock = new();
+    private static readonly object currentScopeLock = new();
 
     public static void Add(IMapsDirectlyToDatabaseTable toCreate)
     {
@@ -24,9 +24,9 @@ public static class NewObjectPool
     }
 
     /// <summary>
-    /// Returns the latest object in <paramref name="from"/> that was created during this session or null.
-    /// Objects are ordered by creation time so that the return value always reflects the most recent (if
-    /// there are multiple matches)
+    ///     Returns the latest object in <paramref name="from" /> that was created during this session or null.
+    ///     Objects are ordered by creation time so that the return value always reflects the most recent (if
+    ///     there are multiple matches)
     /// </summary>
     /// <param name="from"></param>
     /// <returns></returns>
@@ -42,8 +42,8 @@ public static class NewObjectPool
     }
 
     /// <summary>
-    /// Starts a new session tracking all new objects created.  Make sure you wrap the
-    /// returned session in a using statement.
+    ///     Starts a new session tracking all new objects created.  Make sure you wrap the
+    ///     returned session in a using statement.
     /// </summary>
     /// <exception cref="Exception">If there is already a session ongoing</exception>
     /// <returns></returns>
@@ -67,7 +67,7 @@ public static class NewObjectPool
 
     private class Scope : IDisposable
     {
-        public List<IMapsDirectlyToDatabaseTable> Objects { get; set; } = new();
+        public List<IMapsDirectlyToDatabaseTable> Objects { get; } = new();
 
 
         public void Dispose()

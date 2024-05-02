@@ -16,13 +16,16 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the new headers.  Only use this if you have
-/// been given a file in which proper headers are vertical down the first column and records are subsequent columns (i.e. adding new records results in the
-/// DataTable growing horizontally).
-///
-/// <para>IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component unless you set the chunk size large enough
-/// to read the entire file in one go
-/// </para>
+///     Pipeline component which rotates DataTables flowing through it by 90 degrees such that the first column becomes the
+///     new headers.  Only use this if you have
+///     been given a file in which proper headers are vertical down the first column and records are subsequent columns
+///     (i.e. adding new records results in the
+///     DataTable growing horizontally).
+///     <para>
+///         IMPORTANT: Only works with a single load batch if you have a chunked pipeline you cannot use this component
+///         unless you set the chunk size large enough
+///         to read the entire file in one go
+///     </para>
 /// </summary>
 public class Transposer : IPluginDataFlowComponent<DataTable>
 {
@@ -98,6 +101,7 @@ public class Transposer : IPluginDataFlowComponent<DataTable>
 
             outputTable.Rows.Add(newRow);
         }
+
         outputTable.EndLoadData();
         return outputTable;
     }

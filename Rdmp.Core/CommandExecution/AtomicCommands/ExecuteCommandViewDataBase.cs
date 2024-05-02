@@ -11,16 +11,16 @@ using Rdmp.Core.DataViewing;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Abstract base class for all 'view data' style CLI compatible commands
+///     Abstract base class for all 'view data' style CLI compatible commands
 /// </summary>
 public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
 {
     public const string ToFileDescription = "Optional file to output the results of the query to.  Or null";
 
-    public FileInfo ToFile { get; private set; }
+    public FileInfo ToFile { get; }
 
     /// <summary>
-    /// Set to true to prompt user to pick a <see cref="ToFile"/> at command execution time.
+    ///     Set to true to prompt user to pick a <see cref="ToFile" /> at command execution time.
     /// </summary>
     public bool AskForFile { get; set; }
 
@@ -30,8 +30,8 @@ public abstract class ExecuteCommandViewDataBase : BasicCommandExecution
     }
 
     /// <summary>
-    /// Get the SQL query to run and where to run it.  Return null to cancel
-    /// data fetching.
+    ///     Get the SQL query to run and where to run it.  Return null to cancel
+    ///     data fetching.
     /// </summary>
     /// <returns></returns>
     protected abstract IViewSQLAndResultsCollection GetCollection();

@@ -12,14 +12,14 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Command for double clicking objects.
+///     Command for double clicking objects.
 /// </summary>
 public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
 {
     private readonly object _o;
 
     /// <summary>
-    /// Set to true to also emphasise the object being activated
+    ///     Set to true to also emphasise the object being activated
     /// </summary>
     public bool AlsoShow { get; set; }
 
@@ -37,10 +37,15 @@ public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
         Weight = -99.99999f;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return _o == null ? null : iconProvider.GetImage(_o, OverlayKind.Edit);
+    }
 
-    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.Activate;
+    public override string GetCommandName()
+    {
+        return OverrideCommandName ?? GlobalStrings.Activate;
+    }
 
     public override void Execute()
     {

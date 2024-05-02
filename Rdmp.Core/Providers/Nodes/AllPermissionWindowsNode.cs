@@ -10,7 +10,8 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all <see cref="PermissionWindow"/> objects.  These are windows of time in which operations are permitted / forbidden.
+///     Collection of all <see cref="PermissionWindow" /> objects.  These are windows of time in which operations are
+///     permitted / forbidden.
 /// </summary>
 public class AllPermissionWindowsNode : SingletonNode, IOrderable
 {

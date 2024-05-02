@@ -27,11 +27,16 @@ internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution, I
             SetImpossible("No default ANOStore has been set");
     }
 
-    public override string GetCommandHelp() =>
-        "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
+    public override string GetCommandHelp()
+    {
+        return
+            "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
+    }
 
     public override void Execute()
     {

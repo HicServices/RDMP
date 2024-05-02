@@ -11,7 +11,7 @@ using CommandLine.Text;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Options for the Extraction Engine which performs cohort linkage against datasets and extracts anonymous datasets
+///     Options for the Extraction Engine which performs cohort linkage against datasets and extracts anonymous datasets
 /// </summary>
 [Verb("extract", HelpText = "Runs the Data Extraction Engine")]
 public class ExtractionOptions : ConcurrentRDMPCommandLineOptions

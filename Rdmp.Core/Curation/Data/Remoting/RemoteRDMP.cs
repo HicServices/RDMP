@@ -16,12 +16,13 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data.Remoting;
 
 /// <summary>
-/// This represent a Remote Installation of RDMP which can accept connections at multiple endpoints
-/// 
-/// <para>Endpoints are usual REST endpoints with a URL and a type which they can accept.
-/// The endpoint format is {Url}/api/{typename}
-/// The typename is used to create the URL for the endpoint.
-/// If you are sending a collection, append this to the URI: ?asarray=true</para>
+///     This represent a Remote Installation of RDMP which can accept connections at multiple endpoints
+///     <para>
+///         Endpoints are usual REST endpoints with a URL and a type which they can accept.
+///         The endpoint format is {Url}/api/{typename}
+///         The typename is used to create the URL for the endpoint.
+///         If you are sending a collection, append this to the URI: ?asarray=true
+///     </para>
 /// </summary>
 public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
 {
@@ -37,7 +38,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     #endregion
 
     /// <summary>
-    /// Web service URL for communicating with the remote RDMP instance
+    ///     Web service URL for communicating with the remote RDMP instance
     /// </summary>
     public string URL
     {
@@ -45,7 +46,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         set => SetField(ref _uRL, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -55,7 +56,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <summary>
-    /// Username to specify when connecting to the remote webservice
+    ///     Username to specify when connecting to the remote webservice
     /// </summary>
     public string Username
     {
@@ -63,7 +64,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         set => SetField(ref _username, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Password
     {
         get => _encryptedPasswordHost.Password;
@@ -83,19 +84,21 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         }
     }
 
-    /// <inheritdoc/>
-    public string GetDecryptedPassword() =>
-        _encryptedPasswordHost == null
+    /// <inheritdoc />
+    public string GetDecryptedPassword()
+    {
+        return _encryptedPasswordHost == null
             ? throw new Exception(
                 $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
             : _encryptedPasswordHost.GetDecryptedPassword() ?? "";
+    }
 
     public RemoteRDMP()
     {
     }
 
-    /// <inheritdoc/>
-    public RemoteRDMP(ICatalogueRepository repository) : base()
+    /// <inheritdoc />
+    public RemoteRDMP(ICatalogueRepository repository)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
         _encryptedPasswordHost = new EncryptedPasswordHost(repository);
@@ -110,11 +113,11 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public RemoteRDMP(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         // need a new copy of the catalogue repository so a new DB connection can be made to use with the encrypted host.
-        _encryptedPasswordHost = new EncryptedPasswordHost((ICatalogueRepository)repository);
+        _encryptedPasswordHost = new EncryptedPasswordHost(repository);
 
         URL = r["URL"].ToString();
         Name = r["Name"].ToString();
@@ -122,12 +125,15 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
         Password = r["Password"] as string;
     }
 
-    /// <inheritdoc cref="Name"/>
-    public override string ToString() => Name;
+    /// <inheritdoc cref="Name" />
+    public override string ToString()
+    {
+        return Name;
+    }
 
 
     /// <summary>
-    /// Gets the web service sub url for interacting with the object T
+    ///     Gets the web service sub url for interacting with the object T
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <param name="isarray"></param>
@@ -144,7 +150,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <summary>
-    /// Gets the web service sub url for performing a data release
+    ///     Gets the web service sub url for performing a data release
     /// </summary>
     /// <returns></returns>
     public string GetUrlForRelease()
@@ -157,7 +163,7 @@ public class RemoteRDMP : DatabaseEntity, INamed, IEncryptedPasswordHost
     }
 
     /// <summary>
-    /// Gets the web service sub url for value checking?
+    ///     Gets the web service sub url for value checking?
     /// </summary>
     /// <returns></returns>
     public string GetCheckingUrl()

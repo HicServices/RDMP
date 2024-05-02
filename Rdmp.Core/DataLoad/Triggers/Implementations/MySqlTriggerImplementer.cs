@@ -15,10 +15,10 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 internal class MySqlTriggerImplementer : TriggerImplementer
 {
-    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
+    /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)" />
     public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table,
         createDataLoadRunIDAlso)
     {
@@ -113,8 +113,10 @@ internal class MySqlTriggerImplementer : TriggerImplementer
   END";
     }
 
-    public override TriggerStatus GetTriggerStatus() =>
-        string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
+    public override TriggerStatus GetTriggerStatus()
+    {
+        return string.IsNullOrWhiteSpace(GetTriggerBody()) ? TriggerStatus.Missing : TriggerStatus.Enabled;
+    }
 
     protected virtual string GetTriggerBody()
     {
@@ -130,8 +132,10 @@ internal class MySqlTriggerImplementer : TriggerImplementer
         return null;
     }
 
-    protected virtual object GetTriggerName() =>
-        $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_onupdate";
+    protected virtual object GetTriggerName()
+    {
+        return $"{QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName())}_onupdate";
+    }
 
     public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
     {

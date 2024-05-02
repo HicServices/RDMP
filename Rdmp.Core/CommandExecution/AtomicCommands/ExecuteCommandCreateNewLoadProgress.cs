@@ -24,8 +24,11 @@ internal class ExecuteCommandCreateNewLoadProgress : BasicCommandExecution, IAto
         _loadMetadata = loadMetadata;
     }
 
-    public override string GetCommandHelp() =>
-        "Defines that the data load configuration has too much data to load in one go and that it must be loaded in date based batches (e.g. load 2001-01-01 to 2001-01-31)";
+    public override string GetCommandHelp()
+    {
+        return
+            "Defines that the data load configuration has too much data to load in one go and that it must be loaded in date based batches (e.g. load 2001-01-01 to 2001-01-31)";
+    }
 
     public override void Execute()
     {
@@ -36,6 +39,8 @@ internal class ExecuteCommandCreateNewLoadProgress : BasicCommandExecution, IAto
         Emphasise(lp);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.LoadProgress, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.LoadProgress, OverlayKind.Add);
+    }
 }

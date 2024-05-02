@@ -29,8 +29,9 @@ public enum ExecuteExtractionToFlatFileType
 }
 
 /// <summary>
-/// Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g. CSV).  Also copies SupportingDocuments,
-/// lookups etc into accompanying folders in the ExtractionDirectory.
+///     Writes the pipeline DataTable (extracted dataset/custom data) to disk (as ExecuteExtractionToFlatFileType e.g.
+///     CSV).  Also copies SupportingDocuments,
+///     lookups etc into accompanying folders in the ExtractionDirectory.
 /// </summary>
 public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
 {
@@ -41,8 +42,7 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
 
     [DemandsInitialization(
-        "The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values",
-        DemandType.Unspecified)]
+        "The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values")]
     public int? RoundFloatsTo { get; internal set; }
 
     public ExecuteDatasetExtractionFlatFileDestination() : base(true)
@@ -158,8 +158,8 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     private bool _fileAlreadyClosed;
 
     /// <summary>
-    /// If performing a batch resume then this file will be a copy of the flat file
-    /// before we began appending data to it in case the pipeline execution fails
+    ///     If performing a batch resume then this file will be a copy of the flat file
+    ///     before we began appending data to it in case the pipeline execution fails
     /// </summary>
     private string _backupFile;
 
@@ -198,18 +198,28 @@ public class ExecuteDatasetExtractionFlatFileDestination : ExtractionDestination
     }
 
 
-    public override string GetDestinationDescription() => OutputFile;
+    public override string GetDestinationDescription()
+    {
+        return OutputFile;
+    }
 
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) => new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
+        ISelectedDataSets selectedDataSet)
+    {
+        return new FlatFileReleasePotential(repositoryLocator, selectedDataSet);
+    }
 
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new FlatFileReleaseSource();
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new FlatFileReleaseSource();
+    }
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
-        IMapsDirectlyToDatabaseTable globalToCheck) =>
-        new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+        IMapsDirectlyToDatabaseTable globalToCheck)
+    {
+        return new FlatFileGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+    }
 
     public override void Check(ICheckNotifier notifier)
     {

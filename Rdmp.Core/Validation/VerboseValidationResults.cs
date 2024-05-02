@@ -12,27 +12,27 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.Validation;
 
 /// <summary>
-/// Storage class for recording the number of rows failing validation with each Consequence subdivided by Column.
+///     Storage class for recording the number of rows failing validation with each Consequence subdivided by Column.
 /// </summary>
 public class VerboseValidationResults
 {
     /// <summary>
-    /// Dictionary of column names (Key), Value is a Dictionary of each of the potential consequences
-    /// and a count of the number of cells that failed validation with that Consequence (for that Column - Key)
-    /// 
-    /// <para>e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
-    /// (not there where they were expected) in column Forename</para>
-    /// 
+    ///     Dictionary of column names (Key), Value is a Dictionary of each of the potential consequences
+    ///     and a count of the number of cells that failed validation with that Consequence (for that Column - Key)
+    ///     <para>
+    ///         e.g. DictionaryOfFailure["Forename"][Consequence.Missing] is a count of the number of cells which are missing
+    ///         (not there where they were expected) in column Forename
+    ///     </para>
     /// </summary>
-    public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; private set; }
+    public Dictionary<string, Dictionary<Consequence, int>> DictionaryOfFailure { get; }
 
     /// <summary>
-    /// Every time a row is Invalidated (this List get's the reason for Invalidation added to it)
+    ///     Every time a row is Invalidated (this List get's the reason for Invalidation added to it)
     /// </summary>
     public List<string> ReasonsRowsInvalidated { get; set; }
 
     /// <summary>
-    /// A count of the rows Invalidated due to dodgy data - failed Validations with Consequence.InvalidatesRow
+    ///     A count of the rows Invalidated due to dodgy data - failed Validations with Consequence.InvalidatesRow
     /// </summary>
     public int CountOfRowsInvalidated { get; set; }
 

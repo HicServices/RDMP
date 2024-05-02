@@ -16,7 +16,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation"/>
+/// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation" />
 public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity,
     IProjectCohortIdentificationConfigurationAssociation, IInjectKnown<CohortIdentificationConfiguration>
 {
@@ -27,7 +27,7 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Project_ID
     {
         get => _project_ID;
@@ -35,7 +35,8 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     /// <summary>
-    /// The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
+    ///     The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration" /> which is associated with the given
+    ///     <see cref="Project_ID" />.
     /// </summary>
     public int CohortIdentificationConfiguration_ID
     {
@@ -46,13 +47,13 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
 
     #region Relationships
 
-    /// <inheritdoc cref="Project_ID"/>
+    /// <inheritdoc cref="Project_ID" />
     [NoMappingToDatabase]
     public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
 
     private Lazy<CohortIdentificationConfiguration> _knownCic;
 
-    /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
+    /// <inheritdoc cref="CohortIdentificationConfiguration_ID" />
     [NoMappingToDatabase]
     public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
         //handles the object having been deleted and somehow that deletion is missed
@@ -66,8 +67,10 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
     }
 
     /// <summary>
-    /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
-    /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).
+    ///     Declares in the <paramref name="repository" /> database that the given <paramref name="cic" /> cohort query is
+    ///     associated with the supplied <paramref name="project" />.
+    ///     This is usually done after using the query to build an <see cref="IExtractableCohort" /> (But it can be done
+    ///     manually by the user too).
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="project"></param>
@@ -107,13 +110,15 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
         _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration);
     }
 
-    private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration() =>
-        DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
+    private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration()
+    {
+        return DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
             CohortIdentificationConfiguration_ID).SingleOrDefault();
+    }
 
 
     /// <summary>
-    /// Returns the associated <see cref="CohortIdentificationConfiguration_ID"/> Name
+    ///     Returns the associated <see cref="CohortIdentificationConfiguration_ID" /> Name
     /// </summary>
     /// <returns></returns>
     public override string ToString()
@@ -128,15 +133,24 @@ public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntit
         return CohortIdentificationConfiguration?.ShouldBeReadOnly(out reason) ?? false;
     }
 
-    /// <inheritdoc/>
-    public string GetDeleteMessage() => "remove CohortIdentificationConfiguration from the Project";
+    /// <inheritdoc />
+    public string GetDeleteMessage()
+    {
+        return "remove CohortIdentificationConfiguration from the Project";
+    }
 
-    /// <inheritdoc/>
-    public string GetDeleteVerb() => "Remove";
+    /// <inheritdoc />
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
 
     /// <summary>
-    /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
+    ///     Returns the <see cref="CohortIdentificationConfiguration_ID" />
     /// </summary>
     /// <returns></returns>
-    public object MasqueradingAs() => CohortIdentificationConfiguration;
+    public object MasqueradingAs()
+    {
+        return CohortIdentificationConfiguration;
+    }
 }

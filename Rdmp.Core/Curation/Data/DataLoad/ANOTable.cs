@@ -24,21 +24,28 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could be an instance/record that defines input of type
-/// varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by all ColumnInfos that contain GP codes (current GP
-/// previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data load bubble as is pushed to the STAGING bubble.
-/// 
-/// <para>Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this as an ANOStore) including details of the
-/// transformation and a UNIQUE name/suffix.  This let's you quickly identify what data has be annonymised by what ANOTable.</para>
-///  
-/// <para>It is very important to curate your ANOTables properly or you could end up with irrecoverable data, for example sticking to a single ANO server, taking regular backups
-/// NEVER deleting ANOTables that reference existing data  (in the ANOStore database).</para>
-/// 
+///     Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could
+///     be an instance/record that defines input of type
+///     varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by
+///     all ColumnInfos that contain GP codes (current GP
+///     previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data
+///     load bubble as is pushed to the STAGING bubble.
+///     <para>
+///         Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this
+///         as an ANOStore) including details of the
+///         transformation and a UNIQUE name/suffix.  This let's you quickly identify what data has be annonymised by what
+///         ANOTable.
+///     </para>
+///     <para>
+///         It is very important to curate your ANOTables properly or you could end up with irrecoverable data, for example
+///         sticking to a single ANO server, taking regular backups
+///         NEVER deleting ANOTables that reference existing data  (in the ANOStore database).
+///     </para>
 /// </summary>
 public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRevertable, IHasDependencies
 {
     /// <summary>
-    /// Prefix to put on anonymous columns
+    ///     Prefix to put on anonymous columns
     /// </summary>
     public const string ANOPrefix = "ANO";
 
@@ -54,7 +61,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     private int _serverID;
 
     /// <summary>
-    /// The name of the table in the ANO database that stores swapped identifiers
+    ///     The name of the table in the ANO database that stores swapped identifiers
     /// </summary>
     public string TableName
     {
@@ -63,8 +70,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// The number of decimal characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
-    /// the number of unique input values before anonymising fails (due to collisions).
+    ///     The number of decimal characters to use when creating ANO mapping identifiers.  This will directly impact the
+    ///     number of possible values that can be generated and therefore
+    ///     the number of unique input values before anonymising fails (due to collisions).
     /// </summary>
     public int NumberOfIntegersToUseInAnonymousRepresentation
     {
@@ -73,8 +81,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// The number of alphabetic characters to use when creating ANO mapping identifiers.  This will directly impact the number of possible values that can be generated and therefore
-    /// the number of unique input values before anonymising fails (due to collisions).
+    ///     The number of alphabetic characters to use when creating ANO mapping identifiers.  This will directly impact the
+    ///     number of possible values that can be generated and therefore
+    ///     the number of unique input values before anonymising fails (due to collisions).
     /// </summary>
     public int NumberOfCharactersToUseInAnonymousRepresentation
     {
@@ -83,8 +92,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the
-    /// <see cref="ANOStorePatcher"/>
+    ///     The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This
+    ///     should have been created by the
+    ///     <see cref="ANOStorePatcher" />
     /// </summary>
     [Relationship(typeof(ExternalDatabaseServer), RelationshipType.SharedObject)]
     public int Server_ID
@@ -94,9 +104,11 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
-    /// 
-    /// <para>Once you have started using the <see cref="ANOTable"/> to anonymise identifiers you should not change the Suffix</para>
+    ///     The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
+    ///     <para>
+    ///         Once you have started using the <see cref="ANOTable" /> to anonymise identifiers you should not change the
+    ///         Suffix
+    ///     </para>
     /// </summary>
     public string Suffix
     {
@@ -108,7 +120,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
 
     #region Relationships
 
-    /// <inheritdoc cref="Server_ID"/>
+    /// <inheritdoc cref="Server_ID" />
     [NoMappingToDatabase]
     public ExternalDatabaseServer Server => Repository.GetObjectByID<ExternalDatabaseServer>(Server_ID);
 
@@ -122,8 +134,10 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this constructor without first creating the table.  If you do
-    /// you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation"/> and <see cref="NumberOfCharactersToUseInAnonymousRepresentation"/> then <see cref="PushToANOServerAsNewTable"/>
+    ///     Declares that a new ANOTable (anonymous mapping table) should exist in the referenced database.  You can call this
+    ///     constructor without first creating the table.  If you do
+    ///     you should set <see cref="NumberOfIntegersToUseInAnonymousRepresentation" /> and
+    ///     <see cref="NumberOfCharactersToUseInAnonymousRepresentation" /> then <see cref="PushToANOServerAsNewTable" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="externalDatabaseServer"></param>
@@ -169,7 +183,8 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Saves the current state to the database if the <see cref="ANOTable"/> is in a valid state according to <see cref="Check"/> otherwise throws an Exception
+    ///     Saves the current state to the database if the <see cref="ANOTable" /> is in a valid state according to
+    ///     <see cref="Check" /> otherwise throws an Exception
     /// </summary>
     public override void SaveToDatabase()
     {
@@ -178,8 +193,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Attempts to delete the remote mapping table (only works if it is empty) if the <see cref="ANOTable.IsTablePushed"/> then deletes the <see cref="ANOTable"/> reference
-    /// object (this) from the RDMP platform database.
+    ///     Attempts to delete the remote mapping table (only works if it is empty) if the
+    ///     <see cref="ANOTable.IsTablePushed" /> then deletes the <see cref="ANOTable" /> reference
+    ///     object (this) from the RDMP platform database.
     /// </summary>
     public override void DeleteInDatabase()
     {
@@ -187,11 +203,15 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
         Repository.DeleteFromDatabase(this);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => TableName;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return TableName;
+    }
 
     /// <summary>
-    /// Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable"/> settings (<see cref="Suffix"/> etc).
+    ///     Checks that the remote mapping table referenced by this object exists and checks <see cref="ANOTable" /> settings (
+    ///     <see cref="Suffix" /> etc).
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -234,13 +254,18 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Returns true if the anonymous mapping table (<see cref="TableName"/> exists in the referenced mapping database (<see cref="Server"/>)
+    ///     Returns true if the anonymous mapping table (<see cref="TableName" /> exists in the referenced mapping database (
+    ///     <see cref="Server" />)
     /// </summary>
     /// <returns></returns>
-    public bool IsTablePushed() => GetPushedTable() != null;
+    public bool IsTablePushed()
+    {
+        return GetPushedTable() != null;
+    }
 
     /// <summary>
-    /// Connects to <see cref="Server"/> and returns a <see cref="DiscoveredTable"/> that contains the anonymous identifier mappings
+    ///     Connects to <see cref="Server" /> and returns a <see cref="DiscoveredTable" /> that contains the anonymous
+    ///     identifier mappings
     /// </summary>
     /// <returns></returns>
     public DiscoveredTable GetPushedTable()
@@ -256,8 +281,9 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Attempts to delete the anonymous mapping table referenced by <see cref="TableName"/> on the mapping <see cref="Server"/>.  This is safer than just dropping
-    /// from <see cref="GetPushedTable"/> since it will check the table exists, is empty etc.
+    ///     Attempts to delete the anonymous mapping table referenced by <see cref="TableName" /> on the mapping
+    ///     <see cref="Server" />.  This is safer than just dropping
+    ///     from <see cref="GetPushedTable" /> since it will check the table exists, is empty etc.
     /// </summary>
     public void DeleteANOTableInANOStore()
     {
@@ -279,7 +305,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
     }
 
     /// <summary>
-    /// Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
+    ///     Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
     /// </summary>
     /// <param name="identifiableDatatype">The datatype of the identifiable data table</param>
     /// <param name="notifier"></param>
@@ -384,10 +410,13 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
 
 
     /// <summary>
-    /// Anonymisation with an <see cref="ANOTable"/> happens during data load.  This means that the column goes from identifiable in RAW to anonymous in STAGING/LIVE.  This means
-    /// that the datatype of the column changes depending on the <see cref="LoadStage"/>.
-    /// 
-    /// <para>Returns the appropriate datatype for the <see cref="LoadStage"/>.  This is done by connecting to the mapping table and retrieving the mapping table types</para>
+    ///     Anonymisation with an <see cref="ANOTable" /> happens during data load.  This means that the column goes from
+    ///     identifiable in RAW to anonymous in STAGING/LIVE.  This means
+    ///     that the datatype of the column changes depending on the <see cref="LoadStage" />.
+    ///     <para>
+    ///         Returns the appropriate datatype for the <see cref="LoadStage" />.  This is done by connecting to the mapping
+    ///         table and retrieving the mapping table types
+    ///     </para>
     /// </summary>
     /// <param name="loadStage"></param>
     /// <returns></returns>
@@ -430,9 +459,15 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
         };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Repository.GetAllObjectsWithParent<ColumnInfo>(this);
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Repository.GetAllObjectsWithParent<ColumnInfo>(this);
+    }
 }

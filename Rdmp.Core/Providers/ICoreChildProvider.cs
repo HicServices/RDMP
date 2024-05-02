@@ -25,11 +25,15 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects from the database to calculate
-/// things you don't expect to have been the result of an immediate user change you can access the cached object from one of these arrays instead.  For
-/// example if you want to know whether you are within the PermissionWindow of your CacheProgress when picking an icon and you only have the PermissionWindow_ID
-/// property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests for the icon - you don't want to lookup
-/// the PermissionWindow from the database every time).
+///     Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects
+///     from the database to calculate
+///     things you don't expect to have been the result of an immediate user change you can access the cached object from
+///     one of these arrays instead.  For
+///     example if you want to know whether you are within the PermissionWindow of your CacheProgress when picking an icon
+///     and you only have the PermissionWindow_ID
+///     property you can just look at the array AllPermissionWindows (especially since you might get lots of spam requests
+///     for the icon - you don't want to lookup
+///     the PermissionWindow from the database every time).
 /// </summary>
 public interface ICoreChildProvider : IChildProvider
 {
@@ -64,8 +68,8 @@ public interface ICoreChildProvider : IChildProvider
     DescendancyList GetDescendancyListIfAnyFor(object model);
 
     /// <summary>
-    /// Returns the root level object in the descendancy of <paramref name="model"/> or <paramref name="model"/>
-    /// if no descendancy is known.
+    ///     Returns the root level object in the descendancy of <paramref name="model" /> or <paramref name="model" />
+    ///     if no descendancy is known.
     /// </summary>
     /// <param name="model"></param>
     /// <returns></returns>
@@ -104,20 +108,20 @@ public interface ICoreChildProvider : IChildProvider
     Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; }
     AggregateFilter[] AllAggregateFilters { get; }
 
-    /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
+    /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods" />
     Dictionary<int, HashSet<int>> GovernanceCoverage { get; }
 
     JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
 
     /// <summary>
-    /// Copy updated values for all properties from the <paramref name="other"/>
+    ///     Copy updated values for all properties from the <paramref name="other" />
     /// </summary>
     /// <param name="other"></param>
     void UpdateTo(ICoreChildProvider other);
 
     /// <summary>
-    /// Returns all known objects who are masquerading as o
+    ///     Returns all known objects who are masquerading as o
     /// </summary>
     /// <param name="o"></param>
     /// <returns></returns>
@@ -128,23 +132,23 @@ public interface ICoreChildProvider : IChildProvider
     AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; }
 
     /// <summary>
-    /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
+    ///     All standard (i.e. not plugin) use cases for editting <see cref="IPipeline" /> under.
     /// </summary>
     HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; }
 
 
     /// <summary>
-    /// All components within all <see cref="Pipeline"/>
+    ///     All components within all <see cref="Pipeline" />
     /// </summary>
     PipelineComponent[] AllPipelineComponents { get; }
 
     /// <summary>
-    /// All arguments for the <see cref="AllPipelineComponents"/>
+    ///     All arguments for the <see cref="AllPipelineComponents" />
     /// </summary>
     PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
 
     /// <summary>
-    /// All process
+    ///     All process
     /// </summary>
     ProcessTask[] AllProcessTasks { get; }
 
@@ -152,16 +156,19 @@ public interface ICoreChildProvider : IChildProvider
 
 
     /// <summary>
-    /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>
+    ///     Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type" />
     /// </summary>
     /// <param name="type"></param>
-    /// <param name="unwrapMasqueraders">true to unwrap and return matching underlying objects from <see cref="IMasqueradeAs"/> objects</param>
+    /// <param name="unwrapMasqueraders">
+    ///     true to unwrap and return matching underlying objects from
+    ///     <see cref="IMasqueradeAs" /> objects
+    /// </param>
     /// <returns></returns>
     IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders);
 
     /// <summary>
-    /// Performs a partial refresh assuming that only the hierarchy of <paramref name="databaseEntity"/> has
-    /// changed
+    ///     Performs a partial refresh assuming that only the hierarchy of <paramref name="databaseEntity" /> has
+    ///     changed
     /// </summary>
     /// <returns>True if it was possible to selectively refresh part of the child provider</returns>
     /// <param name="databaseEntity"></param>

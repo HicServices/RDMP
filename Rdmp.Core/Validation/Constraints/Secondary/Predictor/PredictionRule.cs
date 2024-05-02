@@ -7,17 +7,21 @@
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Models a validation rule in which the value in one column predicts the value in another based on arbitrary code
+///     Models a validation rule in which the value in one column predicts the value in another based on arbitrary code
 /// </summary>
 public abstract class PredictionRule
 {
     /// <summary>
-    /// Validates the <paramref name="targetValue"/> against the <paramref name="value"/> and returns a <see cref="ValidationFailure"/> if
-    /// the values do not match expectations
+    ///     Validates the <paramref name="targetValue" /> against the <paramref name="value" /> and returns a
+    ///     <see cref="ValidationFailure" /> if
+    ///     the values do not match expectations
     /// </summary>
     /// <param name="parent">The constraint in which the rule is selected</param>
     /// <param name="value">The value upon which to make a prediction</param>
     /// <param name="targetValue">The value that should match the prediction</param>
-    /// <returns>null if the predicted value matches the <paramref name="targetValue"/> otherwise a <see cref="ValidationFailure"/></returns>
+    /// <returns>
+    ///     null if the predicted value matches the <paramref name="targetValue" /> otherwise a
+    ///     <see cref="ValidationFailure" />
+    /// </returns>
     public abstract ValidationFailure Predict(IConstraint parent, object value, object targetValue);
 }

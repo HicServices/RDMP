@@ -19,9 +19,9 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
-/// dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
-/// those files.
+///     Deletes duplicate dlls within the given plugin.  RDMP will not load 2 copies of the same
+///     dll at runtime and so these dlls will just bloat your plugin.  Use this command to prune out
+///     those files.
 /// </summary>
 public sealed partial class ExecuteCommandPrunePlugin : BasicCommandExecution
 {
@@ -35,7 +35,7 @@ public sealed partial class ExecuteCommandPrunePlugin : BasicCommandExecution
     }
 
     /// <summary>
-    /// Interactive constructor
+    ///     Interactive constructor
     /// </summary>
     /// <param name="activator"></param>
     public ExecuteCommandPrunePlugin(IBasicActivateItems activator) : base(activator)

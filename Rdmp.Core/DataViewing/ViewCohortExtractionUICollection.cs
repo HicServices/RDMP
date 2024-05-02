@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Azure.Core;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -17,7 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// <see cref="IViewSQLAndResultsCollection"/> for querying a sample of records in an <see cref="ExtractableCohort"/> (list of patient identifiers)
+///     <see cref="IViewSQLAndResultsCollection" /> for querying a sample of records in an <see cref="ExtractableCohort" />
+///     (list of patient identifiers)
 /// </summary>
 public class ViewCohortExtractionUICollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
@@ -33,7 +33,7 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     private const string IncludeCohortIDKey = "IncludeCohortID";
 
     /// <summary>
-    /// True to fetch the cohort ID (OriginID) from the cohort table as a SELECT column when retrieving records
+    ///     True to fetch the cohort ID (OriginID) from the cohort table as a SELECT column when retrieving records
     /// </summary>
     public bool IncludeCohortID
     {
@@ -50,7 +50,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         DatabaseObjects.Add(cohort);
     }
 
-    public override string SaveExtraText() => PersistStringHelper.SaveDictionaryToString(_arguments);
+    public override string SaveExtraText()
+    {
+        return PersistStringHelper.SaveDictionaryToString(_arguments);
+    }
 
     public override void LoadExtraText(string s)
     {
@@ -65,7 +68,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         yield return Cohort;
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => Cohort.ExternalCohortTable;
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return Cohort.ExternalCohortTable;
+    }
 
     public string GetSql()
     {
@@ -93,9 +99,9 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
     }
 
     /// <summary>
-    /// Returns a block that should be inserted after the SELECT keyword in the query
-    /// that contains all relevant columns to be extracted for cohorts in the given cohort
-    /// database
+    ///     Returns a block that should be inserted after the SELECT keyword in the query
+    ///     that contains all relevant columns to be extracted for cohorts in the given cohort
+    ///     database
     /// </summary>
     /// <param name="ect"></param>
     /// <returns></returns>
@@ -113,7 +119,10 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         return Environment.NewLine + string.Join($",{Environment.NewLine}", selectList) + Environment.NewLine;
     }
 
-    public string GetTabName() => $"View {Cohort}(V{Cohort.ExternalVersion})";
+    public string GetTabName()
+    {
+        return $"View {Cohort}(V{Cohort.ExternalVersion})";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -125,5 +134,8 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         autoComplete.Add(table);
     }
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => Cohort?.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return Cohort?.GetQuerySyntaxHelper();
+    }
 }

@@ -16,21 +16,21 @@ namespace Rdmp.Core.Curation.FilterImporting;
 public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector, string parameterName);
 
 /// <summary>
-/// Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
-/// with it (handled by a <see cref="ParameterManager"/>).
+///     Models a <see cref="Collector" /> who has 0 or more <see cref="ISqlParameter" /> associated
+///     with it (handled by a <see cref="ParameterManager" />).
 /// </summary>
 public class ParameterCollectionUIOptions
 {
     public ICollectSqlParameters Collector { get; set; }
 
     /// <summary>
-    /// True if the <see cref="Collector"/> is <see cref="IMightBeReadOnly"/> and is readonly
+    ///     True if the <see cref="Collector" /> is <see cref="IMightBeReadOnly" /> and is readonly
     /// </summary>
     public bool ReadOnly { get; set; }
 
     public ParameterLevel CurrentLevel { get; set; }
     public ParameterManager ParameterManager { get; set; }
-    private CreateNewSqlParameterHandler _createNewParameterDelegate;
+    private readonly CreateNewSqlParameterHandler _createNewParameterDelegate;
 
     public readonly ParameterRefactorer Refactorer = new();
 
@@ -55,7 +55,7 @@ public class ParameterCollectionUIOptions
 
 
     /// <summary>
-    /// Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
+    ///     Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
     /// </summary>
     /// <returns></returns>
     private ISqlParameter CreateNewParameterDefaultImplementation(ICollectSqlParameters collector, string parameterName)
@@ -73,20 +73,38 @@ public class ParameterCollectionUIOptions
         return newParam;
     }
 
-    public bool CanNewParameters() => _createNewParameterDelegate != null;
+    public bool CanNewParameters()
+    {
+        return _createNewParameterDelegate != null;
+    }
 
-    public ISqlParameter CreateNewParameter(string parameterName) =>
-        _createNewParameterDelegate(Collector, parameterName);
+    public ISqlParameter CreateNewParameter(string parameterName)
+    {
+        return _createNewParameterDelegate(Collector, parameterName);
+    }
 
-    public bool IsHigherLevel(ISqlParameter parameter) =>
-        ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
+    public bool IsHigherLevel(ISqlParameter parameter)
+    {
+        return ParameterManager.GetLevelForParameter(parameter) > CurrentLevel;
+    }
 
-    private bool IsDifferentLevel(ISqlParameter p) => ParameterManager.GetLevelForParameter(p) != CurrentLevel;
+    private bool IsDifferentLevel(ISqlParameter p)
+    {
+        return ParameterManager.GetLevelForParameter(p) != CurrentLevel;
+    }
 
-    public bool IsOverridden(ISqlParameter sqlParameter) => ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
+    public bool IsOverridden(ISqlParameter sqlParameter)
+    {
+        return ParameterManager.GetOverrideIfAnyFor(sqlParameter) != null;
+    }
 
-    public bool ShouldBeDisabled(ISqlParameter p) => IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
+    public bool ShouldBeDisabled(ISqlParameter p)
+    {
+        return IsOverridden(p) || IsHigherLevel(p) || p is SpontaneousObject;
+    }
 
-    public bool ShouldBeReadOnly(ISqlParameter p) =>
-        ReadOnly || IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
+    public bool ShouldBeReadOnly(ISqlParameter p)
+    {
+        return ReadOnly || IsOverridden(p) || IsDifferentLevel(p) || p is SpontaneousObject;
+    }
 }

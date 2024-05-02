@@ -24,10 +24,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
 
 /// <summary>
-/// Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING database during data load.  RAW is an
-/// unconstrained identifiable version of the LIVE table created at the start of an RMDP data load (the RAW=>STAGING=>LIVE model).  STAGING is a constrained
-/// (has primary keys / not nulls etc) version of the LIVE table.  This class uses a DataFlowPipelineEngine to stream the records and this includes (optionally)
-/// any anonymisation operations (dropping columns, substituting identifiers etc) configured on the TableInfo (See BasicAnonymisationEngine).
+///     Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING
+///     database during data load.  RAW is an
+///     unconstrained identifiable version of the LIVE table created at the start of an RMDP data load (the
+///     RAW=>STAGING=>LIVE model).  STAGING is a constrained
+///     (has primary keys / not nulls etc) version of the LIVE table.  This class uses a DataFlowPipelineEngine to stream
+///     the records and this includes (optionally)
+///     any anonymisation operations (dropping columns, substituting identifiers etc) configured on the TableInfo (See
+///     BasicAnonymisationEngine).
 /// </summary>
 public class MigrateRAWTableToStaging : DataLoadComponent
 {

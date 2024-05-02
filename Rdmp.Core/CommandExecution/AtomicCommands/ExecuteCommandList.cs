@@ -12,12 +12,12 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Lists all the objects in RDMP that match search term.
+///     Lists all the objects in RDMP that match search term.
 /// </summary>
 [Alias("ls")]
 public class ExecuteCommandList : BasicCommandExecution
 {
-    private IMapsDirectlyToDatabaseTable[] _toList;
+    private readonly IMapsDirectlyToDatabaseTable[] _toList;
 
     [UseWithObjectConstructor]
     public ExecuteCommandList(IBasicActivateItems activator,
@@ -50,8 +50,8 @@ public class ExecuteCommandList : BasicCommandExecution
         var sb = new StringBuilder();
 
         foreach (var repo in BasicActivator.RepositoryLocator.GetAllRepositories())
-            foreach (var o in repo.GetAllObjectsInDatabase())
-                sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
+        foreach (var o in repo.GetAllObjectsInDatabase())
+            sb.AppendLine($"{o.GetType().Name}:{o.ID}:{o}");
 
         BasicActivator.Show(sb.ToString());
     }

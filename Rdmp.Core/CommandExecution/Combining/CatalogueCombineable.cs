@@ -12,7 +12,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="Catalogue" />
 /// </summary>
 public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
 {
@@ -20,8 +20,7 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
     public Catalogue Catalogue { get; set; }
 
     public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler
-        ResolveMultipleExtractionIdentifiers
-    { get; set; }
+        ResolveMultipleExtractionIdentifiers { get; set; }
 
     public IHasFolder Folderable => Catalogue;
 
@@ -32,11 +31,16 @@ public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
             .Any(e => e.IsExtractionIdentifier);
     }
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 
     /// <summary>
-    /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
-    /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
+    ///     Creates a new AggregateConfiguration based on the Catalogue and returns it as an
+    ///     <see cref="AggregateConfigurationCombineable" />, you should only use this method during EXECUTE as you do not
+    ///     want to be randomly creating these as the user waves an object around over the user interface trying to decide
+    ///     where to drop it.
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="cohortAggregateContainer"></param>

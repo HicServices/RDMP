@@ -16,15 +16,16 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Generates and runs an SQL query to fetch all private identifiers contained in a table
-/// and commits them as a new cohort using the specified <see cref="Pipeline"/>.  Note that
-/// this command will query an entire table, use <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration"/>
-/// if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
+///     Generates and runs an SQL query to fetch all private identifiers contained in a table
+///     and commits them as a new cohort using the specified <see cref="Pipeline" />.  Note that
+///     this command will query an entire table, use
+///     <see cref="ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration" />
+///     if you want to generate a proper query (e.g. joining multiple tables or only fetching a subset of the table)
 /// </summary>
 public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecution
 {
     /// <summary>
-    /// Prompts user at runtime to pick a table and column which are then imported as a new cohort
+    ///     Prompts user at runtime to pick a table and column which are then imported as a new cohort
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
@@ -35,8 +36,10 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         ExternalCohortTable = externalCohortTable;
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a cohort using ALL of the patient identifiers in the referenced table";
+    public override string GetCommandHelp()
+    {
+        return "Creates a cohort using ALL of the patient identifiers in the referenced table";
+    }
 
 
     public override void Execute()
@@ -48,12 +51,12 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
             return;
 
         if (!BasicActivator.SelectObject(new DialogArgs
-        {
-            EntryLabel = "Patient Identifier Column",
-            TaskDescription =
+            {
+                EntryLabel = "Patient Identifier Column",
+                TaskDescription =
                     $"Select which column in the table '{tbl.GetFullyQualifiedName()}' contains the patient identifiers which you want to import",
-            AllowAutoSelect = true
-        }, tbl.DiscoverColumns(), out var col))
+                AllowAutoSelect = true
+            }, tbl.DiscoverColumns(), out var col))
             // user cancelled selecting a column
             return;
 
@@ -88,6 +91,8 @@ public class ExecuteCommandCreateNewCohortFromTable : CohortCreationCommandExecu
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
+    }
 }

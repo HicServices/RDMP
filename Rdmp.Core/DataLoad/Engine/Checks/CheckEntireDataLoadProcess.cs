@@ -15,7 +15,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataLoad.Engine.Checks;
 
 /// <summary>
-/// Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
+///     Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).
 /// </summary>
 public class CheckEntireDataLoadProcess : ICheckable
 {

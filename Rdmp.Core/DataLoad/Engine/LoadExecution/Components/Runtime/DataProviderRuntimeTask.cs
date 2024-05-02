@@ -17,12 +17,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See
-/// RuntimeArgumentCollection
+///     RuntimeTask that hosts an IDataProvider.  The instance is hydrated from the users configuration (ProcessTask and
+///     ProcessTaskArguments) See
+///     RuntimeArgumentCollection
 /// </summary>
 public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 {
-    public IDataProvider Provider { get; private set; }
+    public IDataProvider Provider { get; }
     public ICheckable MEFPluginClassInstance => Provider;
 
     public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
@@ -59,7 +60,10 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
         return Provider.Fetch(job, cancellationToken);
     }
 
-    public override bool Exists() => true;
+    public override bool Exists()
+    {
+        return true;
+    }
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

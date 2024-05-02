@@ -11,7 +11,7 @@ using Rdmp.Core.Providers.Nodes.UsedByNodes;
 namespace Rdmp.Core.Providers.Nodes.UsedByProject;
 
 /// <summary>
-/// Collection of all cohort databases which contain cohorts that can be used in a given <see cref="Project"/>
+///     Collection of all cohort databases which contain cohorts that can be used in a given <see cref="Project" />
 /// </summary>
 public class CohortSourceUsedByProjectNode : ObjectUsedByOtherObjectNode<Project, ExternalCohortTable>
 {

@@ -21,13 +21,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 
 /// <summary>
-/// Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load execution).  This class exists for two reasons
-/// 
-/// <para>Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear magically during DLE execution (e.g. by attaching
-/// an MDF file).</para>
-/// 
-/// <para>Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to have RAW on a different server to LIVE/STAGING
-/// in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.</para>
+///     Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load
+///     execution).  This class exists for two reasons
+///     <para>
+///         Firstly to decide (based on IAttachers) whether RAW tables need to be scripted or whether they will appear
+///         magically during DLE execution (e.g. by attaching
+///         an MDF file).
+///     </para>
+///     <para>
+///         Secondly to allow for overriding the RAW database server (which defaults to localhost).  It is a good idea to
+///         have RAW on a different server to LIVE/STAGING
+///         in order to reduce the risk incorrectly referencing tables in LIVE in Adjust RAW scripts etc.
+///     </para>
 /// </summary>
 public class HICDatabaseConfiguration
 {
@@ -37,20 +42,21 @@ public class HICDatabaseConfiguration
     public INameDatabasesAndTablesDuringLoads DatabaseNamer => DeployInfo.DatabaseNamer;
 
     /// <summary>
-    /// Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).  This prevents incidental fields like
-    /// valid from, data load run id etc from resulting in live table UPDATEs.
-    /// 
-    /// <para>hic_ columns will always be ignored regardless of this setting</para>
+    ///     Optional Regex for fields which will be ignored at migration time between STAGING and LIVE (e.g. hic_ columns).
+    ///     This prevents incidental fields like
+    ///     valid from, data load run id etc from resulting in live table UPDATEs.
+    ///     <para>hic_ columns will always be ignored regardless of this setting</para>
     /// </summary>
     public Regex UpdateButDoNotDiff { get; set; }
 
     /// <summary>
-    /// Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
+    ///     Optional Regex for fields which will be completedly ignored at STAGING=>LIVE migration
     /// </summary>
     public Regex IgnoreColumns { get; internal set; }
 
     /// <summary>
-    /// Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the LoadMetadata, also respects the ServerDefaults for RAW override (if any)
+    ///     Preferred Constructor, creates RAW, STAGING, LIVE connection strings based on the data access points in the
+    ///     LoadMetadata, also respects the ServerDefaults for RAW override (if any)
     /// </summary>
     /// <param name="lmd"></param>
     /// <param name="namer"></param>
@@ -70,7 +76,7 @@ public class HICDatabaseConfiguration
     }
 
     /// <summary>
-    /// Constructor for use in tests, if possible use the LoadMetadata constructor instead
+    ///     Constructor for use in tests, if possible use the LoadMetadata constructor instead
     /// </summary>
     /// <param name="liveServer">The live server where the data is held, IMPORTANT: this must contain InitialCatalog parameter</param>
     /// <param name="namer">optionally lets you specify how to pick database names for the temporary bubbles STAGING and RAW</param>
@@ -85,9 +91,9 @@ public class HICDatabaseConfiguration
 
         // Default namer
         if (namer == null)
-            if(liveServer.DatabaseType == DatabaseType.PostgreSql)
+            if (liveServer.DatabaseType == DatabaseType.PostgreSql)
                 //create the DLE tables on the live database because postgres can't handle cross database references
-                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(),liveDatabase.GetRuntimeName());
+                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName(), liveDatabase.GetRuntimeName());
             else
                 namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
@@ -99,9 +105,9 @@ public class HICDatabaseConfiguration
         var rawServer =
             //if there was defaults and a raw default server
             overrideRAWServer != null
-            ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false)
-            : //get the raw server connection
-            liveServer; //there is no raw override so we will have to use the live server for RAW too.
+                ? DataAccessPortal.ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false)
+                : //get the raw server connection
+                liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
         //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
         DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer, rawServer);
@@ -111,7 +117,7 @@ public class HICDatabaseConfiguration
 
 
     /// <summary>
-    /// Returns all tables in the load as they would be named in the given <paramref name="stage"/>
+    ///     Returns all tables in the load as they would be named in the given <paramref name="stage" />
     /// </summary>
     /// <param name="job">DLE job</param>
     /// <param name="stage"></param>

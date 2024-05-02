@@ -13,16 +13,17 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 /// <summary>
-/// Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed at the RAW database). Also includes
-/// the location of the load directory
+///     Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed
+///     at the RAW database). Also includes
+///     the location of the load directory
 /// </summary>
 public class StageArgs : IStageArgs
 {
-    public DiscoveredDatabase DbInfo { get; private set; }
-    public ILoadDirectory RootDir { get; private set; }
+    public DiscoveredDatabase DbInfo { get; }
+    public ILoadDirectory RootDir { get; }
 
     //Mandatory
-    public LoadStage LoadStage { get; private set; }
+    public LoadStage LoadStage { get; }
 
     public StageArgs(LoadStage loadStage, DiscoveredDatabase database, ILoadDirectory projectDirectory)
     {

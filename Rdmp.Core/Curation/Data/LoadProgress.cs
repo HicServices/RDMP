@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <inheritdoc cref="ILoadProgress"/>
+/// <inheritdoc cref="ILoadProgress" />
 public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 {
     #region Database Properties
@@ -31,14 +31,14 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     private int _loadMetadata_ID;
     private int _defaultNumberOfDaysToLoadEachTime;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsDisabled
     {
         get => _isDisabled;
         set => SetField(ref _isDisabled, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -47,7 +47,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? OriginDate
     {
         get => _originDate;
@@ -55,7 +55,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     }
 
     /// <summary>
-    /// Not used
+    ///     Not used
     /// </summary>
     [Obsolete("Do not use")]
     public string LoadPeriodicity
@@ -64,21 +64,21 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         set => SetField(ref _loadPeriodicity, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? DataLoadProgress
     {
         get => _dataLoadProgress;
         set => SetField(ref _dataLoadProgress, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int LoadMetadata_ID
     {
         get => _loadMetadata_ID;
         set => SetField(ref _loadMetadata_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int DefaultNumberOfDaysToLoadEachTime
     {
         get => _defaultNumberOfDaysToLoadEachTime;
@@ -89,11 +89,11 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ILoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ICacheProgress CacheProgress => Repository.GetAllObjectsWithParent<CacheProgress>(this).SingleOrDefault();
 
@@ -103,7 +103,7 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
     {
     }
 
-    /// <inheritdoc cref="ILoadProgress"/>
+    /// <inheritdoc cref="ILoadProgress" />
     public LoadProgress(ICatalogueRepository repository, LoadMetadata parent)
     {
         repository.InsertAndHydrate(this,
@@ -126,8 +126,11 @@ public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
         DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{Name} ID={ID}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{Name} ID={ID}";
+    }
 
     public void Check(ICheckNotifier notifier)
     {

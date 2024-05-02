@@ -67,7 +67,7 @@ e.g. /$i/$a")]
     //state variables
     protected bool haveOpened;
     private bool haveWrittenBundleContents;
-    private Stopwatch stopwatch = new();
+    private readonly Stopwatch stopwatch = new();
 
     public TableLoadInfo TableLoadInfo { get; private set; }
 
@@ -119,7 +119,7 @@ e.g. /$i/$a")]
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual string GetFilename()
     {
         var filename = _request.ToString();
@@ -136,7 +136,7 @@ e.g. /$i/$a")]
     }
 
     /// <summary>
-    /// Extracts the rows in <paramref name="toProcess"/> to the extraction destination
+    ///     Extracts the rows in <paramref name="toProcess" /> to the extraction destination
     /// </summary>
     /// <param name="toProcess"></param>
     /// <param name="job"></param>
@@ -186,12 +186,13 @@ e.g. /$i/$a")]
 
     #region Abstract Extraction Methods
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract string GetDestinationDescription();
 
     /// <summary>
-    /// Called once on receiving the first batch of records, this is where you should create / open your output stream (or create a table
-    /// if you are extracting to database).
+    ///     Called once on receiving the first batch of records, this is where you should create / open your output stream (or
+    ///     create a table
+    ///     if you are extracting to database).
     /// </summary>
     /// <param name="toProcess"></param>
     /// <param name="job"></param>
@@ -200,7 +201,8 @@ e.g. /$i/$a")]
         GracefulCancellationToken cancellationToken);
 
     /// <summary>
-    /// Called once per batch of records to be extracted, these should be written to the output stream you opened in <see cref="Open"/>
+    ///     Called once per batch of records to be extracted, these should be written to the output stream you opened in
+    ///     <see cref="Open" />
     /// </summary>
     /// <param name="toProcess"></param>
     /// <param name="job"></param>
@@ -210,7 +212,7 @@ e.g. /$i/$a")]
         GracefulCancellationToken cancellationToken, Stopwatch stopwatch);
 
     /// <summary>
-    /// Called after each batch is written, allows you to flush your stream (if required)
+    ///     Called after each batch is written, allows you to flush your stream (if required)
     /// </summary>
     /// <param name="job"></param>
     /// <param name="cancellationToken"></param>
@@ -220,13 +222,13 @@ e.g. /$i/$a")]
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract void Abort(IDataLoadEventListener listener);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual void Check(ICheckNotifier notifier)
     {
         if (!string.IsNullOrWhiteSpace(ExtractionSubdirectoryPattern))
@@ -254,16 +256,16 @@ e.g. /$i/$a")]
 
     #region Release Related Methods
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ISelectedDataSets selectedDataSet);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
         IMapsDirectlyToDatabaseTable globalToCheck);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public abstract FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
 
     #endregion
@@ -395,7 +397,8 @@ e.g. /$i/$a")]
     }
 
     /// <summary>
-    /// Extracts the <paramref name="doc"/> into the supplied <paramref name="directory"/> (unless overridden to put it somewhere else)
+    ///     Extracts the <paramref name="doc" /> into the supplied <paramref name="directory" /> (unless overridden to put it
+    ///     somewhere else)
     /// </summary>
     /// <param name="doc"></param>
     /// <param name="directory"></param>

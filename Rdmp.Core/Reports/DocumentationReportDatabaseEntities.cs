@@ -20,14 +20,16 @@ using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Generates class descriptions for all <see cref="DatabaseEntity"/> classes (from xmldocs) into a user readable Microsoft Word Docx file.
-/// Also shows corresponding icon within RDMP.  This allows the user to see what a Project is and the icon what an ExtractionConfiguration
-/// is etc and for those descriptions/icons to always match the live/installed version of RDMP.
+///     Generates class descriptions for all <see cref="DatabaseEntity" /> classes (from xmldocs) into a user readable
+///     Microsoft Word Docx file.
+///     Also shows corresponding icon within RDMP.  This allows the user to see what a Project is and the icon what an
+///     ExtractionConfiguration
+///     is etc and for those descriptions/icons to always match the live/installed version of RDMP.
 /// </summary>
 public class DocumentationReportDatabaseEntities : DocXHelper
 {
     private CommentStore _commentStore;
-    private Dictionary<Type, string> Summaries = new();
+    private readonly Dictionary<Type, string> Summaries = new();
 
     public void GenerateReport(CommentStore commentStore, ICheckNotifier notifier, IIconProvider iconProvider,
         bool showFile)

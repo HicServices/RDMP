@@ -8,20 +8,21 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.ReusableLibraryCode.Settings;
 
 /// <summary>
-/// This is the Settings static class that can be used in your Core solution or in any
-/// of your client applications. All settings are laid out the same exact way with getters
-/// and setters.
+///     This is the Settings static class that can be used in your Core solution or in any
+///     of your client applications. All settings are laid out the same exact way with getters
+///     and setters.
 /// </summary>
 public static class UserSettings
 {
     private static readonly Lazy<RDMPApplicationSettings> Implementation =
-        new(static () => new RDMPApplicationSettings(), System.Threading.LazyThreadSafetyMode.ExecutionAndPublication);
+        new(static () => new RDMPApplicationSettings(), LazyThreadSafetyMode.ExecutionAndPublication);
 
     private static RDMPApplicationSettings AppSettings => Implementation.Value ??
                                                           throw new NotImplementedException(
@@ -34,14 +35,15 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("UseLocalFileSystem", value);
     }
 
-    public static string LocalFileSystemLocation 
+    public static string LocalFileSystemLocation
     {
-        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation", Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp")); 
+        get => AppSettings.GetValueOrDefault("LocalFileSystemLocation",
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "rdmp"));
         set => AppSettings.AddOrUpdateValue("LocalFileSystemLocation", value);
     }
 
     /// <summary>
-    /// Show a Yes/No confirmation dialog box when closing RDMP
+    ///     Show a Yes/No confirmation dialog box when closing RDMP
     /// </summary>
     public static bool ConfirmApplicationExiting
     {
@@ -50,8 +52,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// True if the user has accepted the open source license agreements for RDMP and
-    /// dependencies used in the software (i.e. MIT and GNU licenses).
+    ///     True if the user has accepted the open source license agreements for RDMP and
+    ///     dependencies used in the software (i.e. MIT and GNU licenses).
     /// </summary>
     public static string LicenseAccepted
     {
@@ -60,7 +62,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Automatically launch the RDMP Home Screen on launch of the RDMP application, regardless of the last window you viewed.
+    ///     Automatically launch the RDMP Home Screen on launch of the RDMP application, regardless of the last window you
+    ///     viewed.
     /// </summary>
     public static bool ShowHomeOnStartup
     {
@@ -69,7 +72,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// If checked series included in graphs that have no values will not be displayed
+    ///     If checked series included in graphs that have no values will not be displayed
     /// </summary>
     public static bool IncludeZeroSeriesInGraphs
     {
@@ -78,8 +81,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Adds an additional behaviour when changing tabs that highlights the tree view
-    /// collection that has that object visible in it.
+    ///     Adds an additional behaviour when changing tabs that highlights the tree view
+    ///     collection that has that object visible in it.
     /// </summary>
     public static bool EmphasiseOnTabChanged
     {
@@ -88,7 +91,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// True to disable any auto starting tutorials
+    ///     True to disable any auto starting tutorials
     /// </summary>
     public static bool DisableTutorials
     {
@@ -97,7 +100,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// The connection string to the main RDMP platform database
+    ///     The connection string to the main RDMP platform database
     /// </summary>
     public static string CatalogueConnectionString
     {
@@ -106,8 +109,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// The connection string to the data export RDMP platform database.  This database will contain
-    /// refrerences to objects in the <see cref="CatalogueConnectionString"/> database
+    ///     The connection string to the data export RDMP platform database.  This database will contain
+    ///     refrerences to objects in the <see cref="CatalogueConnectionString" /> database
     /// </summary>
     public static string DataExportConnectionString
     {
@@ -116,7 +119,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// The colour scheme and format for the RDMP gui client application
+    ///     The colour scheme and format for the RDMP gui client application
     /// </summary>
     public static string Theme
     {
@@ -125,7 +128,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// When selecting a result from the Find dialog the selected item is pinned in the corresponding view.
+    ///     When selecting a result from the Find dialog the selected item is pinned in the corresponding view.
     /// </summary>
     public static bool FindShouldPin
     {
@@ -134,7 +137,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Set the amount of time (in seconds) that the Create Database processes should wait before timing out.
+    ///     Set the amount of time (in seconds) that the Create Database processes should wait before timing out.
     /// </summary>
     public static int CreateDatabaseTimeout
     {
@@ -144,7 +147,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g. list of Catalogues etc)
+    ///     Set the amount of time (in milliseconds) that tooltips should take to appear in the tree collection views (e.g.
+    ///     list of Catalogues etc)
     /// </summary>
     public static int TooltipAppearDelay
     {
@@ -153,7 +157,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// When using the Find feature this option will automatically filter out any cohort set containers (i.e. UNION / INTERSECT / EXCEPT containers)
+    ///     When using the Find feature this option will automatically filter out any cohort set containers (i.e. UNION /
+    ///     INTERSECT / EXCEPT containers)
     /// </summary>
     public static bool ScoreZeroForCohortAggregateContainers
     {
@@ -162,7 +167,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Create audit objects for specific objects/changes (e.g. changes to Catalogue Deprecated status).
+    ///     Create audit objects for specific objects/changes (e.g. changes to Catalogue Deprecated status).
     /// </summary>
     public static bool EnableCommits
     {
@@ -211,7 +216,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// True to apply theme changes to context menus and tool strips.
+    ///     True to apply theme changes to context menus and tool strips.
     /// </summary>
     public static bool ApplyThemeToMenus
     {
@@ -220,7 +225,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Determines line wrapping in multi line editor controls when lines stretch off the control client area
+    ///     Determines line wrapping in multi line editor controls when lines stretch off the control client area
     /// </summary>
     public static int WrapMode
     {
@@ -229,11 +234,14 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>Base colours used for generating heatmaps in HEX format.  Colour intensity will vary
-    /// from the first color to the second.</para>
-    /// 
-    /// <para>The first colour represents the lowest values and should
-    /// typically be darker than the second which represents high values.</para>
+    ///     <para>
+    ///         Base colours used for generating heatmaps in HEX format.  Colour intensity will vary
+    ///         from the first color to the second.
+    ///     </para>
+    ///     <para>
+    ///         The first colour represents the lowest values and should
+    ///         typically be darker than the second which represents high values.
+    ///     </para>
     /// </summary>
     public static string HeatMapColours
     {
@@ -242,8 +250,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>Adds a 5 second delay after startup</para>
-    /// <para>Use this option to add a delay that can be helpful for troubleshooting issues on RDMP startup. </para>
+    ///     <para>Adds a 5 second delay after startup</para>
+    ///     <para>Use this option to add a delay that can be helpful for troubleshooting issues on RDMP startup. </para>
     /// </summary>
     public static bool Wait5SecondsAfterStartupUI
     {
@@ -252,8 +260,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// True to show the cohort creation wizard when creating new cohorts.  False to create
-    /// a default empty configuration.
+    ///     True to show the cohort creation wizard when creating new cohorts.  False to create
+    ///     a default empty configuration.
     /// </summary>
     public static bool ShowCohortWizard
     {
@@ -262,9 +270,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>True to enable "stirct validation" for containers in Cohort Builder Queries.</para>
-    ///
-    /// <para>Will not allow empty sets, or sets that only have one item.</para>
+    ///     <para>True to enable "stirct validation" for containers in Cohort Builder Queries.</para>
+    ///     <para>Will not allow empty sets, or sets that only have one item.</para>
     /// </summary>
     public static bool StrictValidationForCohortBuilderContainers
     {
@@ -273,8 +280,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Changes the behaviour of mouse double clicks in tree views.  When enabled double
-    /// click expands nodes instead of opening the double clicked object (the default behaviour).
+    ///     Changes the behaviour of mouse double clicks in tree views.  When enabled double
+    ///     click expands nodes instead of opening the double clicked object (the default behaviour).
     /// </summary>
     public static bool DoubleClickToExpand
     {
@@ -289,8 +296,11 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
-    /// <para>These figures are completely internal to the application and are not transmitted anywhere.You can view the results in the toolbar.</para>
+    ///     <para>When enabled RDMP will record certain performance related metrics (how long refresh takes etc).</para>
+    ///     <para>
+    ///         These figures are completely internal to the application and are not transmitted anywhere.You can view the
+    ///         results in the toolbar.
+    ///     </para>
     /// </summary>
     public static bool DebugPerformance
     {
@@ -299,8 +309,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
-    /// <para>Can be disabled if problems arrise with column content or header visibility</para>
+    ///     <para>Automatically resize columns in the RDMP user interface with fit contents.</para>
+    ///     <para>Can be disabled if problems arrise with column content or header visibility</para>
     /// </summary>
     public static bool AutoResizeColumns
     {
@@ -310,7 +320,7 @@ public static class UserSettings
 
 
     /// <summary>
-    /// Show a popup confirmation dialog at the end of a pipeline completing execution
+    ///     Show a popup confirmation dialog at the end of a pipeline completing execution
     /// </summary>
     public static bool ShowPipelineCompletedPopup
     {
@@ -319,8 +329,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>Enable to skip the checking stage of pipeline source component CohortIdentificationConfigurationSource.</para>
-    /// <para>In slow computer, or contesest databases this can take a while to compile. This option lets you disable it.</para>
+    ///     <para>Enable to skip the checking stage of pipeline source component CohortIdentificationConfigurationSource.</para>
+    ///     <para>In slow computer, or contesest databases this can take a while to compile. This option lets you disable it.</para>
     /// </summary>
     public static bool SkipCohortBuilderValidationOnCommit
     {
@@ -335,8 +345,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>When true RDMP log viewer will hide table load audits where no inserts/updates/deletes were applied.</para>
-    /// <para>This is helpful if a load targets many tables not all of which will be updated in a given run</para>
+    ///     <para>When true RDMP log viewer will hide table load audits where no inserts/updates/deletes were applied.</para>
+    ///     <para>This is helpful if a load targets many tables not all of which will be updated in a given run</para>
     /// </summary>
     public static bool HideEmptyTableLoadRunAudits
     {
@@ -345,8 +355,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>Enables additional Find filters for objects that are in:</para>
-    /// <para>Cold Storage, Internal, Deprecated, Project Specific and Non Extractable</para>
+    ///     <para>Enables additional Find filters for objects that are in:</para>
+    ///     <para>Cold Storage, Internal, Deprecated, Project Specific and Non Extractable</para>
     /// </summary>
     public static bool AdvancedFindFilters
     {
@@ -355,7 +365,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Timeout in seconds to allow for creating archive trigger, index etc
+    ///     Timeout in seconds to allow for creating archive trigger, index etc
     /// </summary>
     public static int ArchiveTriggerTimeout
     {
@@ -376,9 +386,9 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Enable to refresh only objects which you make changes to instead of
-    /// fetching all database changes since your last edit.  This improves
-    /// performance in large RDMP deployments with thousands of Projects configured.
+    ///     Enable to refresh only objects which you make changes to instead of
+    ///     fetching all database changes since your last edit.  This improves
+    ///     performance in large RDMP deployments with thousands of Projects configured.
     /// </summary>
     public static bool SelectiveRefresh
     {
@@ -387,9 +397,9 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Set to true to always attempt to force joins on all tables under a Catalogue
-    /// when building queries (in Cohort Builder).  This makes it impossible to untick
-    /// force joins.
+    ///     Set to true to always attempt to force joins on all tables under a Catalogue
+    ///     when building queries (in Cohort Builder).  This makes it impossible to untick
+    ///     force joins.
     /// </summary>
     public static bool AlwaysJoinEverything
     {
@@ -398,12 +408,12 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>
-    /// Determines whether queries are automatically sent and results displayed in
-    /// data tabs in RDMP (e.g. View top 100 etc).  Enable to automatically send the
-    /// queries.  Disable to show the SQL but require the user to press F5 or click Run
-    /// to execute.
-    /// </para>
+    ///     <para>
+    ///         Determines whether queries are automatically sent and results displayed in
+    ///         data tabs in RDMP (e.g. View top 100 etc).  Enable to automatically send the
+    ///         queries.  Disable to show the SQL but require the user to press F5 or click Run
+    ///         to execute.
+    ///     </para>
     /// </summary>
     public static bool AutoRunSqlQueries
     {
@@ -412,8 +422,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Enable to automatically expand the tree when opening or creating cohorts in
-    /// Cohort Builder
+    ///     Enable to automatically expand the tree when opening or creating cohorts in
+    ///     Cohort Builder
     /// </summary>
     public static bool ExpandAllInCohortBuilder
     {
@@ -422,7 +432,7 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// True to show ProjectSpecific Catalogues' columns in extraction configuration user interface
+    ///     True to show ProjectSpecific Catalogues' columns in extraction configuration user interface
     /// </summary>
     public static bool ShowProjectSpecificColumns
     {
@@ -431,12 +441,13 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// <para>When generating an aggregate graph, use the column alias instead of the select sql.  For example
-    /// when you have the select column 'SELECT YEAR(dt) as myYear' then the GROUP BY will default to
-    /// 'GROUP BY YEAR(dt)'.  Setting this property to true will instead use 'GROUP BY myYear'.  Typically
-    /// this only works in MySql but it is not universally supported by all MySql versions and server settings
-    /// </para>
-    /// <para>Defaults to false.</para>
+    ///     <para>
+    ///         When generating an aggregate graph, use the column alias instead of the select sql.  For example
+    ///         when you have the select column 'SELECT YEAR(dt) as myYear' then the GROUP BY will default to
+    ///         'GROUP BY YEAR(dt)'.  Setting this property to true will instead use 'GROUP BY myYear'.  Typically
+    ///         this only works in MySql but it is not universally supported by all MySql versions and server settings
+    ///     </para>
+    ///     <para>Defaults to false.</para>
     /// </summary>
     public static bool UseAliasInsteadOfTransformInGroupByAggregateGraphs
     {
@@ -447,8 +458,9 @@ public static class UserSettings
     #endregion
 
     /// <summary>
-    /// Returns the error level the user wants for <paramref name="errorCode"/> or <see cref="ErrorCode.DefaultTreatment"/> (if no custom
-    /// reporting level has been set up for this error code).
+    ///     Returns the error level the user wants for <paramref name="errorCode" /> or
+    ///     <see cref="ErrorCode.DefaultTreatment" /> (if no custom
+    ///     reporting level has been set up for this error code).
     /// </summary>
     /// <param name="errorCode"></param>
     /// <returns></returns>
@@ -460,7 +472,8 @@ public static class UserSettings
     }
 
     /// <summary>
-    /// Changes the reporting level of the given error to <paramref name="value"/> instead of its <see cref="ErrorCode.DefaultTreatment"/>
+    ///     Changes the reporting level of the given error to <paramref name="value" /> instead of its
+    ///     <see cref="ErrorCode.DefaultTreatment" />
     /// </summary>
     /// <param name="errorCode"></param>
     /// <param name="value"></param>
@@ -469,8 +482,10 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"EC_{errorCode.Code}", value.ToString());
     }
 
-    public static bool GetTutorialDone(Guid tutorialGuid) =>
-        tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
+    public static bool GetTutorialDone(Guid tutorialGuid)
+    {
+        return tutorialGuid != Guid.Empty && AppSettings.GetValueOrDefault($"T_{tutorialGuid:N}", false);
+    }
 
     public static void SetTutorialDone(Guid tutorialGuid, bool value)
     {
@@ -505,17 +520,25 @@ public static class UserSettings
         AppSettings.AddOrUpdateValue($"ColV_{colIdentifier}", visible);
     }
 
-    public static int GetColumnWidth(Guid columnGuid) =>
-        columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
+    public static int GetColumnWidth(Guid columnGuid)
+    {
+        return columnGuid == Guid.Empty ? 100 : GetColumnWidth(columnGuid.ToString("N"));
+    }
 
-    public static int GetColumnWidth(string colIdentifier) =>
-        AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
+    public static int GetColumnWidth(string colIdentifier)
+    {
+        return AppSettings.GetValueOrDefault($"ColW_{colIdentifier}", 100);
+    }
 
-    public static bool GetColumnVisible(Guid columnGuid) =>
-        columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
+    public static bool GetColumnVisible(Guid columnGuid)
+    {
+        return columnGuid == Guid.Empty || GetColumnVisible(columnGuid.ToString("N"));
+    }
 
-    public static bool GetColumnVisible(string colIdentifier) =>
-        AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
+    public static bool GetColumnVisible(string colIdentifier)
+    {
+        return AppSettings.GetValueOrDefault($"ColV_{colIdentifier}", true);
+    }
 
     public static string[] GetHistoryForControl(Guid controlGuid)
     {
@@ -569,7 +592,7 @@ public static class UserSettings
         return null;
     }
 
-    private static object _oLockUserSettings = new();
+    private static readonly object _oLockUserSettings = new();
 
     public static void SetLastColumnSortForCollection(Guid controlGuid, string columnName, bool ascending)
     {
@@ -581,17 +604,19 @@ public static class UserSettings
 
 
     /// <summary>
-    /// Returns the last known manually set splitter distance for the Control who is
-    /// identified by <paramref name="controlGuid"/> or -1 if none set yet
+    ///     Returns the last known manually set splitter distance for the Control who is
+    ///     identified by <paramref name="controlGuid" /> or -1 if none set yet
     /// </summary>
     /// <param name="controlGuid"></param>
     /// <returns></returns>
-    public static int GetSplitterDistance(Guid controlGuid) =>
-        AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}", -1);
+    public static int GetSplitterDistance(Guid controlGuid)
+    {
+        return AppSettings.GetValueOrDefault($"SplitterDistance_{controlGuid:N}", -1);
+    }
 
     /// <summary>
-    /// Records that the user has manaully changed the splitter distance of the Control
-    /// who is identified by <paramref name="controlGuid"/>
+    ///     Records that the user has manaully changed the splitter distance of the Control
+    ///     who is identified by <paramref name="controlGuid" />
     /// </summary>
     /// <param name="controlGuid"></param>
     /// <param name="splitterDistance"></param>

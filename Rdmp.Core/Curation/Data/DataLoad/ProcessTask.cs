@@ -22,15 +22,24 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// Describes a specific operation carried out at a specific step of a LoadMetadata.  This could be 'unzip all files called *.zip in for loading' or
-/// 'after loading the data to live, call sp_clean_table1' or 'Connect to webservice X and download 1,000,000 records which will be serialized into XML'
-/// 
-/// <para>The class achieves this wide ranging functionality through the interaction of ProcessTaskType and Path.  e.g. when ProcessTaskType is Attacher then
-/// Path functions as the Type name of a class that implements IAttacher e.g. 'LoadModules.Generic.Attachers.AnySeparatorFileAttacher'.  </para>
-/// 
-/// <para>Each ProcessTask can have one or more strongly typed arguments (see entity ProcessTaskArgument), these are discovered at design time by using
-/// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
-/// to write plugin classes to easily handle proprietary/bespoke source file types or complex data load requirements.</para>
+///     Describes a specific operation carried out at a specific step of a LoadMetadata.  This could be 'unzip all files
+///     called *.zip in for loading' or
+///     'after loading the data to live, call sp_clean_table1' or 'Connect to webservice X and download 1,000,000 records
+///     which will be serialized into XML'
+///     <para>
+///         The class achieves this wide ranging functionality through the interaction of ProcessTaskType and Path.  e.g.
+///         when ProcessTaskType is Attacher then
+///         Path functions as the Type name of a class that implements IAttacher e.g.
+///         'LoadModules.Generic.Attachers.AnySeparatorFileAttacher'.
+///     </para>
+///     <para>
+///         Each ProcessTask can have one or more strongly typed arguments (see entity ProcessTaskArgument), these are
+///         discovered at design time by using
+///         reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with
+///         [DemandsInitialization] attribute.  This allows for 3rd party developers
+///         to write plugin classes to easily handle proprietary/bespoke source file types or complex data load
+///         requirements.
+///     </para>
 /// </summary>
 public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICheckable
 {
@@ -48,7 +57,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     private string? _SerialisableConfiguration;
 #nullable disable
     /// <summary>
-    /// The load the process task exists as part of
+    ///     The load the process task exists as part of
     /// </summary>
     [Relationship(typeof(LoadMetadata), RelationshipType.SharedObject)]
     public int LoadMetadata_ID
@@ -57,7 +66,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         set => SetField(ref _loadMetadataID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Obsolete(
         "Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
     public int? RelatesSolelyToCatalogue_ID
@@ -66,14 +75,14 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         set => SetField(ref _relatesSolelyToCatalogueID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Order
     {
         get => _order;
         set => SetField(ref _order, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [AdjustableLocation]
     public string Path
     {
@@ -81,7 +90,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         set => SetField(ref _path, value);
     }
 
-    /// <inheritdoc cref="IProcessTask.Name"/>
+    /// <inheritdoc cref="IProcessTask.Name" />
     [NotNull]
     public string Name
     {
@@ -89,21 +98,21 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public LoadStage LoadStage
     {
         get => _loadStage;
         set => SetField(ref _loadStage, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ProcessTaskType ProcessTaskType
     {
         get => _processTaskType;
         set => SetField(ref _processTaskType, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsDisabled
     {
         get => _isDisabled;
@@ -111,7 +120,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
 #nullable enable
     public string? SerialisableConfiguration
     {
@@ -124,17 +133,18 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
     #region Relationships
 
-    /// <inheritdoc cref="LoadMetadata_ID"/>
+    /// <inheritdoc cref="LoadMetadata_ID" />
     [NoMappingToDatabase]
     public LoadMetadata LoadMetadata => Repository.GetObjectByID<LoadMetadata>(LoadMetadata_ID);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IEnumerable<ProcessTaskArgument> ProcessTaskArguments =>
         Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);
 
     /// <summary>
-    /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
+    ///     All <see cref="ILoadProgress" /> (if any) that can be advanced by executing this load.  This allows batch execution
+    ///     of large loads
     /// </summary>
     [NoMappingToDatabase]
     public ILoadProgress[] LoadProgresses => LoadMetadata.LoadProgresses;
@@ -146,7 +156,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
     /// <summary>
-    /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
+    ///     Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -162,18 +172,19 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             { "ProcessTaskType", ProcessTaskType.Executable.ToString() },
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
-            { "Order", order },
+            { "Order", order }
         });
     }
 
     /// <summary>
-    /// Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
+    ///     Creates a new operation in the data load (e.g. copy files from A to B, load all CSV files to RAW table B etc)
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
     /// <param name="stage"></param>
     /// <param name="serialisableConfiguration"></param>
-    public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
+    public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage,
+        string serialisableConfiguration = null)
     {
         var order =
             repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
@@ -185,7 +196,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             { "LoadStage", stage },
             { "Name", $"New Process{Guid.NewGuid()}" },
             { "Order", order },
-            {"SerialisableConfiguration", serialisableConfiguration}
+            { "SerialisableConfiguration", serialisableConfiguration }
         });
     }
 
@@ -212,7 +223,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             throw new Exception($"Could not parse LoadStage:{r["LoadStage"]}");
 
         IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
-        if(r["SerialisableConfiguration"] is not null)
+        if (r["SerialisableConfiguration"] is not null)
             SerialisableConfiguration = r["SerialisableConfiguration"].ToString();
     }
 
@@ -221,10 +232,13 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Check(ICheckNotifier notifier)
     {
         switch (ProcessTaskType)
@@ -259,24 +273,24 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
             //let's check for any SQL that indicates user is trying to modify a STAGING table in a RAW script (for example)
             foreach (var tableInfo in LoadMetadata.GetDistinctTableInfoList(false))
                 //for each stage get all the object names that are in that stage
-                foreach (var stage in new[] { LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad })
-                {
-                    //process task belongs in that stage anyway so nothing is prohibited
-                    if (stage == (LoadStage == LoadStage.Mounting ? LoadStage.AdjustRaw : LoadStage))
-                        continue;
+            foreach (var stage in new[] { LoadStage.AdjustRaw, LoadStage.AdjustStaging, LoadStage.PostLoad })
+            {
+                //process task belongs in that stage anyway so nothing is prohibited
+                if (stage == (LoadStage == LoadStage.Mounting ? LoadStage.AdjustRaw : LoadStage))
+                    continue;
 
-                    //figure out what is prohibited
-                    var prohibitedSql = tableInfo.GetQuerySyntaxHelper()
-                        .EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage), null,
-                            tableInfo.GetRuntimeName(stage));
+                //figure out what is prohibited
+                var prohibitedSql = tableInfo.GetQuerySyntaxHelper()
+                    .EnsureFullyQualified(tableInfo.GetDatabaseRuntimeName(stage), null,
+                        tableInfo.GetRuntimeName(stage));
 
-                    //if we reference it, complain
-                    if (sql.Contains(prohibitedSql))
-                        notifier.OnCheckPerformed(
-                            new CheckEventArgs(
-                                $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}",
-                                CheckResult.Warning));
-                }
+                //if we reference it, complain
+                if (sql.Contains(prohibitedSql))
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            $"Sql in file '{Path}' contains a reference to '{prohibitedSql}' which is prohibited since the ProcessTask ('{Name}') runs in LoadStage {LoadStage}",
+                            CheckResult.Warning));
+            }
         }
         catch (Exception e)
         {
@@ -322,23 +336,35 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
     /// <summary>
-    /// Returns all tables loaded by the parent <see cref="LoadMetadata"/>
+    ///     Returns all tables loaded by the parent <see cref="LoadMetadata" />
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<TableInfo> GetTableInfos() => LoadMetadata.GetDistinctTableInfoList(true);
+    public IEnumerable<TableInfo> GetTableInfos()
+    {
+        return LoadMetadata.GetDistinctTableInfoList(true);
+    }
 
-    /// <inheritdoc/>
-    public IEnumerable<IArgument> GetAllArguments() => ProcessTaskArguments;
+    /// <inheritdoc />
+    public IEnumerable<IArgument> GetAllArguments()
+    {
+        return ProcessTaskArguments;
+    }
 
-    /// <inheritdoc/>
-    public IArgument CreateNewArgument() => new ProcessTaskArgument((ICatalogueRepository)Repository, this);
+    /// <inheritdoc />
+    public IArgument CreateNewArgument()
+    {
+        return new ProcessTaskArgument((ICatalogueRepository)Repository, this);
+    }
 
-    /// <inheritdoc/>
-    public string GetClassNameWhoArgumentsAreFor() => Path;
+    /// <inheritdoc />
+    public string GetClassNameWhoArgumentsAreFor()
+    {
+        return Path;
+    }
 
     /// <summary>
-    /// Creates a new copy of the processTask and all its arguments in the database, this clone is then hooked up to the
-    /// new LoadMetadata at the specified stage
+    ///     Creates a new copy of the processTask and all its arguments in the database, this clone is then hooked up to the
+    ///     new LoadMetadata at the specified stage
     /// </summary>
     /// <param name="loadMetadata">The new LoadMetadata parent for the clone</param>
     /// <param name="loadStage">The new load stage to put the clone in </param>
@@ -383,9 +409,10 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
         }
     }
 
-    /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists(Type t) =>
-        ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
+    /// <inheritdoc />
+    public IArgument[] CreateArgumentsForClassIfNotExists(Type t)
+    {
+        return ArgumentFactory.CreateArgumentsForClassIfNotExistsGeneric(
                 t,
 
                 //tell it how to create new instances of us related to parent
@@ -396,13 +423,18 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
 
             //convert the result back from generic to specific (us)
             .ToArray();
+    }
 
-    /// <inheritdoc/>
-    public IArgument[] CreateArgumentsForClassIfNotExists<T>() => CreateArgumentsForClassIfNotExists(typeof(T));
+    /// <inheritdoc />
+    public IArgument[] CreateArgumentsForClassIfNotExists<T>()
+    {
+        return CreateArgumentsForClassIfNotExists(typeof(T));
+    }
 
     /// <summary>
-    /// Returns true if the <see cref="ProcessTaskType"/> is allowed to happen during the given <see cref="LoadStage"/>  (e.g. you can't use an IAttacher to
-    /// load data into STAGING/LIVE - only RAW).
+    ///     Returns true if the <see cref="ProcessTaskType" /> is allowed to happen during the given <see cref="LoadStage" />
+    ///     (e.g. you can't use an IAttacher to
+    ///     load data into STAGING/LIVE - only RAW).
     /// </summary>
     /// <param name="type"></param>
     /// <param name="stage"></param>
@@ -422,16 +454,20 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     }
 
     /// <summary>
-    /// True if <see cref="Path"/> is the name of a C# class (as opposed to the path to an executable or SQL file etc)
+    ///     True if <see cref="Path" /> is the name of a C# class (as opposed to the path to an executable or SQL file etc)
     /// </summary>
     /// <returns></returns>
-    public bool IsPluginType() => ProcessTaskType == ProcessTaskType.Attacher ||
-                                  ProcessTaskType == ProcessTaskType.MutilateDataTable ||
-                                  ProcessTaskType == ProcessTaskType.DataProvider;
+    public bool IsPluginType()
+    {
+        return ProcessTaskType == ProcessTaskType.Attacher ||
+               ProcessTaskType == ProcessTaskType.MutilateDataTable ||
+               ProcessTaskType == ProcessTaskType.DataProvider;
+    }
 
     /// <summary>
-    /// Sets the value of the corresponding <see cref="IArgument"/> (which must already exist) to the given value.  If your argument doesn't exist yet you
-    /// can call <see cref="CreateArgumentsForClassIfNotExists"/>
+    ///     Sets the value of the corresponding <see cref="IArgument" /> (which must already exist) to the given value.  If
+    ///     your argument doesn't exist yet you
+    ///     can call <see cref="CreateArgumentsForClassIfNotExists" />
     /// </summary>
     /// <param name="parameterName"></param>
     /// <param name="o"></param>

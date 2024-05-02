@@ -13,7 +13,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 
 /// <summary>
-/// Helps generate sql queries for reverting/deleting STAGING based on records in LIVE during a backfill data load (See StagingBackfillMutilator).
+///     Helps generate sql queries for reverting/deleting STAGING based on records in LIVE during a backfill data load (See
+///     StagingBackfillMutilator).
 /// </summary>
 public class BackfillSqlHelper
 {
@@ -32,7 +33,8 @@ public class BackfillSqlHelper
     }
 
     /// <summary>
-    /// Composes the SQL which joins the supplied table back up or down to the TimePeriodicity table, so we can assign the rows an effective load date
+    ///     Composes the SQL which joins the supplied table back up or down to the TimePeriodicity table, so we can assign the
+    ///     rows an effective load date
     /// </summary>
     /// <param name="tableAlias"></param>
     /// <param name="tableInfo"></param>

@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
+///     Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.
 /// </summary>
 public class CacheRunner : Runner
 {

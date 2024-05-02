@@ -21,7 +21,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution;
 
 /// <summary>
-/// This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory form!
+///     This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory
+///     form!
 /// </summary>
 public class HICDataLoadFactory
 {
@@ -31,7 +32,7 @@ public class HICDataLoadFactory
     private readonly ILogManager _logManager;
     private readonly IList<ICatalogue> _cataloguesToLoad;
 
-    public ILoadMetadata LoadMetadata { get; private set; }
+    public ILoadMetadata LoadMetadata { get; }
 
     public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
         HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)

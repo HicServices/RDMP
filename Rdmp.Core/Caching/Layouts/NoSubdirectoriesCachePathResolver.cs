@@ -9,9 +9,13 @@ using System.IO;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Basic case of <see cref="ILoadCachePathResolver"/> in which the path .\Data\Cache is what is returned unchanged i.e. no subdirectories
+///     Basic case of <see cref="ILoadCachePathResolver" /> in which the path .\Data\Cache is what is returned unchanged
+///     i.e. no subdirectories
 /// </summary>
 public class NoSubdirectoriesCachePathResolver : ILoadCachePathResolver
 {
-    public DirectoryInfo GetLoadCacheDirectory(DirectoryInfo cacheRootDirectory) => cacheRootDirectory;
+    public DirectoryInfo GetLoadCacheDirectory(DirectoryInfo cacheRootDirectory)
+    {
+        return cacheRootDirectory;
+    }
 }

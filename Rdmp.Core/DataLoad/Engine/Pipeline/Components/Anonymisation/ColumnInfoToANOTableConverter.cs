@@ -22,7 +22,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 
 /// <summary>
-/// Engine class for converting a ColumnInfo and all the data in it into ANO equivalents (See ColumnInfoToANOTableConverterUI).
+///     Engine class for converting a ColumnInfo and all the data in it into ANO equivalents (See
+///     ColumnInfoToANOTableConverterUI).
 /// </summary>
 public class ColumnInfoToANOTableConverter
 {
@@ -171,7 +172,9 @@ public class ColumnInfoToANOTableConverter
             cmd.ExecuteNonQuery();
         }
         else
+        {
             throw new Exception($"User chose not to drop the old column {_colToNuke}");
+        }
     }
 
 

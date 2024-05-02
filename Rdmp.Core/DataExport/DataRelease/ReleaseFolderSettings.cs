@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.DataRelease;
 
 /// <summary>
-/// Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
+///     Options for configuring ReleaseEngine behaviour (To change where files are released to etc)
 /// </summary>
 public class ReleaseFolderSettings : ICheckable
 {

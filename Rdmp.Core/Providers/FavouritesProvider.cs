@@ -15,7 +15,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Determines whether objects are a <see cref="Favourite"/> of the current user and handles creating/deleting them.
+///     Determines whether objects are a <see cref="Favourite" /> of the current user and handles creating/deleting them.
 /// </summary>
 public class FavouritesProvider
 {
@@ -56,7 +56,10 @@ public class FavouritesProvider
         //it wasn't a favourite anyway
     }
 
-    public bool IsFavourite(IMapsDirectlyToDatabaseTable o) => GetFavouriteIfAny(o) != null;
+    public bool IsFavourite(IMapsDirectlyToDatabaseTable o)
+    {
+        return GetFavouriteIfAny(o) != null;
+    }
 
     public Favourite GetFavouriteIfAny(IMapsDirectlyToDatabaseTable o)
     {

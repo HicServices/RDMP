@@ -17,7 +17,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Collection for generating SQL around the extractable columns of a catalogue
+///     Collection for generating SQL around the extractable columns of a catalogue
 /// </summary>
 public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQLAndResultsCollection
 {
@@ -30,7 +30,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     public ExtractionInformation[] ExtractionInformations => DatabaseObjects.OfType<ExtractionInformation>().ToArray();
 
     /// <summary>
-    /// The number of records to fetch (or null to fetch all records)
+    ///     The number of records to fetch (or null to fetch all records)
     /// </summary>
     public int? TopX { get; set; }
 
@@ -40,7 +40,7 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
     }
 
     /// <summary>
-    /// Persistence constructor
+    ///     Persistence constructor
     /// </summary>
     public ViewCatalogueDataCollection()
     {
@@ -98,7 +98,10 @@ public class ViewCatalogueDataCollection : PersistableObjectCollection, IViewSQL
         return builder.SQL;
     }
 
-    public string GetTabName() => Catalogue.Name;
+    public string GetTabName()
+    {
+        return Catalogue.Name;
+    }
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

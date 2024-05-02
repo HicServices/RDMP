@@ -14,18 +14,19 @@ using Rdmp.Core.Providers;
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
 /// <summary>
-/// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all Catalogue filters and parameters as well as those used in
-/// AggregateConfigurations
-/// 
+///     Provides a memory based efficient (in terms of the number of database queries sent) way of finding all Catalogue
+///     filters and parameters as well as those used in
+///     AggregateConfigurations
 /// </summary>
 internal class FilterManagerFromChildProvider : AggregateFilterManager
 {
     /// <summary>
-    /// Where ID key is the ID of the parent and the Value List is all the subcontainers.  If there is no key there are no subcontainers.
+    ///     Where ID key is the ID of the parent and the Value List is all the subcontainers.  If there is no key there are no
+    ///     subcontainers.
     /// </summary>
     private readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new();
 
-    private Dictionary<int, List<AggregateFilter>> _containersToFilters;
+    private readonly Dictionary<int, List<AggregateFilter>> _containersToFilters;
 
     public FilterManagerFromChildProvider(CatalogueRepository repository, ICoreChildProvider childProvider) :
         base(repository)
@@ -51,15 +52,21 @@ internal class FilterManagerFromChildProvider : AggregateFilterManager
 
             _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
         }
+
         r.Close();
     }
 
     public override IContainer[] GetSubContainers(IContainer container)
     {
-        return _subcontainers.TryGetValue(container.ID, out var result) ? result.ToArray() :
-            Array.Empty<AggregateFilterContainer>();
+        return _subcontainers.TryGetValue(container.ID, out var result)
+            ? result.ToArray()
+            : Array.Empty<AggregateFilterContainer>();
     }
 
-    public override IFilter[] GetFilters(IContainer container) =>
-        _containersToFilters.TryGetValue(container.ID, out var result) ? result.ToArray() : Array.Empty<IFilter>();
+    public override IFilter[] GetFilters(IContainer container)
+    {
+        return _containersToFilters.TryGetValue(container.ID, out var result)
+            ? result.ToArray()
+            : Array.Empty<IFilter>();
+    }
 }

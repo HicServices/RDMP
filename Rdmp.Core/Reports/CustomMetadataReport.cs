@@ -18,68 +18,73 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Create a custom report e.g. markdown, xml etc by taking a template file and replicating it with replacements for each <see cref="Catalogue"/> property
+///     Create a custom report e.g. markdown, xml etc by taking a template file and replicating it with replacements for
+///     each <see cref="Catalogue" /> property
 /// </summary>
 public partial class CustomMetadataReport
 {
     /// <summary>
-    /// Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
+    ///     Substitutions that are used during template value replacement e.g. $Name => Catalogue.Name
     /// </summary>
-    private Dictionary<string, Func<Catalogue, object>> Replacements = new();
+    private readonly Dictionary<string, Func<Catalogue, object>> Replacements = new();
 
     /// <summary>
-    /// Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g. $Name => CatalogueItem.Name
+    ///     Substitutions that are used during template value replacement when inside a '$foreach CatalogueItem' block e.g.
+    ///     $Name => CatalogueItem.Name
     /// </summary>
-    private Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
+    private readonly Dictionary<string, Func<CatalogueItem, object>> ReplacementsCatalogueItem = new();
 
 
     /// <summary>
-    /// Control line that begins looping Catalogues
+    ///     Control line that begins looping Catalogues
     /// </summary>
     public const string LoopCatalogues = "$foreach Catalogue";
 
     /// <summary>
-    /// Control line that begins looping CatalogueItems of a Catalogue
+    ///     Control line that begins looping CatalogueItems of a Catalogue
     /// </summary>
     public const string LoopCatalogueItems = "$foreach CatalogueItem";
 
     public const string Comma = "$Comma";
 
     /// <summary>
-    /// Ends looping
+    ///     Ends looping
     /// </summary>
     public const string EndLoop = "$end";
 
     /// <summary>
-    /// How the range of data in each <see cref="Catalogue"/> is determined, defaults to <see cref="DatasetTimespanCalculator"/> (using the DQE results)
+    ///     How the range of data in each <see cref="Catalogue" /> is determined, defaults to
+    ///     <see cref="DatasetTimespanCalculator" /> (using the DQE results)
     /// </summary>
     public IDetermineDatasetTimespan TimespanCalculator { get; set; } = new DatasetTimespanCalculator();
 
     /// <summary>
-    /// Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
+    ///     Specify a replacement for newlines when found in fields e.g. with space.  Leave as null to leave newlines intact.
     /// </summary>
     public string NewlineSubstitution { get; set; }
 
 
     /// <summary>
-    /// Specify a replacement for the token element seperator replacement <see cref="Comma"/> (note that this option
-    /// only affects the token not regular commas in the template).
+    ///     Specify a replacement for the token element seperator replacement <see cref="Comma" /> (note that this option
+    ///     only affects the token not regular commas in the template).
     /// </summary>
     public string CommaSubstitution { get; set; } = ",";
 
     /// <summary>
-    /// The repository where column completeness metrics will come from.  Note this is usually the same source as <see cref="TimespanCalculator"/>
+    ///     The repository where column completeness metrics will come from.  Note this is usually the same source as
+    ///     <see cref="TimespanCalculator" />
     /// </summary>
     public DQERepository DQERepository { get; set; }
 
     /// <summary>
-    /// Cache of latest run DQE <see cref="Evaluation"/> by <see cref="Catalogue"/> (populated from <see cref="DQERepository"/>)
+    ///     Cache of latest run DQE <see cref="Evaluation" /> by <see cref="Catalogue" /> (populated from
+    ///     <see cref="DQERepository" />)
     /// </summary>
     public Dictionary<ICatalogue, Evaluation> EvaluationCache { get; set; } = new();
 
     /// <summary>
-    /// Describes whether a $foreach is iterating and which element type is
-    /// currently being processed for replacement
+    ///     Describes whether a $foreach is iterating and which element type is
+    ///     currently being processed for replacement
     /// </summary>
     private enum ElementIteration
     {
@@ -206,7 +211,10 @@ public partial class CustomMetadataReport
         return total == 0 ? null : $"{(int)(columnStats.CountDBNull / (double)total * 100)}%";
     }
 
-    private Evaluation GetEvaluation(CatalogueItem ci) => GetEvaluation(ci.Catalogue);
+    private Evaluation GetEvaluation(CatalogueItem ci)
+    {
+        return GetEvaluation(ci.Catalogue);
+    }
 
     private Evaluation GetEvaluation(Catalogue c)
     {
@@ -219,20 +227,35 @@ public partial class CustomMetadataReport
         return evaluation;
     }
 
-    private DateTime? GetStartDate(Catalogue c) =>
-        TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
+    private DateTime? GetStartDate(Catalogue c)
+    {
+        return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item1;
+    }
 
-    private DateTime? GetEndDate(Catalogue c) =>
-        TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
+    private DateTime? GetEndDate(Catalogue c)
+    {
+        return TimespanCalculator?.GetMachineReadableTimespanIfKnownOf(c, true, out _)?.Item2;
+    }
 
     /// <summary>
-    /// Reads the contents of <paramref name="template"/> and generates one or more files (see <paramref name="oneFile"/>) by substituting tokens (e.g. $Name) for the values in the provided <paramref name="catalogues"/>
+    ///     Reads the contents of <paramref name="template" /> and generates one or more files (see <paramref name="oneFile" />
+    ///     ) by substituting tokens (e.g. $Name) for the values in the provided <paramref name="catalogues" />
     /// </summary>
     /// <param name="catalogues">All catalogues that you want to produce metadata for</param>
     /// <param name="outputDirectory">The directory to write output file(s) into</param>
-    /// <param name="template">Template file with free text and substitutions (e.g. $Name).  Also supports looping e.g. $foreach CatalogueItem</param>
-    /// <param name="fileNaming">Determines how output file(s) will be named in the <paramref name="outputDirectory"/>.  Supports substitution e.g. $Name.md</param>
-    /// <param name="oneFile">True to concatenate the results together and output in a single file.  If true then <paramref name="fileNaming"/> should not contain substitutions.  If false then <paramref name="fileNaming"/> should contain substitutions (e.g. $Name.doc) to prevent duplicate file names</param>
+    /// <param name="template">
+    ///     Template file with free text and substitutions (e.g. $Name).  Also supports looping e.g.
+    ///     $foreach CatalogueItem
+    /// </param>
+    /// <param name="fileNaming">
+    ///     Determines how output file(s) will be named in the <paramref name="outputDirectory" />.
+    ///     Supports substitution e.g. $Name.md
+    /// </param>
+    /// <param name="oneFile">
+    ///     True to concatenate the results together and output in a single file.  If true then
+    ///     <paramref name="fileNaming" /> should not contain substitutions.  If false then <paramref name="fileNaming" />
+    ///     should contain substitutions (e.g. $Name.doc) to prevent duplicate file names
+    /// </param>
     public void GenerateReport(Catalogue[] catalogues, DirectoryInfo outputDirectory, FileInfo template,
         string fileNaming, bool oneFile)
     {
@@ -330,7 +353,7 @@ public partial class CustomMetadataReport
                 currentSection.Body.Add(str);
             }
             else
-            // is it a loop Catalogues
+                // is it a loop Catalogues
             if (str.Trim().Equals(LoopCatalogues))
             {
                 if (currentSection != null)
@@ -344,7 +367,7 @@ public partial class CustomMetadataReport
                 depth = 1;
             }
             else
-            // is it an end loop
+                // is it an end loop
             if (str.Trim().Equals(EndLoop))
             {
                 if (currentSection == null || currentSection.IsPlainText)
@@ -389,9 +412,9 @@ public partial class CustomMetadataReport
 
     private class CatalogueSection
     {
-        public int LineNumber { get; set; }
-        public bool IsPlainText { get; set; }
-        public List<string> Body { get; set; } = new();
+        public int LineNumber { get; }
+        public bool IsPlainText { get; }
+        public List<string> Body { get; } = new();
 
         public CatalogueSection(bool isPlainText, int lineNumber)
         {
@@ -401,12 +424,14 @@ public partial class CustomMetadataReport
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="strs"></param>
     /// <param name="catalogue"></param>
     /// <param name="section"></param>
-    /// <param name="iteration">Indicates if looping through Catalogues and we are not at the last element in the collection yet.</param>
+    /// <param name="iteration">
+    ///     Indicates if looping through Catalogues and we are not at the last element in the collection
+    ///     yet.
+    /// </param>
     /// <returns></returns>
     private string DoReplacements(string[] strs, Catalogue catalogue, CatalogueSection section,
         ElementIteration iteration)
@@ -442,14 +467,14 @@ public partial class CustomMetadataReport
     }
 
     /// <summary>
-    /// Consumes from $foreach to $end looping <paramref name="catalogueItems"/> to produce output rows of string data
+    ///     Consumes from $foreach to $end looping <paramref name="catalogueItems" /> to produce output rows of string data
     /// </summary>
     /// <param name="strs">The original input in its entirety</param>
-    /// <param name="index">The line in <paramref name="strs"/> in which the foreach was detected</param>
+    /// <param name="index">The line in <paramref name="strs" /> in which the foreach was detected</param>
     /// <param name="result">The results of consuming the foreach block</param>
     /// <param name="catalogueItems"></param>
     /// <param name="section"></param>
-    /// <returns>The index in <paramref name="strs"/> where the $end was detected</returns>
+    /// <returns>The index in <paramref name="strs" /> where the $end was detected</returns>
     private int DoReplacements(string[] strs, int index, out string result, CatalogueItem[] catalogueItems,
         CatalogueSection section)
     {
@@ -500,23 +525,33 @@ public partial class CustomMetadataReport
     }
 
     /// <summary>
-    /// Returns a string representation suitable for adding to a template output based on the input object (which may be null)
+    ///     Returns a string representation suitable for adding to a template output based on the input object (which may be
+    ///     null)
     /// </summary>
     /// <param name="v"></param>
     /// <returns></returns>
-    private string ValueToString(object v) =>
-        v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
+    private string ValueToString(object v)
+    {
+        return v is ExtractionInformation ei ? ei.GetRuntimeName() : ReplaceNewlines(v?.ToString() ?? "");
+    }
 
-    public string ReplaceNewlines(string input) => input != null && NewlineSubstitution != null
-        ? Newline().Replace(input, NewlineSubstitution)
-        : input;
+    public string ReplaceNewlines(string input)
+    {
+        return input != null && NewlineSubstitution != null
+            ? Newline().Replace(input, NewlineSubstitution)
+            : input;
+    }
 
     /// <summary>
-    /// Replace all templated strings (e.g. $Name) in the <paramref name="template"/> with the corresponding values in the <paramref name="catalogueItem"/>
+    ///     Replace all templated strings (e.g. $Name) in the <paramref name="template" /> with the corresponding values in the
+    ///     <paramref name="catalogueItem" />
     /// </summary>
     /// <param name="template"></param>
     /// <param name="catalogueItem"></param>
-    /// <param name="iteration">Indicates if looping through CatalogueItems and we are not at the last element in the collection yet.</param>
+    /// <param name="iteration">
+    ///     Indicates if looping through CatalogueItems and we are not at the last element in the
+    ///     collection yet.
+    /// </param>
     /// <returns></returns>
     private string DoReplacements(string template, CatalogueItem catalogueItem, ElementIteration iteration)
     {

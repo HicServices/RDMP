@@ -24,9 +24,10 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// Creates default pipelines required for basic functionality in RDMP.  These are templates that work but can be expanded upon / modified by the user.  For
-/// example the user might want to add a ColumnForbidder to the default export pipeline to prevent sensitive fields being extracted etc.
-/// 
+///     Creates default pipelines required for basic functionality in RDMP.  These are templates that work but can be
+///     expanded upon / modified by the user.  For
+///     example the user might want to add a ColumnForbidder to the default export pipeline to prevent sensitive fields
+///     being extracted etc.
 /// </summary>
 public class CataloguePipelinesAndReferencesCreation
 {
@@ -54,7 +55,8 @@ public class CataloguePipelinesAndReferencesCreation
         var defaults = _repositoryLocator.CatalogueRepository;
         if (options.CreateLoggingServer)
         {
-            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", new LoggingDatabasePatcher())
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",
+                new LoggingDatabasePatcher())
             {
                 Server = _logging?.DataSource ?? throw new InvalidOperationException("Null logging database provided"),
                 Database = _logging.InitialCatalog
@@ -71,11 +73,12 @@ public class CataloguePipelinesAndReferencesCreation
             Console.WriteLine("Successfully configured default logging server");
         }
 
-        var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
-        {
-            Server = _dqe.DataSource,
-            Database = _dqe.InitialCatalog
-        };
+        var edsDQE =
+            new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher())
+            {
+                Server = _dqe.DataSource,
+                Database = _dqe.InitialCatalog
+            };
 
         if (_dqe.UserID != null)
         {
@@ -130,6 +133,7 @@ public class CataloguePipelinesAndReferencesCreation
             SetComponentProperties(bulkInsertCsvPipe.Destination, "LoggingServer", _edsLogging);
             SetComponentProperties(bulkInsertCsvPipewithAdjuster.Destination, "LoggingServer", _edsLogging);
         }
+
         var createCohortFromCSV = CreatePipeline("CREATE COHORT:From CSV File", typeof(DelimitedFlatFileDataFlowSource),
             typeof(BasicCohortDestination));
         SetComponentProperties(createCohortFromCSV.Source, "Separator", ",");

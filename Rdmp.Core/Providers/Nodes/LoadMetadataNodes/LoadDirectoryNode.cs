@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.IO;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -22,15 +23,24 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
     public bool IsEmpty => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles);
 
 
-    public override string ToString() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
-        ? "???"
-        : LoadMetadata.LocationOfFlatFiles;
+    public override string ToString()
+    {
+        return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
+            ? "???"
+            : LoadMetadata.LocationOfFlatFiles;
+    }
 
-    public DirectoryInfo GetDirectoryInfoIfAny() => string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
-        ? null
-        : new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
+    public DirectoryInfo GetDirectoryInfoIfAny()
+    {
+        return string.IsNullOrWhiteSpace(LoadMetadata.LocationOfFlatFiles)
+            ? null
+            : new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
+    }
 
-    protected bool Equals(LoadDirectoryNode other) => Equals(LoadMetadata, other.LoadMetadata);
+    protected bool Equals(LoadDirectoryNode other)
+    {
+        return Equals(LoadMetadata, other.LoadMetadata);
+    }
 
     public override bool Equals(object obj)
     {
@@ -40,7 +50,10 @@ public class LoadDirectoryNode : Node, IDirectoryInfoNode, IOrderable
         return Equals((LoadDirectoryNode)obj);
     }
 
-    public override int GetHashCode() => System.HashCode.Combine(LoadMetadata);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(LoadMetadata);
+    }
 
     public int Order
     {

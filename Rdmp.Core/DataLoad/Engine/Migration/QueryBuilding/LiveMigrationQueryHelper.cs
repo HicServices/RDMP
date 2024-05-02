@@ -12,7 +12,7 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// See MigrationQueryHelper
+///     See MigrationQueryHelper
 /// </summary>
 public class LiveMigrationQueryHelper : MigrationQueryHelper
 {
@@ -32,7 +32,10 @@ public class LiveMigrationQueryHelper : MigrationQueryHelper
         return string.Join(", ", parts);
     }
 
-    public override string BuildInsertClause() => throw new NotImplementedException();
+    public override string BuildInsertClause()
+    {
+        throw new NotImplementedException();
+    }
 
     public static List<KeyValuePair<string, string>> GetListOfInsertColumnFields(MigrationColumnSet columnsToMigrate,
         int dataLoadRunID)

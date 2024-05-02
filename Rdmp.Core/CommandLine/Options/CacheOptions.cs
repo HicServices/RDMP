@@ -11,7 +11,7 @@ using CommandLine.Text;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Command line options for the caching engine
+///     Command line options for the caching engine
 /// </summary>
 [Verb("cache",
     HelpText =

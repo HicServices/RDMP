@@ -27,11 +27,16 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
             SetImpossible("ExtractionConfiguration does not have any selected datasets");
     }
 
-    public override string GetCommandHelp() =>
-        "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
+    public override string GetCommandHelp()
+    {
+        return
+            "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.CloneExtractionConfiguration);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.CloneExtractionConfiguration);
+    }
 
     public override void Execute()
     {

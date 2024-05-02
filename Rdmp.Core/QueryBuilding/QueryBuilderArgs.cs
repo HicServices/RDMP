@@ -12,8 +12,10 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Input class for <see cref="CohortQueryBuilderHelper"/> that assists in building the Sql query for a single cohort set in a <see cref="AggregateConfiguration"/>
-/// This can include arbitrary hacks like replacing the patient identifier with * and applying TopX etc (see base class <see cref="QueryBuilderCustomArgs"/>).
+///     Input class for <see cref="CohortQueryBuilderHelper" /> that assists in building the Sql query for a single cohort
+///     set in a <see cref="AggregateConfiguration" />
+///     This can include arbitrary hacks like replacing the patient identifier with * and applying TopX etc (see base class
+///     <see cref="QueryBuilderCustomArgs" />).
 /// </summary>
 public class QueryBuilderArgs : QueryBuilderCustomArgs
 {
@@ -23,7 +25,8 @@ public class QueryBuilderArgs : QueryBuilderCustomArgs
     public ISqlParameter[] Globals { get; }
 
     /// <summary>
-    /// Creates basic arguments for an <see cref="AggregateConfiguration"/> that does not have a join to a patient index table
+    ///     Creates basic arguments for an <see cref="AggregateConfiguration" /> that does not have a join to a patient index
+    ///     table
     /// </summary>
     public QueryBuilderArgs(QueryBuilderCustomArgs customisations, ISqlParameter[] globals)
     {
@@ -32,10 +35,14 @@ public class QueryBuilderArgs : QueryBuilderCustomArgs
     }
 
     /// <summary>
-    /// Creates arguments for an <see cref="AggregateConfiguration"/> which has a JOIN to a patient index table.  All arguments must be provided
+    ///     Creates arguments for an <see cref="AggregateConfiguration" /> which has a JOIN to a patient index table.  All
+    ///     arguments must be provided
     /// </summary>
     /// <param name="join">The join usage relationship object (includes join direction etc)</param>
-    /// <param name="joinedTo">The patient index to which the join is made to (e.g. <see cref="JoinableCohortAggregateConfiguration.AggregateConfiguration"/>)</param>
+    /// <param name="joinedTo">
+    ///     The patient index to which the join is made to (e.g.
+    ///     <see cref="JoinableCohortAggregateConfiguration.AggregateConfiguration" />)
+    /// </param>
     /// <param name="joinSql">The full SQL of the join</param>
     /// <param name="customisations"></param>
     /// <param name="globals"></param>

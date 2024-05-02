@@ -15,7 +15,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Cohort.Joinables;
 
 /// <summary>
-/// Indicates that a given AggregateConfiguration in a CohortIdentificationConfiguration is implicitly joined against a 'PatientIndexTable' See JoinableCohortAggregateConfiguration
+///     Indicates that a given AggregateConfiguration in a CohortIdentificationConfiguration is implicitly joined against a
+///     'PatientIndexTable' See JoinableCohortAggregateConfiguration
 /// </summary>
 public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
 {
@@ -26,7 +27,8 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     private ExtractionJoinType _joinType;
 
     /// <summary>
-    /// Specifies the patient index table against which the <see cref="AggregateConfiguration_ID"/> should be joined with at query generation time
+    ///     Specifies the patient index table against which the <see cref="AggregateConfiguration_ID" /> should be joined with
+    ///     at query generation time
     /// </summary>
     public int JoinableCohortAggregateConfiguration_ID
     {
@@ -35,8 +37,9 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     }
 
     /// <summary>
-    /// Specifies the <see cref="AggregateConfiguration"/> which should be joined with the referenced patient index table (See <see cref="JoinableCohortAggregateConfiguration_ID"/>)
-    /// at query generation time
+    ///     Specifies the <see cref="AggregateConfiguration" /> which should be joined with the referenced patient index table
+    ///     (See <see cref="JoinableCohortAggregateConfiguration_ID" />)
+    ///     at query generation time
     /// </summary>
     public int AggregateConfiguration_ID
     {
@@ -45,8 +48,12 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     }
 
     /// <summary>
-    /// Determines how the cohort set <see cref="AggregateConfiguration"/> will be joined against the patient index table referenced by the <see cref="JoinableCohortAggregateConfiguration_ID"/>
-    /// <para>The cohort aggregate is always the 'left' table and the patient index table is the 'right' table.  The join is performed on the patient identifier column</para>
+    ///     Determines how the cohort set <see cref="AggregateConfiguration" /> will be joined against the patient index table
+    ///     referenced by the <see cref="JoinableCohortAggregateConfiguration_ID" />
+    ///     <para>
+    ///         The cohort aggregate is always the 'left' table and the patient index table is the 'right' table.  The join
+    ///         is performed on the patient identifier column
+    ///     </para>
     /// </summary>
     public ExtractionJoinType JoinType
     {
@@ -58,12 +65,12 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
 
     #region Relationships
 
-    /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID"/>
+    /// <inheritdoc cref="JoinableCohortAggregateConfiguration_ID" />
     [NoMappingToDatabase]
     public JoinableCohortAggregateConfiguration JoinableCohortAggregateConfiguration =>
         Repository.GetObjectByID<JoinableCohortAggregateConfiguration>(JoinableCohortAggregateConfiguration_ID);
 
-    /// <inheritdoc cref="AggregateConfiguration_ID"/>
+    /// <inheritdoc cref="AggregateConfiguration_ID" />
     [NoMappingToDatabase]
     public AggregateConfiguration AggregateConfiguration =>
         Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID);
@@ -109,7 +116,7 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     }
 
     /// <summary>
-    /// Translates <see cref="ExtractionJoinType"/> into an SQL keyword (LEFT / RIGHT etc).
+    ///     Translates <see cref="ExtractionJoinType" /> into an SQL keyword (LEFT / RIGHT etc).
     /// </summary>
     /// <returns></returns>
     public string GetJoinDirectionSQL()
@@ -127,8 +134,11 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     private const string ToStringPrefix = "JOIN Against:";
     private string _toStringName;
 
-    /// <inheritdoc/>
-    public override string ToString() => _toStringName ?? GetCachedName();
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return _toStringName ?? GetCachedName();
+    }
 
     private string GetCachedName()
     {
@@ -138,9 +148,13 @@ public class JoinableCohortAggregateConfigurationUse : DatabaseEntity
     }
 
     /// <summary>
-    /// Gets the table alias for the index table in the join sql query e.g. if the alias was ix123 then the query built would be something like
-    /// <code>'select chi from Tbl1 INNER JOIN TblPatIndx ix123 on Tbl1.chi = ix123.chi where ix123.date > GETDATE()'</code>
+    ///     Gets the table alias for the index table in the join sql query e.g. if the alias was ix123 then the query built
+    ///     would be something like
+    ///     <code>'select chi from Tbl1 INNER JOIN TblPatIndx ix123 on Tbl1.chi = ix123.chi where ix123.date > GETDATE()'</code>
     /// </summary>
     /// <returns></returns>
-    public string GetJoinTableAlias() => $"ix{JoinableCohortAggregateConfiguration_ID}";
+    public string GetJoinTableAlias()
+    {
+        return $"ix{JoinableCohortAggregateConfiguration_ID}";
+    }
 }

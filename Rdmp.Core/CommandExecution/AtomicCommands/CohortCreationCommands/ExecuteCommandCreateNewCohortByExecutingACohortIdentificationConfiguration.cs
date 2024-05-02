@@ -19,7 +19,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 /// <summary>
-/// Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration"/> and pipes the resulting private identifier list to create a new <see cref="ExtractableCohort"/>.
+///     Generates and runs an SQL query based on a <see cref="CohortIdentificationConfiguration" /> and pipes the resulting
+///     private identifier list to create a new <see cref="ExtractableCohort" />.
 /// </summary>
 public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration : CohortCreationCommandExecution
 {
@@ -56,8 +57,11 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         _cic = cic;
     }
 
-    public override string GetCommandHelp() =>
-        "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
+    public override string GetCommandHelp()
+    {
+        return
+            "Run the cohort identification configuration (query) and save the resulting final cohort identifier list into a saved cohort database";
+    }
 
     public override void Execute()
     {
@@ -103,8 +107,10 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             cmd.Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Import);
+    }
 
     public override IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

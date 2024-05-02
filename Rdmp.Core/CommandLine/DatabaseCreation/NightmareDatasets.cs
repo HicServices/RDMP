@@ -20,14 +20,14 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 internal class NightmareDatasets : DataGenerator
 {
-    private IRDMPPlatformRepositoryServiceLocator _repos;
-    private string _serverName;
-    private string _databaseNameWrapped;
-    private string _databaseNameRuntime;
+    private readonly IRDMPPlatformRepositoryServiceLocator _repos;
+    private readonly string _serverName;
+    private readonly string _databaseNameWrapped;
+    private readonly string _databaseNameRuntime;
 
     /// <summary>
-    /// Defaults to 1, set to 2 to double the amount of objects generated.
-    /// Set to 10 to produce 10 times the amount etc
+    ///     Defaults to 1, set to 2 to double the amount of objects generated.
+    ///     Set to 10 to produce 10 times the amount etc
     /// </summary>
     public int Factor = 1;
 
@@ -40,21 +40,24 @@ internal class NightmareDatasets : DataGenerator
         _databaseNameRuntime = db1.GetRuntimeName();
     }
 
-    private BucketList<Catalogue> Catalogues = new ();
-    private BucketList<ExtractableDataSet> ExtractableDatasets = new ();
-    private BucketList<Project> Projects = new ();
-    private BucketList<TableInfo> Tables = new ();
+    private readonly BucketList<Catalogue> Catalogues = new();
+    private readonly BucketList<ExtractableDataSet> ExtractableDatasets = new();
+    private readonly BucketList<Project> Projects = new();
+    private readonly BucketList<TableInfo> Tables = new();
     private int TablesCount;
 
     private BucketList<ColumnInfo> Columns = new();
     private int ColumnsCount;
 
     /// <summary>
-    /// <para>Generates a lot of metadata in the RDMP platform databases.  This is for testing
-    /// system scalability.
-    /// </para>
-    /// <remarks>We use <see cref="DataGenerator.GetRandomGPCode(Random)"/> a lot, this is just because it is a nice
-    /// short string of letter and numbers not because we are actually using GP codes</remarks>
+    ///     <para>
+    ///         Generates a lot of metadata in the RDMP platform databases.  This is for testing
+    ///         system scalability.
+    ///     </para>
+    ///     <remarks>
+    ///         We use <see cref="DataGenerator.GetRandomGPCode(Random)" /> a lot, this is just because it is a nice
+    ///         short string of letter and numbers not because we are actually using GP codes
+    ///     </remarks>
     /// </summary>
     public void Create(ExternalCohortTable ect)
     {
@@ -264,7 +267,13 @@ internal class NightmareDatasets : DataGenerator
     }
 
     // we are not actually interested in these methods, just want to use GetGaussian etc
-    public override object[] GenerateTestDataRow(Person p) => throw new NotSupportedException();
+    public override object[] GenerateTestDataRow(Person p)
+    {
+        throw new NotSupportedException();
+    }
 
-    protected override string[] GetHeaders() => throw new NotSupportedException();
+    protected override string[] GetHeaders()
+    {
+        throw new NotSupportedException();
+    }
 }

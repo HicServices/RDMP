@@ -23,7 +23,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Scores objects as to how relevant they are to a given search string
+///     Scores objects as to how relevant they are to a given search string
 /// </summary>
 public class SearchablesMatchScorer
 {
@@ -40,34 +40,34 @@ public class SearchablesMatchScorer
 
 
     /// <summary>
-    /// List of objects which should be favoured slightly above others of equal match potential
+    ///     List of objects which should be favoured slightly above others of equal match potential
     /// </summary>
     public List<IMapsDirectlyToDatabaseTable> BumpMatches { get; set; } = new();
 
     /// <summary>
-    /// Only show objects with the given ID
+    ///     Only show objects with the given ID
     /// </summary>
     public int? ID { get; set; }
 
     /// <summary>
-    /// How much to bump matches when they are in <see cref="BumpMatches"/>
+    ///     How much to bump matches when they are in <see cref="BumpMatches" />
     /// </summary>
     public int BumpWeight = 1;
 
     /// <summary>
-    /// True to respect <see cref="UserSettings.ShowProjectSpecificCatalogues"/> etc settings.  Defaults to false
+    ///     True to respect <see cref="UserSettings.ShowProjectSpecificCatalogues" /> etc settings.  Defaults to false
     /// </summary>
     public bool RespectUserSettings { get; set; } = false;
 
 
     /// <summary>
-    /// Determines behaviour when there are no search terms.  If true then return an empty dictionary.
-    /// If false return a dictionary in which all items are scored 0.
+    ///     Determines behaviour when there are no search terms.  If true then return an empty dictionary.
+    ///     If false return a dictionary in which all items are scored 0.
     /// </summary>
     public bool ReturnEmptyResultWhenNoSearchTerms { get; set; }
 
     /// <summary>
-    /// When the user types one of these they get a filter on the full Type
+    ///     When the user types one of these they get a filter on the full Type
     /// </summary>
     public static Dictionary<string, Type> ShortCodes =
         new(StringComparer.CurrentCultureIgnoreCase)
@@ -88,14 +88,16 @@ public class SearchablesMatchScorer
         };
 
     /// <summary>
-    /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
-    /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
-    /// Key Type.
+    ///     When the user types one of these Types (or a <see cref="ShortCodes" /> for one) they also get the value list for
+    ///     free.
+    ///     This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs" /> objects as though they were the same
+    ///     as thier
+    ///     Key Type.
     /// </summary>
     public static Dictionary<string, Type[]> AlsoIncludes =
         new(StringComparer.CurrentCultureIgnoreCase)
         {
-            { "Pipeline", new Type[] { typeof(PipelineCompatibleWithUseCaseNode) } }
+            { "Pipeline", new[] { typeof(PipelineCompatibleWithUseCaseNode) } }
         };
 
     public SearchablesMatchScorer()
@@ -106,13 +108,23 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Performs a free text search on all <paramref name="searchables"/>.  The <paramref name="searchText"/> will match on both the object
-    /// and its parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
+    ///     Performs a free text search on all <paramref name="searchables" />.  The <paramref name="searchText" /> will match
+    ///     on both the object
+    ///     and its parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
     /// </summary>
-    /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables"/>)</param>
+    /// <param name="searchables">
+    ///     All available objects that can be searched (see
+    ///     <see cref="ICoreChildProvider.GetAllSearchables" />)
+    /// </param>
     /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>
-    /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
-    /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
+    /// <param name="showOnlyTypes">
+    ///     Optional (can be null) list of types to return results from.  Not respected if
+    ///     <paramref name="searchText" /> includes type names
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     Token for cancelling match scoring.  This method will return null if cancellation is
+    ///     detected
+    /// </param>
     /// <returns></returns>
     public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText,
@@ -143,7 +155,7 @@ public class SearchablesMatchScorer
         if (ReturnEmptyResultWhenNoSearchTerms && string.IsNullOrWhiteSpace(searchText) && ID == null)
             return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
 
-        var tokens = (searchText ?? "").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        var tokens = (searchText ?? "").Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
         var regexes = new List<Regex>();
 
@@ -272,13 +284,17 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Returns true if the given <paramref name="kvp"/> object isnot one the user wants to ever see based on the values e.g. <see cref="UserSettings.ShowDeprecatedCatalogues"/>
+    ///     Returns true if the given <paramref name="kvp" /> object isnot one the user wants to ever see based on the values
+    ///     e.g. <see cref="UserSettings.ShowDeprecatedCatalogues" />
     /// </summary>
     /// <param name="kvp"></param>
     /// <returns></returns>
-    private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp) =>
-        !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues, _showColdStorageCatalogues,
+    private bool ScoreZeroBecauseOfUserSettings(KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
+    {
+        return !Filter(kvp.Key, kvp.Value, _showInternalCatalogues, _showDeprecatedCatalogues,
+            _showColdStorageCatalogues,
             _showProjectSpecificCatalogues, _showNonExtractableCatalogues);
+    }
 
     private static Catalogue GetCatalogueIfAnyInDescendancy(
         KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList> kvp)
@@ -288,7 +304,10 @@ public class SearchablesMatchScorer
             : (Catalogue)kvp.Value?.Parents.FirstOrDefault(p => p is Catalogue);
     }
 
-    private static int CountMatchType(List<Regex> regexes, object key) => MatchCount(regexes, key.GetType().Name);
+    private static int CountMatchType(List<Regex> regexes, object key)
+    {
+        return MatchCount(regexes, key.GetType().Name);
+    }
 
     private static int CountMatchToString(List<Regex> regexes, object key)
     {
@@ -321,8 +340,8 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Returns true if the given <paramref name="modelObject"/> survives filtering based on the supplied inclusion
-    /// criteria.  Anything that isn't in some way related to a <see cref="Catalogue"/> automatically survives filtering
+    ///     Returns true if the given <paramref name="modelObject" /> survives filtering based on the supplied inclusion
+    ///     criteria.  Anything that isn't in some way related to a <see cref="Catalogue" /> automatically survives filtering
     /// </summary>
     /// <param name="modelObject"></param>
     /// <param name="descendancy"></param>
@@ -364,8 +383,8 @@ public class SearchablesMatchScorer
     }
 
     /// <summary>
-    /// Shortlists the output of <see cref="ScoreMatches"/>
-    /// producing a list of results up to the supplied length (<paramref name="take"/>).
+    ///     Shortlists the output of <see cref="ScoreMatches" />
+    ///     producing a list of results up to the supplied length (<paramref name="take" />).
     /// </summary>
     /// <param name="scores"></param>
     /// <param name="take"></param>

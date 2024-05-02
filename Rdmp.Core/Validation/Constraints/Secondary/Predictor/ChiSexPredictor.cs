@@ -9,8 +9,9 @@ using System;
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Validation rule that checks that the second from last digit in a CHI matches the patient gender.  CHI numbers second last digit should be even for
-/// females and odd for males.
+///     Validation rule that checks that the second from last digit in a CHI matches the patient gender.  CHI numbers
+///     second last digit should be even for
+///     females and odd for males.
 /// </summary>
 public class ChiSexPredictor : PredictionRule
 {

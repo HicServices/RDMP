@@ -7,14 +7,14 @@
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Provides the ProjectNumber as the salt for the data export hashing of columns (See ConfigureHashingAlgorithm)
+///     Provides the ProjectNumber as the salt for the data export hashing of columns (See ConfigureHashingAlgorithm)
 /// </summary>
 public class HICProjectSalt : IHICProjectSalt
 {
     private readonly IProject _project;
 
     /// <summary>
-    /// Creates a hashing salt based on the given <paramref name="project"/>'s <see cref="IProject.ProjectNumber"/>
+    ///     Creates a hashing salt based on the given <paramref name="project" />'s <see cref="IProject.ProjectNumber" />
     /// </summary>
     /// <param name="project"></param>
     public HICProjectSalt(IProject project)
@@ -23,8 +23,11 @@ public class HICProjectSalt : IHICProjectSalt
     }
 
     /// <summary>
-    /// Returns the <see cref="IProject.ProjectNumber"/> (set during construction).
+    ///     Returns the <see cref="IProject.ProjectNumber" /> (set during construction).
     /// </summary>
     /// <returns></returns>
-    public string GetSalt() => _project.ProjectNumber.ToString();
+    public string GetSalt()
+    {
+        return _project.ProjectNumber.ToString();
+    }
 }

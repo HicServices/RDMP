@@ -1,5 +1,4 @@
 using System.Reflection;
-
 #if WINDOWS
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("windows")]
 #endif

@@ -17,8 +17,10 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
-/// Records the total number of validation failures that occur for each column.  Results are calculated for each novel DataLoadRunId found.  The counts
-/// for a column will always add up to the row count even if there are multiple validation rules broken (The worst consequence only is counted).
+///     Records the total number of validation failures that occur for each column.  Results are calculated for each novel
+///     DataLoadRunId found.  The counts
+///     for a column will always add up to the row count even if there are multiple validation rules broken (The worst
+///     consequence only is counted).
 /// </summary>
 public class DQEStateOverDataLoadRunId
 {
@@ -106,8 +108,9 @@ public class DQEStateOverDataLoadRunId
     private bool _correctValuesCalculated;
 
     /// <summary>
-    /// Calculates the final counts for each Column based on the validation failures documented to date.  You can only call this method once and it
-    /// must be called before committing to database.
+    ///     Calculates the final counts for each Column based on the validation failures documented to date.  You can only call
+    ///     this method once and it
+    ///     must be called before committing to database.
     /// </summary>
     /// <exception cref="Exception"></exception>
     public void CalculateFinalValues()
@@ -121,20 +124,20 @@ public class DQEStateOverDataLoadRunId
         //per run id
         foreach (var dataLoadRunID in AllColumnStates.Keys)
             //per column
-            foreach (var column in AllColumnStates[dataLoadRunID])
-                //if it is a constrained column
-                if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
-                    .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
-                {
-                    //adjust our correct value downwards according to the results of the dictionary of failure
-                    column.CountMissing = consequence[Consequence.Missing];
-                    column.CountWrong = consequence[Consequence.Wrong];
-                    column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
+        foreach (var column in AllColumnStates[dataLoadRunID])
+            //if it is a constrained column
+            if (ColumnValidationFailuresByDataLoadRunID[dataLoadRunID]
+                .DictionaryOfFailure.TryGetValue(column.TargetProperty, out var consequence))
+            {
+                //adjust our correct value downwards according to the results of the dictionary of failure
+                column.CountMissing = consequence[Consequence.Missing];
+                column.CountWrong = consequence[Consequence.Wrong];
+                column.CountInvalidatesRow = consequence[Consequence.InvalidatesRow];
 
-                    column.CountCorrect -= consequence[Consequence.Missing];
-                    column.CountCorrect -= consequence[Consequence.Wrong];
-                    column.CountCorrect -= consequence[Consequence.InvalidatesRow];
-                }
+                column.CountCorrect -= consequence[Consequence.Missing];
+                column.CountCorrect -= consequence[Consequence.Wrong];
+                column.CountCorrect -= consequence[Consequence.InvalidatesRow];
+            }
     }
 
     public void CommitToDatabase(Evaluation evaluation, ICatalogue catalogue, DbConnection con,

@@ -16,7 +16,7 @@ namespace Rdmp.Core.DataLoad.Engine.Migration;
 public delegate void TableMigrationComplete(string tableName, int numInserts, int numUpdates);
 
 /// <summary>
-/// See OverwriteMigrationStrategy
+///     See OverwriteMigrationStrategy
 /// </summary>
 public abstract class DatabaseMigrationStrategy
 {

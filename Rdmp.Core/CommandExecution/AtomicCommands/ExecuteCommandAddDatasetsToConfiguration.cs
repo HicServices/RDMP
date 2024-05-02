@@ -23,8 +23,8 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     private IExtractableDataSet[] _toadd;
 
     /// <summary>
-    /// True if <see cref="_toadd"/> is a suggestion of available datasets from which the user must pick.
-    /// False if <see cref="_toadd"/> reflects an already made selection (e.g. a drag and drop operation).
+    ///     True if <see cref="_toadd" /> is a suggestion of available datasets from which the user must pick.
+    ///     False if <see cref="_toadd" /> reflects an already made selection (e.g. a drag and drop operation).
     /// </summary>
     private bool _userMustPick;
 
@@ -90,11 +90,11 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         if (_userMustPick)
         {
             if (!SelectMany(new DialogArgs
-            {
-                WindowTitle = "Select Datasets",
-                TaskDescription =
+                {
+                    WindowTitle = "Select Datasets",
+                    TaskDescription =
                         "Select the Datasets you would like to be exported as part of your Extraction Configuration."
-            }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
+                }, _toadd.Cast<ExtractableDataSet>().ToArray(), out var selected))
                 return;
 
             foreach (var ds in selected)
@@ -109,6 +109,8 @@ public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
         Publish(_targetExtractionConfiguration);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Import);
+    }
 }

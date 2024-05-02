@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.Sharing.Refactoring.Exceptions;
 
 /// <summary>
-/// Thrown when there is a problem performing renaming refactoring on an SQL string (e.g. SelectSQL / WhereSQL etc)
+///     Thrown when there is a problem performing renaming refactoring on an SQL string (e.g. SelectSQL / WhereSQL etc)
 /// </summary>
 public class RefactoringException : Exception
 {

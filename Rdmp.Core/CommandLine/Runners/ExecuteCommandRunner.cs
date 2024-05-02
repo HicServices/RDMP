@@ -70,11 +70,11 @@ internal class ExecuteCommandRunner : IRunner
 
         // add Aliases (commands that can be invoked with an alternate shorthand)
         foreach (var type in commandTypes)
-            foreach (var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
-                if (!_commands.TryAdd(alias.Name, type))
-                    _listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Warning,
-                            $"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
+        foreach (var alias in type.GetCustomAttributes(false).OfType<AliasAttribute>())
+            if (!_commands.TryAdd(alias.Name, type))
+                _listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Warning,
+                        $"Bad command alias '{alias.Name}', it is already in use by '{_commands[alias.Name].FullName}' so cannot be used for '{type.FullName}'"));
 
 
         _picker =
@@ -120,7 +120,7 @@ internal class ExecuteCommandRunner : IRunner
     }
 
     /// <summary>
-    /// Runs a main loop in which the user types many commands one after the other
+    ///     Runs a main loop in which the user types many commands one after the other
     /// </summary>
     /// <param name="repositoryLocator"></param>
     private void RunCommandExecutionLoop(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -152,7 +152,8 @@ internal class ExecuteCommandRunner : IRunner
     }
 
     /// <summary>
-    /// Takes a single command line e.g. "list Catalogue" and spits it into a command "list" (returned) and the arguments list (as <paramref name="picker"/>)
+    ///     Takes a single command line e.g. "list Catalogue" and spits it into a command "list" (returned) and the arguments
+    ///     list (as <paramref name="picker" />)
     /// </summary>
     /// <param name="command"></param>
     /// <param name="picker"></param>
@@ -172,7 +173,7 @@ internal class ExecuteCommandRunner : IRunner
     }
 
     /// <summary>
-    /// Runs all commands in the provided script
+    ///     Runs all commands in the provided script
     /// </summary>
     /// <param name="script">Location of the file to run</param>
     /// <param name="repositoryLocator"></param>
@@ -213,8 +214,8 @@ internal class ExecuteCommandRunner : IRunner
     }
 
     /// <summary>
-    /// Splits a command line string into a sequence of discrete arguments as you would get in Program.cs main
-    /// string[] args.  Includes support for wrapping arguments in spaces and escaping etc
+    ///     Splits a command line string into a sequence of discrete arguments as you would get in Program.cs main
+    ///     string[] args.  Includes support for wrapping arguments in spaces and escaping etc
     /// </summary>
     /// <param name="commandLine"></param>
     /// <returns></returns>

@@ -14,10 +14,13 @@ using System.Text.RegularExpressions;
 namespace Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
 /// <summary>
-/// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather
-/// than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support the full specification of CSV and
-/// it is easier to provide them with a file where problem symbols are not present than explain that they have to join multiple lines together when it is
-/// bounded by quotes.
+///     Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips
+///     out all problem fields rather
+///     than applying proper escaping etc.  This is done because some researcher end point tools / scripts do not support
+///     the full specification of CSV and
+///     it is easier to provide them with a file where problem symbols are not present than explain that they have to join
+///     multiple lines together when it is
+///     bounded by quotes.
 /// </summary>
 public class CSVOutputFormat : FileOutputFormat
 {
@@ -36,7 +39,10 @@ public class CSVOutputFormat : FileOutputFormat
         DateFormat = dateFormat;
     }
 
-    public override string GetFileExtension() => ".csv";
+    public override string GetFileExtension()
+    {
+        return ".csv";
+    }
 
     public override void Open()
     {

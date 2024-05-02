@@ -12,41 +12,43 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
-/// <inheritdoc cref="ProcessTask"/>
+/// <inheritdoc cref="ProcessTask" />
 public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisableable
 {
-    /// <inheritdoc cref="IArgumentHost.GetAllArguments"/>
+    /// <inheritdoc cref="IArgumentHost.GetAllArguments" />
     IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get; }
 
     /// <summary>
-    /// Either the C# Type name of a data load component (e.g. an IAttatcher, IDataProvider) or the path to an sql file or exe file (depending on <see cref="ProcessTaskType"/>)
+    ///     Either the C# Type name of a data load component (e.g. an IAttatcher, IDataProvider) or the path to an sql file or
+    ///     exe file (depending on <see cref="ProcessTaskType" />)
     /// </summary>
     string Path { get; }
 
     /// <summary>
-    /// The human readable description of what the component is supposed to do (e.g. "Copy all csv files from c:/temp/landing into ForLoading")
+    ///     The human readable description of what the component is supposed to do (e.g. "Copy all csv files from
+    ///     c:/temp/landing into ForLoading")
     /// </summary>
     string Name { get; }
 
     /// <summary>
-    /// The stage of the data load (RAW=>STAGING=>LIVE) that the task should be run at.  This can restrict which operations are allowed e.g. you can't run attatchers PostLoad
+    ///     The stage of the data load (RAW=>STAGING=>LIVE) that the task should be run at.  This can restrict which operations
+    ///     are allowed e.g. you can't run attatchers PostLoad
     /// </summary>
     LoadStage LoadStage { get; }
 
-    /// <inheritdoc cref="DataLoad.ProcessTaskType"/>
+    /// <inheritdoc cref="DataLoad.ProcessTaskType" />
     ProcessTaskType ProcessTaskType { get; }
 
     /// <summary>
-    /// Deprecated property
+    ///     Deprecated property
     /// </summary>
     [Obsolete(
         "Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
     int? RelatesSolelyToCatalogue_ID { get; }
 
     /// <summary>
-    /// A serialised JSON object that stores arbitrary configuration for the process task
+    ///     A serialised JSON object that stores arbitrary configuration for the process task
     /// </summary>
-    #nullable enable
+#nullable enable
     string? SerialisableConfiguration { get; }
-    #nullable disable
 }

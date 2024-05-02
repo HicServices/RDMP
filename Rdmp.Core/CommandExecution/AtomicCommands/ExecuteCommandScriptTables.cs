@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Script multiple tables optionally porting schema to a new server/DBMS type
+///     Script multiple tables optionally porting schema to a new server/DBMS type
 /// </summary>
 public class ExecuteCommandScriptTables : BasicCommandExecution
 {
@@ -28,7 +28,7 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
     private readonly FileInfo _outFile;
 
     /// <summary>
-    /// Scripts multiple tables schemas and optionally ports datatypes / constraints etc to alternate DBMS
+    ///     Scripts multiple tables schemas and optionally ports datatypes / constraints etc to alternate DBMS
     /// </summary>
     public ExecuteCommandScriptTables(IBasicActivateItems activator,
         [DemandsInitialization("Tables to script")]
@@ -46,7 +46,10 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
         _outFile = outFile;
     }
 
-    public override string GetCommandHelp() => "Scripts multiple tables structure to Clipboard (without dependencies)";
+    public override string GetCommandHelp()
+    {
+        return "Scripts multiple tables structure to Clipboard (without dependencies)";
+    }
 
     public override void Execute()
     {
@@ -72,5 +75,8 @@ public class ExecuteCommandScriptTables : BasicCommandExecution
             Show($"Script for {_tableInfos.Length} tables", sbScript.ToString());
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SQL);
+    }
 }

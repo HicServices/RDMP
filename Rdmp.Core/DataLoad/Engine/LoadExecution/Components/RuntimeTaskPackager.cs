@@ -16,10 +16,13 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves converting the ProcessTasks
-/// (which are user defined class names, argument values etc) into instances of IRuntimeTask.  You can either call CreateCompositeDataLoadComponentFor
-/// to create a generic CompositeDataLoadComponent containing all the IRuntimeTasks or you can get the IRuntimeTask list directly and use it yourself in
-/// a more advanced DataLoadComponent (e.g. PopulateRAW - See usages in HICDataLoadFactory)
+///     Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves
+///     converting the ProcessTasks
+///     (which are user defined class names, argument values etc) into instances of IRuntimeTask.  You can either call
+///     CreateCompositeDataLoadComponentFor
+///     to create a generic CompositeDataLoadComponent containing all the IRuntimeTasks or you can get the IRuntimeTask
+///     list directly and use it yourself in
+///     a more advanced DataLoadComponent (e.g. PopulateRAW - See usages in HICDataLoadFactory)
 /// </summary>
 public class RuntimeTaskPackager
 {

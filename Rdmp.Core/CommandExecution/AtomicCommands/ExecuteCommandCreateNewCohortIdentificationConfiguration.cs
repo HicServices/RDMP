@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new persistent database query configuration for identifying cohort sets of patients.
+///     Creates a new persistent database query configuration for identifying cohort sets of patients.
 /// </summary>
 public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
 {
@@ -26,28 +26,30 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     private readonly string _name;
 
     /// <summary>
-    /// True to prompt the user to pick a Project if no explicit Project is configured
-    /// yet on this command.
+    ///     True to prompt the user to pick a Project if no explicit Project is configured
+    ///     yet on this command.
     /// </summary>
     public bool PromptToPickAProject { get; set; } = false;
 
     /// <summary>
-    /// The folder to put the new <see cref="CohortIdentificationConfiguration"/> in.  Defaults to <see cref="FolderHelper.Root"/>
+    ///     The folder to put the new <see cref="CohortIdentificationConfiguration" /> in.  Defaults to
+    ///     <see cref="FolderHelper.Root" />
     /// </summary>
     public string Folder { get; init; } = FolderHelper.Root;
 
     /// <summary>
-    /// Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort Configuration Wizard)
+    ///     Name to give the root component of new cics created by this command (usually an EXCEPT but not always - see Cohort
+    ///     Configuration Wizard)
     /// </summary>
     public const string RootContainerName = "Root Container";
 
     /// <summary>
-    /// Name to give the inclusion component of new cics created by this command
+    ///     Name to give the inclusion component of new cics created by this command
     /// </summary>
     public const string InclusionCriteriaName = "Inclusion Criteria";
 
     /// <summary>
-    /// Name to give the exclusion component of new cics created by this command
+    ///     Name to give the exclusion component of new cics created by this command
     /// </summary>
     public const string ExclusionCriteriaName = "Exclusion Criteria";
 
@@ -66,8 +68,10 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         _name = name;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {
@@ -138,11 +142,11 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
 
         if (name == null)
             if (!BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = "New Cohort Builder Query",
-                TaskDescription = "Enter a name for the Cohort Builder Query.",
-                EntryLabel = "Name"
-            }, 255, null, out name, false))
+                {
+                    WindowTitle = "New Cohort Builder Query",
+                    TaskDescription = "Enter a name for the Cohort Builder Query.",
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
                 return null;
 
         var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
@@ -174,6 +178,9 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
         return cic;
     }
 
-    public override string GetCommandHelp() =>
-        "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
+    public override string GetCommandHelp()
+    {
+        return
+            "Creating a cohort identification configuration which includes/excludes patients based on the data in your database tables ";
+    }
 }

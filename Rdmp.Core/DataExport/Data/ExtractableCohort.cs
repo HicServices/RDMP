@@ -23,12 +23,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractableCohort"/>
+/// <inheritdoc cref="IExtractableCohort" />
 public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>,
     IInjectKnown<ExternalCohortTable>, ICustomSearchString
 {
     /// <summary>
-    /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts
+    ///     Logging entry in the RDMP central relational log under which to record all activities that relate to creating
+    ///     cohorts
     /// </summary>
     public const string CohortLoggingTask = "CohortManagement";
 
@@ -39,28 +40,28 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     private string _auditLog;
     private bool _isDeprecated;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ExternalCohortTable_ID
     {
         get => _externalCohortTable_ID;
         set => SetField(ref _externalCohortTable_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string OverrideReleaseIdentifierSQL
     {
         get => _overrideReleaseIdentifierSQL;
         set => SetField(ref _overrideReleaseIdentifierSQL, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string AuditLog
     {
         get => _auditLog;
         set => SetField(ref _auditLog, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int OriginID
     {
         get => _originID;
@@ -68,7 +69,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     }
 
     /// <summary>
-    /// True if the cohort has been replaced by another cohort or otherwise should not be used
+    ///     True if the cohort has been replaced by another cohort or otherwise should not be used
     /// </summary>
     public bool IsDeprecated
     {
@@ -82,7 +83,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     private int _count = -1;
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public int Count
     {
@@ -97,7 +98,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
 
     private int _countDistinct = -1;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public int CountDistinct
     {
@@ -114,21 +115,21 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
 
     #region Relationships
 
-    /// <inheritdoc cref="ExternalCohortTable_ID"/>
+    /// <inheritdoc cref="ExternalCohortTable_ID" />
     [NoMappingToDatabase]
     public IExternalCohortTable ExternalCohortTable => _knownExternalCohortTable.Value;
 
     #endregion
 
     /// <summary>
-    /// Alias field, returns <see cref="INamed.Name"/>
+    ///     Alias field, returns <see cref="INamed.Name" />
     /// </summary>
     [NoMappingToDatabase]
     [UsefulProperty(DisplayName = "Source")]
     public string Source => ExternalCohortTable.Name;
 
     /// <summary>
-    /// Fetches and returns the project number listed in the remote cohort database for this cohort (results are cached)
+    ///     Fetches and returns the project number listed in the remote cohort database for this cohort (results are cached)
     /// </summary>
     [NoMappingToDatabase]
     [UsefulProperty(DisplayName = "P")]
@@ -138,7 +139,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
     }
 
     /// <summary>
-    /// Fetches and returns the version number listed in the remote cohort database for this cohort (results are cached)
+    ///     Fetches and returns the version number listed in the remote cohort database for this cohort (results are cached)
     /// </summary>
     [NoMappingToDatabase]
     [UsefulProperty(DisplayName = "V")]
@@ -183,7 +184,7 @@ public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnow
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IExternalCohortDefinitionData GetExternalData(int timeoutInSeconds = -1)
     {
         var db = ExternalCohortTable.Discover();
@@ -220,8 +221,9 @@ where
     private int _originID;
 
     /// <summary>
-    /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to
-    /// a row in the external cohort database (<paramref name="externalSource"/>).
+    ///     Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId" />)
+    ///     to
+    ///     a row in the external cohort database (<paramref name="externalSource" />).
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="externalSource"></param>
@@ -244,8 +246,9 @@ where
     }
 
     /// <summary>
-    /// Returns the external description of the cohort (held in the remote cohort database <see cref="ExternalCohortTable"/>) or
-    /// "Broken Cohort" if that database is unreachable
+    ///     Returns the external description of the cohort (held in the remote cohort database
+    ///     <see cref="ExternalCohortTable" />) or
+    ///     "Broken Cohort" if that database is unreachable
     /// </summary>
     /// <returns></returns>
     public override string ToString()
@@ -253,12 +256,15 @@ where
         return GetFromCacheData(x => x.ExternalDescription) as string ?? "Broken Cohort";
     }
 
-    /// <inheritdoc/>
-    public string GetSearchString() => $"{ToString()} {ExternalProjectNumber} {ExternalVersion}";
+    /// <inheritdoc />
+    public string GetSearchString()
+    {
+        return $"{ToString()} {ExternalProjectNumber} {ExternalVersion}";
+    }
 
     private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         return _cachedQuerySyntaxHelper ??= ExternalCohortTable.GetQuerySyntaxHelper();
@@ -266,7 +272,7 @@ where
 
     #region Stuff for executing the actual queries described by this class (generating cohorts etc)
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DataTable FetchEntireCohort()
     {
         var ect = ExternalCohortTable;
@@ -288,7 +294,7 @@ where
         return dtReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string WhereSQL()
     {
         var ect = ExternalCohortTable;
@@ -310,7 +316,7 @@ where
         return Convert.ToInt32(cmd.ExecuteScalar());
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int GetCountDistinctFromDatabase(int timeout = -1)
     {
         var syntax = GetQuerySyntaxHelper();
@@ -338,7 +344,8 @@ where
     #endregion
 
     /// <summary>
-    /// Returns details of all cohorts held in <paramref name="externalSource"/> (that have at least one identifier mapping).
+    ///     Returns details of all cohorts held in <paramref name="externalSource" /> (that have at least one identifier
+    ///     mapping).
     /// </summary>
     /// <param name="externalSource"></param>
     /// <returns></returns>
@@ -360,7 +367,8 @@ where
     }
 
     /// <summary>
-    /// Returns the remote DataTable row held in <paramref name="externalSource"/> that describes all cohorts held in it (that have at least one identifier mapping).
+    ///     Returns the remote DataTable row held in <paramref name="externalSource" /> that describes all cohorts held in it
+    ///     (that have at least one identifier mapping).
     /// </summary>
     /// <param name="externalSource"></param>
     /// <param name="displayMemberName"></param>
@@ -400,7 +408,7 @@ where
         return toReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string GetReleaseIdentifier(bool runtimeName = false)
     {
         //respect override
@@ -422,31 +430,44 @@ where
         return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(toReturn) : toReturn;
     }
 
-    /// <inheritdoc/>
-    public string GetPrivateIdentifier(bool runtimeName = false) => runtimeName
-        ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)
-        : ExternalCohortTable.PrivateIdentifierField;
+    /// <inheritdoc />
+    public string GetPrivateIdentifier(bool runtimeName = false)
+    {
+        return runtimeName
+            ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)
+            : ExternalCohortTable.PrivateIdentifierField;
+    }
 
-    /// <inheritdoc/>
-    public string GetPrivateIdentifierDataType() => ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
+    /// <inheritdoc />
+    public string GetPrivateIdentifierDataType()
+    {
+        return ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
+    }
 
-    /// <inheritdoc/>
-    public string GetReleaseIdentifierDataType() => ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
+    /// <inheritdoc />
+    public string GetReleaseIdentifierDataType()
+    {
+        return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
+    }
 
 
-    /// <inheritdoc/>
-    public DiscoveredDatabase GetDatabaseServer() => ExternalCohortTable.Discover();
+    /// <inheritdoc />
+    public DiscoveredDatabase GetDatabaseServer()
+    {
+        return ExternalCohortTable.Discover();
+    }
 
     //these need to be private since ReverseAnonymiseDataTable will likely be called in batch
     private int _reverseAnonymiseProgressFetchingMap;
     private int _reverseAnonymiseProgressReversing;
 
     /// <summary>
-    /// Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been deleted etc.
+    ///     Indicates whether the database described in ExternalCohortTable is unreachable or if the cohort has since been
+    ///     deleted etc.
     /// </summary>
     private bool _broken;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener, bool allowCaching)
     {
         var haveWarnedAboutTop1AlreadyCount = 10;
@@ -565,7 +586,8 @@ where
     }
 
     /// <summary>
-    /// Appends the <paramref name="s"/> to the <see cref="AuditLog"/> prefixed by the DateTime and Username of the caller and then saves to database
+    ///     Appends the <paramref name="s" /> to the <see cref="AuditLog" /> prefixed by the DateTime and Username of the
+    ///     caller and then saves to database
     /// </summary>
     /// <param name="s"></param>
     public void AppendToAuditLog(string s)
@@ -576,7 +598,7 @@ where
         SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(IExternalCohortDefinitionData instance)
     {
         _broken = instance == null;
@@ -584,13 +606,13 @@ where
         _cacheData = new Lazy<IExternalCohortDefinitionData>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ExternalCohortTable instance)
     {
         _knownExternalCohortTable = new Lazy<IExternalCohortTable>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _cacheData = new Lazy<IExternalCohortDefinitionData>(() => GetExternalData());
@@ -599,13 +621,15 @@ where
         _broken = false;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { ExternalCohortTable };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() =>
-        Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID ", ID);
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID ", ID);
+    }
 }

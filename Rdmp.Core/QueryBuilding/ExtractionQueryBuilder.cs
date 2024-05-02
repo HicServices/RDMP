@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
@@ -19,8 +20,10 @@ using TypeGuesser;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment
-/// components to it to link against the cohort, drop the private identifier column, add the release identifier column etc.
+///     Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal
+///     QueryBuilder and then adding adjustment
+///     components to it to link against the cohort, drop the private identifier column, add the release identifier column
+///     etc.
 /// </summary>
 public class ExtractionQueryBuilder
 {
@@ -32,10 +35,11 @@ public class ExtractionQueryBuilder
     }
 
     /// <summary>
-    /// This produces the SQL that would retrieve the specified dataset columns including any JOINS
-    /// 
-    /// <para>It uses:
-    /// QueryBuilder and then it adds some custom lines for linking to the cohort</para>
+    ///     This produces the SQL that would retrieve the specified dataset columns including any JOINS
+    ///     <para>
+    ///         It uses:
+    ///         QueryBuilder and then it adds some custom lines for linking to the cohort
+    ///     </para>
     /// </summary>
     /// <returns></returns>
     public QueryBuilder GetSQLCommandForFullExtractionSet(ExtractDatasetCommand request,
@@ -194,7 +198,10 @@ public class ExtractionQueryBuilder
         queryBuilder.ParameterManager.AddGlobalParameter(batchEndParameter);
     }
 
-    private static string FormatDateAsParameterValue(DateTime dt) => $"'{dt.Year:D4}-{dt.Month:D2}-{dt.Day:D2}'";
+    private static string FormatDateAsParameterValue(DateTime dt)
+    {
+        return $"'{dt.Year:D4}-{dt.Month:D2}-{dt.Day:D2}'";
+    }
 
     public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper,
         IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
@@ -205,7 +212,7 @@ public class ExtractionQueryBuilder
 
         var toReturn = new List<ConstantParameter>();
 
-        if (syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)
+        if (syntaxHelper.DatabaseType == DatabaseType.Oracle)
             return toReturn;
 
         var project = configuration.Project;

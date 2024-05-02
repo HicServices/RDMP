@@ -9,8 +9,9 @@ using System.ComponentModel;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
 /// <summary>
-/// Enhanced version of c# core class <see cref="PropertyChangedEventArgs"/> which supports recording the old and new values that changed when
-/// the property was updated.
+///     Enhanced version of c# core class <see cref="PropertyChangedEventArgs" /> which supports recording the old and new
+///     values that changed when
+///     the property was updated.
 /// </summary>
 public class PropertyChangedExtendedEventArgs : PropertyChangedEventArgs
 {

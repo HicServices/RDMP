@@ -18,8 +18,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading) database (if required).  Also runs
-/// all LoadStage.Mounting and components.
+///     DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading)
+///     database (if required).  Also runs
+///     all LoadStage.Mounting and components.
 /// </summary>
 public class PopulateRAW : CompositeDataLoadComponent
 {
@@ -59,17 +60,17 @@ public class PopulateRAW : CompositeDataLoadComponent
             case 0:
                 return true;
             case > 1:
-                {
-                    // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
-                    var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
-                    var numAttachersRequiringDbCreation =
-                        attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
+            {
+                // if there are multiple attachers, ensure that they all agree on whether or not they require external database creation
+                var attachers = attachingProcesses.Select(runtime => runtime.Attacher).ToList();
+                var numAttachersRequiringDbCreation =
+                    attachers.Count(attacher => attacher.RequestsExternalDatabaseCreation);
 
-                    if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
-                        throw new Exception(
-                            $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
-                    break;
-                }
+                if (numAttachersRequiringDbCreation > 0 && numAttachersRequiringDbCreation < attachingProcesses.Length)
+                    throw new Exception(
+                        $"If there are multiple attachers then they should all agree on whether they require database creation or not: {attachers.Aggregate("", (s, attacher) => $"{s} {attacher.GetType().Name}:{attacher.RequestsExternalDatabaseCreation}")}");
+                break;
+            }
         }
 
         return attachingProcesses[0].Attacher.RequestsExternalDatabaseCreation;

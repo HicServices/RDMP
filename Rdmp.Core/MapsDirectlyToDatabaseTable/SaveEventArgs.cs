@@ -9,18 +9,18 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)"/> operation.
-/// See also <see cref="IRepository.Saving"/>
+///     Event args for the <see cref="IRepository.SaveToDatabase(IMapsDirectlyToDatabaseTable)" /> operation.
+///     See also <see cref="IRepository.Saving" />
 /// </summary>
 public class SaveEventArgs : EventArgs
 {
     /// <summary>
-    /// Set to true to prevent the save writing to database/disk.
+    ///     Set to true to prevent the save writing to database/disk.
     /// </summary>
     public bool Cancel { get; set; }
 
     /// <summary>
-    /// The object that is about to be saved to database/disk
+    ///     The object that is about to be saved to database/disk
     /// </summary>
     public IMapsDirectlyToDatabaseTable BeingSaved { get; }
 

@@ -22,7 +22,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
     private Project _project;
 
     /// <summary>
-    /// The clone that was created this command or null if it has not been executed/failed
+    ///     The clone that was created this command or null if it has not been executed/failed
     /// </summary>
     public CohortIdentificationConfiguration CloneCreatedIfAny { get; private set; }
 
@@ -34,15 +34,20 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         _cic = cic;
     }
 
-    public override string GetCommandHelp() =>
-        "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
+    public override string GetCommandHelp()
+    {
+        return
+            "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
+    }
 
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
     {
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+    }
 
     public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
     {

@@ -24,9 +24,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 
 /// <summary>
-/// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).
-/// Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire DataLoad has completed successfully) will clear
-/// out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data
+///     Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be
+///     done (e.g. data is cached but not yet loaded).
+///     Cached data is unzipped to the forLoading directory.  The Dispose method (which should be called after the entire
+///     DataLoad has completed successfully) will clear
+///     out the cached file(s) that were loaded and update the schedule to indicate the successful loading of data
 /// </summary>
 public abstract class CachedFileRetriever : ICachedDataProvider
 {
@@ -176,8 +178,11 @@ public abstract class CachedFileRetriever : ICachedDataProvider
         }
     }
 
-    private static string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache) => fileInCache
-        .Directory.FullName.Replace(cacheRoot.FullName, "").TrimStart(Path.DirectorySeparatorChar);
+    private static string GetPathRelativeToCacheRoot(DirectoryInfo cacheRoot, FileInfo fileInCache)
+    {
+        return fileInCache
+            .Directory.FullName.Replace(cacheRoot.FullName, "").TrimStart(Path.DirectorySeparatorChar);
+    }
 
     private static IArchivedFileExtractor CreateExtractor(CacheArchiveType cacheArchiveType)
     {

@@ -17,22 +17,27 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to
-/// extract this set of ExtractionInformation objects only from the database.  This includes determining which ExtractionInformation
-/// are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo in the catalogue
-/// 
-/// <para>It will throw when query SQL if it is not possible to join all the underlying tables or there are any other problems.</para>
-/// 
-/// <para>You can ask it what is on line X or ask what line number has ExtractionInformation Y on it</para>
-/// 
-/// <para>ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them to the query builder)</para>
+///     This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to
+///     extract this set of ExtractionInformation objects only from the database.  This includes determining which
+///     ExtractionInformation
+///     are Lookups, which tables the various objects come from, figuring out whether they can be joined by using JoinInfo
+///     in the catalogue
+///     <para>
+///         It will throw when query SQL if it is not possible to join all the underlying tables or there are any other
+///         problems.
+///     </para>
+///     <para>You can ask it what is on line X or ask what line number has ExtractionInformation Y on it</para>
+///     <para>
+///         ExtractionInformation is sorted by column order prior to generating the SQL (i.e. not the order you add them
+///         to the query builder)
+///     </para>
 /// </summary>
 public class QueryBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
     private readonly object oSQLLock = new();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string SQL
     {
         get
@@ -46,36 +51,39 @@ public class QueryBuilder : ISqlQueryBuilder
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string LimitationSQL { get; private set; }
 
-    /// <inheritdoc/>
-    public List<QueryTimeColumn> SelectColumns { get; private set; }
+    /// <inheritdoc />
+    public List<QueryTimeColumn> SelectColumns { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<ITableInfo> TablesUsedInQuery { get; private set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<JoinInfo> JoinsUsedInQuery { get; private set; }
 
-    /// <inheritdoc/>
-    public List<CustomLine> CustomLines { get; private set; }
+    /// <inheritdoc />
+    public List<CustomLine> CustomLines { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CustomLine TopXCustomLine { get; set; }
 
-    /// <inheritdoc/>
-    public ParameterManager ParameterManager { get; private set; }
+    /// <inheritdoc />
+    public ParameterManager ParameterManager { get; }
 
     /// <summary>
-    /// Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary key tables e.g. in a star schema.
-    /// If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the Exception
+    ///     Optional field, this specifies where to start gargantuan joins such as when there are 3+ joins and multiple primary
+    ///     key tables e.g. in a star schema.
+    ///     If this is not set and there are too many JoinInfos defined in the Catalogue then the class will bomb out with the
+    ///     Exception
     /// </summary>
     public ITableInfo PrimaryExtractionTable { get; set; }
 
     /// <summary>
-    /// A container that contains all the subcontainers and filters to be assembled during the query (use a SpontaneouslyInventedFilterContainer if you want to inject your
-    /// own container tree at runtime rather than referencing a database entity)
+    ///     A container that contains all the subcontainers and filters to be assembled during the query (use a
+    ///     SpontaneouslyInventedFilterContainer if you want to inject your
+    ///     own container tree at runtime rather than referencing a database entity)
     /// </summary>
     public IContainer RootFilterContainer
     {
@@ -87,15 +95,16 @@ public class QueryBuilder : ISqlQueryBuilder
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool CheckSyntax { get; set; }
 
 
     private string _salt;
 
     /// <summary>
-    /// Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a QueryEditor all fields so marked will be hashed using the
-    /// specified salt
+    ///     Only use this if you want IColumns which are marked as requiring Hashing to be hashed.  Once you set this on a
+    ///     QueryEditor all fields so marked will be hashed using the
+    ///     specified salt
     /// </summary>
     /// <param name="salt">A 3 letter string indicating the desired SALT</param>
     public void SetSalt(string salt)
@@ -115,11 +124,11 @@ public class QueryBuilder : ISqlQueryBuilder
         SQLOutOfDate = true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<IFilter> Filters { get; private set; }
 
     /// <summary>
-    /// Limits the number of returned rows to the supplied maximum or -1 if there is no maximum
+    ///     Limits the number of returned rows to the supplied maximum or -1 if there is no maximum
     /// </summary>
     public int TopX
     {
@@ -137,7 +146,7 @@ public class QueryBuilder : ISqlQueryBuilder
 
     private string _sql;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool SQLOutOfDate { get; set; }
 
     private IContainer _rootFilterContainer;
@@ -147,7 +156,7 @@ public class QueryBuilder : ISqlQueryBuilder
     public IQuerySyntaxHelper QuerySyntaxHelper { get; set; }
 
     /// <summary>
-    /// Used to build extraction queries based on ExtractionInformation sets
+    ///     Used to build extraction queries based on ExtractionInformation sets
     /// </summary>
     /// <param name="limitationSQL">Any text you want after SELECT to limit the results e.g. "DISTINCT" or "TOP 10"</param>
     /// <param name="hashingAlgorithm"></param>
@@ -167,7 +176,7 @@ public class QueryBuilder : ISqlQueryBuilder
         TopX = -1;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddColumnRange(IColumn[] columnsToAdd)
     {
         //add the new ones to the list
@@ -177,7 +186,7 @@ public class QueryBuilder : ISqlQueryBuilder
         SQLOutOfDate = true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddColumn(IColumn col)
     {
         var toAdd = new QueryTimeColumn(col);
@@ -190,7 +199,7 @@ public class QueryBuilder : ISqlQueryBuilder
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
     {
         SQLOutOfDate = true;
@@ -198,7 +207,8 @@ public class QueryBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to manually call it.
+    ///     Updates .SQL Property, note that this is automatically called when you query .SQL anyway so you do not need to
+    ///     manually call it.
     /// </summary>
     public void RegenerateSQL()
     {
@@ -328,11 +338,14 @@ public class QueryBuilder : ISqlQueryBuilder
         return toReturn;
     }
 
-    /// <inheritdoc/>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups() => SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    /// <inheritdoc />
+    public IEnumerable<Lookup> GetDistinctRequiredLookups()
+    {
+        return SqlQueryBuilderHelper.GetDistinctRequiredLookups(this);
+    }
 
     /// <summary>
-    /// Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter"/>.
+    ///     Generates Sql to comment, declare and set the initial value for the supplied <see cref="ISqlParameter" />.
     /// </summary>
     /// <param name="sqlParameter"></param>
     /// <returns></returns>
@@ -356,6 +369,8 @@ public class QueryBuilder : ISqlQueryBuilder
         return toReturn;
     }
 
-    public static string GetParameterDeclarationSQL(IEnumerable<ISqlParameter> sqlParameters) =>
-        string.Join("", sqlParameters.Select(GetParameterDeclarationSQL));
+    public static string GetParameterDeclarationSQL(IEnumerable<ISqlParameter> sqlParameters)
+    {
+        return string.Join("", sqlParameters.Select(GetParameterDeclarationSQL));
+    }
 }

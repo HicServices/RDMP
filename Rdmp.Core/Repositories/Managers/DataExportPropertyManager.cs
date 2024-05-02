@@ -12,10 +12,11 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Repositories.Managers;
 
 /// <summary>
-/// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release
-/// Document that is provided to researchers (and anything else we might want to configure globally for extraction in future).
-/// 
-/// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
+///     String based properties that are configured once per Data Export Database.  This includes how to implement Hashing
+///     and any text to appear in the Release
+///     Document that is provided to researchers (and anything else we might want to configure globally for extraction in
+///     future).
+///     <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
 /// </summary>
 internal class DataExportPropertyManager : IDataExportPropertyManager
 {
@@ -25,7 +26,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     private readonly ConcurrentDictionary<string, string> _cacheDictionary = new();
 
     /// <summary>
-    /// Creates a new instance ready to read values out of the <paramref name="repository"/> database
+    ///     Creates a new instance ready to read values out of the <paramref name="repository" /> database
     /// </summary>
     /// <param name="allowCaching"></param>
     /// <param name="repository"></param>
@@ -36,10 +37,10 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     }
 
     /// <summary>
-    /// Returns the currently persisted value for the given key (See <see cref="DataExportProperty"/>)
+    ///     Returns the currently persisted value for the given key (See <see cref="DataExportProperty" />)
     /// </summary>
     /// <param name="property"></param>
-    ///  <returns></returns>
+    /// <returns></returns>
     /// <exception cref="KeyNotFoundException"></exception>
     public string GetValue(string property)
     {
@@ -50,12 +51,15 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         return _cacheDictionary.TryGetValue(property, out var value) ? value : null;
     }
 
-    /// <inheritdoc cref="GetValue(string)"/>
-    public string GetValue(DataExportProperty property) => GetValue(property.ToString());
+    /// <inheritdoc cref="GetValue(string)" />
+    public string GetValue(DataExportProperty property)
+    {
+        return GetValue(property.ToString());
+    }
 
 
     /// <summary>
-    /// Stores a new <paramref name="value"/> for the given <paramref name="property"/> (and saves to the database)
+    ///     Stores a new <paramref name="value" /> for the given <paramref name="property" /> (and saves to the database)
     /// </summary>
     /// <param name="property"></param>
     /// <param name="value"></param>
@@ -82,20 +86,25 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
     }
 
     /// <summary>
-    /// Deletes the currently stored value of the given <paramref name="property"/>
+    ///     Deletes the currently stored value of the given <paramref name="property" />
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    public int DeleteValue(string property) => IssueDeleteCommand(property);
+    public int DeleteValue(string property)
+    {
+        return IssueDeleteCommand(property);
+    }
 
     #region read/write to database
 
-    private int IssueDeleteCommand(string property) =>
-        _repository.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
+    private int IssueDeleteCommand(string property)
+    {
+        return _repository.Delete("DELETE FROM [ConfigurationProperties] WHERE Property=@property",
             new Dictionary<string, object>
             {
                 { "property", property }
             });
+    }
 
     private void IssueInsertCommand(string property, string value)
     {

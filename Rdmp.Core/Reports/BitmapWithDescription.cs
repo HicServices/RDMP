@@ -9,7 +9,7 @@ using SixLabors.ImageSharp;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Describes an Aggregate Graph or Heatmap etc with optional description/headers
+///     Describes an Aggregate Graph or Heatmap etc with optional description/headers
 /// </summary>
 public class BitmapWithDescription
 {

@@ -15,10 +15,13 @@ using Rdmp.Core.DataLoad.Triggers;
 namespace Rdmp.Core.DataLoad.Engine.Migration;
 
 /// <summary>
-/// Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields roles such that artifact fields
-/// that are generated as part of the load (i.e. computed columns) denoted by the prefix hic_ are not treated as differences in the dataset.  This means
-/// that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not be identified as UPDATES to the
-/// LIVE data table and will be ignored (assuming that there are no differences in other fields that are Diffed).
+///     Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields
+///     roles such that artifact fields
+///     that are generated as part of the load (i.e. computed columns) denoted by the prefix hic_ are not treated as
+///     differences in the dataset.  This means
+///     that records in STAGING with a new hic_dataLoadRunID (all of them because each load gets a unique number) will not
+///     be identified as UPDATES to the
+///     LIVE data table and will be ignored (assuming that there are no differences in other fields that are Diffed).
 /// </summary>
 public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
 {
@@ -26,7 +29,7 @@ public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     private readonly Regex _ignore;
     private readonly ColumnInfo[] _alsoIgnore;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool NoBackupTrigger { get; set; }
 
     public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null, Regex ignore = null,

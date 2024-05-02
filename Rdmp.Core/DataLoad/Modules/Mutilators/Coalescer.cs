@@ -16,9 +16,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// Resolves primary key collisions that are the result of non primary key fields being null in some records and not null in others (where primary keys of those records
-/// are the same).  Or to put it simpler, resolves primary key collisions by making records less null.  This can only be applied in the Adjust RAW stage of a data load.
-/// This creates deviation from ground truth of the data you are loading and reducing nullness might not always be correct according to your data.
+///     Resolves primary key collisions that are the result of non primary key fields being null in some records and not
+///     null in others (where primary keys of those records
+///     are the same).  Or to put it simpler, resolves primary key collisions by making records less null.  This can only
+///     be applied in the Adjust RAW stage of a data load.
+///     This creates deviation from ground truth of the data you are loading and reducing nullness might not always be
+///     correct according to your data.
 /// </summary>
 public class Coalescer : MatchingTablesMutilator
 {

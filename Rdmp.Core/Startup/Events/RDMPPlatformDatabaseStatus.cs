@@ -7,33 +7,34 @@
 namespace Rdmp.Core.Startup.Events;
 
 /// <summary>
-/// Describes the state of one of the RDMP platform databases or satellite databases (e.g. Logging, third party plugin databases etc)
+///     Describes the state of one of the RDMP platform databases or satellite databases (e.g. Logging, third party plugin
+///     databases etc)
 /// </summary>
 public enum RDMPPlatformDatabaseStatus
 {
     /// <summary>
-    /// The database could not be reached
+    ///     The database could not be reached
     /// </summary>
     Unreachable,
 
     /// <summary>
-    /// The database is not in a valid state for some unknown reason
+    ///     The database is not in a valid state for some unknown reason
     /// </summary>
     Broken,
 
     /// <summary>
-    /// The database schema is behind the current software version and there are
-    /// unapplied patch files for that database
+    ///     The database schema is behind the current software version and there are
+    ///     unapplied patch files for that database
     /// </summary>
     RequiresPatching,
 
     /// <summary>
-    /// The database is in a valid state
+    ///     The database is in a valid state
     /// </summary>
     Healthy,
 
     /// <summary>
-    /// The database being read is at least one version ahead of the currently running software.
+    ///     The database being read is at least one version ahead of the currently running software.
     /// </summary>
     SoftwareOutOfDate
 }

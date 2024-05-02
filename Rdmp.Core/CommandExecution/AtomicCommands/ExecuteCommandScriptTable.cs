@@ -22,7 +22,10 @@ public class ExecuteCommandScriptTable : BasicCommandExecution, IAtomicCommand
         _tableInfo = tableInfo;
     }
 
-    public override string GetCommandHelp() => "Scripts table structure to Clipboard (without dependencies)";
+    public override string GetCommandHelp()
+    {
+        return "Scripts table structure to Clipboard (without dependencies)";
+    }
 
     public override void Execute()
     {
@@ -30,5 +33,8 @@ public class ExecuteCommandScriptTable : BasicCommandExecution, IAtomicCommand
             _tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false, false, false));
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SQL);
+    }
 }

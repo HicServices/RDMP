@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.Curation.Data;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -15,7 +15,11 @@ public sealed class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecutio
     private readonly ColumnInfo _columnInfo;
     private readonly Curation.Data.Dataset _dataset;
     private readonly bool _linkAll;
-    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator, [DemandsInitialization("The column to link")] ColumnInfo columnInfo, [DemandsInitialization("The dataset to link to")] Curation.Data.Dataset dataset, bool linkAllOtherColumns = true) : base(activator)
+
+    public ExecuteCommandLinkColumnInfoToDataset(IBasicActivateItems activator,
+        [DemandsInitialization("The column to link")] ColumnInfo columnInfo,
+        [DemandsInitialization("The dataset to link to")] Curation.Data.Dataset dataset,
+        bool linkAllOtherColumns = true) : base(activator)
     {
         _columnInfo = columnInfo;
         _dataset = dataset;
@@ -31,7 +35,8 @@ public sealed class ExecuteCommandLinkColumnInfoToDataset : BasicCommandExecutio
         if (!_linkAll) return;
 
         var databaseName = _columnInfo.Name[.._columnInfo.Name.LastIndexOf('.')];
-        var catalogueItems = _columnInfo.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci => ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName);
+        var catalogueItems = _columnInfo.CatalogueRepository.GetAllObjects<ColumnInfo>().Where(ci =>
+            ci.Name[..ci.Name.LastIndexOf(".", StringComparison.Ordinal)] == databaseName);
         foreach (var ci in catalogueItems)
         {
             ci.Dataset_ID = _dataset.ID;

@@ -9,7 +9,9 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
     private readonly string _source;
     private readonly IBasicActivateItems _activator;
 
-    public ExecuteCommandCreateDataset(IBasicActivateItems activator, [DemandsInitialization("The name of the dataset")]string name, string doi = null,string source = null) : base(activator)
+    public ExecuteCommandCreateDataset(IBasicActivateItems activator,
+        [DemandsInitialization("The name of the dataset")] string name, string doi = null,
+        string source = null) : base(activator)
     {
         _name = name;
         _doi = doi;
@@ -24,7 +26,8 @@ public class ExecuteCommandCreateDataset : BasicCommandExecution
     public override void Execute()
     {
         base.Execute();
-        var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name) { DigitalObjectIdentifier = _doi, Source = _source };
+        var dataset = new Curation.Data.Dataset(BasicActivator.RepositoryLocator.CatalogueRepository, _name)
+            { DigitalObjectIdentifier = _doi, Source = _source };
         dataset.SaveToDatabase();
         _activator.Publish(dataset);
     }

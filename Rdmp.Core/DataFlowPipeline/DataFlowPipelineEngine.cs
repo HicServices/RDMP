@@ -19,9 +19,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataFlowPipeline;
 
 /// <summary>
-/// Generic implementation of IDataFlowPipelineEngine (See IDataFlowPipelineEngine).  You can create a DataFlowPipelineEngine by manually constructing the context,
-/// source, destination etc but more often you will want to use an IPipeline configured by the user and an IPipelineUseCase to stamp out the pipeline into an instance
-/// of the engine (See IDataFlowPipelineEngineFactory).  IPipeline is the user configured set of components they think will achieve a given task.
+///     Generic implementation of IDataFlowPipelineEngine (See IDataFlowPipelineEngine).  You can create a
+///     DataFlowPipelineEngine by manually constructing the context,
+///     source, destination etc but more often you will want to use an IPipeline configured by the user and an
+///     IPipelineUseCase to stamp out the pipeline into an instance
+///     of the engine (See IDataFlowPipelineEngineFactory).  IPipeline is the user configured set of components they think
+///     will achieve a given task.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
@@ -30,37 +33,41 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
     private readonly IDataLoadEventListener _listener;
 
     private bool initialized;
-    private string _name;
+    private readonly string _name;
 
     /// <summary>
-    /// Readonly cast of <see cref="ComponentObjects"/>. If you need to add components, add them to <see cref="ComponentObjects"/> instead.
+    ///     Readonly cast of <see cref="ComponentObjects" />. If you need to add components, add them to
+    ///     <see cref="ComponentObjects" /> instead.
     /// </summary>
     public ReadOnlyCollection<IDataFlowComponent<T>> Components =>
         ComponentObjects.Cast<IDataFlowComponent<T>>().ToList().AsReadOnly();
 
     /// <summary>
-    /// The last component in the pipeline, responsible for writing the chunks (of type {T}) to somewhere (E.g. to disk, to database etc)
+    ///     The last component in the pipeline, responsible for writing the chunks (of type {T}) to somewhere (E.g. to disk, to
+    ///     database etc)
     /// </summary>
-    public IDataFlowDestination<T> Destination { get; private set; }
+    public IDataFlowDestination<T> Destination { get; }
 
     /// <summary>
-    /// The first component in the pipeline, responsible for iteratively generating chunks (of type {T}) for feeding to downstream pipeline components
+    ///     The first component in the pipeline, responsible for iteratively generating chunks (of type {T}) for feeding to
+    ///     downstream pipeline components
     /// </summary>
-    public IDataFlowSource<T> Source { get; private set; }
+    public IDataFlowSource<T> Source { get; }
 
     /// <summary>
-    /// Middle components of the pipeline, must be <see cref="IDataFlowComponent{T}"/> with T appropriate to the context.
+    ///     Middle components of the pipeline, must be <see cref="IDataFlowComponent{T}" /> with T appropriate to the context.
     /// </summary>
     public List<object> ComponentObjects { get; set; }
 
-    /// <inheritdoc cref="Destination"/>
+    /// <inheritdoc cref="Destination" />
     public object DestinationObject => Destination;
 
-    /// <inheritdoc cref="Source"/>
+    /// <inheritdoc cref="Source" />
     public object SourceObject => Source;
 
     /// <summary>
-    /// Creates a new pipeline engine ready to run under the <paramref name="context"/> recording events that occur to <paramref name="listener"/>.
+    ///     Creates a new pipeline engine ready to run under the <paramref name="context" /> recording events that occur to
+    ///     <paramref name="listener" />.
     /// </summary>
     /// <param name="context"></param>
     /// <param name="source"></param>
@@ -80,7 +87,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         _name = pipelineSource != null ? pipelineSource.Name : "Undefined pipeline";
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Initialize(params object[] initializationObjects)
     {
         _context.PreInitialize(_listener, Source, initializationObjects);
@@ -107,7 +114,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         }.Start();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ExecutePipeline(GracefulCancellationToken cancellationToken)
     {
         Exception exception = null;
@@ -137,6 +144,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
                     new NotifyEventArgs(ProgressEventType.Information, "Pipeline engine aborted"));
                 return;
             }
+
             foreach (var alert in uiAlerts.Distinct().Where(static alert => alert is not null))
                 UIAlert(alert.Item1, alert.Item2);
         }
@@ -205,8 +213,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             throw new PipelineCrashedException("Data Flow Pipeline Crashed", exception);
     }
 
-    /// <inheritdoc/>
-    public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken, List<Tuple<string, IBasicActivateItems>> completionUIAlerts = null)
+    /// <inheritdoc />
+    public bool ExecuteSinglePass(GracefulCancellationToken cancellationToken,
+        List<Tuple<string, IBasicActivateItems>> completionUIAlerts = null)
     {
         if (!initialized)
             throw new Exception(
@@ -226,6 +235,7 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             throw new InvalidOperationException(
                 $"Error when attempting to get a chunk from the source component: {Source}", e);
         }
+
         if (currentChunk == null)
         {
             _listener.OnNotify(this,
@@ -234,41 +244,43 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
             return false;
         }
 
-        try {
-          foreach (var component in Components)
-          {
-              if (cancellationToken.IsAbortRequested) break;
+        try
+        {
+            foreach (var component in Components)
+            {
+                if (cancellationToken.IsAbortRequested) break;
 
-              currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
-              if (completionUIAlerts is not null && currentChunk is DataTable dt)
-              {
-                  var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
-                  completionUIAlerts.Add(uiAlert);
-              }
-          }
+                currentChunk = component.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+                if (completionUIAlerts is not null && currentChunk is DataTable dt)
+                {
+                    var uiAlert = (Tuple<string, IBasicActivateItems>)dt.ExtendedProperties["AlertUIAtEndOfProcess"];
+                    completionUIAlerts.Add(uiAlert);
+                }
+            }
 
-          if (cancellationToken.IsAbortRequested) return true;
+            if (cancellationToken.IsAbortRequested) return true;
 
-          Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
+            Destination.ProcessPipelineData(currentChunk, _listener, cancellationToken);
 
-          if (cancellationToken.IsAbortRequested) return true;
+            if (cancellationToken.IsAbortRequested) return true;
         }
-        finally {
-          //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
-          if (currentChunk is DataTable dt2)
-              dt2.Clear();
+        finally
+        {
+            //if it is a DataTable call .Clear() because Dispose doesn't actually free up any memory
+            if (currentChunk is DataTable dt2)
+                dt2.Clear();
 
-          //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
-          if (currentChunk is IDisposable junk)
-  #pragma warning disable
-              junk.Dispose();
+            //if the chunk is something that can be disposed, dispose it (e.g. DataTable - to free up memory)
+            if (currentChunk is IDisposable junk)
+#pragma warning disable
+                junk.Dispose();
         }
 
         return true;
     }
 
     /// <summary>
-    /// Runs checks on all components in the pipeline that support <see cref="ICheckable"/>
+    ///     Runs checks on all components in the pipeline that support <see cref="ICheckable" />
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -332,6 +344,9 @@ public class DataFlowPipelineEngine<T> : IDataFlowPipelineEngine
         notifier.OnCheckPerformed(new CheckEventArgs("Finished checking all components", CheckResult.Success));
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => _name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return _name;
+    }
 }

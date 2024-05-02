@@ -25,7 +25,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 
 /// <summary>
-/// Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline"/> and create a reference to it in RDMP.
+///     Import a file (e.g. CSV, excel etc) into a relational database as a new table using a given <see cref="Pipeline" />
+///     and create a reference to it in RDMP.
 /// </summary>
 public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreationCommandExecution
 {
@@ -65,7 +66,7 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         Pipeline pipeline,
         [DemandsInitialization(Desc_ProjectSpecificParameter)]
         Project projectSpecific,
-        string initialDescription=null) : base(activator, projectSpecific, null)
+        string initialDescription = null) : base(activator, projectSpecific, null)
 
     {
         File = file;
@@ -128,13 +129,15 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         runner.Run(BasicActivator.RepositoryLocator, null, null, null);
     }
 
-    public static DialogArgs GetCreateCatalogueFromFileDialogArgs() =>
-        new()
+    public static DialogArgs GetCreateCatalogueFromFileDialogArgs()
+    {
+        return new DialogArgs
         {
             WindowTitle = "Create Catalogue from File",
             TaskDescription =
                 "Select a Pipeline compatible with the file format you are loading and your intended destination.  If the pipeline completes successfully a new Catalogue will be created referencing the new table created in your database."
         };
+    }
 
     private void OnPipelineCompleted(object sender, PipelineEngineEventArgs args, DiscoveredDatabase db)
     {
@@ -156,14 +159,16 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
 
         var importer = new TableInfoImporter(BasicActivator.RepositoryLocator.CatalogueRepository, tbl);
         importer.DoImport(out var ti, out _);
-        var extractionIdentifiers = _extractionIdentifier is null ? null : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
+        var extractionIdentifiers = _extractionIdentifier is null
+            ? null
+            : ti.ColumnInfos.Where(t => t.Name == _extractionIdentifier).ToArray();
         var cata = BasicActivator.CreateAndConfigureCatalogue(ti, extractionIdentifiers,
             $"Import of file '{File.FullName}' by {Environment.UserName} on {DateTime.Now}", ProjectSpecific,
             TargetFolder);
 
         if (cata == null) return;
 
-        if(_initialDescription is not null)
+        if (_initialDescription is not null)
         {
             cata.Description = _initialDescription;
             cata.SaveToDatabase();
@@ -173,13 +178,21 @@ public class ExecuteCommandCreateNewCatalogueByImportingFile : CatalogueCreation
         Emphasise(cata);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        ProjectSpecific != null
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return ProjectSpecific != null
             ? iconProvider.GetImage(RDMPConcept.ProjectCatalogue, OverlayKind.Add)
             : iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
+    }
 
 
-    public override string GetCommandHelp() => GlobalStrings.CreateNewCatalogueByImportingFileHelp;
+    public override string GetCommandHelp()
+    {
+        return GlobalStrings.CreateNewCatalogueByImportingFileHelp;
+    }
 
-    public override string GetCommandName() => OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
+    public override string GetCommandName()
+    {
+        return OverrideCommandName ?? GlobalStrings.CreateNewCatalogueByImportingFile;
+    }
 }

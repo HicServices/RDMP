@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Lists all known commands, optionally restricted to those matching pattern
+///     Lists all known commands, optionally restricted to those matching pattern
 /// </summary>
 [Alias("lc")]
 [Alias("ListCommands")]

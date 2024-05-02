@@ -13,7 +13,7 @@ using BadMedicine.Datasets;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Generates CSV files on disk for RDMP example datasets (based on BadMedicine library)
+///     Generates CSV files on disk for RDMP example datasets (based on BadMedicine library)
 /// </summary>
 public class ExecuteCommandGenerateTestData : BasicCommandExecution
 {
@@ -21,8 +21,8 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
     private readonly int _numberOfPeople;
     private readonly int _numberOfRecords;
     private readonly string _toFile;
-    private Random _r;
-    private IDataGenerator _generator;
+    private readonly Random _r;
+    private readonly IDataGenerator _generator;
 
     public ExecuteCommandGenerateTestData(IBasicActivateItems activator, string datasetName, int numberOfPeople,
         int numberOfRecords, int seed, string toFile) : base(activator)
@@ -32,8 +32,9 @@ public class ExecuteCommandGenerateTestData : BasicCommandExecution
         _numberOfRecords = numberOfRecords;
         _toFile = toFile;
 
-        var match = DataGeneratorFactory.GetAvailableGenerators().Cast<DataGeneratorFactory.GeneratorType?>().FirstOrDefault(g =>
-            g?.Type.FullName?.Contains(datasetName, StringComparison.InvariantCultureIgnoreCase) == true);
+        var match = DataGeneratorFactory.GetAvailableGenerators().Cast<DataGeneratorFactory.GeneratorType?>()
+            .FirstOrDefault(g =>
+                g?.Type.FullName?.Contains(datasetName, StringComparison.InvariantCultureIgnoreCase) == true);
 
         if (match is null)
         {

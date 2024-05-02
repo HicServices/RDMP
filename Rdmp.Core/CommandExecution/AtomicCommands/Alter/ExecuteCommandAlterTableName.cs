@@ -10,7 +10,7 @@ using Rdmp.Core.Sharing.Refactoring;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Renames a table in the live database
+///     Renames a table in the live database
 /// </summary>
 public class ExecuteCommandAlterTableName : AlterTableCommandExecution
 {

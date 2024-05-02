@@ -11,20 +11,27 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw NotSupportedException on any attempt to persist / delete them etc but which
-/// you can initialize and set properties on towards your own nefarious ends.
-/// 
-/// <para>E.g. let's say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can
-/// SpontaneouslyInventedFilterContainer, put the AggregateContainer into it and create a SpontaneouslyInventedFilter along side it.  Then pass the Sponted container
-/// to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters / containers.</para>
-/// 
-/// <para>SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
-/// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue</para>
+///     SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw
+///     NotSupportedException on any attempt to persist / delete them etc but which
+///     you can initialize and set properties on towards your own nefarious ends.
+///     <para>
+///         E.g. let's say during the course of your programming you want to bolt another container and filter onto an
+///         AggregateContainer (in your Catalogue) then you can
+///         SpontaneouslyInventedFilterContainer, put the AggregateContainer into it and create a
+///         SpontaneouslyInventedFilter along side it.  Then pass the Sponted container
+///         to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters
+///         / containers.
+///     </para>
+///     <para>
+///         SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for
+///         object equality without getting confused but prevents the
+///         system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue
+///     </para>
 /// </summary>
 public abstract class SpontaneousObject : DatabaseEntity
 {
     /// <summary>
-    /// Optional repository for tracking the objects relationship to other <see cref="SpontaneousObject"/>
+    ///     Optional repository for tracking the objects relationship to other <see cref="SpontaneousObject" />
     /// </summary>
     /// <param name="repository"></param>
     protected SpontaneousObject(MemoryRepository repository)

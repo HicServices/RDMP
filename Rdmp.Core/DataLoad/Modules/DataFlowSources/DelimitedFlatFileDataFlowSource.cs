@@ -23,11 +23,14 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-/// Pipeline component (source) for reading from a flat file delimited by by a specific character (or string) e.g. csv.  The file is batch processed into
-/// DataTables of size MaxBatchSize (to avoid memory problems in large files).
-/// 
-/// <para>Values read are fed into the pipeline as a DataTable with the Name of the DataTable being the name of the file being read.  Example usage would
-/// be setting the separator to , to read CSV files.</para>
+///     Pipeline component (source) for reading from a flat file delimited by by a specific character (or string) e.g. csv.
+///     The file is batch processed into
+///     DataTables of size MaxBatchSize (to avoid memory problems in large files).
+///     <para>
+///         Values read are fed into the pipeline as a DataTable with the Name of the DataTable being the name of the file
+///         being read.  Example usage would
+///         be setting the separator to , to read CSV files.
+///     </para>
 /// </summary>
 public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRequirement<FlatFileToLoad>
 {
@@ -37,7 +40,7 @@ public class DelimitedFlatFileDataFlowSource : IPluginDataFlowSource<DataTable>,
     private IDataLoadEventListener _listener;
 
     /// <summary>
-    /// The minimum value to allow the user to specify for <see cref="StronglyTypeInputBatchSize"/>
+    ///     The minimum value to allow the user to specify for <see cref="StronglyTypeInputBatchSize" />
     /// </summary>
     public const int MinimumStronglyTypeInputBatchSize = 500;
 
@@ -160,12 +163,12 @@ This will not help you avoid bad data as the full file structure must still be r
     public string ExplicitDateTimeFormat { get; set; }
 
     /// <summary>
-    /// The database table we are trying to load
+    ///     The database table we are trying to load
     /// </summary>
     private DataTable _workingTable;
 
     /// <summary>
-    /// File we are trying to load
+    ///     File we are trying to load
     /// </summary>
     private FlatFileToLoad _fileToLoad;
 
@@ -174,9 +177,9 @@ This will not help you avoid bad data as the full file structure must still be r
     public FlatFileToDataTablePusher DataPusher { get; private set; }
 
     /// <summary>
-    /// things we know we definetly cannot load!
+    ///     things we know we definetly cannot load!
     /// </summary>
-    private string[] _prohibitedExtensions =
+    private readonly string[] _prohibitedExtensions =
     {
         ".xls", ".xlsx", ".doc", ".docx"
     };
@@ -184,7 +187,7 @@ This will not help you avoid bad data as the full file structure must still be r
     private string _separator;
 
     /// <summary>
-    /// Used to split the records read into chunks to avoid running out of memory
+    ///     Used to split the records read into chunks to avoid running out of memory
     /// </summary>
     private int _lineNumberBatch;
 
@@ -254,7 +257,7 @@ This will not help you avoid bad data as the full file structure must still be r
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, batchSizeToLoad);
                 }
                 else
-                //user does not want to strongly type or is strongly typing with regular batch size
+                    //user does not want to strongly type or is strongly typing with regular batch size
                 {
                     rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
                 }
@@ -504,14 +507,17 @@ This will not help you avoid bad data as the full file structure must still be r
     }
 
     /// <summary>
-    /// Override this if you want to mess with values as they are read from the source file in some freaky way.
+    ///     Override this if you want to mess with values as they are read from the source file in some freaky way.
     /// </summary>
     /// <param name="s"></param>
     /// <returns></returns>
-    protected virtual object HackValueReadFromFile(string s) => s;
+    protected virtual object HackValueReadFromFile(string s)
+    {
+        return s;
+    }
 
     /// <summary>
-    /// Sets the target DataTable that we are loading from the csv/tsv etc
+    ///     Sets the target DataTable that we are loading from the csv/tsv etc
     /// </summary>
     /// <param name="dt"></param>
     public void SetDataTable(DataTable dt)

@@ -14,10 +14,13 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current
-/// user.
-/// 
-/// <para>Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those databases (and to create new ones).</para>
+///     Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user
+///     settings file for the current
+///     user.
+///     <para>
+///         Use properties CatalogueRepository and DataExportRepository for interacting with objects saved in those
+///         databases (and to create new ones).
+///     </para>
 /// </summary>
 public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
 {
@@ -52,11 +55,17 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
     }
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
-        string databaseObjectTypeName, int objectID) =>
-        _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
+        string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,
+            objectID);
+    }
 
-    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID) =>
-        _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName,
+            objectID);
+    }
 
     public void RefreshRepositoriesFromUserSettings()
     {
@@ -94,11 +103,18 @@ public class UserSettingsRepositoryFinder : IRDMPPlatformRepositoryServiceLocato
         _linkedRepositoryProvider = newrepo;
     }
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable =>
-        _linkedRepositoryProvider.GetObjectByID<T>(value);
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+    {
+        return _linkedRepositoryProvider.GetObjectByID<T>(value);
+    }
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value) =>
-        _linkedRepositoryProvider.GetObjectByID(t, value);
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+    {
+        return _linkedRepositoryProvider.GetObjectByID(t, value);
+    }
 
-    public IEnumerable<IRepository> GetAllRepositories() => _linkedRepositoryProvider.GetAllRepositories();
+    public IEnumerable<IRepository> GetAllRepositories()
+    {
+        return _linkedRepositoryProvider.GetAllRepositories();
+    }
 }

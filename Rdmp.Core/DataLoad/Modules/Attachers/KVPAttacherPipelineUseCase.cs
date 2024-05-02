@@ -12,8 +12,9 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Use case for the user configured pipeline for reading from a flat file.  Used by KVPAttacher (See KVPAttacher) to allow the user control over how the
-/// source file format is read (e.g. csv, fixed width, excel etc).
+///     Use case for the user configured pipeline for reading from a flat file.  Used by KVPAttacher (See KVPAttacher) to
+///     allow the user control over how the
+///     source file format is read (e.g. csv, fixed width, excel etc).
 /// </summary>
 public sealed class KVPAttacherPipelineUseCase : PipelineUseCase
 {

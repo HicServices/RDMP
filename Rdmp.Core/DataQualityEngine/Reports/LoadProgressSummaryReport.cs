@@ -21,10 +21,13 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
 /// <summary>
-/// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all cached fetch
-/// counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed into the contructor.  These tables are
-/// intended to assist the user in rapidly determining how much of a given dataset collection based on a cache fetch/load DLE job has currently been loaded
-/// (according to the DQE).  See LoadProgressDiagram
+///     Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.
+///     The second containing all cached fetch
+///     counts and counts of all files in the Caching directory for the CacheProgress (if any) of the LoadProgress passed
+///     into the contructor.  These tables are
+///     intended to assist the user in rapidly determining how much of a given dataset collection based on a cache
+///     fetch/load DLE job has currently been loaded
+///     (according to the DQE).  See LoadProgressDiagram
 /// </summary>
 public class LoadProgressSummaryReport : ICheckable
 {
@@ -41,7 +44,7 @@ public class LoadProgressSummaryReport : ICheckable
     public DirectoryInfo ResolvedCachePath;
 
     public HashSet<Catalogue> CataloguesMissingDQERuns { get; private set; }
-    private ICacheProgress _cacheProgress;
+    private readonly ICacheProgress _cacheProgress;
 
     public Dictionary<Catalogue, Evaluation> CataloguesWithDQERuns { get; private set; }
 

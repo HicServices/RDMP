@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -12,15 +13,16 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Removes all <see cref="AggregateDimension"/> on an <see cref="AggregateConfiguration"/> and creates
-/// a single new dimension for linkage in a <see cref="CohortIdentificationConfiguration"/> based on
-/// a chosen <see cref="ExtractionInformation"/> which must be marked <see cref="ConcreteColumn.IsExtractionIdentifier"/>
+///     Removes all <see cref="AggregateDimension" /> on an <see cref="AggregateConfiguration" /> and creates
+///     a single new dimension for linkage in a <see cref="CohortIdentificationConfiguration" /> based on
+///     a chosen <see cref="ExtractionInformation" /> which must be marked
+///     <see cref="ConcreteColumn.IsExtractionIdentifier" />
 /// </summary>
 public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomicCommand
 {
-    private AggregateConfiguration _aggregate;
-    private ExtractionInformation[] _available;
-    private ExtractionInformation _extractionInformation;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly ExtractionInformation[] _available;
+    private readonly ExtractionInformation _extractionInformation;
 
     public ExecuteCommandSetAggregateDimension(IBasicActivateItems activator,
         [DemandsInitialization("The AggregateConfiguration which you want to change the extraction identifier on")]
@@ -70,7 +72,7 @@ public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomi
                 return;
             }
         }
-        catch (System.Exception ex)
+        catch (Exception ex)
         {
             SetImpossible($"Could not determine compatible columns:{ex.Message}");
         }

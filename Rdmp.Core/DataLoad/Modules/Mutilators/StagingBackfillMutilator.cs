@@ -24,17 +24,26 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
 /// <summary>
-/// Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP supports a 'newer is better' policy in which
-/// all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly loaded record with pk X will result in an
-/// UPDATE of the values for that record to the new values in STAGING that are being loaded).
-/// 
-/// <para>This component is designed to support loading periods of old data into a LIVE data table that has moved on (i.e. to backfill a dataset) without
-/// overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have found a year of data you forgot to load back
-/// in 2009 but you expect that since 2009 there have been historical record updates for records originally generated in 2009 (you want to load all 2009 records
-/// from the historical batch except where there has been an update since).</para>
-/// 
-/// <para>This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset time' of the record (as opposed to the load time) e.g. 'date blood sample
-///  taken'.  STAGING records will be deleted where there are records in LIVE wich  have the same primary key but a newer TimePeriodicity date.</para>
+///     Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP
+///     supports a 'newer is better' policy in which
+///     all records loaded in a DLE run automatically replace/add to the LIVE table based on primary key (i.e. a newly
+///     loaded record with pk X will result in an
+///     UPDATE of the values for that record to the new values in STAGING that are being loaded).
+///     <para>
+///         This component is designed to support loading periods of old data into a LIVE data table that has moved on
+///         (i.e. to backfill a dataset) without
+///         overwriting newer versions of a record (with primary key x) with old.  For example it is 2011 and you have
+///         found a year of data you forgot to load back
+///         in 2009 but you expect that since 2009 there have been historical record updates for records originally
+///         generated in 2009 (you want to load all 2009 records
+///         from the historical batch except where there has been an update since).
+///     </para>
+///     <para>
+///         This is done by selecting a 'TimePeriodicity' field that identifies the 'dataset time' of the record (as
+///         opposed to the load time) e.g. 'date blood sample
+///         taken'.  STAGING records will be deleted where there are records in LIVE wich  have the same primary key but a
+///         newer TimePeriodicity date.
+///     </para>
 /// </summary>
 public class StagingBackfillMutilator : IPluginMutilateDataTables
 {
@@ -68,7 +77,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
                     "Executing within test context but no TableNamingScheme has been provided");
         }
         else
-        // If we are not operating inside a Test, hardwire the TableNamingScheme
+            // If we are not operating inside a Test, hardwire the TableNamingScheme
         {
             TableNamingScheme = new FixedStagingDatabaseNamer(liveDatabaseInfo.GetRuntimeName());
         }
@@ -96,7 +105,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     }
 
     /// <summary>
-    /// Get the database credentials for the Live server, accessing them via the TimePeriodicityField ColumnInfo
+    ///     Get the database credentials for the Live server, accessing them via the TimePeriodicityField ColumnInfo
     /// </summary>
     /// <returns></returns>
     private DiscoveredDatabase GetLiveDatabaseInfo()
@@ -106,7 +115,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     }
 
     /// <summary>
-    /// Ascends join tree from the TimePeriodicity table, processing tables at each step
+    ///     Ascends join tree from the TimePeriodicity table, processing tables at each step
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -144,7 +153,7 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     }
 
     /// <summary>
-    /// Descends to leaves of join tree, then processes tables on way back up
+    ///     Descends to leaves of join tree, then processes tables on way back up
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
@@ -166,11 +175,16 @@ public class StagingBackfillMutilator : IPluginMutilateDataTables
     }
 
     /// <summary>
-    /// Deletes any rows in tiCurrent that are out-of-date (with respect to live) and childless, then updates remaining out-of-date rows with the values from staging.
-    /// Out-of-date remaining rows will only be present if they have children which are to be inserted. Any other children will have been deleted in an earlier pass through the recursion (since it starts at the leaves and works upwards).
+    ///     Deletes any rows in tiCurrent that are out-of-date (with respect to live) and childless, then updates remaining
+    ///     out-of-date rows with the values from staging.
+    ///     Out-of-date remaining rows will only be present if they have children which are to be inserted. Any other children
+    ///     will have been deleted in an earlier pass through the recursion (since it starts at the leaves and works upwards).
     /// </summary>
     /// <param name="tiCurrent"></param>
-    /// <param name="joinPathToTimeTable">Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover the effective date of a particular row</param>
+    /// <param name="joinPathToTimeTable">
+    ///     Chain of JoinInfos back to the TimePeriodicity table so we can join to it and recover
+    ///     the effective date of a particular row
+    /// </param>
     /// <param name="childJoins"></param>
     private void ProcessTable(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable, List<JoinInfo> childJoins)
     {
@@ -250,31 +264,37 @@ RIGHT JOIN EntriesToDelete {mcsQueryHelper.BuildJoinClause("EntriesToDelete", "C
     }
 
     /// <summary>
-    /// This and GetLiveDataToUpdateStaging are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
+    ///     This and GetLiveDataToUpdateStaging are ugly in that they just reflect modifications to the comparison CTE. Leaving
+    ///     for now as a more thorough refactoring may be required once the full test suite is available.
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
-        $@"
+    private string GetCurrentOldEntriesSQL(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+    {
+        return $@"
 CurrentOldEntries AS (
 SELECT ToLoadWithTime.* FROM 
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)} 
 ";
+    }
 
     /// <summary>
-    /// This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving for now as a more thorough refactoring may be required once the full test suite is available.
+    ///     This and GetCurrentOldEntriesSQL are ugly in that they just reflect modifications to the comparison CTE. Leaving
+    ///     for now as a more thorough refactoring may be required once the full test suite is available.
     /// </summary>
     /// <param name="tiCurrent"></param>
     /// <param name="joinPathToTimeTable"></param>
     /// <returns></returns>
-    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable) =>
-        $@"
+    private string GetLiveDataToUpdateStaging(ITableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
+    {
+        return $@"
 LiveDataForUpdating AS (
 SELECT LoadedWithTime.* FROM
 
 {_sqlHelper.GetSQLComparingStagingAndLiveTables(tiCurrent, joinPathToTimeTable)}";
+    }
 
     public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
     {

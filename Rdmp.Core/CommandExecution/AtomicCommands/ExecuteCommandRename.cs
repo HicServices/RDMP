@@ -16,7 +16,7 @@ public class ExecuteCommandRename : BasicCommandExecution, IAtomicCommand
 {
     private string _newValue;
     private readonly INamed _nameable;
-    private bool _explicitNewValuePassed;
+    private readonly bool _explicitNewValuePassed;
 
     public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable) : base(activator)
     {

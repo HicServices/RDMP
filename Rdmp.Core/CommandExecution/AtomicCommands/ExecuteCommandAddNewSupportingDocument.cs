@@ -51,8 +51,11 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         }
     }
 
-    public override string GetCommandHelp() =>
-        "Marks a file on disk as useful for understanding the dataset and (optionally) copies into project extractions";
+    public override string GetCommandHelp()
+    {
+        return
+            "Marks a file on disk as useful for understanding the dataset and (optionally) copies into project extractions";
+    }
 
     public override void Execute()
     {
@@ -63,10 +66,10 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add SupportingDocument",
-                TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add SupportingDocument",
+                    TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -99,6 +102,8 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
             Activate(doc);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
+    }
 }

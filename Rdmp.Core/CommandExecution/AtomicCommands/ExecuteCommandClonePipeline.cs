@@ -32,6 +32,8 @@ public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
         Publish(_pipeline);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
+    }
 }

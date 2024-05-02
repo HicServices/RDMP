@@ -9,8 +9,9 @@ using CommandLine;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Options for the Release Engine which is responsible for gathering all the artifacts produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc)
-/// and transmitting them somewhere as a final released package.
+///     Options for the Release Engine which is responsible for gathering all the artifacts produced by the Extraction
+///     Engine (anonymised project extracts, bundled lookups and documents etc)
+///     and transmitting them somewhere as a final released package.
 /// </summary>
 [Verb("release",
     HelpText =

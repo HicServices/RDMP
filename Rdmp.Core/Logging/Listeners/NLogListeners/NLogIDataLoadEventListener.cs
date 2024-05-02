@@ -11,7 +11,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Logging.Listeners.NLogListeners;
 
 /// <summary>
-/// <see cref="IDataLoadEventListener"/> that passes all events to an <see cref="NLog.LogManager"/>.  Optionally throws on Errors (after logging).
+///     <see cref="IDataLoadEventListener" /> that passes all events to an <see cref="NLog.LogManager" />.  Optionally
+///     throws on Errors (after logging).
 /// </summary>
 public class NLogIDataLoadEventListener : NLogListener, IDataLoadEventListener
 {

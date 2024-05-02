@@ -7,8 +7,9 @@
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Describes a number of ways in which a standard query built by a <see cref="CohortQueryBuilderHelper"/> can be modified e.g. to show TopX of the cohort only or
-/// to select all columns instead of just the cohort identifier (e.g. for previewing to the matched patient's records).
+///     Describes a number of ways in which a standard query built by a <see cref="CohortQueryBuilderHelper" /> can be
+///     modified e.g. to show TopX of the cohort only or
+///     to select all columns instead of just the cohort identifier (e.g. for previewing to the matched patient's records).
 /// </summary>
 public class QueryBuilderCustomArgs
 {
@@ -28,7 +29,7 @@ public class QueryBuilderCustomArgs
     }
 
     /// <summary>
-    /// Populates <paramref name="other"/> with the values stored in this
+    ///     Populates <paramref name="other" /> with the values stored in this
     /// </summary>
     /// <param name="other"></param>
     public void Populate(QueryBuilderCustomArgs other)

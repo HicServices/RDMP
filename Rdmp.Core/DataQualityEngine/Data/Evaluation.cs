@@ -16,8 +16,9 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataQualityEngine.Data;
 
 /// <summary>
-/// Root object for a DQE run including the time the DQE engine was run, the <see cref="Catalogue"/> being evaluated and all the results.
-/// An <see cref="Evaluation"/> is immutable and created created after each successful run.
+///     Root object for a DQE run including the time the DQE engine was run, the <see cref="Catalogue" /> being evaluated
+///     and all the results.
+///     An <see cref="Evaluation" /> is immutable and created created after each successful run.
 /// </summary>
 public class Evaluation : DatabaseEntity
 {
@@ -72,7 +73,6 @@ public class Evaluation : DatabaseEntity
     }
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
@@ -96,7 +96,7 @@ public class Evaluation : DatabaseEntity
     }
 
     /// <summary>
-    /// Starts a new evaluation with the given transaction
+    ///     Starts a new evaluation with the given transaction
     /// </summary>
     internal Evaluation(DQERepository dqeRepository, ICatalogue c)
     {
@@ -144,7 +144,8 @@ public class Evaluation : DatabaseEntity
     }
 
     /// <summary>
-    /// Returns the count of records in the dataset when this DQE evaluation was made.  This is done by summing the first <see cref="ColumnStates"/>
+    ///     Returns the count of records in the dataset when this DQE evaluation was made.  This is done by summing the first
+    ///     <see cref="ColumnStates" />
     /// </summary>
     /// <returns></returns>
     public int? GetRecordCount()

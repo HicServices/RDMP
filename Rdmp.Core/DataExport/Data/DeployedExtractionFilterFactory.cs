@@ -12,15 +12,16 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-///  Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an ExtractionConfiguration has (optionally)
-///  its own root container IFilters, subcontainers etc.
+///     Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an
+///     ExtractionConfiguration has (optionally)
+///     its own root container IFilters, subcontainers etc.
 /// </summary>
 public class DeployedExtractionFilterFactory : IFilterFactory
 {
     private readonly IDataExportRepository _repository;
 
     /// <summary>
-    /// Prepares to create extraction filters for project datasets int eh provided <paramref name="repository"/>
+    ///     Prepares to create extraction filters for project datasets int eh provided <paramref name="repository" />
     /// </summary>
     /// <param name="repository"></param>
     public DeployedExtractionFilterFactory(IDataExportRepository repository)
@@ -28,18 +29,32 @@ public class DeployedExtractionFilterFactory : IFilterFactory
         _repository = repository;
     }
 
-    /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new DeployedExtractionFilter(_repository, name, null);
+    /// <inheritdoc />
+    public IFilter CreateNewFilter(string name)
+    {
+        return new DeployedExtractionFilter(_repository, name, null);
+    }
 
-    /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
-        new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
+    /// <inheritdoc />
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
+    {
+        return new DeployedExtractionFilterParameter(_repository, parameterSQL, filter);
+    }
 
-    /// <inheritdoc/>
-    public Type GetRootOwnerType() => typeof(SelectedDataSets);
+    /// <inheritdoc />
+    public Type GetRootOwnerType()
+    {
+        return typeof(SelectedDataSets);
+    }
 
-    /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny() => typeof(FilterContainer);
+    /// <inheritdoc />
+    public Type GetIContainerTypeIfAny()
+    {
+        return typeof(FilterContainer);
+    }
 
-    public IContainer CreateNewContainer() => new FilterContainer(_repository);
+    public IContainer CreateNewContainer()
+    {
+        return new FilterContainer(_repository);
+    }
 }

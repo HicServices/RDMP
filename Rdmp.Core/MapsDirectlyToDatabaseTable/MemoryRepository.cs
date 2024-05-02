@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Implementation of <see cref="IRepository"/> which creates objects in memory instead of the database.
+///     Implementation of <see cref="IRepository" /> which creates objects in memory instead of the database.
 /// </summary>
 public class MemoryRepository : IRepository
 {
@@ -27,7 +27,7 @@ public class MemoryRepository : IRepository
     public bool SupportsCommits => false;
 
     /// <summary>
-    /// This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
+    ///     This is a concurrent hashset.  See https://stackoverflow.com/a/18923091
     /// </summary>
     protected readonly ConcurrentDictionary<IMapsDirectlyToDatabaseTable, byte> Objects =
         new();
@@ -85,15 +85,15 @@ public class MemoryRepository : IRepository
 
         if (type.IsEnum)
         {
-            if ( strVal != null)
+            if (strVal != null)
                 prop.SetValue(toCreate, Enum.Parse(type, strVal));
             else
-            {
                 prop.SetValue(toCreate, Enum.ToObject(type, val));
-            }
         }
         else
+        {
             prop.SetValue(toCreate, Convert.ChangeType(val, type));
+        }
     }
 
     private void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -172,7 +172,7 @@ public class MemoryRepository : IRepository
         var propertyName = $"{parent.GetType().Name}_ID";
 
         var prop = typeof(T).GetProperty(propertyName);
-        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID)
+        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).OrderBy(o => o.ID)
             .ToArray();
     }
 
@@ -183,7 +183,7 @@ public class MemoryRepository : IRepository
         var propertyName = $"{typeof(T2).Name}_ID";
 
         var prop = typeof(T).GetProperty(propertyName);
-        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().OrderBy(o => o.ID)
+        return Objects.Keys.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).OrderBy(o => o.ID)
             .ToArray();
     }
 
@@ -218,8 +218,8 @@ public class MemoryRepository : IRepository
     }
 
     /// <summary>
-    /// Override to replicate any database delete cascade relationships (e.g. deleting all
-    /// CatalogueItem when a Catalogue is deleted)
+    ///     Override to replicate any database delete cascade relationships (e.g. deleting all
+    ///     CatalogueItem when a Catalogue is deleted)
     /// </summary>
     /// <param name="oTableWrapperObject"></param>
     protected virtual void CascadeDeletes(IMapsDirectlyToDatabaseTable oTableWrapperObject)
@@ -267,7 +267,7 @@ public class MemoryRepository : IRepository
         return new RevertableObjectReport(differences) { Evaluation = ChangeDescription.DatabaseCopyDifferent };
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2)
     {
         if (obj1 == null && obj2 != null)
@@ -283,10 +283,16 @@ public class MemoryRepository : IRepository
         return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
     }
 
-    /// <inheritdoc/>
-    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1) => obj1.GetType().GetHashCode() * obj1.ID;
+    /// <inheritdoc />
+    public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
+    {
+        return obj1.GetType().GetHashCode() * obj1.ID;
+    }
 
-    public Version GetVersion() => GetType().Assembly.GetName().Version;
+    public Version GetVersion()
+    {
+        return GetType().Assembly.GetName().Version;
+    }
 
 
     public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
@@ -294,7 +300,10 @@ public class MemoryRepository : IRepository
         return Objects.Keys.OfType<T>().Any(o => o.ID == allegedParent);
     }
 
-    public bool StillExists(IMapsDirectlyToDatabaseTable o) => Objects.ContainsKey(o);
+    public bool StillExists(IMapsDirectlyToDatabaseTable o)
+    {
+        return Objects.ContainsKey(o);
+    }
 
     public bool StillExists(Type objectType, int objectId)
     {
@@ -334,7 +343,10 @@ public class MemoryRepository : IRepository
         return Objects.Keys.OrderBy(o => o.ID).ToArray();
     }
 
-    public bool SupportsObjectType(Type type) => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type);
+    public bool SupportsObjectType(Type type)
+    {
+        return typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type);
+    }
 
     public void TestConnection()
     {
@@ -364,7 +376,10 @@ public class MemoryRepository : IRepository
     }
 
 
-    public IDisposable BeginNewTransaction() => new EmptyDisposeable();
+    public IDisposable BeginNewTransaction()
+    {
+        return new EmptyDisposeable();
+    }
 
     public void EndTransaction(bool commit)
     {

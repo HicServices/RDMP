@@ -72,7 +72,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         // if there are no new ones
         if (!available.Any())
         {
-            BasicActivator.Show($"There are no new cohorts");
+            BasicActivator.Show("There are no new cohorts");
             return null;
         }
 
@@ -93,6 +93,8 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         return BasicActivator.SelectObject("Import Cohort", available, out var cd) ? cd.ID : null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
+    }
 }

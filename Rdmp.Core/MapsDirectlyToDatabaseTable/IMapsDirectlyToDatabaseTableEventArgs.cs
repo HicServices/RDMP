@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Describes an event taking place on a database <see cref="Object"/>
+///     Describes an event taking place on a database <see cref="Object" />
 /// </summary>
 public class IMapsDirectlyToDatabaseTableEventArgs : EventArgs
 {

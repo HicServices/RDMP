@@ -11,9 +11,8 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 
 /// <summary>
-/// Records the number of records passing / failing validation with each consquence (See PeriodicityState).
-/// 
-/// <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
+///     Records the number of records passing / failing validation with each consquence (See PeriodicityState).
+///     <para>This class handles the Consequence dimension (See PeriodicityCubesOverTime for the time aspect handling).</para>
 /// </summary>
 public class PeriodicityCube
 {
@@ -29,8 +28,10 @@ public class PeriodicityCube
         _consequenceCube.Add(Consequence.InvalidatesRow, new PeriodicityState(year, month, Consequence.InvalidatesRow));
     }
 
-    public PeriodicityState GetStateForConsequence(Consequence? consequence) =>
-        consequence == null ? _passingValidation : _consequenceCube[(Consequence)consequence];
+    public PeriodicityState GetStateForConsequence(Consequence? consequence)
+    {
+        return consequence == null ? _passingValidation : _consequenceCube[(Consequence)consequence];
+    }
 
     public void CommitToDatabase(Evaluation evaluation, string pivotCategory)
     {

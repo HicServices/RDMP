@@ -11,7 +11,8 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 
 /// <summary>
-///  Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters the column type to bit
+///     Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters
+///     the column type to bit
 /// </summary>
 /// <returns></returns>
 public class CrushToBitFlag : DilutionOperation
@@ -21,8 +22,9 @@ public class CrushToBitFlag : DilutionOperation
     {
     }
 
-    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer) =>
-        string.Format(
+    public override string GetMutilationSql(INameDatabasesAndTablesDuringLoads namer)
+    {
+        return string.Format(
             @"
   ALTER TABLE {0} Add {1}_bit bit 
   GO
@@ -36,4 +38,5 @@ public class CrushToBitFlag : DilutionOperation
   EXEC sp_rename '{0}.{1}_bit', '{1}' , 'COLUMN'
   GO
 ", ColumnToDilute.TableInfo.GetRuntimeName(LoadStage.AdjustStaging, namer), ColumnToDilute.GetRuntimeName());
+    }
 }

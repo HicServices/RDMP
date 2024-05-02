@@ -22,7 +22,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IProject"/>
+/// <inheritdoc cref="IProject" />
 public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable, IHasFolder
 {
     #region Database Properties
@@ -33,7 +33,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     private int? _projectNumber;
     private string _folder;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -42,14 +42,14 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string MasterTicket
     {
         get => _masterTicket;
         set => SetField(ref _masterTicket, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [AdjustableLocation]
     public string ExtractionDirectory
     {
@@ -57,7 +57,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
         set => SetField(ref _extractionDirectory, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [UsefulProperty]
     public int? ProjectNumber
     {
@@ -65,7 +65,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
         set => SetField(ref _projectNumber, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [UsefulProperty]
     public string Folder
     {
@@ -77,7 +77,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IExtractionConfiguration[] ExtractionConfigurations =>
         Repository.GetAllObjectsWithParent<ExtractionConfiguration>(this)
@@ -85,7 +85,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
             .ToArray();
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IProjectCohortIdentificationConfigurationAssociation[]
         ProjectCohortIdentificationConfigurationAssociations =>
@@ -98,7 +98,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     }
 
     /// <summary>
-    /// Defines a new extraction project this is stored in the Data Export database
+    ///     Defines a new extraction project this is stored in the Data Export database
     /// </summary>
     public Project(IDataExportRepository repository, string name)
     {
@@ -118,15 +118,8 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
             if (ex.Message.Contains("idx_ProjectNumberMustBeUnique"))
             {
                 Project offender;
-                try
-                {
-                    //find the one with the unset project number
-                    offender = Repository.GetAllObjects<Project>().Single(p => p.ProjectNumber == null);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                //find the one with the unset project number
+                offender = Repository.GetAllObjects<Project>().Single(p => p.ProjectNumber == null);
 
                 throw new Exception(
                     $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
@@ -150,10 +143,13 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     }
 
     /// <summary>
-    /// Returns <see cref="Name"/>
+    ///     Returns <see cref="Name" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     public void Check(ICheckNotifier notifier)
     {
@@ -162,14 +158,18 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     }
 
     /// <summary>
-    /// Returns <see cref="ProjectNumber"/> (if any), <see cref="Name"/> and <see cref="MasterTicket"/>
+    ///     Returns <see cref="ProjectNumber" /> (if any), <see cref="Name" /> and <see cref="MasterTicket" />
     /// </summary>
     /// <returns></returns>
-    public string GetSearchString() => ProjectNumber == null ? Name : $"{ProjectNumber}_{Name}_{MasterTicket}";
+    public string GetSearchString()
+    {
+        return ProjectNumber == null ? Name : $"{ProjectNumber}_{Name}_{MasterTicket}";
+    }
 
     /// <summary>
-    /// Returns all <see cref="CohortIdentificationConfiguration"/> which are associated with the <see cref="IProject"/> (usually because
-    /// they have been used to create <see cref="ExtractableCohort"/> used by the <see cref="IProject"/>).
+    ///     Returns all <see cref="CohortIdentificationConfiguration" /> which are associated with the <see cref="IProject" />
+    ///     (usually because
+    ///     they have been used to create <see cref="ExtractableCohort" /> used by the <see cref="IProject" />).
     /// </summary>
     /// <returns></returns>
     public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
@@ -180,28 +180,32 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     }
 
     /// <summary>
-    /// Associates the <paramref name="cic"/> with the <see cref="IProject"/>.  This is usually done after generating an <see cref="IExtractableCohort"/>.
-    /// You can associate a <see cref="CohortIdentificationConfiguration"/> with multiple <see cref="IProject"/> (M to M relationship).
+    ///     Associates the <paramref name="cic" /> with the <see cref="IProject" />.  This is usually done after generating an
+    ///     <see cref="IExtractableCohort" />.
+    ///     You can associate a <see cref="CohortIdentificationConfiguration" /> with multiple <see cref="IProject" /> (M to M
+    ///     relationship).
     /// </summary>
     /// <param name="cic"></param>
     /// <returns></returns>
     public ProjectCohortIdentificationConfigurationAssociation
-        AssociateWithCohortIdentification(CohortIdentificationConfiguration cic) =>
-        new((IDataExportRepository)Repository, this, cic);
+        AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
+    {
+        return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository)Repository, this, cic);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ICatalogue[] GetAllProjectCatalogues()
     {
         return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory c)
     {
         return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractionInformation[] GetAllProjectCatalogueColumns(ICoreChildProvider childProvider, ExtractionCategory c)
     {
         return childProvider is DataExportChildProvider dx
@@ -211,9 +215,15 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
             : GetAllProjectCatalogueColumns(c);
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => ExtractionConfigurations;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return ExtractionConfigurations;
+    }
 }

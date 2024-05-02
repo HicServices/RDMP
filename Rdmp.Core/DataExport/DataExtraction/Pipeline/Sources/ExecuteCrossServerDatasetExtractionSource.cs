@@ -19,10 +19,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 
 /// <summary>
-/// Data Extraction Source which can fulfill the IExtractCommand even when the dataset in the command is on a different server from the cohort.  This is done
-/// by copying the Cohort from the cohort database into tempdb for the duration of the pipeline execution and doing the linkage against that instead of
-/// the original cohort table.
-/// 
+///     Data Extraction Source which can fulfill the IExtractCommand even when the dataset in the command is on a different
+///     server from the cohort.  This is done
+///     by copying the Cohort from the cohort database into tempdb for the duration of the pipeline execution and doing the
+///     linkage against that instead of
+///     the original cohort table.
 /// </summary>
 public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractionSource
 {
@@ -57,7 +58,7 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
         return base.GetChunk(listener, cancellationToken);
     }
 
-    private List<DiscoveredTable> tablesToCleanup = new();
+    private readonly List<DiscoveredTable> tablesToCleanup = new();
 
     public static Semaphore OneCrossServerExtractionAtATime = new(1, 1);
     private DiscoveredServer _server;
@@ -65,12 +66,13 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     private bool _semaphoreObtained;
 
     /// <summary>
-    /// True if we decided not to move the cohort after all (e.g. if one or more datasets being extracted are already on the same server).
+    ///     True if we decided not to move the cohort after all (e.g. if one or more datasets being extracted are already on
+    ///     the same server).
     /// </summary>
     private bool _doNotMigrate;
 
     private string _tablename;
-    private object _tableName = new();
+    private readonly object _tableName = new();
 
     public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
     {
@@ -196,17 +198,20 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     }
 
     /// <summary>
-    /// Returns true if the two databases are on the same server (do not have to be on the same database).  Also confirms that the access
-    /// credentials are compatible.
+    ///     Returns true if the two databases are on the same server (do not have to be on the same database).  Also confirms
+    ///     that the access
+    ///     credentials are compatible.
     /// </summary>
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    protected static bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b) =>
-        string.Equals(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase) &&
-        a.DatabaseType == b.DatabaseType &&
-        a.ExplicitUsernameIfAny == b.ExplicitUsernameIfAny &&
-        a.ExplicitPasswordIfAny == b.ExplicitPasswordIfAny;
+    protected static bool AreOnSameServer(DiscoveredServer a, DiscoveredServer b)
+    {
+        return string.Equals(a.Name, b.Name, StringComparison.CurrentCultureIgnoreCase) &&
+               a.DatabaseType == b.DatabaseType &&
+               a.ExplicitUsernameIfAny == b.ExplicitUsernameIfAny &&
+               a.ExplicitPasswordIfAny == b.ExplicitPasswordIfAny;
+    }
 
 
     private void CopyCohortToDataServer(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
@@ -333,6 +338,9 @@ public class ExecuteCrossServerDatasetExtractionSource : ExecuteDatasetExtractio
     {
     }
 
-    public override DataTable TryGetPreview() => throw new NotSupportedException(
-        "Previews are not supported for Cross Server extraction since it involves shipping off the cohort into tempdb.");
+    public override DataTable TryGetPreview()
+    {
+        throw new NotSupportedException(
+            "Previews are not supported for Cross Server extraction since it involves shipping off the cohort into tempdb.");
+    }
 }

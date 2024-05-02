@@ -12,22 +12,26 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.Spontaneous;
 
 /// <summary>
-/// Spontaneous (memory only) implementation of IContainer.
-/// 
-/// <para>IContainers are collections of subcontainers and WHERE statements e.g.
-/// (
-///     --age is above 5
-///     Age > 5
-/// AND
-///    --name is bob
-///     Name like 'Bob%'
-/// )</para>
-/// 
-/// <para>Most IContainers come from the DataCatalogue/DataExport Database and are a hierarchical list of filters the user wants to use to create a query.  But sometimes IN CODE,
-/// we want to create an impromptu container and ram some additional filters we have either also invented or have pulled out of the Catalogue into the container.  This
-/// Class lets you do that, it creates a 'memory only' container which cannot be saved/deleted etc but can be used in query building by ISqlQueryBuilders.</para>
-/// 
-/// <para>See also SpontaneouslyInventedFilter</para>
+///     Spontaneous (memory only) implementation of IContainer.
+///     <para>
+///         IContainers are collections of subcontainers and WHERE statements e.g.
+///         (
+///         --age is above 5
+///         Age > 5
+///         AND
+///         --name is bob
+///         Name like 'Bob%'
+///         )
+///     </para>
+///     <para>
+///         Most IContainers come from the DataCatalogue/DataExport Database and are a hierarchical list of filters the
+///         user wants to use to create a query.  But sometimes IN CODE,
+///         we want to create an impromptu container and ram some additional filters we have either also invented or have
+///         pulled out of the Catalogue into the container.  This
+///         Class lets you do that, it creates a 'memory only' container which cannot be saved/deleted etc but can be used
+///         in query building by ISqlQueryBuilders.
+///     </para>
+///     <para>See also SpontaneouslyInventedFilter</para>
 /// </summary>
 public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContainer
 {
@@ -52,7 +56,10 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
     }
 
 
-    public override Catalogue GetCatalogueIfAny() => null;
+    public override Catalogue GetCatalogueIfAny()
+    {
+        return null;
+    }
 
     public override bool ShouldBeReadOnly(out string reason)
     {
@@ -60,9 +67,13 @@ public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContaine
         return false;
     }
 
-    public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters() =>
+    public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
+    {
         throw new NotSupportedException("Spontaneously invented filter containers cannot be cloned");
+    }
 
-    public override IFilterFactory GetFilterFactory() =>
+    public override IFilterFactory GetFilterFactory()
+    {
         throw new NotSupportedException("Spontaneously invented filters do not have a corresponding IFilterFactory");
+    }
 }

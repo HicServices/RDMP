@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractableDataSetPackage"/>
+/// <inheritdoc cref="IExtractableDataSetPackage" />
 public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPackage
 {
     #region Database Properties
@@ -24,7 +24,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     private DateTime _creationDate;
 
     /// <summary>
-    /// Name for the collection of datasets (e.g. 'Core Datasets').
+    ///     Name for the collection of datasets (e.g. 'Core Datasets').
     /// </summary>
     [NotNull]
     [Unique]
@@ -35,7 +35,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     }
 
     /// <summary>
-    /// Environment.UserName of the person who created the <see cref="ExtractableDataSetPackage"/>
+    ///     Environment.UserName of the person who created the <see cref="ExtractableDataSetPackage" />
     /// </summary>
     public string Creator
     {
@@ -44,7 +44,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     }
 
     /// <summary>
-    /// When the <see cref="ExtractableDataSetPackage"/> was created
+    ///     When the <see cref="ExtractableDataSetPackage" /> was created
     /// </summary>
     public DateTime CreationDate
     {
@@ -60,7 +60,7 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     }
 
     /// <summary>
-    /// Reads an <see cref="ExtractableDataSetPackage"/> out of the data export database
+    ///     Reads an <see cref="ExtractableDataSetPackage" /> out of the data export database
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="r"></param>
@@ -74,7 +74,8 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
 
 
     /// <summary>
-    /// Creates a new <see cref="ExtractableDataSetPackage"/> in the data export database with the supplied <paramref name="name"/>
+    ///     Creates a new <see cref="ExtractableDataSetPackage" /> in the data export database with the supplied
+    ///     <paramref name="name" />
     /// </summary>
     /// <param name="dataExportRepository"></param>
     /// <param name="name"></param>
@@ -89,8 +90,11 @@ public class ExtractableDataSetPackage : DatabaseEntity, IExtractableDataSetPack
     }
 
     /// <summary>
-    /// Returns <see cref="Name"/>
+    ///     Returns <see cref="Name" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 }

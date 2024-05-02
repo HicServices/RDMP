@@ -13,8 +13,9 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Collection of all datasets in a given <see cref="Package"/>.  This lets you define template sets of datasets which all get extracted together
-/// e.g. 'Core Datasets'.
+///     Collection of all datasets in a given <see cref="Package" />.  This lets you define template sets of datasets which
+///     all get extracted together
+///     e.g. 'Core Datasets'.
 /// </summary>
 public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasqueradeAs
 {
@@ -30,9 +31,15 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         DataSet = dataSet;
     }
 
-    public override string ToString() => DataSet.ToString();
+    public override string ToString()
+    {
+        return DataSet.ToString();
+    }
 
-    protected bool Equals(PackageContentNode other) => Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
+    protected bool Equals(PackageContentNode other)
+    {
+        return Equals(Package, other.Package) && Equals(DataSet, other.DataSet);
+    }
 
     public override bool Equals(object obj)
     {
@@ -42,18 +49,30 @@ public class PackageContentNode : Node, IDeletableWithCustomMessage, IMasquerade
         return Equals((PackageContentNode)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(Package, DataSet);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Package, DataSet);
+    }
 
     public void DeleteInDatabase()
     {
         _contents.RemoveDataSetFromPackage(Package, DataSet);
     }
 
-    public object MasqueradingAs() => DataSet;
+    public object MasqueradingAs()
+    {
+        return DataSet;
+    }
 
-    /// <inheritdoc/>
-    public string GetDeleteMessage() => $"remove '{DataSet}' from Package";
+    /// <inheritdoc />
+    public string GetDeleteMessage()
+    {
+        return $"remove '{DataSet}' from Package";
+    }
 
-    /// <inheritdoc/>
-    public string GetDeleteVerb() => "Remove";
+    /// <inheritdoc />
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
 }

@@ -10,8 +10,8 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 
 /// <summary>
-/// UpdateProgressIfLoadsuccessful which uses a fixed 'specificValue' to update the LoadProgress.DataLoadProgress to
-/// (See UpdateProgressIfLoadsuccessful).
+///     UpdateProgressIfLoadsuccessful which uses a fixed 'specificValue' to update the LoadProgress.DataLoadProgress to
+///     (See UpdateProgressIfLoadsuccessful).
 /// </summary>
 public class UpdateProgressToSpecificValueIfLoadsuccessful : UpdateProgressIfLoadsuccessful
 {

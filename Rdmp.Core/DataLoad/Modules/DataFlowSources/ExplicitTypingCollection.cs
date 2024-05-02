@@ -15,19 +15,23 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources;
 
 /// <summary>
-/// A collection of column names with explicitly defined column types that the user wants to force where present.  e.g. they loading a CSV and they get values
-/// "291","195" but they know that some codes are like "012" and wish to preserve this leading 0s so they can explicitly define the column as being a string.
-/// 
-/// <para>This class can be used by [DemandsInitialization] properties and it will launch its custom UI: ExplicitTypingCollectionUI</para>
+///     A collection of column names with explicitly defined column types that the user wants to force where present.  e.g.
+///     they loading a CSV and they get values
+///     "291","195" but they know that some codes are like "012" and wish to preserve this leading 0s so they can
+///     explicitly define the column as being a string.
+///     <para>
+///         This class can be used by [DemandsInitialization] properties and it will launch its custom UI:
+///         ExplicitTypingCollectionUI
+///     </para>
 /// </summary>
 public class ExplicitTypingCollection : ICustomUIDrivenClass
 {
     /// <summary>
-    /// A dictionary of names (e.g. column names) which must have specific C# data types
+    ///     A dictionary of names (e.g. column names) which must have specific C# data types
     /// </summary>
     public Dictionary<string, Type> ExplicitTypesCSharp = new();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RestoreStateFrom(string value)
     {
         if (value == null)
@@ -47,7 +51,7 @@ public class ExplicitTypingCollection : ICustomUIDrivenClass
             ExplicitTypesCSharp.Add(lines[i], Type.GetType(lines[i + 1]));
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string SaveStateToString()
     {
         var sb = new StringBuilder();

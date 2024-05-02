@@ -13,22 +13,22 @@ using Rdmp.Core.QueryCaching.Aggregation;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// Interface for plugins that want to perform custom tasks when part of a cohort builder query is run
-/// e.g. call out to an external API and store the resulting identifier list in the query cache
+///     Interface for plugins that want to perform custom tasks when part of a cohort builder query is run
+///     e.g. call out to an external API and store the resulting identifier list in the query cache
 /// </summary>
 public interface IPluginCohortCompiler
 {
     /// <summary>
-    /// Return true if the <paramref name="ac"/> is of a type that should be handled by your class.
-    /// All aggregates will regularly be passed to this when run so ensure that your response is fast
+    ///     Return true if the <paramref name="ac" /> is of a type that should be handled by your class.
+    ///     All aggregates will regularly be passed to this when run so ensure that your response is fast
     /// </summary>
     /// <param name="ac"></param>
     /// <returns></returns>
     bool ShouldRun(AggregateConfiguration ac);
 
     /// <summary>
-    /// Return true if the <paramref name="catalogue"/> is of a type that should be handled by your class
-    /// by calling your API.
+    ///     Return true if the <paramref name="catalogue" /> is of a type that should be handled by your class
+    ///     by calling your API.
     /// </summary>
     /// <param name="catalogue"></param>
     /// <returns></returns>
@@ -36,8 +36,8 @@ public interface IPluginCohortCompiler
 
 
     /// <summary>
-    /// Must be implemented such that by the time the method completes the <paramref name="cache"/>
-    /// is populated with an identifier list that matches the expectations of <paramref name="ac"/>
+    ///     Must be implemented such that by the time the method completes the <paramref name="cache" />
+    ///     is populated with an identifier list that matches the expectations of <paramref name="ac" />
     /// </summary>
     /// <param name="ac"></param>
     /// <param name="cache"></param>
@@ -46,8 +46,8 @@ public interface IPluginCohortCompiler
         CancellationToken cancellationToken);
 
     /// <summary>
-    /// Return true if the <paramref name="oldDescription"/> does not match the logic currently
-    /// stored in <paramref name="aggregate"/>
+    ///     Return true if the <paramref name="oldDescription" /> does not match the logic currently
+    ///     stored in <paramref name="aggregate" />
     /// </summary>
     /// <param name="aggregate"></param>
     /// <param name="oldDescription"></param>
@@ -55,9 +55,9 @@ public interface IPluginCohortCompiler
     bool IsStale(AggregateConfiguration aggregate, string oldDescription);
 
     /// <summary>
-    /// When the API is used as described in <paramref name="joinedTo"/> as a patient index table
-    /// and its results are cached, which column should be pulled from the results for joining to
-    /// other datasets
+    ///     When the API is used as described in <paramref name="joinedTo" /> as a patient index table
+    ///     and its results are cached, which column should be pulled from the results for joining to
+    ///     other datasets
     /// </summary>
     /// <param name="joinedTo"></param>
     /// <returns></returns>

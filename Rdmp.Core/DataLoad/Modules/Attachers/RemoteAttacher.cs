@@ -3,6 +3,10 @@
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
+using System.Data;
+using System.Linq;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
@@ -10,23 +14,20 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
-using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using System;
-using System.Data;
-using System.Globalization;
-using System.Linq;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Root class to facilitate the Table and Database remote attachers.
+///     Root class to facilitate the Table and Database remote attachers.
 /// </summary>
 public class RemoteAttacher : Attacher, IPluginAttacher
 {
+    public RemoteAttacher() : base(true)
+    {
+    }
 
-    public RemoteAttacher() : base(true) { }
     [DemandsInitialization("How far back to pull data from")]
     public AttacherHistoricalDurations HistoricalFetchDuration { get; set; }
 
@@ -43,17 +44,19 @@ public class RemoteAttacher : Attacher, IPluginAttacher
 
     [DemandsInitialization("The Current Start Date for procedural fetching of historical data")]
     public DateTime DeltaReadingStartDate { get; set; }
+
     [DemandsInitialization("How many days the procedural fetching should look back ")]
     public int DeltaReadingLookBackDays { get; set; } = 0;
+
     [DemandsInitialization("How many days the procedural fetching should look forward ")]
     public int DeltaReadingLookForwardDays { get; set; } = 0;
 
-    [DemandsInitialization("If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
+    [DemandsInitialization(
+        "If you only want to progress the procedural load to the most recent date seen in the procedural load, not the date + X days, then tick this box")]
     public bool SetDeltaReadingToLatestSeenDatePostLoad { get; set; } = false;
 
     [DemandsInitialization("Internal Value")]
     public DateTime? MostRecentlySeenDate { get; set; }
-
 
 
     private static string GetCorrectDateAddForDatabaseType(DatabaseType dbType, string addType, string amount)
@@ -92,55 +95,58 @@ public class RemoteAttacher : Attacher, IPluginAttacher
             default:
                 return $"convert(Date,'{dateString}')";
         }
-
     }
 
     public string SqlHistoricalDataFilter(ILoadMetadata loadMetadata, DatabaseType dbType)
     {
-        string _dateConvert = dbType == DatabaseType.PostgreSql ? "Date" : "Date";
+        var _dateConvert = dbType == DatabaseType.PostgreSql ? "Date" : "Date";
 
         switch (HistoricalFetchDuration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "DAY", "-1")}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "DAY", "-1")}";
             case AttacherHistoricalDurations.Past7Days:
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "WEEK", "-1")}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "WEEK", "-1")}";
             case AttacherHistoricalDurations.PastMonth:
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "MONTH", "-1")}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "MONTH", "-1")}";
             case AttacherHistoricalDurations.PastYear:
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "YEAR", "-1")}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {GetCorrectDateAddForDatabaseType(dbType, "YEAR", "-1")}";
             case AttacherHistoricalDurations.SinceLastUse:
-                if (loadMetadata.LastLoadTime is not null) return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, loadMetadata.LastLoadTime.GetValueOrDefault().ToString(RemoteTableDateFormat))}";
+                if (loadMetadata.LastLoadTime is not null)
+                    return
+                        $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, loadMetadata.LastLoadTime.GetValueOrDefault().ToString(RemoteTableDateFormat))}";
                 return "";
             case AttacherHistoricalDurations.Custom:
-                if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate != DateTime.MinValue)
-                {
+                if (CustomFetchDurationStartDate == DateTime.MinValue &&
+                    CustomFetchDurationEndDate != DateTime.MinValue)
                     //end only
-                    return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
-
-                }
-                if (CustomFetchDurationStartDate != DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
-                {
+                    return
+                        $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
+                if (CustomFetchDurationStartDate != DateTime.MinValue &&
+                    CustomFetchDurationEndDate == DateTime.MinValue)
                     //start only
-                    return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))}";
-
-                }
-                if (CustomFetchDurationStartDate == DateTime.MinValue && CustomFetchDurationEndDate == DateTime.MinValue)
-                {
+                    return
+                        $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))}";
+                if (CustomFetchDurationStartDate == DateTime.MinValue &&
+                    CustomFetchDurationEndDate == DateTime.MinValue)
                     //No Dates
                     return "";
-                }
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, CustomFetchDurationStartDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, CustomFetchDurationEndDate.ToString(RemoteTableDateFormat))}";
             case AttacherHistoricalDurations.DeltaReading:
                 if (DeltaReadingStartDate == DateTime.MinValue) return "";
                 var startDate = DeltaReadingStartDate.AddDays(-DeltaReadingLookBackDays);
                 var endDate = DeltaReadingStartDate.AddDays(DeltaReadingLookForwardDays);
-                return $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, startDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, endDate.ToString(RemoteTableDateFormat))}";
+                return
+                    $" WHERE CAST({RemoteTableDateColumn} as {_dateConvert}) >= {ConvertDateString(dbType, startDate.ToString(RemoteTableDateFormat))} AND CAST({RemoteTableDateColumn} as {_dateConvert}) <= {ConvertDateString(dbType, endDate.ToString(RemoteTableDateFormat))}";
             default:
                 return "";
         }
     }
-
 
 
     private bool IsThisRemoteAttacher(IProcessTask task)
@@ -148,34 +154,58 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         if (task.ProcessTaskType != ProcessTaskType.Attacher) return false;
         try
         {
-            if (HistoricalFetchDuration.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "HistoricalFetchDuration").First().Value) return false;
-            if (RemoteTableDateColumn.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "RemoteTableDateColumn").First().Value) return false;
+            if (HistoricalFetchDuration.ToString() != task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "HistoricalFetchDuration").First().Value) return false;
+            if (RemoteTableDateColumn != task.ProcessTaskArguments.Where(arg => arg.Name == "RemoteTableDateColumn")
+                    .First().Value) return false;
 
-            if (CustomFetchDurationStartDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
-            if (CustomFetchDurationStartDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value == null) return false;
-            if (CustomFetchDurationStartDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value) != CustomFetchDurationStartDate) return false;
+            if (CustomFetchDurationStartDate == DateTime.MinValue && task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
+            if (CustomFetchDurationStartDate != DateTime.MinValue && task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value == null) return false;
+            if (CustomFetchDurationStartDate != DateTime.MinValue &&
+                DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate")
+                    .First().Value) != CustomFetchDurationStartDate) return false;
 
-            if (CustomFetchDurationEndDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
-            if (CustomFetchDurationEndDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationEndDate").First().Value == null) return false;
-            if (CustomFetchDurationEndDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationEndDate").First().Value) != CustomFetchDurationEndDate) return false;
+            if (CustomFetchDurationEndDate == DateTime.MinValue && task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "CustomFetchDurationStartDate").First().Value != null) return false;
+            if (CustomFetchDurationEndDate != DateTime.MinValue && task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "CustomFetchDurationEndDate").First().Value == null) return false;
+            if (CustomFetchDurationEndDate != DateTime.MinValue &&
+                DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "CustomFetchDurationEndDate").First()
+                    .Value) != CustomFetchDurationEndDate) return false;
 
-            if (DeltaReadingStartDate == DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value != null) return false;
-            if (DeltaReadingStartDate != DateTime.MinValue && task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value == null) return false;
-            if (DeltaReadingStartDate != DateTime.MinValue && DateTime.Parse(task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value) != DeltaReadingStartDate) return false;
+            if (DeltaReadingStartDate == DateTime.MinValue &&
+                task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value != null)
+                return false;
+            if (DeltaReadingStartDate != DateTime.MinValue &&
+                task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value == null)
+                return false;
+            if (DeltaReadingStartDate != DateTime.MinValue &&
+                DateTime.Parse(
+                    task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingStartDate").First().Value) !=
+                DeltaReadingStartDate) return false;
 
-            if (DeltaReadingLookBackDays.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingLookBackDays").First().Value) return false;
-            if (DeltaReadingLookForwardDays.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "DeltaReadingLookForwardDays").First().Value) return false;
-            if (SetDeltaReadingToLatestSeenDatePostLoad.ToString() != task.ProcessTaskArguments.Where(arg => arg.Name == "SetDeltaReadingToLatestSeenDatePostLoad").First().Value) return false;
+            if (DeltaReadingLookBackDays.ToString() != task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "DeltaReadingLookBackDays").First().Value) return false;
+            if (DeltaReadingLookForwardDays.ToString() != task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "DeltaReadingLookForwardDays").First().Value) return false;
+            if (SetDeltaReadingToLatestSeenDatePostLoad.ToString() != task.ProcessTaskArguments
+                    .Where(arg => arg.Name == "SetDeltaReadingToLatestSeenDatePostLoad").First().Value) return false;
         }
         catch (Exception)
         {
             return false;
         }
+
         return true;
     }
-    public void FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
+
+    public void FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table,
+        IDataLoadJob job)
     {
-        string maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
+        var maxDateSql =
+            $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
 
 
         using var con = _dbInfo.Server.GetConnection();
@@ -184,7 +214,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         cmd.CommandTimeout = 30000;
         using var da = _dbInfo.Server.GetDataAdapter(cmd);
         da.Fill(dt);
-        MostRecentlySeenDate = dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != "" ? DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()) : null;
+        MostRecentlySeenDate = dt.Rows.Count > 0 && dt.Rows[0].ItemArray[0].ToString() != ""
+            ? DateTime.Parse(dt.Rows[0].ItemArray[0].ToString())
+            : null;
         foreach (ProcessTask task in job.LoadMetadata.ProcessTasks.Where(pt => IsThisRemoteAttacher(pt)))
         {
             task.SetArgumentValue("MostRecentlySeenDate", MostRecentlySeenDate);

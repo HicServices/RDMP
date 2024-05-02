@@ -30,7 +30,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
 /// <summary>
-/// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
+///     Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an
+///     Sql Server database
 /// </summary>
 public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 {
@@ -412,7 +413,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     }
 
 
-    public override string GetDestinationDescription() => GetDestinationDescription("");
+    public override string GetDestinationDescription()
+    {
+        return GetDestinationDescription();
+    }
 
     private string GetDestinationDescription(string suffix = "")
     {
@@ -426,18 +430,28 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         return $"{TargetDatabaseServer.ID}|{dbName}|{tblName}";
     }
 
-    public static DestinationType GetDestinationType() => DestinationType.Database;
+    public static DestinationType GetDestinationType()
+    {
+        return DestinationType.Database;
+    }
 
     public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-        ISelectedDataSets selectedDataSet) => new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
+        ISelectedDataSets selectedDataSet)
+    {
+        return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
+    }
 
-    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository) =>
-        new MsSqlReleaseSource(catalogueRepository);
+    public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+    {
+        return new MsSqlReleaseSource(catalogueRepository);
+    }
 
     public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(
         IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult,
-        IMapsDirectlyToDatabaseTable globalToCheck) =>
-        new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+        IMapsDirectlyToDatabaseTable globalToCheck)
+    {
+        return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
+    }
 
     protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory,
         IExtractionConfiguration configuration, IDataLoadEventListener listener, out int linesWritten,

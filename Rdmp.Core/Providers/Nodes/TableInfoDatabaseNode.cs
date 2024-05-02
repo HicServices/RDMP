@@ -26,11 +26,16 @@ public class TableInfoDatabaseNode : Node
         DatabaseName = databaseName ?? NullDatabaseNode;
     }
 
-    public override string ToString() => DatabaseName;
+    public override string ToString()
+    {
+        return DatabaseName;
+    }
 
-    protected bool Equals(TableInfoDatabaseNode other) =>
-        Server.Equals(other.Server) &&
-        string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
+    protected bool Equals(TableInfoDatabaseNode other)
+    {
+        return Server.Equals(other.Server) &&
+               string.Equals(DatabaseName, other.DatabaseName, StringComparison.CurrentCultureIgnoreCase);
+    }
 
     public override bool Equals(object obj)
     {
@@ -39,5 +44,8 @@ public class TableInfoDatabaseNode : Node
         return obj.GetType() == GetType() && Equals((TableInfoDatabaseNode)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(Server, DatabaseName);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Server, DatabaseName);
+    }
 }

@@ -25,7 +25,7 @@ using CsvHelper;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-/// Contains lots of generically useful static methods
+///     Contains lots of generically useful static methods
 /// </summary>
 public static partial class UsefulStuff
 {
@@ -36,13 +36,18 @@ public static partial class UsefulStuff
 
     private static readonly Regex NullWithSpaces = NullInSpace();
 
-    public static bool IsBasicallyNull(this string result) =>
-        string.IsNullOrWhiteSpace(result) ||
-        // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
-        // but not the same as task cancellation
-        NullWithSpaces.IsMatch(result);
+    public static bool IsBasicallyNull(this string result)
+    {
+        return string.IsNullOrWhiteSpace(result) ||
+               // if user types the literal string null then return null (typically interpreted as - 'I don't want to pick one')
+               // but not the same as task cancellation
+               NullWithSpaces.IsMatch(result);
+    }
 
-    public static bool IsBadName(string name) => name?.Any(Path.GetInvalidFileNameChars().Contains) == true;
+    public static bool IsBadName(string name)
+    {
+        return name?.Any(Path.GetInvalidFileNameChars().Contains) == true;
+    }
 
     public static void OpenUrl(string url)
     {
@@ -120,7 +125,7 @@ public static partial class UsefulStuff
         if (string.IsNullOrWhiteSpace(text))
             yield break;
 
-        var split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
+        var split = text.Split(new[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
 
         //trim off [db]..[tbl] 1
@@ -173,9 +178,11 @@ public static partial class UsefulStuff
         }
     }
 
-    public static bool CHIisOK(string sCHI) =>
-        long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) && sCHI.Length == 10 &&
-        DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
+    public static bool CHIisOK(string sCHI)
+    {
+        return long.TryParse(sCHI, NumberStyles.None, CultureInfo.InvariantCulture, out _) && sCHI.Length == 10 &&
+               DateTime.TryParse($"{sCHI[..2]}/{sCHI[2..4]}/{sCHI[4..6]}", out _) && GetCHICheckDigit(sCHI) == sCHI[^1];
+    }
 
     private static char GetCHICheckDigit(string sCHI)
     {
@@ -194,8 +201,11 @@ public static partial class UsefulStuff
         return (char)(c + '0');
     }
 
-    public static DirectoryInfo GetExecutableDirectory() =>
-        new(AppDomain.CurrentDomain.BaseDirectory ?? throw new Exception("BaseDirectory was null?!"));
+    public static DirectoryInfo GetExecutableDirectory()
+    {
+        return new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory ??
+                                 throw new Exception("BaseDirectory was null?!"));
+    }
 
     public static string HashFile(string filename, int retryCount = 6)
     {
@@ -259,7 +269,7 @@ public static partial class UsefulStuff
     }
 
     /// <summary>
-    /// Executes the given SQL against the database + sends GO delimited statements as separate batches
+    ///     Executes the given SQL against the database + sends GO delimited statements as separate batches
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="conn"></param>
@@ -321,13 +331,17 @@ public static partial class UsefulStuff
 
 
     /// <summary>
-    /// Locates a manifest resource in the assembly under the manifest name subspace.  If you want to spray the resource MySoftwareSuite.MyApplication.MyResources.Bob.txt then pass:
-    /// 1. the assembly containing the resource (e.g. typeof(MyClass1).Assembly)
-    /// 2. the full path to the resource file: "MySoftwareSuite.MyApplication.MyResources.Bob.txt"
-    /// 3. the filename "Bob.txt"
+    ///     Locates a manifest resource in the assembly under the manifest name subspace.  If you want to spray the resource
+    ///     MySoftwareSuite.MyApplication.MyResources.Bob.txt then pass:
+    ///     1. the assembly containing the resource (e.g. typeof(MyClass1).Assembly)
+    ///     2. the full path to the resource file: "MySoftwareSuite.MyApplication.MyResources.Bob.txt"
+    ///     3. the filename "Bob.txt"
     /// </summary>
     /// <param name="assembly">The dll e.g. MySoftwareSuite.MyApplication.dll</param>
-    /// <param name="manifestName">The full path to the manifest resource e.g. MySoftwareSuite.MyApplication.MyResources.Bob.txt</param>
+    /// <param name="manifestName">
+    ///     The full path to the manifest resource e.g.
+    ///     MySoftwareSuite.MyApplication.MyResources.Bob.txt
+    /// </param>
     /// <param name="file">The filename ONLY of the resource e.g. Bob.txt</param>
     /// <param name="outputDirectory">The directory to put the generated file in.  Defaults to %appdata%/RDMP </param>
     public static FileInfo SprayFile(Assembly assembly, string manifestName, string file, string outputDirectory = null)
@@ -380,7 +394,10 @@ public static partial class UsefulStuff
         return task.Wait(timeout) && task.Result;
     }
 
-    public static bool VerifyFileExists(Uri uri, int timeout) => VerifyFileExists(uri.LocalPath, timeout);
+    public static bool VerifyFileExists(Uri uri, int timeout)
+    {
+        return VerifyFileExists(uri.LocalPath, timeout);
+    }
 
     public static string DataTableToHtmlDataTable(DataTable dt)
     {
@@ -490,9 +507,9 @@ public static partial class UsefulStuff
     }
 
     /// <summary>
-    /// Returns the <paramref name="input"/> string split across multiple lines with the
-    /// <paramref name="newline"/> (or <see cref="Environment.NewLine"/> if null) separator
-    /// such that no lines are longer than <paramref name="maxLen"/>
+    ///     Returns the <paramref name="input" /> string split across multiple lines with the
+    ///     <paramref name="newline" /> (or <see cref="Environment.NewLine" /> if null) separator
+    ///     such that no lines are longer than <paramref name="maxLen" />
     /// </summary>
     /// <param name="input"></param>
     /// <param name="maxLen"></param>
@@ -550,8 +567,8 @@ public static partial class UsefulStuff
     }
 
     /// <summary>
-    /// Implementation of <see cref="Convert.ChangeType(object,Type)"/> that works with nullable types,
-    /// dates etc
+    ///     Implementation of <see cref="Convert.ChangeType(object,Type)" /> that works with nullable types,
+    ///     dates etc
     /// </summary>
     /// <param name="value"></param>
     /// <param name="conversionType"></param>

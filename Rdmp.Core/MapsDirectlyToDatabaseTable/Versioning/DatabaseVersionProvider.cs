@@ -12,11 +12,12 @@ using FAnsi.Discovery;
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 
 /// <summary>
-/// Fetches the version number of a platform database.  Platform databases managed by an IPatcher whose assembly contains both the object definitions (IMapsDirectlyToDatabaseTable)
-/// and the SQL schema / patches for the database.  It is important that the version numbers of the host assembly and database match.  To this end when the database is deployed or
-/// patched (updated) the IPatcher assembly version is written into the database.
-/// 
-/// <para>This prevents running mismatched versions of the RDMP software with out dated object definitions.</para>
+///     Fetches the version number of a platform database.  Platform databases managed by an IPatcher whose assembly
+///     contains both the object definitions (IMapsDirectlyToDatabaseTable)
+///     and the SQL schema / patches for the database.  It is important that the version numbers of the host assembly and
+///     database match.  To this end when the database is deployed or
+///     patched (updated) the IPatcher assembly version is written into the database.
+///     <para>This prevents running mismatched versions of the RDMP software with out dated object definitions.</para>
 /// </summary>
 public class DatabaseVersionProvider
 {

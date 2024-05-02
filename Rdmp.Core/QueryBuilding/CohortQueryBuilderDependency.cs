@@ -22,10 +22,11 @@ using Rdmp.Core.QueryCaching.Aggregation;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// A single cohort set in a <see cref="CohortIdentificationConfiguration"/> which selects specific patients from the database by their unique <see cref="IColumn.IsExtractionIdentifier"/>.
-/// Can include a join to a patient index table.  This class stores the cached (if available) uncached and partially Cached SQL for relevant subsections of the query (and the whole query).
-/// So that the decision about whether to use the cache can be delayed till later
-/// 
+///     A single cohort set in a <see cref="CohortIdentificationConfiguration" /> which selects specific patients from the
+///     database by their unique <see cref="IColumn.IsExtractionIdentifier" />.
+///     Can include a join to a patient index table.  This class stores the cached (if available) uncached and partially
+///     Cached SQL for relevant subsections of the query (and the whole query).
+///     So that the decision about whether to use the cache can be delayed till later
 /// </summary>
 public class CohortQueryBuilderDependency
 {
@@ -33,41 +34,48 @@ public class CohortQueryBuilderDependency
     private readonly IReadOnlyCollection<IPluginCohortCompiler> _pluginCohortCompilers;
 
     /// <summary>
-    /// The primary table being queried
+    ///     The primary table being queried
     /// </summary>
     public AggregateConfiguration CohortSet { get; }
 
     /// <summary>
-    /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
+    ///     The relationship object describing the JOIN relationship between <see cref="CohortSet" /> and another optional
+    ///     table
     /// </summary>
     public JoinableCohortAggregateConfigurationUse PatientIndexTableIfAny { get; }
 
     /// <summary>
-    /// The column in the <see cref="CohortSet"/> that is marked <see cref="IColumn.IsExtractionIdentifier"/>
+    ///     The column in the <see cref="CohortSet" /> that is marked <see cref="IColumn.IsExtractionIdentifier" />
     /// </summary>
     public AggregateDimension ExtractionIdentifierColumn { get; }
 
     /// <summary>
-    /// The aggregate (query) referenced by <see cref="PatientIndexTableIfAny"/>
+    ///     The aggregate (query) referenced by <see cref="PatientIndexTableIfAny" />
     /// </summary>
     public AggregateConfiguration JoinedTo { get; }
 
     /// <summary>
-    /// The raw SQL that can be used to join the <see cref="CohortSet"/> and <see cref="PatientIndexTableIfAny"/> (if there is one).  Null if they exist
-    /// on different servers (this is allowed only if the <see cref="CohortSet"/> is on the same server as the cache while the <see cref="PatientIndexTableIfAny"/>
-    /// is remote).
-    ///
-    /// <para>This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION / INTERSECT / EXCEPT hierarchy</para>
+    ///     The raw SQL that can be used to join the <see cref="CohortSet" /> and <see cref="PatientIndexTableIfAny" /> (if
+    ///     there is one).  Null if they exist
+    ///     on different servers (this is allowed only if the <see cref="CohortSet" /> is on the same server as the cache while
+    ///     the <see cref="PatientIndexTableIfAny" />
+    ///     is remote).
+    ///     <para>
+    ///         This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION /
+    ///         INTERSECT / EXCEPT hierarchy
+    ///     </para>
     /// </summary>
     public CohortQueryBuilderDependencySql SqlCacheless { get; private set; }
 
     /// <summary>
-    /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
+    ///     The raw SQL for the <see cref="CohortSet" /> with a join against the cached artifact for the
+    ///     <see cref="PatientIndexTableIfAny" />
     /// </summary>
     public CohortQueryBuilderDependencySql SqlPartiallyCached { get; private set; }
 
     /// <summary>
-    /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
+    ///     Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet" /> joined to
+    ///     <see cref="PatientIndexTableIfAny" /> (if there was any)
     /// </summary>
     public CohortQueryBuilderDependencySql SqlFullyCached { get; private set; }
 
@@ -76,7 +84,7 @@ public class CohortQueryBuilderDependency
     public CohortQueryBuilderDependencySql SqlJoinableCached { get; private set; }
 
     /// <summary>
-    /// Locks on aggregate by ID
+    ///     Locks on aggregate by ID
     /// </summary>
     private static readonly ConcurrentDictionary<int, object> AggregateLocks = new();
 
@@ -111,10 +119,12 @@ public class CohortQueryBuilderDependency
         }
     }
 
-    public override string ToString() =>
-        JoinedTo != null
+    public override string ToString()
+    {
+        return JoinedTo != null
             ? $"{CohortSet.Name}{PatientIndexTableIfAny.JoinType} JOIN {JoinedTo.Name}"
             : CohortSet.Name;
+    }
 
     public void Build(CohortQueryBuilderResult parent, ISqlParameter[] globals, CancellationToken cancellationToken)
     {

@@ -16,17 +16,19 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input
-/// to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing records out to the ExtractionDirectory.
+///     Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset
+///     (linked to the project cohort).  The input
+///     to this is a DataRow rather than an SQL query because the class is used at extraction time as we are writing
+///     records out to the ExtractionDirectory.
 /// </summary>
 public partial class ExtractionTimeTimeCoverageAggregator
 {
     public int countOfBrokenDates { get; private set; }
     public int countOfNullsSeen { get; private set; }
-    public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; private set; }
+    public Dictionary<DateTime, ExtractionTimeTimeCoverageAggregatorBucket> Buckets { get; }
 
     private readonly ICatalogue _catalogue;
-    private string _expectedTimeFieldInOutputBuffer;
+    private readonly string _expectedTimeFieldInOutputBuffer;
     private string _expectedExtractionIdentifierInOutputBuffer;
 
     private bool haveCheckedTimeFieldExists;
@@ -156,9 +158,12 @@ public partial class ExtractionTimeTimeCoverageAggregator
     }
 
     /// <summary>
-    /// we want a consistent line of buckets with difference of BucketSize.  Use this method when you identify a DateTime that is (after
-    /// rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been reached (either
-    /// adding new higher buckets if the key is > than the current maximum or adding additional lower buckets if it is lower.
+    ///     we want a consistent line of buckets with difference of BucketSize.  Use this method when you identify a DateTime
+    ///     that is (after
+    ///     rounding to the BucketSize, not in Buckets.  This method will add additional buckets up until the key has been
+    ///     reached (either
+    ///     adding new higher buckets if the key is > than the current maximum or adding additional lower buckets if it is
+    ///     lower.
     /// </summary>
     /// <param name="key"></param>
     private void ExtendBucketsToEncompas(DateTime key)

@@ -12,12 +12,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// To be used at design time only. Using this in runtime will generate Not Implemented Exceptions.
+///     To be used at design time only. Using this in runtime will generate Not Implemented Exceptions.
 /// </summary>
 public class NullReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
     protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken) => throw new NotImplementedException();
+        GracefulCancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -33,5 +36,8 @@ public class NullReleaseSource : FixedReleaseSource<ReleaseAudit>
     {
     }
 
-    public override string ToString() => "Fixed Release Source";
+    public override string ToString()
+    {
+        return "Fixed Release Source";
+    }
 }

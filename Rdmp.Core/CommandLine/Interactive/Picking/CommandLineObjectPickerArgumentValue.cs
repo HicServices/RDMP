@@ -20,50 +20,56 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
 /// <summary>
-/// Holds a string value entered in at the console (or other source).  Typically produced by a <see cref="CommandLineObjectPicker"/> or <see cref="PickObjectBase"/> this class
-/// can be an expression of multiple different types of objects (e.g. a <see cref="Database"/> or <see cref="Table"/>).  You can always access the original string via <see cref="RawValue"/>.
+///     Holds a string value entered in at the console (or other source).  Typically produced by a
+///     <see cref="CommandLineObjectPicker" /> or <see cref="PickObjectBase" /> this class
+///     can be an expression of multiple different types of objects (e.g. a <see cref="Database" /> or <see cref="Table" />
+///     ).  You can always access the original string via <see cref="RawValue" />.
 /// </summary>
 public class CommandLineObjectPickerArgumentValue
 {
     /// <summary>
-    /// The exact value typed in at the console
+    ///     The exact value typed in at the console
     /// </summary>
     public string RawValue { get; }
 
     /// <summary>
-    /// Which element in the sequence of arguments
+    ///     Which element in the sequence of arguments
     /// </summary>
     public int Index { get; }
 
     /// <summary>
-    /// <see cref="DiscoveredDatabase"/> if <see cref="RawValue"/> matches the syntax (see <see cref="PickDatabase"/>) otherwise null
+    ///     <see cref="DiscoveredDatabase" /> if <see cref="RawValue" /> matches the syntax (see <see cref="PickDatabase" />)
+    ///     otherwise null
     /// </summary>
     public DiscoveredDatabase Database { get; private set; }
 
     /// <summary>
-    /// <see cref="DiscoveredDatabase"/> if <see cref="RawValue"/> matches the syntax (see <see cref="PickTable"/>) otherwise null
+    ///     <see cref="DiscoveredDatabase" /> if <see cref="RawValue" /> matches the syntax (see <see cref="PickTable" />)
+    ///     otherwise null
     /// </summary>
     public DiscoveredTable Table { get; private set; }
 
     /// <summary>
-    /// A collection of <see cref="DatabaseEntity"/> if the <see cref="RawValue"/> indicates selecting one or more such objects
-    /// (e.g. see <see cref="PickObjectByID"/>, <see cref="PickObjectByName"/>) otherwise null
+    ///     A collection of <see cref="DatabaseEntity" /> if the <see cref="RawValue" /> indicates selecting one or more such
+    ///     objects
+    ///     (e.g. see <see cref="PickObjectByID" />, <see cref="PickObjectByName" />) otherwise null
     /// </summary>
     public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; private set; }
 
     /// <summary>
-    /// <see cref="System.Type"/> if the <see cref="RawValue"/> matches a single type name (see <see cref="PickType"/>) otherwise null
+    ///     <see cref="System.Type" /> if the <see cref="RawValue" /> matches a single type name (see <see cref="PickType" />)
+    ///     otherwise null
     /// </summary>
     public Type Type { get; private set; }
 
     /// <summary>
-    /// True if the <see cref="RawValue"/> is an explicit indication by the user that they want a null
-    /// value used (rather than just skipping out selection)
+    ///     True if the <see cref="RawValue" /> is an explicit indication by the user that they want a null
+    ///     value used (rather than just skipping out selection)
     /// </summary>
     public bool ExplicitNull =>
         RawValue != null && RawValue.Equals("null", StringComparison.CurrentCultureIgnoreCase);
 
-    private Logger _logger = LogManager.GetCurrentClassLogger();
+    private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
     public CommandLineObjectPickerArgumentValue(string rawValue, int idx)
     {
@@ -94,8 +100,9 @@ public class CommandLineObjectPickerArgumentValue
     }
 
     /// <summary>
-    /// Returns the contents of this class expressed as the given <paramref name="paramType"/> or null if the current state
-    /// does not describe an object of that Type
+    ///     Returns the contents of this class expressed as the given <paramref name="paramType" /> or null if the current
+    ///     state
+    ///     does not describe an object of that Type
     /// </summary>
     /// <param name="paramType"></param>
     /// <returns></returns>
@@ -206,8 +213,8 @@ public class CommandLineObjectPickerArgumentValue
     }
 
     /// <summary>
-    /// Returns true if the current <see cref="CommandLineObjectPickerArgumentValue"/> could be used to provide a
-    /// value of the given <paramref name="paramType"/> or the user has picked an <see cref="ExplicitNull"/>.
+    ///     Returns true if the current <see cref="CommandLineObjectPickerArgumentValue" /> could be used to provide a
+    ///     value of the given <paramref name="paramType" /> or the user has picked an <see cref="ExplicitNull" />.
     /// </summary>
     /// <param name="paramType"></param>
     /// <returns></returns>
@@ -232,7 +239,7 @@ public class CommandLineObjectPickerArgumentValue
     }
 
     /// <summary>
-    /// Modifies this instance to include missing values identified in <paramref name="others"/>
+    ///     Modifies this instance to include missing values identified in <paramref name="others" />
     /// </summary>
     /// <param name="others"></param>
     /// <returns></returns>

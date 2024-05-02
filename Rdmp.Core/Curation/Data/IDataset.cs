@@ -10,13 +10,14 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// The core of datasets within RDMP.
-/// Simple objects to link up catalogue data to DOI and datasets
+///     The core of datasets within RDMP.
+///     Simple objects to link up catalogue data to DOI and datasets
 /// </summary>
-public interface IDataset: IMapsDirectlyToDatabaseTable
+public interface IDataset : IMapsDirectlyToDatabaseTable
 {
     /// <summary>
-    /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
+    ///     Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository" /> or null if the object does
+    ///     not exist in a catalogue repository.
     /// </summary>
     ICatalogueRepository CatalogueRepository { get; }
 

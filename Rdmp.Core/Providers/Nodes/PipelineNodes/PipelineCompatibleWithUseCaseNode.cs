@@ -13,10 +13,13 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes;
 
 /// <summary>
-/// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source /
-/// destination components and flow type etc).
-/// 
-/// <para>It is <see cref="SpontaneousObject"/> only so it appears under Ctrl+F window... not a pattern we want to repeat.</para>
+///     This class is a wrapper for a <see cref="Pipeline" /> that has been found to be compatible with a given
+///     <see cref="PipelineUseCase" /> (in terms of the source /
+///     destination components and flow type etc).
+///     <para>
+///         It is <see cref="SpontaneousObject" /> only so it appears under Ctrl+F window... not a pattern we want to
+///         repeat.
+///     </para>
 /// </summary>
 public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeAs
 {
@@ -33,21 +36,32 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
         _useCaseType = UseCase.GetType();
     }
 
-    public object MasqueradingAs() => Pipeline;
+    public object MasqueradingAs()
+    {
+        return Pipeline;
+    }
 
-    public override string ToString() => Pipeline.Name;
+    public override string ToString()
+    {
+        return Pipeline.Name;
+    }
 
     public override void DeleteInDatabase()
     {
         Pipeline.DeleteInDatabase();
     }
 
-    public override bool Exists() => Pipeline.Exists();
+    public override bool Exists()
+    {
+        return Pipeline.Exists();
+    }
 
     #region Equality
 
-    protected bool Equals(PipelineCompatibleWithUseCaseNode other) =>
-        _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
+    protected bool Equals(PipelineCompatibleWithUseCaseNode other)
+    {
+        return _useCaseType == other._useCaseType && Pipeline.Equals(other.Pipeline);
+    }
 
     public override bool Equals(object obj)
     {
@@ -57,7 +71,10 @@ public class PipelineCompatibleWithUseCaseNode : SpontaneousObject, IMasqueradeA
         return Equals((PipelineCompatibleWithUseCaseNode)obj);
     }
 
-    public override int GetHashCode() => HashCode.Combine(_useCaseType, Pipeline);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(_useCaseType, Pipeline);
+    }
 
     #endregion
 }

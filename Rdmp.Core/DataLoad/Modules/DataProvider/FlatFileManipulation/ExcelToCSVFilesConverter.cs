@@ -26,8 +26,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation;
 
 /// <summary>
-/// DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in which case 1 csv will be created for
-/// each worksheet.  Supports both .xls and .xlsx by using NPOI (i.e. not Interop).
+///     DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in
+///     which case 1 csv will be created for
+///     each worksheet.  Supports both .xls and .xlsx by using NPOI (i.e. not Interop).
 /// </summary>
 public class ExcelToCSVFilesConverter : IPluginDataProvider
 {
@@ -131,5 +132,8 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
         }
     }
 
-    private bool IsWorksheetNameMatch(string name) => WorksheetPattern?.IsMatch(name) != false;
+    private bool IsWorksheetNameMatch(string name)
+    {
+        return WorksheetPattern?.IsMatch(name) != false;
+    }
 }

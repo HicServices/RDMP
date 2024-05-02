@@ -27,9 +27,13 @@ public class ExecuteCommandCreateNewRemoteRDMP : BasicCommandExecution, IAtomicC
         Activate(remote);
     }
 
-    public override string GetCommandHelp() =>
-        "Tell RDMP about another instance of RDMP that is available for communication with via a web service";
+    public override string GetCommandHelp()
+    {
+        return "Tell RDMP about another instance of RDMP that is available for communication with via a web service";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.RemoteRDMP, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.RemoteRDMP, OverlayKind.Add);
+    }
 }

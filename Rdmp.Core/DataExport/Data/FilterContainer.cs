@@ -14,9 +14,11 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Sometimes you need to limit which records are extracted as part of an ExtractionConfiguration (See DeployedExtractionFilter).  In order to assemble valid WHERE SQL for this use
-/// case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that each subcontainer / filter beyond the first is seperated by
-/// the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
+///     Sometimes you need to limit which records are extracted as part of an ExtractionConfiguration (See
+///     DeployedExtractionFilter).  In order to assemble valid WHERE SQL for this use
+///     case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that
+///     each subcontainer / filter beyond the first is seperated by
+///     the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
 /// </summary>
 public class FilterContainer : ConcreteContainer, IContainer
 {
@@ -25,7 +27,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     }
 
     /// <summary>
-    /// Creates a new instance with the given <paramref name="operation"/>
+    ///     Creates a new instance with the given <paramref name="operation" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="operation"></param>
@@ -44,7 +46,7 @@ public class FilterContainer : ConcreteContainer, IContainer
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override Catalogue GetCatalogueIfAny()
     {
         var sel = GetSelectedDataSetIfAny();
@@ -65,10 +67,13 @@ public class FilterContainer : ConcreteContainer, IContainer
     }
 
     /// <summary>
-    /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
+    ///     Returns the <see cref="ConcreteContainer.Operation" /> "AND" or "OR"
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Operation.ToString();
+    public override string ToString()
+    {
+        return Operation.ToString();
+    }
 
 
     public override IContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
@@ -113,8 +118,9 @@ public class FilterContainer : ConcreteContainer, IContainer
     }
 
     /// <summary>
-    /// If this container is a top level root container (as opposed to a subcontainer) this will return which <see cref="SelectedDataSets"/> (which dataset in which configuration)
-    /// in which it applies.
+    ///     If this container is a top level root container (as opposed to a subcontainer) this will return which
+    ///     <see cref="SelectedDataSets" /> (which dataset in which configuration)
+    ///     in which it applies.
     /// </summary>
     /// <returns></returns>
     public SelectedDataSets GetSelectedDataSetIfAny()
@@ -128,11 +134,13 @@ public class FilterContainer : ConcreteContainer, IContainer
 
 
     /// <summary>
-    /// /// <summary>
-    /// Return which <see cref="SelectedDataSets"/> (which dataset in which configuration) this container resides in (or null if it is an orphan).  This
-    /// involves multiple database queries as the container hierarchy is recursively traversed up.
-    /// </summary>
-    /// <returns></returns>
+    ///     ///
+    ///     <summary>
+    ///         Return which <see cref="SelectedDataSets" /> (which dataset in which configuration) this container resides in
+    ///         (or null if it is an orphan).  This
+    ///         involves multiple database queries as the container hierarchy is recursively traversed up.
+    ///     </summary>
+    ///     <returns></returns>
     /// </summary>
     /// <returns></returns>
     public SelectedDataSets GetSelectedDataSetsRecursively()
@@ -153,7 +161,10 @@ public class FilterContainer : ConcreteContainer, IContainer
         return parent?.GetSelectedDataSetsRecursively();
     }
 
-    public override IFilterFactory GetFilterFactory() => new DeployedExtractionFilterFactory(DataExportRepository);
+    public override IFilterFactory GetFilterFactory()
+    {
+        return new DeployedExtractionFilterFactory(DataExportRepository);
+    }
 
     public override void DeleteInDatabase()
     {

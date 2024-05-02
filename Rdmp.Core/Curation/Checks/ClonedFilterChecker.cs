@@ -12,17 +12,19 @@ using Rdmp.Core.ReusableLibraryCode.Exceptions;
 namespace Rdmp.Core.Curation.Checks;
 
 /// <summary>
-/// Checks whether a given IFilter which was known to be cloned is still identical to its parent ExtractionFilter.  Also confirms that its parent still exists.
-/// It is legal to modify an IFilter after cloning into a subfilter (e.g. AggregateFilter) therefore this class only provides Warning level events
+///     Checks whether a given IFilter which was known to be cloned is still identical to its parent ExtractionFilter.
+///     Also confirms that its parent still exists.
+///     It is legal to modify an IFilter after cloning into a subfilter (e.g. AggregateFilter) therefore this class only
+///     provides Warning level events
 /// </summary>
 public class ClonedFilterChecker : ICheckable
 {
     private readonly IFilter _child;
-    private int? _allegedParent;
+    private readonly int? _allegedParent;
     private readonly IRepository _catalogueDatabaseRepository;
 
     /// <summary>
-    /// Prepares to check the supplied IFilter which must be of a lower filter type to its parent ExtractionFilter
+    ///     Prepares to check the supplied IFilter which must be of a lower filter type to its parent ExtractionFilter
     /// </summary>
     /// <param name="child"></param>
     /// <param name="allegedParentExtractionFilterID">ExtractionFilter from which the IFilter was derrived</param>
@@ -36,8 +38,9 @@ public class ClonedFilterChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks that the alleged parent of the cloned IFilter still exists and issues a warning if the SQL has changed vs the master (might not
-    ///  be a problem since user customisation is allowed)
+    ///     Checks that the alleged parent of the cloned IFilter still exists and issues a warning if the SQL has changed vs
+    ///     the master (might not
+    ///     be a problem since user customisation is allowed)
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)

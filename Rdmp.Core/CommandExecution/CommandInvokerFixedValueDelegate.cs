@@ -9,8 +9,9 @@ using System;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// <see cref="CommandInvokerDelegate"/> that only ever returns a single object (in <see cref="CommandInvokerDelegate.Run"/>)
-/// and claims only to handle that object's exact <see cref="Type"/>.
+///     <see cref="CommandInvokerDelegate" /> that only ever returns a single object (in
+///     <see cref="CommandInvokerDelegate.Run" />)
+///     and claims only to handle that object's exact <see cref="Type" />.
 /// </summary>
 internal class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
 {
@@ -18,5 +19,8 @@ internal class CommandInvokerFixedValueDelegate : CommandInvokerDelegate
     {
     }
 
-    public override bool CanHandle(Type t) => HandledType == t;
+    public override bool CanHandle(Type t)
+    {
+        return HandledType == t;
+    }
 }

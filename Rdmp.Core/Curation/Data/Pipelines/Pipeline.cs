@@ -16,7 +16,7 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
-/// <inheritdoc cref="IPipeline"/>
+/// <inheritdoc cref="IPipeline" />
 public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 {
     #region Database Properties
@@ -26,7 +26,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     private int? _destinationPipelineComponentID;
     private int? _sourcePipelineComponentID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -35,21 +35,21 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Description
     {
         get => _description;
         set => SetField(ref _description, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? DestinationPipelineComponent_ID
     {
         get => _destinationPipelineComponentID;
         set => SetField(ref _destinationPipelineComponentID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? SourcePipelineComponent_ID
     {
         get => _sourcePipelineComponentID;
@@ -60,11 +60,11 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IList<IPipelineComponent> PipelineComponents => _knownPipelineComponents.Value;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IPipelineComponent Destination
     {
@@ -76,7 +76,7 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IPipelineComponent Source
     {
@@ -96,8 +96,10 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
     }
 
     /// <summary>
-    /// Creates a new empty <see cref="Pipeline"/> in the database, this is a sequence of <see cref="PipelineComponent"/> which when combined
-    /// with an <see cref="IPipelineUseCase"/> achieve a specific goal (e.g. loading records into the database from a flat file).
+    ///     Creates a new empty <see cref="Pipeline" /> in the database, this is a sequence of <see cref="PipelineComponent" />
+    ///     which when combined
+    ///     with an <see cref="IPipelineUseCase" /> achieve a specific goal (e.g. loading records into the database from a flat
+    ///     file).
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -133,12 +135,16 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Creates (in the database) and returns a new <see cref="Pipeline"/> which is an identical copy of the current.  This includes creating new copies
-    /// of all child objects (i.e. <see cref="PipelineComponent"/> and <see cref="PipelineComponentArgument"/>)
+    ///     Creates (in the database) and returns a new <see cref="Pipeline" /> which is an identical copy of the current.
+    ///     This includes creating new copies
+    ///     of all child objects (i.e. <see cref="PipelineComponent" /> and <see cref="PipelineComponentArgument" />)
     /// </summary>
     /// <returns></returns>
     public Pipeline Clone()
@@ -195,21 +201,27 @@ public class Pipeline : DatabaseEntity, IPipeline, IHasDependencies
         return proposedName;
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => PipelineComponents.Cast<IHasDependencies>().ToArray();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return PipelineComponents.Cast<IHasDependencies>().ToArray();
+    }
 
     private Lazy<IList<IPipelineComponent>> _knownPipelineComponents;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(IPipelineComponent[] instance)
     {
         _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(() => instance.OrderBy(p => p.Order).ToList());
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _knownPipelineComponents = new Lazy<IList<IPipelineComponent>>(FetchPipelineComponents);

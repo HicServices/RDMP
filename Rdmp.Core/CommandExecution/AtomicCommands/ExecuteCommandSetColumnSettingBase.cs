@@ -13,29 +13,34 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution, IAtomicCommand
 {
-    private ICatalogue _catalogue;
-    private ExtractionInformation[] _extractionInformations;
-    private ExtractionInformation[] _alreadyMarked;
+    private readonly ICatalogue _catalogue;
+    private readonly ExtractionInformation[] _extractionInformations;
+    private readonly ExtractionInformation[] _alreadyMarked;
 
     private readonly IExtractionConfiguration _inConfiguration;
     private readonly string _commandName;
-    private ConcreteColumn[] _selectedDataSetColumns;
-    private ConcreteColumn[] _alreadyMarkedInConfiguration;
+    private readonly ConcreteColumn[] _selectedDataSetColumns;
+    private readonly ConcreteColumn[] _alreadyMarkedInConfiguration;
 
     /// <summary>
-    /// Explicit columns to pick rather than prompting to choose at runtime
+    ///     Explicit columns to pick rather than prompting to choose at runtime
     /// </summary>
-    private string[] toPick;
+    private readonly string[] toPick;
 
     private readonly string _commandProperty;
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="catalogue">The dataset you want to change the setting for</param>
-    /// <param name="inConfiguration">Optional - If setting should only be applied to a specific extraction or Null for the Catalogue itself (will affect all future extractions)</param>
-    /// <param name="column">"Optional - The Column name(s) you want to select as the new selection(s).  Comma seperate multiple entries if needed"</param>
+    /// <param name="inConfiguration">
+    ///     Optional - If setting should only be applied to a specific extraction or Null for the
+    ///     Catalogue itself (will affect all future extractions)
+    /// </param>
+    /// <param name="column">
+    ///     "Optional - The Column name(s) you want to select as the new selection(s).  Comma seperate
+    ///     multiple entries if needed"
+    /// </param>
     /// <param name="commandName">Describe what is being changed from user perspective e.g. "Set IsExtractionIdentifier"</param>
     /// <param name="commandProperty">Name of property being changed by this command e.g "Extraction Identifier"</param>
     public ExecuteCommandSetColumnSettingBase(
@@ -135,13 +140,13 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
         else
         {
             if (SelectMany(new DialogArgs
-            {
-                InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
-                AllowSelectingNull = true,
-                WindowTitle = $"Set {_commandProperty}",
-                TaskDescription =
+                {
+                    InitialObjectSelection = _alreadyMarked ?? _alreadyMarkedInConfiguration,
+                    AllowSelectingNull = true,
+                    WindowTitle = $"Set {_commandProperty}",
+                    TaskDescription =
                         $"Choose which columns will make up the new {_commandProperty}.  Or select null to clear"
-            }, allColumns, out selected))
+                }, allColumns, out selected))
             {
                 if (selected == null || selected.Length == 0)
                     if (!YesNo($"Do you want to clear the {_commandProperty}?", $"Clear {_commandProperty}?"))
@@ -168,21 +173,23 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
     }
 
     /// <summary>
-    /// Value getter to determine if a given <see cref="ConcreteColumn"/> is included in the current selection for your setting
+    ///     Value getter to determine if a given <see cref="ConcreteColumn" /> is included in the current selection for your
+    ///     setting
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>
     protected abstract bool Getter(ConcreteColumn c);
 
     /// <summary>
-    /// Value setter to assign new inclusion/exclusion status for the column (if command is executed and a new selection confirmed)
+    ///     Value setter to assign new inclusion/exclusion status for the column (if command is executed and a new selection
+    ///     confirmed)
     /// </summary>
     /// <param name="c"></param>
     /// <param name="newValue">New status, true = include in selection, false = exclude</param>
     protected abstract void Setter(ConcreteColumn c, bool newValue);
 
     /// <summary>
-    /// Show any warnings if applicable and then return false if user changes their mind about <paramref name="selected"/>
+    ///     Show any warnings if applicable and then return false if user changes their mind about <paramref name="selected" />
     /// </summary>
     /// <param name="selected"></param>
     /// <returns></returns>

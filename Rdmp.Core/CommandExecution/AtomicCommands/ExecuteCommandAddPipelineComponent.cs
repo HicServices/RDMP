@@ -11,6 +11,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
@@ -19,7 +20,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds new <see cref="PipelineComponent"/> to an existing <see cref="Pipeline"/>
+///     Adds new <see cref="PipelineComponent" /> to an existing <see cref="Pipeline" />
 /// </summary>
 public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
 {
@@ -49,8 +50,10 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         _useCaseIfAny = useCaseIfAny;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.PipelineComponent, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.PipelineComponent, OverlayKind.Add);
+    }
 
     public override void Execute()
     {
@@ -64,13 +67,16 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            bool Filter(Type t, object o) => t.IsGenericType &&
-                                             (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
-                                              t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            bool Filter(Type t, object o)
+            {
+                return t.IsGenericType &&
+                       (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
+                        t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            }
 
             //get any source and flow components compatible with any context
             offer.AddRange(
-                Repositories.MEF.GetAllTypes()
+                MEF.GetAllTypes()
                     .Where(t => !t.IsInterface && !t.IsAbstract)
                     .Where(t => t.FindInterfaces(Filter, null).Any())
                     .Where(t => context == null || context.IsAllowable(t))
@@ -130,10 +136,14 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         return;
 
         // check if it is a source or destination (or if both are false it is a middle component)
-        bool SourceFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        bool SourceFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        }
 
-        bool DestFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        bool DestFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        }
     }
 }

@@ -15,7 +15,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 
 /// <summary>
-/// Extraction component for extracting (and optionally transforming in some way) arbitrary files on disk as part of an extraction
+///     Extraction component for extracting (and optionally transforming in some way) arbitrary files on disk as part of an
+///     extraction
 /// </summary>
 public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<IExtractCommand>
 {
@@ -61,7 +62,7 @@ public abstract class FileExtractor : IPluginDataFlowComponent<DataTable>, IPipe
     }
 
     /// <summary>
-    /// Gets called once only per extraction pipeline run (at the time globals start being extracted)
+    ///     Gets called once only per extraction pipeline run (at the time globals start being extracted)
     /// </summary>
     /// <param name="command"></param>
     /// <param name="listener"></param>

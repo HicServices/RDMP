@@ -10,12 +10,13 @@ using Rdmp.Core.Repositories.Managers;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and will be lost (unless you have the original key)
+///     Creates a new private key for encrypting credentials in RDMP.  Old passwords will not decrypt using the new key and
+///     will be lost (unless you have the original key)
 /// </summary>
 public class ExecuteCommandCreatePrivateKey : BasicCommandExecution
 {
     private readonly FileInfo _keyFileToCreate;
-    private PasswordEncryptionKeyLocation _encryption;
+    private readonly PasswordEncryptionKeyLocation _encryption;
 
     public ExecuteCommandCreatePrivateKey(IBasicActivateItems activator, FileInfo keyFileToCreate) : base(activator)
     {

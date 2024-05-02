@@ -17,9 +17,11 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
-/// Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part of a Data Release.  This includes
-/// row counts and unique patient counts as well as the number of patients in the original cohort (not all patients will appear in all datasets).  Also
-/// included are the tickets for the project, the cohort ID number etc
+///     Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part
+///     of a Data Release.  This includes
+///     row counts and unique patient counts as well as the number of patients in the original cohort (not all patients
+///     will appear in all datasets).  Also
+///     included are the tickets for the project, the cohort ID number etc
 /// </summary>
 public class WordDataReleaseFileGenerator : DocXHelper
 {
@@ -60,7 +62,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
         //actually changes it to landscape :)
         SetLandscape(document);
 
-        InsertHeader(document, $"Project:{Project.Name}", 1);
+        InsertHeader(document, $"Project:{Project.Name}");
         InsertHeader(document, Configuration.Name, 2);
 
         var disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
@@ -117,7 +119,7 @@ public class WordDataReleaseFileGenerator : DocXHelper
     }
 
     /// <summary>
-    /// Returns the first 3 digits of the first release identifier in the cohort (this is very hic specific).
+    ///     Returns the first 3 digits of the first release identifier in the cohort (this is very hic specific).
     /// </summary>
     /// <returns></returns>
     private string GetFirstProCHIPrefix()
@@ -186,10 +188,13 @@ public class WordDataReleaseFileGenerator : DocXHelper
             var filename = GetFileName(result);
             var extractableDataset = _repository.GetObjectByID<ExtractableDataSet>(result.ExtractableDataSet_ID);
             SetTableCell(table, tableLine, 0,
-              extractableDataset.ToString());
-            var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(static c => c.ColumnInfo).Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
-            var datasets = _repository.CatalogueRepository.GetAllObjects<Curation.Data.Dataset>().Where(d => linkedDatasets.Contains(d.ID)).ToList();
-            var datasetString = string.Join("",datasets.Select(ds=> $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}"));
+                extractableDataset.ToString());
+            var linkedDatasets = extractableDataset.Catalogue.CatalogueItems.Select(static c => c.ColumnInfo)
+                .Where(ci => ci.Dataset_ID != null).Distinct().Select(ci => ci.Dataset_ID);
+            var datasets = _repository.CatalogueRepository.GetAllObjects<Curation.Data.Dataset>()
+                .Where(d => linkedDatasets.Contains(d.ID)).ToList();
+            var datasetString =
+                string.Join("", datasets.Select(ds => $"{ds.Name} {getDOI(ds)}, {Environment.NewLine}"));
             SetTableCell(table, tableLine, 1, result.FiltersUsed);
             SetTableCell(table, tableLine, 2, filename);
             SetTableCell(table, tableLine, 3, result.RecordsExtracted.ToString("N0"));

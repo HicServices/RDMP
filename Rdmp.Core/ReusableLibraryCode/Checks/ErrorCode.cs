@@ -9,24 +9,25 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// Describes an error that can surface during RDMPs execution as a result of state e.g. user is trying to extract to a db but the
-/// destination table already exists.
+///     Describes an error that can surface during RDMPs execution as a result of state e.g. user is trying to extract to a
+///     db but the
+///     destination table already exists.
 /// </summary>
 public sealed class ErrorCode
 {
     /// <summary>
-    /// A fixed code for uniquely identifying this error type
+    ///     A fixed code for uniquely identifying this error type
     /// </summary>
     public string Code { get; }
 
     /// <summary>
-    /// The string to display to the user in the event that the error occurs.  This is likely to contain one or more
-    /// placeholders e.g. {0} that will be populated with relevant info at the time it occurs (e.g. table names)
+    ///     The string to display to the user in the event that the error occurs.  This is likely to contain one or more
+    ///     placeholders e.g. {0} that will be populated with relevant info at the time it occurs (e.g. table names)
     /// </summary>
     public string Message { get; }
 
     /// <summary>
-    /// The severity level at which the error is reported.  Can be overriden by <see cref="UserSettings"/>
+    ///     The severity level at which the error is reported.  Can be overriden by <see cref="UserSettings" />
     /// </summary>
     public CheckResult DefaultTreatment { get; }
 
@@ -37,5 +38,8 @@ public sealed class ErrorCode
         DefaultTreatment = defaultTreatment;
     }
 
-    public override string ToString() => Code;
+    public override string ToString()
+    {
+        return Code;
+    }
 }

@@ -12,10 +12,11 @@ public abstract class FileOutputFormat : IFileOutputFormat
 {
     public abstract string GetFileExtension();
 
-    public string OutputFilename { get; private set; }
+    public string OutputFilename { get; }
 
     /// <summary>
-    /// The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values
+    ///     The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which
+    ///     is hard typed Float and not to string values
     /// </summary>
     public int? RoundFloatsTo { get; internal set; }
 

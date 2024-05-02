@@ -18,7 +18,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Stores a known specific useful value for a given ExtractionFilterParameter.  See <see cref="Data.ExtractionFilterParameterSet"/> for a use case for this.
+///     Stores a known specific useful value for a given ExtractionFilterParameter.  See
+///     <see cref="Data.ExtractionFilterParameterSet" /> for a use case for this.
 /// </summary>
 public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, IInjectKnown<ExtractionFilterParameter>
 {
@@ -29,7 +30,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     private int _extractionFilterParameterID;
 
     /// <summary>
-    /// The 'known good paramter set' (<see cref="ExtractionFilterParameterSet"/>) to which this parameter value belongs
+    ///     The 'known good paramter set' (<see cref="ExtractionFilterParameterSet" />) to which this parameter value belongs
     /// </summary>
     public int ExtractionFilterParameterSet_ID
     {
@@ -38,7 +39,8 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     }
 
     /// <summary>
-    /// The specific parameter that this object is providing a 'known value' for in the parent <see cref="ExtractionFilter"/> e.g. @DrugList='123.2,123.2,... etc'.
+    ///     The specific parameter that this object is providing a 'known value' for in the parent
+    ///     <see cref="ExtractionFilter" /> e.g. @DrugList='123.2,123.2,... etc'.
     /// </summary>
     public int ExtractionFilterParameter_ID
     {
@@ -46,7 +48,7 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
         set => SetField(ref _extractionFilterParameterID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Value
     {
@@ -60,13 +62,13 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
 
     private Lazy<ExtractionFilterParameter> _knownExtractionFilterParameter;
 
-    /// <inheritdoc/>
-    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
+    /// <inheritdoc />
+    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID" /></remarks>
     [NoMappingToDatabase]
     public string ParameterName => _knownExtractionFilterParameter.Value.ParameterName;
 
-    /// <inheritdoc/>
-    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
+    /// <inheritdoc />
+    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID" /></remarks>
     [Sql]
     [NoMappingToDatabase]
     public string ParameterSQL
@@ -75,8 +77,8 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
         set { }
     }
 
-    /// <inheritdoc/>
-    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID"/></remarks>
+    /// <inheritdoc />
+    /// <remarks>Readonly, fetched from associated <see cref="ExtractionFilterParameter_ID" /></remarks>
     [NoMappingToDatabase]
     public string Comment
     {
@@ -85,21 +87,24 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     }
 
     /// <summary>
-    /// Returns the <see cref="ExtractionFilterParameterSet"/> this known good value belongs to
+    ///     Returns the <see cref="ExtractionFilterParameterSet" /> this known good value belongs to
     /// </summary>
     /// <returns></returns>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => ExtractionFilterParameterSet;
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return ExtractionFilterParameterSet;
+    }
 
     #endregion
 
     #region Relationships
 
-    /// <inheritdoc cref="ExtractionFilterParameterSet_ID"/>
+    /// <inheritdoc cref="ExtractionFilterParameterSet_ID" />
     [NoMappingToDatabase]
     public ExtractionFilterParameterSet ExtractionFilterParameterSet =>
         Repository.GetObjectByID<ExtractionFilterParameterSet>(ExtractionFilterParameterSet_ID);
 
-    /// <inheritdoc cref="ExtractionFilterParameter_ID"/>
+    /// <inheritdoc cref="ExtractionFilterParameter_ID" />
     [NoMappingToDatabase]
     public ExtractionFilterParameter ExtractionFilterParameter => _knownExtractionFilterParameter.Value;
 
@@ -122,12 +127,18 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
     }
 
     /// <summary>
-    /// Creates a record of what value to use with the given <see cref="ISqlParameter"/> of the <see cref="ExtractionFilterParameterSet"/> <see cref="IFilter"/> to achieve the concept.
-    /// 
-    /// <para>For example if there is an <see cref="ExtractionFilter"/> 'Prescribed Drug X' with a parameter @DrugList and you create an <see cref="ExtractionFilterParameterSet"/>
-    /// 'Diabetic Drugs' then this will create a <see cref="ExtractionFilterParameterSetValue"/> of '@DrugList='123.23,121,2... etc'.</para>
-    /// 
-    /// <para>If a filter has more than one parameter then you will need one <see cref="ExtractionFilterParameterSetValue"/> per parameter per <see cref="ExtractionFilterParameterSet"/></para>
+    ///     Creates a record of what value to use with the given <see cref="ISqlParameter" /> of the
+    ///     <see cref="ExtractionFilterParameterSet" /> <see cref="IFilter" /> to achieve the concept.
+    ///     <para>
+    ///         For example if there is an <see cref="ExtractionFilter" /> 'Prescribed Drug X' with a parameter @DrugList and
+    ///         you create an <see cref="ExtractionFilterParameterSet" />
+    ///         'Diabetic Drugs' then this will create a <see cref="ExtractionFilterParameterSetValue" /> of
+    ///         '@DrugList='123.23,121,2... etc'.
+    ///     </para>
+    ///     <para>
+    ///         If a filter has more than one parameter then you will need one
+    ///         <see cref="ExtractionFilterParameterSetValue" /> per parameter per <see cref="ExtractionFilterParameterSet" />
+    ///     </para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -144,16 +155,22 @@ public class ExtractionFilterParameterSetValue : DatabaseEntity, ISqlParameter, 
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ExtractionFilterParameter.GetQuerySyntaxHelper();
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return ExtractionFilterParameter.GetQuerySyntaxHelper();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Check(ICheckNotifier notifier)
     {
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    public override string ToString() => $"{ParameterName} = {Value}";
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
     public void InjectKnown(ExtractionFilterParameter instance)
     {

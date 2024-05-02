@@ -19,9 +19,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// Responsible for executing the caching pipeline(s) for a given PermissionWindow and/or set of CacheProgress items.
-/// If a PermissionWindow is set, either all CacheProgresses attached to that window can be downloaded (by calling Download) or a subset may be specified (by calling overloaded Download).
-/// If no PermissionWindow is set, either all CacheProgresses which have no PermissionWindow can be downloaded (by calling Download) or a subset may be specified (by calling overloaded Download).
+///     Responsible for executing the caching pipeline(s) for a given PermissionWindow and/or set of CacheProgress items.
+///     If a PermissionWindow is set, either all CacheProgresses attached to that window can be downloaded (by calling
+///     Download) or a subset may be specified (by calling overloaded Download).
+///     If no PermissionWindow is set, either all CacheProgresses which have no PermissionWindow can be downloaded (by
+///     calling Download) or a subset may be specified (by calling overloaded Download).
 /// </summary>
 public class PermissionWindowCacheDownloader
 {
@@ -32,7 +34,7 @@ public class PermissionWindowCacheDownloader
     private RetrievalResult _retrievalResult;
 
     /// <summary>
-    /// Overload with specific cache items to download for this permission window
+    ///     Overload with specific cache items to download for this permission window
     /// </summary>
     /// <param name="permissionWindow"></param>
     /// <param name="cacheProgressItems"></param>
@@ -59,9 +61,9 @@ public class PermissionWindowCacheDownloader
     }
 
     /// <summary>
-    /// Single-shot, will either exit immediately if not in the permission window or run until either:
-    /// - the permission window expires, or
-    /// - all engines successfully complete execution.
+    ///     Single-shot, will either exit immediately if not in the permission window or run until either:
+    ///     - the permission window expires, or
+    ///     - all engines successfully complete execution.
     /// </summary>
     /// <param name="listener"></param>
     /// <param name="cancellationToken"></param>
@@ -117,8 +119,9 @@ public class PermissionWindowCacheDownloader
     }
 
     /// <summary>
-    /// Blocking call which runs a set of DataFlowPipelineEngines according to the execution strategy whilst observing the PermissionWindow.
-    /// Stops the task and returns if the PermissionWindow closes.
+    ///     Blocking call which runs a set of DataFlowPipelineEngines according to the execution strategy whilst observing the
+    ///     PermissionWindow.
+    ///     Stops the task and returns if the PermissionWindow closes.
     /// </summary>
     /// <param name="cancellationToken"></param>
     /// <param name="cachingEngines"></param>
@@ -229,7 +232,10 @@ public class PermissionWindowCacheDownloader
             }
     }
 
-    public override string ToString() => _permissionWindow == null
-        ? "Downloader (Any Time)"
-        : $"Downloader for {_permissionWindow.Name}";
+    public override string ToString()
+    {
+        return _permissionWindow == null
+            ? "Downloader (Any Time)"
+            : $"Downloader for {_permissionWindow.Name}";
+    }
 }

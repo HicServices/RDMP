@@ -18,7 +18,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Sharing.Dependency.Gathering;
 
 /// <summary>
-/// Gathers dependencies of a given object in a more advanced/selective way than simply using methods of IHasDependencies
+///     Gathers dependencies of a given object in a more advanced/selective way than simply using methods of
+///     IHasDependencies
 /// </summary>
 public class Gatherer
 {
@@ -49,15 +50,20 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Invokes the relevant overload if it exists.
-    /// <seealso cref="CanGatherDependencies"/>
+    ///     Invokes the relevant overload if it exists.
+    ///     <seealso cref="CanGatherDependencies" />
     /// </summary>
     /// <param name="databaseEntity"></param>
     /// <returns></returns>
-    public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity) =>
-        _functions.ContainsKey(databaseEntity.GetType());
+    public bool CanGatherDependencies(IMapsDirectlyToDatabaseTable databaseEntity)
+    {
+        return _functions.ContainsKey(databaseEntity.GetType());
+    }
 
-    public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o) => _functions[o.GetType()](o);
+    public GatheredObject GatherDependencies(IMapsDirectlyToDatabaseTable o)
+    {
+        return _functions[o.GetType()](o);
+    }
 
     public static GatheredObject GatherDependencies(ANOTable anoTable)
     {
@@ -88,7 +94,9 @@ public class Gatherer
             }
         }
 
-        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        var linkage =
+            loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID",
+                loadMetadata.ID);
         foreach (var link in linkage)
         {
             var glcl = new GatheredObject(link);
@@ -119,9 +127,11 @@ public class Gatherer
     }
 
     /// <summary>
-    /// Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue databases
-    /// which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should share its
-    /// runtime name e.g. CatalogueItem and ExtractionInformation.
+    ///     Gathers dependencies of ColumnInfo, this includes all [Sql] properties on any object in data export / catalogue
+    ///     databases
+    ///     which references the fully qualified name of the ColumnInfo as well as its immediate network friends that should
+    ///     share its
+    ///     runtime name e.g. CatalogueItem and ExtractionInformation.
     /// </summary>
     /// <param name="c"></param>
     /// <returns></returns>

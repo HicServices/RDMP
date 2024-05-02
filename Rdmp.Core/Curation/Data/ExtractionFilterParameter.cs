@@ -19,7 +19,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter"/> (its parent).
+///     Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter" /> (its
+///     parent).
 /// </summary>
 public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
 {
@@ -30,7 +31,7 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     private string _parameterSQL;
     private int _extractionFilterID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Value
     {
@@ -38,14 +39,14 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
         set => SetField(ref _value, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Comment
     {
         get => _comment;
         set => SetField(ref _comment, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string ParameterSQL
     {
@@ -54,7 +55,8 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
     /// <summary>
-    /// The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter"/>'Healthboard X' could have a required property (<see cref="ExtractionFilterParameter"/>) @Hb
+    ///     The filter which requires this parameter belongs e.g. an <see cref="ExtractionFilter" />'Healthboard X' could have
+    ///     a required property (<see cref="ExtractionFilterParameter" />) @Hb
     /// </summary>
     [Relationship(typeof(ExtractionFilter), RelationshipType.LocalReference)]
     public int ExtractionFilter_ID
@@ -67,14 +69,14 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
 
 
     /// <summary>
-    /// extracts the name ofthe parameter from the SQL
+    ///     extracts the name ofthe parameter from the SQL
     /// </summary>
     [NoMappingToDatabase]
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
     #region Relationships
 
-    /// <inheritdoc cref="ExtractionFilter_ID"/>
+    /// <inheritdoc cref="ExtractionFilter_ID" />
     [NoMappingToDatabase]
     public ExtractionFilter ExtractionFilter => Repository.GetObjectByID<ExtractionFilter>(ExtractionFilter_ID);
 
@@ -85,8 +87,11 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
     }
 
     /// <summary>
-    /// Creates a new parameter on the given <paramref name="parent"/>
-    /// <para>It is better to use <see cref="ParameterCreator"/> to automatically generate parameters based on the WHERE Sql</para>
+    ///     Creates a new parameter on the given <paramref name="parent" />
+    ///     <para>
+    ///         It is better to use <see cref="ParameterCreator" /> to automatically generate parameters based on the WHERE
+    ///         Sql
+    ///     </para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parameterSQL"></param>
@@ -110,30 +115,40 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
         Comment = r["Comment"] as string;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{ParameterName} = {Value}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
-    /// <inheritdoc cref="ParameterSyntaxChecker"/>
+    /// <inheritdoc cref="ParameterSyntaxChecker" />
     public void Check(ICheckNotifier notifier)
     {
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => ExtractionFilter.GetQuerySyntaxHelper();
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return ExtractionFilter.GetQuerySyntaxHelper();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { ExtractionFilter };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => null;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return null;
+    }
 
     /// <summary>
-    /// Returns true if a  <see cref="Comment"/> has been provided and an example/initial <see cref="Value"/> specified.  This is a requirement of
-    /// publishing a filter as a master filter
+    ///     Returns true if a  <see cref="Comment" /> has been provided and an example/initial <see cref="Value" /> specified.
+    ///     This is a requirement of
+    ///     publishing a filter as a master filter
     /// </summary>
     /// <param name="sqlParameter"></param>
     /// <param name="reasonParameterRejected"></param>
@@ -151,6 +166,9 @@ public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParame
         return reasonParameterRejected == null;
     }
 
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => ExtractionFilter;
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return ExtractionFilter;
+    }
 }

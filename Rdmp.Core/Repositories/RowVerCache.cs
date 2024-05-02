@@ -15,9 +15,9 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.Repositories;
 
 /// <summary>
-/// Caches the results of calls to GetAllObjects of <see cref="TableRepository"/> using a mixture of
-/// Sql Server 'Change Tracking' and a RowVer column.  This reduces the number of objects that need to be
-/// constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
+///     Caches the results of calls to GetAllObjects of <see cref="TableRepository" /> using a mixture of
+///     Sql Server 'Change Tracking' and a RowVer column.  This reduces the number of objects that need to be
+///     constructed / updated when an RDMP platform database stores hundreds of thousands of objects.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class RowVerCache<T> : IRowVerCache where T : IMapsDirectlyToDatabaseTable
@@ -25,18 +25,18 @@ public class RowVerCache<T> : IRowVerCache where T : IMapsDirectlyToDatabaseTabl
     private readonly TableRepository _repository;
 
     private List<T> _cachedObjects = new();
-    private object _oLockCachedObjects = new();
+    private readonly object _oLockCachedObjects = new();
 
     private byte[] _maxRowVer;
     public long _changeTracking;
 
     /// <summary>
-    /// True if the caching system is broken for some reason (e.g. user lacks certain permissions)
+    ///     True if the caching system is broken for some reason (e.g. user lacks certain permissions)
     /// </summary>
     public bool Broken => BrokenReason != null;
 
     /// <summary>
-    /// The error that triggered <see cref="Broken"/> (and ended use of the object caching strategy)
+    ///     The error that triggered <see cref="Broken" /> (and ended use of the object caching strategy)
     /// </summary>
     public SqlException BrokenReason { get; set; }
 
@@ -148,5 +148,8 @@ FROM
         return hex.ToString();
     }
 
-    public T1[] GetAllObjects<T1>() => GetAllObjects().Cast<T1>().ToArray();
+    public T1[] GetAllObjects<T1>()
+    {
+        return GetAllObjects().Cast<T1>().ToArray();
+    }
 }

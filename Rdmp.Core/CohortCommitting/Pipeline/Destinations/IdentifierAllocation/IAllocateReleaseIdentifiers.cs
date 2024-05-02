@@ -9,21 +9,24 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 
 /// <summary>
-/// Class responsible for allocating Release Identifiers for a Cohort that is being committed (see <see cref="BasicCohortDestination"/>) when the user has not supplied any in
-/// the file/cohort he is uploading.
+///     Class responsible for allocating Release Identifiers for a Cohort that is being committed (see
+///     <see cref="BasicCohortDestination" />) when the user has not supplied any in
+///     the file/cohort he is uploading.
 /// </summary>
 public interface IAllocateReleaseIdentifiers
 {
     /// <summary>
-    /// Return a new (or existing) anonymous mapping for the provided <paramref name="privateIdentifier"/>.  This will be called for
-    /// novel identifiers only in a given batch being processed so you do not need to track your return values.
+    ///     Return a new (or existing) anonymous mapping for the provided <paramref name="privateIdentifier" />.  This will be
+    ///     called for
+    ///     novel identifiers only in a given batch being processed so you do not need to track your return values.
     /// </summary>
     /// <param name="privateIdentifier"></param>
     /// <returns></returns>
     object AllocateReleaseIdentifier(object privateIdentifier);
 
     /// <summary>
-    /// Called before any allocation, lets you know what <see cref="IProject"/> etc is involved in the cohort creation attempt.
+    ///     Called before any allocation, lets you know what <see cref="IProject" /> etc is involved in the cohort creation
+    ///     attempt.
     /// </summary>
     /// <param name="request"></param>
     void Initialize(ICohortCreationRequest request);

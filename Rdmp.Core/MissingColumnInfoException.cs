@@ -10,8 +10,9 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core;
 
 /// <summary>
-/// Thrown when an object which should be associated with a single <see cref="ColumnInfo"/> cannot be resolved to one (e.g. an <see cref="ExtractionInformation"/> which
-/// has become unlinked with an underlying column).
+///     Thrown when an object which should be associated with a single <see cref="ColumnInfo" /> cannot be resolved to one
+///     (e.g. an <see cref="ExtractionInformation" /> which
+///     has become unlinked with an underlying column).
 /// </summary>
 public class MissingColumnInfoException : Exception
 {

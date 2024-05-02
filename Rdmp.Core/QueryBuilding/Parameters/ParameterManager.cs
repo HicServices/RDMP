@@ -15,42 +15,51 @@ using IFilter = Rdmp.Core.Curation.Data.IFilter;
 namespace Rdmp.Core.QueryBuilding.Parameters;
 
 /// <summary>
-/// Handles the accumulation of Parameters in SQL queries ('DECLARE @bob as varchar(10); SET @bob = 'bob').  Because ISqlParameters can exist at many levels
-/// (e.g. IFilter vs AggregateConfiguration) ParameterManager has to consider what ParameterLevel it finds ISqlParameters at and whether ISqlParameters are
-/// functionality identical or not.  For example if a CohortIdentificationConfiguration has two AggregateConfigurations each with an IFilter for healthboard
-/// containing an ISqlParameter @hb.  If the declaration and value are the same then the ParameterManager can ignore one.  If the values are different then
-/// the ParameterManager needs to create renamed versions in memory (SpontaneouslyInventedSqlParameter) and update the IFilter.  However if there is an ISqlParameter
-/// @hb declared at the root (the CohortIdentificationConfiguration) then it will override both and be used instead.
-/// 
-/// <para>See ParameterLevel for a description of the various levels ISqlParameters can be found at.</para>
-/// 
-/// <para>ParameterManager has a ParameterManagerLifecycleState (State) which indicates whether it is still collecting new ISqlParameters or whether it has resolved them
-/// into a final representation.  </para>
-/// 
-/// <para>You can merge multiple ParameterManagers together (like CohortQueryBuilder does) by calling ImportAndElevateResolvedParametersFromSubquery which will create the
-/// final CompositeQueryLevel. </para>
+///     Handles the accumulation of Parameters in SQL queries ('DECLARE @bob as varchar(10); SET @bob = 'bob').  Because
+///     ISqlParameters can exist at many levels
+///     (e.g. IFilter vs AggregateConfiguration) ParameterManager has to consider what ParameterLevel it finds
+///     ISqlParameters at and whether ISqlParameters are
+///     functionality identical or not.  For example if a CohortIdentificationConfiguration has two AggregateConfigurations
+///     each with an IFilter for healthboard
+///     containing an ISqlParameter @hb.  If the declaration and value are the same then the ParameterManager can ignore
+///     one.  If the values are different then
+///     the ParameterManager needs to create renamed versions in memory (SpontaneouslyInventedSqlParameter) and update the
+///     IFilter.  However if there is an ISqlParameter
+///     @hb declared at the root (the CohortIdentificationConfiguration) then it will override both and be used instead.
+///     <para>See ParameterLevel for a description of the various levels ISqlParameters can be found at.</para>
+///     <para>
+///         ParameterManager has a ParameterManagerLifecycleState (State) which indicates whether it is still collecting
+///         new ISqlParameters or whether it has resolved them
+///         into a final representation.
+///     </para>
+///     <para>
+///         You can merge multiple ParameterManagers together (like CohortQueryBuilder does) by calling
+///         ImportAndElevateResolvedParametersFromSubquery which will create the
+///         final CompositeQueryLevel.
+///     </para>
 /// </summary>
 public class ParameterManager
 {
     /// <summary>
-    /// <see cref="ParameterManager"/> is a state driven object, it gathers all <see cref="ISqlParameter"/> then resolves them into a final list.  This
-    /// property records which stage of that lifecycle it is at.
+    ///     <see cref="ParameterManager" /> is a state driven object, it gathers all <see cref="ISqlParameter" /> then resolves
+    ///     them into a final list.  This
+    ///     property records which stage of that lifecycle it is at.
     /// </summary>
     public ParameterManagerLifecycleState State { get; private set; }
 
     /// <summary>
-    /// Collection of all the parameters found at each level so far
-    /// <para>Do not modify this yourself</para>
+    ///     Collection of all the parameters found at each level so far
+    ///     <para>Do not modify this yourself</para>
     /// </summary>
     public Dictionary<ParameterLevel, List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new();
 
     /// <summary>
-    /// Repository for creating temporary aggregate parameters
+    ///     Repository for creating temporary aggregate parameters
     /// </summary>
     private readonly MemoryRepository _memoryRepository = new();
 
     /// <summary>
-    /// Creates a new <see cref="ParameterManager"/> with the specified global parameters
+    ///     Creates a new <see cref="ParameterManager" /> with the specified global parameters
     /// </summary>
     /// <param name="globals"></param>
     public ParameterManager(ISqlParameter[] globals = null)
@@ -67,7 +76,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
+    ///     Records parameters from the <see cref="TableInfo" /> at the appropriate <see cref="ParameterLevel" />
     /// </summary>
     public void AddParametersFor(List<ITableInfo> tableInfos)
     {
@@ -75,7 +84,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Records parameters from the <see cref="TableInfo"/> at the appropriate <see cref="ParameterLevel"/>
+    ///     Records parameters from the <see cref="TableInfo" /> at the appropriate <see cref="ParameterLevel" />
     /// </summary>
     public void AddParametersFor(ITableInfo tableInfo)
     {
@@ -83,7 +92,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Records parameters from the <see cref="IFilter"/> at the appropriate <see cref="ParameterLevel"/>
+    ///     Records parameters from the <see cref="IFilter" /> at the appropriate <see cref="ParameterLevel" />
     /// </summary>
     public void AddParametersFor(List<IFilter> filters)
     {
@@ -91,7 +100,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Records parameters from the <see cref="ICollectSqlParameters"/> at the specified <see cref="ParameterLevel"/>
+    ///     Records parameters from the <see cref="ICollectSqlParameters" /> at the specified <see cref="ParameterLevel" />
     /// </summary>
     public void AddParametersFor(ICollectSqlParameters collector, ParameterLevel parameterLevel)
     {
@@ -99,9 +108,11 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Adds a new global parameter which will overridde other parameters declared at lower <see cref="ParameterLevel"/>
-    /// 
-    /// <para>The <see cref="State"/> must be <see cref="ParameterManagerLifecycleState.AllowingGlobals"/> for this to be allowed</para>
+    ///     Adds a new global parameter which will overridde other parameters declared at lower <see cref="ParameterLevel" />
+    ///     <para>
+    ///         The <see cref="State" /> must be <see cref="ParameterManagerLifecycleState.AllowingGlobals" /> for this to be
+    ///         allowed
+    ///     </para>
     /// </summary>
     /// <param name="parameter"></param>
     public void AddGlobalParameter(ISqlParameter parameter)
@@ -135,8 +146,9 @@ public class ParameterManager
 
 
     /// <summary>
-    /// Resolves all <see cref="ISqlParameter"/> found so far and merges/overrides as appropriate to accomodate identical side by side parameters and
-    /// global overriding ones etc.
+    ///     Resolves all <see cref="ISqlParameter" /> found so far and merges/overrides as appropriate to accomodate identical
+    ///     side by side parameters and
+    ///     global overriding ones etc.
     /// </summary>
     /// <returns></returns>
     public IEnumerable<ISqlParameter> GetFinalResolvedParametersList()
@@ -146,8 +158,8 @@ public class ParameterManager
         var toReturn = new List<ParameterFoundAtLevel>();
 
         foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
-            foreach (var sqlParameter in kvp.Value)
-                AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter, kvp.Key), toReturn);
+        foreach (var sqlParameter in kvp.Value)
+            AddParameterToCollection(new ParameterFoundAtLevel(sqlParameter, kvp.Key), toReturn);
 
 
         //There can be empty parameters during resolution but only if it finds an overriding one further up the hierarchy
@@ -159,14 +171,15 @@ public class ParameterManager
                                    throw new QueryBuildingException(exceptionMessage);
 
             //problem was from a user one from their Catalogue Database, tell them the ProblemObject as well
-            throw new QueryBuildingException(exceptionMessage, new[] { asConcreteObject });
+            throw new QueryBuildingException(exceptionMessage, asConcreteObject);
         }
 
         return toReturn.Select(t => t.Parameter);
     }
 
     /// <summary>
-    /// Removes all non global parameters from the <see cref="ParameterManager"/> and returns the <see cref="State"/> to allow new parameters
+    ///     Removes all non global parameters from the <see cref="ParameterManager" /> and returns the <see cref="State" /> to
+    ///     allow new parameters
     /// </summary>
     public void ClearNonGlobals()
     {
@@ -251,9 +264,9 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Imports all TableInfo level paramaters into a super set (with all TableInfo level paramaters from every manager you have imported).  Also imports all
-    /// QueryLevel parameters but for these it will do renames where there are conflicting named parameters, you must
-    /// 
+    ///     Imports all TableInfo level paramaters into a super set (with all TableInfo level paramaters from every manager you
+    ///     have imported).  Also imports all
+    ///     QueryLevel parameters but for these it will do renames where there are conflicting named parameters, you must
     /// </summary>
     /// <param name="toImport"></param>
     /// <param name="parameterNameSubstitutions"></param>
@@ -320,7 +333,7 @@ public class ParameterManager
                         //there's an override with the same name but different datatypes (that's a problem)
                         throw new QueryBuildingException(
                             $"Parameter {parameterToImport} has the same name as an existing parameter with a global override but differing declarations (normally we would handle with a rename but we can't because of the overriding global)",
-                            new object[] { existing, parameterToImport, overridingGlobal });
+                            existing, parameterToImport, overridingGlobal);
 
                 //one already exists so we will have to do a parameter rename
 
@@ -387,9 +400,9 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Returns all <see cref="ISqlParameter"/> which would be overwritten (ignored) because of higher level parameters during <see cref="GetFinalResolvedParametersList"/>
-    /// 
-    /// <para>Does not change the <see cref="State"/>of the <see cref="ParameterManager"/></para>
+    ///     Returns all <see cref="ISqlParameter" /> which would be overwritten (ignored) because of higher level parameters
+    ///     during <see cref="GetFinalResolvedParametersList" />
+    ///     <para>Does not change the <see cref="State" />of the <see cref="ParameterManager" /></para>
     /// </summary>
     /// <returns></returns>
     public ISqlParameter[] GetOverridenParameters()
@@ -422,7 +435,8 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Returns the <see cref="ISqlParameter"/> which would be overwritten (ignored) because of higher level parameters during <see cref="GetFinalResolvedParametersList"/>
+    ///     Returns the <see cref="ISqlParameter" /> which would be overwritten (ignored) because of higher level parameters
+    ///     during <see cref="GetFinalResolvedParametersList" />
     /// </summary>
     /// <param name="existing"></param>
     /// <returns>The overriding parameter or null if there are none</returns>
@@ -451,9 +465,11 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Makes the <see cref="ParameterManager"/> forget about the given <see cref="ISqlParameter"/>
-    /// 
-    /// <para>This operation ignores <see cref="State"/> so you should not use the <see cref="ParameterManager"/> for code generation after calling this method</para>
+    ///     Makes the <see cref="ParameterManager" /> forget about the given <see cref="ISqlParameter" />
+    ///     <para>
+    ///         This operation ignores <see cref="State" /> so you should not use the <see cref="ParameterManager" /> for
+    ///         code generation after calling this method
+    ///     </para>
     /// </summary>
     /// <param name="deleteable"></param>
     public void RemoveParameter(ISqlParameter deleteable)
@@ -464,7 +480,8 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Returns the <see cref="ParameterLevel"/> that the <see cref="ISqlParameter"/> was found at or null if has not been added to this <see cref="ParameterManager"/>
+    ///     Returns the <see cref="ParameterLevel" /> that the <see cref="ISqlParameter" /> was found at or null if has not
+    ///     been added to this <see cref="ParameterManager" />
     /// </summary>
     /// <param name="parameter"></param>
     /// <returns></returns>
@@ -479,8 +496,9 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Creates a shallow copy of the <see cref="ParameterManager"/> in which <see cref="ParametersFoundSoFarInQueryGeneration"/> is a new
-    /// instance but the parameters referenced are shared (with the original).
+    ///     Creates a shallow copy of the <see cref="ParameterManager" /> in which
+    ///     <see cref="ParametersFoundSoFarInQueryGeneration" /> is a new
+    ///     instance but the parameters referenced are shared (with the original).
     /// </summary>
     /// <returns></returns>
     public ParameterManager Clone()
@@ -497,7 +515,7 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Returns all <see cref="ISqlParameter"/> that collide with <paramref name="other"/> (same name different value)
+    ///     Returns all <see cref="ISqlParameter" /> that collide with <paramref name="other" /> (same name different value)
     /// </summary>
     /// <param name="other"></param>
     /// <returns></returns>
@@ -516,10 +534,13 @@ public class ParameterManager
     }
 
     /// <summary>
-    /// Imports novel <see cref="ISqlParameter"/> from <paramref name="other"/> without renaming.
+    ///     Imports novel <see cref="ISqlParameter" /> from <paramref name="other" /> without renaming.
     /// </summary>
     /// <param name="other"></param>
-    /// <exception cref="QueryBuildingException">Thrown if there are non identical parameter name collisions (same name different value)</exception>
+    /// <exception cref="QueryBuildingException">
+    ///     Thrown if there are non identical parameter name collisions (same name
+    ///     different value)
+    /// </exception>
     public void MergeWithoutRename(ParameterManager other)
     {
         var collisions = GetCollisions(other);

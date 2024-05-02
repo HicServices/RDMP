@@ -9,12 +9,12 @@ using System;
 namespace Rdmp.Core.Curation.Data.DataLoad.Extensions;
 
 /// <summary>
-/// Static extensions for <see cref="LoadStage"/>
+///     Static extensions for <see cref="LoadStage" />
 /// </summary>
 public static class LoadStageExtensions
 {
     /// <summary>
-    /// Converts a <see cref="LoadStage"/> into a <see cref="LoadBubble"/>
+    ///     Converts a <see cref="LoadStage" /> into a <see cref="LoadBubble" />
     /// </summary>
     /// <param name="loadStage"></param>
     /// <returns></returns>

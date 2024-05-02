@@ -17,11 +17,12 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
 /// <summary>
-/// Data load component that copies files into the ForLoading directory from the remote directory (that match the file pattern e.g. *.csv).  A good use case
-/// for this is if you want to expose a network location as a share for data provders to send you files to but want the DLE to take a copy of the files at
-/// runtime for the purposes of loading.
-///
-/// <para>Optionally deletes files from the fetch location if the data load is successful</para>
+///     Data load component that copies files into the ForLoading directory from the remote directory (that match the file
+///     pattern e.g. *.csv).  A good use case
+///     for this is if you want to expose a network location as a share for data provders to send you files to but want the
+///     DLE to take a copy of the files at
+///     runtime for the purposes of loading.
+///     <para>Optionally deletes files from the fetch location if the data load is successful</para>
 /// </summary>
 public class ImportFilesDataProvider : IPluginDataProvider
 {

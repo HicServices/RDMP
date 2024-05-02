@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.Validation.Dependency.Exceptions;
 
 /// <summary>
-/// Thrown when you attempt to delete an object which is referenced in a Catalogues ValidatorXML
+///     Thrown when you attempt to delete an object which is referenced in a Catalogues ValidatorXML
 /// </summary>
 public class ValidationXmlDependencyException : Exception
 {

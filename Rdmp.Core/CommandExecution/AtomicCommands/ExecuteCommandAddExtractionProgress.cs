@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds a new <see cref="ExtractionProgress"/> for windowed date based extractions of a dataset.
+///     Adds a new <see cref="ExtractionProgress" /> for windowed date based extractions of a dataset.
 /// </summary>
 public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
 {
@@ -32,12 +32,13 @@ public class ExecuteCommandAddExtractionProgress : BasicCommandExecution
         if (_sds.GetCatalogue()?.TimeCoverage_ExtractionInformation_ID == null)
         {
             SetImpossible("Catalogue does not have a time coverage field configured");
-            return;
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractionProgress, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractionProgress, OverlayKind.Add);
+    }
 
     public override void Execute()
     {

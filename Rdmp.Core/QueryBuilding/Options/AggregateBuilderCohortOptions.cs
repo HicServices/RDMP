@@ -15,27 +15,32 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set'
+///     Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration" /> that are
+///     running as a 'cohort set'
 /// </summary>
 public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
 {
     private readonly ISqlParameter[] _globals;
 
     /// <summary>
-    /// Creates an <see cref="IAggregateBuilderOptions"/> for use with <see cref="AggregateConfiguration"/> which are <see cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>
-    ///  </summary>
-    /// <param name="globals">Global parameters found in the scope of <see cref="AggregateConfiguration"/> you intend to use</param>
+    ///     Creates an <see cref="IAggregateBuilderOptions" /> for use with <see cref="AggregateConfiguration" /> which are
+    ///     <see cref="AggregateConfiguration.IsCohortIdentificationAggregate" />
+    /// </summary>
+    /// <param name="globals">Global parameters found in the scope of <see cref="AggregateConfiguration" /> you intend to use</param>
     public AggregateBuilderCohortOptions(ISqlParameter[] globals)
     {
         _globals = globals;
     }
 
-    /// <inheritdoc/>
-    public string GetTitleTextPrefix(AggregateConfiguration aggregate) => aggregate.IsJoinablePatientIndexTable()
-        ? "Patient Index Table:"
-        : "Cohort Identification Set:";
+    /// <inheritdoc />
+    public string GetTitleTextPrefix(AggregateConfiguration aggregate)
+    {
+        return aggregate.IsJoinablePatientIndexTable()
+            ? "Patient Index Table:"
+            : "Cohort Identification Set:";
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
     {
         //get the existing dimensions
@@ -53,7 +58,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         return candidates.Where(c => c.IsExtractionIdentifier).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
     {
         var toReturn = new List<IColumn>();
@@ -77,7 +82,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         return toReturn.ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
     {
         return section switch
@@ -90,7 +95,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         };
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var existingForcedJoinTables = aggregate.ForcedJoins;
@@ -122,7 +127,7 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         return toReturn.ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
     {
         var parameterManager = new ParameterManager();
@@ -134,9 +139,11 @@ public class AggregateBuilderCohortOptions : IAggregateBuilderOptions
         return parameterManager.GetFinalResolvedParametersList().ToArray();
     }
 
-    /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate) =>
-        aggregate.IsJoinablePatientIndexTable()
+    /// <inheritdoc />
+    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
+    {
+        return aggregate.IsJoinablePatientIndexTable()
             ? CountColumnRequirement.CanOptionallyHaveOne
             : CountColumnRequirement.CannotHaveOne;
+    }
 }

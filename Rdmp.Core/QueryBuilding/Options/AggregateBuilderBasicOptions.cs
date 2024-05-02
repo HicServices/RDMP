@@ -13,15 +13,18 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 namespace Rdmp.Core.QueryBuilding.Options;
 
 /// <summary>
-/// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode'
+///     Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration" /> that are
+///     running in 'graph mode'
 /// </summary>
 public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
 {
-    /// <inheritdoc/>
-    public string GetTitleTextPrefix(AggregateConfiguration aggregate) =>
-        aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
+    /// <inheritdoc />
+    public string GetTitleTextPrefix(AggregateConfiguration aggregate)
+    {
+        return aggregate.IsExtractable ? "Extractable 'Group By' Aggregate:" : "'Group By' Aggregate:";
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IColumn[] GetAvailableSELECTColumns(AggregateConfiguration aggregate)
     {
         var existingDimensions = aggregate.AggregateDimensions.Select(d => d.ExtractionInformation).ToArray();
@@ -35,12 +38,14 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
             .ToArray();
     }
 
-    /// <inheritdoc/>
-    public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate) =>
+    /// <inheritdoc />
+    public IColumn[] GetAvailableWHEREColumns(AggregateConfiguration aggregate)
+    {
         //for this basic case the WHERE columns can be anything
-        aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
+        return aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Cast<IColumn>().ToArray();
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool ShouldBeEnabled(AggregateEditorSection section, AggregateConfiguration aggregate)
     {
         return section switch
@@ -58,7 +63,7 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         };
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable[] GetAvailableJoinables(AggregateConfiguration aggregate)
     {
         var availableTables = aggregate.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
@@ -87,10 +92,15 @@ public class AggregateBuilderBasicOptions : IAggregateBuilderOptions
         return true;
     }
 
-    /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate) => aggregate.GetAllParameters();
+    /// <inheritdoc />
+    public ISqlParameter[] GetAllParameters(AggregateConfiguration aggregate)
+    {
+        return aggregate.GetAllParameters();
+    }
 
-    /// <inheritdoc/>
-    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate) =>
-        CountColumnRequirement.MustHaveOne;
+    /// <inheritdoc />
+    public CountColumnRequirement GetCountColumnRequirement(AggregateConfiguration aggregate)
+    {
+        return CountColumnRequirement.MustHaveOne;
+    }
 }

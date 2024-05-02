@@ -14,11 +14,15 @@ using Rdmp.Core.Providers;
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
 /// <summary>
-/// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers
-/// and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant relationship records with two queries and then
-/// sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
-/// 
-/// <para>This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the method on IContainer directly (which goes back to the database).</para>
+///     Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes
+///     containers (CohortAggregateContainer) and subcontainers
+///     and thier contained cohort sets ( AggregateConfiguration).  This is done in memory by fetching all the relevant
+///     relationship records with two queries and then
+///     sorting out the already fetched objects in CatalogueChildProvider into the relevant hierarchy.
+///     <para>
+///         This allows you to use GetSubContainers and GetAggregateConfigurations in bulk without having to use the
+///         method on IContainer directly (which goes back to the database).
+///     </para>
 /// </summary>
 internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 {
@@ -31,12 +35,14 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
     }
 
     /// <summary>
-    /// Returns cached answers without running database queries
+    ///     Returns cached answers without running database queries
     /// </summary>
     /// <param name="parent"></param>
     /// <returns></returns>
-    public override IOrderable[] GetChildren(CohortAggregateContainer parent) =>
-        _contents.TryGetValue(parent.ID, out var content) ? content.ToArray() : Array.Empty<IOrderable>();
+    public override IOrderable[] GetChildren(CohortAggregateContainer parent)
+    {
+        return _contents.TryGetValue(parent.ID, out var content) ? content.ToArray() : Array.Empty<IOrderable>();
+    }
 
     public void FetchAllRelationships(ICoreChildProvider childProvider)
     {
@@ -90,7 +96,7 @@ internal class CohortContainerManagerFromChildProvider : CohortContainerManager
 
             config.SetKnownOrder(currentOrder);
 
-                _contents[currentParentId].Add(config);
+            _contents[currentParentId].Add(config);
         }
 
         r.Close();

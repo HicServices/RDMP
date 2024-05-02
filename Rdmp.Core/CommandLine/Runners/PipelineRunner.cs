@@ -16,7 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// <see cref="IRunner"/> that runs an <see cref="IPipeline"/> for a given <see cref="IPipelineUseCase"/> and reports events to a flexible set of listeners
+///     <see cref="IRunner" /> that runs an <see cref="IPipeline" /> for a given <see cref="IPipelineUseCase" /> and
+///     reports events to a flexible set of listeners
 /// </summary>
 public class PipelineRunner : IPipelineRunner
 {

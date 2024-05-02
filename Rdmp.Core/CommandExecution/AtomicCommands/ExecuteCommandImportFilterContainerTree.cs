@@ -24,12 +24,14 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Imports the entire tree from another <see cref="ISelectedDataSets"/> or <see cref="AggregateConfiguration"/> into a given <see cref="SelectedDataSets"/> (as new copies)
+///     Imports the entire tree from another <see cref="ISelectedDataSets" /> or <see cref="AggregateConfiguration" /> into
+///     a given <see cref="SelectedDataSets" /> (as new copies)
 /// </summary>
 public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
 {
     /// <summary>
-    /// ID of the Catalogue that is being extracted by <see cref="_into"/> to ensure that we only import filters from the same table
+    ///     ID of the Catalogue that is being extracted by <see cref="_into" /> to ensure that we only import filters from the
+    ///     same table
     /// </summary>
     private readonly ICatalogue _catalogue;
 
@@ -37,14 +39,15 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     private const float DEFAULT_WEIGHT = 1.2f;
 
     /// <summary>
-    /// May be null, if populated this is the explicit subcontainer into which the tree should be imported i.e. not <see cref="_into"/>
+    ///     May be null, if populated this is the explicit subcontainer into which the tree should be imported i.e. not
+    ///     <see cref="_into" />
     /// </summary>
-    private IContainer _intoSubContainer;
+    private readonly IContainer _intoSubContainer;
 
     /// <summary>
-    /// May be null, if populated then this is the explicit one the user wants and we shouldn't ask them again
+    ///     May be null, if populated then this is the explicit one the user wants and we shouldn't ask them again
     /// </summary>
-    private IContainer _explicitChoice;
+    private readonly IContainer _explicitChoice;
 
     private ExecuteCommandImportFilterContainerTree(IBasicActivateItems activator) : base(activator)
     {
@@ -74,7 +77,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     }
 
     /// <summary>
-    /// constructor for explicit choices, use this aggregates root container
+    ///     constructor for explicit choices, use this aggregates root container
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="into"></param>
@@ -92,7 +95,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     }
 
     /// <summary>
-    /// Constructor for explicitly specifying the container to import
+    ///     Constructor for explicitly specifying the container to import
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="into"></param>
@@ -106,7 +109,7 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     }
 
     /// <summary>
-    /// Constructor for importing into a sub container
+    ///     Constructor for importing into a sub container
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="into"></param>
@@ -120,8 +123,10 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
         _explicitChoice = explicitChoice;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.FilterContainer, OverlayKind.Import);
+    }
 
     public override void Execute()
     {
@@ -217,11 +222,15 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
             into.AddChild(wizard.Import(into, filter));
     }
 
-    private bool IsEligible(CohortIdentificationConfiguration arg) => GetEligibleChildren(arg).Any();
+    private bool IsEligible(CohortIdentificationConfiguration arg)
+    {
+        return GetEligibleChildren(arg).Any();
+    }
 
 
     /// <summary>
-    /// Returns all <see cref="AggregateConfiguration"/> from the <paramref name="arg"/> where the dataset is the same and there are filters defined
+    ///     Returns all <see cref="AggregateConfiguration" /> from the <paramref name="arg" /> where the dataset is the same
+    ///     and there are filters defined
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
@@ -234,12 +243,19 @@ public class ExecuteCommandImportFilterContainerTree : BasicCommandExecution
     }
 
     /// <summary>
-    /// Returns the <see cref="ISelectedDataSets"/> that matches the dataset <see cref="_into"/> if it is one of the datasets in the <see cref="ExtractionConfiguration"/> <paramref name="arg"/> (each dataset can only be extracted once in a given <see cref="ExtractionConfiguration"/>)
+    ///     Returns the <see cref="ISelectedDataSets" /> that matches the dataset <see cref="_into" /> if it is one of the
+    ///     datasets in the <see cref="ExtractionConfiguration" /> <paramref name="arg" /> (each dataset can only be extracted
+    ///     once in a given <see cref="ExtractionConfiguration" />)
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>
-    private ISelectedDataSets GetEligibleChild(ExtractionConfiguration arg) =>
-        arg.SelectedDataSets.FirstOrDefault(IsEligible);
+    private ISelectedDataSets GetEligibleChild(ExtractionConfiguration arg)
+    {
+        return arg.SelectedDataSets.FirstOrDefault(IsEligible);
+    }
 
-    private bool IsEligible(ISelectedDataSets arg) => arg.RootFilterContainer_ID != null;
+    private bool IsEligible(ISelectedDataSets arg)
+    {
+        return arg.RootFilterContainer_ID != null;
+    }
 }

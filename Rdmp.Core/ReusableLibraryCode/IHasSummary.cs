@@ -9,12 +9,12 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.ReusableLibraryCode;
 
 /// <summary>
-/// Interface for classes that are able to summarise themselves for display to a user
+///     Interface for classes that are able to summarise themselves for display to a user
 /// </summary>
 public interface IHasSummary
 {
     /// <summary>
-    /// Gets a user friendly summary of the objects current state
+    ///     Gets a user friendly summary of the objects current state
     /// </summary>
     /// <param name="title">Short description (should not have newlines)</param>
     /// <param name="body">Long description which can contain newlines</param>

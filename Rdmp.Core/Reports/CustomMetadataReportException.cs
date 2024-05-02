@@ -9,17 +9,17 @@ using System;
 namespace Rdmp.Core.Reports;
 
 /// <summary>
-/// Thrown when a problem is encountered parsing a template during <see cref="CustomMetadataReport"/> execution
+///     Thrown when a problem is encountered parsing a template during <see cref="CustomMetadataReport" /> execution
 /// </summary>
 public class CustomMetadataReportException : Exception
 {
     /// <summary>
-    /// The line number in the template that the error occurred (first line of file is 1)
+    ///     The line number in the template that the error occurred (first line of file is 1)
     /// </summary>
     public int LineNumber { get; set; }
 
     /// <summary>
-    /// Tells the user there is a problem with a template being used in <see cref="CustomMetadataReport"/>
+    ///     Tells the user there is a problem with a template being used in <see cref="CustomMetadataReport" />
     /// </summary>
     /// <param name="msg"></param>
     /// <param name="lineNumber">The line number in the template that the error occurred (first line of file is 1)</param>

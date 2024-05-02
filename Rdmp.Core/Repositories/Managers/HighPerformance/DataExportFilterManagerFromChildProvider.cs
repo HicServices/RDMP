@@ -14,8 +14,10 @@ using Rdmp.Core.Providers;
 namespace Rdmp.Core.Repositories.Managers.HighPerformance;
 
 /// <summary>
-/// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers and subcontainers and filters in the entire DataExportManager
-/// database at once rather than using the methods on IContainer and IFilter which send individual database queries for relevant subcontainers etc.
+///     Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers
+///     and subcontainers and filters in the entire DataExportManager
+///     database at once rather than using the methods on IContainer and IFilter which send individual database queries for
+///     relevant subcontainers etc.
 /// </summary>
 internal class DataExportFilterManagerFromChildProvider : DataExportFilterManager
 {
@@ -24,8 +26,8 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
     private readonly Dictionary<int, List<DeployedExtractionFilter>> _containersToFilters;
 
     /// <summary>
-    /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
-    /// fast access to them.
+    ///     Fetches all containers and filters out of the <paramref name="repository" /> and sets the class up to provide
+    ///     fast access to them.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="childProvider"></param>
@@ -54,15 +56,20 @@ internal class DataExportFilterManagerFromChildProvider : DataExportFilterManage
     }
 
     /// <summary>
-    /// Returns all subcontainers found in the <paramref name="parent"/> (results are returned from the cache created during class construction)
+    ///     Returns all subcontainers found in the <paramref name="parent" /> (results are returned from the cache created
+    ///     during class construction)
     /// </summary>
-    public override IContainer[] GetSubContainers(IContainer parent) =>
-        _subContainers.TryGetValue(parent.ID, out var result)
+    public override IContainer[] GetSubContainers(IContainer parent)
+    {
+        return _subContainers.TryGetValue(parent.ID, out var result)
             ? result.ToArray()
             : Array.Empty<IContainer>();
+    }
 
-    public override IFilter[] GetFilters(IContainer container) =>
-        _containersToFilters.TryGetValue(container.ID, out var filters)
+    public override IFilter[] GetFilters(IContainer container)
+    {
+        return _containersToFilters.TryGetValue(container.ID, out var filters)
             ? filters.ToArray()
             : Array.Empty<IFilter>();
+    }
 }

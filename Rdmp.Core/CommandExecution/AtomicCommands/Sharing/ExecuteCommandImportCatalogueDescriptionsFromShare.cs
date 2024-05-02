@@ -16,7 +16,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 /// <summary>
-/// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
+///     Opens a <see cref="ShareDefinition" /> (which must be a share of a <see cref="Catalogue" />) and imports all
+///     descriptions including for CatalogueItems
 /// </summary>
 public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
 {

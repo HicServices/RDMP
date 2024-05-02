@@ -22,10 +22,12 @@ public class CohortIdentificationConfigurationStateBasedIconProvider : IObjectSt
             Image.Load<Rgba32>(CatalogueIcons.FrozenCohortIdentificationConfiguration);
     }
 
-    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
-        o is not CohortIdentificationConfiguration cic
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o is not CohortIdentificationConfiguration cic
             ? null
             : cic.Frozen
                 ? _frozenCohortIdentificationConfiguration
                 : _cohortIdentificationConfiguration;
+    }
 }

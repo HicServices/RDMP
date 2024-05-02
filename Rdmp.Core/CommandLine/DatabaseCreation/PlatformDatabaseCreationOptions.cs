@@ -12,7 +12,7 @@ using Microsoft.Data.SqlClient;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// Command line arguments for install verb of rdmp CLI
+///     Command line arguments for install verb of rdmp CLI
 /// </summary>
 [Verb("install", HelpText = "Creates RMDP platform databases in the target database server")]
 public class PlatformDatabaseCreationOptions
@@ -43,7 +43,9 @@ public class PlatformDatabaseCreationOptions
             "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
     public bool SkipPipelines { get; set; }
 
-    [Option('l', "Create Logging Server", Default = true, HelpText = "Create the default logging server in the Catalogue database once created. Is superseeded by 'Skip Pipelines'")]
+    [Option('l', "Create Logging Server", Default = true,
+        HelpText =
+            "Create the default logging server in the Catalogue database once created. Is superseeded by 'Skip Pipelines'")]
     public bool CreateLoggingServer { get; set; }
 
     [Option('e', "ExampleDatasets", Default = false,
@@ -93,7 +95,7 @@ public class PlatformDatabaseCreationOptions
                 new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_" });
             yield return new Example("Drop existing",
                 new PlatformDatabaseCreationOptions
-                { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
+                    { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
             yield return new Example("Create example datasets",
                 new PlatformDatabaseCreationOptions
                 {

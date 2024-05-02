@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ProcessTask"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="ProcessTask" />
 /// </summary>
 public class ProcessTaskCombineable : ICombineToMakeCommand
 {
@@ -20,5 +20,8 @@ public class ProcessTaskCombineable : ICombineToMakeCommand
         ProcessTask = processTask;
     }
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 }

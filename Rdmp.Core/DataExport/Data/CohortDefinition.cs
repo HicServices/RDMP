@@ -11,38 +11,49 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable"/>).  It may also reflect
-/// one that does not exist yet in which case it will have a null ID (e.g. in the case where you are trying to create a new cohort
-/// using an identifier list).
+///     This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable" />).  It may
+///     also reflect
+///     one that does not exist yet in which case it will have a null ID (e.g. in the case where you are trying to create a
+///     new cohort
+///     using an identifier list).
 /// </summary>
 public class CohortDefinition : ICohortDefinition
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? ID { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Description { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Version { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int ProjectNumber { get; set; }
 
-    /// <inheritdoc/>
-    public IExternalCohortTable LocationOfCohort { get; private set; }
+    /// <inheritdoc />
+    public IExternalCohortTable LocationOfCohort { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IExtractableCohort CohortReplacedIfAny { get; set; }
 
     /// <summary>
-    /// Sets up a new row for inserting (or reporting) from an <see cref="ExternalCohortTable"/>.
+    ///     Sets up a new row for inserting (or reporting) from an <see cref="ExternalCohortTable" />.
     /// </summary>
-    /// <param name="id">The ID row read from the table (this is not an RDMP ID, it is an <see cref="IExtractableCohort.OriginID"/>).  Pass null if you
-    /// are trying to insert a new row and expect the database to allocate the ID itself as an autonum</param>
-    /// <param name="description">Unique string identifying the cohort, this should be the same for all cohorts that are versions of one another</param>
-    /// <param name="version">The version number where there are multiple revisions to a cohort over time (these must share the same <paramref name="description"/>)</param>
-    /// <param name="projectNumber">The <see cref="IProject.ProjectNumber"/> that the cohort can be used with</param>
+    /// <param name="id">
+    ///     The ID row read from the table (this is not an RDMP ID, it is an <see cref="IExtractableCohort.OriginID" />).  Pass
+    ///     null if you
+    ///     are trying to insert a new row and expect the database to allocate the ID itself as an autonum
+    /// </param>
+    /// <param name="description">
+    ///     Unique string identifying the cohort, this should be the same for all cohorts that are
+    ///     versions of one another
+    /// </param>
+    /// <param name="version">
+    ///     The version number where there are multiple revisions to a cohort over time (these must share the
+    ///     same <paramref name="description" />)
+    /// </param>
+    /// <param name="projectNumber">The <see cref="IProject.ProjectNumber" /> that the cohort can be used with</param>
     /// <param name="locationOfCohort">The database where the row will be written to (or read from)</param>
     public CohortDefinition(int? id, string description, int version, int projectNumber,
         IExternalCohortTable locationOfCohort)
@@ -60,14 +71,14 @@ public class CohortDefinition : ICohortDefinition
                     : $"There is a cohort (with ID {id}) in {locationOfCohort.DefinitionTableName} which has a blank/null description.  You must fix this.");
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsAcceptableAsNewCohort(out string matchDescription)
     {
         //if there is an ID
         if (ID != null)
             if (ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)
                 .Any(t => t.ID == ID))
-            //the same ID already exists
+                //the same ID already exists
             {
                 matchDescription = $"Found a cohort in {LocationOfCohort} with the ID {ID}";
                 return false;
@@ -103,8 +114,11 @@ public class CohortDefinition : ICohortDefinition
     }
 
     /// <summary>
-    /// Returns the <see cref="Description"/>, <see cref="Version"/> and <see cref="ID"/>
+    ///     Returns the <see cref="Description" />, <see cref="Version" /> and <see cref="ID" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => $"{Description}(Version {Version}, ID={ID})";
+    public override string ToString()
+    {
+        return $"{Description}(Version {Version}, ID={ID})";
+    }
 }

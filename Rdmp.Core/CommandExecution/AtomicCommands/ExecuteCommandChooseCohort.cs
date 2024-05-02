@@ -69,8 +69,10 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
                 $"Specified cohort {_pick} was not compatible with Project.  Check the cohorts ProjectNumber matches");
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
+    }
 
     public override void Execute()
     {
@@ -80,11 +82,11 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 
         if (pick == null)
             if (SelectOne(new DialogArgs
-            {
-                WindowTitle = "Select Saved Cohort",
-                TaskDescription =
+                    {
+                        WindowTitle = "Select Saved Cohort",
+                        TaskDescription =
                             "Select the existing Cohort you would like to be used for your Extraction Configuration."
-            },
+                    },
                     _compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID && !c.IsDeprecated)
                         .ToList(),
                     out var selected))

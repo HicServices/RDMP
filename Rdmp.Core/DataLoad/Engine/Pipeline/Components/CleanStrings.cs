@@ -18,21 +18,23 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 
 /// <summary>
-/// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns
-/// are only processed if they are destined to go into a char field in the database (According to the TableInfo being processed).
+///     Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into
+///     proper nulls (DBNull.Value).  Columns
+///     are only processed if they are destined to go into a char field in the database (According to the TableInfo being
+///     processed).
 /// </summary>
 public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequirement<TableInfo>
 {
     private int _rowsProcessed;
     private string _taskDescription;
-    private Stopwatch timer = new();
+    private readonly Stopwatch timer = new();
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
         GracefulCancellationToken cancellationToken)
     {
         timer.Start();
         toProcess.BeginLoadData();
-    StartAgain:
+        StartAgain:
         foreach (DataRow row in toProcess.Rows)
         {
             for (var i = 0; i < columnsToClean.Count; i++)
@@ -89,7 +91,7 @@ public class CleanStrings : IPluginDataFlowComponent<DataTable>, IPipelineRequir
         return toProcess;
     }
 
-    private List<string> columnsToClean = new();
+    private readonly List<string> columnsToClean = new();
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {

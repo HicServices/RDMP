@@ -14,8 +14,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 /// <summary>
-/// Pipeline component for renaming a single column in DataTables passing through the component.
-/// <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
+///     Pipeline component for renaming a single column in DataTables passing through the component.
+///     <para>Renames a column with a given name to have a new name e.g. 'mCHI' to 'CHI'</para>
 /// </summary>
 public class ColumnRenamer : IPluginDataFlowComponent<DataTable>
 {

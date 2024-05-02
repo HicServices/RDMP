@@ -17,13 +17,16 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset (Catalogue).  This can be marked as Extractable in which case
-/// every time the dataset is extracted the file will also be bundled along with it (so that researchers can also benefit from the file).
-/// 
-/// <para>You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to researchers regardless of which datasets they have selected
-/// e.g. a PDF on data governance or a copy of an empty 'data use contract document'</para>
-/// 
-/// <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
+///     Describes a document (e.g. PDF / Excel file etc) which is useful for understanding a given dataset (Catalogue).
+///     This can be marked as Extractable in which case
+///     every time the dataset is extracted the file will also be bundled along with it (so that researchers can also
+///     benefit from the file).
+///     <para>
+///         You can also mark SupportingDocuments as Global in which case they will be provided (if Extractable) to
+///         researchers regardless of which datasets they have selected
+///         e.g. a PDF on data governance or a copy of an empty 'data use contract document'
+///     </para>
+///     <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
 /// </summary>
 public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
 {
@@ -37,7 +40,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     private bool _isGlobal;
     private int _catalogueID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -47,7 +50,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// Path to the document on disk
+    ///     Path to the document on disk
     /// </summary>
     [AdjustableLocation]
     public Uri URL
@@ -57,7 +60,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// Human readable description of what the document contains and why it is in the system
+    ///     Human readable description of what the document contains and why it is in the system
     /// </summary>
     public string Description
     {
@@ -66,7 +69,8 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// If true then the file will be copied to the output directory of project extractions that include the <see cref="Catalogue_ID"/>.
+    ///     If true then the file will be copied to the output directory of project extractions that include the
+    ///     <see cref="Catalogue_ID" />.
     /// </summary>
     public bool Extractable
     {
@@ -75,7 +79,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// <see cref="ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the document
+    ///     <see cref="ITicketingSystem" /> identifier of a ticket for logging time curating / updating etc the document
     /// </summary>
     public string Ticket
     {
@@ -84,8 +88,9 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// If <see cref="Extractable"/>  and <see cref="IsGlobal"/> then the document will be copied to the ouptut directory of all project extractions
-    /// regardless of whether or not the <see cref="Catalogue_ID"/> dataset is included in the extraction
+    ///     If <see cref="Extractable" />  and <see cref="IsGlobal" /> then the document will be copied to the ouptut directory
+    ///     of all project extractions
+    ///     regardless of whether or not the <see cref="Catalogue_ID" /> dataset is included in the extraction
     /// </summary>
     public bool IsGlobal
     {
@@ -94,7 +99,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// The dataset the document relates to
+    ///     The dataset the document relates to
     /// </summary>
     public int Catalogue_ID
     {
@@ -109,7 +114,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// Creates a new supporting document for helping understand the dataset <paramref name="parent"/>
+    ///     Creates a new supporting document for helping understand the dataset <paramref name="parent" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="parent"></param>
@@ -137,11 +142,14 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
         IsGlobal = Convert.ToBoolean(r["IsGlobal"]);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Returns true if <see cref="Extractable"/> and has a valid <see cref="URL"/>
+    ///     Returns true if <see cref="Extractable" /> and has a valid <see cref="URL" />
     /// </summary>
     /// <returns></returns>
     public bool IsReleasable()
@@ -158,7 +166,7 @@ public class SupportingDocument : DatabaseEntity, INamed, ISupportingObject
     }
 
     /// <summary>
-    /// Returns the name of the file referenced by <see cref="URL"/> or null if it is not a file URL
+    ///     Returns the name of the file referenced by <see cref="URL" /> or null if it is not a file URL
     /// </summary>
     /// <returns></returns>
     public FileInfo GetFileName()

@@ -26,17 +26,22 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data.Cohort;
 
 /// <summary>
-/// Cohort identification is the job identifying which patients fit certain study criteria.  E.g. "I want all patients who have been prescribed Diazepam for the first time after 2000
-/// and who are still alive today".  Every time the data analyst has a new project/cohort to identify he should create a new CohortIdentificationConfiguration, it is the entry point
-/// for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket and is the hanging off point for all the
-/// RootCohortAggregateContainers (the bit that provides the actual filtering/technical data about how the cohort is identified).
+///     Cohort identification is the job identifying which patients fit certain study criteria.  E.g. "I want all patients
+///     who have been prescribed Diazepam for the first time after 2000
+///     and who are still alive today".  Every time the data analyst has a new project/cohort to identify he should create
+///     a new CohortIdentificationConfiguration, it is the entry point
+///     for cohort generation and includes a high level description of what the cohort requirements are, an optional ticket
+///     and is the hanging off point for all the
+///     RootCohortAggregateContainers (the bit that provides the actual filtering/technical data about how the cohort is
+///     identified).
 /// </summary>
 public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlParameters, INamed, IHasDependencies,
     ICustomSearchString, IMightBeReadOnly, IHasFolder
 {
     /// <summary>
-    /// Characters that apear in front of any <see cref="AggregateConfiguration"/> which is acting as a cohort identification list or patient index table
-    /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
+    ///     Characters that apear in front of any <see cref="AggregateConfiguration" /> which is acting as a cohort
+    ///     identification list or patient index table
+    ///     <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate" />.
     /// </summary>
     public const string CICPrefix = "cic_";
 
@@ -53,7 +58,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     private int? _clonedFrom_ID;
     private string _folder;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Unique]
     [NotNull]
     public string Name
@@ -63,8 +68,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// User typed description of the cohort identification criteria in high level terms.  This should be a primer for looking at the contents (cohort sets, set operations
-    /// etc).
+    ///     User typed description of the cohort identification criteria in high level terms.  This should be a primer for
+    ///     looking at the contents (cohort sets, set operations
+    ///     etc).
     /// </summary>
     public string Description
     {
@@ -73,8 +79,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Name of a ticket in your company issue tracking application (if you have one) for logging time/issues with this <see cref="CohortIdentificationConfiguration"/>.
-    /// Ties in with <see cref="ITicketingSystem"/> if a compatible plugin is installed.
+    ///     Name of a ticket in your company issue tracking application (if you have one) for logging time/issues with this
+    ///     <see cref="CohortIdentificationConfiguration" />.
+    ///     Ties in with <see cref="ITicketingSystem" /> if a compatible plugin is installed.
     /// </summary>
     public string Ticket
     {
@@ -83,9 +90,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// All <see cref="CohortIdentificationConfiguration"/> must have a single unique root <see cref="CohortAggregateContainer"/> in order to be run.  This is the ID of that
-    /// container.
-    /// <para>You should not share containers/cohort sets with any other <see cref="CohortIdentificationConfiguration"/></para>
+    ///     All <see cref="CohortIdentificationConfiguration" /> must have a single unique root
+    ///     <see cref="CohortAggregateContainer" /> in order to be run.  This is the ID of that
+    ///     container.
+    ///     <para>
+    ///         You should not share containers/cohort sets with any other <see cref="CohortIdentificationConfiguration" />
+    ///     </para>
     /// </summary>
     public int? RootCohortAggregateContainer_ID
     {
@@ -94,13 +104,16 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// To assist with complex cohort identification queries over multiple datasets (and between servers / server types) you can configure a QueryCachingServer.
-    /// This is an <see cref="ExternalDatabaseServer"/> created by <see cref="QueryCachingPatcher"/>.
-    /// 
-    /// <para>Once setup, each <see cref="AggregateConfiguration"/> query in this <see cref="CohortIdentificationConfiguration"/> will be run independently and
-    /// the resulting patient list committed ot the cache server (See QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager).</para>
-    /// 
-    /// <para>This field holds the ID of the currently configured database (if any) which acts as a result cache</para>
+    ///     To assist with complex cohort identification queries over multiple datasets (and between servers / server types)
+    ///     you can configure a QueryCachingServer.
+    ///     This is an <see cref="ExternalDatabaseServer" /> created by <see cref="QueryCachingPatcher" />.
+    ///     <para>
+    ///         Once setup, each <see cref="AggregateConfiguration" /> query in this
+    ///         <see cref="CohortIdentificationConfiguration" /> will be run independently and
+    ///         the resulting patient list committed ot the cache server (See
+    ///         QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager).
+    ///     </para>
+    ///     <para>This field holds the ID of the currently configured database (if any) which acts as a result cache</para>
     /// </summary>
     public int? QueryCachingServer_ID
     {
@@ -109,9 +122,13 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Indicates whether the <see cref="CohortIdentificationConfiguration"/> should be considered immutable.  Usually because it has been run and the results committed to
-    /// a Project.
-    /// <para>IMPORTANT:You should use <see cref="Freeze()"/> rather than just setting this manually so as to also populate <see cref="FrozenBy"/> and <see cref="FrozenDate"/></para>
+    ///     Indicates whether the <see cref="CohortIdentificationConfiguration" /> should be considered immutable.  Usually
+    ///     because it has been run and the results committed to
+    ///     a Project.
+    ///     <para>
+    ///         IMPORTANT:You should use <see cref="Freeze()" /> rather than just setting this manually so as to also
+    ///         populate <see cref="FrozenBy" /> and <see cref="FrozenDate" />
+    ///     </para>
     /// </summary>
     public bool Frozen
     {
@@ -120,8 +137,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Username of the user who ran <see cref="Freeze()"/>
-    /// <seealso cref="Frozen"/>
+    ///     Username of the user who ran <see cref="Freeze()" />
+    ///     <seealso cref="Frozen" />
     /// </summary>
     public string FrozenBy
     {
@@ -130,8 +147,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// The date <see cref="Freeze()"/> was last ran
-    /// <seealso cref="Frozen"/>
+    ///     The date <see cref="Freeze()" /> was last ran
+    ///     <seealso cref="Frozen" />
     /// </summary>
     public DateTime? FrozenDate
     {
@@ -140,10 +157,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// The ID of the CohortIdentificationConfiguration that this one was cloned from (if any).
-    /// 
-    /// <para>It is possible to delete the parent, resulting in a ClonedFrom_ID which cannot be resolved to a parent object</para>
-    /// <seealso cref="Frozen"/>
+    ///     The ID of the CohortIdentificationConfiguration that this one was cloned from (if any).
+    ///     <para>It is possible to delete the parent, resulting in a ClonedFrom_ID which cannot be resolved to a parent object</para>
+    ///     <seealso cref="Frozen" />
     /// </summary>
     public int? ClonedFrom_ID
     {
@@ -151,7 +167,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         set => SetField(ref _clonedFrom_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [UsefulProperty]
     public string Folder
     {
@@ -163,14 +179,14 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     #region Relationships
 
-    /// <inheritdoc cref="RootCohortAggregateContainer_ID"/>
+    /// <inheritdoc cref="RootCohortAggregateContainer_ID" />
     [NoMappingToDatabase]
     public CohortAggregateContainer RootCohortAggregateContainer =>
         RootCohortAggregateContainer_ID == null
             ? null
             : Repository.GetObjectByID<CohortAggregateContainer>((int)RootCohortAggregateContainer_ID);
 
-    /// <inheritdoc cref="QueryCachingServer_ID"/>
+    /// <inheritdoc cref="QueryCachingServer_ID" />
     [NoMappingToDatabase]
     public ExternalDatabaseServer QueryCachingServer =>
         QueryCachingServer_ID == null
@@ -184,8 +200,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Declares a new configuration for identifying patient lists matching a study requirements based on the results of cohort sets / patient index tables and set operations
-    /// <see cref="CohortIdentificationConfiguration"/>
+    ///     Declares a new configuration for identifying patient lists matching a study requirements based on the results of
+    ///     cohort sets / patient index tables and set operations
+    ///     <see cref="CohortIdentificationConfiguration" />
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -219,7 +236,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Deletes the root container and consequently the entire <see cref="CohortIdentificationConfiguration"/>
+    ///     Deletes the root container and consequently the entire <see cref="CohortIdentificationConfiguration" />
     /// </summary>
     public override void DeleteInDatabase()
     {
@@ -237,7 +254,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Creates a new <see cref="CohortAggregateContainer"/> if there is no <see cref="RootCohortAggregateContainer_ID"/> yet
+    ///     Creates a new <see cref="CohortAggregateContainer" /> if there is no <see cref="RootCohortAggregateContainer_ID" />
+    ///     yet
     /// </summary>
     public void CreateRootContainerIfNotExists()
     {
@@ -251,8 +269,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         SaveToDatabase();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -266,31 +287,47 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return false;
     }
 
-    /// <inheritdoc/>
-    public string GetSearchString() =>
+    /// <inheritdoc />
+    public string GetSearchString()
+    {
         //let the cic acronym match cohort identification configuration
-        $"cic {Name}";
+        return $"cic {Name}";
+    }
 
-    /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters() => CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    /// <inheritdoc />
+    public ISqlParameter[] GetAllParameters()
+    {
+        return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
+    }
 
 
-    /// <inheritdoc cref="CICPrefix"/>
-    public string GetNamingConventionPrefixForConfigurations() => $"{CICPrefix}{ID}_";
+    /// <inheritdoc cref="CICPrefix" />
+    public string GetNamingConventionPrefixForConfigurations()
+    {
+        return $"{CICPrefix}{ID}_";
+    }
 
     /// <summary>
-    /// Returns true if the <see cref="AggregateConfiguration"/> provided has Name compatible with <see cref="CICPrefix"/>
-    /// <seealso cref="GetNamingConventionPrefixForConfigurations"/>
+    ///     Returns true if the <see cref="AggregateConfiguration" /> provided has Name compatible with
+    ///     <see cref="CICPrefix" />
+    ///     <seealso cref="GetNamingConventionPrefixForConfigurations" />
     /// </summary>
     /// <param name="aggregate"></param>
     /// <returns></returns>
-    public bool IsValidNamedConfiguration(AggregateConfiguration aggregate) =>
-        aggregate.Name.StartsWith(GetNamingConventionPrefixForConfigurations());
+    public bool IsValidNamedConfiguration(AggregateConfiguration aggregate)
+    {
+        return aggregate.Name.StartsWith(GetNamingConventionPrefixForConfigurations());
+    }
 
     /// <summary>
-    /// All <see cref="AggregateConfiguration"/>s within a <see cref="CohortIdentificationConfiguration"/> must start with the appropriate prefix (and ID of the cic)
-    /// (See <see cref="CICPrefix"/>).  This method will change the <see cref="AggregateConfiguration.Name"/> to match the expected prefix.
-    /// <para>If the name change would result in a collisionw ith an existing set in the configuration then (Copy X) will appear at the end of the name</para>
+    ///     All <see cref="AggregateConfiguration" />s within a <see cref="CohortIdentificationConfiguration" /> must start
+    ///     with the appropriate prefix (and ID of the cic)
+    ///     (See <see cref="CICPrefix" />).  This method will change the <see cref="AggregateConfiguration.Name" /> to match
+    ///     the expected prefix.
+    ///     <para>
+    ///         If the name change would result in a collisionw ith an existing set in the configuration then (Copy X) will
+    ///         appear at the end of the name
+    ///     </para>
     /// </summary>
     /// <param name="aggregate"></param>
     public void EnsureNamingConvention(AggregateConfiguration aggregate)
@@ -322,9 +359,13 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Creates a entirely new copy of the <see cref="CohortIdentificationConfiguration"/> with all new IDs on the root and all child objects.  This includes
-    /// filters, patient index tables, parameters, set containers etc.
-    /// <para>This is done in a transaction so that if it fails halfway through you won't end up with half a clone configuration</para>
+    ///     Creates a entirely new copy of the <see cref="CohortIdentificationConfiguration" /> with all new IDs on the root
+    ///     and all child objects.  This includes
+    ///     filters, patient index tables, parameters, set containers etc.
+    ///     <para>
+    ///         This is done in a transaction so that if it fails halfway through you won't end up with half a clone
+    ///         configuration
+    ///     </para>
     /// </summary>
     /// <param name="notifier">Event listener for reporting cloning progress and any problems</param>
     /// <returns></returns>
@@ -391,13 +432,20 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Creates an adjusted copy of the <paramref name="toClone"/> to be used as a cohort identification <see cref="AggregateConfiguration"/>.  This could be
-    /// an <see cref="AggregateConfiguration"/> graph or one that is acting as a patient index table / cohort set for another <see cref="CohortIdentificationConfiguration"/>.
-    /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
+    ///     Creates an adjusted copy of the <paramref name="toClone" /> to be used as a cohort identification
+    ///     <see cref="AggregateConfiguration" />.  This could be
+    ///     an <see cref="AggregateConfiguration" /> graph or one that is acting as a patient index table / cohort set for
+    ///     another <see cref="CohortIdentificationConfiguration" />.
+    ///     <para>
+    ///         IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from
+    ///         <paramref name="resolveMultipleExtractionIdentifiers" />
+    ///     </para>
     /// </summary>
     /// <param name="toClone">The aggregate to import</param>
-    /// <param name="resolveMultipleExtractionIdentifiers">What to do if there are multiple <see cref="ExtractionInformation"/>/<see cref="AggregateDimension"/>
-    ///  marked IsExtractionIdentifier</param>
+    /// <param name="resolveMultipleExtractionIdentifiers">
+    ///     What to do if there are multiple <see cref="ExtractionInformation" />/<see cref="AggregateDimension" />
+    ///     marked IsExtractionIdentifier
+    /// </param>
     /// <param name="useTransaction">True to run the import in a transaction</param>
     /// <returns></returns>
     public AggregateConfiguration ImportAggregateConfigurationAsIdentifierList(AggregateConfiguration toClone,
@@ -495,9 +543,11 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there are multiple IsExtractionIdentifier columns.
-    /// For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the descision on which column to use is resolved by this
-    /// class.
+    ///     Delegate for handling the situation in which the user wants to create a cohort based on a given Catalogue but there
+    ///     are multiple IsExtractionIdentifier columns.
+    ///     For example SMR02 (baby birth records) might have (Mother CHI, Father CHI, Baby CHI).  In this situation the
+    ///     descision on which column to use is resolved by this
+    ///     class.
     /// </summary>
     /// <param name="catalogue"></param>
     /// <param name="candidates"></param>
@@ -507,13 +557,21 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
 
     /// <summary>
-    /// Creates a new cohort set <see cref="AggregateConfiguration"/> which initially matches any patient appearing in the dataset (<see cref="Catalogue"/>).
-    /// <para>IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from <paramref name="resolveMultipleExtractionIdentifiers"/></para>
+    ///     Creates a new cohort set <see cref="AggregateConfiguration" /> which initially matches any patient appearing in the
+    ///     dataset (<see cref="Catalogue" />).
+    ///     <para>
+    ///         IMPORTANT: It must be possible to select a single column from which to harvest the patient identifiers from
+    ///         <paramref name="resolveMultipleExtractionIdentifiers" />
+    ///     </para>
     /// </summary>
-    /// <param name="catalogue">The catalogue to import as a patient identification set (you can import the same Catalogue multiple times e.g.
-    /// 'People ever prescribed morphine' EXCEPT 'People ever prescribed percoset'</param>
-    /// <param name="resolveMultipleExtractionIdentifiers">What to do if there are multiple <see cref="ExtractionInformation"/>
-    ///  marked IsExtractionIdentifier</param>
+    /// <param name="catalogue">
+    ///     The catalogue to import as a patient identification set (you can import the same Catalogue multiple times e.g.
+    ///     'People ever prescribed morphine' EXCEPT 'People ever prescribed percoset'
+    /// </param>
+    /// <param name="resolveMultipleExtractionIdentifiers">
+    ///     What to do if there are multiple <see cref="ExtractionInformation" />
+    ///     marked IsExtractionIdentifier
+    /// </param>
     /// <param name="importMandatoryFilters"></param>
     /// <returns></returns>
     public AggregateConfiguration CreateNewEmptyConfigurationForCatalogue(ICatalogue catalogue,
@@ -569,11 +627,15 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// returns an underlying ExtractionInformation which IsExtractionIdentifier (e.g. a chi column).  The first pass approach is to look for a suitable AggregateDimension which
-    /// has an underlying  ExtractionInformation which IsExtractionIdentifier but if it doesn't find one then it will look in the Catalogue for one instead.  The reason this is
-    /// complex is because you can have datasets with multiple IsExtractionIdentifier columns e.g. SMR02 (birth records) where there is both MotherCHI and BabyCHI which are both
-    /// IsExtractionIdentifier - in this case the AggregateConfiguration would need a Dimension of one or the other (but not both!) - if it had neither then the method would throw
-    /// when it checked Catalogue and found both.
+    ///     returns an underlying ExtractionInformation which IsExtractionIdentifier (e.g. a chi column).  The first pass
+    ///     approach is to look for a suitable AggregateDimension which
+    ///     has an underlying  ExtractionInformation which IsExtractionIdentifier but if it doesn't find one then it will look
+    ///     in the Catalogue for one instead.  The reason this is
+    ///     complex is because you can have datasets with multiple IsExtractionIdentifier columns e.g. SMR02 (birth records)
+    ///     where there is both MotherCHI and BabyCHI which are both
+    ///     IsExtractionIdentifier - in this case the AggregateConfiguration would need a Dimension of one or the other (but
+    ///     not both!) - if it had neither then the method would throw
+    ///     when it checked Catalogue and found both.
     /// </summary>
     /// <param name="toClone"></param>
     /// <param name="underlyingExtractionInformation"></param>
@@ -639,16 +701,20 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Returns all patient index tables declared in this <see cref="CohortIdentificationConfiguration"/> (See <see cref="JoinableCohortAggregateConfiguration"/>)
+    ///     Returns all patient index tables declared in this <see cref="CohortIdentificationConfiguration" /> (See
+    ///     <see cref="JoinableCohortAggregateConfiguration" />)
     /// </summary>
     /// <returns></returns>
-    public JoinableCohortAggregateConfiguration[] GetAllJoinables() =>
-        Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).ToArray();
+    public JoinableCohortAggregateConfiguration[] GetAllJoinables()
+    {
+        return Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).ToArray();
+    }
 
 
     /// <summary>
-    /// Returns all unique <see cref="TableInfo"/> required for building all of the <see cref="AggregateConfiguration"/>s in the
-    /// <see cref="AggregateConfiguration.RootFilterContainer_ID"/> or any subcontainers.
+    ///     Returns all unique <see cref="TableInfo" /> required for building all of the <see cref="AggregateConfiguration" />s
+    ///     in the
+    ///     <see cref="AggregateConfiguration.RootFilterContainer_ID" /> or any subcontainers.
     /// </summary>
     /// <returns></returns>
     public TableInfo[] GetDistinctTableInfos()
@@ -663,9 +729,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Freezes the current <see cref="CohortIdentificationConfiguration"/> marking it as immutable.
-    /// <para>This is the preferred way of setting <see cref="Frozen"/></para>
-    /// <seealso cref="Frozen"/>
+    ///     Freezes the current <see cref="CohortIdentificationConfiguration" /> marking it as immutable.
+    ///     <para>This is the preferred way of setting <see cref="Frozen" /></para>
+    ///     <seealso cref="Frozen" />
     /// </summary>
     public void Freeze()
     {
@@ -679,7 +745,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     }
 
     /// <summary>
-    /// Clears the <see cref="Frozen"/> flag fields and saves to database
+    ///     Clears the <see cref="Frozen" /> flag fields and saves to database
     /// </summary>
     public void Unfreeze()
     {
@@ -692,7 +758,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         var dependencies = new List<IHasDependencies>();
@@ -705,6 +771,9 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return dependencies.ToArray();
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 }

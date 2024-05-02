@@ -15,7 +15,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Clone and import one or more <see cref="CohortIdentificationConfiguration"/> into a root or subcontainer of another
+///     Clone and import one or more <see cref="CohortIdentificationConfiguration" /> into a root or subcontainer of
+///     another
 /// </summary>
 public class ExecuteCommandImportCohortIdentificationConfiguration : BasicCommandExecution
 {
@@ -43,8 +44,10 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
         UseTripleDotSuffix = ToImport == null;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Add);
+    }
 
     public override void Execute()
     {
@@ -54,11 +57,11 @@ public class ExecuteCommandImportCohortIdentificationConfiguration : BasicComman
 
         if (import == null)
             if (!BasicActivator.SelectObjects(new DialogArgs
-            {
-                WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
-                TaskDescription =
+                    {
+                        WindowTitle = "Add CohortIdentificationConfiguration(s) to Container",
+                        TaskDescription =
                             $"Choose which CohortIdentificationConfiguration(s) to add to the cohort container '{IntoContainer.Name}'.  For each one selected, the entire query tree will be imported."
-            },
+                    },
                     BasicActivator.RepositoryLocator.CatalogueRepository
                         .GetAllObjects<CohortIdentificationConfiguration>(),
                     out import))

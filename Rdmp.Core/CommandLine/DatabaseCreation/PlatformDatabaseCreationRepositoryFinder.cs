@@ -13,9 +13,12 @@ using Rdmp.Core.Startup;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// IRDMPPlatformRepositoryServiceLocator which identifies the location of Catalogue and Data Export databases during the runtime of DatabaseCreation.exe
-/// 
-/// <para>Since these connection strings are part of the command line arguments to DatabaseCreation.exe it's a pretty simple class!</para>
+///     IRDMPPlatformRepositoryServiceLocator which identifies the location of Catalogue and Data Export databases during
+///     the runtime of DatabaseCreation.exe
+///     <para>
+///         Since these connection strings are part of the command line arguments to DatabaseCreation.exe it's a pretty
+///         simple class!
+///     </para>
 /// </summary>
 public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryServiceLocator
 {
@@ -26,20 +29,33 @@ public class PlatformDatabaseCreationRepositoryFinder : IRDMPPlatformRepositoryS
     public IDataExportRepository DataExportRepository => _linkedRepositoryProvider.DataExportRepository;
 
     public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName,
-        string databaseObjectTypeName, int objectID) =>
-        _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName, objectID);
+        string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.GetArbitraryDatabaseObject(repositoryTypeName, databaseObjectTypeName,
+            objectID);
+    }
 
-    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID) =>
-        _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName, objectID);
+    public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
+    {
+        return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName, databaseObjectTypeName,
+            objectID);
+    }
 
-    /// <inheritdoc/>
-    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable =>
-        _linkedRepositoryProvider.GetObjectByID<T>(value);
+    /// <inheritdoc />
+    public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+    {
+        return _linkedRepositoryProvider.GetObjectByID<T>(value);
+    }
 
-    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value) =>
-        _linkedRepositoryProvider.GetObjectByID(t, value);
+    public IMapsDirectlyToDatabaseTable GetObjectByID(Type t, int value)
+    {
+        return _linkedRepositoryProvider.GetObjectByID(t, value);
+    }
 
-    public IEnumerable<IRepository> GetAllRepositories() => _linkedRepositoryProvider.GetAllRepositories();
+    public IEnumerable<IRepository> GetAllRepositories()
+    {
+        return _linkedRepositoryProvider.GetAllRepositories();
+    }
 
     public PlatformDatabaseCreationRepositoryFinder(PlatformDatabaseCreationOptions options)
     {

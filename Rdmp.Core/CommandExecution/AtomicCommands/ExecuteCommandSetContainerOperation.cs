@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Changes the set operation on a <see cref="CohortAggregateContainer"/>
+///     Changes the set operation on a <see cref="CohortAggregateContainer" />
 /// </summary>
 public class ExecuteCommandSetContainerOperation : BasicCommandExecution
 {
@@ -40,9 +40,12 @@ public class ExecuteCommandSetContainerOperation : BasicCommandExecution
         };
     }
 
-    public override string GetCommandName() => !string.IsNullOrWhiteSpace(OverrideCommandName)
-        ? OverrideCommandName
-        : $"Set operation {_operation}";
+    public override string GetCommandName()
+    {
+        return !string.IsNullOrWhiteSpace(OverrideCommandName)
+            ? OverrideCommandName
+            : $"Set operation {_operation}";
+    }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider)
     {

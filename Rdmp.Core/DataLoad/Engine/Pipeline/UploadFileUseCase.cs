@@ -15,8 +15,10 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline;
 
 /// <summary>
-/// Describes the use case of uploading a <see cref="FileInfo"/> to a target database server.  Compatible pipelines for achieving this must have a destination
-/// of (or inheriting from) <see cref="DataTableUploadDestination"/> and a source that implements IPipelineRequirement&lt;FlatFileToLoad&gt;.
+///     Describes the use case of uploading a <see cref="FileInfo" /> to a target database server.  Compatible pipelines
+///     for achieving this must have a destination
+///     of (or inheriting from) <see cref="DataTableUploadDestination" /> and a source that implements IPipelineRequirement
+///     &lt;FlatFileToLoad&gt;.
 /// </summary>
 public sealed class UploadFileUseCase : PipelineUseCase
 {
@@ -46,5 +48,8 @@ public sealed class UploadFileUseCase : PipelineUseCase
         GenerateContext();
     }
 
-    public static PipelineUseCase DesignTime() => new UploadFileUseCase();
+    public static PipelineUseCase DesignTime()
+    {
+        return new UploadFileUseCase();
+    }
 }

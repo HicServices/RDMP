@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.Loader;
 using FAnsi.Discovery;
@@ -26,16 +25,16 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup.Events;
+using TypeGuesser;
 
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2
-/// databases) and plugin databases (Called Tier3).
-/// 
-/// <para>Identifies which databases need to be patched.</para>
-/// 
-/// <para>Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.</para>
+///     Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc
+///     - called Tier2
+///     databases) and plugin databases (Called Tier3).
+///     <para>Identifies which databases need to be patched.</para>
+///     <para>Loads MEF assemblies and identifies assembly incompatibilities / Type Load errors.</para>
 /// </summary>
 public class Startup
 {
@@ -44,7 +43,7 @@ public class Startup
     //public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
     /// <summary>
-    /// Set to true to ignore unpatched platform databases
+    ///     Set to true to ignore unpatched platform databases
     /// </summary>
     public bool SkipPatching { get; init; }
 
@@ -61,7 +60,7 @@ public class Startup
 
     public Startup()
     {
-        TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
+        GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
     }
 
     #endregion
@@ -236,7 +235,7 @@ public class Startup
     #region MEF
 
     /// <summary>
-    /// Load the plugins from the platform DB
+    ///     Load the plugins from the platform DB
     /// </summary>
     /// <param name="catalogueRepository"></param>
     /// <param name="notifier"></param>
@@ -270,12 +269,14 @@ public class Startup
     #endregion
 
     /// <summary>
-    /// <para>
-    /// Call before running <see cref="Startup"/>.  Sets up basic assembly redirects to the execution directory
-    /// (see <see cref="AssemblyResolver"/>) and FAnsiSql DBMS implementations.
-    /// </para>
-    /// <para>Note that this method can be used even if you do not then go on to use <see cref="Startup"/> e.g. if you
-    /// are performing a low level operation like patching</para>
+    ///     <para>
+    ///         Call before running <see cref="Startup" />.  Sets up basic assembly redirects to the execution directory
+    ///         (see <see cref="AssemblyResolver" />) and FAnsiSql DBMS implementations.
+    ///     </para>
+    ///     <para>
+    ///         Note that this method can be used even if you do not then go on to use <see cref="Startup" /> e.g. if you
+    ///         are performing a low level operation like patching
+    ///     </para>
     /// </summary>
     public static void PreStartup()
     {

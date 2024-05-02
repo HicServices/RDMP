@@ -15,18 +15,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Tracks a collection of <see cref="IDataAccessPoint"/> and optionally ensures that they all open connections
-/// to the same server (and server type e.g. MySql on localhost).
+///     Tracks a collection of <see cref="IDataAccessPoint" /> and optionally ensures that they all open connections
+///     to the same server (and server type e.g. MySql on localhost).
 /// </summary>
 public class DataAccessPointCollection
 {
     /// <summary>
-    /// True to require all <see cref="IDataAccessPoint"/> added to be on the same server
+    ///     True to require all <see cref="IDataAccessPoint" /> added to be on the same server
     /// </summary>
     public bool SingleServer { get; }
 
     /// <summary>
-    /// All <see cref="IDataAccessPoint"/> that have been added so far.
+    ///     All <see cref="IDataAccessPoint" /> that have been added so far.
     /// </summary>
     public IReadOnlyCollection<IDataAccessPoint> Points => _points;
 
@@ -35,10 +35,10 @@ public class DataAccessPointCollection
     private HashSet<IDataAccessPoint> _points = new();
 
     /// <summary>
-    /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
-    /// when building a query in which there are subqueries run on different databases
+    ///     Creates a new collection of <see cref="IDataAccessPoint" /> for collecting dependencies e.g.
+    ///     when building a query in which there are subqueries run on different databases
     /// </summary>
-    /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
+    /// <param name="singleServer">True to require all <see cref="Points" /> to be on the same server (and type).</param>
     /// <param name="context"></param>
     public DataAccessPointCollection(bool singleServer,
         DataAccessContext context = DataAccessContext.InternalDataProcessing)
@@ -48,8 +48,9 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Adds the given <paramref name="point"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
-    /// is set and the new <paramref name="point"/> is on a different server or <see cref="DatabaseType"/>
+    ///     Adds the given <paramref name="point" /> to the collection. Throws InvalidOperationException if
+    ///     <see cref="SingleServer" />
+    ///     is set and the new <paramref name="point" /> is on a different server or <see cref="DatabaseType" />
     /// </summary>
     /// <param name="point"></param>
     public void Add(IDataAccessPoint point)
@@ -58,8 +59,10 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Attempts to add <paramref name="point"/> to the collection returning true if it was successfully added.  Returns false
-    /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="point"/> is to a different server/type).
+    ///     Attempts to add <paramref name="point" /> to the collection returning true if it was successfully added.  Returns
+    ///     false
+    ///     if not added (e.g. if <see cref="SingleServer" /> is true and <paramref name="point" /> is to a different
+    ///     server/type).
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
@@ -69,10 +72,11 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Attempts to add <paramref name="points"/> to the collection returning true if it was successfully added.  Returns false
-    /// if not added (e.g. if <see cref="SingleServer"/> is true and <paramref name="points"/> is to a different server/type).
-    ///
-    ///  <para>Either all or none of the <paramref name="points"/> will be added (i.e. not half)</para>
+    ///     Attempts to add <paramref name="points" /> to the collection returning true if it was successfully added.  Returns
+    ///     false
+    ///     if not added (e.g. if <see cref="SingleServer" /> is true and <paramref name="points" /> is to a different
+    ///     server/type).
+    ///     <para>Either all or none of the <paramref name="points" /> will be added (i.e. not half)</para>
     /// </summary>
     /// <param name="points"></param>
     /// <returns></returns>
@@ -91,8 +95,9 @@ public class DataAccessPointCollection
 
 
     /// <summary>
-    /// Adds the given <paramref name="points"/> to the collection. Throws InvalidOperationException if <see cref="SingleServer"/>
-    /// is set and the new <paramref name="points"/> is on a different server or <see cref="DatabaseType"/>
+    ///     Adds the given <paramref name="points" /> to the collection. Throws InvalidOperationException if
+    ///     <see cref="SingleServer" />
+    ///     is set and the new <paramref name="points" /> is on a different server or <see cref="DatabaseType" />
     /// </summary>
     /// <param name="points"></param>
     public void AddRange(IDataAccessPoint[] points)
@@ -135,7 +140,7 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Clears <see cref="Points"/>
+    ///     Clears <see cref="Points" />
     /// </summary>
     public void Clear()
     {
@@ -143,7 +148,7 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Returns comma separated list of <see cref="Points"/>
+    ///     Returns comma separated list of <see cref="Points" />
     /// </summary>
     /// <returns></returns>
     public override string ToString()
@@ -152,9 +157,9 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Returns as single server on which all <see cref="Points"/> can be reached (even if they are in
-    /// separate databases on that server).  Only valid if <see cref="SingleServer"/> is set (otherwise
-    /// throws <see cref="NotSupportedException"/>
+    ///     Returns as single server on which all <see cref="Points" /> can be reached (even if they are in
+    ///     separate databases on that server).  Only valid if <see cref="SingleServer" /> is set (otherwise
+    ///     throws <see cref="NotSupportedException" />
     /// </summary>
     /// <returns></returns>
     public DiscoveredServer GetDistinctServer()
@@ -170,7 +175,7 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Returns a new collection with a new set of <see cref="Points"/> matching the old set (but not instance).
+    ///     Returns a new collection with a new set of <see cref="Points" /> matching the old set (but not instance).
     /// </summary>
     /// <returns></returns>
     public DataAccessPointCollection Clone()
@@ -183,10 +188,13 @@ public class DataAccessPointCollection
     }
 
     /// <summary>
-    /// Tests whether the supplied <paramref name="point"/> could be added to the current collection (without
-    /// actually adding it).
+    ///     Tests whether the supplied <paramref name="point" /> could be added to the current collection (without
+    ///     actually adding it).
     /// </summary>
     /// <param name="point"></param>
     /// <returns></returns>
-    public bool AddWouldBePossible(IDataAccessPoint point) => Clone().TryAdd(point);
+    public bool AddWouldBePossible(IDataAccessPoint point)
+    {
+        return Clone().TryAdd(point);
+    }
 }

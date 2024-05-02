@@ -11,12 +11,12 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.FilterImporting;
 
-/// <inheritdoc/>
+/// <inheritdoc />
 public class DeployedExtractionFilterUIOptions : FilterUIOptions
 {
-    private ISqlParameter[] _globals;
-    private ITableInfo[] _tables;
-    private IColumn[] _columns;
+    private readonly ISqlParameter[] _globals;
+    private readonly ITableInfo[] _tables;
+    private readonly IColumn[] _columns;
 
     public DeployedExtractionFilterUIOptions(DeployedExtractionFilter deployedExtractionFilter) : base(
         deployedExtractionFilter)
@@ -38,9 +38,18 @@ public class DeployedExtractionFilterUIOptions : FilterUIOptions
         _columns = columns.ToArray();
     }
 
-    public override ITableInfo[] GetTableInfos() => _tables;
+    public override ITableInfo[] GetTableInfos()
+    {
+        return _tables;
+    }
 
-    public override ISqlParameter[] GetGlobalParametersInFilterScope() => _globals;
+    public override ISqlParameter[] GetGlobalParametersInFilterScope()
+    {
+        return _globals;
+    }
 
-    public override IColumn[] GetIColumnsInFilterScope() => _columns;
+    public override IColumn[] GetIColumnsInFilterScope()
+    {
+        return _columns;
+    }
 }

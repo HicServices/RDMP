@@ -9,7 +9,7 @@ using System;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Thrown when the API tries to Execute a command marked IsImpossible
+///     Thrown when the API tries to Execute a command marked IsImpossible
 /// </summary>
 public class ImpossibleCommandException : Exception
 {

@@ -17,15 +17,17 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-///  Use this class to create standard parameters which you will always manually add in code to a QueryBuilder.  These are not editable
-///  by users and are not stored in a database.  They should be used for things such as cohortDefinitionID, projectID etc.
+///     Use this class to create standard parameters which you will always manually add in code to a QueryBuilder.  These
+///     are not editable
+///     by users and are not stored in a database.  They should be used for things such as cohortDefinitionID, projectID
+///     etc.
 /// </summary>
 public class ConstantParameter : ISqlParameter
 {
     private readonly IQuerySyntaxHelper _syntaxHelper;
 
     /// <summary>
-    /// Creates a new unchangeable always available parameter in a query being built.
+    ///     Creates a new unchangeable always available parameter in a query being built.
     /// </summary>
     /// <param name="parameterSQL">The declaration sql e.g. DECLARE @bob as int</param>
     /// <param name="value">The value to set the paramater e.g. 1</param>
@@ -40,18 +42,21 @@ public class ConstantParameter : ISqlParameter
     }
 
     /// <summary>
-    /// Not supported for constant parameters
+    ///     Not supported for constant parameters
     /// </summary>
     public void SaveToDatabase()
     {
         throw new NotSupportedException();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{ParameterName} = {Value}";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{ParameterName} = {Value}";
+    }
 
     /// <summary>
-    /// Checks the syntax of the parameter (See <see cref="ParameterSyntaxChecker"/>)
+    ///     Checks the syntax of the parameter (See <see cref="ParameterSyntaxChecker" />)
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -59,31 +64,37 @@ public class ConstantParameter : ISqlParameter
         new ParameterSyntaxChecker(this).Check(notifier);
     }
 
-    /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => _syntaxHelper;
+    /// <inheritdoc />
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return _syntaxHelper;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ParameterName => QuerySyntaxHelper.GetParameterNameFromDeclarationSQL(ParameterSQL);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string ParameterSQL { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string Value { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Comment { get; set; }
 
     /// <summary>
-    /// Returns null, <see cref="ConstantParameter"/> are never owned by any objects
+    ///     Returns null, <see cref="ConstantParameter" /> are never owned by any objects
     /// </summary>
     /// <returns></returns>
-    public IMapsDirectlyToDatabaseTable GetOwnerIfAny() => null;
+    public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
+    {
+        return null;
+    }
 
     /// <summary>
-    /// Attempts to parse the provided <paramref name="sql"/> text into a <see cref="ConstantParameter"/>
+    ///     Attempts to parse the provided <paramref name="sql" /> text into a <see cref="ConstantParameter" />
     /// </summary>
     /// <param name="sql"></param>
     /// <param name="syntaxHelper"></param>
@@ -108,7 +119,7 @@ public class ConstantParameter : ISqlParameter
             throw new Exception($"Value line did not start with SET:{sql}");
 
         var valueLineSplit = valueLine.Split(new[] { '=' });
-        var value = valueLineSplit[1].TrimEnd(new[] { ';', '\r' });
+        var value = valueLineSplit[1].TrimEnd(';', '\r');
 
         return new ConstantParameter(declaration.Trim(), value.Trim(), comment, syntaxHelper);
     }

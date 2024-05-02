@@ -7,17 +7,19 @@
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 /// <summary>
-/// Interface for objects able to summarise themselves as strings
+///     Interface for objects able to summarise themselves as strings
 /// </summary>
 public interface ICanBeSummarised
 {
     /// <summary>
-    /// Generates a sumary of the objects current state.  Containing only useful
-    /// information to the user to understand the objects state.
+    ///     Generates a sumary of the objects current state.  Containing only useful
+    ///     information to the user to understand the objects state.
     /// </summary>
-    /// <param name="includeName">true to include the name or title of the object.  False to
-    /// skip that out when sumarising (e.g. if you are inserting into a body of text which
-    /// already has a distinguishing title)</param>
+    /// <param name="includeName">
+    ///     true to include the name or title of the object.  False to
+    ///     skip that out when sumarising (e.g. if you are inserting into a body of text which
+    ///     already has a distinguishing title)
+    /// </param>
     /// <param name="includeId"></param>
     /// <returns></returns>
     public string GetSummary(bool includeName, bool includeId);

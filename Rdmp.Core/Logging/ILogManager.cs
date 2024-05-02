@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Logging;
 
 /// <summary>
-/// See LogManager
+///     See LogManager
 /// </summary>
 public interface ILogManager
 {

@@ -12,12 +12,14 @@ using Rdmp.Core.Curation.Data.Spontaneous;
 namespace Rdmp.Core.Curation.FilterImporting;
 
 /// <summary>
-/// Handles renaming a parameter in the WHERE SQL of its parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this
-/// to be carried through to the parent without having any knowledge available to what that parent is or even if it has one
+///     Handles renaming a parameter in the WHERE SQL of its parent (if it has one).  Use this when you want the user to be
+///     able to change the name of a parameter and for this
+///     to be carried through to the parent without having any knowledge available to what that parent is or even if it has
+///     one
 /// </summary>
 public class ParameterRefactorer : IParameterRefactorer
 {
-    public HashSet<IFilter> RefactoredFilters { get; private set; }
+    public HashSet<IFilter> RefactoredFilters { get; }
 
     public ParameterRefactorer()
     {

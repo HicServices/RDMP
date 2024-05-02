@@ -14,22 +14,28 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Curation.Data.Pipelines;
 
 /// <summary>
-/// Abstract base IPipelineUseCase. Provides basic implementations for filtering compatible pipelines and translating
-/// a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set ExplicitSource /
-/// ExplicitDestination / PreInitialize objects etc as needed for your use case.
+///     Abstract base IPipelineUseCase. Provides basic implementations for filtering compatible pipelines and translating
+///     a selected IPipeline into an actual executable engine instance via DataFlowPipelineEngineFactory.  Set
+///     ExplicitSource /
+///     ExplicitDestination / PreInitialize objects etc as needed for your use case.
 /// </summary>
 public abstract class PipelineUseCase : IPipelineUseCase
 {
-    /// <inheritdoc/>
-    public HashSet<object> GetInitializationObjects() => InitializationObjects;
+    /// <inheritdoc />
+    public HashSet<object> GetInitializationObjects()
+    {
+        return InitializationObjects;
+    }
 
-    /// <inheritdoc/>
-    public IDataFlowPipelineContext GetContext() =>
-        _context ?? throw new Exception(
+    /// <inheritdoc />
+    public IDataFlowPipelineContext GetContext()
+    {
+        return _context ?? throw new Exception(
             $"Context has not been initialized yet for use case {GetType()} make sure to add a call to GenerateContext method in the constructor (and mark class as sealed)");
+    }
 
     /// <summary>
-    /// Call this in your constructor
+    ///     Call this in your constructor
     /// </summary>
     protected void GenerateContext()
     {
@@ -37,32 +43,34 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Implement this to generate the compatiblity definition for pipelines that will be used by you.
-    /// 
-    /// <para>IMPORTANT: Make sure you call <see cref="GenerateContext"/> in every constructor you have</para>
+    ///     Implement this to generate the compatiblity definition for pipelines that will be used by you.
+    ///     <para>IMPORTANT: Make sure you call <see cref="GenerateContext" /> in every constructor you have</para>
     /// </summary>
     /// <returns></returns>
     protected abstract IDataFlowPipelineContext GenerateContextImpl();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object ExplicitSource { get; protected set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public object ExplicitDestination { get; protected set; }
 
     /// <summary>
-    /// True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is often
-    /// the case when the user is editing a <see cref="Pipeline"/> at some arbitrary time.
-    /// 
-    /// <para>If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects for the task</para>
+    ///     True if there there are no objects available for hydrating (e.g. no files to load, no picked cohorts etc).  This is
+    ///     often
+    ///     the case when the user is editing a <see cref="Pipeline" /> at some arbitrary time.
+    ///     <para>
+    ///         If this is true then GetInitializationObjects should return Type[] instead of the actually selected objects
+    ///         for the task
+    ///     </para>
     /// </summary>
-    public bool IsDesignTime { get; private set; }
+    public bool IsDesignTime { get; }
 
     protected HashSet<object> InitializationObjects = new();
     private IDataFlowPipelineContext _context;
 
     /// <summary>
-    /// The normal (non desing time) constructor.  Add your objects to <see cref="InitializationObjects"/>
+    ///     The normal (non desing time) constructor.  Add your objects to <see cref="InitializationObjects" />
     /// </summary>
     protected PipelineUseCase()
     {
@@ -70,8 +78,10 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Use this constructor if you are intending to use the <see cref="PipelineUseCase"/> for design time activities only (building pipelines
-    /// from compatible components).  Only use if you don't have all the normally required object instances to actually execute a pipeline.
+    ///     Use this constructor if you are intending to use the <see cref="PipelineUseCase" /> for design time activities only
+    ///     (building pipelines
+    ///     from compatible components).  Only use if you don't have all the normally required object instances to actually
+    ///     execute a pipeline.
     /// </summary>
     /// <param name="designTimeInitializationObjectTypes"></param>
     protected PipelineUseCase(Type[] designTimeInitializationObjectTypes)
@@ -81,11 +91,13 @@ public abstract class PipelineUseCase : IPipelineUseCase
             InitializationObjects.Add(t);
     }
 
-    /// <inheritdoc/>
-    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines) =>
-        pipelines.Where(IsAllowable);
+    /// <inheritdoc />
+    public virtual IEnumerable<Pipeline> FilterCompatiblePipelines(IEnumerable<Pipeline> pipelines)
+    {
+        return pipelines.Where(IsAllowable);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual IDataFlowPipelineEngine GetEngine(IPipeline pipeline, IDataLoadEventListener listener)
     {
         var engine = new DataFlowPipelineEngineFactory(this, pipeline).Create(pipeline, listener);
@@ -95,7 +107,8 @@ public abstract class PipelineUseCase : IPipelineUseCase
     }
 
     /// <summary>
-    /// Mark the object instance <paramref name="o"/> as available for pipeline components to subscribe to via IPipelineRequirement.
+    ///     Mark the object instance <paramref name="o" /> as available for pipeline components to subscribe to via
+    ///     IPipelineRequirement.
     /// </summary>
     /// <param name="o"></param>
     protected void AddInitializationObject(object o)

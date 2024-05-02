@@ -34,8 +34,8 @@ public static class Rfc4180Writer
         foreach (DataRow row in sourceTable.Rows)
         {
             var line = (from DataColumn col in sourceTable.Columns
-                        select QuoteValue(GetStringRepresentation(row[col],
-                            typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
+                select QuoteValue(GetStringRepresentation(row[col],
+                    typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper))).ToList();
             writer.WriteLine(string.Join(",", line));
         }
 
@@ -62,8 +62,13 @@ public static class Rfc4180Writer
         return str;
     }
 
-    private static string GetStringRepresentation(DateTime dt) =>
-        dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
+    private static string GetStringRepresentation(DateTime dt)
+    {
+        return dt.ToString(dt.TimeOfDay == TimeSpan.Zero ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm:ss.fff");
+    }
 
-    private static string QuoteValue(string value) => value == null ? "NULL" : $"\"{value}\"";
+    private static string QuoteValue(string value)
+    {
+        return value == null ? "NULL" : $"\"{value}\"";
+    }
 }

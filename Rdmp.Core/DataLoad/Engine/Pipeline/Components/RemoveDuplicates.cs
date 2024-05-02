@@ -16,17 +16,17 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 
 /// <summary>
-/// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
+///     PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.
 /// </summary>
 public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
 {
-    private Stopwatch sw = new();
-    private int totalRecordsProcessed = 0;
-    private int totalDuplicatesFound = 0;
+    private readonly Stopwatch sw = new();
+    private int totalRecordsProcessed;
+    private int totalDuplicatesFound;
     private readonly Dictionary<int, List<DataRow>> _uniqueHashesSeen = new();
 
     /// <summary>
-    /// Turns off notify messages about number of duplicates found/replaced
+    ///     Turns off notify messages about number of duplicates found/replaced
     /// </summary>
     public bool NoLogging { get; set; }
 
@@ -91,12 +91,12 @@ public class RemoveDuplicates : IPluginDataFlowComponent<DataTable>
     }
 
     /// <summary>
-    /// Gets the hash code for the contents of the array since the default hash code
-    /// for an array is unique even if the contents are the same.
+    ///     Gets the hash code for the contents of the array since the default hash code
+    ///     for an array is unique even if the contents are the same.
     /// </summary>
     /// <remarks>
-    /// See Jon Skeet (C# MVP) response in the StackOverflow thread
-    /// http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
+    ///     See Jon Skeet (C# MVP) response in the StackOverflow thread
+    ///     http://stackoverflow.com/questions/263400/what-is-the-best-algorithm-for-an-overridden-system-object-gethashcode
     /// </remarks>
     /// <param name="array">The array to generate a hash code for.</param>
     /// <returns>The hash code for the values in the array.</returns>

@@ -11,16 +11,20 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an Exception or ProposedFix.  ProposedFix
-/// is a string that suggests how a problem can be resolved but where the resolution might be undesirable under certain circumstances (hence the choice).
-/// 
-/// <para>The workflow is:
-/// 1. ICheckable has its Check method called with an ICheckNotifier
-/// 2. Check logic performed
-/// 3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
-/// 4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you should not catch/suppress).
-/// 5. If OnCheckPerformed completes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
-/// 
+///     Created when an ICheckable performs a check to indicate whether the check passed or not and whether there is an
+///     Exception or ProposedFix.  ProposedFix
+///     is a string that suggests how a problem can be resolved but where the resolution might be undesirable under certain
+///     circumstances (hence the choice).
+///     <para>
+///         The workflow is:
+///         1. ICheckable has its Check method called with an ICheckNotifier
+///         2. Check logic performed
+///         3. CheckEventArgs created and ICheckNotifier.OnCheckPerformed called
+///         4. ICheckNotifier decides how to respond to the message (which can include throwing an Exception - which you
+///         should not catch/suppress).
+///         5. If OnCheckPerformed completes without Exception evaluate the bool return if there was a ProposedFix and
+///         apply the fix if it is true
+///     </para>
 /// </summary>
 public sealed class CheckEventArgs : IHasSummary
 {
@@ -61,8 +65,9 @@ public sealed class CheckEventArgs : IHasSummary
     }
 
     /// <summary>
-    /// Reports an event from the standard list in <see cref="ErrorCodes"/> at the <see cref="ErrorCode.DefaultTreatment"/> check
-    /// level (or the customised reporting level in <see cref="UserSettings"/>).
+    ///     Reports an event from the standard list in <see cref="ErrorCodes" /> at the
+    ///     <see cref="ErrorCode.DefaultTreatment" /> check
+    ///     level (or the customised reporting level in <see cref="UserSettings" />).
     /// </summary>
     /// <param name="code"></param>
     /// <param name="ex"></param>
@@ -87,7 +92,10 @@ public sealed class CheckEventArgs : IHasSummary
         }
     }
 
-    public override string ToString() => Message;
+    public override string ToString()
+    {
+        return Message;
+    }
 
     public NotifyEventArgs ToNotifyEventArgs()
     {

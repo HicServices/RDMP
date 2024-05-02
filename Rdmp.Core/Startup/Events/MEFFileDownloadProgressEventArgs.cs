@@ -10,9 +10,8 @@ using System.IO;
 namespace Rdmp.Core.Startup.Events;
 
 /// <summary>
-/// EventArgs for MEF downloading during Startup.cs
-/// 
-/// <para>Records whether the file was successfully downloaded and the number of dlls saved so far.</para>
+///     EventArgs for MEF downloading during Startup.cs
+///     <para>Records whether the file was successfully downloaded and the number of dlls saved so far.</para>
 /// </summary>
 public class MEFFileDownloadProgressEventArgs
 {

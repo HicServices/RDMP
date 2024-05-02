@@ -9,13 +9,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Logging.Listeners;
 
 /// <summary>
-/// Acts as wrapper for another <see cref="IDataLoadEventListener"/> but changes all messages that flow through to appear to come from the same
-/// sender (string).  You can use this to help with distinguishing message dispatchers (senders) between discrete tasks / threads.
+///     Acts as wrapper for another <see cref="IDataLoadEventListener" /> but changes all messages that flow through to
+///     appear to come from the same
+///     sender (string).  You can use this to help with distinguishing message dispatchers (senders) between discrete tasks
+///     / threads.
 /// </summary>
 public class OverrideSenderIDataLoadEventListener : IDataLoadEventListener
 {
     private readonly string _overridingSender;
-    private IDataLoadEventListener _child;
+    private readonly IDataLoadEventListener _child;
 
     public OverrideSenderIDataLoadEventListener(string overridingSender, IDataLoadEventListener childToPassTo)
     {

@@ -26,8 +26,10 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts
-/// produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit them somewhere as a final released package.
+///     Runs the release process for one or more <see cref="ExtractionConfiguration" /> in the same <see cref="Project" />.
+///     This is the proces by which we gather all the artifacts
+///     produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc) and transmit
+///     them somewhere as a final released package.
 /// </summary>
 public class ReleaseRunner : ManyRunner
 {
@@ -300,9 +302,15 @@ public class ReleaseRunner : ManyRunner
         return results.GetWorst();
     }
 
-    public object GetState(SupportingSQLTable global) => GetState((IMapsDirectlyToDatabaseTable)global);
+    public object GetState(SupportingSQLTable global)
+    {
+        return GetState((IMapsDirectlyToDatabaseTable)global);
+    }
 
-    public object GetState(SupportingDocument global) => GetState((IMapsDirectlyToDatabaseTable)global);
+    public object GetState(SupportingDocument global)
+    {
+        return GetState((IMapsDirectlyToDatabaseTable)global);
+    }
 
     private object GetState(IMapsDirectlyToDatabaseTable global)
     {

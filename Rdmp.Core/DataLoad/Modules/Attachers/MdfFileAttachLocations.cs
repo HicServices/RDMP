@@ -7,13 +7,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics.Statistics;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// Container class for recording the various directories involved in attaching a microsoft database file (MDF) to an Sql Server Instance.
+///     Container class for recording the various directories involved in attaching a microsoft database file (MDF) to an
+///     Sql Server Instance.
 /// </summary>
 internal class MdfFileAttachLocations
 {
@@ -49,8 +49,12 @@ internal class MdfFileAttachLocations
 
         CopyToMdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationMdf));
         CopyToLdf = Path.Combine(copyToDirectory, Path.GetFileName(OriginLocationLdf));
-        AttachMdfPath = MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer, OriginLocationMdf);
-        AttachLdfPath = MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer, OriginLocationLdf);
+        AttachMdfPath =
+            MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer,
+                OriginLocationMdf);
+        AttachLdfPath =
+            MergeDirectoryAndFileUsingAssumedDirectorySeparator(databaseDirectoryFromPerspectiveOfDatabaseServer,
+                OriginLocationLdf);
     }
 
     public string OriginLocationMdf { get; set; }
@@ -65,13 +69,16 @@ internal class MdfFileAttachLocations
 
     private static char GetCorrectDirectorySeparatorCharBasedOnString(string partialPath)
     {
-        bool containUnixStyle = partialPath.Contains('/');
-        bool containsNTFSStyle = partialPath.Contains('\\');
-        if (containUnixStyle && containsNTFSStyle) throw new Exception("Override partial path contains both '/' and '\\', unable to correctly guess which file system is in use ");
+        var containUnixStyle = partialPath.Contains('/');
+        var containsNTFSStyle = partialPath.Contains('\\');
+        if (containUnixStyle && containsNTFSStyle)
+            throw new Exception(
+                "Override partial path contains both '/' and '\\', unable to correctly guess which file system is in use ");
         return containUnixStyle ? '/' : '\\';
     }
 
-    public static string MergeDirectoryAndFileUsingAssumedDirectorySeparator(string directory, string file) {
+    public static string MergeDirectoryAndFileUsingAssumedDirectorySeparator(string directory, string file)
+    {
         var directorySeparator = GetCorrectDirectorySeparatorCharBasedOnString(directory);
         return directory.TrimEnd(directorySeparator) + directorySeparator + Path.GetFileName(file);
     }

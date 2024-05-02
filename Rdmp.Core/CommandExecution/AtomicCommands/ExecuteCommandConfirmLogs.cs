@@ -17,31 +17,31 @@ using TypeGuesser.Deciders;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
-/// the top log entry is failing or if there are no log entries within the expected time span.
+///     Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
+///     the top log entry is failing or if there are no log entries within the expected time span.
 /// </summary>
 public class ExecuteCommandConfirmLogs : BasicCommandExecution
 {
     /// <summary>
-    /// Optional time period in which to expect successful logs
+    ///     Optional time period in which to expect successful logs
     /// </summary>
-    private TimeSpan? WithinTime { get; set; }
+    private TimeSpan? WithinTime { get; }
 
     /// <summary>
-    /// The object which generates logs that you want to check
+    ///     The object which generates logs that you want to check
     /// </summary>
     public ILoggedActivityRootObject LogRootObject { get; }
 
     /// <summary>
-    /// If <see cref="LogRootObject"/> is a <see cref="LoadMetadata"/> then
-    /// setting this to true requires that rows were updated/inserted into
-    /// the live tables for the command to pass
+    ///     If <see cref="LogRootObject" /> is a <see cref="LoadMetadata" /> then
+    ///     setting this to true requires that rows were updated/inserted into
+    ///     the live tables for the command to pass
     /// </summary>
     public bool RequireLoadedRows { get; }
 
     /// <summary>
-    /// Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
-    /// the top log entry is failing or if there are no log entries within the expected time span.
+    ///     Checks the RDMP logs for the latest log entry of a given object.  Throws (returns exit code non zero) if
+    ///     the top log entry is failing or if there are no log entries within the expected time span.
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="obj"></param>
@@ -83,7 +83,7 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
     private void ThrowIfNoEntries(LogManager logManager, bool checkInclusionCriteria)
     {
         // get the latest log entry
-        var unfilteredResults = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask(), null, null);
+        var unfilteredResults = logManager.GetArchivalDataLoadInfos(LogRootObject.GetDistinctLoggingTask());
         var latest = LogRootObject
             .FilterRuns(unfilteredResults)
             .FirstOrDefault(a => !checkInclusionCriteria || Include(a));
@@ -119,9 +119,9 @@ public class ExecuteCommandConfirmLogs : BasicCommandExecution
     }
 
     /// <summary>
-    /// Returns false if <paramref name="arg"/> is an audit for <see cref="LogRootObject"/>
-    /// as a DLE load (<see cref="LoadMetadata"/>) and <see cref="RequireLoadedRows"/> is set
-    /// and no rows were reported as loaded into the final tables of the load
+    ///     Returns false if <paramref name="arg" /> is an audit for <see cref="LogRootObject" />
+    ///     as a DLE load (<see cref="LoadMetadata" />) and <see cref="RequireLoadedRows" /> is set
+    ///     and no rows were reported as loaded into the final tables of the load
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>

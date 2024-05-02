@@ -26,22 +26,22 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <summary>
-/// How are files cached within the cache (e.g. within a zip? tar? just uncompressed in a directory).
+///     How are files cached within the cache (e.g. within a zip? tar? just uncompressed in a directory).
 /// </summary>
 public enum CacheArchiveType
 {
     /// <summary>
-    /// Cached files are in a directory uncompressed
+    ///     Cached files are in a directory uncompressed
     /// </summary>
     None = 0,
 
     /// <summary>
-    /// Cached files are contained in a zip file
+    ///     Cached files are contained in a zip file
     /// </summary>
     Zip = 1
 }
 
-/// <inheritdoc cref="ILoadMetadata"/>
+/// <inheritdoc cref="ILoadMetadata" />
 public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper,
     ILoggedActivityRootObject, IHasFolder
 {
@@ -57,7 +57,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [AdjustableLocation]
     public string LocationOfFlatFiles
     {
@@ -66,7 +66,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Not used
+    ///     Not used
     /// </summary>
     public string AnonymisationEngineClass
     {
@@ -74,7 +74,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         set => SetField(ref _anonymisationEngineClass, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Unique]
     [NotNull]
     public string Name
@@ -84,7 +84,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Human readable description of the load, what it does etc
+    ///     Human readable description of the load, what it does etc
     /// </summary>
     public string Description
     {
@@ -93,8 +93,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress"/>.  This may not be respected
-    /// depending on the implementation of the sepecific ICacheLayout
+    ///     The format for storing files in when reading/writing to a cache with a <see cref="CacheProgress" />.  This may not
+    ///     be respected
+    ///     depending on the implementation of the sepecific ICacheLayout
     /// </summary>
     public CacheArchiveType CacheArchiveType
     {
@@ -103,8 +104,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer"/> should be used for the RAW server (instead of
-    /// the system default - see <see cref="ServerDefaults"/>).
+    ///     Optional.  Indicates that when running the Data Load Engine, the specific <see cref="ExternalDatabaseServer" />
+    ///     should be used for the RAW server (instead of
+    ///     the system default - see <see cref="ServerDefaults" />).
     /// </summary>
     public int? OverrideRAWServer_ID
     {
@@ -113,14 +115,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
 
-    /// <iheritdoc/>
+    /// <iheritdoc />
     public bool IgnoreTrigger
     {
         get => _ignoreTrigger;
         set => SetField(ref _ignoreTrigger, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [UsefulProperty]
     public string Folder
     {
@@ -130,7 +132,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
 
     /// <summary>
-    /// Stores the last time the load was ran.
+    ///     Stores the last time the load was ran.
     /// </summary>
     public DateTime? LastLoadTime
     {
@@ -143,17 +145,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ExternalDatabaseServer OverrideRAWServer => OverrideRAWServer_ID.HasValue
         ? Repository.GetObjectByID<ExternalDatabaseServer>(OverrideRAWServer_ID.Value)
         : null;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ILoadProgress[] LoadProgresses => Repository.GetAllObjectsWithParent<LoadProgress>(this);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IOrderedEnumerable<IProcessTask> ProcessTasks
     {
@@ -171,9 +173,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Create a new DLE load.  This load will not have any <see cref="ProcessTask"/> and will not load any <see cref="TableInfo"/> yet.
-    /// 
-    /// <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadatas"/> on some of your datasets</para>
+    ///     Create a new DLE load.  This load will not have any <see cref="ProcessTask" /> and will not load any
+    ///     <see cref="TableInfo" /> yet.
+    ///     <para>To set the loaded tables, set <see cref="Catalogue.LoadMetadatas" /> on some of your datasets</para>
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -186,7 +188,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             { "Name", name },
             { "IgnoreTrigger", false /*todo could be system global default here*/ },
             { "Folder", FolderHelper.Root },
-            {"LastLoadTime", null }
+            { "LastLoadTime", null }
         });
     }
 
@@ -202,28 +204,30 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
-        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ?null: DateTime.Parse(r["LastLoadTime"].ToString());
+        LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString())
+            ? null
+            : DateTime.Parse(r["LastLoadTime"].ToString());
     }
 
-    internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
+    internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    public void LinkToCatalogue(ICatalogue catalogue) {
-        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository,this,catalogue);
+    public void LinkToCatalogue(ICatalogue catalogue)
+    {
+        var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, this, catalogue);
         linkage.SaveToDatabase();
     }
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach(var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
-        {
+        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>()
+                     .Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == ID))
             l.DeleteInDatabase();
-        }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void DeleteInDatabase()
     {
         var firstOrDefault = GetAllCatalogues().FirstOrDefault();
@@ -235,16 +239,21 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         base.DeleteInDatabase();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    /// <inheritdoc/>
-    public IEnumerable<ICatalogue> GetAllCatalogues() {
-        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
+    /// <inheritdoc />
+    public IEnumerable<ICatalogue> GetAllCatalogues()
+    {
+        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID)
+            .Select(l => l.CatalogueID);
         return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
     }
 
-    /// <inheritdoc cref="GetDistinctLoggingDatabase()"/>
+    /// <inheritdoc cref="GetDistinctLoggingDatabase()" />
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
     {
         var loggingServers = GetLoggingServers();
@@ -259,10 +268,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer"/>)
+    ///     The unique logging server for auditing the load (found by querying <see cref="Catalogue.LiveLoggingServer" />)
     /// </summary>
     /// <returns></returns>
-    public DiscoveredServer GetDistinctLoggingDatabase() => GetDistinctLoggingDatabase(out _);
+    public DiscoveredServer GetDistinctLoggingDatabase()
+    {
+        return GetDistinctLoggingDatabase(out _);
+    }
 
     private IDataAccessPoint[] GetLoggingServers()
     {
@@ -275,7 +287,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Returns the unique value of <see cref="Catalogue.LoggingDataTask"/> amongst all catalogues loaded by the <see cref="LoadMetadata"/>
+    ///     Returns the unique value of <see cref="Catalogue.LoggingDataTask" /> amongst all catalogues loaded by the
+    ///     <see cref="LoadMetadata" />
     /// </summary>
     /// <returns></returns>
     public string GetDistinctLoggingTask()
@@ -300,23 +313,27 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Return all <see cref="TableInfo"/> underlying the <see cref="Catalogue"/>(s) which use this load (what tables will be loaded by the DLE).
+    ///     Return all <see cref="TableInfo" /> underlying the <see cref="Catalogue" />(s) which use this load (what tables
+    ///     will be loaded by the DLE).
     /// </summary>
-    /// <param name="includeLookups">true to include lookup tables (e.g. z_sex etc) configured in the <see cref="Catalogue"/>(s)</param>
+    /// <param name="includeLookups">
+    ///     true to include lookup tables (e.g. z_sex etc) configured in the <see cref="Catalogue" />
+    ///     (s)
+    /// </param>
     /// <returns></returns>
     public List<TableInfo> GetDistinctTableInfoList(bool includeLookups)
     {
         var toReturn = new List<TableInfo>();
 
         foreach (var catalogueMetadata in GetAllCatalogues())
-            foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
-                if (!toReturn.Contains(tableInfo))
-                    toReturn.Add(tableInfo);
+        foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
+            if (!toReturn.Contains(tableInfo))
+                toReturn.Add(tableInfo);
 
         return toReturn;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DiscoveredServer GetDistinctLiveDatabaseServer()
     {
         var normalTables = new HashSet<ITableInfo>();
@@ -341,14 +358,21 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
                 $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => null;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return null;
+    }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => GetAllCatalogues().ToArray();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return GetAllCatalogues().ToArray();
+    }
 
     /// <summary>
-    /// Tests that the logging database for the load is reachable and that it has an appropriate logging task for the load (if not a new task will be created 'Loading X')
+    ///     Tests that the logging database for the load is reachable and that it has an appropriate logging task for the load
+    ///     (if not a new task will be created 'Loading X')
     /// </summary>
     /// <param name="catalogue"></param>
     public void EnsureLoggingWorksFor(ICatalogue catalogue)
@@ -383,7 +407,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
@@ -394,11 +418,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     }
 
     /// <summary>
-    /// Returns all runs since each LoadMetadata has its own task and all runs apply to that task and hence this object
+    ///     Returns all runs since each LoadMetadata has its own task and all runs apply to that task and hence this object
     /// </summary>
     /// <param name="runs"></param>
     /// <returns></returns>
-    public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs) => runs;
+    public IEnumerable<ArchivalDataLoadInfo> FilterRuns(IEnumerable<ArchivalDataLoadInfo> runs)
+    {
+        return runs;
+    }
 
     public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
     {

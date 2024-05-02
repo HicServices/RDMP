@@ -17,18 +17,20 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Abstract base ICacheLayout, see ICacheLayout for description or BasicCacheLayout for example of how to use this class.
+///     Abstract base ICacheLayout, see ICacheLayout for description or BasicCacheLayout for example of how to use this
+///     class.
 /// </summary>
 public abstract class CacheLayout : ICacheLayout
 {
-    public string DateFormat { get; private set; }
-    public CacheArchiveType ArchiveType { get; private set; }
-    public CacheFileGranularity CacheFileGranularity { get; private set; }
-    public ILoadCachePathResolver Resolver { get; private set; }
-    public DirectoryInfo RootDirectory { get; private set; }
+    public string DateFormat { get; }
+    public CacheArchiveType ArchiveType { get; }
+    public CacheFileGranularity CacheFileGranularity { get; }
+    public ILoadCachePathResolver Resolver { get; }
+    public DirectoryInfo RootDirectory { get; }
 
     /// <summary>
-    /// When archiving files what compression level should be used to add/update new files (only applies if <see cref="ArchiveType"/> is zip).  Defaults to Optimal
+    ///     When archiving files what compression level should be used to add/update new files (only applies if
+    ///     <see cref="ArchiveType" /> is zip).  Defaults to Optimal
     /// </summary>
     public CompressionLevel Compression { get; set; } = CompressionLevel.Optimal;
 
@@ -83,7 +85,8 @@ public abstract class CacheLayout : ICacheLayout
     }
 
     /// <summary>
-    /// The cache sub-directory for a particular load schedule within a load metadata. Uses a resolver for dataset-specific cache layout knowledge
+    ///     The cache sub-directory for a particular load schedule within a load metadata. Uses a resolver for dataset-specific
+    ///     cache layout knowledge
     /// </summary>
     /// <param name="listener"></param>
     /// <returns></returns>
@@ -143,14 +146,20 @@ public abstract class CacheLayout : ICacheLayout
         return new Queue<DateTime>(dateList);
     }
 
-    public bool CheckCacheFilesAvailability(IDataLoadEventListener listener) =>
-        GetArchiveFilesInLoadCacheDirectory(listener).Any();
+    public bool CheckCacheFilesAvailability(IDataLoadEventListener listener)
+    {
+        return GetArchiveFilesInLoadCacheDirectory(listener).Any();
+    }
 
-    public DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener) =>
-        GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Max();
+    public DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
+    {
+        return GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Max();
+    }
 
-    public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener) =>
-        GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Min();
+    public DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener)
+    {
+        return GetDateListFromArchiveFilesInLoadCacheDirectory(listener).Min();
+    }
 
     protected void ArchiveFiles(FileInfo[] files, DateTime archiveDate, IDataLoadEventListener listener)
     {

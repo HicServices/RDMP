@@ -12,7 +12,8 @@ using Rdmp.Core.CommandLine.Runners;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Runs a given RDMP command specified by <see cref="CommandName"/> from the CLI.  See <see cref="ExecuteCommandRunner"/> for implementation.
+///     Runs a given RDMP command specified by <see cref="CommandName" /> from the CLI.  See
+///     <see cref="ExecuteCommandRunner" /> for implementation.
 /// </summary>
 [Verb("cmd", true, HelpText = "Run the specified command.  To list commands run 'rdmp cmd ListSupportedCommands'")]
 public class ExecuteCommandOptions : RDMPCommandLineOptions
@@ -28,7 +29,8 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
     public string File { get; set; }
 
     /// <summary>
-    /// The deserialized contents of File or null if File is not provided.  It is up to the hosting API to populate this property
+    ///     The deserialized contents of File or null if File is not provided.  It is up to the hosting API to populate this
+    ///     property
     /// </summary>
     /// <value></value>
     public RdmpScript Script { get; set; }
@@ -39,7 +41,7 @@ public class ExecuteCommandOptions : RDMPCommandLineOptions
         get
         {
             yield return new Example("Runs the delete command on Catalogue with ID 1",
-                new ExecuteCommandOptions { CommandName = "Delete", CommandArgs = new string[] { "Catalogue:1" } });
+                new ExecuteCommandOptions { CommandName = "Delete", CommandArgs = new[] { "Catalogue:1" } });
             yield return new Example("List available commands",
                 new ExecuteCommandOptions { CommandName = "ListSupportedCommands" });
             yield return new Example("Runs all commands in the file",

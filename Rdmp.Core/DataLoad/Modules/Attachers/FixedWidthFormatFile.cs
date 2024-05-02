@@ -13,8 +13,9 @@ using Rdmp.Core.DataLoad.Modules.Exceptions;
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 
 /// <summary>
-/// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date
-/// format (where applicable).
+///     User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character
+///     positions of each named field and date
+///     format (where applicable).
 /// </summary>
 public class FixedWidthFormatFile
 {
@@ -115,7 +116,7 @@ public class FixedWidthFormatFile
                 if (string.IsNullOrWhiteSpace(value))
                     dataRow[fixedWidthColumn.Field] = DBNull.Value;
                 else
-                //it is a date column
+                    //it is a date column
                 if (!string.IsNullOrWhiteSpace(fixedWidthColumn.DateFormat))
                     try
                     {

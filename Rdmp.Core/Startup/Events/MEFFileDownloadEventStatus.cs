@@ -7,23 +7,23 @@
 namespace Rdmp.Core.Startup.Events;
 
 /// <summary>
-/// Describes the result of attempting to download an RDMP plugin from the RDMP platform database into the
-/// local working disk for loading as a runtime assembly
+///     Describes the result of attempting to download an RDMP plugin from the RDMP platform database into the
+///     local working disk for loading as a runtime assembly
 /// </summary>
 public enum MEFFileDownloadEventStatus
 {
     /// <summary>
-    /// The file was successfully processed
+    ///     The file was successfully processed
     /// </summary>
     Success,
 
     /// <summary>
-    /// The file could not be written to disk because of an existing locked file
+    ///     The file could not be written to disk because of an existing locked file
     /// </summary>
     FailedDueToFileLock,
 
     /// <summary>
-    /// The file could not be processed due to a non file lock related error
+    ///     The file could not be processed due to a non file lock related error
     /// </summary>
     OtherError
 }

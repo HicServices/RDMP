@@ -18,5 +18,8 @@ public class ExtractionFilterParameterSetCombineable : ICombineToMakeCommand
     }
 
 
-    public string GetSqlString() => null;
+    public string GetSqlString()
+    {
+        return null;
+    }
 }

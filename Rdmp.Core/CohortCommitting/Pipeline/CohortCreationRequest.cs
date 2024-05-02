@@ -22,8 +22,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CohortCommitting.Pipeline;
 
 /// <summary>
-/// All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.  There are no identifiers for the cohort.
-/// Also functions as the use case for cohort creation (to which it passes itself as an input object).
+///     All metadata details nessesary to create a cohort including which project it goes into, its name, version etc.
+///     There are no identifiers for the cohort.
+///     Also functions as the use case for cohort creation (to which it passes itself as an input object).
 /// </summary>
 public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequest, ICanBeSummarised
 {
@@ -87,7 +88,7 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
     #endregion
 
-    public IProject Project { get; private set; }
+    public IProject Project { get; }
     public ICohortDefinition NewCohortDefinition { get; set; }
 
     public ExtractableCohort CohortCreatedIfAny { get; set; }
@@ -110,7 +111,8 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
     }
 
     /// <summary>
-    /// For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
+    ///     For refreshing the current extraction configuration CohortIdentificationConfiguration ONLY.  The
+    ///     ExtractionConfiguration must have a cic and a refresh pipeline configured on it.
     /// </summary>
     /// <param name="configuration"></param>
     public CohortCreationRequest(ExtractionConfiguration configuration)
@@ -147,12 +149,14 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         GenerateContext();
     }
 
-    protected override IDataFlowPipelineContext GenerateContextImpl() =>
-        new DataFlowPipelineContext<DataTable>
+    protected override IDataFlowPipelineContext GenerateContextImpl()
+    {
+        return new DataFlowPipelineContext<DataTable>
         {
             MustHaveDestination = typeof(ICohortPipelineDestination),
             MustHaveSource = typeof(IDataFlowSource<DataTable>)
         };
+    }
 
 
     public void Check(ICheckNotifier notifier)
@@ -239,9 +243,9 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
 
 
     /// <summary>
-    /// Design time types
+    ///     Design time types
     /// </summary>
-    private CohortCreationRequest() : base(new Type[]
+    private CohortCreationRequest() : base(new[]
     {
         typeof(FlatFileToLoad),
         typeof(CohortIdentificationConfiguration),
@@ -253,11 +257,18 @@ public sealed class CohortCreationRequest : PipelineUseCase, ICohortCreationRequ
         GenerateContext();
     }
 
-    public static PipelineUseCase DesignTime() => new CohortCreationRequest();
+    public static PipelineUseCase DesignTime()
+    {
+        return new CohortCreationRequest();
+    }
 
-    public override string ToString() =>
-        NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
+    public override string ToString()
+    {
+        return NewCohortDefinition == null ? base.ToString() : NewCohortDefinition.Description;
+    }
 
-    public string GetSummary(bool includeName, bool includeId) =>
-        $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
+    public string GetSummary(bool includeName, bool includeId)
+    {
+        return $"External Cohort Table: {NewCohortDefinition?.LocationOfCohort}";
+    }
 }

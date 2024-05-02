@@ -24,8 +24,10 @@ using IFilter = Rdmp.Core.Curation.Data.IFilter;
 namespace Rdmp.Core.Reports.ExtractionTime;
 
 /// <summary>
-/// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the
-/// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML
+///     Generates a Microsoft Word docx file containing information about a researchers extract including the file
+///     generated, the number of rows, distinct patients, the
+///     filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the
+///     number of rows extracted that passed ValidationXML
 /// </summary>
 public class WordDataWriter : DocXHelper
 {
@@ -55,7 +57,6 @@ public class WordDataWriter : DocXHelper
     private readonly IExecuteDatasetExtractionDestination _destination;
 
 
-
     [NotNull]
     private static string GetDoi([NotNull] Curation.Data.Dataset ds)
     {
@@ -63,8 +64,9 @@ public class WordDataWriter : DocXHelper
     }
 
     /// <summary>
-    /// Generates a new metadata word file in the extraction directory and populates it with information about the extraction.
-    /// It returns the open document as an object so that you can supplement it e.g. with catalogue information
+    ///     Generates a new metadata word file in the extraction directory and populates it with information about the
+    ///     extraction.
+    ///     It returns the open document as an object so that you can supplement it e.g. with catalogue information
     /// </summary>
     /// <returns></returns>
     public void GenerateWordFile()
@@ -83,10 +85,7 @@ public class WordDataWriter : DocXHelper
 
             var foundDatasets = Executer.Source.Request.ColumnsToExtract.Select(static col => col.ColumnInfo)
                 .Where(static ci => ci.Dataset_ID > 0).Select(static ci => ci.Dataset_ID.Value).Distinct().ToList();
-            if (foundDatasets.Count > 0)
-            {
-                rowCount++;
-            }
+            if (foundDatasets.Count > 0) rowCount++;
 
 
             var t = InsertTable(document, rowCount, 2);
@@ -163,7 +162,8 @@ public class WordDataWriter : DocXHelper
 
             if (foundDatasets.Count > 0)
             {
-                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>().ToList();
+                var datasets = Executer.Source.Request.Catalogue.Repository.GetAllObjects<Curation.Data.Dataset>()
+                    .ToList();
 
                 var datasetString = string.Join(", ",
                     foundDatasets
@@ -262,13 +262,13 @@ public class WordDataWriter : DocXHelper
         var currentLine = 1;
 
         foreach (var filter in filtersUsed)
-            foreach (var parameter in filter.GetAllParameters())
-            {
-                SetTableCell(t, currentLine, 0, parameter.ParameterName);
-                SetTableCell(t, currentLine, 1, parameter.Comment);
-                SetTableCell(t, currentLine, 2, parameter.Value);
-                currentLine++;
-            }
+        foreach (var parameter in filter.GetAllParameters())
+        {
+            SetTableCell(t, currentLine, 0, parameter.ParameterName);
+            SetTableCell(t, currentLine, 1, parameter.Comment);
+            SetTableCell(t, currentLine, 2, parameter.Value);
+            currentLine++;
+        }
 
         foreach (var globalParameter in globalParameters)
         {

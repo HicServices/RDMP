@@ -12,7 +12,7 @@ using Rdmp.Core.CommandLine.Runners;
 namespace Rdmp.Core.CommandLine.Options;
 
 /// <summary>
-/// Command line arguments for uploading plugins
+///     Command line arguments for uploading plugins
 /// </summary>
 [Verb("pack", HelpText = "Uploads a new RDMP plugin into the database")]
 public class PackOptions : RDMPCommandLineOptions

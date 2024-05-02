@@ -7,8 +7,9 @@
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// ICheckNotifier which ignores all check messages completely (including failures) but responds true to any ProposedFixes.  Use this ICheckNotifier
-/// when you want to run the Check method on an ICheckable but don't care whether it passes or not.
+///     ICheckNotifier which ignores all check messages completely (including failures) but responds true to any
+///     ProposedFixes.  Use this ICheckNotifier
+///     when you want to run the Check method on an ICheckable but don't care whether it passes or not.
 /// </summary>
 public sealed class IgnoreAllErrorsCheckNotifier : ICheckNotifier
 {
@@ -18,5 +19,8 @@ public sealed class IgnoreAllErrorsCheckNotifier : ICheckNotifier
     {
     }
 
-    public bool OnCheckPerformed(CheckEventArgs args) => true;
+    public bool OnCheckPerformed(CheckEventArgs args)
+    {
+        return true;
+    }
 }

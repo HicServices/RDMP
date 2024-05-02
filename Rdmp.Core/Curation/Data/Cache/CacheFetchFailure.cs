@@ -13,8 +13,9 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Curation.Data.Cache;
 
 /// <summary>
-/// Describes a failed attempt to contact a caching service including the time it occurred and any associated Exception as well as whether it has been
-/// resolved.  Any object of type ICacheFetchRequest (with paired Exception) can be used to create a failure record.
+///     Describes a failed attempt to contact a caching service including the time it occurred and any associated Exception
+///     as well as whether it has been
+///     resolved.  Any object of type ICacheFetchRequest (with paired Exception) can be used to create a failure record.
 /// </summary>
 public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
 {
@@ -28,42 +29,42 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     private DateTime? _resolvedOn;
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int CacheProgress_ID
     {
         get => _cacheProgressID;
         set => SetField(ref _cacheProgressID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime FetchRequestStart
     {
         get => _fetchRequestStart;
         set => SetField(ref _fetchRequestStart, value);
     }
 
-    /// <inheritdoc cref="ICacheFetchFailure.FetchRequestStart"/>
+    /// <inheritdoc cref="ICacheFetchFailure.FetchRequestStart" />
     public DateTime FetchRequestEnd
     {
         get => _fetchRequestEnd;
         set => SetField(ref _fetchRequestEnd, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ExceptionText
     {
         get => _exceptionText;
         set => SetField(ref _exceptionText, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime LastAttempt
     {
         get => _lastAttempt;
         set => SetField(ref _lastAttempt, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? ResolvedOn
     {
         get => _resolvedOn;
@@ -77,7 +78,8 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
     }
 
     /// <summary>
-    /// Documents that a given cache fetch request was not succesfully executed e.g. the remote endpoint returned an error for that date range.
+    ///     Documents that a given cache fetch request was not succesfully executed e.g. the remote endpoint returned an error
+    ///     for that date range.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="cacheProgress"></param>
@@ -109,7 +111,7 @@ public class CacheFetchFailure : DatabaseEntity, ICacheFetchFailure
         ResolvedOn = ObjectToNullableDateTime(r["ResolvedOn"]);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Resolve()
     {
         ResolvedOn = DateTime.Now;

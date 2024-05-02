@@ -18,8 +18,9 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Triggers.Implementations;
 
 /// <summary>
-/// Trigger implementer for that creates archive triggers on tables.  This is a prerequisite for the RDMP DLE and ensures that
-/// when updates in a load replace live records the old state is persisted.
+///     Trigger implementer for that creates archive triggers on tables.  This is a prerequisite for the RDMP DLE and
+///     ensures that
+///     when updates in a load replace live records the old state is persisted.
 /// </summary>
 public abstract class TriggerImplementer : ITriggerImplementer
 {
@@ -32,8 +33,8 @@ public abstract class TriggerImplementer : ITriggerImplementer
     protected readonly DiscoveredColumn[] _primaryKeys;
 
     /// <summary>
-    /// Trigger implementer for that creates a trigger on <paramref name="table"/> which records old UPDATE
-    /// records into an _Archive table.  <paramref name="table"/> must have primary keys
+    ///     Trigger implementer for that creates a trigger on <paramref name="table" /> which records old UPDATE
+    ///     records into an _Archive table.  <paramref name="table" /> must have primary keys
     /// </summary>
     /// <param name="table"></param>
     /// <param name="createDataLoadRunIDAlso"></param>
@@ -155,11 +156,14 @@ public abstract class TriggerImplementer : ITriggerImplementer
     public abstract TriggerStatus GetTriggerStatus();
 
     /// <summary>
-    /// Returns true if the trigger exists and the method body of the trigger matches the expected method body.  This exists to handle
-    /// the situation where a trigger is created on a table then the schema of the live table or the archive table is altered subsequently.
-    /// 
-    /// <para>The best way to implement this is to regenerate the trigger and compare it to the current code fetched from the ddl</para>
-    /// 
+    ///     Returns true if the trigger exists and the method body of the trigger matches the expected method body.  This
+    ///     exists to handle
+    ///     the situation where a trigger is created on a table then the schema of the live table or the archive table is
+    ///     altered subsequently.
+    ///     <para>
+    ///         The best way to implement this is to regenerate the trigger and compare it to the current code fetched from
+    ///         the ddl
+    ///     </para>
     /// </summary>
     /// <returns></returns>
     public virtual bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()

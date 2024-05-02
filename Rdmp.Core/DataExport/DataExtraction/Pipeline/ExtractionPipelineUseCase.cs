@@ -24,7 +24,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 
 /// <summary>
-/// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).
+///     Use case for linking and extracting Project Extraction Configuration datasets and custom data (See
+///     IExtractCommand).
 /// </summary>
 public sealed class ExtractionPipelineUseCase : PipelineUseCase
 {
@@ -37,8 +38,10 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     public GracefulCancellationToken Token { get; set; }
 
     /// <summary>
-    /// If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the configuration, cohort etc otherwise the destination will have to react properly
-    /// / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would be a logically permissable destination for an ExtractionPipeline
+    ///     If Destination is an IExecuteDatasetExtractionDestination then it will be initialized properly with the
+    ///     configuration, cohort etc otherwise the destination will have to react properly
+    ///     / dynamically based on what comes down the pipeline just like it would normally e.g. SqlBulkInsertDestination would
+    ///     be a logically permissable destination for an ExtractionPipeline
     /// </summary>
     public IExecuteDatasetExtractionDestination Destination { get; private set; }
 
@@ -106,7 +109,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                     if (runAgain)
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Information,
-                                $"Running pipeline again for next batch in ExtractionProgress"));
+                                "Running pipeline again for next batch in ExtractionProgress"));
                 }
                 else
                 {
@@ -117,7 +120,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
                     if (runAgain)
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
+                            new NotifyEventArgs(ProgressEventType.Information, "Retrying pipeline"));
                 }
             } while (runAgain);
         }
@@ -128,9 +131,9 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     }
 
     /// <summary>
-    /// Inspects the <paramref name="extractDatasetCommand"/> to see if it is a batch load that has
-    /// only done part of its full execution.  If so then progress will be recorded and true will be returned
-    /// (i.e. run again).
+    ///     Inspects the <paramref name="extractDatasetCommand" /> to see if it is a batch load that has
+    ///     only done part of its full execution.  If so then progress will be recorded and true will be returned
+    ///     (i.e. run again).
     /// </summary>
     /// <returns></returns>
     /// <exception cref="Exception"></exception>
@@ -165,8 +168,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     }
 
     /// <summary>
-    /// Returns whether to retry the extraction.  This method may perform a wait operation
-    /// before returning true.
+    ///     Returns whether to retry the extraction.  This method may perform a wait operation
+    ///     before returning true.
     /// </summary>
     /// <param name="extractDatasetCommand"></param>
     /// <param name="listener"></param>
@@ -183,7 +186,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
 
     /// <summary>
-    /// Runs the extraction once and returns true if it was success otherwise false
+    ///     Runs the extraction once and returns true if it was success otherwise false
     /// </summary>
     /// <param name="listener"></param>
     /// <returns></returns>
@@ -334,7 +337,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
     }
 
     private ExtractionPipelineUseCase()
-        : base(new Type[]
+        : base(new[]
         {
             typeof(IExtractCommand),
             typeof(IProject),
@@ -346,5 +349,8 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
         GenerateContext();
     }
 
-    public static ExtractionPipelineUseCase DesignTime() => new();
+    public static ExtractionPipelineUseCase DesignTime()
+    {
+        return new ExtractionPipelineUseCase();
+    }
 }

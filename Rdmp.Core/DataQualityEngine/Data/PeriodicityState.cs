@@ -13,16 +13,19 @@ using Rdmp.Core.Validation.Constraints;
 namespace Rdmp.Core.DataQualityEngine.Data;
 
 /// <summary>
-/// Runtime class for DQE used to record the number of rows passing/failing validation/null overall.  This is calculated by validating every column in the row
-/// and selecting the worst validation failure Consequence (if any) for the row.
-/// 
-/// <para>These counts are incremented during the DQE evaluation process then finally saved into the PeriodicityState table in DQE database.</para>
+///     Runtime class for DQE used to record the number of rows passing/failing validation/null overall.  This is
+///     calculated by validating every column in the row
+///     and selecting the worst validation failure Consequence (if any) for the row.
+///     <para>
+///         These counts are incremented during the DQE evaluation process then finally saved into the PeriodicityState
+///         table in DQE database.
+///     </para>
 /// </summary>
 public class PeriodicityState
 {
     private int _countOfRecords;
-    public int Year { get; private set; }
-    public int Month { get; private set; }
+    public int Year { get; }
+    public int Month { get; }
 
     public int CountOfRecords
     {
@@ -36,7 +39,7 @@ public class PeriodicityState
         }
     }
 
-    public string RowEvaluation { get; private set; }
+    public string RowEvaluation { get; }
 
     public bool IsCommitted { get; private set; }
 
@@ -121,9 +124,9 @@ public class PeriodicityState
     }
 
     /// <summary>
-    /// Returns a table describing the number of records over time optionally only those where the pivot column in the rows
-    /// had the value of <paramref name="pivotCategoryValue"/>.  Returns null if no rows were present in the table at the
-    /// time the <paramref name="evaluation"/> was run.
+    ///     Returns a table describing the number of records over time optionally only those where the pivot column in the rows
+    ///     had the value of <paramref name="pivotCategoryValue" />.  Returns null if no rows were present in the table at the
+    ///     time the <paramref name="evaluation" /> was run.
     /// </summary>
     /// <param name="evaluation"></param>
     /// <param name="pivotCategoryValue"></param>

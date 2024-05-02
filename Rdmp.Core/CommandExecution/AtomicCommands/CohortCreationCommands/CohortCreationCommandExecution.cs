@@ -33,7 +33,8 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     private readonly string _explicitCohortName;
 
     /// <summary>
-    /// Initialises base class with no targetting parameters, these will be prompted from the user at execution time assuming <see cref="IBasicActivateItems.IsInteractive"/>
+    ///     Initialises base class with no targetting parameters, these will be prompted from the user at execution time
+    ///     assuming <see cref="IBasicActivateItems.IsInteractive" />
     /// </summary>
     /// <param name="activator"></param>
     protected CohortCreationCommandExecution(IBasicActivateItems activator)
@@ -42,7 +43,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     }
 
     /// <summary>
-    /// Initialises common targetting parameters (where to store resulting identifiers etc)
+    ///     Initialises common targetting parameters (where to store resulting identifiers etc)
     /// </summary>
     /// <param name="activator"></param>
     /// <param name="externalCohortTable"></param>
@@ -98,11 +99,12 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
     }
 
     /// <summary>
-    /// Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable"/>
+    ///     Describes in a user friendly way the activity of picking an <see cref="ExternalCohortTable" />
     /// </summary>
     /// <returns></returns>
-    public static DialogArgs GetChooseCohortDialogArgs() =>
-        new()
+    public static DialogArgs GetChooseCohortDialogArgs()
+    {
+        return new DialogArgs
         {
             WindowTitle = "Choose where to save cohort",
             TaskDescription =
@@ -110,6 +112,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
             EntryLabel = "Select Cohort Database",
             AllowAutoSelect = true
         };
+    }
 
     private ICohortCreationRequest GenerateCohortCreationRequestFromNameAndProject(string name,
         string auditLogDescription, ExternalCohortTable ect)
@@ -163,9 +166,9 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         var logManager = new LogManager(loggingServer);
         logManager.CreateNewLoggingTaskIfNotExists(ExtractableCohort.CohortLoggingTask);
 
-            //create a db listener
-            var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
-                ExtractableCohort.CohortLoggingTask, description);
+        //create a db listener
+        var toDbListener = new ToLoggingDatabaseDataLoadEventListener(this, logManager,
+            ExtractableCohort.CohortLoggingTask, description);
 
         //make all messages go to both the db and the UI
         pipelineRunner.SetAdditionalProgressListener(toDbListener);

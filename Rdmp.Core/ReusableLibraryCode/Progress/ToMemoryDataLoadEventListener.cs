@@ -12,10 +12,11 @@ using System.Text;
 namespace Rdmp.Core.ReusableLibraryCode.Progress;
 
 /// <summary>
-/// IDataLoadEventListener which records all OnNotify and all novel OnProgress messages in memory (in Dictionaries where the key is component which
-/// sent the message).  You can optionally respond to OnNotify events where the ProgressEventType is Error by throwing an Exception.
-/// 
-/// <para>The typical use case for this is for testing to ensure that components log specific messages.</para>
+///     IDataLoadEventListener which records all OnNotify and all novel OnProgress messages in memory (in Dictionaries
+///     where the key is component which
+///     sent the message).  You can optionally respond to OnNotify events where the ProgressEventType is Error by throwing
+///     an Exception.
+///     <para>The typical use case for this is for testing to ensure that components log specific messages.</para>
 /// </summary>
 public class ToMemoryDataLoadEventListener : IDataLoadEventListener
 {
@@ -63,7 +64,7 @@ public class ToMemoryDataLoadEventListener : IDataLoadEventListener
     }
 
     /// <summary>
-    /// Flattens EventsReceivedBySender and returns the result as a Dictionary by ProgressEventType (Error / Warning etc)
+    ///     Flattens EventsReceivedBySender and returns the result as a Dictionary by ProgressEventType (Error / Warning etc)
     /// </summary>
     /// <returns></returns>
     public Dictionary<ProgressEventType, List<NotifyEventArgs>> GetAllMessagesByProgressEventType()

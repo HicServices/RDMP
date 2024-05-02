@@ -19,13 +19,15 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline;
 
 /// <summary>
-/// <para>
-/// Component for copying directory trees or top level files from a location on disk to the output directory
-/// of a project extraction.  Supports substituting private identifiers for release identifiers in top level
-/// file/directory names.
-/// </para>
-/// <para>IMPORTANT: File extractor operates as part of the 'Extract Globals' section of the extraction pipeline.
-/// This means that you must enable globals in the extraction for the component to operate.</para>
+///     <para>
+///         Component for copying directory trees or top level files from a location on disk to the output directory
+///         of a project extraction.  Supports substituting private identifiers for release identifiers in top level
+///         file/directory names.
+///     </para>
+///     <para>
+///         IMPORTANT: File extractor operates as part of the 'Extract Globals' section of the extraction pipeline.
+///         This means that you must enable globals in the extraction for the component to operate.
+///     </para>
 /// </summary>
 public class SimpleFileExtractor : FileExtractor
 {
@@ -114,7 +116,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     }
 
     /// <summary>
-    /// Resolves tokens (if any) in OutputDirectoryName into a single path
+    ///     Resolves tokens (if any) in OutputDirectoryName into a single path
     /// </summary>
     /// <returns></returns>
     public DirectoryInfo GetDestinationDirectory()
@@ -133,7 +135,7 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     }
 
     /// <summary>
-    /// Called when <see cref="PerPatient"/> is false.  Called once per extraction
+    ///     Called when <see cref="PerPatient" /> is false.  Called once per extraction
     /// </summary>
     public virtual void MoveAll(DirectoryInfo destinationDirectory, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -192,7 +194,8 @@ $c - Configuration Extraction Directory  (e.g. c:\MyProject\Extractions\Extr_16)
     }
 
     /// <summary>
-    /// Called when <see cref="PerPatient"/> is true.  Called once per private identifier.  Note that it is possible for 2 private identifiers to map to the same release identifier - be careful
+    ///     Called when <see cref="PerPatient" /> is true.  Called once per private identifier.  Note that it is possible for 2
+    ///     private identifiers to map to the same release identifier - be careful
     /// </summary>
     public virtual void MovePatient(object privateIdentifier, object releaseIdentifier,
         DirectoryInfo destinationDirectory, IDataLoadEventListener listener,

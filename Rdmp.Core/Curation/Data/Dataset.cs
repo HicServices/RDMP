@@ -4,18 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.using Amazon.Auth.AccessControlPolicy;
 
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Diagnostics.CodeAnalysis;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <inheritdoc cref="IDataset"/>
-
+/// <inheritdoc cref="IDataset" />
 public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
     private string _name;
@@ -23,7 +22,7 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
     private string _source;
     private string _folder = FolderHelper.Root;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [DoNotImportDescriptions]
     [UsefulProperty]
     public string Folder
@@ -53,21 +52,27 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
         set => SetField(ref _source, value);
     }
 
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
 
     public Dataset(ICatalogueRepository catalogueRepository, string name)
     {
         catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            {"Name", name },
-            {"Folder", _folder }
+            { "Name", name },
+            { "Folder", _folder }
         });
     }
 
-    public Dataset() { }
+    public Dataset()
+    {
+    }
+
     internal Dataset(ICatalogueRepository repository, DbDataReader r)
-       : base(repository, r)
+        : base(repository, r)
     {
         Name = r["Name"].ToString();
         Folder = r["Folder"].ToString();

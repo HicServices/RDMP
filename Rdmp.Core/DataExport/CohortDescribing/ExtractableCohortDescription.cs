@@ -12,11 +12,14 @@ using Rdmp.Core.DataExport.Data;
 namespace Rdmp.Core.DataExport.CohortDescribing;
 
 /// <summary>
-/// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases
-/// for a patient - 2 private identifiers map to the same release identifier).
-/// 
-/// <para>Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may start out null/0 and become populated
-/// after the CohortDescriptionDataTableAsyncFetch completes.</para>
+///     Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount
+///     (can differ if there are aliases
+///     for a patient - 2 private identifiers map to the same release identifier).
+///     <para>
+///         Depending on whether you are using an CohortDescriptionDataTableAsyncFetch some properties of this class may
+///         start out null/0 and become populated
+///         after the CohortDescriptionDataTableAsyncFetch completes.
+///     </para>
 /// </summary>
 public class ExtractableCohortDescription
 {
@@ -41,7 +44,7 @@ public class ExtractableCohortDescription
 
 
     /// <summary>
-    /// Creates a non async cohort description, this will block until counts are available for the cohort
+    ///     Creates a non async cohort description, this will block until counts are available for the cohort
     /// </summary>
     /// <param name="cohort"></param>
     public ExtractableCohortDescription(ExtractableCohort cohort)
@@ -100,11 +103,13 @@ public class ExtractableCohortDescription
 
 
     /// <summary>
-    /// Creates a new description based on the async fetch request for all cohorts including row counts etc (which might have already completed btw).  If you
-    /// use this constructor then the properties will start out with text like "Loading..." but it will perform much faster, when the fetch completes the
-    /// values will be populated.  In general if you want to use this feature you should probably use CohortDescriptionFactory and only use it if you are
-    /// trying to get all the cohorts at once.
-    ///  
+    ///     Creates a new description based on the async fetch request for all cohorts including row counts etc (which might
+    ///     have already completed btw).  If you
+    ///     use this constructor then the properties will start out with text like "Loading..." but it will perform much
+    ///     faster, when the fetch completes the
+    ///     values will be populated.  In general if you want to use this feature you should probably use
+    ///     CohortDescriptionFactory and only use it if you are
+    ///     trying to get all the cohorts at once.
     /// </summary>
     /// <param name="cohort"></param>
     /// <param name="fetch"></param>
@@ -189,7 +194,13 @@ public class ExtractableCohortDescription
     }
 
 
-    public override string ToString() => Cohort.ToString();
+    public override string ToString()
+    {
+        return Cohort.ToString();
+    }
 
-    private static DateTime? ObjectToNullableDateTime(object o) => o == null || o == DBNull.Value ? null : (DateTime)o;
+    private static DateTime? ObjectToNullableDateTime(object o)
+    {
+        return o == null || o == DBNull.Value ? null : (DateTime)o;
+    }
 }

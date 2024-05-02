@@ -21,8 +21,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that executes a single .exe file specified by the user in a ProcessTask with ProcessTaskType Executable.  The exe will be given command line
-/// arguments for the database connection / loading directory via RuntimeArgumentCollection
+///     RuntimeTask that executes a single .exe file specified by the user in a ProcessTask with ProcessTaskType
+///     Executable.  The exe will be given command line
+///     arguments for the database connection / loading directory via RuntimeArgumentCollection
 /// </summary>
 public class ExecutableRuntimeTask : RuntimeTask
 {
@@ -121,7 +122,10 @@ public class ExecutableRuntimeTask : RuntimeTask
         return !success ? throw new ArgumentException($"Could not parse exit code from value: {value}") : exitCode;
     }
 
-    public override bool Exists() => File.Exists(ExeFilepath);
+    public override bool Exists()
+    {
+        return File.Exists(ExeFilepath);
+    }
 
     public override void Abort(IDataLoadEventListener postDataLoadEventListener)
     {
@@ -182,8 +186,13 @@ public class ExecutableRuntimeTask : RuntimeTask
                     CheckResult.Warning));
     }
 
-    public override string ToString() =>
-        string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
+    public override string ToString()
+    {
+        return string.IsNullOrEmpty(ExeFilepath) ? "No executable" : $"{ExeFilepath} {CreateArgString()}";
+    }
 
-    public static XmlSchema GetSchema() => null;
+    public static XmlSchema GetSchema()
+    {
+        return null;
+    }
 }

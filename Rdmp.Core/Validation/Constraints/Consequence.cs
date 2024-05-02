@@ -7,22 +7,24 @@
 namespace Rdmp.Core.Validation.Constraints;
 
 /// <summary>
-/// Describes the severity of a failing <see cref="Validator"/> <see cref="IConstraint"/> (i.e. a rule in the Data Quality Engine)
+///     Describes the severity of a failing <see cref="Validator" /> <see cref="IConstraint" /> (i.e. a rule in the Data
+///     Quality Engine)
 /// </summary>
 public enum Consequence
 {
     /// <summary>
-    /// When the <see cref="IConstraint"/> is broken then it means important information is missing in the record
+    ///     When the <see cref="IConstraint" /> is broken then it means important information is missing in the record
     /// </summary>
     Missing,
 
     /// <summary>
-    /// When the <see cref="IConstraint"/> is broken then it means that the wrong important information is present in the cell of the record
+    ///     When the <see cref="IConstraint" /> is broken then it means that the wrong important information is present in the
+    ///     cell of the record
     /// </summary>
     Wrong,
 
     /// <summary>
-    /// When the <see cref="IConstraint"/> is broken then it means that the entire record should be considered 'bad'
+    ///     When the <see cref="IConstraint" /> is broken then it means that the entire record should be considered 'bad'
     /// </summary>
     InvalidatesRow
 }

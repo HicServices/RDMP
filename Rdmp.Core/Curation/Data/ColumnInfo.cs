@@ -24,13 +24,18 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Records the last known state of a column in an SQL table.  Can be synchronized using <see cref="TableInfoSynchronizer"/>.
-/// 
-/// <para>A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not only of its name and datatype
-/// in LIVE but also its unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).</para>
-/// 
-/// <para>ColumnInfo ensures a cached representation of the underlying database so that RDMP can rationalize and inform the system user of disappearing
-/// columns etc and let the user make decisions about how to resolve it.</para>
+///     Records the last known state of a column in an SQL table.  Can be synchronized using
+///     <see cref="TableInfoSynchronizer" />.
+///     <para>
+///         A ColumnInfo can belong to an anonymisation group (ANOTable) e.g. ANOGPCode, in this case it will be aware not
+///         only of its name and datatype
+///         in LIVE but also its unanonymised name/datatype (see method GetRuntimeName(LoadStage stage)).
+///     </para>
+///     <para>
+///         ColumnInfo ensures a cached representation of the underlying database so that RDMP can rationalize and inform
+///         the system user of disappearing
+///         columns etc and let the user make decisions about how to resolve it.
+///     </para>
 /// </summary>
 public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable,
     IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>, INamed
@@ -56,7 +61,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     private bool _ignoreInLoads;
 
     /// <summary>
-    /// ID of the <see cref="TableInfo"/> that this <see cref="ColumnInfo"/> belongs to.
+    ///     ID of the <see cref="TableInfo" /> that this <see cref="ColumnInfo" /> belongs to.
     /// </summary>
     public int TableInfo_ID
     {
@@ -65,8 +70,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// ID of the <see cref="ANOTable"/> transform that is applied to this <see cref="ColumnInfo"/> during
-    /// data loads e.g. swap chi for anochi.
+    ///     ID of the <see cref="ANOTable" /> transform that is applied to this <see cref="ColumnInfo" /> during
+    ///     data loads e.g. swap chi for anochi.
     /// </summary>
     public int? ANOTable_ID
     {
@@ -75,7 +80,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// The fully specified name of the column in the underlying database table this record points at.
+    ///     The fully specified name of the column in the underlying database table this record points at.
     /// </summary>
     [Sql]
     public string Name
@@ -84,7 +89,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Data_type
     {
         get => _dataType;
@@ -92,8 +97,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP.
-    /// <para> Use <see cref="Collation"/> instead</para>
+    ///     User specified free text field.  Not used for anything by RDMP.
+    ///     <para> Use <see cref="Collation" /> instead</para>
     /// </summary>
     public string Format
     {
@@ -102,7 +107,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Digitisation_specs
     {
@@ -111,7 +116,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Source
     {
@@ -120,7 +125,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Description
     {
@@ -129,7 +134,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    ///  User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public ColumnStatus? Status
     {
@@ -138,8 +143,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Validation Regex that could be used to assess the cleanliness of data in the column.   Not used for anything by RDMP.
-    /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+    ///     Validation Regex that could be used to assess the cleanliness of data in the column.   Not used for anything by
+    ///     RDMP.
+    ///     <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML" />)</para>
     /// </summary>
     public string RegexPattern
     {
@@ -148,8 +154,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Not used for anything by RDMP.
-    /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>
+    ///     Not used for anything by RDMP.
+    ///     <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML" />)</para>
     /// </summary>
     public string ValidationRules
     {
@@ -157,21 +163,21 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         set => SetField(ref _validationRules, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsPrimaryKey
     {
         get => _isPrimaryKey;
         set => SetField(ref _isPrimaryKey, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsAutoIncrement
     {
         get => _isAutoIncrement;
         set => SetField(ref _isAutoIncrement, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Collation
     {
         get => _collation;
@@ -179,10 +185,12 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// The importance of this column in resolving primary key collisions during data loads (in RAW).  Columns with a lower number are consulted first when resolving
-    /// collisions.  E.g. are the colliding records different on this column? if yes use <see cref="DuplicateRecordResolutionIsAscending"/> to pick which to delete
-    /// otherwise move onto the next (non primary key) column.
-    /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+    ///     The importance of this column in resolving primary key collisions during data loads (in RAW).  Columns with a lower
+    ///     number are consulted first when resolving
+    ///     collisions.  E.g. are the colliding records different on this column? if yes use
+    ///     <see cref="DuplicateRecordResolutionIsAscending" /> to pick which to delete
+    ///     otherwise move onto the next (non primary key) column.
+    ///     <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
     /// </summary>
     public int? DuplicateRecordResolutionOrder
     {
@@ -191,9 +199,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Used in primary key collision resolution during data loads (in RAW).  If two records differ on this field (and <see cref="IsPrimaryKey"/> is false) then the order
-    /// (<see cref="DuplicateRecordResolutionIsAscending"/>) will be used to decide which is deleted.
-    /// <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
+    ///     Used in primary key collision resolution during data loads (in RAW).  If two records differ on this field (and
+    ///     <see cref="IsPrimaryKey" /> is false) then the order
+    ///     (<see cref="DuplicateRecordResolutionIsAscending" />) will be used to decide which is deleted.
+    ///     <para>Only applies if you have a PrimaryKeyCollisionResolverMutilation in the data load</para>
     /// </summary>
     public bool DuplicateRecordResolutionIsAscending
     {
@@ -202,7 +211,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Set to True to ignore this column when doing data loads
+    ///     Set to True to ignore this column when doing data loads
     /// </summary>
     public bool IgnoreInLoads
     {
@@ -214,17 +223,19 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
     #region Relationships
 
-    /// <inheritdoc cref="TableInfo_ID"/>
+    /// <inheritdoc cref="TableInfo_ID" />
     [NoMappingToDatabase]
     public TableInfo TableInfo => _knownTableInfo.Value;
 
-    /// <inheritdoc cref="ANOTable_ID"/>
+    /// <inheritdoc cref="ANOTable_ID" />
     [NoMappingToDatabase]
     public ANOTable ANOTable => ANOTable_ID == null ? null : Repository.GetObjectByID<ANOTable>((int)ANOTable_ID);
 
     /// <summary>
-    /// Fetches all <see cref="ExtractionInformation"/> which draw on this <see cref="ColumnInfo"/>.  This could be none (if it is not extractable) or more than one
-    /// (if there are multiple extraction transforms available for the column or if the column/table is part of multiple <see cref="Catalogue"/>)
+    ///     Fetches all <see cref="ExtractionInformation" /> which draw on this <see cref="ColumnInfo" />.  This could be none
+    ///     (if it is not extractable) or more than one
+    ///     (if there are multiple extraction transforms available for the column or if the column/table is part of multiple
+    ///     <see cref="Catalogue" />)
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ExtractionInformation> ExtractionInformations
@@ -233,8 +244,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Fetches all <see cref="CatalogueItem"/> which describe the <see cref="ExtractionInformations"/> of this <see cref="ColumnInfo"/>.  This will also include any
-    /// non extractable <see cref="CatalogueItem"/> linked to this <see cref="ColumnInfo"/> in <see cref="Catalogue"/>s.
+    ///     Fetches all <see cref="CatalogueItem" /> which describe the <see cref="ExtractionInformations" /> of this
+    ///     <see cref="ColumnInfo" />.  This will also include any
+    ///     non extractable <see cref="CatalogueItem" /> linked to this <see cref="ColumnInfo" /> in <see cref="Catalogue" />s.
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<CatalogueItem> CatalogueItems => Repository.GetAllObjectsWithParent<CatalogueItem>(this);
@@ -242,27 +254,27 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     #endregion
 
     /// <summary>
-    /// Notional usage status of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+    ///     Notional usage status of a <see cref="ColumnInfo" />.  Not used for anything by RDMP.
     /// </summary>
     public enum ColumnStatus
     {
         /// <summary>
-        /// Should not be used anymore.  Not used for anything by RDMP.
+        ///     Should not be used anymore.  Not used for anything by RDMP.
         /// </summary>
         Deprecated,
 
         /// <summary>
-        /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+        ///     Notional usage state of a <see cref="ColumnInfo" />.  Not used for anything by RDMP.
         /// </summary>
         Inactive,
 
         /// <summary>
-        /// Notional usage state of a <see cref="ColumnInfo"/>.  Not used for anything by RDMP.
+        ///     Notional usage state of a <see cref="ColumnInfo" />.  Not used for anything by RDMP.
         /// </summary>
         Archived,
 
         /// <summary>
-        /// Normal state for columns.  Not used for anything by RDMP.
+        ///     Normal state for columns.  Not used for anything by RDMP.
         /// </summary>
         Active
     }
@@ -273,9 +285,11 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo"/>.  This constructor will be used
-    /// when first importing a table reference (See <see cref="TableInfoImporter"/>)  and again whenever there are new columns
-    /// discovered during table sync (See <see cref="TableInfoSynchronizer"/>)
+    ///     Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo" />.
+    ///     This constructor will be used
+    ///     when first importing a table reference (See <see cref="TableInfoImporter" />)  and again whenever there are new
+    ///     columns
+    ///     discovered during table sync (See <see cref="TableInfoSynchronizer" />)
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -288,8 +302,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
-            { "Name", name != null ? (object)name : DBNull.Value },
-            { "Data_type", type != null ? (object)type : DBNull.Value },
+            { "Name", name != null ? name : DBNull.Value },
+            { "Data_type", type != null ? type : DBNull.Value },
             { "TableInfo_ID", parent.ID },
             { "IgnoreInLoads", false }
         });
@@ -298,8 +312,9 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     private int? _datasetID;
+
     /// <summary>
-    /// The ID of the dataset this column information came from
+    ///     The ID of the dataset this column information came from
     /// </summary>
     [DoNotExtractProperty]
     public int? Dataset_ID
@@ -349,13 +364,16 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Returns the fully qualified <see cref="Name"/> of the <see cref="ColumnInfo"/>
+    ///     Returns the fully qualified <see cref="Name" /> of the <see cref="ColumnInfo" />
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Allows sorting by fully qualified <see cref="Name"/>.
+    ///     Allows sorting by fully qualified <see cref="Name" />.
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
@@ -368,22 +386,28 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
-    ///<inheritdoc/>
-    public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
+    /// <inheritdoc />
+    public string GetRuntimeName()
+    {
+        return Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);
+    }
 
-    ///<inheritdoc/>
-    public string GetFullyQualifiedName() => Name;
+    /// <inheritdoc />
+    public string GetFullyQualifiedName()
+    {
+        return Name;
+    }
 
     private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
     private Lazy<TableInfo> _knownTableInfo;
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         return _cachedQuerySyntaxHelper ??= TableInfo.GetQuerySyntaxHelper();
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public string GetRuntimeName(LoadStage stage)
     {
         var finalName = GetRuntimeName();
@@ -398,9 +422,11 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Gets the DataType adjusted for the stage at which the ColumnInfo is at, this is almost always the same as Data_type.  The only
-    /// time it is different is when there is an ANOTable involved e.g. ANOLocation could be a varchar(6) like 'AB10_L' after anonymisation
-    /// but if the LoadStage is AdjustRaw then it would have a value like 'NH10' (varchar(4) - the unanonymised state).
+    ///     Gets the DataType adjusted for the stage at which the ColumnInfo is at, this is almost always the same as
+    ///     Data_type.  The only
+    ///     time it is different is when there is an ANOTable involved e.g. ANOLocation could be a varchar(6) like 'AB10_L'
+    ///     after anonymisation
+    ///     but if the LoadStage is AdjustRaw then it would have a value like 'NH10' (varchar(4) - the unanonymised state).
     /// </summary>
     /// <param name="loadStage"></param>
     /// <returns></returns>
@@ -429,9 +455,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Connects to the live database referenced by this <seealso cref="ColumnInfo"/> and discovers the column returning the
-    /// live state of the column.
-    /// <para>If the database/table/column doesn't exist or is inaccessible then this method will throw</para>
+    ///     Connects to the live database referenced by this <seealso cref="ColumnInfo" /> and discovers the column returning
+    ///     the
+    ///     live state of the column.
+    ///     <para>If the database/table/column doesn't exist or is inaccessible then this method will throw</para>
     /// </summary>
     /// <param name="context">Determines which credentials (if any) to use to perform the connection operation</param>
     /// <returns>The live state of the column</returns>
@@ -442,7 +469,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
         return db.ExpectTable(ti.GetRuntimeName()).DiscoverColumn(GetRuntimeName());
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         var iDependOn = new List<IHasDependencies>();
@@ -457,7 +484,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         var dependantObjects = new List<IHasDependencies>();
@@ -478,8 +505,8 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     }
 
     /// <summary>
-    /// Checks the ANO status of the column is valid (and matching on datatypes etc).
-    /// <para>Does not check for synchronization against the underlying database.</para>
+    ///     Checks the ANO status of the column is valid (and matching on datatypes etc).
+    ///     <para>Does not check for synchronization against the underlying database.</para>
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -492,19 +519,20 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             if (GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"ColumnInfo {this} (ID={ID}) begins with {ANOTable.ANOPrefix} but does not have an ANOTable configured for it",
-                    CheckResult.Warning, null));
+                    CheckResult.Warning));
         }
         else //if it does have an ANO transform it must start with ANO
         if (!GetRuntimeName().StartsWith(ANOTable.ANOPrefix))
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"ColumnInfo {this} (ID={ID}) has an ANOTable configured but does not start with {ANOTable.ANOPrefix} (All anonymised columns must start with {ANOTable.ANOPrefix})",
-                CheckResult.Fail, null));
+                CheckResult.Fail));
         }
     }
 
     /// <summary>
-    /// Determines whether the <see cref="ColumnInfo"/> is involved in <see cref="Lookup"/> declarations (either as a foreign key, or as part of a lookup <see cref="TableInfo"/>).
+    ///     Determines whether the <see cref="ColumnInfo" /> is involved in <see cref="Lookup" /> declarations (either as a
+    ///     foreign key, or as part of a lookup <see cref="TableInfo" />).
     /// </summary>
     /// <param name="type"></param>
     /// <returns></returns>
@@ -520,22 +548,22 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
             : throw new NotImplementedException($"Unrecognised LookupType {type}");
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(TableInfo instance)
     {
         _knownTableInfo = new Lazy<TableInfo>(instance);
     }
 
-    ///<inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
     }
 
     /// <summary>
-    /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
-    /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything
-    /// else goes wrong resolving the Type.
+    ///     Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
+    ///     false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything
+    ///     else goes wrong resolving the Type.
     /// </summary>
     /// <returns></returns>
     public bool IsNumerical()

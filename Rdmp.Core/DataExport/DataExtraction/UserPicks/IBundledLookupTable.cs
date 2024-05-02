@@ -9,7 +9,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataExport.DataExtraction.UserPicks;
 
 /// <summary>
-/// See BundledLookupTable
+///     See BundledLookupTable
 /// </summary>
 public interface IBundledLookupTable
 {

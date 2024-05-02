@@ -22,15 +22,15 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.Autocomplete;
 
 /// <summary>
-/// Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo"/>)
+///     Creates autocomplete strings based on RDMP objects (e.g. <see cref="TableInfo" />)
 /// </summary>
 public partial class AutoCompleteProvider : IAutoCompleteProvider
 {
     public HashSet<string> Items { get; set; } = new();
 
     /// <summary>
-    /// Array of images that items can be depicted with.  Use <see cref="ItemsWithImages"/> to index into
-    /// this array to get the image out
+    ///     Array of images that items can be depicted with.  Use <see cref="ItemsWithImages" /> to index into
+    ///     this array to get the image out
     /// </summary>
     public Image<Rgba32>[] Images;
 
@@ -57,7 +57,7 @@ public partial class AutoCompleteProvider : IAutoCompleteProvider
     }
 
     /// <summary>
-    /// Splits <paramref name="arg"/> into individual autocomplete words for suggestions
+    ///     Splits <paramref name="arg" /> into individual autocomplete words for suggestions
     /// </summary>
     /// <param name="arg"></param>
     /// <returns></returns>

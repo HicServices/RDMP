@@ -12,14 +12,15 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Providers.Nodes;
 
 /// <summary>
-/// Folder Node that can be added to TreeListViews.  You can only add one folder of each name because they inherit from <see cref="SingletonNode"/>.
+///     Folder Node that can be added to TreeListViews.  You can only add one folder of each name because they inherit from
+///     <see cref="SingletonNode" />.
 /// </summary>
 public class ArbitraryFolderNode : SingletonNode, IOrderable
 {
     public int Order { get; set; }
 
     /// <summary>
-    /// Commands to be created when/if the node is right clicked.  Null if no commands are required
+    ///     Commands to be created when/if the node is right clicked.  Null if no commands are required
     /// </summary>
     public Func<IEnumerable<IAtomicCommand>> CommandGetter { get; set; }
 

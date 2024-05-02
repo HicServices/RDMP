@@ -37,18 +37,23 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Performance optimisation class and general super class in charge of recording and discovering all objects in the Catalogue database so they can be displayed in
-/// RDMPCollectionUIs etc.  This includes issuing a single database query per Type fetching all objects (e.g. AllProcessTasks, AllLoadMetadatas etc) and then in evaluating
-/// and documenting the hierarchy in _childDictionary.  Every object that is not a root level object also has a DescendancyList which records the path of parents to that
-/// exact object.  Therefore you can easily identify 1. what the immediate children of any object are, 2. what the full path to any given object is.
-/// 
-/// <para>The pattern is:
-/// 1. Identify a root level object
-/// 2. Create a method overload AddChildren that takes the object
-/// 3. Create a new HashSet containing all the child objects (regardless of mixed Type)
-/// 4. Call AddToDictionaries with a new DescendancyList containing the parent object
-/// 5. For each of the objects added that has children of its own repeat the above (Except call DescendancyList.Add instead of creating a new one)</para>
-///  
+///     Performance optimisation class and general super class in charge of recording and discovering all objects in the
+///     Catalogue database so they can be displayed in
+///     RDMPCollectionUIs etc.  This includes issuing a single database query per Type fetching all objects (e.g.
+///     AllProcessTasks, AllLoadMetadatas etc) and then in evaluating
+///     and documenting the hierarchy in _childDictionary.  Every object that is not a root level object also has a
+///     DescendancyList which records the path of parents to that
+///     exact object.  Therefore you can easily identify 1. what the immediate children of any object are, 2. what the full
+///     path to any given object is.
+///     <para>
+///         The pattern is:
+///         1. Identify a root level object
+///         2. Create a method overload AddChildren that takes the object
+///         3. Create a new HashSet containing all the child objects (regardless of mixed Type)
+///         4. Call AddToDictionaries with a new DescendancyList containing the parent object
+///         5. For each of the objects added that has children of its own repeat the above (Except call DescendancyList.Add
+///         instead of creating a new one)
+///     </para>
 /// </summary>
 public class CatalogueChildProvider : ICoreChildProvider
 {
@@ -159,7 +164,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AggregateFilterParameter[] AllAggregateFilterParameters { get; private set; }
 
     //Catalogue master filters (does not include any support for filter containers (AND/OR)
-    private ExtractionFilter[] AllCatalogueFilters;
+    private readonly ExtractionFilter[] AllCatalogueFilters;
     public ExtractionFilterParameter[] AllCatalogueParameters;
     public ExtractionFilterParameterSet[] AllCatalogueValueSets;
     public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
@@ -172,7 +177,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
     /// <summary>
-    /// Collection of all objects for which there are masqueraders
+    ///     Collection of all objects for which there are masqueraders
     /// </summary>
     public ConcurrentDictionary<object, HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
@@ -186,14 +191,14 @@ public class CatalogueChildProvider : ICoreChildProvider
     public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
     public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
 
-    private CommentStore _commentStore;
+    private readonly CommentStore _commentStore;
 
     public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
     public AllPluginsNode AllPluginsNode { get; private set; }
     public HashSet<StandardPipelineUseCaseNode> PipelineUseCases { get; set; } = new();
 
     /// <summary>
-    /// Lock for changes to Child provider
+    ///     Lock for changes to Child provider
     /// </summary>
     protected object WriteLock = new();
 
@@ -209,11 +214,13 @@ public class CatalogueChildProvider : ICoreChildProvider
     private int _progress;
 
     /// <summary>
-    /// 
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="pluginChildProviders"></param>
-    /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
+    /// <param name="errorsCheckNotifier">
+    ///     Where to report errors building the hierarchy e.g. when
+    ///     <paramref name="pluginChildProviders" /> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier" />
+    /// </param>
     /// <param name="previousStateIfKnown">Previous child provider state if you know it otherwise null</param>
     public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders,
         ICheckNotifier errorsCheckNotifier, CatalogueChildProvider previousStateIfKnown)
@@ -663,7 +670,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
     /// <summary>
-    /// Creates new <see cref="StandardPipelineUseCaseNode"/>s and fills it with all compatible Pipelines - do not call this method more than once
+    ///     Creates new <see cref="StandardPipelineUseCaseNode" />s and fills it with all compatible Pipelines - do not call
+    ///     this method more than once
     /// </summary>
     protected void AddPipelineUseCases(Dictionary<string, PipelineUseCase> useCases)
     {
@@ -993,7 +1001,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var catalogue in AllCatalogues)
         {
             var lmds = catalogue.LoadMetadatas();
-            if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
+            if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList()
+                    .Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
             {
                 usedCatalogues.Add(catalogue);
                 chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
@@ -1606,8 +1615,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     }
 
     /// <summary>
-    /// Asks all plugins to provide the child objects for every object we have found so far.  This method is recursive, call it with null the first time to use all objects.  It will then
-    /// call itself with all the new objects that were sent back by the plugin (so that new objects found can still have children).
+    ///     Asks all plugins to provide the child objects for every object we have found so far.  This method is recursive,
+    ///     call it with null the first time to use all objects.  It will then
+    ///     call itself with all the new objects that were sent back by the plugin (so that new objects found can still have
+    ///     children).
     /// </summary>
     /// <param name="objectsToAskAbout"></param>
     protected void GetPluginChildren(HashSet<object> objectsToAskAbout = null)
@@ -1624,61 +1635,61 @@ public class CatalogueChildProvider : ICoreChildProvider
             if (providers.Any())
                 foreach (var o in objectsToAskAbout ?? GetAllObjects())
                     //for every plugin loaded (that is not forbidlisted)
-                    foreach (var plugin in providers)
-                        //ask about the children
-                        try
+                foreach (var plugin in providers)
+                    //ask about the children
+                    try
+                    {
+                        sw.Restart();
+                        //otherwise ask plugin what its children are
+                        var pluginChildren = plugin.GetChildren(o);
+
+                        //if the plugin takes too long to respond we need to stop
+                        if (sw.ElapsedMilliseconds > 1000)
                         {
-                            sw.Restart();
-                            //otherwise ask plugin what its children are
-                            var pluginChildren = plugin.GetChildren(o);
+                            _blockedPlugins.Add(plugin);
+                            throw new Exception(
+                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                        }
 
-                            //if the plugin takes too long to respond we need to stop
-                            if (sw.ElapsedMilliseconds > 1000)
+                        //it has children
+                        if (pluginChildren != null && pluginChildren.Any())
+                        {
+                            //get the descendancy of the parent
+                            var parentDescendancy = GetDescendancyListIfAnyFor(o);
+                            var newDescendancy = parentDescendancy == null
+                                ? new DescendancyList(o)
+                                : //if the parent is a root level object start a new descendancy list from it
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+                            newDescendancy =
+                                parentDescendancy
+                                    .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
+
+                            //record that
+                            foreach (var pluginChild in pluginChildren)
                             {
-                                _blockedPlugins.Add(plugin);
-                                throw new Exception(
-                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                            }
-
-                            //it has children
-                            if (pluginChildren != null && pluginChildren.Any())
-                            {
-                                //get the descendancy of the parent
-                                var parentDescendancy = GetDescendancyListIfAnyFor(o);
-                                var newDescendancy = parentDescendancy == null
-                                    ? new DescendancyList(new[] { o })
-                                    : //if the parent is a root level object start a new descendancy list from it
-                                    parentDescendancy
-                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-                                newDescendancy =
-                                    parentDescendancy
-                                        .Add(o); //otherwise keep going down, returns a new DescendancyList so doesn't corrupt the dictionary one
-
-                                //record that
-                                foreach (var pluginChild in pluginChildren)
-                                {
-                                    //if the parent didn't have any children before
-                                    if (!_childDictionary.ContainsKey(o))
-                                        _childDictionary.AddOrUpdate(o, new HashSet<object>(),
-                                            (o1, set) => set); //it does now
+                                //if the parent didn't have any children before
+                                if (!_childDictionary.ContainsKey(o))
+                                    _childDictionary.AddOrUpdate(o, new HashSet<object>(),
+                                        (o1, set) => set); //it does now
 
 
-                                    //add us to the parent objects child collection
-                                    _childDictionary[o].Add(pluginChild);
+                                //add us to the parent objects child collection
+                                _childDictionary[o].Add(pluginChild);
 
-                                    //add to the child collection of the parent object kvp.Key
-                                    _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
-                                        (s, e) => newDescendancy);
+                                //add to the child collection of the parent object kvp.Key
+                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,
+                                    (s, e) => newDescendancy);
 
-                                    //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
-                                    newObjectsFound.Add(pluginChild);
-                                }
+                                //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
+                                newObjectsFound.Add(pluginChild);
                             }
                         }
-                        catch (Exception e)
-                        {
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
-                        }
+                    }
+                    catch (Exception e)
+                    {
+                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail, e));
+                    }
 
             if (newObjectsFound.Any())
                 GetPluginChildren(newObjectsFound);

@@ -14,8 +14,10 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Creates a new Lookup relationship between two <see cref="TableInfo"/>.  This will allow you to optionally extract code descriptions side by side code values (e.g. SexCode, SexCode_Desc)
-/// by joining the two tables.  It also allows you to extract the <see cref="Lookup"/> <see cref="TableInfo"/> along side the main dataset when it is extracted for research projects.
+///     Creates a new Lookup relationship between two <see cref="TableInfo" />.  This will allow you to optionally extract
+///     code descriptions side by side code values (e.g. SexCode, SexCode_Desc)
+///     by joining the two tables.  It also allows you to extract the <see cref="Lookup" /> <see cref="TableInfo" /> along
+///     side the main dataset when it is extracted for research projects.
 /// </summary>
 public class ExecuteCommandCreateLookup : BasicCommandExecution
 {
@@ -29,19 +31,35 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     private readonly ExtractionInformation[] _allExtractionInformations;
 
     /// <summary>
-    /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).
-    /// There can be multiple join keys and multiple descriptions can be selected at once (e.g. SendingLocationCode=> LocationTable.AddressLine1, LocationTable.AddressLine2) etc.
-    /// 
-    /// <para>See parameter descriptions for help</para>
+    ///     Creates a knowledge that one <see cref="TableInfo" /> provides a description for a code in a column of a
+    ///     <see cref="Catalogue" /> (<see cref="ExtractionInformation" />).
+    ///     There can be multiple join keys and multiple descriptions can be selected at once (e.g. SendingLocationCode=>
+    ///     LocationTable.AddressLine1, LocationTable.AddressLine2) etc.
+    ///     <para>See parameter descriptions for help</para>
     /// </summary>
     /// <param name="catalogueRepository"></param>
-    /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
-    /// <param name="lookupDescriptionColumns">The column(s) in the lookup that contain the free text description of the code e.g. SexDescription, SexDescriptionLong etc</param>
-    /// <param name="fkToPkTuples">Must have at least 1, Item1 must be the foreign key column in the main dataset, Item2 must be the primary key column in the lookup.
-    ///     <para>MOST lookups have 1 column paring only e.g. genderCode but some crazy lookups have duplication of code with another column e.g. TestCode+Healthboard as primary keys into lookup</para></param>
+    /// <param name="foreignKeyExtractionInformation">
+    ///     The extractable column in the main dataset which contains the lookup code
+    ///     foreign key e.g. PatientSexCode
+    /// </param>
+    /// <param name="lookupDescriptionColumns">
+    ///     The column(s) in the lookup that contain the free text description of the code
+    ///     e.g. SexDescription, SexDescriptionLong etc
+    /// </param>
+    /// <param name="fkToPkTuples">
+    ///     Must have at least 1, Item1 must be the foreign key column in the main dataset, Item2 must be the primary key
+    ///     column in the lookup.
+    ///     <para>
+    ///         MOST lookups have 1 column paring only e.g. genderCode but some crazy lookups have duplication of code with
+    ///         another column e.g. TestCode+Healthboard as primary keys into lookup
+    ///     </para>
+    /// </param>
     /// <param name="collation"></param>
-    /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
-    /// the column(s) in the dataset (when the SELECT query is built)</param>
+    /// <param name="alsoCreateExtractionInformations">
+    ///     True to create a new virtual column in the main dataset so that the code description appears inline with the rest
+    ///     of
+    ///     the column(s) in the dataset (when the SELECT query is built)
+    /// </param>
     public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
         ExtractionInformation foreignKeyExtractionInformation, ColumnInfo[] lookupDescriptionColumns,
         List<Tuple<ColumnInfo, ColumnInfo>> fkToPkTuples, string collation, bool alsoCreateExtractionInformations)
@@ -63,15 +81,22 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     }
 
     /// <summary>
-    /// Creates a knowledge that one <see cref="TableInfo"/> provides a description for a code in a column of a <see cref="Catalogue"/> (<see cref="ExtractionInformation"/>).
+    ///     Creates a knowledge that one <see cref="TableInfo" /> provides a description for a code in a column of a
+    ///     <see cref="Catalogue" /> (<see cref="ExtractionInformation" />).
     /// </summary>
     /// <param name="catalogueRepository"></param>
-    /// <param name="foreignKeyExtractionInformation">The extractable column in the main dataset which contains the lookup code foreign key e.g. PatientSexCode </param>
+    /// <param name="foreignKeyExtractionInformation">
+    ///     The extractable column in the main dataset which contains the lookup code
+    ///     foreign key e.g. PatientSexCode
+    /// </param>
     /// <param name="lookupDescriptionColumn">The column in the lookup table containing the code description that you want</param>
     /// <param name="lookupTablePrimaryKey">The column in the lookup which contains the code e.g. LocationCode</param>
     /// <param name="collation">Optional - the collation to use when linking the columns</param>
-    /// <param name="alsoCreateExtractionInformations">True to create a new virtual column in the main dataset so that the code description appears inline with the rest of
-    /// the columns in the dataset (when the SELECT query is built)</param>
+    /// <param name="alsoCreateExtractionInformations">
+    ///     True to create a new virtual column in the main dataset so that the code description appears inline with the rest
+    ///     of
+    ///     the columns in the dataset (when the SELECT query is built)
+    /// </param>
     [UseWithObjectConstructor]
     public ExecuteCommandCreateLookup(ICatalogueRepository catalogueRepository,
         ExtractionInformation foreignKeyExtractionInformation, ColumnInfo lookupDescriptionColumn,
@@ -83,7 +108,7 @@ public class ExecuteCommandCreateLookup : BasicCommandExecution
     {
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void Execute()
     {
         base.Execute();

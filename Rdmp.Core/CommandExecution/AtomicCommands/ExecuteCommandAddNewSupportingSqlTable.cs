@@ -26,8 +26,11 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         _name = name;
     }
 
-    public override string GetCommandHelp() =>
-        "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
+    public override string GetCommandHelp()
+    {
+        return
+            "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
+    }
 
     public override void Execute()
     {
@@ -40,10 +43,10 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add Supporting SQL Table",
-                TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add Supporting SQL Table",
+                    TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -52,12 +55,12 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
 
         if (name == null && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = "Supporting SQL Table Name",
-                TaskDescription =
+                {
+                    WindowTitle = "Supporting SQL Table Name",
+                    TaskDescription =
                         "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
-                EntryLabel = "Name"
-            }, 255, null, out name, false))
+                    EntryLabel = "Name"
+                }, 255, null, out name, false))
                 // user cancelled typing a name
                 return;
 
@@ -68,6 +71,8 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         Publish(c);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.SupportingSQLTable, OverlayKind.Add);
+    }
 }

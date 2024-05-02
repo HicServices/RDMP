@@ -18,7 +18,7 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.Curation.Data;
 
-/// <inheritdoc cref="IPermissionWindow"/>
+/// <inheritdoc cref="IPermissionWindow" />
 public class PermissionWindow : DatabaseEntity, IPermissionWindow
 {
     #region Database Properties
@@ -27,7 +27,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private string _description;
     private bool _requiresSynchronousAccess;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [Unique]
     public string Name
@@ -36,14 +36,14 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Description
     {
         get => _description;
         set => SetField(ref _description, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool RequiresSynchronousAccess
     {
         get => _requiresSynchronousAccess;
@@ -51,7 +51,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     }
 
     /// <summary>
-    /// The serialized string of <see cref="PermissionWindowPeriods"/> which is written/read from the catalogue database
+    ///     The serialized string of <see cref="PermissionWindowPeriods" /> which is written/read from the catalogue database
     /// </summary>
     public string PermissionPeriodConfig
     {
@@ -68,13 +68,13 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IEnumerable<ICacheProgress> CacheProgresses => Repository.GetAllObjectsWithParent<CacheProgress>(this);
 
     #endregion
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public List<PermissionWindowPeriod> PermissionWindowPeriods { get; private set; }
 
@@ -90,18 +90,19 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     private void DeserializePermissionWindowPeriods(string permissionPeriodConfig)
     {
         if (string.IsNullOrWhiteSpace(permissionPeriodConfig))
-        {
             PermissionWindowPeriods = new List<PermissionWindowPeriod>();
-        }
         else
             PermissionWindowPeriods =
                 Serializer.Deserialize(new StringReader(permissionPeriodConfig)) as List<PermissionWindowPeriod>;
     }
 
-    /// <inheritdoc/>
-    public bool WithinPermissionWindow() => WithinPermissionWindow(DateTime.UtcNow);
+    /// <inheritdoc />
+    public bool WithinPermissionWindow()
+    {
+        return WithinPermissionWindow(DateTime.UtcNow);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public virtual bool WithinPermissionWindow(DateTime dateTimeUTC)
     {
         return !PermissionWindowPeriods.Any() ||
@@ -113,7 +114,7 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
     }
 
     /// <summary>
-    /// Create a new time window in which you can restrict things (caching, loading etc) from happening outside
+    ///     Create a new time window in which you can restrict things (caching, loading etc) from happening outside
     /// </summary>
     /// <param name="repository"></param>
     public PermissionWindow(ICatalogueRepository repository)
@@ -134,10 +135,13 @@ public class PermissionWindow : DatabaseEntity, IPermissionWindow
         PermissionPeriodConfig = r["PermissionPeriodConfig"].ToString();
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return $"{(string.IsNullOrWhiteSpace(Name) ? "Unnamed" : Name)}(ID = {ID})";
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void SetPermissionWindowPeriods(List<PermissionWindowPeriod> windowPeriods)
     {
         PermissionWindowPeriods = windowPeriods;

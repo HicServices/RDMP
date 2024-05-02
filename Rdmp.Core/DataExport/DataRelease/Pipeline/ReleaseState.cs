@@ -7,22 +7,22 @@
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Describes what data release is underway (following successful data extraction)
+///     Describes what data release is underway (following successful data extraction)
 /// </summary>
 public enum ReleaseState
 {
     /// <summary>
-    /// Nothing is being released / unknown
+    ///     Nothing is being released / unknown
     /// </summary>
     Nothing,
 
     /// <summary>
-    /// A subset of the full extraction is being released
+    ///     A subset of the full extraction is being released
     /// </summary>
     DoingPatch,
 
     /// <summary>
-    /// The full extraction is being released
+    ///     The full extraction is being released
     /// </summary>
     DoingProperRelease
 }

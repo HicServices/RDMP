@@ -29,10 +29,13 @@ using TypeGuesser;
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 /// <summary>
-/// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform
-/// targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable and a table will be created with the
-/// name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in which case a basic bulk insert will take
-/// place.
+///     Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase
+///     (PreInitialize argument).  Supports cross platform
+///     targets (MySql , Sql Server etc).  Normally the SQL Data Types and column names will be computed from the DataTable
+///     and a table will be created with the
+///     name of the DataTable being processed.  If a matching table already exists you can choose to load it anyway in
+///     which case a basic bulk insert will take
+///     place.
 /// </summary>
 public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, IDataFlowDestination<DataTable>,
     IPipelineRequirement<DiscoveredDatabase>
@@ -77,16 +80,16 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public string TargetTableName { get; private set; }
 
     /// <summary>
-    /// True if a new table was created or re-created by the execution of this destination.  False if
-    /// the table already existed e.g. data was simply added
+    ///     True if a new table was created or re-created by the execution of this destination.  False if
+    ///     the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
 
     private IBulkCopy _bulkcopy;
     private int _affectedRows;
 
-    private Stopwatch swTimeSpentWriting = new();
-    private Stopwatch swMeasuringStrings = new();
+    private readonly Stopwatch swTimeSpentWriting = new();
+    private readonly Stopwatch swMeasuringStrings = new();
 
     private DiscoveredServer _loggingDatabaseSettings;
 
@@ -101,15 +104,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public List<DatabaseColumnRequest> ExplicitTypes { get; set; }
 
     private bool _firstTime = true;
-    private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
+    private readonly HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
 
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
 
     /// <summary>
-    /// Optional function called when a name is needed for the table being uploaded (this overrides
-    /// upstream components naming of tables - e.g. from file names).
+    ///     Optional function called when a name is needed for the table being uploaded (this overrides
+    ///     upstream components naming of tables - e.g. from file names).
     /// </summary>
     public Func<string> TableNamerDelegate { get; set; }
 
@@ -259,8 +262,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
 
     /// <summary>
-    /// Clears the primary key status of the DataTable / <see cref="ExplicitTypes"/>.  These are recorded in <see cref="_primaryKey"/> and applied at Dispose time
-    /// in order that primary key in the destination database table does not interfere with ALTER statements (see <see cref="ResizeColumnsIfRequired"/>)
+    ///     Clears the primary key status of the DataTable / <see cref="ExplicitTypes" />.  These are recorded in
+    ///     <see cref="_primaryKey" /> and applied at Dispose time
+    ///     in order that primary key in the destination database table does not interfere with ALTER statements (see
+    ///     <see cref="ResizeColumnsIfRequired" />)
     /// </summary>
     /// <param name="toProcess"></param>
     private void ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(DataTable toProcess)
@@ -360,7 +365,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     }
 
     /// <summary>
-    /// Returns true if we should not be trying to do this alter after all
+    ///     Returns true if we should not be trying to do this alter after all
     /// </summary>
     /// <param name="oldSqlType">The database proprietary type you are considering altering from</param>
     /// <param name="newSqlType">The ANSI SQL type you are considering altering to</param>
@@ -487,9 +492,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     }
 
     /// <summary>
-    /// Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should always have the associated database type (e.g. varchar(59))
-    /// The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are only the starting types and might get changed later to
-    /// accomodate new data.
+    ///     Declare that the column of name columnName (which might or might not appear in DataTables being uploaded) should
+    ///     always have the associated database type (e.g. varchar(59))
+    ///     The columnName is Case insensitive.  Note that if AllowResizingColumnsAtUploadTime is true then these datatypes are
+    ///     only the starting types and might get changed later to
+    ///     accomodate new data.
     /// </summary>
     /// <param name="columnName"></param>
     /// <param name="explicitType"></param>
@@ -502,7 +509,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         if (columnFlags == null)
         {
-            columnRequest = new DatabaseColumnRequest(columnName, explicitType, true);
+            columnRequest = new DatabaseColumnRequest(columnName, explicitType);
             ExplicitTypes.Add(columnRequest);
             return columnRequest;
         }

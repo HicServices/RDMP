@@ -21,16 +21,19 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 
 /// <summary>
-/// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for processing the headers (or overriding headers)
-/// of a CSV (TSV etc) file.
-/// 
-/// <para>The component has two main operational modes after it has read headers: <see cref="GetDataTableWithHeaders"/> and  <see cref="MakeDataTableFitHeaders"/></para>
+///     This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource" />, it is responsible for processing
+///     the headers (or overriding headers)
+///     of a CSV (TSV etc) file.
+///     <para>
+///         The component has two main operational modes after it has read headers:
+///         <see cref="GetDataTableWithHeaders" /> and  <see cref="MakeDataTableFitHeaders" />
+///     </para>
 /// </summary>
 public class FlatFileColumnCollection
 {
     /// <summary>
-    /// Text to display in ASCII art of column matches when a column from the source could not be matched
-    /// with the destination.
+    ///     Text to display in ASCII art of column matches when a column from the source could not be matched
+    ///     with the destination.
     /// </summary>
     public const string UnmatchedText = "????";
 
@@ -42,8 +45,8 @@ public class FlatFileColumnCollection
     private readonly string _ignoreColumns;
 
     /// <summary>
-    /// The columns from the file the user does not want to load into the destination (this will not help
-    /// you avoid bad data).
+    ///     The columns from the file the user does not want to load into the destination (this will not help
+    ///     you avoid bad data).
     /// </summary>
     public HashSet<string> IgnoreColumnsList { get; private set; }
 
@@ -71,26 +74,28 @@ public class FlatFileColumnCollection
     private State _state = State.Start;
 
     /// <summary>
-    /// The Headers found in the file / overridden by ForceHeaders
+    ///     The Headers found in the file / overridden by ForceHeaders
     /// </summary>
     private string[] _headers;
 
     /// <summary>
-    /// Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These get thrown away
-    /// and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if you have inserted
-    /// it via Excel
+    ///     Column headers that appear in the middle of the file (i.e. not trailing) but that don't have a header name.  These
+    ///     get thrown away
+    ///     and they must never have data in them.  This lets you have a full blank column in the middle of your file e.g. if
+    ///     you have inserted
+    ///     it via Excel
     /// </summary>
     public ReadOnlyCollection<DataColumn> UnamedColumns = new(Array.Empty<DataColumn>()); //start off with none
 
     public bool FileIsEmpty;
 
     /// <summary>
-    /// used to advise user if he has selected the wrong separator
+    ///     used to advise user if he has selected the wrong separator
     /// </summary>
-    private string[] _commonSeparators = { "|", ",", "    ", "#" };
+    private readonly string[] _commonSeparators = { "|", ",", "    ", "#" };
 
     /// <summary>
-    /// Counts the number of headers that are not null
+    ///     Counts the number of headers that are not null
     /// </summary>
     public int CountNotNull
     {
@@ -98,7 +103,7 @@ public class FlatFileColumnCollection
     }
 
     /// <summary>
-    /// The number of headers including null ones (but not trailing null headers)
+    ///     The number of headers including null ones (but not trailing null headers)
     /// </summary>
     public int Length => _headers.Length;
 
@@ -164,7 +169,8 @@ public class FlatFileColumnCollection
 
 
     /// <summary>
-    /// Creates a new empty DataTable has only the columns found in the headers that were read during <see cref="GetHeadersFromFile"/>
+    ///     Creates a new empty DataTable has only the columns found in the headers that were read during
+    ///     <see cref="GetHeadersFromFile" />
     /// </summary>
     /// <param name="listener"></param>
     /// <returns></returns>
@@ -206,7 +212,7 @@ public class FlatFileColumnCollection
                 unamedColumns.Add(dt.Columns.Add(h));
             }
             else
-            //override type
+                //override type
             if (_explicitlyTypedColumns?.ExplicitTypesCSharp.TryGetValue(h, out var t) == true)
             {
                 var c = dt.Columns.Add(h, t);
@@ -230,8 +236,9 @@ public class FlatFileColumnCollection
     }
 
     /// <summary>
-    /// Takes an existing DataTable with a fixed schema and validates the columns read during <see cref="GetHeadersFromFile"/> against it making minor changes
-    /// where appropriate to match the schema
+    ///     Takes an existing DataTable with a fixed schema and validates the columns read during
+    ///     <see cref="GetHeadersFromFile" /> against it making minor changes
+    ///     where appropriate to match the schema
     /// </summary>
     /// <param name="dt"></param>
     /// <param name="listener"></param>
@@ -348,8 +355,9 @@ public class FlatFileColumnCollection
     }
 
     /// <summary>
-    /// Use only when ForceHeaders is on and ForceHeadersReplacesFirstLineInFile is true.  Pass the header line that was read from the file
-    /// that will be ignored (<paramref name="row"/>).  This method will show the user what replacements were made.
+    ///     Use only when ForceHeaders is on and ForceHeadersReplacesFirstLineInFile is true.  Pass the header line that was
+    ///     read from the file
+    ///     that will be ignored (<paramref name="row" />).  This method will show the user what replacements were made.
     /// </summary>
     /// <param name="row"></param>
     /// <param name="listener"></param>

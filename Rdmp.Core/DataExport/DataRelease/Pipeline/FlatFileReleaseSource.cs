@@ -13,16 +13,18 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Prepares the Source Global Folder for the ReleaseEngine.
+///     Prepares the Source Global Folder for the ReleaseEngine.
 /// </summary>
 public class FlatFileReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
     protected override ReleaseAudit GetChunkImpl(IDataLoadEventListener listener,
-        GracefulCancellationToken cancellationToken) =>
-        flowData ?? new ReleaseAudit
+        GracefulCancellationToken cancellationToken)
+    {
+        return flowData ?? new ReleaseAudit
         {
             SourceGlobalFolder = PrepareSourceGlobalFolder()
         };
+    }
 
     public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
     {
@@ -38,6 +40,8 @@ public class FlatFileReleaseSource : FixedReleaseSource<ReleaseAudit>
     {
     }
 
-    protected override DirectoryInfo PrepareSourceGlobalFolder() =>
-        _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
+    protected override DirectoryInfo PrepareSourceGlobalFolder()
+    {
+        return _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
+    }
 }

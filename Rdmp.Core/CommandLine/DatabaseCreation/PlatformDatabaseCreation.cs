@@ -16,8 +16,9 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
-/// pipelines for common activities.
+///     Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates
+///     initial
+///     pipelines for common activities.
 /// </summary>
 public class PlatformDatabaseCreation
 {
@@ -27,7 +28,7 @@ public class PlatformDatabaseCreation
     public const string DefaultLoggingDatabaseName = "Logging";
 
     /// <summary>
-    /// Creates new databases on the given server for RDMP platform databases
+    ///     Creates new databases on the given server for RDMP platform databases
     /// </summary>
     /// <param name="options"></param>
     public static void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
@@ -41,9 +42,7 @@ public class PlatformDatabaseCreation
 
         SqlConnectionStringBuilder logging = null;
         if (options.CreateLoggingServer)
-        {
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
-        }
         CatalogueRepository.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
@@ -56,7 +55,7 @@ public class PlatformDatabaseCreation
 
         if (options.ExampleDatasets || options.Nightmare)
         {
-            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo, null), repo);
+            var examples = new ExampleDatasetsCreation(new ThrowImmediatelyActivator(repo), repo);
             var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
 
             examples.Create(server.GetCurrentDatabase(), ThrowImmediatelyCheckNotifier.Quiet, options);

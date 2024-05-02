@@ -16,8 +16,10 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.DataExtraction;
 
 /// <summary>
-/// Helper class for fetching entire tables from a database and writing them to CSV.  It uses CSVOutputFormat.CleanString to strip out problem characters.
-/// Records are read one at a time rather than downloading as a DataTable to allow any size of table to be processed without running out of memory.
+///     Helper class for fetching entire tables from a database and writing them to CSV.  It uses
+///     CSVOutputFormat.CleanString to strip out problem characters.
+///     Records are read one at a time rather than downloading as a DataTable to allow any size of table to be processed
+///     without running out of memory.
 /// </summary>
 public class ExtractTableVerbatim
 {
@@ -27,14 +29,15 @@ public class ExtractTableVerbatim
     private readonly DirectoryInfo _outputDirectory;
     private readonly string _separator;
     private readonly string _dateTimeFormat;
-    private string _specificSQLTableName;
-    private DiscoveredServer _server;
-    private Stream _stream;
+    private readonly string _specificSQLTableName;
+    private readonly DiscoveredServer _server;
+    private readonly Stream _stream;
 
     /// <summary>
-    /// The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed Float and not to string values
+    ///     The number of decimal places to round floating point numbers to.  This only applies to data which is hard typed
+    ///     Float and not to string values
     /// </summary>
-    private int? RoundFloatsTo { get; set; }
+    private int? RoundFloatsTo { get; }
 
     public string OutputFilename { get; private set; }
 
@@ -62,11 +65,15 @@ public class ExtractTableVerbatim
     }
 
     /// <summary>
-    /// Runs the supplied SQL and puts it out to the file specified (in the outputDirectory), will deal with stripping separators etc automatically
+    ///     Runs the supplied SQL and puts it out to the file specified (in the outputDirectory), will deal with stripping
+    ///     separators etc automatically
     /// </summary>
     /// <param name="server"></param>
     /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
-    /// <param name="outputName">The name of the csv file you would like to create in the outputDirectory.  Do not include.csv in your string it will be put on automatically</param>
+    /// <param name="outputName">
+    ///     The name of the csv file you would like to create in the outputDirectory.  Do not include.csv
+    ///     in your string it will be put on automatically
+    /// </param>
     /// <param name="outputDirectory"></param>
     /// <param name="separator"></param>
     /// <param name="dateTimeFormat"></param>
@@ -81,11 +88,15 @@ public class ExtractTableVerbatim
         _server = server;
     }
 
-    private static string GetDefaultDateTimeFormat() => "yyyy-MM-dd hh:mm:ss";
+    private static string GetDefaultDateTimeFormat()
+    {
+        return "yyyy-MM-dd hh:mm:ss";
+    }
 
 
     /// <summary>
-    /// Runs the supplied SQL and puts it out to the <paramref name="stream"/> specified, will deal with stripping separators etc automatically
+    ///     Runs the supplied SQL and puts it out to the <paramref name="stream" /> specified, will deal with stripping
+    ///     separators etc automatically
     /// </summary>
     /// <param name="server"></param>
     /// <param name="sql">Some SQL you want to run (instead of a specific table)</param>
@@ -209,7 +220,7 @@ public class ExtractTableVerbatim
     }
 
     /// <summary>
-    /// Runs the query described in <paramref name="collection"/> and extracts the data into <paramref name="toFile"/>
+    ///     Runs the query described in <paramref name="collection" /> and extracts the data into <paramref name="toFile" />
     /// </summary>
     /// <param name="collection"></param>
     /// <param name="toFile"></param>

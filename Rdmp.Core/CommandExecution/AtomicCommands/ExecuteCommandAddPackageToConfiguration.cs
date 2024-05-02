@@ -50,6 +50,8 @@ public sealed class ExecuteCommandAddPackageToConfiguration : BasicCommandExecut
                 _extractionConfiguration).Execute();
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
+    }
 }

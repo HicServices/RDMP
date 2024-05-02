@@ -20,10 +20,12 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     public ICacheFetchRequest Current { get; private set; }
 
     /// <summary>
-    /// Sets up the class to generate <see cref="ICacheFetchRequest"/> for the given <see cref="ICacheProgress"/>
+    ///     Sets up the class to generate <see cref="ICacheFetchRequest" /> for the given <see cref="ICacheProgress" />
     /// </summary>
-    /// <param name="cacheProgress">The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress"/> or its
-    /// <see cref="ILoadProgress"/> parent must have a populated <see cref="ILoadProgress.OriginDate"/></param>
+    /// <param name="cacheProgress">
+    ///     The cache which the request is for, this must have either an <see cref="ICacheProgress.CacheFillProgress" /> or its
+    ///     <see cref="ILoadProgress" /> parent must have a populated <see cref="ILoadProgress.OriginDate" />
+    /// </param>
     public CacheFetchRequestProvider(ICacheProgress cacheProgress)
     {
         CacheProgress = cacheProgress;
@@ -31,7 +33,8 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     }
 
     /// <summary>
-    /// Creates a new <see cref="ICacheFetchRequest"/> with a valid start date but no End.  To hydrate end you should use a <see cref="ICacheFetchRequestProvider"/>
+    ///     Creates a new <see cref="ICacheFetchRequest" /> with a valid start date but no End.  To hydrate end you should use
+    ///     a <see cref="ICacheFetchRequestProvider" />
     /// </summary>
     /// <returns></returns>
     public virtual ICacheFetchRequest CreateInitialRequest()
@@ -60,13 +63,16 @@ public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     }
 
     /// <summary>
-    /// Returns the next <see cref="ICacheFetchRequest"/> based on the <see cref="Current"/>
+    ///     Returns the next <see cref="ICacheFetchRequest" /> based on the <see cref="Current" />
     /// </summary>
     /// <param name="listener"></param>
     /// <returns></returns>
-    public ICacheFetchRequest GetNext(IDataLoadEventListener listener) => _initialRequest == null
-        ? Current = _initialRequest = CreateInitialRequest()
-        : Current = CreateNext();
+    public ICacheFetchRequest GetNext(IDataLoadEventListener listener)
+    {
+        return _initialRequest == null
+            ? Current = _initialRequest = CreateInitialRequest()
+            : Current = CreateNext();
+    }
 
     private ICacheFetchRequest CreateNext()
     {

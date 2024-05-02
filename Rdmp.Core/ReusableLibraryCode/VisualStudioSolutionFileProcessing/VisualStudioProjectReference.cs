@@ -7,7 +7,7 @@
 namespace Rdmp.Core.ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
 /// <summary>
-/// A csproj file referenced by a .sln file (See VisualStudioSolutionFile)
+///     A csproj file referenced by a .sln file (See VisualStudioSolutionFile)
 /// </summary>
 public class VisualStudioProjectReference
 {

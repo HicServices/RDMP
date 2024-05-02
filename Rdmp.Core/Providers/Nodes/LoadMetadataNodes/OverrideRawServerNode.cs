@@ -25,10 +25,19 @@ internal class OverrideRawServerNode : ObjectUsedByOtherObjectNode<LoadMetadata,
         User.SaveToDatabase();
     }
 
-    public override string ToString() => $"Override RAW:{ObjectBeingUsed.Name}";
+    public override string ToString()
+    {
+        return $"Override RAW:{ObjectBeingUsed.Name}";
+    }
 
-    public string GetDeleteMessage() => "remove explicit RAW server";
+    public string GetDeleteMessage()
+    {
+        return "remove explicit RAW server";
+    }
 
-    /// <inheritdoc/>
-    public string GetDeleteVerb() => "Remove";
+    /// <inheritdoc />
+    public string GetDeleteVerb()
+    {
+        return "Remove";
+    }
 }

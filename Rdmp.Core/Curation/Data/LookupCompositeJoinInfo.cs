@@ -13,10 +13,13 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see <see cref="Lookup"/>)
-/// 
-/// <para>This is only the case if you have a given lookup code which changes meaning based on another column e.g. testcode X means a different thing
-/// in healthboard A vs healthboard B</para>
+///     Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see
+///     <see cref="Lookup" />)
+///     <para>
+///         This is only the case if you have a given lookup code which changes meaning based on another column e.g.
+///         testcode X means a different thing
+///         in healthboard A vs healthboard B
+///     </para>
 /// </summary>
 public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 {
@@ -28,7 +31,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     private string _collation;
 
     /// <summary>
-    /// The Main <see cref="Lookup"/> to which this column pair must also be joined in the ON SQL block
+    ///     The Main <see cref="Lookup" /> to which this column pair must also be joined in the ON SQL block
     /// </summary>
     public int OriginalLookup_ID
     {
@@ -36,21 +39,21 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         set => SetField(ref _originalLookup_ID, value);
     }
 
-    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    /// <inheritdoc cref="IJoin.ForeignKey" />
     public int ForeignKey_ID
     {
         get => _foreignKey_ID;
         set => SetField(ref _foreignKey_ID, value);
     }
 
-    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    /// <inheritdoc cref="IJoin.PrimaryKey" />
     public int PrimaryKey_ID
     {
         get => _primaryKey_ID;
         set => SetField(ref _primaryKey_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Collation
     {
         get => _collation;
@@ -61,11 +64,11 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
 
     #region Relationships
 
-    /// <inheritdoc cref="IJoin.ForeignKey"/>
+    /// <inheritdoc cref="IJoin.ForeignKey" />
     [NoMappingToDatabase]
     public ColumnInfo ForeignKey => Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID);
 
-    /// <inheritdoc cref="IJoin.PrimaryKey"/>
+    /// <inheritdoc cref="IJoin.PrimaryKey" />
     [NoMappingToDatabase]
     public ColumnInfo PrimaryKey => Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID);
 
@@ -75,7 +78,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     {
     }
 
-    /// <inheritdoc cref="LookupCompositeJoinInfo"/>
+    /// <inheritdoc cref="LookupCompositeJoinInfo" />
     public LookupCompositeJoinInfo(ICatalogueRepository repository, Lookup parent, ColumnInfo foreignKey,
         ColumnInfo primaryKey, string collation = null)
     {
@@ -90,7 +93,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
             { "OriginalLookup_ID", parent.ID },
             { "ForeignKey_ID", foreignKey.ID },
             { "PrimaryKey_ID", primaryKey.ID },
-            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation }
+            { "Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : collation }
         });
     }
 
@@ -104,8 +107,11 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         PrimaryKey_ID = int.Parse(r["PrimaryKey_ID"].ToString());
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => ToStringCached();
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return ToStringCached();
+    }
 
     private string _cachedToString;
 
@@ -114,7 +120,7 @@ public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
         return _cachedToString ??= $"{ForeignKey.Name} = {PrimaryKey.Name}";
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void SaveToDatabase()
     {
         if (ForeignKey.ID == PrimaryKey.ID)

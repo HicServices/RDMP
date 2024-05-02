@@ -13,7 +13,8 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CommandLine.Runners;
 
 /// <summary>
-/// interface for all processes which satiate an <see cref="RDMPCommandLineOptions"/> derrived command by running a given engine on the supplied input objects
+///     interface for all processes which satiate an <see cref="RDMPCommandLineOptions" /> derrived command by running a
+///     given engine on the supplied input objects
 /// </summary>
 public interface IRunner
 {

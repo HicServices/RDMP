@@ -15,67 +15,76 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// All extractions through DataExportManager must be done through Projects.  A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system
-/// configured).  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you
-/// ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
-/// 
-/// <para>The <see cref="ProjectNumber"/> must match the project number of the cohorts in your cohort database.</para>
+///     All extractions through DataExportManager must be done through Projects.  A Project has a name, extraction
+///     directory and optionally Tickets (if you have a ticketing system
+///     configured).  A Project should never be deleted even after all ExtractionConfigurations have been executed as it
+///     serves as an audit and a cloning point if you
+///     ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
+///     <para>The <see cref="ProjectNumber" /> must match the project number of the cohorts in your cohort database.</para>
 /// </summary>
 public interface IProject : IHasDependencies, INamed, IHasFolder
 {
     /// <summary>
-    /// Optional ticket identifier for auditing time, project requirements etc.  Should be compatible with your currently configured <see cref="ITicketingSystem"/>
+    ///     Optional ticket identifier for auditing time, project requirements etc.  Should be compatible with your currently
+    ///     configured <see cref="ITicketingSystem" />
     /// </summary>
     string MasterTicket { get; set; }
 
     /// <summary>
-    /// Location on disk that the extracted artifacts for the project (csv files , <see cref="SupportingDocument"/> etc) are put in.
+    ///     Location on disk that the extracted artifacts for the project (csv files , <see cref="SupportingDocument" /> etc)
+    ///     are put in.
     /// </summary>
     string ExtractionDirectory { get; set; }
 
     /// <summary>
-    /// The number you want to associate with Project, a Project is not in a legal state if it doesn't have one (you can't upload cohorts, do extradctions etc).
-    /// You can have multiple <see cref="IProject"/> with the same number (in which case they will have shared access to the same cohorts, anonymisation mappings etc).
+    ///     The number you want to associate with Project, a Project is not in a legal state if it doesn't have one (you can't
+    ///     upload cohorts, do extradctions etc).
+    ///     You can have multiple <see cref="IProject" /> with the same number (in which case they will have shared access to
+    ///     the same cohorts, anonymisation mappings etc).
     /// </summary>
     int? ProjectNumber { get; set; }
 
     /// <summary>
-    /// A <see cref="IProject"/> can have multiple <see cref="IExtractionConfiguration"/> defined (e.g. Cases / Controls or multiple extractions over time).  This
-    /// returns all current and frozen (released) configurations.
+    ///     A <see cref="IProject" /> can have multiple <see cref="IExtractionConfiguration" /> defined (e.g. Cases / Controls
+    ///     or multiple extractions over time).  This
+    ///     returns all current and frozen (released) configurations.
     /// </summary>
     IExtractionConfiguration[] ExtractionConfigurations { get; }
 
     /// <summary>
-    /// Returns all association links to <see cref="CohortIdentificationConfiguration"/> (cohort queries that are associated with the project).  These are
-    /// association objects not the actual configuration itself.
+    ///     Returns all association links to <see cref="CohortIdentificationConfiguration" /> (cohort queries that are
+    ///     associated with the project).  These are
+    ///     association objects not the actual configuration itself.
     /// </summary>
     IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations { get; }
 
     /// <summary>
-    /// The database in which the object is persisted
+    ///     The database in which the object is persisted
     /// </summary>
     IDataExportRepository DataExportRepository { get; }
 
     /// <summary>
-    /// Returns all datasets which are selected in any <see cref="ExtractionConfigurations"/> in the project
+    ///     Returns all datasets which are selected in any <see cref="ExtractionConfigurations" /> in the project
     /// </summary>
     /// <returns></returns>
     ICatalogue[] GetAllProjectCatalogues();
 
     /// <summary>
-    /// Returns all <see cref="ExtractionInformation"/> in all <see cref="Catalogue"/> which are marked as project specific (for this <see cref="IProject"/>)
+    ///     Returns all <see cref="ExtractionInformation" /> in all <see cref="Catalogue" /> which are marked as project
+    ///     specific (for this <see cref="IProject" />)
     /// </summary>
     /// <param name="any"></param>
     /// <returns></returns>
     ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any);
 
     /// <summary>
-    /// <para>
-    /// Returns all <see cref="ExtractionInformation"/> in all <see cref="Catalogue"/> which are marked as project specific (for this <see cref="IProject"/>)
-    /// </para>
-    /// <para>
-    /// High performance overload for when you have a <see cref="ICoreChildProvider"/>
-    /// </para>
+    ///     <para>
+    ///         Returns all <see cref="ExtractionInformation" /> in all <see cref="Catalogue" /> which are marked as project
+    ///         specific (for this <see cref="IProject" />)
+    ///     </para>
+    ///     <para>
+    ///         High performance overload for when you have a <see cref="ICoreChildProvider" />
+    ///     </para>
     /// </summary>
     /// <param name="childProvider"></param>
     /// <param name="any"></param>

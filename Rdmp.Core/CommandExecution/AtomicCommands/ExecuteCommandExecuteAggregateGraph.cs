@@ -33,7 +33,10 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         UseTripleDotSuffix = true;
     }
 
-    public override string GetCommandHelp() => "Assembles and runs the graph query and renders the results as a graph";
+    public override string GetCommandHelp()
+    {
+        return "Assembles and runs the graph query and renders the results as a graph";
+    }
 
     public override void Execute()
     {
@@ -50,5 +53,8 @@ public class ExecuteCommandExecuteAggregateGraph : BasicCommandExecution, IAtomi
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) => Image.Load<Rgba32>(CatalogueIcons.Graph);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.Graph);
+    }
 }

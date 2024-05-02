@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
@@ -23,7 +24,7 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
     }
 
     /// <summary>
-    /// Persistence constructor
+    ///     Persistence constructor
     /// </summary>
     public ViewSupportingSqlCollection()
     {
@@ -33,17 +34,26 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
     {
     }
 
-    public IDataAccessPoint GetDataAccessPoint() => SupportingSQLTable.ExternalDatabaseServer;
+    public IDataAccessPoint GetDataAccessPoint()
+    {
+        return SupportingSQLTable.ExternalDatabaseServer;
+    }
 
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
+        var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? DatabaseType.MicrosoftSQLServer;
         return QuerySyntaxHelperFactory.Create(syntax);
     }
 
-    public string GetSql() => SupportingSQLTable.SQL;
+    public string GetSql()
+    {
+        return SupportingSQLTable.SQL;
+    }
 
-    public string GetTabName() => SupportingSQLTable.Name;
+    public string GetTabName()
+    {
+        return SupportingSQLTable.Name;
+    }
 
     public IEnumerable<DatabaseEntity> GetToolStripObjects()
     {

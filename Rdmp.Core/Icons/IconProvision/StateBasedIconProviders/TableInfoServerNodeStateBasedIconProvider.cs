@@ -17,8 +17,10 @@ public sealed class TableInfoServerNodeStateBasedIconProvider : IObjectStateBase
     private static readonly DatabaseTypeIconProvider DatabaseTypeIconProvider = new();
     private static readonly Image<Rgba32> ServerNode = Image.Load<Rgba32>(CatalogueIcons.TableInfoServerNode);
 
-    public Image<Rgba32> GetImageIfSupportedObject(object o) =>
-        o is not TableInfoServerNode node
+    public Image<Rgba32> GetImageIfSupportedObject(object o)
+    {
+        return o is not TableInfoServerNode node
             ? null
             : IconOverlayProvider.GetOverlay(ServerNode, DatabaseTypeIconProvider.GetOverlay(node.DatabaseType));
+    }
 }

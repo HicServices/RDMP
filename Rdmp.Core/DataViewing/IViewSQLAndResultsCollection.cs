@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataViewing;
 
 /// <summary>
-/// Input collection for upon which an SQL query can be built that results in a single result set.
+///     Input collection for upon which an SQL query can be built that results in a single result set.
 /// </summary>
 public interface IViewSQLAndResultsCollection : IPersistableObjectCollection, IHasQuerySyntaxHelper
 {

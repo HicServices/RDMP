@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
-
 namespace Rdmp.Core.DataViewing;
 
 internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableObjectCollection,
@@ -40,10 +39,12 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         }
     }
 
-    private ExternalDatabaseServer GetCacheServer() =>
-        CohortIdentificationConfiguration is { QueryCachingServer_ID: not null }
+    private ExternalDatabaseServer GetCacheServer()
+    {
+        return CohortIdentificationConfiguration is { QueryCachingServer_ID: not null }
             ? CohortIdentificationConfiguration.QueryCachingServer
             : null;
+    }
 
 
     public IDataAccessPoint GetDataAccessPoint()
@@ -69,7 +70,10 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
         return builder.SQL;
     }
 
-    public string GetTabName() => $"View {CohortIdentificationConfiguration}";
+    public string GetTabName()
+    {
+        return $"View {CohortIdentificationConfiguration}";
+    }
 
     public void AdjustAutocomplete(IAutoCompleteProvider autoComplete)
     {
@@ -78,5 +82,8 @@ internal class ViewCohortIdentificationConfigurationSqlCollection : PersistableO
     private CohortIdentificationConfiguration CohortIdentificationConfiguration =>
         DatabaseObjects.OfType<CohortIdentificationConfiguration>().SingleOrDefault();
 
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => GetDataAccessPoint()?.GetQuerySyntaxHelper();
+    public IQuerySyntaxHelper GetQuerySyntaxHelper()
+    {
+        return GetDataAccessPoint()?.GetQuerySyntaxHelper();
+    }
 }

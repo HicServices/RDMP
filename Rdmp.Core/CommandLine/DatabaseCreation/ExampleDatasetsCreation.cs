@@ -14,6 +14,7 @@ using BadMedicine.Datasets;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
+using FAnsi.Discovery.QuerySyntax.Aggregation;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
@@ -40,7 +41,7 @@ using TypeGuesser;
 namespace Rdmp.Core.CommandLine.DatabaseCreation;
 
 /// <summary>
-/// Handles the creation of example RDMP datasets and metadata object (catalogues, cohorts , projects etc).
+///     Handles the creation of example RDMP datasets and metadata object (catalogues, cohorts , projects etc).
 /// </summary>
 public partial class ExampleDatasetsCreation
 {
@@ -524,12 +525,12 @@ public partial class ExampleDatasetsCreation
     }
 
     /// <summary>
-    /// Creates a new AggregateGraph for the given dataset (<paramref name="cata"/>)
+    ///     Creates a new AggregateGraph for the given dataset (<paramref name="cata" />)
     /// </summary>
     /// <param name="cata"></param>
     /// <param name="name">The name to give the graph</param>
     /// <param name="dimension1">The first dimension e.g. pass only one dimension to create a bar chart</param>
-    /// <param name="isAxis">True if <paramref name="dimension1"/> should be created as a axis (creates a line chart)</param>
+    /// <param name="isAxis">True if <paramref name="dimension1" /> should be created as a axis (creates a line chart)</param>
     /// <param name="dimension2">Optional second dimension to create (this will be the pivot column)</param>
     private AggregateConfiguration CreateGraph(ICatalogue cata, string name, string dimension1, bool isAxis,
         string dimension2)
@@ -551,7 +552,7 @@ public partial class ExampleDatasetsCreation
             var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository, mainDimension)
             {
                 StartDate = "'1970-01-01'",
-                AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year
+                AxisIncrement = AxisIncrement.Year
             };
             axis.SaveToDatabase();
         }
@@ -634,7 +635,10 @@ public partial class ExampleDatasetsCreation
         return ti;
     }
 
-    private ICatalogue ImportCatalogue(DiscoveredTable tbl) => ImportCatalogue(ImportTableInfo(tbl));
+    private ICatalogue ImportCatalogue(DiscoveredTable tbl)
+    {
+        return ImportCatalogue(ImportTableInfo(tbl));
+    }
 
     private ICatalogue ImportCatalogue(ITableInfo ti)
     {

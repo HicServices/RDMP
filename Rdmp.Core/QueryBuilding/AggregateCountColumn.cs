@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
@@ -15,7 +16,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// The count(*) column in an AggregateConfiguration, this is used by AggregateBuilder.  This can be any aggregate function such as 'sum', 'avg' etc.
+///     The count(*) column in an AggregateConfiguration, this is used by AggregateBuilder.  This can be any aggregate
+///     function such as 'sum', 'avg' etc.
 /// </summary>
 public class AggregateCountColumn : SpontaneousObject, IColumn
 {
@@ -23,13 +25,13 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     private readonly string _sql;
 
     /// <summary>
-    /// The default alias for unamed count columns
+    ///     The default alias for unamed count columns
     /// </summary>
     public const string DefaultAliasName = "MyCount";
 
     /// <summary>
-    /// Creates a new Aggregate Function (count / max etc) with the given line of SELECT SQL
-    /// <para>Can include aliases e.g. count(*) as MyCount</para>
+    ///     Creates a new Aggregate Function (count / max etc) with the given line of SELECT SQL
+    ///     <para>Can include aliases e.g. count(*) as MyCount</para>
     /// </summary>
     /// <param name="sql"></param>
     public AggregateCountColumn(string sql) : base(new MemoryRepository())
@@ -38,8 +40,9 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
     }
 
     /// <summary>
-    /// Initializes the <see cref="IQuerySyntaxHelper"/> for the column and optionally ensures that it has an alias.  If no <see cref="Alias"/> has
-    /// been specified or was found in the current sql then <see cref="DefaultAliasName"/> is set.
+    ///     Initializes the <see cref="IQuerySyntaxHelper" /> for the column and optionally ensures that it has an alias.  If
+    ///     no <see cref="Alias" /> has
+    ///     been specified or was found in the current sql then <see cref="DefaultAliasName" /> is set.
     /// </summary>
     /// <param name="syntaxHelper"></param>
     /// <param name="ensureAliasExists"></param>
@@ -56,45 +59,50 @@ public class AggregateCountColumn : SpontaneousObject, IColumn
         SelectSQL = select;
     }
 
-    /// <inheritdoc/>
-    public string GetRuntimeName() =>
-        _syntaxHelper == null
-            ? throw new System.Exception("SyntaxHelper is null, call SetQuerySyntaxHelper first")
+    /// <inheritdoc />
+    public string GetRuntimeName()
+    {
+        return _syntaxHelper == null
+            ? throw new Exception("SyntaxHelper is null, call SetQuerySyntaxHelper first")
             : string.IsNullOrWhiteSpace(Alias)
                 ? _syntaxHelper.GetRuntimeName(SelectSQL)
                 : Alias;
+    }
 
     /// <summary>
-    /// Combines the <see cref="SelectSQL"/> with the <see cref="Alias"/> for use in SELECT Sql
+    ///     Combines the <see cref="SelectSQL" /> with the <see cref="Alias" /> for use in SELECT Sql
     /// </summary>
     /// <returns></returns>
-    public string GetFullSelectLineStringForSavingIntoAnAggregate() => string.IsNullOrWhiteSpace(Alias)
-        ? SelectSQL
-        : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
+    public string GetFullSelectLineStringForSavingIntoAnAggregate()
+    {
+        return string.IsNullOrWhiteSpace(Alias)
+            ? SelectSQL
+            : SelectSQL + _syntaxHelper.AliasPrefix + Alias;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ColumnInfo ColumnInfo => null;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Order { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Sql]
     public string SelectSQL { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Alias { get; private set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool HashOnDataRelease => false;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsExtractionIdentifier => false;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsPrimaryKey => false;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Check(ICheckNotifier notifier)
     {
         new ColumnSyntaxChecker(this).Check(notifier);

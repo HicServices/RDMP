@@ -18,18 +18,22 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for
-/// [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the ReleaseId e.g. [cohort]) with the dataset
-/// table (e.g. [biochemistry]).
-/// 
-/// <para>This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See ExtractionQueryBuilder)</para>
+///     Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g.
+///     swap [biochemistry]..[chi] for
+///     [cohort]..[ReleaseId]).  Also includes the Join SQL string for linking the cohort table (which contains the
+///     ReleaseId e.g. [cohort]) with the dataset
+///     table (e.g. [biochemistry]).
+///     <para>
+///         This class is an IColumn and is designed to be added as a new Column to a QueryBuilder as normal (See
+///         ExtractionQueryBuilder)
+///     </para>
 /// </summary>
 public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
 {
     public string JoinSQL { get; private set; }
 
     /// <summary>
-    /// The identifiable column which is being substituted on
+    ///     The identifiable column which is being substituted on
     /// </summary>
     public IColumn OriginalDatasetColumn;
 
@@ -37,7 +41,7 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
 
     [Sql] public string SelectSQL { get; set; }
 
-    public string Alias { get; private set; }
+    public string Alias { get; }
 
     //all these are hard coded to null or false really
     public ColumnInfo ColumnInfo => OriginalDatasetColumn.ColumnInfo;
@@ -126,8 +130,10 @@ public class ReleaseIdentifierSubstitution : SpontaneousObject, IColumn
         JoinSQL = $"{OriginalDatasetColumn.SelectSQL}={privateCol.GetFullyQualifiedName()}{collateStatement}";
     }
 
-    public string GetRuntimeName() =>
-        string.IsNullOrWhiteSpace(Alias) ? _querySyntaxHelper.GetRuntimeName(SelectSQL) : Alias;
+    public string GetRuntimeName()
+    {
+        return string.IsNullOrWhiteSpace(Alias) ? _querySyntaxHelper.GetRuntimeName(SelectSQL) : Alias;
+    }
 
     public void Check(ICheckNotifier notifier)
     {

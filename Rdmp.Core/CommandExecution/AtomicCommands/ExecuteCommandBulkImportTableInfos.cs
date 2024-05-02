@@ -23,7 +23,8 @@ using SixLabors.ImageSharp.PixelFormats;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Import references to many tables at once from a database as <see cref="TableInfo"/>.  Optionally importing descriptive metadata for them from <see cref="ShareDefinition"/> files
+///     Import references to many tables at once from a database as <see cref="TableInfo" />.  Optionally importing
+///     descriptive metadata for them from <see cref="ShareDefinition" /> files
 /// </summary>
 public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
 {
@@ -157,12 +158,16 @@ public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, 
     }
 
     private int? LocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipAttribute,
-        ShareDefinition shareDefinition) =>
-        property.Name.EndsWith("LoggingServer_ID", StringComparison.Ordinal)
+        ShareDefinition shareDefinition)
+    {
+        return property.Name.EndsWith("LoggingServer_ID", StringComparison.Ordinal)
             ? _loggingServer.ID
             : throw new SharingException($"Could not figure out a sensible value to assign to Property {property}");
+    }
 
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Database, OverlayKind.Import);
+    }
 }

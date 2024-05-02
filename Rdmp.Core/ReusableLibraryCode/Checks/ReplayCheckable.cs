@@ -7,8 +7,10 @@
 namespace Rdmp.Core.ReusableLibraryCode.Checks;
 
 /// <summary>
-/// ICheckable where the Check method simply replays an existing list of CheckEventArgs stored in a ToMemoryCheckNotifier.  The use case for this is when
-/// you want to store the results of checking an ICheckable then replay it later (possibly multiple times) e.g. into a UI component.
+///     ICheckable where the Check method simply replays an existing list of CheckEventArgs stored in a
+///     ToMemoryCheckNotifier.  The use case for this is when
+///     you want to store the results of checking an ICheckable then replay it later (possibly multiple times) e.g. into a
+///     UI component.
 /// </summary>
 public class ReplayCheckable : ICheckable
 {

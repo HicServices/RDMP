@@ -15,8 +15,9 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CohortCreation.Execution;
 
 /// <summary>
-/// The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more AggregateConfigurations within
-/// them - also optionally with other sub containers.
+///     The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more
+///     AggregateConfigurations within
+///     them - also optionally with other sub containers.
 /// </summary>
 public class AggregationContainerTask : Compileable, IOrderable
 {
@@ -39,7 +40,10 @@ public class AggregationContainerTask : Compileable, IOrderable
                             Array.Empty<CohortAggregateContainer>();
     }
 
-    public override string GetCatalogueName() => "";
+    public override string GetCatalogueName()
+    {
+        return "";
+    }
 
     public override IMapsDirectlyToDatabaseTable Child => Container;
 

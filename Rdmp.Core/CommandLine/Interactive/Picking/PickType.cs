@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking;
 
@@ -23,9 +24,15 @@ internal partial class PickType : PickObjectBase
     public override string Help { get; }
     public override IEnumerable<string> Examples { get; }
 
-    public override bool IsMatch(string arg, int idx) => GetType(arg) != null;
+    public override bool IsMatch(string arg, int idx)
+    {
+        return GetType(arg) != null;
+    }
 
-    public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx) => new(arg, idx, GetType(arg));
+    public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
+    {
+        return new CommandLineObjectPickerArgumentValue(arg, idx, GetType(arg));
+    }
 
     private static Type GetType(string arg)
     {
@@ -35,9 +42,9 @@ internal partial class PickType : PickObjectBase
         try
         {
             return
-                Repositories.MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
+                MEF.GetType(BasicCommandExecution.ExecuteCommandPrefix + arg)
                 ??
-                Repositories.MEF.GetType(arg);
+                MEF.GetType(arg);
         }
         catch (Exception)
         {

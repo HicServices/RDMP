@@ -8,7 +8,7 @@
 namespace Rdmp.Core.Validation.Constraints.Secondary;
 
 /// <summary>
-/// Abstract base that allows plugin developers to create new <see cref="SecondaryConstraint"/> rules
+///     Abstract base that allows plugin developers to create new <see cref="SecondaryConstraint" /> rules
 /// </summary>
 public abstract class PluginSecondaryConstraint : SecondaryConstraint
 {

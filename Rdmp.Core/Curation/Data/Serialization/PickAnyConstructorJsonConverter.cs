@@ -14,16 +14,19 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.Curation.Data.Serialization;
 
 /// <summary>
-/// Supports Json deserialization of objects which don't have default (blank) constructors.  Pass the objects you want to use for constructor
-/// arguments to classes you want to deserialize.  This JsonConverter will assert that it CanConvert any object for which it finds no default constructor and
-/// a single constructor which is compatible with the constructorObjects (or a subset of them)
+///     Supports Json deserialization of objects which don't have default (blank) constructors.  Pass the objects you want
+///     to use for constructor
+///     arguments to classes you want to deserialize.  This JsonConverter will assert that it CanConvert any object for
+///     which it finds no default constructor and
+///     a single constructor which is compatible with the constructorObjects (or a subset of them)
 /// </summary>
 public class PickAnyConstructorJsonConverter : JsonConverter
 {
     private readonly object[] _constructorObjects;
 
     /// <summary>
-    /// Creates a JSON deserializer that can use any constructors on the class which match <paramref name="constructorObjects"/>
+    ///     Creates a JSON deserializer that can use any constructors on the class which match
+    ///     <paramref name="constructorObjects" />
     /// </summary>
     /// <param name="constructorObjects"></param>
     public PickAnyConstructorJsonConverter(params object[] constructorObjects)
@@ -32,12 +35,12 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     }
 
     /// <summary>
-    /// Cannot write, this class is for deserialization only
+    ///     Cannot write, this class is for deserialization only
     /// </summary>
     public override bool CanWrite => false;
 
     /// <summary>
-    /// Cannot write, throws NotImplementedException
+    ///     Cannot write, throws NotImplementedException
     /// </summary>
     /// <param name="writer"></param>
     /// <param name="value"></param>
@@ -48,11 +51,14 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     }
 
     /// <summary>
-    /// Returns a hydrated object from <paramref name="reader"/> by invoking the appropriate constructor identified by <see cref="ObjectConstructor.GetConstructors"/>
-    /// whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
-    /// 
-    /// <para>If the <paramref name="objectType"/> is <see cref="IPickAnyConstructorFinishedCallback"/> then <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction"/>
-    /// will be called</para>
+    ///     Returns a hydrated object from <paramref name="reader" /> by invoking the appropriate constructor identified by
+    ///     <see cref="ObjectConstructor.GetConstructors" />
+    ///     whitch matches the parameters provided to <see cref="PickAnyConstructorJsonConverter" /> when it was constructed.
+    ///     <para>
+    ///         If the <paramref name="objectType" /> is <see cref="IPickAnyConstructorFinishedCallback" /> then
+    ///         <see cref="IPickAnyConstructorFinishedCallback.AfterConstruction" />
+    ///         will be called
+    ///     </para>
     /// </summary>
     /// <param name="reader"></param>
     /// <param name="objectType"></param>
@@ -74,8 +80,9 @@ public class PickAnyConstructorJsonConverter : JsonConverter
     }
 
     /// <summary>
-    /// Returns true if the <paramref name="objectType"/> is a non value Type with one constructor compatible with the parameters provided to
-    /// <see cref="PickAnyConstructorJsonConverter"/> when it was constructed.
+    ///     Returns true if the <paramref name="objectType" /> is a non value Type with one constructor compatible with the
+    ///     parameters provided to
+    ///     <see cref="PickAnyConstructorJsonConverter" /> when it was constructed.
     /// </summary>
     /// <param name="objectType"></param>
     /// <returns></returns>
@@ -97,6 +104,8 @@ public class PickAnyConstructorJsonConverter : JsonConverter
                 $"There were {constructors.Count} compatible constructors for the constructorObjects provided");
     }
 
-    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType) =>
-        ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+    private Dictionary<ConstructorInfo, List<object>> GetConstructors(Type objectType)
+    {
+        return ObjectConstructor.GetConstructors(objectType, false, false, _constructorObjects);
+    }
 }

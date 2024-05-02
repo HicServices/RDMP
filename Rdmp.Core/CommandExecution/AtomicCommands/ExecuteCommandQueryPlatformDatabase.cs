@@ -20,11 +20,11 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Runs a query on a one of the RDMP platform databases and returns the results
+///     Runs a query on a one of the RDMP platform databases and returns the results
 /// </summary>
 public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
 {
-    private string _query;
+    private readonly string _query;
     private readonly FileInfo _toFile;
     private DiscoveredTable _table;
 
@@ -134,9 +134,11 @@ public class ExecuteCommandQueryPlatformDatabase : ExecuteCommandViewDataBase
     }
 
 
-    protected override IViewSQLAndResultsCollection GetCollection() =>
-        new ArbitraryTableExtractionUICollection(_table)
+    protected override IViewSQLAndResultsCollection GetCollection()
+    {
+        return new ArbitraryTableExtractionUICollection(_table)
         {
             OverrideSql = _query
         };
+    }
 }

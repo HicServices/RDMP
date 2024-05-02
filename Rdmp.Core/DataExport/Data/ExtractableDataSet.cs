@@ -15,7 +15,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractableDataSet"/>
+/// <inheritdoc cref="IExtractableDataSet" />
 public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
 {
     #region Database Properties
@@ -24,7 +24,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     private bool _disableExtraction;
     private int? _project_ID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Catalogue_ID
     {
         get => _catalogue_ID;
@@ -35,7 +35,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool DisableExtraction
     {
         get => _disableExtraction;
@@ -43,7 +43,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? Project_ID
     {
         get => _project_ID;
@@ -55,7 +55,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     #region Relationships
 
     /// <summary>
-    /// Returns all <see cref="IExtractionConfiguration"/> in which this dataset is one of the extracted datasets
+    ///     Returns all <see cref="IExtractionConfiguration" /> in which this dataset is one of the extracted datasets
     /// </summary>
     [NoMappingToDatabase]
     public IExtractionConfiguration[] ExtractionConfigurations
@@ -69,7 +69,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ICatalogue Catalogue => _catalogue.Value;
 
@@ -82,7 +82,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     }
 
     /// <summary>
-    /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
+    ///     Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport
+    ///     database
     /// </summary>
     /// <returns></returns>
     public ExtractableDataSet(IDataExportRepository repository, ICatalogue catalogue, bool disableExtraction = false)
@@ -108,12 +109,13 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         ClearAllInjections();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public bool IsCatalogueDeprecated => Catalogue == null || Catalogue.IsDeprecated;
 
     /// <summary>
-    /// Returns the <see cref="ICatalogue"/> behind this dataset's Name or a string describing the object state if the Catalogue is unreachable.
+    ///     Returns the <see cref="ICatalogue" /> behind this dataset's Name or a string describing the object state if the
+    ///     Catalogue is unreachable.
     /// </summary>
     /// <returns></returns>
     public override string ToString()
@@ -128,8 +130,8 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     #region Stuff for updating our internal database records
 
     /// <summary>
-    /// Deletes the dataset, this will make the <see cref="ICatalogue"/> non extractable.  This operation fails if
-    /// the dataset is part of any <see cref="ExtractionConfigurations"/>.
+    ///     Deletes the dataset, this will make the <see cref="ICatalogue" /> non extractable.  This operation fails if
+    ///     the dataset is part of any <see cref="ExtractionConfigurations" />.
     /// </summary>
     public override void DeleteInDatabase()
     {
@@ -150,14 +152,17 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
     #endregion
 
     /// <summary>
-    /// Returns an object indicating whether the dataset is project specific or not
+    ///     Returns an object indicating whether the dataset is project specific or not
     /// </summary>
     /// <returns></returns>
-    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus() => new(true, Project_ID != null);
+    public CatalogueExtractabilityStatus GetCatalogueExtractabilityStatus()
+    {
+        return new CatalogueExtractabilityStatus(true, Project_ID != null);
+    }
 
     private Lazy<ICatalogue> _catalogue;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ICatalogue instance)
     {
         if (instance.ID != Catalogue_ID)
@@ -166,7 +171,7 @@ public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKn
         _catalogue = new Lazy<ICatalogue>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _catalogue = new Lazy<ICatalogue>(FetchCatalogue);

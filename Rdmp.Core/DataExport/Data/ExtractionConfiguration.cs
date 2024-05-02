@@ -28,7 +28,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.Data;
 
-/// <inheritdoc cref="IExtractionConfiguration"/>
+/// <inheritdoc cref="IExtractionConfiguration" />
 public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters, INamed,
     ICustomSearchString
 {
@@ -50,42 +50,42 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     private int? _cohortIdentificationConfigurationID;
     private int? _cohortRefreshPipelineID;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? CohortRefreshPipeline_ID
     {
         get => _cohortRefreshPipelineID;
         set => SetField(ref _cohortRefreshPipelineID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? CohortIdentificationConfiguration_ID
     {
         get => _cohortIdentificationConfigurationID;
         set => SetField(ref _cohortIdentificationConfigurationID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? DefaultPipeline_ID
     {
         get => _defaultPipeline_ID;
         set => SetField(ref _defaultPipeline_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public DateTime? dtCreated
     {
         get => _dtCreated;
         set => SetField(ref _dtCreated, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? Cohort_ID
     {
         get => _cohort_ID;
         set => SetField(ref _cohort_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsExtractable(out string reason)
     {
         if (IsReleased)
@@ -110,56 +110,56 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return true;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string RequestTicket
     {
         get => _requestTicket;
         set => SetField(ref _requestTicket, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string ReleaseTicket
     {
         get => _releaseTicket;
         set => SetField(ref _releaseTicket, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int Project_ID
     {
         get => _project_ID;
         set => SetField(ref _project_ID, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Username
     {
         get => _username;
         set => SetField(ref _username, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Separator
     {
         get => _separator;
         set => SetField(ref _separator, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string Description
     {
         get => _description;
         set => SetField(ref _description, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool IsReleased
     {
         get => _isReleased;
         set => SetField(ref _isReleased, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     public string Name
     {
@@ -167,7 +167,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         set => SetField(ref _name, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public int? ClonedFrom_ID
     {
         get => _clonedFrom_ID;
@@ -178,37 +178,37 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
 
     #region Relationships
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IProject Project => Repository.GetObjectByID<Project>(Project_ID);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ISqlParameter[] GlobalExtractionFilterParameters =>
         Repository.GetAllObjectsWithParent<GlobalExtractionFilterParameter>(this)
             .Cast<ISqlParameter>().ToArray();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IEnumerable<ICumulativeExtractionResults> CumulativeExtractionResults =>
         Repository.GetAllObjectsWithParent<CumulativeExtractionResults>(this);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IEnumerable<ISupplementalExtractionResults> SupplementalExtractionResults =>
         Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IExtractableCohort Cohort =>
         Cohort_ID == null ? null : Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public ISelectedDataSets[] SelectedDataSets => Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
         .Cast<ISelectedDataSets>().ToArray();
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NoMappingToDatabase]
     public IReleaseLog[] ReleaseLog
     {
@@ -218,7 +218,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         }
     }
 
-    /// <inheritdoc cref="DefaultPipeline_ID"/>
+    /// <inheritdoc cref="DefaultPipeline_ID" />
     [NoMappingToDatabase]
     public IPipeline DefaultPipeline =>
         DefaultPipeline_ID == null
@@ -227,7 +227,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 DefaultPipeline_ID.Value);
 
 
-    /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
+    /// <inheritdoc cref="CohortIdentificationConfiguration_ID" />
     [NoMappingToDatabase]
     public CohortIdentificationConfiguration CohortIdentificationConfiguration =>
         CohortIdentificationConfiguration_ID == null
@@ -235,7 +235,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             : ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(
                 CohortIdentificationConfiguration_ID.Value);
 
-    /// <inheritdoc cref="CohortRefreshPipeline_ID"/>
+    /// <inheritdoc cref="CohortRefreshPipeline_ID" />
     [NoMappingToDatabase]
     public IPipeline CohortRefreshPipeline =>
         CohortRefreshPipeline_ID == null
@@ -244,17 +244,24 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 CohortRefreshPipeline_ID.Value);
 
     /// <summary>
-    /// Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a <see cref="DataLoadInfo"/>)
+    ///     Returns a name suitable for describing the extraction of a dataset(s) from this configuration (in a
+    ///     <see cref="DataLoadInfo" />)
     /// </summary>
     /// <returns></returns>
-    public string GetLoggingRunName() => $"{Project.Name} {GetExtractionLoggingName()}";
+    public string GetLoggingRunName()
+    {
+        return $"{Project.Name} {GetExtractionLoggingName()}";
+    }
 
-    private string GetExtractionLoggingName() => $"(ExtractionConfiguration ID={ID})";
+    private string GetExtractionLoggingName()
+    {
+        return $"(ExtractionConfiguration ID={ID})";
+    }
 
     #endregion
 
     /// <summary>
-    /// Returns <see cref="INamed.Name"/>
+    ///     Returns <see cref="INamed.Name" />
     /// </summary>
     [NoMappingToDatabase]
     [UsefulProperty]
@@ -267,7 +274,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
+    ///     Creates a new extraction configuration in the <paramref name="repository" /> database for the provided
+    ///     <paramref name="project" />.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="project"></param>
@@ -288,16 +296,18 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Provides a short human readable representation of the <see cref="Project"/> to which this
-    /// <see cref="ExtractionConfiguration"/> is associated with
+    ///     Provides a short human readable representation of the <see cref="Project" /> to which this
+    ///     <see cref="ExtractionConfiguration" /> is associated with
     /// </summary>
     /// <param name="shortString">True for a short representation.  False for a longer representation.</param>
     /// <returns></returns>
-    public string GetProjectHint(bool shortString) =>
-        shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
+    public string GetProjectHint(bool shortString)
+    {
+        return shortString ? $"({Project.ProjectNumber})" : $"'{Project.Name}' (PNo. {Project.ProjectNumber})";
+    }
 
     /// <summary>
-    /// Reads an existing <see cref="IExtractionConfiguration"/> out of the  <paramref name="repository"/> database.
+    ///     Reads an existing <see cref="IExtractionConfiguration" /> out of the  <paramref name="repository" /> database.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="r"></param>
@@ -335,17 +345,26 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         CohortRefreshPipeline_ID = ObjectToNullableInt(r["CohortRefreshPipeline_ID"]);
     }
 
-    /// <inheritdoc/>
-    public string GetSearchString() => $"{ToString()}_{RequestTicket}_{ReleaseTicket}";
+    /// <inheritdoc />
+    public string GetSearchString()
+    {
+        return $"{ToString()}_{RequestTicket}_{ReleaseTicket}";
+    }
 
-    /// <inheritdoc/>
-    public ISqlParameter[] GetAllParameters() => GlobalExtractionFilterParameters;
+    /// <inheritdoc />
+    public ISqlParameter[] GetAllParameters()
+    {
+        return GlobalExtractionFilterParameters;
+    }
 
     /// <summary>
-    /// Returns the configuration Name
+    ///     Returns the configuration Name
     /// </summary>
     /// <returns></returns>
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
     public bool ShouldBeReadOnly(out string reason)
     {
@@ -360,8 +379,10 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Creates a complete copy of the <see cref="IExtractionConfiguration"/>, all selected datasets, filters etc.  The copy is created directly into
-    /// the <see cref="DatabaseEntity.Repository"/> database using a transaction (to prevent a half succesful clone being generated).
+    ///     Creates a complete copy of the <see cref="IExtractionConfiguration" />, all selected datasets, filters etc.  The
+    ///     copy is created directly into
+    ///     the <see cref="DatabaseEntity.Repository" /> database using a transaction (to prevent a half succesful clone being
+    ///     generated).
     /// </summary>
     /// <returns></returns>
     public ExtractionConfiguration DeepCloneWithNewIDs()
@@ -461,10 +482,13 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return clone;
     }
 
-    /// <inheritdoc/>
-    public IProject GetProject() => Repository.GetObjectByID<Project>(Project_ID);
+    /// <inheritdoc />
+    public IProject GetProject()
+    {
+        return Repository.GetObjectByID<Project>(Project_ID);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ExtractableColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
     {
         return
@@ -472,7 +496,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 .Where(e => e.ExtractableDataSet_ID == dataset.ID).ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
     {
         return Repository.GetAllObjectsWhere<SelectedDataSets>("ExtractionConfiguration_ID", ID)
@@ -510,12 +534,15 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return repo.CatalogueRepository.GetObjectByID<ExternalDatabaseServer>(uniqueLoggingServerID);
     }
 
-    /// <inheritdoc/>
-    public IExtractableCohort GetExtractableCohort() => Cohort_ID == null
-        ? null
-        : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+    /// <inheritdoc />
+    public IExtractableCohort GetExtractableCohort()
+    {
+        return Cohort_ID == null
+            ? null
+            : (IExtractableCohort)Repository.GetObjectByID<ExtractableCohort>(Cohort_ID.Value);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IExtractableDataSet[] GetAllExtractableDataSets()
     {
         return
@@ -525,8 +552,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Makes the provided <paramref name="extractableDataSet"/> extractable in the current <see cref="IExtractionConfiguration"/>.  This
-    /// includes selecting it (<see cref="ISelectedDataSets"/>) and replicating any mandatory filters.
+    ///     Makes the provided <paramref name="extractableDataSet" /> extractable in the current
+    ///     <see cref="IExtractionConfiguration" />.  This
+    ///     includes selecting it (<see cref="ISelectedDataSets" />) and replicating any mandatory filters.
     /// </summary>
     /// <param name="extractableDataSet"></param>
     public void AddDatasetToConfiguration(IExtractableDataSet extractableDataSet)
@@ -535,8 +563,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Makes the provided <paramref name="extractableDataSet"/> extractable in the current <see cref="IExtractionConfiguration"/>.  This
-    /// includes selecting it (<see cref="ISelectedDataSets"/>) and replicating any mandatory filters.
+    ///     Makes the provided <paramref name="extractableDataSet" /> extractable in the current
+    ///     <see cref="IExtractionConfiguration" />.  This
+    ///     includes selecting it (<see cref="ISelectedDataSets" />) and replicating any mandatory filters.
     /// </summary>
     /// <param name="extractableDataSet"></param>
     /// <param name="selectedDataSet">The RDMP object that indicates that the dataset is extracted in this configuration</param>
@@ -581,7 +610,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
             }
         }
 
-        var legacyColumns = GetAllExtractableColumnsFor(extractableDataSet).Cast<ExtractableColumn>().ToArray();
+        var legacyColumns = GetAllExtractableColumnsFor(extractableDataSet).ToArray();
 
         //add Core or ProjectSpecific columns
         foreach (var all in extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
@@ -591,7 +620,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     AddColumnToExtraction(extractableDataSet, all);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void RemoveDatasetFromConfiguration(IExtractableDataSet extractableDataSet)
     {
         var match = SelectedDataSets.SingleOrDefault(s => s.ExtractableDataSet_ID == extractableDataSet.ID);
@@ -599,8 +628,9 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Makes the given <paramref name="column"/> SELECT Sql part of the query for linking and extracting the provided <paramref name="forDataSet"/>
-    /// for this <see cref="IExtractionConfiguration"/>.
+    ///     Makes the given <paramref name="column" /> SELECT Sql part of the query for linking and extracting the provided
+    ///     <paramref name="forDataSet" />
+    ///     for this <see cref="IExtractionConfiguration" />.
     /// </summary>
     /// <param name="forDataSet"></param>
     /// <param name="column"></param>
@@ -617,7 +647,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         ExtractableColumn addMe;
 
         if (column is ExtractionInformation extractionInformation)
-            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation, -1, query);
+            addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, extractionInformation,
+                -1, query);
         else
             addMe = new ExtractableColumn((IDataExportRepository)Repository, forDataSet, this, null, -1,
                 query); // its custom column of some kind, not tied to a catalogue entry
@@ -628,7 +659,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
     }
 
     /// <summary>
-    /// Returns the logging server that should be used to audit extraction executions of this <see cref="IExtractionConfiguration"/>.
+    ///     Returns the logging server that should be used to audit extraction executions of this
+    ///     <see cref="IExtractionConfiguration" />.
     /// </summary>
     /// <returns></returns>
     public LogManager GetExplicitLoggingDatabaseServerOrDefault()
@@ -677,7 +709,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return lm;
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void Unfreeze()
     {
         foreach (var l in ReleaseLog)
@@ -690,7 +722,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         SaveToDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IMapsDirectlyToDatabaseTable[] GetGlobals()
     {
         var sds = SelectedDataSets.FirstOrDefault(s => s.ExtractableDataSet.Catalogue != null);
@@ -708,7 +740,7 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                 .ToArray();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void DeleteInDatabase()
     {
         foreach (var result in Repository.GetAllObjectsWithParent<SupplementalExtractionResults>(this))
@@ -717,17 +749,22 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         base.DeleteInDatabase();
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsThisDependsOn()
     {
         return new[] { Project };
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsDependingOnThis() => Array.Empty<IHasDependencies>();
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsDependingOnThis()
+    {
+        return Array.Empty<IHasDependencies>();
+    }
 
-    public DiscoveredServer GetDistinctLoggingDatabase() =>
-        GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
+    public DiscoveredServer GetDistinctLoggingDatabase()
+    {
+        return GetDistinctLoggingServer(false).Discover(DataAccessContext.Logging).Server;
+    }
 
     public DiscoveredServer GetDistinctLoggingDatabase(out IExternalDatabaseServer serverChosen)
     {
@@ -735,10 +772,13 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
         return serverChosen.Discover(DataAccessContext.Logging).Server;
     }
 
-    public string GetDistinctLoggingTask() => ExecuteDatasetExtractionSource.AuditTaskName;
+    public string GetDistinctLoggingTask()
+    {
+        return ExecuteDatasetExtractionSource.AuditTaskName;
+    }
 
     /// <summary>
-    /// Returns runs from the data extraction task where the run was for this ExtractionConfiguration
+    ///     Returns runs from the data extraction task where the run was for this ExtractionConfiguration
     /// </summary>
     /// <param name="runs"></param>
     /// <returns></returns>

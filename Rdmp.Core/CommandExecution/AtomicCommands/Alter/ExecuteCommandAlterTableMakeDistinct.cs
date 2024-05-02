@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Removes exact duplication from the given table
+///     Removes exact duplication from the given table
 /// </summary>
 public class ExecuteCommandAlterTableMakeDistinct : AlterTableCommandExecution
 {

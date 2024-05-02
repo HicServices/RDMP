@@ -24,7 +24,7 @@ public sealed class ExecuteCommandSetGlobalDleIgnorePattern : BasicCommandExecut
     }
 
     /// <summary>
-    /// Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
+    ///     Constructor for when we should prompt user in Gui for what the pattern should be if/when command is executed
     /// </summary>
     /// <param name="activator"></param>
     public ExecuteCommandSetGlobalDleIgnorePattern(IBasicActivateItems activator) : base(activator)

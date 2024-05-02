@@ -24,8 +24,8 @@ using YamlDotNet.Serialization;
 namespace Rdmp.Core.CommandLine;
 
 /// <summary>
-/// Parses strings into relevant <see cref="RDMPCommandLineOptions"/> subclasses
-/// and runs appropriate <see cref="Runners.Runner"/>
+///     Parses strings into relevant <see cref="RDMPCommandLineOptions" /> subclasses
+///     and runs appropriate <see cref="Runners.Runner" />
 /// </summary>
 public class RdmpCommandLineBootStrapper
 {
@@ -95,7 +95,7 @@ public class RdmpCommandLineBootStrapper
             }
         }
 
-        return Run((RDMPCommandLineOptions)opts, null, existingLocator);
+        return Run(opts, null, existingLocator);
     }
 
     public static int Run(RDMPCommandLineOptions opts, IRunner explicitRunner = null,
@@ -160,7 +160,7 @@ public class RdmpCommandLineBootStrapper
     }
 
     /// <summary>
-    /// The error to return when there is a problem contacting the repository databases
+    ///     The error to return when there is a problem contacting the repository databases
     /// </summary>
     public const int REPO_ERROR = 7;
 

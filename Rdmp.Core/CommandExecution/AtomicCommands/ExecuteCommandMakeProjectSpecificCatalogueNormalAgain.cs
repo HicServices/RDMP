@@ -16,8 +16,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
 {
-    private Catalogue _catalogue;
-    private ExtractableDataSet _extractableDataSet;
+    private readonly Catalogue _catalogue;
+    private readonly ExtractableDataSet _extractableDataSet;
 
     public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue) :
         base(activator)
@@ -43,12 +43,14 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         if (_extractableDataSet.Project_ID == null)
         {
             SetImpossible("Catalogue is not a project specific Catalogue");
-            return;
         }
     }
 
-    public override string GetCommandHelp() =>
-        "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
+    public override string GetCommandHelp()
+    {
+        return
+            "Take a dataset that was previously only usable with extractions of a specific project and make it free for use in any extraction project";
+    }
 
     public override void Execute()
     {
@@ -66,6 +68,8 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
         Publish(_catalogue);
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return Image.Load<Rgba32>(CatalogueIcons.MakeProjectSpecificCatalogueNormalAgain);
+    }
 }

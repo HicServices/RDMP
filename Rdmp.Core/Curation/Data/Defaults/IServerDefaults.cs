@@ -7,26 +7,31 @@
 namespace Rdmp.Core.Curation.Data.Defaults;
 
 /// <summary>
-/// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of its type for all rows created which have an IdentifierDump.
-/// For example TableInfo.IdentifierDumpServer_ID defaults to whichever IdentifierDump ExternalDatabaseServer is configured (can be DBNull.Value).
+///     Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of
+///     its type for all rows created which have an IdentifierDump.
+///     For example TableInfo.IdentifierDumpServer_ID defaults to whichever IdentifierDump ExternalDatabaseServer is
+///     configured (can be DBNull.Value).
 /// </summary>
 public interface IServerDefaults
 {
     /// <summary>
-    /// Returns the default server for performing the activity
+    ///     Returns the default server for performing the activity
     /// </summary>
     /// <param name="field"></param>
-    /// <returns>the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or null if no default has yet been picked</returns>
+    /// <returns>
+    ///     the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or
+    ///     null if no default has yet been picked
+    /// </returns>
     IExternalDatabaseServer GetDefaultFor(PermissableDefaults field);
 
     /// <summary>
-    /// Sets the database <paramref name="toDelete"/> default to null (not configured)
+    ///     Sets the database <paramref name="toDelete" /> default to null (not configured)
     /// </summary>
     /// <param name="toDelete"></param>
     void ClearDefault(PermissableDefaults toDelete);
 
     /// <summary>
-    /// Changes the database <paramref name="toChange"/> default to the specified server
+    ///     Changes the database <paramref name="toChange" /> default to the specified server
     /// </summary>
     /// <param name="toChange"></param>
     /// <param name="externalDatabaseServer"></param>

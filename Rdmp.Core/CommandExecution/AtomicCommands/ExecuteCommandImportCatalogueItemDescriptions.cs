@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Import all CatalogueItem descriptions from one <see cref="Catalogue"/> into another
+///     Import all CatalogueItem descriptions from one <see cref="Catalogue" /> into another
 /// </summary>
 public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecution, IAtomicCommand
 {

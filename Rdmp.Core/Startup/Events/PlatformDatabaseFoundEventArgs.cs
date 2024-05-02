@@ -12,12 +12,17 @@ using Rdmp.Core.ReusableLibraryCode;
 namespace Rdmp.Core.Startup.Events;
 
 /// <summary>
-/// Event Args for when an <see cref="IPatcher"/> is located during <see cref="Startup"/>
-/// 
-/// <para>Includes the evaluated status of the database (does it need patching etc) and the <see cref="Patcher"/> which contains the schema script definitions).</para>
-/// 
-/// <para>It is important that all platform Databases exactly match the runtime libraries for managing saving/loading objects therefore if the Status is
-/// RequiresPatching it is imperative that you patch the database and restart the application (happens automatically with StartupUI).</para>
+///     Event Args for when an <see cref="IPatcher" /> is located during <see cref="Startup" />
+///     <para>
+///         Includes the evaluated status of the database (does it need patching etc) and the <see cref="Patcher" />
+///         which contains the schema script definitions).
+///     </para>
+///     <para>
+///         It is important that all platform Databases exactly match the runtime libraries for managing saving/loading
+///         objects therefore if the Status is
+///         RequiresPatching it is imperative that you patch the database and restart the application (happens
+///         automatically with StartupUI).
+///     </para>
 /// </summary>
 public class PlatformDatabaseFoundEventArgs
 {
@@ -36,6 +41,9 @@ public class PlatformDatabaseFoundEventArgs
         Exception = exception;
     }
 
-    public string SummariseAsString() =>
-        $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
+    public string SummariseAsString()
+    {
+        return
+            $"RDMPPlatformDatabaseStatus is {Status} for tier {Patcher.Tier} database of type {Patcher.Name} with connection string {(Repository == null ? "Unknown" : Repository.ConnectionString)}{Environment.NewLine}{(Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(Exception))}";
+    }
 }

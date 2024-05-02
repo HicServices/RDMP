@@ -43,15 +43,23 @@ public sealed class ExecuteCommandChangeExtractability : BasicCommandExecution
         _markExtractable = explicitExtractability ?? !status.IsExtractable;
     }
 
-    public override string GetCommandName() => _markExtractable ? "Mark Extractable" : "Mark Not Extractable";
+    public override string GetCommandName()
+    {
+        return _markExtractable ? "Mark Extractable" : "Mark Not Extractable";
+    }
 
-    public override string GetCommandHelp() =>
-        !_markExtractable
+    public override string GetCommandHelp()
+    {
+        return !_markExtractable
             ? "Prevent dataset from being released in Project extracts.  This fails if it is already part of any ExtractionConfigurations"
             : @"Enable dataset linkage\extraction in Project extracts.  This requires that at least one column be marked IsExtractionIdentifier";
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.ExtractableDataSet, _markExtractable ? OverlayKind.Add : OverlayKind.Delete);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.ExtractableDataSet,
+            _markExtractable ? OverlayKind.Add : OverlayKind.Delete);
+    }
 
     public override void Execute()
     {

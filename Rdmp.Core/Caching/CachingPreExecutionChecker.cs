@@ -15,8 +15,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching;
 
 /// <summary>
-/// Determines whether a given CacheProgress can be run.  This includes checking if there is a data time period to process, whether it is Locked, whether the classes required in the Pipeline
-/// can be constructed etc.
+///     Determines whether a given CacheProgress can be run.  This includes checking if there is a data time period to
+///     process, whether it is Locked, whether the classes required in the Pipeline
+///     can be constructed etc.
 /// </summary>
 public class CachingPreExecutionChecker : ICheckable
 {

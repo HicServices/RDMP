@@ -17,8 +17,9 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources;
 
 /// <summary>
-/// Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column referenced by the <see cref="IPipelineRequirement{T}"/>
-/// <see cref="ExtractionInformation"/>.
+///     Pipeline source component that generates a DataTable containing all the unique patient identifiers in the column
+///     referenced by the <see cref="IPipelineRequirement{T}" />
+///     <see cref="ExtractionInformation" />.
 /// </summary>
 public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
     IPipelineRequirement<ExtractionInformation>
@@ -65,7 +66,7 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
 
         using var r = cmd.ExecuteReader();
         while (r.Read())
-            dt.Rows.Add(new[] { r[colName] });
+            dt.Rows.Add(r[colName]);
 
         dt.EndLoadData();
         return dt;
@@ -79,7 +80,10 @@ public class PatientIdentifierColumnSource : IPluginDataFlowSource<DataTable>,
     {
     }
 
-    public DataTable TryGetPreview() => GetDataTable(10, 1000);
+    public DataTable TryGetPreview()
+    {
+        return GetDataTable(10, 1000);
+    }
 
     public void Check(ICheckNotifier notifier)
     {

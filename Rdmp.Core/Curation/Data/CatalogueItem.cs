@@ -24,17 +24,21 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain the descriptions of what is contained
-/// in the column as well as any outstanding/resolved issues.
-/// 
-/// <para>It is important to note that <see cref="CatalogueItem"/> are tied to underlying database via <see cref="ExtractionInformation"/>.  This means
-/// that you can for example have multiple different versions of the same underlying <see cref="ColumnInfo"/> </para>
-/// 
-/// <para>e.g.
-/// CatalogueItem: PatientDateOfBirth (ExtractionInformation verbatim but 'Special Approval Required')
-/// CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is 'Core')</para>
-/// 
-/// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
+///     A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain
+///     the descriptions of what is contained
+///     in the column as well as any outstanding/resolved issues.
+///     <para>
+///         It is important to note that <see cref="CatalogueItem" /> are tied to underlying database via
+///         <see cref="ExtractionInformation" />.  This means
+///         that you can for example have multiple different versions of the same underlying <see cref="ColumnInfo" />
+///     </para>
+///     <para>
+///         e.g.
+///         CatalogueItem: PatientDateOfBirth (ExtractionInformation verbatim but 'Special Approval Required')
+///         CatalogueItem: PatientDateOfBirthApprox (ExtractionInformation rounds to nearest quarter but governance is
+///         'Core')
+///     </para>
+///     <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
 /// </summary>
 public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed,
     IInjectKnown<ExtractionInformation>, IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
@@ -58,7 +62,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     private Lazy<Catalogue> _knownCatalogue;
 
     /// <summary>
-    /// The ID of the parent <see cref="Catalogue"/> (dataset) to which this is a virtual column/column description
+    ///     The ID of the parent <see cref="Catalogue" /> (dataset) to which this is a virtual column/column description
     /// </summary>
     [Relationship(typeof(Catalogue), RelationshipType.SharedObject)]
     [DoNotExtractProperty]
@@ -72,7 +76,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [NotNull]
     [DoNotImportDescriptions]
     public string Name
@@ -82,7 +86,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User supplied field meant to identify any statistical anomalies with the data in the column described.  Not used for anything by RDMP.
+    ///     User supplied field meant to identify any statistical anomalies with the data in the column described.  Not used
+    ///     for anything by RDMP.
     /// </summary>
     public string Statistical_cons
     {
@@ -91,7 +96,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User supplied field meant for describing research applicability/field of the data in the column.  Not used for anything by RDMP.
+    ///     User supplied field meant for describing research applicability/field of the data in the column.  Not used for
+    ///     anything by RDMP.
     /// </summary>
     public string Research_relevance
     {
@@ -101,7 +107,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
 
     /// <summary>
-    /// User supplied description of what is in the column
+    ///     User supplied description of what is in the column
     /// </summary>
     [UsefulProperty]
     public string Description
@@ -111,7 +117,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User supplied heading or keywords of what is in the column relates to.  Not used for anything by RDMP.
+    ///     User supplied heading or keywords of what is in the column relates to.  Not used for anything by RDMP.
     /// </summary>
     public string Topic
     {
@@ -120,7 +126,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Agg_method
     {
@@ -129,7 +135,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Limitations
     {
@@ -138,7 +144,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// User specified free text field.  Not used for anything by RDMP.
+    ///     User specified free text field.  Not used for anything by RDMP.
     /// </summary>
     public string Comments
     {
@@ -147,10 +153,13 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// The ID of the underlying <see cref="ColumnInfo"/> to which this CatalogueItem describes.  This can be null if the underlying column has been deleted / removed.
-    /// You can have multiple <see cref="CatalogueItem"/>s in a <see cref="Catalogue"/> that share the same underlying <see cref="ColumnInfo"/> if one of them is a transform
-    /// e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core"/>) but only release the full postcode with
-    /// <see cref="ExtractionCategory.SpecialApprovalRequired"/>.
+    ///     The ID of the underlying <see cref="ColumnInfo" /> to which this CatalogueItem describes.  This can be null if the
+    ///     underlying column has been deleted / removed.
+    ///     You can have multiple <see cref="CatalogueItem" />s in a <see cref="Catalogue" /> that share the same underlying
+    ///     <see cref="ColumnInfo" /> if one of them is a transform
+    ///     e.g. you might release the first 3 digits of a postcode to anyone (<see cref="ExtractionCategory.Core" />) but only
+    ///     release the full postcode with
+    ///     <see cref="ExtractionCategory.SpecialApprovalRequired" />.
     /// </summary>
     [Relationship(typeof(ColumnInfo),
         RelationshipType.IgnoreableLocalReference)] //will appear as empty, then the user can guess from a table
@@ -169,7 +178,8 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// How frequently this column is updated... why this would be different from <see cref="Data.Catalogue.Periodicity"/>?
+    ///     How frequently this column is updated... why this would be different from <see cref="Data.Catalogue.Periodicity" />
+    ///     ?
     /// </summary>
     public Catalogue.CataloguePeriodicity Periodicity
     {
@@ -182,27 +192,32 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
     #region Relationships
 
-    /// <inheritdoc cref="Catalogue_ID"/>
+    /// <inheritdoc cref="Catalogue_ID" />
     [NoMappingToDatabase]
     public Catalogue Catalogue => _knownCatalogue.Value;
 
     /// <summary>
-    /// Fetches the <see cref="ExtractionInformation"/> (if any) that specifies how to extract this column.  This can be the underlying column name (fully specified) or a transform.
-    /// <para>This will be null if the <see cref="CatalogueItem"/> is not extractable</para>
+    ///     Fetches the <see cref="ExtractionInformation" /> (if any) that specifies how to extract this column.  This can be
+    ///     the underlying column name (fully specified) or a transform.
+    ///     <para>This will be null if the <see cref="CatalogueItem" /> is not extractable</para>
     /// </summary>
     [NoMappingToDatabase]
     public ExtractionInformation ExtractionInformation => _knownExtractionInformation.Value;
 
-    /// <inheritdoc cref="ColumnInfo_ID"/>
+    /// <inheritdoc cref="ColumnInfo_ID" />
     [NoMappingToDatabase]
     public ColumnInfo ColumnInfo => _knownColumnInfo.Value;
 
-    internal bool IsColumnInfoCached() => _knownColumnInfo.IsValueCreated;
+    internal bool IsColumnInfoCached()
+    {
+        return _knownColumnInfo.IsValueCreated;
+    }
 
     #endregion
 
     /// <summary>
-    /// Name of the parent <see cref="Catalogue"/>.  This property value will be cached once fetched for a given object thanks to Lazy/IInjectKnown&lt;Catalogue&gt;"/>.
+    ///     Name of the parent <see cref="Catalogue" />.  This property value will be cached once fetched for a given object
+    ///     thanks to Lazy/IInjectKnown&lt;Catalogue&gt;"/>.
     /// </summary>
     [UsefulProperty]
     [NoMappingToDatabase]
@@ -215,9 +230,15 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// Creates a new virtual column description for for a column in the dataset (<paramref name="parent"/>) supplied with the given Name.
-    /// <para><remarks>You should next choose which <see cref="ColumnInfo"/> powers it and optionally create an <see cref="ExtractionInformation"/> to
-    /// make the column extractable</remarks></para>
+    ///     Creates a new virtual column description for for a column in the dataset (<paramref name="parent" />) supplied with
+    ///     the given Name.
+    ///     <para>
+    ///         <remarks>
+    ///             You should next choose which <see cref="ColumnInfo" /> powers it and optionally create an
+    ///             <see cref="ExtractionInformation" /> to
+    ///             make the column extractable
+    ///         </remarks>
+    ///     </para>
     /// </summary>
     public CatalogueItem(ICatalogueRepository repository, ICatalogue parent, string name)
     {
@@ -250,10 +271,12 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         //Periodicity - with handling for invalid enum values listed in database
         var periodicity = r["Periodicity"];
         if (periodicity == null || periodicity == DBNull.Value)
+        {
             Periodicity = Catalogue.CataloguePeriodicity.Unknown;
+        }
         else
         {
-            if(Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
+            if (Enum.TryParse(periodicity.ToString(), true, out Catalogue.CataloguePeriodicity periodicityAsEnum))
                 Periodicity = periodicityAsEnum;
             else
                 Periodicity = Catalogue.CataloguePeriodicity.Unknown;
@@ -267,13 +290,13 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(Catalogue instance)
     {
         _knownCatalogue = new Lazy<Catalogue>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void ClearAllInjections()
     {
         _knownColumnInfo = new Lazy<ColumnInfo>(FetchColumnInfoIfAny);
@@ -281,31 +304,41 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         _knownCatalogue = new Lazy<Catalogue>(FetchCatalogue);
     }
 
-    private Catalogue FetchCatalogue() => Repository.GetObjectByID<Catalogue>(Catalogue_ID);
+    private Catalogue FetchCatalogue()
+    {
+        return Repository.GetObjectByID<Catalogue>(Catalogue_ID);
+    }
 
-    private ExtractionInformation FetchExtractionInformationIfAny() =>
-        Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+    private ExtractionInformation FetchExtractionInformationIfAny()
+    {
+        return Repository.GetAllObjectsWithParent<ExtractionInformation>(this).SingleOrDefault();
+    }
 
-    private ColumnInfo FetchColumnInfoIfAny() =>
-        !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+    private ColumnInfo FetchColumnInfoIfAny()
+    {
+        return !ColumnInfo_ID.HasValue ? null : Repository.GetObjectByID<ColumnInfo>(ColumnInfo_ID.Value);
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ExtractionInformation instance)
     {
         _knownExtractionInformation = new Lazy<ExtractionInformation>(instance);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void InjectKnown(ColumnInfo instance)
     {
         _knownColumnInfo = new Lazy<ColumnInfo>(instance);
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Sorts alphabetically by <see cref="Name"/>
+    ///     Sorts alphabetically by <see cref="Name" />
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
@@ -319,9 +352,13 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <paramref name="cataToImportTo"/>
+    ///     Copies the descriptive metadata from one <see cref="CatalogueItem" /> (this) into a new
+    ///     <see cref="CatalogueItem" /> in the supplied <paramref name="cataToImportTo" />
     /// </summary>
-    /// <param name="cataToImportTo">The <see cref="Catalogue"/> to import into (cannot be the current <see cref="CatalogueItem"/> parent)</param>
+    /// <param name="cataToImportTo">
+    ///     The <see cref="Catalogue" /> to import into (cannot be the current
+    ///     <see cref="CatalogueItem" /> parent)
+    /// </param>
     /// <returns></returns>
     public CatalogueItem CloneCatalogueItemWithIDIntoCatalogue(Catalogue cataToImportTo)
     {
@@ -349,9 +386,11 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// Guesses which <see cref="ColumnInfo"/> from a collection is probably the right one for underlying this <see cref="CatalogueItem"/>.  This is done
-    /// by looking for a <see cref="ColumnInfo"/> whose name is the same as the <see cref="CatalogueItem.Name"/> if not then it gets more flexible looking
-    /// for .Contains etc.
+    ///     Guesses which <see cref="ColumnInfo" /> from a collection is probably the right one for underlying this
+    ///     <see cref="CatalogueItem" />.  This is done
+    ///     by looking for a <see cref="ColumnInfo" /> whose name is the same as the <see cref="CatalogueItem.Name" /> if not
+    ///     then it gets more flexible looking
+    ///     for .Contains etc.
     /// </summary>
     /// <param name="guessPool"></param>
     /// <param name="allowPartial">Set to false to avoid last-resort match based on String.Contains</param>
@@ -384,10 +423,13 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         return Array.Empty<ColumnInfo>();
     }
 
-    /// <inheritdoc/>
-    public IHasDependencies[] GetObjectsThisDependsOn() => null;
+    /// <inheritdoc />
+    public IHasDependencies[] GetObjectsThisDependsOn()
+    {
+        return null;
+    }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IHasDependencies[] GetObjectsDependingOnThis()
     {
         var dependantObjects = new List<IHasDependencies>();
@@ -405,9 +447,10 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     }
 
     /// <summary>
-    /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
-    /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in its
-    /// <see cref="IColumn.SelectSQL"/>.
+    ///     Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is
+    ///     specified).  This will
+    ///     likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in its
+    ///     <see cref="IColumn.SelectSQL" />.
     /// </summary>
     /// <param name="columnInfo"></param>
     public void SetColumnInfo(ColumnInfo columnInfo)

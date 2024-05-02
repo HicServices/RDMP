@@ -13,7 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.QueryBuilding.SyntaxChecking;
 
 /// <summary>
-/// Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSQL
+///     Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSQL
 /// </summary>
 public abstract class SyntaxChecker : ICheckable
 {
@@ -23,11 +23,15 @@ public abstract class SyntaxChecker : ICheckable
     private static readonly Regex QuotedString = new("'[^']*'", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
     /// <summary>
-    /// Checks to see if there is a closing bracket for every opening bracket (or any other characters that come in open/close pairs.  Throws SyntaxErrorException if there
-    /// is a mismatch in the number of opening/closing of any of the character pairs passed into the method.
+    ///     Checks to see if there is a closing bracket for every opening bracket (or any other characters that come in
+    ///     open/close pairs.  Throws SyntaxErrorException if there
+    ///     is a mismatch in the number of opening/closing of any of the character pairs passed into the method.
     /// </summary>
     /// <param name="openingCharacters">An array of opening characters which start a condition e.g. '['</param>
-    /// <param name="closingCharacters">An array of closing characters which must be in the same order (semantically) and size as openingCharacters e.g. if open array element 0 is '[' then closing array element 0 must be ']' </param>
+    /// <param name="closingCharacters">
+    ///     An array of closing characters which must be in the same order (semantically) and size
+    ///     as openingCharacters e.g. if open array element 0 is '[' then closing array element 0 must be ']'
+    /// </param>
     /// <param name="sql">The string of text to check for equal numbers of opening/closing characters in</param>
     public static void ParityCheckCharacterPairs(char[] openingCharacters, char[] closingCharacters, string sql)
     {
@@ -52,7 +56,8 @@ public abstract class SyntaxChecker : ICheckable
     }
 
     /// <summary>
-    /// Checks to ensure char based parameters contains a value, are not longer than the expected length and contain either single quotes or an @ symbol before performing bracket parity checks
+    ///     Checks to ensure char based parameters contains a value, are not longer than the expected length and contain either
+    ///     single quotes or an @ symbol before performing bracket parity checks
     /// </summary>
     /// <param name="parameter"></param>
     public static void CheckSyntax(ISqlParameter parameter)
@@ -99,7 +104,7 @@ public abstract class SyntaxChecker : ICheckable
     }
 
     /// <summary>
-    /// Override in child classes to check the currently configured Sql of the object
+    ///     Override in child classes to check the currently configured Sql of the object
     /// </summary>
     /// <param name="notifier"></param>
     public abstract void Check(ICheckNotifier notifier);

@@ -14,7 +14,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Adds a new <see cref="AggregateDimension"/> to a <see cref="AggregateConfiguration"/> based on one of the associated <see cref="Catalogue"/> <see cref="ExtractionInformation"/>
+///     Adds a new <see cref="AggregateDimension" /> to a <see cref="AggregateConfiguration" /> based on one of the
+///     associated <see cref="Catalogue" /> <see cref="ExtractionInformation" />
 /// </summary>
 public sealed class ExecuteCommandAddDimension : BasicCommandExecution
 {

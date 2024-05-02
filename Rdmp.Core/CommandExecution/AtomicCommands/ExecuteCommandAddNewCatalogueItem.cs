@@ -25,8 +25,8 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
     private readonly HashSet<int> _existingColumnInfos;
 
     /// <summary>
-    /// The category to assign for newly created <see cref="ExtractionInformation"/>.
-    /// Defaults to <see cref="ExtractionCategory.Core"/>.  Set to null to make them non extractable
+    ///     The category to assign for newly created <see cref="ExtractionInformation" />.
+    ///     Defaults to <see cref="ExtractionCategory.Core" />.  Set to null to make them non extractable
     /// </summary>
     public ExtractionCategory? Category { get; set; } = ExtractionCategory.Core;
 
@@ -56,8 +56,11 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
                 .Where(static col => col.HasValue).Select(static v => v.Value).Distinct());
     }
 
-    public override string GetCommandHelp() =>
-        "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
+    public override string GetCommandHelp()
+    {
+        return
+            "Creates a new virtual column in the dataset, this is the first stage to making a new column extractable or defining a new extraction transform";
+    }
 
     public override void Execute()
     {
@@ -71,10 +74,10 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         if (c == null)
         {
             if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add CatalogueItem",
-                TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add CatalogueItem",
+                    TaskDescription = "Select which Catalogue you want to add the CatalogueItem to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 // user cancelled selecting a Catalogue
                 return;
 
@@ -145,9 +148,13 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
         ei.SaveToDatabase();
     }
 
-    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos) =>
-        existingColumnInfos.Contains(candidate.ID);
+    private static bool AlreadyInCatalogue(ColumnInfo candidate, IReadOnlySet<int> existingColumnInfos)
+    {
+        return existingColumnInfos.Contains(candidate.ID);
+    }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
+    }
 }

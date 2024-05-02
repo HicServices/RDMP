@@ -24,8 +24,8 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Release pipeline must start with a Fixed Source that will run checks and prepare the source folder.
-/// Extraction Destinations will return an implementation of this class based on the extraction method used.
+///     Release pipeline must start with a Fixed Source that will run checks and prepare the source folder.
+///     Extraction Destinations will return an implementation of this class based on the extraction method used.
 /// </summary>
 /// <typeparam name="T">The type which is passed around in the pipeline</typeparam>
 public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<ReleaseData>, IDataFlowSource<T>
@@ -58,7 +58,10 @@ public abstract class FixedReleaseSource<T> : ICheckable, IPipelineRequirement<R
 
     public abstract void Abort(IDataLoadEventListener listener);
 
-    public T TryGetPreview() => null;
+    public T TryGetPreview()
+    {
+        return null;
+    }
 
     public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
     {

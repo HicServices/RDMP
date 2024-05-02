@@ -13,7 +13,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
 public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
 {
-    private Catalogue _target;
+    private readonly Catalogue _target;
     private FileInfo _toImport;
     private readonly DublinCoreTranslater _translater = new();
 

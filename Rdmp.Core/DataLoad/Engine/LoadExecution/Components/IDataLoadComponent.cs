@@ -10,8 +10,9 @@ using Rdmp.Core.DataLoad.Engine.Job;
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 
 /// <summary>
-/// A discrete step in DLE execution either configured by the user (ProcessTask=>RuntimeTask) or a fixed step e.g. MigrateRAWTableToStaging.  See
-/// DataLoadEngine.cd for how all the various components interact in the larger scheme of the DLE IDataLoadExecution.
+///     A discrete step in DLE execution either configured by the user (ProcessTask=>RuntimeTask) or a fixed step e.g.
+///     MigrateRAWTableToStaging.  See
+///     DataLoadEngine.cd for how all the various components interact in the larger scheme of the DLE IDataLoadExecution.
 /// </summary>
 public interface IDataLoadComponent : IDisposeAfterDataLoad
 {

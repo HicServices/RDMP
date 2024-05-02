@@ -7,13 +7,15 @@
 namespace Rdmp.Core.DataExport.Data;
 
 /// <summary>
-/// Provides the salt which will be passed for use by the Hashing algorithm in data extraction  (See ConfigureHashingAlgorithm).
+///     Provides the salt which will be passed for use by the Hashing algorithm in data extraction  (See
+///     ConfigureHashingAlgorithm).
 /// </summary>
 public interface IHICProjectSalt
 {
     /// <summary>
-    /// Returns a salt for hashing.  If you want reproducible extraction outputs then this should be based on an attribute of
-    /// the <see cref="IProject"/> being extracted (or the <see cref="IExtractionConfiguration"/>).
+    ///     Returns a salt for hashing.  If you want reproducible extraction outputs then this should be based on an attribute
+    ///     of
+    ///     the <see cref="IProject" /> being extracted (or the <see cref="IExtractionConfiguration" />).
     /// </summary>
     /// <returns></returns>
     string GetSalt();

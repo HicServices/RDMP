@@ -17,17 +17,23 @@ using Rdmp.Core.QueryBuilding.Parameters;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by
-/// AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with conflicting sql parameter names),
-/// injecting globals etc.
+///     Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.
+///     Subqueries are actually built by
+///     AggregateBuilder but this class handles tab indentation, parameter renaming (where there are other subqueries with
+///     conflicting sql parameter names),
+///     injecting globals etc.
 /// </summary>
 public class CohortQueryBuilderHelper
 {
     /// <summary>
-    /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
-    /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
-    ///
-    /// <para>Use <paramref name="args"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
+    ///     Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include
+    ///     parameter declarations (which
+    ///     would appear at the very top) and includes rename operations dependant on what has been written out before by
+    ///     (tracked by <see cref="ParameterManager" />).
+    ///     <para>
+    ///         Use <paramref name="args" /> for the original un renamed / including parameter declarations e.g. to test for
+    ///         cache hits
+    ///     </para>
     /// </summary>
     /// <param name="aggregate"></param>
     /// <param name="args"></param>

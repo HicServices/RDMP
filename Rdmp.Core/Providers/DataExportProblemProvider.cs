@@ -12,20 +12,20 @@ using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 namespace Rdmp.Core.Providers;
 
 /// <summary>
-/// Identifies all rapidly detectable problems with the configurations of Data Export items
+///     Identifies all rapidly detectable problems with the configurations of Data Export items
 /// </summary>
 public class DataExportProblemProvider : ProblemProvider
 {
     private DataExportChildProvider _exportChildProvider;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override void RefreshProblems(ICoreChildProvider childProvider)
     {
         _exportChildProvider = childProvider as DataExportChildProvider;
     }
 
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     protected override string DescribeProblemImpl(object o)
     {
         return o switch
@@ -41,10 +41,12 @@ public class DataExportProblemProvider : ProblemProvider
         };
     }
 
-    private string DescribeProblem(ExternalCohortTable externalCohortTable) =>
-        _exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable)
+    private string DescribeProblem(ExternalCohortTable externalCohortTable)
+    {
+        return _exportChildProvider != null && _exportChildProvider.ForbidListedSources.Contains(externalCohortTable)
             ? "Cohort Source database was unreachable"
             : null;
+    }
 
     private string DescribeProblem(ExtractionConfiguration extractionConfiguration)
     {
@@ -77,15 +79,20 @@ public class DataExportProblemProvider : ProblemProvider
         return null;
     }
 
-    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode) =>
-        _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
+    private string DescribeProblem(ProjectSavedCohortsNode projectSavedCohortsNode)
+    {
+        return _exportChildProvider.ProjectHasNoSavedCohorts(projectSavedCohortsNode.Project)
             ? "Project has no Cohorts. Commit new Cohort(s) from File/Cohort Query Builder to use with this Project's ExtractionConfigurations"
             : null;
+    }
 
 
-    private static string DescribeProblem(ExtractionDirectoryNode edn) => edn.GetDirectoryInfoIfAny() == null
-        ? "No Extraction Directory has been specified"
-        : null;
+    private static string DescribeProblem(ExtractionDirectoryNode edn)
+    {
+        return edn.GetDirectoryInfoIfAny() == null
+            ? "No Extraction Directory has been specified"
+            : null;
+    }
 
     private static string DescribeProblem(Project project)
     {

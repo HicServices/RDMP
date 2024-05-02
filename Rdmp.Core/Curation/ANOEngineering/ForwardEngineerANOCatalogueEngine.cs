@@ -21,12 +21,18 @@ using Rdmp.Core.Sharing.Refactoring;
 namespace Rdmp.Core.Curation.ANOEngineering;
 
 /// <summary>
-/// Creates a new 'anonymous' version of a Catalogue based on a configuration the user has set up in a ForwardEngineerANOCataloguePlanManager.  This involves creating
-/// a new empty data table in the destination database (adjusted to accomodate anonymous datatypes / dropped columns etc), importing the empty table as a new
-/// TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup tables shared join tables etc) the engine
-/// supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist in the destination database).
-/// 
-/// <para>Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old table into the new table.</para>
+///     Creates a new 'anonymous' version of a Catalogue based on a configuration the user has set up in a
+///     ForwardEngineerANOCataloguePlanManager.  This involves creating
+///     a new empty data table in the destination database (adjusted to accomodate anonymous datatypes / dropped columns
+///     etc), importing the empty table as a new
+///     TableInfo(s) and creating a new Catalogue entry.  Since Catalogues can have multiple underlying tables (e.g. lookup
+///     tables shared join tables etc) the engine
+///     supports migrating only a subset of tables across (the remaining tables must have already been migrated and exist
+///     in the destination database).
+///     <para>
+///         Finally the engine creates a LoadMetadata which when run will migrate (copy) the data from the old table into
+///         the new table.
+///     </para>
 /// </summary>
 public class ForwardEngineerANOCatalogueEngine
 {
@@ -39,9 +45,9 @@ public class ForwardEngineerANOCatalogueEngine
     public Dictionary<ITableInfo, QueryBuilder> SelectSQLForMigrations = new();
     public Dictionary<PreLoadDiscardedColumn, IDilutionOperation> DilutionOperationsForMigrations = new();
 
-    private ShareManager _shareManager;
+    private readonly ShareManager _shareManager;
 
-    private ColumnInfo[] _allColumnsInfos;
+    private readonly ColumnInfo[] _allColumnsInfos;
 
     public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         ForwardEngineerANOCataloguePlanManager planManager)
@@ -66,8 +72,8 @@ public class ForwardEngineerANOCatalogueEngine
                 //for each skipped table
                 foreach (var skippedTable in _planManager.SkippedTables)
                     //we might have to refactor or port JoinInfos to these tables so we should establish what the parenthood of them was
-                    foreach (var columnInfo in skippedTable.ColumnInfos)
-                        GetNewColumnInfoForOld(columnInfo, true);
+                foreach (var columnInfo in skippedTable.ColumnInfos)
+                    GetNewColumnInfoForOld(columnInfo, true);
 
                 //for each table that isn't being skipped
                 foreach (var oldTableInfo in _planManager.TableInfos.Except(_planManager.SkippedTables))
@@ -98,8 +104,8 @@ public class ForwardEngineerANOCatalogueEngine
 
                             columnsToCreate.Add(
                                 new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(),
-                                    !columnInfo.IsPrimaryKey)
-                                { IsPrimaryKey = columnInfo.IsPrimaryKey });
+                                        !columnInfo.IsPrimaryKey)
+                                    { IsPrimaryKey = columnInfo.IsPrimaryKey });
                         }
                     }
 
@@ -219,7 +225,7 @@ public class ForwardEngineerANOCatalogueEngine
 
                             //do a refactor on the old column name for the new column name
                             SelectSQLRefactorer.RefactorColumnName(newExtractionInformation, oldColumnInfo,
-                                newColumnInfo.Name, true);
+                                newColumnInfo.Name);
 
                             //also refactor any other column names that might be referenced by the transform SQL e.g. it could be a combo column name where forename + surname is the value of the ExtractionInformation
                             foreach (var kvpOtherCols in _parenthoodDictionary.Where(kvp => kvp.Key is ColumnInfo))
@@ -341,7 +347,8 @@ public class ForwardEngineerANOCatalogueEngine
     }
 
     /// <summary>
-    /// Returns the newly created / already existing NEW ANO column info when passed the old (identifiable original) ColumnInfo
+    ///     Returns the newly created / already existing NEW ANO column info when passed the old (identifiable original)
+    ///     ColumnInfo
     /// </summary>
     /// <param name="col"></param>
     /// <param name="isOptional"></param>
@@ -372,9 +379,11 @@ public class ForwardEngineerANOCatalogueEngine
     }
 
     /// <summary>
-    /// Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part of migrating another Catalogue.  We are
-    /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced
-    /// duplicate references to the same TableInfo/ColumnInfos.
+    ///     Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part
+    ///     of migrating another Catalogue.  We are
+    ///     now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since
+    ///     deleted the reference or worse introduced
+    ///     duplicate references to the same TableInfo/ColumnInfos.
     /// </summary>
     /// <param name="syntaxHelper"></param>
     /// <param name="col"></param>
@@ -442,7 +451,8 @@ public class ForwardEngineerANOCatalogueEngine
                 $"Found '{columns.Length}' ColumnInfos called '{expectedNewNames.First()}'{(failedANOToo ? $" (Or 'ANO{expectedName}')" : "")}");
     }
 
-    private Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new();
+    private readonly Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable> _parenthoodDictionary =
+        new();
 
 
     private void AuditParenthood(IMapsDirectlyToDatabaseTable parent, IMapsDirectlyToDatabaseTable child)

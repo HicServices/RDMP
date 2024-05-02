@@ -13,8 +13,8 @@ using Rdmp.Core.Repositories.Construction;
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-/// Clears the <see cref="DataExportChildProvider.ForbidListedSources"/> list and triggers a refresh
-/// which results in all previously broken cohort sources to be re-evaluated for existence
+///     Clears the <see cref="DataExportChildProvider.ForbidListedSources" /> list and triggers a refresh
+///     which results in all previously broken cohort sources to be re-evaluated for existence
 /// </summary>
 public class ExecuteCommandRefreshBrokenCohorts : BasicCommandExecution
 {

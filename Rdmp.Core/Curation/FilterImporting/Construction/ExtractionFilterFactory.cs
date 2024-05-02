@@ -11,8 +11,9 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.FilterImporting.Construction;
 
 /// <summary>
-/// Constructs IFilters etc for main Catalogue database filter (ExtractionFilter).  These are the master filters which are copied out as needed for cohort identification,
-/// extraction etc and therefore do not have any IContainer type (AND/OR).
+///     Constructs IFilters etc for main Catalogue database filter (ExtractionFilter).  These are the master filters which
+///     are copied out as needed for cohort identification,
+///     extraction etc and therefore do not have any IContainer type (AND/OR).
 /// </summary>
 public class ExtractionFilterFactory : IFilterFactory
 {
@@ -20,8 +21,9 @@ public class ExtractionFilterFactory : IFilterFactory
     private readonly ExtractionInformation _extractionInformation;
 
     /// <summary>
-    /// Prepares to create master extraction filters at <see cref="Catalogue"/> level which can be reused in cohort generation, project extractions etc.  Filters created
-    /// will be stored under the specific <paramref name="extractionInformation"/> (extractable column) provided.
+    ///     Prepares to create master extraction filters at <see cref="Catalogue" /> level which can be reused in cohort
+    ///     generation, project extractions etc.  Filters created
+    ///     will be stored under the specific <paramref name="extractionInformation" /> (extractable column) provided.
     /// </summary>
     /// <param name="extractionInformation"></param>
     public ExtractionFilterFactory(ExtractionInformation extractionInformation)
@@ -30,19 +32,32 @@ public class ExtractionFilterFactory : IFilterFactory
         _extractionInformation = extractionInformation;
     }
 
-    /// <inheritdoc/>
-    public IFilter CreateNewFilter(string name) => new ExtractionFilter(_repository, name, _extractionInformation);
+    /// <inheritdoc />
+    public IFilter CreateNewFilter(string name)
+    {
+        return new ExtractionFilter(_repository, name, _extractionInformation);
+    }
 
-    /// <inheritdoc/>
-    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL) =>
-        new ExtractionFilterParameter(_repository, parameterSQL, (ExtractionFilter)filter);
+    /// <inheritdoc />
+    public ISqlParameter CreateNewParameter(IFilter filter, string parameterSQL)
+    {
+        return new ExtractionFilterParameter(_repository, parameterSQL, (ExtractionFilter)filter);
+    }
 
-    /// <inheritdoc/>
-    public Type GetRootOwnerType() => typeof(ExtractionInformation);
+    /// <inheritdoc />
+    public Type GetRootOwnerType()
+    {
+        return typeof(ExtractionInformation);
+    }
 
-    /// <inheritdoc/>
-    public Type GetIContainerTypeIfAny() => null;
+    /// <inheritdoc />
+    public Type GetIContainerTypeIfAny()
+    {
+        return null;
+    }
 
-    public IContainer CreateNewContainer() =>
+    public IContainer CreateNewContainer()
+    {
         throw new NotSupportedException("Catalogue level master filters do not support IContainers");
+    }
 }

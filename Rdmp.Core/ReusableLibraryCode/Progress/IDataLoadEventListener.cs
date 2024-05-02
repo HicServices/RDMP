@@ -7,10 +7,11 @@
 namespace Rdmp.Core.ReusableLibraryCode.Progress;
 
 /// <summary>
-/// Event handler for progress updates and one off notifications.  This can include errors (ProgressEventType.Error), warnings and information.  Progress
-/// events are incremental messages in which a numerical count increases (possibly to a known maximum) e.g. 'loaded 300 records out of 2000'.
-/// 
-/// <para>It is valid to respond to OnNotify with ProgressEventType.Error (or even Warning) by throwing an Exception.</para>
+///     Event handler for progress updates and one off notifications.  This can include errors (ProgressEventType.Error),
+///     warnings and information.  Progress
+///     events are incremental messages in which a numerical count increases (possibly to a known maximum) e.g. 'loaded 300
+///     records out of 2000'.
+///     <para>It is valid to respond to OnNotify with ProgressEventType.Error (or even Warning) by throwing an Exception.</para>
 /// </summary>
 public interface IDataLoadEventListener
 {

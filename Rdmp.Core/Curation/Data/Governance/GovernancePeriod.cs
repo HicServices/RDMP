@@ -18,20 +18,28 @@ using Rdmp.Core.Ticketing;
 namespace Rdmp.Core.Curation.Data.Governance;
 
 /// <summary>
-/// A GovernancePeriod is used to track the fact that a given set of datasets requires external approval for your agency to hold.  This is not the same as releasing data
-/// to researchers or researcher approval to get specific extracts from you.  Governance Periods are concerned only with your agency and its ability to hold datasets.  A
-/// GovernancePeriod starts at a specific date and can optionally expire.  A GovernancePeriod relates to one or more Catalogues but Catalogues can have multiple GovernancePeriods
-/// e.g. if you require to get approval from 2 different external agencies to hold a specific dataset.
-/// 
-/// <para>GovernancePeriods are entirely optional, you can happily get by without configuring any for any of your Catalogues.  However once you have configured a GovernancePeriod for a
-/// specific Catalogue once then it will always require governance and be reported as Governance Expired in the Dashboard once its GovernancePeriod has expired.</para>
-/// 
-/// <para>The correct usage of GovernancePeriods is to never delete them e.g. your dataset MyDataset1 would have Governacne 2001-2002 (with attachment
-/// letters of approval) and another one for 2003-2004 and another from 2005 onwards etc.</para>
+///     A GovernancePeriod is used to track the fact that a given set of datasets requires external approval for your
+///     agency to hold.  This is not the same as releasing data
+///     to researchers or researcher approval to get specific extracts from you.  Governance Periods are concerned only
+///     with your agency and its ability to hold datasets.  A
+///     GovernancePeriod starts at a specific date and can optionally expire.  A GovernancePeriod relates to one or more
+///     Catalogues but Catalogues can have multiple GovernancePeriods
+///     e.g. if you require to get approval from 2 different external agencies to hold a specific dataset.
+///     <para>
+///         GovernancePeriods are entirely optional, you can happily get by without configuring any for any of your
+///         Catalogues.  However once you have configured a GovernancePeriod for a
+///         specific Catalogue once then it will always require governance and be reported as Governance Expired in the
+///         Dashboard once its GovernancePeriod has expired.
+///     </para>
+///     <para>
+///         The correct usage of GovernancePeriods is to never delete them e.g. your dataset MyDataset1 would have
+///         Governacne 2001-2002 (with attachment
+///         letters of approval) and another one for 2003-2004 and another from 2005 onwards etc.
+///     </para>
 /// </summary>
 public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
 {
-    private IGovernanceManager _manager;
+    private readonly IGovernanceManager _manager;
 
     #region Database Properties
 
@@ -43,7 +51,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
 
 
     /// <summary>
-    /// When did the governance come into effect (in realtime not dataset time)
+    ///     When did the governance come into effect (in realtime not dataset time)
     /// </summary>
     public DateTime StartDate
     {
@@ -52,7 +60,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// Does governane for the described datasets ever expire (e.g. if you need to get annual approval for holding datasets)
+    ///     Does governane for the described datasets ever expire (e.g. if you need to get annual approval for holding
+    ///     datasets)
     /// </summary>
     public DateTime? EndDate
     {
@@ -60,7 +69,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
         set => SetField(ref _endDate, value);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     [Unique]
     [NotNull]
     public string Name
@@ -70,7 +79,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// Who gave the governance and what it covers in human readable broad terms
+    ///     Who gave the governance and what it covers in human readable broad terms
     /// </summary>
     public string Description
     {
@@ -79,7 +88,7 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// <see cref="ITicketingSystem"/> ticket number for tracking effort / progress towards obtaining the governance
+    ///     <see cref="ITicketingSystem" /> ticket number for tracking effort / progress towards obtaining the governance
     /// </summary>
     public string Ticket
     {
@@ -92,15 +101,16 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     #region Relationships
 
     /// <summary>
-    /// All documents (emails sent, pdfs, letters of permission etc) that were involved in obtaining and which grant permission to hold the datasets described by the
-    /// <see cref="GovernancePeriod"/>
+    ///     All documents (emails sent, pdfs, letters of permission etc) that were involved in obtaining and which grant
+    ///     permission to hold the datasets described by the
+    ///     <see cref="GovernancePeriod" />
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<GovernanceDocument> GovernanceDocuments =>
         Repository.GetAllObjectsWithParent<GovernanceDocument>(this);
 
     /// <summary>
-    /// All datasets to which this governance grants permission to hold
+    ///     All datasets to which this governance grants permission to hold
     /// </summary>
     [NoMappingToDatabase]
     public IEnumerable<ICatalogue> GovernedCatalogues => _manager.GetAllGovernedCatalogues(this);
@@ -112,7 +122,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// Creates a new <see cref="GovernancePeriod"/> in the database.  This grants (ethical) permission to hold datasets referenced by <see cref="GovernedCatalogues"/>.
+    ///     Creates a new <see cref="GovernancePeriod" /> in the database.  This grants (ethical) permission to hold datasets
+    ///     referenced by <see cref="GovernedCatalogues" />.
     /// </summary>
     /// <param name="repository"></param>
     /// <param name="name"></param>
@@ -142,11 +153,14 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
         _manager = CatalogueRepository.GovernanceManager;
     }
 
-    /// <inheritdoc/>
-    public override string ToString() => Name;
+    /// <inheritdoc />
+    public override string ToString()
+    {
+        return Name;
+    }
 
     /// <summary>
-    /// Checks that the governance has not expired before it began etc
+    ///     Checks that the governance has not expired before it began etc
     /// </summary>
     /// <param name="notifier"></param>
     public void Check(ICheckNotifier notifier)
@@ -166,7 +180,8 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// Marks the given <see cref="Catalogue"/> as no longer requiring governance approval from this <see cref="GovernancePeriod"/>.
+    ///     Marks the given <see cref="Catalogue" /> as no longer requiring governance approval from this
+    ///     <see cref="GovernancePeriod" />.
     /// </summary>
     /// <param name="c"></param>
     public void DeleteGovernanceRelationshipTo(ICatalogue c)
@@ -175,11 +190,15 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// Declares that the given <see cref="Catalogue"/> requires governance to hold and that this <see cref="GovernancePeriod"/> describes the specifics
-    /// as well as any <see cref="EndDate"/> to the governance.
-    /// 
-    /// <para>A <see cref="Catalogue"/> belonging to 0 <see cref="GovernancePeriod"/> is not assumed to require any governance.  A <see cref="Catalogue"/> can
-    /// belong to multiple <see cref="GovernancePeriod"/> e.g. 'Tayside Governance 2001', 'Tayside Governance 2002' etc</para>
+    ///     Declares that the given <see cref="Catalogue" /> requires governance to hold and that this
+    ///     <see cref="GovernancePeriod" /> describes the specifics
+    ///     as well as any <see cref="EndDate" /> to the governance.
+    ///     <para>
+    ///         A <see cref="Catalogue" /> belonging to 0 <see cref="GovernancePeriod" /> is not assumed to require any
+    ///         governance.  A <see cref="Catalogue" /> can
+    ///         belong to multiple <see cref="GovernancePeriod" /> e.g. 'Tayside Governance 2001', 'Tayside Governance 2002'
+    ///         etc
+    ///     </para>
     /// </summary>
     /// <param name="c"></param>
     public void CreateGovernanceRelationshipTo(ICatalogue c)
@@ -188,8 +207,11 @@ public class GovernancePeriod : DatabaseEntity, ICheckable, INamed
     }
 
     /// <summary>
-    /// True if the current date is after the <see cref="EndDate"/> (if there is one)
+    ///     True if the current date is after the <see cref="EndDate" /> (if there is one)
     /// </summary>
     /// <returns></returns>
-    public bool IsExpired() => EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
+    public bool IsExpired()
+    {
+        return EndDate != null && DateTime.Now.Date > EndDate.Value.Date;
+    }
 }

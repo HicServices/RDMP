@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
@@ -15,12 +16,12 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using System.Text.Json;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 /// <summary>
-/// RuntimeTask that executes a single .bak file specified by the user in a ProcessTask with ProcessTaskType SQLBakFile.
+///     RuntimeTask that executes a single .bak file specified by the user in a ProcessTask with ProcessTaskType
+///     SQLBakFile.
 /// </summary>
 public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
 {
@@ -56,14 +57,15 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
         using var con = (SqlConnection)db.Server.GetConnection();
         using (var cmd = new SqlCommand(fileOnlyCommand, con))
         using (var da = new SqlDataAdapter(cmd))
+        {
             da.Fill(fileInfo);
+        }
+
         var primaryFiles = fileInfo.Select("Type = 'D'");
         var logFiles = fileInfo.Select("Type = 'L'");
         if (primaryFiles.Length != 1 || logFiles.Length != 1)
-        {
             //Something has gone wrong
             return ExitCodeType.Error;
-        }
 
 
         var primaryFile = primaryFiles[0];
@@ -104,7 +106,10 @@ public class ExecuteSqlBakFileRuntimeTask : RuntimeTask
     }
 
 
-    public override bool Exists() => File.Exists(Filepath);
+    public override bool Exists()
+    {
+        return File.Exists(Filepath);
+    }
 
     public override void Abort(IDataLoadEventListener postLoadEventListener)
     {

@@ -10,11 +10,11 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IFilter"/>
+///     <see cref="ICombineToMakeCommand" /> for an object of type <see cref="IFilter" />
 /// </summary>
 public class FilterCombineable : ICombineToMakeCommand
 {
-    public IFilter Filter { get; private set; }
+    public IFilter Filter { get; }
 
     public IContainer ImmediateContainerIfAny { get; private set; }
     public IContainer RootContainerIfAny { get; private set; }
@@ -22,7 +22,7 @@ public class FilterCombineable : ICombineToMakeCommand
     public Catalogue SourceCatalogueIfAny { get; private set; }
 
     /// <summary>
-    /// All the containers that are in the current filter tree (includes the Root).
+    ///     All the containers that are in the current filter tree (includes the Root).
     /// </summary>
     public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; }
 
@@ -52,5 +52,8 @@ public class FilterCombineable : ICombineToMakeCommand
     }
 
 
-    public string GetSqlString() => Filter.WhereSQL;
+    public string GetSqlString()
+    {
+        return Filter.WhereSQL;
+    }
 }

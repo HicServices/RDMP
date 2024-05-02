@@ -8,7 +8,7 @@
 namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 /// <summary>
-/// Abstract base for plugin developers to write new <see cref="PredictionRule"/> for the data quality engine
+///     Abstract base for plugin developers to write new <see cref="PredictionRule" /> for the data quality engine
 /// </summary>
 public abstract class PluginPredictionRule : PredictionRule
 {

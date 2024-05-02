@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
+using NLog;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -30,20 +31,22 @@ using Spectre.Console;
 namespace Rdmp.Core.CommandLine.Interactive;
 
 /// <summary>
-/// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification but is <see cref="IsInteractive"/>=false and throws <see cref="InputDisallowedException"/> on any attempt to illicit user feedback
+///     Implementation of <see cref="IBasicActivateItems" /> that handles object selection and message notification but is
+///     <see cref="IsInteractive" />=false and throws <see cref="InputDisallowedException" /> on any attempt to illicit
+///     user feedback
 /// </summary>
 public class ConsoleInputManager : BasicActivateItems
 {
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public override bool IsInteractive => !DisallowInput;
 
     /// <summary>
-    /// Set to true to throw on any blocking input methods (e.g. <see cref="TypeText"/>)
+    ///     Set to true to throw on any blocking input methods (e.g. <see cref="TypeText" />)
     /// </summary>
     public bool DisallowInput { get; set; }
 
     /// <summary>
-    /// Creates a new instance connected to the provided RDMP platform databases
+    ///     Creates a new instance connected to the provided RDMP platform databases
     /// </summary>
     /// <param name="repositoryLocator">The databases to connect to</param>
     /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
@@ -142,8 +145,7 @@ public class ConsoleInputManager : BasicActivateItems
     public override IMapsDirectlyToDatabaseTable[] SelectMany(DialogArgs args, Type arrayElementType,
         IMapsDirectlyToDatabaseTable[] availableObjects)
     {
-        var value = ReadLineWithAuto(args, new PickObjectBase[]
-            { new PickObjectByID(this), new PickObjectByName(this) });
+        var value = ReadLineWithAuto(args, new PickObjectByID(this), new PickObjectByName(this));
 
         var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
@@ -154,12 +156,12 @@ public class ConsoleInputManager : BasicActivateItems
     }
 
     /// <summary>
-    /// Displays the text described in the prompt theming <paramref name="args"/>
+    ///     Displays the text described in the prompt theming <paramref name="args" />
     /// </summary>
     /// <param name="args"></param>
     /// <param name="entryLabel"></param>
     /// <param name="pickers"></param>
-    /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput"/> is true</exception>
+    /// <exception cref="InputDisallowedException">Thrown if <see cref="DisallowInput" /> is true</exception>
     private string GetPromptFor(DialogArgs args, bool entryLabel = true, params PickObjectBase[] pickers)
     {
         if (DisallowInput)
@@ -191,7 +193,7 @@ public class ConsoleInputManager : BasicActivateItems
             if (picker.Examples.Any())
             {
                 sb.AppendLine();
-                sb.Append($"Examples:");
+                sb.Append("Examples:");
                 foreach (var example in picker.Examples)
                 {
                     sb.AppendLine();
@@ -225,8 +227,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         Console.Write(args.EntryLabel);
 
-        var value = ReadLineWithAuto(args, new PickObjectBase[]
-            { new PickObjectByID(this), new PickObjectByName(this) });
+        var value = ReadLineWithAuto(args, new PickObjectByID(this), new PickObjectByName(this));
 
         var chosen = value.DatabaseEntities?.SingleOrDefault();
 
@@ -276,7 +277,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{prompt}'");
 
-        var result = AnsiConsole.Prompt<string>(
+        var result = AnsiConsole.Prompt(
             new TextPrompt<string>(
                     GetPromptFor(new DialogArgs
                     {
@@ -288,16 +289,19 @@ public class ConsoleInputManager : BasicActivateItems
         return result.IsBasicallyNull() ? null : new DirectoryInfo(result);
     }
 
-    public override FileInfo SelectFile(string prompt) => DisallowInput
-        ? throw new InputDisallowedException($"Value required for '{prompt}'")
-        : SelectFile(prompt, null, null);
+    public override FileInfo SelectFile(string prompt)
+    {
+        return DisallowInput
+            ? throw new InputDisallowedException($"Value required for '{prompt}'")
+            : SelectFile(prompt, null, null);
+    }
 
     public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
     {
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{prompt}'");
 
-        var result = AnsiConsole.Prompt<string>(
+        var result = AnsiConsole.Prompt(
             new TextPrompt<string>(
                     GetPromptFor(new DialogArgs
                     {
@@ -314,7 +318,7 @@ public class ConsoleInputManager : BasicActivateItems
         if (DisallowInput)
             throw new InputDisallowedException($"Value required for '{prompt}'");
 
-        var file = AnsiConsole.Prompt<string>(
+        var file = AnsiConsole.Prompt(
             new TextPrompt<string>(
                     GetPromptFor(new DialogArgs
                     {
@@ -384,7 +388,7 @@ public class ConsoleInputManager : BasicActivateItems
 
         var sql = collection.GetSql();
 
-        var logger = NLog.LogManager.GetCurrentClassLogger();
+        var logger = LogManager.GetCurrentClassLogger();
         logger.Trace($"About to ShowData from Query:{Environment.NewLine}{sql}");
 
         var toRun = new ExtractTableVerbatim(db.Server, sql, Console.OpenStandardOutput(), ",", null);

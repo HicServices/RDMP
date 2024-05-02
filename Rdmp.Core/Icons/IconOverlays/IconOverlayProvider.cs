@@ -25,23 +25,34 @@ public static class IconOverlayProvider
 
     private static readonly EnumImageCollection<OverlayKind> Images = new(Overlays.ResourceManager);
 
-    public static Image<Rgba32> GetOverlay(Image<Rgba32> forImage, OverlayKind overlayKind) =>
-        Cache.GetOrAdd((forImage, overlayKind), _ => GetOverlayNoCache(forImage, overlayKind));
+    public static Image<Rgba32> GetOverlay(Image<Rgba32> forImage, OverlayKind overlayKind)
+    {
+        return Cache.GetOrAdd((forImage, overlayKind), _ => GetOverlayNoCache(forImage, overlayKind));
+    }
 
-    public static Image<Rgba32> GetOverlay(Image<Rgba32> forImage, Image<Rgba32> customOverlay) =>
-        ResultCacheCustom.GetOrAdd((forImage, customOverlay),
-            _ => forImage.Clone<Rgba32>(x => x.DrawImage(customOverlay, 1.0f)));
+    public static Image<Rgba32> GetOverlay(Image<Rgba32> forImage, Image<Rgba32> customOverlay)
+    {
+        return ResultCacheCustom.GetOrAdd((forImage, customOverlay),
+            _ => forImage.Clone(x => x.DrawImage(customOverlay, 1.0f)));
+    }
 
-    public static Image<Rgba32> GetGreyscale(Image<Rgba32> forImage) =>
-        GreyscaleCache.GetOrAdd(forImage, MakeGreyscale);
+    public static Image<Rgba32> GetGreyscale(Image<Rgba32> forImage)
+    {
+        return GreyscaleCache.GetOrAdd(forImage, MakeGreyscale);
+    }
 
     /// <summary>
-    /// Use ImageSharp's greyscale converter
+    ///     Use ImageSharp's greyscale converter
     /// </summary>
     /// <param name="original"></param>
     /// <returns></returns>
-    private static Image<Rgba32> MakeGreyscale(Image<Rgba32> original) => original.Clone(static x => x.Grayscale());
+    private static Image<Rgba32> MakeGreyscale(Image<Rgba32> original)
+    {
+        return original.Clone(static x => x.Grayscale());
+    }
 
-    public static Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind) =>
-        forImage.Clone<Rgba32>(x => x.DrawImage(Images[overlayKind], 1.0f));
+    public static Image<Rgba32> GetOverlayNoCache(Image<Rgba32> forImage, OverlayKind overlayKind)
+    {
+        return forImage.Clone(x => x.DrawImage(Images[overlayKind], 1.0f));
+    }
 }

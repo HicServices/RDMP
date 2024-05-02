@@ -23,10 +23,13 @@ using Rdmp.Core.Sharing.Refactoring;
 namespace Rdmp.Core.Curation.ANOEngineering;
 
 /// <summary>
-/// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions
-/// etc to apply to which columns, which TableInfos are to be mirated etc.  Also stores whether the LoadMetadata that is to be created should be a single one off
-/// load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the source table to be migrated in one go - e.g.
-/// tens of millions of records).
+///     Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class
+///     stores which anonymisation transforms/dilutions
+///     etc to apply to which columns, which TableInfos are to be mirated etc.  Also stores whether the LoadMetadata that
+///     is to be created should be a single one off
+///     load or should load in date based batches (e.g. 1 year at a time - use this option if you have too much data in the
+///     source table to be migrated in one go - e.g.
+///     tens of millions of records).
 /// </summary>
 public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstructorFinishedCallback
 {
@@ -47,7 +50,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
     public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new();
 
-    [JsonIgnore] public List<IDilutionOperation> DilutionOperations { get; private set; }
+    [JsonIgnore] public List<IDilutionOperation> DilutionOperations { get; }
 
     public ITableInfo[] TableInfos { get; private set; }
 
@@ -60,8 +63,9 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     private ICatalogue _catalogue;
 
     /// <summary>
-    /// This constructor is primarily intended for deserialization via <see cref="JsonConvertExtensions.DeserializeObject"/>.  You should
-    /// instead use the overload.
+    ///     This constructor is primarily intended for deserialization via
+    ///     <see cref="JsonConvertExtensions.DeserializeObject" />.  You should
+    ///     instead use the overload.
     /// </summary>
     public ForwardEngineerANOCataloguePlanManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
     {
@@ -82,13 +86,17 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
             plan.SetToRecommendedPlan();
     }
 
-    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col) =>
-        !Plans.TryGetValue(col, out var anoPlan)
+    public ColumnInfoANOPlan GetPlanForColumnInfo(ColumnInfo col)
+    {
+        return !Plans.TryGetValue(col, out var anoPlan)
             ? throw new Exception($"No plan found for column {col}")
-        : anoPlan;
+            : anoPlan;
+    }
 
-    public IExternalDatabaseServer GetIdentifierDumpServer() =>
-        Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+    public IExternalDatabaseServer GetIdentifierDumpServer()
+    {
+        return Catalogue.CatalogueRepository.GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+    }
 
 
     public void Check(ICheckNotifier notifier)
@@ -218,7 +226,7 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
     }
 
     /// <summary>
-    /// Re checks the TableInfos associated with the Catalogue incase some have changed
+    ///     Re checks the TableInfos associated with the Catalogue incase some have changed
     /// </summary>
     public void RefreshTableInfos()
     {
@@ -226,9 +234,9 @@ public class ForwardEngineerANOCataloguePlanManager : ICheckable, IPickAnyConstr
 
         //generate plans for novel ColumnInfos
         foreach (TableInfo tableInfo in TableInfos)
-            foreach (var columnInfo in tableInfo.ColumnInfos)
-                if (!Plans.ContainsKey(columnInfo))
-                    Plans.Add(columnInfo, new ColumnInfoANOPlan(columnInfo));
+        foreach (var columnInfo in tableInfo.ColumnInfos)
+            if (!Plans.ContainsKey(columnInfo))
+                Plans.Add(columnInfo, new ColumnInfoANOPlan(columnInfo));
 
 
         //Remove unplanned columns

@@ -19,7 +19,7 @@ using TypeGuesser;
 namespace Rdmp.Core.Curation.ANOEngineering;
 
 /// <summary>
-/// Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)
+///     Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)
 /// </summary>
 public class ColumnInfoANOPlan : ICheckable
 {
@@ -83,7 +83,7 @@ public class ColumnInfoANOPlan : ICheckable
         ColumnInfo.IsPrimaryKey;
 
     /// <summary>
-    /// Json deserialization constructor <see cref="PickAnyConstructorJsonConverter"/>
+    ///     Json deserialization constructor <see cref="PickAnyConstructorJsonConverter" />
     /// </summary>
     public ColumnInfoANOPlan(ColumnInfo columnInfo)
     {
@@ -91,8 +91,9 @@ public class ColumnInfoANOPlan : ICheckable
     }
 
     /// <summary>
-    /// Make up ANOTable plans based on existing ANOTable/column usages.  For example if the column chi is being migrated and there is at least one column
-    /// called chi or ANOchi already existing (probably from another table) then we should suggest using ANOTable ANOchi.
+    ///     Make up ANOTable plans based on existing ANOTable/column usages.  For example if the column chi is being migrated
+    ///     and there is at least one column
+    ///     called chi or ANOchi already existing (probably from another table) then we should suggest using ANOTable ANOchi.
     /// </summary>
     /// <returns></returns>
     internal void Initialize(ExtractionInformation[] allExtractionInformations, CatalogueItem[] allCatalogueItems,

@@ -13,14 +13,15 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T"/> e.g.
-/// Catalogue folders.  <see cref="FolderNode{T}"/> objects are typically created through <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})"/>
-/// dynamically based on the current <see cref="IHasFolder.Folder"/> strings.
+///     A virtual folder that can have subdirectories and stores ojbects of type <typeparamref name="T" /> e.g.
+///     Catalogue folders.  <see cref="FolderNode{T}" /> objects are typically created through
+///     <see cref="FolderHelper.BuildFolderTree{T}(T[], FolderNode{T})" />
+///     dynamically based on the current <see cref="IHasFolder.Folder" /> strings.
 /// </summary>
 /// <typeparam name="T"></typeparam>
 public class
     FolderNode<T> : IFolderNode,
-        IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
+    IOrderable /*Orderable interface ensures that folders always appear before datasets in tree*/
     where T : class, IHasFolder
 {
     public string Name { get; set; }
@@ -53,14 +54,10 @@ public class
 
         while (p != null)
         {
-            if(p.Name.Equals(FolderHelper.Root))
-            {
+            if (p.Name.Equals(FolderHelper.Root))
                 sb.Insert(0, p.Name);
-            }
             else
-            {
                 sb.Insert(0, $"{p.Name}\\");
-            }
 
             p = p.Parent;
         }
@@ -76,11 +73,19 @@ public class
                ?? throw new ArgumentOutOfRangeException($"Could not find a child folder with the key '{key}'");
     }
 
-    public override string ToString() => Name;
+    public override string ToString()
+    {
+        return Name;
+    }
 
-    public override bool Equals(object obj) =>
-        obj is FolderNode<T> node &&
-        FullName == node.FullName;
+    public override bool Equals(object obj)
+    {
+        return obj is FolderNode<T> node &&
+               FullName == node.FullName;
+    }
 
-    public override int GetHashCode() => HashCode.Combine(FullName);
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(FullName);
+    }
 }

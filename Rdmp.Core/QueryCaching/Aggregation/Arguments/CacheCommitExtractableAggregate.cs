@@ -13,11 +13,11 @@ using Rdmp.Core.Curation.Data.Aggregation;
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
 /// <summary>
-/// Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g. 'number of records per year in
-/// Biochemistry by healthboard').  Should not contain patient identifiers.
-/// 
-/// <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
-///</summary>
+///     Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g.
+///     'number of records per year in
+///     Biochemistry by healthboard').  Should not contain patient identifiers.
+///     <para>Serves as an input to CachedAggregateConfigurationResultsManager.</para>
+/// </summary>
 public class CacheCommitExtractableAggregate : CacheCommitArguments
 {
     public CacheCommitExtractableAggregate(AggregateConfiguration configuration, string sql, DataTable results,

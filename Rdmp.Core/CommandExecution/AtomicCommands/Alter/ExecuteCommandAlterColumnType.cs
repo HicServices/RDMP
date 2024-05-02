@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 
 /// <summary>
-/// Changes the datatype of the database column in the live database
+///     Changes the datatype of the database column in the live database
 /// </summary>
 public class ExecuteCommandAlterColumnType : BasicCommandExecution
 {
@@ -39,7 +39,7 @@ public class ExecuteCommandAlterColumnType : BasicCommandExecution
         var oldSqlType = fansiType.SQLType;
         var newSqlType = _datatype;
 
-        if (newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType, false))
+        if (newSqlType == null && !TypeText("New Data Type", "Type", 50, oldSqlType, out newSqlType))
             return;
 
         if (string.IsNullOrWhiteSpace(newSqlType))

@@ -7,7 +7,7 @@
 namespace Rdmp.Core.Curation.Data;
 
 /// <summary>
-/// Non generic interface for <see cref="FolderNode{T}"/>
+///     Non generic interface for <see cref="FolderNode{T}" />
 /// </summary>
 public interface IFolderNode
 {

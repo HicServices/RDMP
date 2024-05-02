@@ -15,7 +15,7 @@ namespace Rdmp.Core.ReusableLibraryCode.Extensions;
 public static class DataTableExtensions
 {
     /// <summary>
-    /// Formats the data in the <paramref name="dt"/> to CSV format to the given <paramref name="stream"/>
+    ///     Formats the data in the <paramref name="dt" /> to CSV format to the given <paramref name="stream" />
     /// </summary>
     /// <param name="dt"></param>
     /// <param name="stream"></param>

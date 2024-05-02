@@ -10,8 +10,8 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
-/// Defines an alternative name for <see cref="IAtomicCommand"/> that can be used
-/// e.g. "ls" instead of "List"
+///     Defines an alternative name for <see cref="IAtomicCommand" /> that can be used
+///     e.g. "ls" instead of "List"
 /// </summary>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public class AliasAttribute : Attribute

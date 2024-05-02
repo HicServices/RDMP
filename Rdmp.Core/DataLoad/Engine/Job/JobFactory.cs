@@ -14,7 +14,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job;
 
 /// <summary>
-/// Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
+///     Basic IJobFactory for creating an 'OnDemand', one off, self contained (not date based) IDataLoadJob.
 /// </summary>
 public class JobFactory : IJobFactory
 {

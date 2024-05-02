@@ -21,7 +21,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.DataRelease.Pipeline;
 
 /// <summary>
-/// Prepares the Environment and the Source Database for the ReleaseEngine.
+///     Prepares the Environment and the Source Database for the ReleaseEngine.
 /// </summary>
 public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
 {
@@ -211,6 +211,8 @@ public class MsSqlReleaseSource : FixedReleaseSource<ReleaseAudit>
         }
     }
 
-    protected override DirectoryInfo PrepareSourceGlobalFolder() =>
-        _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
+    protected override DirectoryInfo PrepareSourceGlobalFolder()
+    {
+        return _releaseData.ReleaseGlobals ? base.PrepareSourceGlobalFolder() : null;
+    }
 }

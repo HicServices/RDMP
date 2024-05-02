@@ -11,27 +11,27 @@ using System.Linq;
 namespace Rdmp.Core.Curation;
 
 /// <summary>
-/// Basic implementation of ILoadDirectory including support for creating new templates on the file system.
+///     Basic implementation of ILoadDirectory including support for creating new templates on the file system.
 /// </summary>
 public class LoadDirectory : ILoadDirectory
 {
-    /// <inheritdoc/>
-    public DirectoryInfo ForLoading { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo ForLoading { get; }
 
-    /// <inheritdoc/>
-    public DirectoryInfo ForArchiving { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo ForArchiving { get; }
 
-    /// <inheritdoc/>
-    public DirectoryInfo Cache { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo Cache { get; }
 
-    /// <inheritdoc/>
-    public DirectoryInfo RootPath { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo RootPath { get; }
 
-    /// <inheritdoc/>
-    public DirectoryInfo DataPath { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo DataPath { get; }
 
-    /// <inheritdoc/>
-    public DirectoryInfo ExecutablesPath { get; private set; }
+    /// <inheritdoc />
+    public DirectoryInfo ExecutablesPath { get; }
 
 
     internal const string ExampleFixedWidthFormatFileContents = @"From,To,Field,Size,DateFormat
@@ -46,9 +46,12 @@ public class LoadDirectory : ILoadDirectory
 ";
 
     /// <summary>
-    /// Declares that a new directory contains the folder structure required by the DLE.  Throws Exceptions if this folder doesn't exist or isn't set up yet.
-    /// 
-    /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
+    ///     Declares that a new directory contains the folder structure required by the DLE.  Throws Exceptions if this folder
+    ///     doesn't exist or isn't set up yet.
+    ///     <para>
+    ///         Use static method <see cref="CreateDirectoryStructure" /> if you want to create a new folder hierarchy on
+    ///         disk
+    ///     </para>
     /// </summary>
     /// <param name="rootPath"></param>
     public LoadDirectory(string rootPath)
@@ -73,8 +76,10 @@ public class LoadDirectory : ILoadDirectory
         Cache = FindFolderInPath(DataPath, "Cache");
     }
 
-    private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>
-        path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
+    private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName)
+    {
+        return path.EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly).FirstOrDefault();
+    }
 
     private DirectoryInfo FindFolderInPathOrThrow(DirectoryInfo path, string folderName)
     {
@@ -85,11 +90,14 @@ public class LoadDirectory : ILoadDirectory
     }
 
     /// <summary>
-    /// Creates a new directory on disk compatible with <see cref="LoadDirectory"/>.
+    ///     Creates a new directory on disk compatible with <see cref="LoadDirectory" />.
     /// </summary>
     /// <param name="parentDir">Parent folder to create the tree in e.g. c:\temp</param>
     /// <param name="dirName">Root folder name for the DLE e.g. LoadingBiochem</param>
-    /// <param name="overrideExistsCheck">Determines behaviour if the folder already exists and contains files.  True to carry on, False to throw an Exception</param>
+    /// <param name="overrideExistsCheck">
+    ///     Determines behaviour if the folder already exists and contains files.  True to carry
+    ///     on, False to throw an Exception
+    /// </param>
     /// <returns></returns>
     public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName,
         bool overrideExistsCheck = false)

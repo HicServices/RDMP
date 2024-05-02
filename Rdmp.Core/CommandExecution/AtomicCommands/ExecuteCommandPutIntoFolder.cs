@@ -39,8 +39,10 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
         _toMove = toMove;
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        OverrideIcon ?? Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return OverrideIcon ?? Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder);
+    }
 
     public override void Execute()
     {
@@ -59,12 +61,12 @@ public class ExecuteCommandPutIntoFolder : BasicCommandExecution
                 var oldValue = current.Length == 1 ? current[0] : "\\";
 
                 if (!BasicActivator.TypeText(new DialogArgs
-                {
-                    WindowTitle = "Folder",
-                    TaskDescription =
+                    {
+                        WindowTitle = "Folder",
+                        TaskDescription =
                             "Enter a new virtual folder for the object.  Folder names should be lower case and start with a backslash ('\\')",
-                    EntryLabel = "New Folder"
-                }, 500, oldValue, out f, false))
+                        EntryLabel = "New Folder"
+                    }, 500, oldValue, out f, false))
                     return;
             }
             else

@@ -18,33 +18,51 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 namespace Rdmp.Core.QueryBuilding;
 
 /// <summary>
-/// Assembles GROUP BY queries based on the specified IColumns, IContainers, IFilters etc.  There are three main types of query AggregateBuilder can create
-/// 
-/// <para>1. Basic GROUP BY e.g. Select chi,count(chi) from prescribing where LEN(chi) = 10 group by chi HAVING count(chi)> 10</para>
-/// 
-/// <para>2. Calendar Table GROUP BY.  This supports all of the features of 1. but also starts by using dynamic SQL to create a date range table to which the query is
-/// automatically Joined.  This means that you will not get gaps in days where there is no data.  To create one of these you must set AggregateContinuousDateAxis</para>
-/// 
-/// <para>3. Dynamic PIVOT GROUP BY.  This supports all of the features of 2. (it must have an axis) but also generates a dynamic PIVOT column for each unique value found
-/// in the AggregateConfiguration.PivotDimension.  This is (normally) done by running a pre query which includes all the IFilters and IContainers etc so to return the
-/// unique values that will appear in the final query only.  Then the final query is run with a PIVOT command over the column values found.  Since data can be a mile
-/// wide and full of punctuation etc there is an adjustment operation on the values to qualify them as valid column names.</para>
-/// 
-/// <para>AggregateBuilder is cross database compatible.  This is achieved by assembling all the lines it thinks it needs for its query and then passing off the exact
-/// implementation into IAggregateHelper.BuildAggregate.  The implementation of the calendars/dynamic pivots vary wildly by database engine (See MySqlAggregateHelper vs
-/// MicrosoftSQLAggregateHelper).  </para>
-/// 
-/// <para>All IAggregateHelper.BuildAggregate implementations must produce the same result tables for the same column/axis/pivot settings.  This is rigidly enforced by
-/// AggregateDataBasedTests </para>
-/// 
-/// <para>IMPORTANT: AggregateBuilder also powers the cohort identification system (See CohortQueryBuilderHelper) in which case the AggregateConfiguration will have
-/// only a single AggregateDimension (which must be the patient identifier column).</para>
+///     Assembles GROUP BY queries based on the specified IColumns, IContainers, IFilters etc.  There are three main types
+///     of query AggregateBuilder can create
+///     <para>
+///         1. Basic GROUP BY e.g. Select chi,count(chi) from prescribing where LEN(chi) = 10 group by chi HAVING
+///         count(chi)> 10
+///     </para>
+///     <para>
+///         2. Calendar Table GROUP BY.  This supports all of the features of 1. but also starts by using dynamic SQL to
+///         create a date range table to which the query is
+///         automatically Joined.  This means that you will not get gaps in days where there is no data.  To create one of
+///         these you must set AggregateContinuousDateAxis
+///     </para>
+///     <para>
+///         3. Dynamic PIVOT GROUP BY.  This supports all of the features of 2. (it must have an axis) but also generates a
+///         dynamic PIVOT column for each unique value found
+///         in the AggregateConfiguration.PivotDimension.  This is (normally) done by running a pre query which includes
+///         all the IFilters and IContainers etc so to return the
+///         unique values that will appear in the final query only.  Then the final query is run with a PIVOT command over
+///         the column values found.  Since data can be a mile
+///         wide and full of punctuation etc there is an adjustment operation on the values to qualify them as valid column
+///         names.
+///     </para>
+///     <para>
+///         AggregateBuilder is cross database compatible.  This is achieved by assembling all the lines it thinks it needs
+///         for its query and then passing off the exact
+///         implementation into IAggregateHelper.BuildAggregate.  The implementation of the calendars/dynamic pivots vary
+///         wildly by database engine (See MySqlAggregateHelper vs
+///         MicrosoftSQLAggregateHelper).
+///     </para>
+///     <para>
+///         All IAggregateHelper.BuildAggregate implementations must produce the same result tables for the same
+///         column/axis/pivot settings.  This is rigidly enforced by
+///         AggregateDataBasedTests
+///     </para>
+///     <para>
+///         IMPORTANT: AggregateBuilder also powers the cohort identification system (See CohortQueryBuilderHelper) in
+///         which case the AggregateConfiguration will have
+///         only a single AggregateDimension (which must be the patient identifier column).
+///     </para>
 /// </summary>
 public class AggregateBuilder : ISqlQueryBuilder
 {
     private readonly ITableInfo[] _forceJoinsToTheseTables;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public string SQL
     {
         get
@@ -56,17 +74,18 @@ public class AggregateBuilder : ISqlQueryBuilder
         }
     }
 
-    /// <inheritdoc/>
-    public string LimitationSQL { get; private set; }
+    /// <inheritdoc />
+    public string LimitationSQL { get; }
 
 
     /// <summary>
-    /// Text to add as an SQL comment before the SELECT section of the query e.g. "bob" would result in the text /*bob*/ appearing at the top of the SELECT
+    ///     Text to add as an SQL comment before the SELECT section of the query e.g. "bob" would result in the text /*bob*/
+    ///     appearing at the top of the SELECT
     /// </summary>
     public string LabelWithComment { get; set; }
 
 
-    private AggregateCountColumn _countColumn;
+    private readonly AggregateCountColumn _countColumn;
 
     private QueryTimeColumn _pivotDimension;
     private AggregateContinuousDateAxis _axis;
@@ -74,73 +93,79 @@ public class AggregateBuilder : ISqlQueryBuilder
     private bool _isCohortIdentificationAggregate;
 
     /// <summary>
-    /// Optional, SQL to apply a HAVING clause to the GROUP BY query generated
-    /// 
-    /// <para>Do not include the word HAVING in the text since it will automatically be added</para>
-    /// 
-    /// <para>Depending on <see cref="IAggregateBuilderOptions.ShouldBeEnabled"/> this may not be supported for your <see cref="AggregateConfiguration"/></para>
+    ///     Optional, SQL to apply a HAVING clause to the GROUP BY query generated
+    ///     <para>Do not include the word HAVING in the text since it will automatically be added</para>
+    ///     <para>
+    ///         Depending on <see cref="IAggregateBuilderOptions.ShouldBeEnabled" /> this may not be supported for your
+    ///         <see cref="AggregateConfiguration" />
+    ///     </para>
     /// </summary>
     public string HavingSQL { get; set; }
 
     /// <summary>
-    /// Optional, Limit the results returned.
-    /// 
-    /// <para>Depending on <see cref="IAggregateBuilderOptions.ShouldBeEnabled"/> this may not be supported for your <see cref="AggregateConfiguration"/></para>
+    ///     Optional, Limit the results returned.
+    ///     <para>
+    ///         Depending on <see cref="IAggregateBuilderOptions.ShouldBeEnabled" /> this may not be supported for your
+    ///         <see cref="AggregateConfiguration" />
+    ///     </para>
     /// </summary>
     public IAggregateTopX AggregateTopX { get; set; }
 
-    /// <inheritdoc/>
-    public List<QueryTimeColumn> SelectColumns { get; private set; }
+    /// <inheritdoc />
+    public List<QueryTimeColumn> SelectColumns { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<ITableInfo> TablesUsedInQuery { get; private set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<JoinInfo> JoinsUsedInQuery { get; private set; }
 
-    /// <inheritdoc/>
-    public List<CustomLine> CustomLines { get; private set; }
+    /// <inheritdoc />
+    public List<CustomLine> CustomLines { get; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CustomLine TopXCustomLine { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public CustomLine AddCustomLine(string text, QueryComponent positionToInsert)
     {
         SQLOutOfDate = true;
         return SqlQueryBuilderHelper.AddCustomLine(this, text, positionToInsert);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public List<IFilter> Filters { get; private set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public IContainer RootFilterContainer { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool CheckSyntax { get; set; }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public ITableInfo PrimaryExtractionTable { get; private set; }
 
-    /// <inheritdoc/>
-    public ParameterManager ParameterManager { get; private set; }
+    /// <inheritdoc />
+    public ParameterManager ParameterManager { get; }
 
     private string _sql;
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public bool SQLOutOfDate { get; set; }
 
     /// <summary>
-    /// Facilitates injection of <see cref="ISqlParameter"/> from the <see cref="AggregateConfiguration"/> at <see cref="ParameterLevel.QueryLevel"/>
-    /// with consideration for any overriding globals that might already exist
+    ///     Facilitates injection of <see cref="ISqlParameter" /> from the <see cref="AggregateConfiguration" /> at
+    ///     <see cref="ParameterLevel.QueryLevel" />
+    ///     with consideration for any overriding globals that might already exist
     /// </summary>
     private readonly ICollectSqlParameters _queryLevelParameterProvider;
 
     /// <summary>
-    /// True to skip writing any parameter declarations (which would normally appear at the top of the query).
-    ///
-    /// <para>This can be used to allow joining several queries together interspersed with INTERSECT / UNION etc without the <see cref="ISqlParameter"/> declarations getting in the way </para>
+    ///     True to skip writing any parameter declarations (which would normally appear at the top of the query).
+    ///     <para>
+    ///         This can be used to allow joining several queries together interspersed with INTERSECT / UNION etc without
+    ///         the <see cref="ISqlParameter" /> declarations getting in the way
+    ///     </para>
     /// </summary>
     public bool DoNotWriteOutParameters
     {
@@ -162,8 +187,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// when adding columns you have the option of either including them in groupby (default) or omitting them from groupby.  If ommitted then the columns will be used to decide how to
-    /// build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the query
+    ///     when adding columns you have the option of either including them in groupby (default) or omitting them from
+    ///     groupby.  If ommitted then the columns will be used to decide how to
+    ///     build the FROM statement (which tables to join etc) but not included in the SELECT and GROUP BY sections of the
+    ///     query
     /// </summary>
     private readonly List<IColumn> _skipGroupByForThese = new();
 
@@ -171,7 +198,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// <param name="limitationSQL"></param>
     /// <param name="countSQL"></param>
     /// <param name="aggregateConfigurationIfAny"></param>
-    /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
+    /// <param name="forceJoinsToTheseTables">
+    ///     Tables you definetly want the query to join against in the FROM section
+    ///     (compatible <see cref="JoinInfo" /> must exist if there are multiple)
+    /// </param>
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny,
         ITableInfo[] forceJoinsToTheseTables)
         : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
@@ -180,19 +210,25 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// True to skip the ORDER BY section of the query
+    ///     True to skip the ORDER BY section of the query
     /// </summary>
     public bool DoNotWriteOutOrderBy { get; set; }
 
     /// <summary>
-    /// Build a query based on the current <see cref="AggregateConfiguration"/>
+    ///     Build a query based on the current <see cref="AggregateConfiguration" />
     /// </summary>
-    /// <param name="limitationSQL">See <see cref="LimitationSQL"/></param>
+    /// <param name="limitationSQL">See <see cref="LimitationSQL" /></param>
     /// <param name="countSQL">
-    /// Intended purpose:The line of SELECT Sql that is an 'Aggregate Function' e.g. count(*).
-    /// <para>Other purposes: You can use this to ram arbitrary lines of code into SELECT section of the query e.g. see CohortQueryBuilder </para>
+    ///     Intended purpose:The line of SELECT Sql that is an 'Aggregate Function' e.g. count(*).
+    ///     <para>
+    ///         Other purposes: You can use this to ram arbitrary lines of code into SELECT section of the query e.g. see
+    ///         CohortQueryBuilder
+    ///     </para>
     /// </param>
-    /// <param name="aggregateConfigurationIfAny"><see cref="AggregateConfiguration"/> containing columns, filters, parameters etc for the GROUP BY</param>
+    /// <param name="aggregateConfigurationIfAny">
+    ///     <see cref="AggregateConfiguration" /> containing columns, filters, parameters
+    ///     etc for the GROUP BY
+    /// </param>
     public AggregateBuilder(string limitationSQL, string countSQL, AggregateConfiguration aggregateConfigurationIfAny)
     {
         if (limitationSQL != null && limitationSQL.Trim().StartsWith("top", StringComparison.CurrentCultureIgnoreCase))
@@ -226,14 +262,15 @@ public class AggregateBuilder : ISqlQueryBuilder
         }
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddColumn(IColumn col)
     {
         AddColumn(col, true);
     }
 
     /// <summary>
-    /// Overload lets you include columns for the purposes of FROM creation but not have them also appear in GROUP BY sections
+    ///     Overload lets you include columns for the purposes of FROM creation but not have them also appear in GROUP BY
+    ///     sections
     /// </summary>
     /// <param name="col"></param>
     /// <param name="includeAsGroupBy"></param>
@@ -245,13 +282,13 @@ public class AggregateBuilder : ISqlQueryBuilder
             _skipGroupByForThese.Add(col);
     }
 
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public void AddColumnRange(IColumn[] columnsToAdd)
     {
         AddColumnRange(columnsToAdd, true);
     }
 
-    /// <inheritdoc cref="ISqlQueryBuilder.AddColumnRange(IColumn[])"/>
+    /// <inheritdoc cref="ISqlQueryBuilder.AddColumnRange(IColumn[])" />
     /// <param name="columnsToAdd"></param>
     /// <param name="includeAsGroupBy">false to add the columns only to the SELECT section of the query (and not GROUP BY)</param>
     public void AddColumnRange(IColumn[] columnsToAdd, bool includeAsGroupBy)
@@ -271,8 +308,9 @@ public class AggregateBuilder : ISqlQueryBuilder
     private readonly AggregateConfiguration _aggregateConfigurationIfAny;
 
     /// <summary>
-    /// Defines a PIVOT on the values in a given column.  This is only valid for <see cref="AggregateConfiguration"/> which are graphs
-    /// <see cref="AggregateBuilderBasicOptions"/> which must also have an axis configured
+    ///     Defines a PIVOT on the values in a given column.  This is only valid for <see cref="AggregateConfiguration" />
+    ///     which are graphs
+    ///     <see cref="AggregateBuilderBasicOptions" /> which must also have an axis configured
     /// </summary>
     /// <param name="pivot"></param>
     public void SetPivotToDimensionID(AggregateDimension pivot)
@@ -288,7 +326,8 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Populates _sql (SQL property) and resolves all parameters, filters containers etc.  Basically Finalizes this query builder
+    ///     Populates _sql (SQL property) and resolves all parameters, filters containers etc.  Basically Finalizes this query
+    ///     builder
     /// </summary>
     public void RegenerateSQL()
     {
@@ -323,7 +362,7 @@ public class AggregateBuilder : ISqlQueryBuilder
         if (_countColumn != null)
         {
             _isCohortIdentificationAggregate = _aggregateConfigurationIfAny is
-            { IsCohortIdentificationAggregate: true };
+                { IsCohortIdentificationAggregate: true };
 
             //if it is not a cic aggregate then make sure it has an alias e.g. count(*) AS MyCount.  cic aggregates take extreme liberties with this field like passing in 'distinct chi' and '*' and other wacky stuff that is so not cool
             _countColumn.SetQuerySyntaxHelper(QuerySyntaxHelper, !_isCohortIdentificationAggregate);
@@ -499,7 +538,7 @@ public class AggregateBuilder : ISqlQueryBuilder
                 //if there's a top X (with an explicit order by)
                 if (AggregateTopX != null)
                     queryLines.Add(new CustomLine(GetOrderBySQL(AggregateTopX), QueryComponent.OrderBy)
-                    { Role = CustomLineRole.TopX });
+                        { Role = CustomLineRole.TopX });
                 else
                     foreach (var col in SelectColumns)
                     {
@@ -533,7 +572,7 @@ public class AggregateBuilder : ISqlQueryBuilder
 
 
     /// <summary>
-    /// Creates the appropriate line for slotting into GROUP BY or ORDER BY based on DMBS
+    ///     Creates the appropriate line for slotting into GROUP BY or ORDER BY based on DMBS
     /// </summary>
     /// <param name="col"></param>
     /// <returns></returns>
@@ -672,8 +711,11 @@ public class AggregateBuilder : ISqlQueryBuilder
     }
 
     /// <summary>
-    /// Throws <see cref="NotSupportedException"/> since <see cref="Lookup"/> canot be part of an aggregate GROUP BY
+    ///     Throws <see cref="NotSupportedException" /> since <see cref="Lookup" /> canot be part of an aggregate GROUP BY
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<Lookup> GetDistinctRequiredLookups() => throw new NotSupportedException();
+    public IEnumerable<Lookup> GetDistinctRequiredLookups()
+    {
+        throw new NotSupportedException();
+    }
 }

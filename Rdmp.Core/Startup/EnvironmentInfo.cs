@@ -9,13 +9,13 @@ using System;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Class for describing the runtime environment in which <see cref="Startup"/> is executing e.g. under
-/// Windows / Linux.
+///     Class for describing the runtime environment in which <see cref="Startup" /> is executing e.g. under
+///     Windows / Linux.
 /// </summary>
 public static class EnvironmentInfo
 {
     /// <summary>
-    /// For our purposes 'Linux' = anything that isn't Windows
+    ///     For our purposes 'Linux' = anything that isn't Windows
     /// </summary>
     public static bool IsLinux => Environment.OSVersion.Platform != PlatformID.Win32NT;
 }

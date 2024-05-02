@@ -19,10 +19,11 @@ using Rdmp.Core.Validation.Dependency;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction
-/// projects there are, what IFilters are available etc - literally everything, just look at who inherits from IMapsDirectlyToDatabaseTable!).
-/// 
-/// <para>See also UserSettingsRepositoryFinder</para>
+///     Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information
+///     (what datasets there are, what extraction
+///     projects there are, what IFilters are available etc - literally everything, just look at who inherits from
+///     IMapsDirectlyToDatabaseTable!).
+///     <para>See also UserSettingsRepositoryFinder</para>
 /// </summary>
 public class LinkedRepositoryProvider : RepositoryProvider
 {
@@ -60,8 +61,9 @@ public class LinkedRepositoryProvider : RepositoryProvider
     }
 
     /// <summary>
-    /// Call once if the <see cref="CatalogueRepository"/> and <see cref="DataExportRepository"/> are new (not existing already).  This will populate the
-    /// <see cref="TableRepository.ObscureDependencyFinder"/> with appropriate cross database runtime constraints.
+    ///     Call once if the <see cref="CatalogueRepository" /> and <see cref="DataExportRepository" /> are new (not existing
+    ///     already).  This will populate the
+    ///     <see cref="TableRepository.ObscureDependencyFinder" /> with appropriate cross database runtime constraints.
     /// </summary>
     private void ConfigureObscureDependencies()
     {

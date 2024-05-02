@@ -11,7 +11,8 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Caching.Layouts;
 
 /// <summary>
-/// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
+///     Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory
+///     (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
 /// </summary>
 public class ZipCacheLayoutOnePerDay : CacheLayout
 {

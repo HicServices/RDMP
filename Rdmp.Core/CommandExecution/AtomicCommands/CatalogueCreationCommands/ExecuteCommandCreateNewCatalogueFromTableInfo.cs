@@ -41,6 +41,8 @@ public class ExecuteCommandCreateNewCatalogueFromTableInfo : CatalogueCreationCo
         }
     }
 
-    public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
-        iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
+    public override Image<Rgba32> GetImage(IIconProvider iconProvider)
+    {
+        return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Shortcut);
+    }
 }

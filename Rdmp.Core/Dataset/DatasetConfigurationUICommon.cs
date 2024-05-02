@@ -9,23 +9,16 @@ using Rdmp.Core.CommandExecution;
 namespace Rdmp.Core.Dataset;
 
 /// <summary>
-/// Common methods used by Cohort Builder UI implementations.  Eliminates
-/// code duplication and makes it possible to add new UI formats later
-/// e.g. web/console etc
+///     Common methods used by Cohort Builder UI implementations.  Eliminates
+///     code duplication and makes it possible to add new UI formats later
+///     e.g. web/console etc
 /// </summary>
 public class DatasetConfigurationUICommon
 {
-     /// <summary>
-    /// User interface layer for modal dialogs, showing Exceptions etc
+    /// <summary>
+    ///     User interface layer for modal dialogs, showing Exceptions etc
     /// </summary>
     public IBasicActivateItems Activator;
 
     public Curation.Data.Dataset Dataset;
-
-
-    public DatasetConfigurationUICommon()
-    {
-    }
-
-   
 }

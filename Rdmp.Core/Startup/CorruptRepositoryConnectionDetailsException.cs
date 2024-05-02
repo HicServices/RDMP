@@ -11,7 +11,7 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Startup;
 
 /// <summary>
-/// Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator"/>
+///     Thrown when the connection details to an <see cref="IRDMPPlatformRepositoryServiceLocator" />
 /// </summary>
 [Serializable]
 public class CorruptRepositoryConnectionDetailsException : Exception

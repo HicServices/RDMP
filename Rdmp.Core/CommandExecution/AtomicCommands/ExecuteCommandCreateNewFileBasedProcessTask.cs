@@ -42,7 +42,8 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
             SetImpossible("Could not construct LoadDirectory");
         }
 
-        ProcessTaskType[] AcceptedProcessTaskTypes = { ProcessTaskType.SQLFile, ProcessTaskType.Executable, ProcessTaskType.SQLBakFile };
+        ProcessTaskType[] AcceptedProcessTaskTypes =
+            { ProcessTaskType.SQLFile, ProcessTaskType.Executable, ProcessTaskType.SQLBakFile };
         if (!AcceptedProcessTaskTypes.Contains(taskType))
             SetImpossible("Only SQLFile, SqlBakFile and Executable task types are supported by this command");
 
@@ -77,7 +78,6 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
                     File.WriteAllText(target, "/*todo Type some SQL*/");
 
                 _file = new FileInfo(target);
-
             }
             else if (_taskType == ProcessTaskType.Executable)
             {

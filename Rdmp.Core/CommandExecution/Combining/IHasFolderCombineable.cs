@@ -9,8 +9,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.CommandExecution.Combining;
 
 /// <summary>
-/// <see cref="ICombineableSource"/> interface for anyone who hosts an <see cref="IHasFolder"/> object
-/// and wants to support drag and drop onto folders
+///     <see cref="ICombineableSource" /> interface for anyone who hosts an <see cref="IHasFolder" /> object
+///     and wants to support drag and drop onto folders
 /// </summary>
 public interface IHasFolderCombineable : ICombineToMakeCommand
 {

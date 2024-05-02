@@ -15,7 +15,7 @@ using Rdmp.Core.QueryBuilding;
 namespace Rdmp.Core.DataExport.DataExtraction.Commands;
 
 /// <summary>
-/// See ExtractDatasetCommand
+///     See ExtractDatasetCommand
 /// </summary>
 public interface IExtractDatasetCommand : IExtractCommand
 {
@@ -36,18 +36,18 @@ public interface IExtractDatasetCommand : IExtractCommand
     int TopX { get; set; }
 
     /// <summary>
-    /// If this is a batch extraction then this is the inclusive start date of the data fetched
+    ///     If this is a batch extraction then this is the inclusive start date of the data fetched
     /// </summary>
     DateTime? BatchStart { get; set; }
 
     /// <summary>
-    /// If this is a batch extraction then this is the exclusive end date of the data fetched
+    ///     If this is a batch extraction then this is the exclusive end date of the data fetched
     /// </summary>
-    /// <inheritdoc/>
+    /// <inheritdoc />
     DateTime? BatchEnd { get; set; }
 
     /// <summary>
-    /// Returns the unique server for running the <see cref="QueryBuilder"/> sql on
+    ///     Returns the unique server for running the <see cref="QueryBuilder" /> sql on
     /// </summary>
     /// <returns></returns>
     DiscoveredServer GetDistinctLiveDatabaseServer();
