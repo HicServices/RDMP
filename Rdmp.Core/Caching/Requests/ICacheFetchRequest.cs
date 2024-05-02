@@ -22,8 +22,6 @@ public interface ICacheFetchRequest
 {
     IRepository Repository { get; set; }
 
-    void SaveCacheFillProgress(DateTime cacheFillProgress);
-
     DateTime Start { get; set; }
     DateTime End { get; }
     TimeSpan ChunkPeriod { get; set; }
@@ -31,7 +29,5 @@ public interface ICacheFetchRequest
     ICacheProgress CacheProgress { get; set; }
     bool IsRetry { get; }
 
-    void RequestFailed(Exception e);
-    void RequestSucceeded();
     ICacheFetchRequest GetNext();
 }

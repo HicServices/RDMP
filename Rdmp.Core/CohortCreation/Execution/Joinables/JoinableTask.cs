@@ -99,9 +99,4 @@ public class JoinableTask : CacheableTask
     {
         IsUnused = !Joinable.Users.Any();
     }
-
-    public string GetUnusedWarningText()
-    {
-        return $"Patient Index Table '{ToString()}' is not used by any of your sets (above).";
-    }
 }

@@ -40,7 +40,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
     }
 
     private void RunAsPatientIndexTable(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
-        CancellationToken token)
+        CancellationToken _)
     {
         using var dt = new DataTable();
         dt.Columns.Add("chi", typeof(string));
@@ -57,7 +57,7 @@ public class ExamplePluginCohortCompiler : PluginCohortCompiler
     }
 
     private void RunAsIdentifierList(AggregateConfiguration ac, CachedAggregateConfigurationResultsManager cache,
-        CancellationToken token)
+        CancellationToken _)
     {
         var pc = new PersonCollection();
         var requiredNumber = GetNumberToGenerate(ac);

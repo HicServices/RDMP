@@ -174,7 +174,7 @@ public abstract class CohortCreationCommandExecution : BasicCommandExecution, IA
         pipelineRunner.SetAdditionalProgressListener(toDbListener);
 
         //after executing the pipeline finalise the db listener table info records
-        pipelineRunner.PipelineExecutionFinishedsuccessfully += (s, e) => toDbListener.FinalizeTableLoadInfos();
+        pipelineRunner.PipelineExecutionFinishedsuccessfully += (_, _) => toDbListener.FinalizeTableLoadInfos();
 
         return pipelineRunner;
     }

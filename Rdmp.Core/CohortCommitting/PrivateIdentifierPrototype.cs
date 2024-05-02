@@ -51,9 +51,4 @@ public class PrivateIdentifierPrototype
     {
         return MatchingExtractionInformations.Count;
     }
-
-    public string GetDeclarationSql()
-    {
-        return $"{RuntimeName} {DataType}";
-    }
 }

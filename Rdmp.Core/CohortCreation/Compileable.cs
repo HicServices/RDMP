@@ -84,11 +84,6 @@ public abstract class Compileable : ICompileable
         return _compiler.GetCachedQueryUseCount(this);
     }
 
-    public bool AreaAllQueriesCached()
-    {
-        return _compiler.AreaAllQueriesCached(this);
-    }
-
     public void SetKnownContainer(CohortAggregateContainer parent, bool isFirstInContainer)
     {
         ParentContainerIfAny = parent;

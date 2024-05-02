@@ -80,7 +80,6 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
             if (projAssociations.Length == 1) Project = projAssociations[0].Project;
         }
 
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
         var request = GetCohortCreationRequest(ExtractableCohortAuditLogBuilder.GetDescription(cic));
 
         //user choose to cancel the cohort creation request dialogue
@@ -91,7 +90,7 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
 
         var configureAndExecute = GetConfigureAndExecuteControl(request, $"Execute CIC {cic} and commit results", cic);
 
-        configureAndExecute.PipelineExecutionFinishedsuccessfully += (s, u) => OnImportCompletedSuccessfully(cic);
+        configureAndExecute.PipelineExecutionFinishedsuccessfully += (_, _) => OnImportCompletedSuccessfully(cic);
 
         configureAndExecute.Run(BasicActivator.RepositoryLocator, null, null, null);
     }

@@ -19,7 +19,7 @@ namespace Rdmp.Core.CohortCreation.Execution;
 ///     AggregateConfigurations within
 ///     them - also optionally with other sub containers.
 /// </summary>
-public class AggregationContainerTask : Compileable, IOrderable
+public class AggregationContainerTask : Compileable
 {
     private readonly CohortAggregateContainer[] _parentContainers;
     public CohortAggregateContainer Container { get; set; }
@@ -73,25 +73,5 @@ public class AggregationContainerTask : Compileable, IOrderable
     public override bool IsEnabled()
     {
         return !Container.IsDisabled && !_parentContainers.Any(c => c.IsDisabled);
-    }
-
-    public string DescribeOperation()
-    {
-        return ((CohortAggregateContainer)Child).Operation switch
-        {
-            SetOperation.UNION =>
-                @"Includes ALL patients which appear in any of the sets in this container.  If there are subcontainers
-(i.e. other UNION/INTERSECT/EXCEPT blocks under this one) then the UNION operation will be applied to the
-result of the subcontainer.",
-            SetOperation.INTERSECT =>
-                @"Only includes patients which appear in EVERY set in this container.  This means that for a patient to
-returned by this operation they must be in all the sets under this (including the results of any subcontainers)",
-            SetOperation.EXCEPT =>
-                @"Includes ALL patients in the FIRST set (or subcontainer) under this container but ONLY if they DO NOT
-APPEAR in any of the sets that come after the FIRST.  This means that you get everyone in the first set
-EXCEPT anyone appearing in any of the other sets that follow the FIRST.",
-            _ => throw new ArgumentOutOfRangeException(
-                $"Did not know what tool tip to return for set operation {ToString()}")
-        };
     }
 }

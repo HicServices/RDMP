@@ -952,7 +952,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandAddPipelineComponent(_activator, pipeline, null);
         }
 
-        if (Is(o, out StandardPipelineUseCaseNode psu))
+        if (Is(o, out StandardPipelineUseCaseNode _))
             yield return new ExecuteCommandNewObject(_activator, typeof(Pipeline))
                 { OverrideCommandName = "New Pipeline" };
     }

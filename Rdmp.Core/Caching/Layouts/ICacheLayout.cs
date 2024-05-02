@@ -31,10 +31,6 @@ public interface ICacheLayout
     DirectoryInfo RootDirectory { get; }
 
     // some interface for looking up filename
-    DateTime? GetEarliestDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
-    DateTime? GetMostRecentDateToLoadAccordingToFilesystem(IDataLoadEventListener listener);
-    void CreateIfNotExists(IDataLoadEventListener listener);
-    bool CheckExists(DateTime archiveDate, IDataLoadEventListener listener);
     FileInfo GetArchiveFileInfoForDate(DateTime archiveDate, IDataLoadEventListener listener);
     DirectoryInfo GetLoadCacheDirectory(IDataLoadEventListener listener);
 

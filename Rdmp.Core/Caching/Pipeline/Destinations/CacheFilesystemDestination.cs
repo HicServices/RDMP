@@ -71,8 +71,6 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
     {
     }
 
-    public bool SilentRunning { get; set; }
-
     public virtual void Check(ICheckNotifier notifier)
     {
         if (CacheDirectory == null)

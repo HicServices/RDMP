@@ -190,7 +190,7 @@ public class CohortIdentificationConfigurationSource : IPluginDataFlowSource<Dat
         {
             RunSubcontainers = false
         };
-        runner.PhaseChanged += (s, e) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+        runner.PhaseChanged += (_, _) => listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"CohortCompilerRunner entered Phase '{runner.ExecutionPhase}'"));
         return runner.Run(_cancelGlobalOperations.Token);
     }

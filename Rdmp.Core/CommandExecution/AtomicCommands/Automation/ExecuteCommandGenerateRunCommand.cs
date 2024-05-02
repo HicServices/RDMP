@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
-public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAtomicCommand
+public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution
 {
     public ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
         : base(activator, commandGetter)

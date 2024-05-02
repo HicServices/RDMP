@@ -16,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
-public class ExecuteCommandRunDetached : AutomationCommandExecution, IAtomicCommand
+public class ExecuteCommandRunDetached : AutomationCommandExecution
 {
     private readonly string _rdmpBinaryPath;
 
