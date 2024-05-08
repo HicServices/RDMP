@@ -93,6 +93,7 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
+            cbPromptFilterRename = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -521,6 +522,7 @@
             // 
             // groupBox8
             // 
+            groupBox8.Controls.Add(cbPromptFilterRename);
             groupBox8.Controls.Add(cbExpandAllInCohortBuilder);
             groupBox8.Controls.Add(cbStrictValidationForCohortBuilderContainers);
             groupBox8.Controls.Add(cbShowCohortWizard);
@@ -766,6 +768,18 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
+            // cbPromptFilterRename
+            // 
+            cbPromptFilterRename.AutoSize = true;
+            cbPromptFilterRename.Checked = true;
+            cbPromptFilterRename.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbPromptFilterRename.Location = new System.Drawing.Point(6, 89);
+            cbPromptFilterRename.Name = "cbPromptFilterRename";
+            cbPromptFilterRename.Size = new System.Drawing.Size(222, 19);
+            cbPromptFilterRename.TabIndex = 4;
+            cbPromptFilterRename.Text = "Prompt For Rename on Filter Change";
+            cbPromptFilterRename.UseVisualStyleBackColor = true;
+            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -870,5 +884,6 @@
         private System.Windows.Forms.CheckBox cbUseLocalFileSystem;
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox tbLogLocation;
+        private System.Windows.Forms.CheckBox cbPromptFilterRename;
     }
 }
