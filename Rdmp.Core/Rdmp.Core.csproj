@@ -123,6 +123,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\080_AllowMultipleCatalogueLoadMetadatas.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\081_AddInstanceSettings.sql" />
 		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
 		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
 		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -247,6 +248,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\081_AddInstanceSettings.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\080_AllowMultipleCatalogueLoadMetadatas.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
@@ -321,7 +323,7 @@
 		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="Terminal.Gui" />
 		<PackageReference Include="YamlDotNet" />
-		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces"/>
+		<PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
 	</ItemGroup>
 	<ItemGroup>
 		<EmbeddedResource Include="Curation\KeywordHelp.txt">

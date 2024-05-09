@@ -25,6 +25,7 @@ public class PlatformDatabaseCreation
     public const string DefaultDataExportDatabaseName = "DataExport";
     public const string DefaultDQEDatabaseName = "DQE";
     public const string DefaultLoggingDatabaseName = "Logging";
+    public const string DefaulConfigurationDatabaseName = "Configuration";
 
     /// <summary>
     /// Creates new databases on the given server for RDMP platform databases
@@ -44,6 +45,7 @@ public class PlatformDatabaseCreation
         {
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
         }
+
         CatalogueRepository.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
