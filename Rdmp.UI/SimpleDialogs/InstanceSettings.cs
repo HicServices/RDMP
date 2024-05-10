@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.ReusableLibraryCode;
+﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.Setting;
 using Rdmp.UI.ItemActivation;
 using System;
@@ -14,7 +15,6 @@ namespace Rdmp.UI.SimpleDialogs
         private readonly IActivateItems _activator;
         private bool _loaded;
         private Setting[] _settings;
-
 
         public InstanceSettings(IActivateItems activator)
         {

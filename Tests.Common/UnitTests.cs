@@ -580,7 +580,9 @@ public class UnitTests
             return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd,cata);
         }
 
-        if (typeof(T) == typeof(Setting)) new Setting(repository.CatalogueRepository, "", "");
+        if (typeof(T) == typeof(Setting)) {
+            return (T)(object)new Setting(repository.CatalogueRepository, "", "");
+        }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }
