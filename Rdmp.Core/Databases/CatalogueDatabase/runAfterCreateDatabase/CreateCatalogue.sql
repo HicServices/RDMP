@@ -1329,8 +1329,9 @@ ALTER TABLE [dbo].[TableInfo] CHECK CONSTRAINT [FK_TableInfo_ExternalDatabaseSer
 GO
 CREATE TABLE [dbo].[Setting](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[Key] [varchar](450) NOT NULL UNIQUE,
+	[Key] [varchar](450) NOT NULL,
 	[Value] [varchar](max) NOT NULL,
+CONSTRAINT [UNIQUE_SettingKey] UNIQUE([Key]),
  CONSTRAINT [PK_SettingKey] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
