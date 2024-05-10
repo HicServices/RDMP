@@ -40,6 +40,7 @@ using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Rdmp.Core.Setting;
 
 namespace Tests.Common;
 
@@ -578,6 +579,8 @@ public class UnitTests
 
             return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd,cata);
         }
+
+        if (typeof(T) == typeof(Setting)) new Setting(repository.CatalogueRepository, "", "");
 
         throw new TestCaseNotWrittenYetException(typeof(T));
     }

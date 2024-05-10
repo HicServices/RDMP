@@ -1,6 +1,8 @@
-﻿namespace Rdmp.Core.Setting;
+﻿using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
-public interface ISetting
+namespace Rdmp.Core.Setting;
+
+public interface ISetting: IMapsDirectlyToDatabaseTable
 {
     string Key { get; set; }
     string Value { get; set; }
