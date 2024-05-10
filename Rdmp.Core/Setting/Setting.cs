@@ -39,6 +39,7 @@ public class Setting : DatabaseEntity, ISetting
 
     #endregion
 
+    public Setting() { }
     public Setting(ICatalogueRepository repository, string key, string value)
     {
         Key = key;
