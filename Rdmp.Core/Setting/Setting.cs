@@ -2,11 +2,10 @@
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
-using Rdmp.Core.Setting;
 using System.Collections.Generic;
 using System.Data.Common;
 
-namespace Rdmp.Core.Settings;
+namespace Rdmp.Core.Setting;
 
 public class Setting : DatabaseEntity, ISetting
 {

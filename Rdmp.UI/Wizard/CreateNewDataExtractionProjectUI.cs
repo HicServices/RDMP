@@ -21,10 +21,9 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using Rdmp.Core.Settings;
+using Rdmp.Core.Setting;
 using Rdmp.UI.CohortUI.CohortSourceManagement;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
