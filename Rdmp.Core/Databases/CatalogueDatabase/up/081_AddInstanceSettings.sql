@@ -4,7 +4,7 @@ if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='Settin
 BEGIN
 CREATE TABLE [dbo].[Setting](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
-	[Key] [varchar](max) NOT NULL,
+	[Key] [varchar](max) NOT NULL UNIQUE,
 	[Value] [varchar](max) NOT NULL,
  CONSTRAINT [PK_SettingKey] PRIMARY KEY CLUSTERED 
 (
