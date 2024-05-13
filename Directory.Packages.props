@@ -22,7 +22,7 @@
 		<PackageVersion Include="Terminal.Gui" Version="1.16.0"/>
 		<PackageVersion Include="YamlDotNet" Version="15.1.2"/>
 		<PackageVersion Include="ConsoleControl" Version="1.3.0"/>
-		<PackageVersion Include="Autoupdater.NET.Official" Version="1.8.5"/>
+		<PackageVersion Include="Autoupdater.NET.Official" Version="1.8.6"/>
 		<PackageVersion Include="DockPanelSuite.ThemeVS2015" Version="3.1.0"/>
 		<PackageVersion Include="System.Threading.ThreadPool" Version="4.3.0"/>
 		<PackageVersion Include="WeCantSpell.Hunspell" Version="5.0.0"/>
