@@ -66,7 +66,7 @@ jobs:
           mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-core.lcov
-      - uses: coverallsapp/github-action@v2.2.3
+      - uses: coverallsapp/github-action@v2.3.0
         with:
           github-token: ${{ secrets.github_token }}
           files: ./db-ui.lcov ./db-core.lcov
@@ -128,7 +128,7 @@ jobs:
           mv `find coverage -type f` fs-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
-      - uses: coverallsapp/github-action@v2.2.3
+      - uses: coverallsapp/github-action@v2.3.0
         with:
           github-token: ${{ secrets.github_token }}
           files: ./fs-ui.lcov ./fs-core.lcov
@@ -208,6 +208,7 @@ jobs:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
       - name: Fix execute permissions
+        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         shell: perl {0}
         run: |
           use strict;
@@ -239,6 +240,7 @@ jobs:
           $zip->memberNamed('rdmp')->unixFileAttributes( 0755 );
           $zip->overwriteAs($zipname);
       - name: Compress tar
+        if: contains(github.ref, 'refs/tags/v') || contains('refs/heads/main refs/heads/develop',github.ref)
         run: |
           7z a -txz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar.xz dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
           rm dist/rdmp-${{ steps.version.outputs.rdmpversion }}-cli-linux-x64.tar
@@ -251,6 +253,7 @@ jobs:
           dotnet pack $i -c Release --include-symbols --nologo -o . -v:m -p:Version=${{ steps.version.outputs.rdmpversion }}
           done
       - name: Calculate SHA256SUMS
+        if: contains(github.ref, 'refs/tags/v')
         run: '&{foreach ($i in Get-ChildItem dist -Exclude *SUMS|Get-FileHash) { echo "$($i.Hash) $(echo $i | Split-Path -Leaf)" }} > dist/SHA256SUMS'
       - name: Archive production artifacts
         uses: actions/upload-artifact@v4
