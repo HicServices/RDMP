@@ -1196,7 +1196,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         var type = GetDistinctLiveDatabaseServerType() ?? throw new AmbiguousDatabaseTypeException(
             $"Catalogue '{this}' has no extractable columns so no Database Type could be determined");
-        return QuerySyntaxHelperFactory.Create(type);
+        return new QuerySyntaxHelperFactory().Create(type);
     }
 
     #region Static Methods

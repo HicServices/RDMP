@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
-- Migrate from .net7 to .net8
+- Migrate from .net7 to .net7
 - Add timeout override to remote table selectors
 - Extractions now remember the last used pipeline
 - Allow for custom .bak file physical locations during data loads

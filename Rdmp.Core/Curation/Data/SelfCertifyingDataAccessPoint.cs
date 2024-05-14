@@ -71,7 +71,7 @@ public class SelfCertifyingDataAccessPoint : EncryptedPasswordHost, IDataAccessC
     }
 
     /// <inheritdoc/>
-    public IQuerySyntaxHelper GetQuerySyntaxHelper() => QuerySyntaxHelperFactory.Create(DatabaseType);
+    public IQuerySyntaxHelper GetQuerySyntaxHelper() => new QuerySyntaxHelperFactory().Create(DatabaseType);
 
     public bool DiscoverExistence(DataAccessContext context, out string reason)
     {

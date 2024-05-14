@@ -38,7 +38,7 @@ internal class ViewSupportingSqlCollection : PersistableObjectCollection, IViewS
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
         var syntax = SupportingSQLTable.ExternalDatabaseServer?.DatabaseType ?? FAnsi.DatabaseType.MicrosoftSQLServer;
-        return QuerySyntaxHelperFactory.Create(syntax);
+        return new QuerySyntaxHelperFactory().Create(syntax);
     }
 
     public string GetSql() => SupportingSQLTable.SQL;

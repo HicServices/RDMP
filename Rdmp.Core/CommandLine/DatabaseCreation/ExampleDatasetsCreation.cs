@@ -589,7 +589,7 @@ public partial class ExampleDatasetsCreation
             CheckResult.Success));
 
         //half a million biochemistry results
-        var biochem = DataGeneratorFactory.Create(typeof(T), r);
+        var biochem = new DataGeneratorFactory().Create(typeof(T), r);
         var dt = biochem.GetDataTable(people, numberOfRecords);
 
         //prune "nulls"
@@ -645,14 +645,14 @@ public partial class ExampleDatasetsCreation
         forwardEngineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
         //get descriptions of the columns from BadMedicine
-        cata.Description = Trim(Descriptions.Get(cata.Name));
+        cata.Description = Trim(new Descriptions().Get(cata.Name));
         if (cata.Description != null)
         {
             cata.SaveToDatabase();
 
             foreach (var ci in cata.CatalogueItems)
             {
-                var ciDescription = Trim(Descriptions.Get(cata.Name, ci.Name));
+                var ciDescription = Trim(new Descriptions().Get(cata.Name, ci.Name));
                 if (ciDescription != null)
                 {
                     ci.Description = ciDescription;

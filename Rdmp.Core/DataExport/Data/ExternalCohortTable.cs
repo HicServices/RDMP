@@ -184,7 +184,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
 
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
-        QuerySyntaxHelperFactory.Create(SelfCertifyingDataAccessPoint.DatabaseType);
+        new QuerySyntaxHelperFactory().Create(SelfCertifyingDataAccessPoint.DatabaseType);
 
     /// <inheritdoc/>
     public DiscoveredDatabase Discover() => SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);

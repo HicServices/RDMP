@@ -44,11 +44,11 @@ public partial class GenerateTestDataUI : RDMPForm
 
         var yLoc = 0;
 
-        foreach (var t in DataGeneratorFactory.GetAvailableGenerators())
+        foreach (var t in new DataGeneratorFactory().GetAvailableGenerators())
         {
             var ui = new DataGeneratorUI
             {
-                Generator = DataGeneratorFactory.Create(t.Type, new Random()),
+                Generator = new DataGeneratorFactory().Create(t, new Random()),
                 Location = new Point(0, yLoc)
             };
             yLoc += ui.Height;
@@ -205,7 +205,7 @@ public partial class GenerateTestDataUI : RDMPForm
         Executing.Add(current);
 
         //reset the current generator to use the seed provided
-        current.Generator = DataGeneratorFactory.Create(current.Generator.GetType(), r);
+        current.Generator = new DataGeneratorFactory().Create(current.Generator.GetType(), r);
 
         current.BeginGeneration(identifiers, _extractDirectory);
 
