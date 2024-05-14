@@ -47,13 +47,13 @@ public partial class RichTextBoxEx : RichTextBox
         public byte bReserved1;
     }
 
-    [LibraryImport("user32.dll")]
+    [LibraryImport("user32.dll", SetLastError = true, EntryPoint = "SendMessageW", StringMarshalling = StringMarshalling.Utf16)]
     private static partial IntPtr SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
     private const int WM_USER = 0x0400;
     private const int EM_GETCHARFORMAT = WM_USER + 58;
     private const int EM_SETCHARFORMAT = WM_USER + 68;
-
+    
     private const int SCF_SELECTION = 0x0001;
     private const int SCF_WORD = 0x0002;
     private const int SCF_ALL = 0x0004;

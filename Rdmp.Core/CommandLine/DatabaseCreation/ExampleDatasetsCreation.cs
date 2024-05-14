@@ -44,8 +44,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation;
 /// </summary>
 public partial class ExampleDatasetsCreation
 {
-    private IRDMPPlatformRepositoryServiceLocator _repos;
-    private IBasicActivateItems _activator;
+    private readonly IRDMPPlatformRepositoryServiceLocator _repos;
+    private readonly IBasicActivateItems _activator;
     public const int NumberOfPeople = 5000;
     public const int NumberOfRowsPerDataset = 10000;
 
@@ -388,9 +388,6 @@ public partial class ExampleDatasetsCreation
             ExtractionDirectory = Path.GetTempPath()
         };
         project.SaveToDatabase();
-
-        //create a cohort
-        var auditLogBuilder = new ExtractableCohortAuditLogBuilder();
 
         var request = new CohortCreationRequest(project,
             new CohortDefinition(null, cohortName, 1, projectNumber, externalCohortTable), _repos.DataExportRepository,
