@@ -18,7 +18,7 @@ By opening this PR, I confirm that I have:
 
 -   [ ] Ensured that the PR branch is in sync with the target branch (i.e. it is automatically merge-able)
 -   [ ] Created or updated any tests if relevant
--   [ ] Have validated this change against the [Test Plan](https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/TestPlan.md)
+-   [ ] Have validated this change against the [Test Plan](https://github.com/HicServices/RDMP/blob/task/document-test-plan/Documentation/CodeTutorials/TestPlan.md)
 -   [ ] Requested a review by one of the repository maintainers
 -   [ ] Have written new documentation or updated existing documentation to detail any new or updated functionality and how to use it
 -   [ ] Have added an entry into the changelog
