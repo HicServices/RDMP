@@ -244,7 +244,7 @@
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
-  <EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql"/>
+  <EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\075_Memento.sql" />
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\074_ColumnForbidderRename.sql" />
   <EmbeddedResource Include="Databases\CatalogueDatabase\up\073_WiderCatalogueColumns.sql" />
@@ -313,8 +313,8 @@
   <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   <PackageReference Include="NPOI" Version="2.6.2" />
   <PackageReference Include="NLog" Version="5.2.8" />
-  <PackageReference Include="SixLabors.ImageSharp" Version="3.1.2" />
-  <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.0" />
+  <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+  <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.3" />
   <PackageReference Include="Spectre.Console" Version="0.48.0" />
   <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
   <PackageReference Include="SSH.NET" Version="2023.0.1" />

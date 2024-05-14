@@ -79,9 +79,17 @@ public class EncryptedPasswordHost : IEncryptedPasswordHost
     }
 
     /// <inheritdoc/>
-    public string GetDecryptedPassword() =>
-        _encryptedString == null
+    /// <inheritdoc/>
+    public string GetDecryptedPassword()
+    {
+        if (_encryptedString != null)
+        {
+            var value = _encryptedString.GetDecryptedValue();
+            Console.WriteLine(value);
+        }
+        return _encryptedString == null
             ? throw new Exception(
                 $"Passwords cannot be decrypted until {nameof(SetRepository)} has been called and decryption strategy is established")
             : _encryptedString.GetDecryptedValue() ?? "";
+    }
 }
