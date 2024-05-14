@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Changed
 
+- Improve error messages for Multi-ExtractionIdentifier extractions
 - Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
 - Add prompt to reanem container when adding a cohort filter
 - Add ability to set Extraction Categort as "Not Extractable"
