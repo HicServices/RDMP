@@ -9,10 +9,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using NPOI.OpenXmlFormats.Dml;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -56,46 +53,21 @@ namespace Rdmp.Core.Providers;
 public class CatalogueChildProvider : ICoreChildProvider
 {
     //Load System
-    private Lazy<LoadMetadata[]> _AllLoadMetadatas;
+    public LoadMetadata[] AllLoadMetadatas { get; set; }
+    public ProcessTask[] AllProcessTasks { get; set; }
+    public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
-    public LoadMetadata[] AllLoadMetadatas
-    {
-        get { return _AllLoadMetadatas.Value; }
-        set { _AllLoadMetadatas = new Lazy<LoadMetadata[]>(() => value); }
-    }
-
-    private Lazy<ProcessTask[]> _AllProcessTasks;
-    public ProcessTask[] AllProcessTasks { get { return _AllProcessTasks.Value; } set { _AllProcessTasks = new Lazy<ProcessTask[]>(() => value); } }
-
-    private Lazy<ProcessTaskArgument[]> _AllProcessTasksArguments;
-    public ProcessTaskArgument[] AllProcessTasksArguments { get { return _AllProcessTasksArguments.Value; } set { _AllProcessTasksArguments = new Lazy<ProcessTaskArgument[]>(() => value); } }
-
-    private Lazy<LoadProgress[]> _AllLoadProgresses;
-    public LoadProgress[] AllLoadProgresses { get { return _AllLoadProgresses.Value; } set { _AllLoadProgresses = new Lazy<LoadProgress[]>(() => value); } }
-
-    private Lazy<CacheProgress[]> _AllCacheProgresses;
-    public CacheProgress[] AllCacheProgresses { get { return _AllCacheProgresses.Value; } set { _AllCacheProgresses = new Lazy<CacheProgress[]>(() => value); } }
-
-    private Lazy<PermissionWindow[]> _AllPermissionWindows;
-    public PermissionWindow[] AllPermissionWindows { get { return _AllPermissionWindows.Value; } set { _AllPermissionWindows = new Lazy<PermissionWindow[]>(() => value); } }
+    public LoadProgress[] AllLoadProgresses { get; set; }
+    public CacheProgress[] AllCacheProgresses { get; set; }
+    public PermissionWindow[] AllPermissionWindows { get; set; }
 
     //Catalogue side of things
+    public Catalogue[] AllCatalogues { get; set; }
+    public Curation.Data.Dataset[] AllDatasets { get; set; }
+    public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
-    private Lazy<Catalogue[]> _AllCatalogues;
-    public Catalogue[] AllCatalogues { get { return _AllCatalogues.Value; } set { _AllCatalogues = new Lazy<Catalogue[]>(() => value); } }
-
-    private Lazy<Curation.Data.Dataset[]> _AllDatasets;
-    public Curation.Data.Dataset[] AllDatasets { get { return _AllDatasets.Value; } set { _AllDatasets = new Lazy<Curation.Data.Dataset[]>(() => value); } }
-
-    private Lazy<Dictionary<int, Catalogue>> _AllCatalogueDictionary;
-    public Dictionary<int, Catalogue> AllCataloguesDictionary { get { return _AllCatalogueDictionary.Value; } private set { _AllCatalogueDictionary = new Lazy<Dictionary<int, Catalogue>>(() => value); } }
-
-    private Lazy<SupportingDocument[]> _AllSupportingDocuments;
-    public SupportingDocument[] AllSupportingDocuments { get { return _AllSupportingDocuments.Value; } set { _AllSupportingDocuments = new Lazy<SupportingDocument[]>(() => value); } }
-
-    private Lazy<SupportingSQLTable[]> _AllSupportingSQL;
-
-    public SupportingSQLTable[] AllSupportingSQL { get { return _AllSupportingSQL.Value; } set{ _AllSupportingSQL = new Lazy<SupportingSQLTable[]>(() => value); } }
+    public SupportingDocument[] AllSupportingDocuments { get; set; }
+    public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
     //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
     private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new();
