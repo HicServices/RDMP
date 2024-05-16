@@ -1003,36 +1003,12 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var catalogueId in linkedCatalogueIDs)
         {
             var foundCatalogue = AllCatalogues.Where(c => c.ID == catalogueId).FirstOrDefault();
+            if (foundCatalogue is null) continue;
             usedCatalogues.Add(foundCatalogue);
             childObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
                     foundCatalogue));
         }
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
-
-
-        //List<Catalogue> linkedCatalogues = GetAllObjects<LoadMetadataCatalogueLinkage>(_catalogueRepository)
-        //    .Where(link => link.LoadMetadataID == loadMetadataId).ToList()
-        //    .ConvertAll<Catalogue>(link => AllCatalogues.Where(cata => cata.ID == link.CatalogueID).FirstOrDefault());
-
-        //allCataloguesUsedByLoadMetadataNode.UsedCatalogues = linkedCatalogues;
-        //foreach (var catalogue in linkedCatalogues)
-        //{
-        //    childObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, catalogue));
-        //}
-        //-----
-        //List<Catalogue> usedCatalogues = new();
-        //foreach (var catalogue in AllCatalogues)
-        //{
-        //    var lmds = catalogue.LoadMetadatas();
-        //    if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
-        //    {
-        //        usedCatalogues.Add(catalogue);
-        //        chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-        //            catalogue));
-        //    }
-        //}
-
-        //allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
         AddToDictionaries(childObjects, descendancy);
     }
