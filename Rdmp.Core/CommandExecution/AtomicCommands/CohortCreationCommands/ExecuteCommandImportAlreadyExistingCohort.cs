@@ -72,7 +72,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         // if there are no new ones
         if (!available.Any())
         {
-            BasicActivator.Show($"There are no new cohorts");
+            BasicActivator.Show("There are no new cohorts");
             return null;
         }
 
