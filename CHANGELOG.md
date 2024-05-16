@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add prompt to reanem container when adding a cohort filter
 - Fix to remove stack trace button from non error popups
 - Add ability to set Extraction Categort as "Not Extractable"
+- Replace BadMedicine v1.2.1 with SynthEHR v2.0.0
 
 ## [8.1.5] - 2024-04-03
 
