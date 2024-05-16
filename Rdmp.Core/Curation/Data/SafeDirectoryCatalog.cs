@@ -71,7 +71,7 @@ public static class SafeDirectoryCatalog
         "autoupdater.net.resources.dll",
         "azure.core.dll",
         "azure.identity.dll",
-        "badmedicine.core.dll",
+        "syntehr.core.dll",
         "bouncycastle.crypto.dll",
         "clretwrc.dll",
         "clrjit.dll",

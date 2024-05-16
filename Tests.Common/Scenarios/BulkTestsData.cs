@@ -7,8 +7,8 @@
 using System;
 using System.Data;
 using System.Linq;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
