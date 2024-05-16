@@ -65,43 +65,43 @@ GlobalSection(NestedProjects) = preSolution
          EndGlobalSection*/
 
         var enteredRelationshipsBit = false;
-        for (var i = 0; i < slnFileLines.Length; i++)
+        foreach (var line in slnFileLines)
         {
-            if (slnFileLines[i].Trim().Equals(@"GlobalSection(NestedProjects) = preSolution"))
+            var trim = line.Trim();
+            if (trim.Equals(@"GlobalSection(NestedProjects) = preSolution"))
             {
                 enteredRelationshipsBit = true;
                 continue;
             }
 
-            if (slnFileLines[i].Trim().Equals("EndGlobalSection") && enteredRelationshipsBit)
+            if (trim.Equals("EndGlobalSection") && enteredRelationshipsBit)
                 break;
 
-            if (string.IsNullOrWhiteSpace(slnFileLines[i]))
+            if (string.IsNullOrWhiteSpace(line))
                 continue;
 
-            if (enteredRelationshipsBit)
+            if (!enteredRelationshipsBit) continue;
+
+            var split = line.Split('=');
+
+            var thingInside = split[0].Trim();
+            var thingHoldingIt = split[1].Trim();
+
+            var folderInside = Folders.SingleOrDefault(f => f.Guid.Equals(thingInside));
+            var folderHoldingIt = Folders.SingleOrDefault(f => f.Guid.Equals(thingHoldingIt));
+
+            if (folderHoldingIt == null)
+                continue;
+
+            if (folderInside != null)
             {
-                var split = slnFileLines[i].Split('=');
-
-                var thingInside = split[0].Trim();
-                var thingHoldingIt = split[1].Trim();
-
-                var folderInside = Folders.SingleOrDefault(f => f.Guid.Equals(thingInside));
-                var folderHoldingIt = Folders.SingleOrDefault(f => f.Guid.Equals(thingHoldingIt));
-
-                if (folderHoldingIt == null)
-                    continue;
-
-                if (folderInside != null)
-                {
-                    folderHoldingIt.ChildrenFolders.Add(folderInside);
-                }
-                else
-                {
-                    var visualStudioProjectReferenceInside = Projects.Single(p => p.Guid.Equals(thingInside));
-                    Folders.Single(f => f.Guid.Equals(thingHoldingIt)).ChildrenProjects
-                        .Add(visualStudioProjectReferenceInside);
-                }
+                folderHoldingIt.ChildrenFolders.Add(folderInside);
+            }
+            else
+            {
+                var visualStudioProjectReferenceInside = Projects.Single(p => p.Guid.Equals(thingInside));
+                Folders.Single(f => f.Guid.Equals(thingHoldingIt)).ChildrenProjects
+                    .Add(visualStudioProjectReferenceInside);
             }
         }
 

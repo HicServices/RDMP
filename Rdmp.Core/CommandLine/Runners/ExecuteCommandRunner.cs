@@ -224,12 +224,10 @@ internal class ExecuteCommandRunner : IRunner
 
         var word = new StringBuilder();
 
-        for (var i = 0; i < commandLine.Length; i++)
+        foreach (var c in commandLine)
         {
-            var c = commandLine[i];
-
             //if we enter quotes and it's the first letter in the word
-            if (inQuotes == null && (c == '\'' || c == '"') && word.Length == 0)
+            if (inQuotes == null && c is '\'' or '"' && word.Length == 0)
             {
                 inQuotes = c;
             }
