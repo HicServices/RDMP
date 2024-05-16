@@ -110,26 +110,25 @@ public class DleRunner : Runner
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
                     var processTasks = loadMetadata.ProcessTasks.Where(static ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
-                    if (processTasks.Count > 0) //if using a remote attacher, there may be some additional work to do
-                    {
-                        foreach (var arguments in processTasks.Select(static task => task.GetAllArguments().ToList()))
-                        {
-                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
-                            {
-                                var scanForwardDate = arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays"));
-                                var arg = (ProcessTaskArgument)argument;
-                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(int.Parse(scanForwardDate.Value)).ToString();
-                                if (arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).Value == "True")
-                                {
-                                    var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
-                                    if (mostRecentValue is not null)
-                                    {
-                                        arg.Value = DateTime.Parse(mostRecentValue).ToString();
-                                    }
-                                }
 
-                                arg.SaveToDatabase();
+                    //if using a remote attacher, there may be some additional work to do
+                    foreach (var arguments in processTasks.Select(static task => task.GetAllArguments().ToList()))
+                    {
+                        foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
+                        {
+                            var scanForwardDate = arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays"));
+                            var arg = (ProcessTaskArgument)argument;
+                            arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(int.Parse(scanForwardDate.Value)).ToString();
+                            if (arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).Value == "True")
+                            {
+                                var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
+                                if (mostRecentValue is not null)
+                                {
+                                    arg.Value = DateTime.Parse(mostRecentValue).ToString();
+                                }
                             }
+
+                            arg.SaveToDatabase();
                         }
                     }
                 }
