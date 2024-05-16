@@ -425,31 +425,31 @@ public class SqlQueryBuilderHelper
                 }
 
             //now add any joins which don't involve the primary table
-            for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
-                if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID != qb.PrimaryExtractionTable.ID &&
-                    qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
+            foreach (var join in qb.JoinsUsedInQuery)
+                if (join.ForeignKey.TableInfo_ID != qb.PrimaryExtractionTable.ID &&
+                    join.PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
                 {
-                    var pkTableID = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
-                    var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
+                    var pkTableID = join.PrimaryKey.TableInfo_ID;
+                    var fkTableID = join.ForeignKey.TableInfo_ID;
 
 
                     //if we have already seen foreign key table before
                     //if we already have
                     if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
                     {
-                        unneededJoins.Add(qb.JoinsUsedInQuery[i]);
+                        unneededJoins.Add(join);
                     }
                     else if (tablesAddedSoFar.Contains(fkTableID))
                     {
-                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(join) +
                                     Environment.NewLine; //add primary
                         tablesAddedSoFar.Add(pkTableID);
                     }
                     else
-                    //else if we have already seen primary key table before
+                        //else if we have already seen primary key table before
                     if (tablesAddedSoFar.Contains(pkTableID))
                     {
-                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(join) +
                                     Environment.NewLine; //add foreign instead
                         tablesAddedSoFar.Add(fkTableID);
                     }
