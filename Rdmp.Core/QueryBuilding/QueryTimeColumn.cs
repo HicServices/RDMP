@@ -80,19 +80,18 @@ public class QueryTimeColumn : IComparable
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        if (obj is QueryTimeColumn == false)
-            throw new Exception(".Equals only works for objects of type QueryTimeColumn");
+        if (obj is QueryTimeColumn other)
+            return
+                other.IColumn.Equals(IColumn);
 
-        var other = obj as QueryTimeColumn;
-        return
-            other.IColumn.Equals(IColumn);
+        throw new Exception(".Equals only works for objects of type QueryTimeColumn");
     }
 
     /// <inheritdoc/>
     public int CompareTo(object obj) =>
-        obj is QueryTimeColumn
+        obj is QueryTimeColumn column
             ? IColumn.Order -
-              (obj as QueryTimeColumn).IColumn.Order
+              column.IColumn.Order
             : 0;
 
     /// <summary>
