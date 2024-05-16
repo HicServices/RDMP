@@ -177,13 +177,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     public void Add(string name, string summary)
     {
         //these are not helpful!
-        if (name == "C" || name == "R")
-            return;
-
-        if (_dictionary.ContainsKey(name))
-            return;
-
-        _dictionary.Add(name, summary);
+        if (name is not ("C" or "R")) _dictionary.TryAdd(name, summary);
     }
 
     public bool ContainsKey(string keyword) => _dictionary.ContainsKey(keyword);
