@@ -41,26 +41,23 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
     public virtual void ReadComments(params string[] locations)
     {
-        foreach (var location in locations)
+        foreach (var location in locations.Where(static location => location is not null))
         {
-            if (location is null)
-                continue;
             if (Directory.Exists(location))
                 foreach (var xml in Directory.EnumerateFiles(location, "*.xml", SearchOption.AllDirectories))
-                    using (var content = File.OpenRead(xml))
-                    {
-                        ReadComments(content);
-                    }
-            else if (File.Exists(location))
-                using (var zip = new LibArchiveReader(location))
                 {
-                    foreach (var xml in zip.Entries())
-                        if (xml.Name.EndsWith(".xml", true, CultureInfo.InvariantCulture))
-                            using (var content = xml.Stream)
-                            {
-                                ReadComments(content);
-                            }
+                    using var content = File.OpenRead(xml);
+                    ReadComments(content);
                 }
+            else if (File.Exists(location))
+            {
+                using var zip = new LibArchiveReader(location);
+                foreach (var xml in zip.Entries().Where(static xml => xml.Name.EndsWith(".xml", true, CultureInfo.InvariantCulture)))
+                {
+                    using var content = xml.Stream;
+                    ReadComments(content);
+                }
+            }
         }
     }
 
