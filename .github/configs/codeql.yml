@@ -10,3 +10,5 @@ paths-ignore:
 query-filters:
   - exclude:
       id: cs/catch-of-all-exceptions
+  - exclude:
+      id: cs/useless-assignment-to-local      
