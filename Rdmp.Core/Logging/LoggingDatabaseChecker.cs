@@ -20,7 +20,7 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public class LoggingDatabaseChecker : ICheckable
 {
-    private DiscoveredServer _server;
+    private readonly DiscoveredServer _server;
 
 
     public LoggingDatabaseChecker(DiscoveredServer server)
@@ -238,7 +238,7 @@ public class LoggingDatabaseChecker : ICheckable
 
 
             //there is a required ID that does not exist e.g. 99,'MyFunkyStatus'
-            if (!actual.ContainsKey(kvp.Key))
+            if (!actual.TryGetValue(kvp.Key, out _))
             {
                 missing.Add(kvp.Key, kvp.Value);
                 continue;

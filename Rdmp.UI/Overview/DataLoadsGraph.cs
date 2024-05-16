@@ -203,7 +203,7 @@ public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
                     return;
                 }
 
-                var dt = new DataTable();
+                using var dt = new DataTable();
                 dt.Columns.Add("Category");
                 dt.Columns.Add("NumberOfDataLoadsAtStatus");
 

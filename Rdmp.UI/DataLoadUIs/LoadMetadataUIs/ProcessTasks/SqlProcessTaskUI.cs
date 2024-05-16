@@ -135,7 +135,7 @@ public partial class SqlProcessTaskUI : SqlProcessTaskUI_Design, ISaveableUI
 
     private void btnBrowse_Click(object sender, EventArgs e)
     {
-        var ofd = new OpenFileDialog
+        using var ofd = new OpenFileDialog
         {
             Filter = _processTask.ProcessTaskType == ProcessTaskType.SQLBakFile ? "BAK Files |*.bak" : "Sql Files|*.sql",
             CheckFileExists = true

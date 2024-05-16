@@ -13,3 +13,5 @@ query-filters:
       id: cs/catch-of-all-exceptions
   - exclude:
       id: cs/useless-assignment-to-local      
+  - exclude:
+      id: cs/local-not-disposed       
