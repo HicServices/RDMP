@@ -82,7 +82,7 @@ public class ConnectionStringKeyword : DatabaseEntity, INamed, ICheckable
             { "Value", value }
         });
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 

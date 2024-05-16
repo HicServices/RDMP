@@ -682,7 +682,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }
         });
 
-        if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
+        if (ID == 0 || string.IsNullOrWhiteSpace(Name) ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         //if there is a default logging server

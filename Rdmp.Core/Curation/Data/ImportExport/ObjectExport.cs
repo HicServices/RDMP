@@ -62,7 +62,7 @@ public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMa
             { "SharingUID", guid.ToString() }
         });
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         ClearAllInjections();

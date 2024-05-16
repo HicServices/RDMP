@@ -57,7 +57,7 @@ public class AggregateTopX: DatabaseEntity
 			{"AggregateConfiguration",config.ID}
 		});
 
-		if (ID == 0 || Repository != repository)
+		if (ID == 0 ||  !repository.Equals(Repository))
 			throw new ArgumentException("Repository failed to properly hydrate this class");
 	}
 	
@@ -144,7 +144,7 @@ public class AggregateTopX : DatabaseEntity, IInjectKnown<AggregateConfiguration
 			{"AggregateConfiguration",config.ID}
 		});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
     }
 
@@ -186,7 +186,7 @@ public void InjectKnown(AggregateConfiguration instance)
 			{"AggregateConfiguration",config.ID}
 		});
 
-        if (ID == 0 || Repository != repository)
+        if (ID == 0 ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         ClearAllInjections();
