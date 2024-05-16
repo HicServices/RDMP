@@ -453,10 +453,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var e in AllExports)
         {
-            if (!searchables.ContainsKey(e.ReferencedObjectID))
+            if (!searchables.TryGetValue(e.ReferencedObjectID, out var searchable))
                 continue;
 
-            var known = searchables[e.ReferencedObjectID]
+            var known = searchable
                 .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
             if (known != null)
