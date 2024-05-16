@@ -392,13 +392,11 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
-        ReportProgress("1");
 
         CohortIdentificationConfigurationRootFolder =
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
-        ReportProgress("2");
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
@@ -415,7 +413,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
         dec.SetBetterRouteExists();
         AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
-        ReportProgress("3");
 
         //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
         //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -825,17 +822,13 @@ public class CatalogueChildProvider : ICoreChildProvider
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
 
-
-        ReportProgress("AAA");
         //add loads in folder
         foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
-        ReportProgress("BBB");
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
                     .Union(folder.ChildObjects)), descendancy
         );
-        ReportProgress("CCC");
     }
 
     private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
