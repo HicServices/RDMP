@@ -64,9 +64,12 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
             var context = _useCaseIfAny?.GetContext();
             var offer = new List<Type>();
 
-            bool Filter(Type t, object o) => t.IsGenericType &&
-                                             (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
-                                              t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            static bool Filter(Type t, object o)
+            {
+                return t.IsGenericType &&
+                       (t.GetGenericTypeDefinition() == typeof(IDataFlowComponent<>) ||
+                        t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>));
+            }
 
             //get any source and flow components compatible with any context
             offer.AddRange(
@@ -130,10 +133,14 @@ public class ExecuteCommandAddPipelineComponent : BasicCommandExecution
         return;
 
         // check if it is a source or destination (or if both are false it is a middle component)
-        bool SourceFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        static bool SourceFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowSource<>);
+        }
 
-        bool DestFilter(Type t, object o) =>
-            t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        static bool DestFilter(Type t, object o)
+        {
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IDataFlowDestination<>);
+        }
     }
 }
