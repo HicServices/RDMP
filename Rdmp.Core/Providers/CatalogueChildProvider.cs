@@ -983,22 +983,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
         DescendancyList descendancy)
     {
-        var childObjects = new HashSet<object>();
-
-
         var loadMetadataId = allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID;
-
-        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(link => link.CatalogueID);
-        List<Catalogue> usedCatalogues = new();
-        foreach (var catalogueId in linkedCatalogueIDs)
-        {
-            var foundCatalogue = AllCatalogues.Where(c => c.ID == catalogueId).FirstOrDefault();
-            if (foundCatalogue is null) continue;
-            usedCatalogues.Add(foundCatalogue);
-            childObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-                    foundCatalogue));
-        }
+        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(static link => link.CatalogueID);
+        var usedCatalogues = linkedCatalogueIDs.Select(catalogueId => AllCatalogues.FirstOrDefault(c => c.ID == catalogueId)).Where(static foundCatalogue => foundCatalogue is not null).ToList();
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
+        var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
 
         AddToDictionaries(childObjects, descendancy);
     }
