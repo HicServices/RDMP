@@ -419,12 +419,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         var joinableDictionaryByAggregateConfigurationId =
             AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
-        foreach (var ac in AllAggregateConfigurations)
-            ac.InjectKnown(
-                joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
-                    out var joinable) //if there's a joinable
-                    ? joinable //inject that we know the joinable (and what it is)
-                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
+        foreach (var ac in AllAggregateConfigurations) //if there's a joinable
+            ac.InjectKnown( //inject that we know the joinable (and what it is)
+                joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
 
         ReportProgress("After AggregateConfiguration injection");
 
@@ -1560,7 +1557,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return _descendancyDictionary.TryGetValue(model, out var result) ? result : null;
+            return _descendancyDictionary.GetValueOrDefault(model);
         }
     }
 
