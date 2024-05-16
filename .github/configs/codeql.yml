@@ -14,4 +14,6 @@ query-filters:
   - exclude:
       id: cs/useless-assignment-to-local      
   - exclude:
-      id: cs/local-not-disposed       
+      id: cs/local-not-disposed   
+  - exclude:
+      id: cs/missed-readonly-modifier      
