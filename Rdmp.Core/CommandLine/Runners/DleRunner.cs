@@ -6,7 +6,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
+using NPOI.Util.Collections;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -145,15 +148,12 @@ public class DleRunner : Runner
         }
     }
 
-    private string RemoteAttacherPropertiesValidator(string propertyName)
-    {
-        var properties = typeof(RemoteAttacher).GetProperties();
-        var foundProperties = properties.Where(p => p.Name == propertyName);
-        if (foundProperties.Any())
-        {
-            return foundProperties.First().Name;
-        }
-        throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+    private static readonly ImmutableDictionary<string, PropertyInfo> Properties = typeof(RemoteAttacher).GetProperties().ToImmutableDictionary(static p => p.Name);
 
+    private static string RemoteAttacherPropertiesValidator(string propertyName)
+    {
+        var foundProperty = Properties.GetValueOrDefault(propertyName) ?? throw new Exception(
+            $"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+        return foundProperty.Name;
     }
 }

@@ -33,27 +33,21 @@ internal class FindSearchTailFilterWithAlwaysShowList : IListFilter
         if (string.IsNullOrEmpty(text))
         {
             _scoringObjects = allObjects.Take(maxToTake).ToList();
+            return;
         }
-        else
+
+        var searchThese = allObjects.ToDictionary(static o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+
+        var scorer = new SearchablesMatchScorer
         {
-            var searchThese = allObjects.ToDictionary(o => o, activator.CoreChildProvider.GetDescendancyListIfAnyFor);
+            TypeNames = new HashSet<string>(searchThese.Keys.Select(static m => m.GetType().Name),
+                StringComparer.CurrentCultureIgnoreCase)
+        };
+        var matches = scorer.ScoreMatches(searchThese, text, null, cancellationToken);
 
-            var scorer = new SearchablesMatchScorer
-            {
-                TypeNames = new HashSet<string>(allObjects.Select(m => m.GetType().Name).Distinct(),
-                    StringComparer.CurrentCultureIgnoreCase)
-            };
-            var matches = scorer.ScoreMatches(searchThese, text, null, cancellationToken);
-
-            // we were cancelled
-            if (matches == null)
-            {
-                _scoringObjects = new List<IMapsDirectlyToDatabaseTable>();
-                return;
-            }
-
-            _scoringObjects = SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
-        }
+        _scoringObjects = matches == null
+            ? new List<IMapsDirectlyToDatabaseTable>() // we were cancelled
+            : SearchablesMatchScorer.ShortList(matches, maxToTake, activator);
     }
 
 
