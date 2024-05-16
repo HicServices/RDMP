@@ -109,17 +109,17 @@ public class DleRunner : Runner
                     //Store the date of the last successful load
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
-                    List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
-                    if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
+                    var processTasks = loadMetadata.ProcessTasks.Where(static ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
+                    if (processTasks.Count > 0) //if using a remote attacher, there may be some additional work to do
                     {
-                        foreach (IEnumerable<Argument> arguments in processTasks.Select(task => task.GetAllArguments()))
+                        foreach (var arguments in processTasks.Select(static task => task.GetAllArguments().ToList()))
                         {
                             foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
                             {
-                                var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
+                                var scanForwardDate = arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays"));
                                 var arg = (ProcessTaskArgument)argument;
-                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
-                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
+                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(int.Parse(scanForwardDate.Value)).ToString();
+                                if (arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).Value == "True")
                                 {
                                     var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
                                     if (mostRecentValue is not null)
@@ -127,6 +127,7 @@ public class DleRunner : Runner
                                         arg.Value = DateTime.Parse(mostRecentValue).ToString();
                                     }
                                 }
+
                                 arg.SaveToDatabase();
                             }
                         }
