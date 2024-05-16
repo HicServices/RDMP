@@ -29,7 +29,6 @@ namespace Rdmp.Core.QueryBuilding;
 /// </summary>
 public class CohortQueryBuilderDependency
 {
-    private readonly ICoreChildProvider _childProvider;
     private readonly IReadOnlyCollection<IPluginCohortCompiler> _pluginCohortCompilers;
 
     /// <summary>
@@ -85,7 +84,7 @@ public class CohortQueryBuilderDependency
         JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider,
         IReadOnlyCollection<IPluginCohortCompiler> pluginCohortCompilers)
     {
-        _childProvider = childProvider;
+        var childProvider1 = childProvider;
         _pluginCohortCompilers = pluginCohortCompilers;
         CohortSet = cohortSet;
         PatientIndexTableIfAny = patientIndexTableIfAny;
@@ -99,10 +98,10 @@ public class CohortQueryBuilderDependency
 
         if (PatientIndexTableIfAny != null)
         {
-            var join = _childProvider.AllJoinables.SingleOrDefault(j =>
+            var join = childProvider1.AllJoinables.SingleOrDefault(j =>
                            j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID) ??
                        throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-            JoinedTo = _childProvider.AllAggregateConfigurations.SingleOrDefault(ac =>
+            JoinedTo = childProvider1.AllAggregateConfigurations.SingleOrDefault(ac =>
                 ac.ID == join.AggregateConfiguration_ID);
 
             if (JoinedTo == null)
