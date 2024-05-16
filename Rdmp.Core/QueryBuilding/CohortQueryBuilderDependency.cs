@@ -164,13 +164,10 @@ public class CohortQueryBuilderDependency
                 SqlJoinableCached = GetCacheFetchSqlIfPossible(parent, JoinedTo, SqlJoinableCacheless, true,
                     joinedToPluginCohortCompiler, cancellationToken);
 
-                if (SqlJoinableCached == null)
-                    throw new Exception(
-                        $"Unable to build query for '{CohortSet}' because it joins to API cohort '{JoinedTo}' that did not exist in the cache");
-
                 // Since the only way to query the dataset is using the cache we can pretend that it is the cacheless way
                 // of querying it too.
-                SqlJoinableCacheless = SqlJoinableCached;
+                SqlJoinableCacheless = SqlJoinableCached ?? throw new Exception(
+                    $"Unable to build query for '{CohortSet}' because it joins to API cohort '{JoinedTo}' that did not exist in the cache");
             }
         }
 
