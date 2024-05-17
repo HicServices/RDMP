@@ -8,8 +8,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 
 namespace Rdmp.UI.SimpleDialogs.Reports;
 
