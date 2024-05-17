@@ -84,25 +84,25 @@ public sealed class LoggingDatabasePatcher : Patcher
 
         sql.AppendLine(@"
 
-INSERT INTO z_DataLoadTaskStatus(ID, status, description) VALUES(1, 'Open', NULL);
-INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(2, 'Ready', NULL);
-INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(3, 'Committed', NULL);
-INSERT INTO z_FatalErrorStatus(ID, status) VALUES(1, 'Outstanding');
-INSERT INTO z_FatalErrorStatus (ID, status) VALUES(2, 'Resolved');
-INSERT INTO z_FatalErrorStatus (ID, status) VALUES(3, 'Blocked');
-INSERT INTO z_RowErrorType(ID, type) VALUES(1, 'LoadRow');
-INSERT INTO z_RowErrorType (ID, type) VALUES(2, 'Duplication');
-INSERT INTO z_RowErrorType (ID, type) VALUES(3, 'Validation');
-INSERT INTO z_RowErrorType (ID, type) VALUES(4, 'DatabaseOperation');
-INSERT INTO z_RowErrorType (ID, type) VALUES(5, 'Unknown');
+INSERT INTO ""z_DataLoadTaskStatus"" (""ID"", status, description) VALUES(1, 'Open', NULL);
+INSERT INTO ""z_DataLoadTaskStatus"" (""ID"", status, description) VALUES(2, 'Ready', NULL);
+INSERT INTO ""z_DataLoadTaskStatus"" (""ID"", status, description) VALUES(3, 'Committed', NULL);
+INSERT INTO ""z_FatalErrorStatus"" (""ID"", status) VALUES(1, 'Outstanding');
+INSERT INTO ""z_FatalErrorStatus"" (""ID"", status) VALUES(2, 'Resolved');
+INSERT INTO ""z_FatalErrorStatus"" (""ID"", status) VALUES(3, 'Blocked');
+INSERT INTO ""z_RowErrorType"" (""ID"", type) VALUES(1, 'LoadRow');
+INSERT INTO ""z_RowErrorType"" (""ID"", type) VALUES(2, 'Duplication');
+INSERT INTO ""z_RowErrorType"" (""ID"", type) VALUES(3, 'Validation');
+INSERT INTO ""z_RowErrorType"" (""ID"", type) VALUES(4, 'DatabaseOperation');
+INSERT INTO ""z_RowErrorType"" (""ID"", type) VALUES(5, 'Unknown');
 
 /*create datasets*/
-INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'DataExtraction', 'DataExtraction', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO ""DataSet"" (""dataSetID"", name, description, time_period, ""SLA_required"", supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, ""currentContactInstitutions"", contact_tel_no, contact_email, frequency, method) VALUES(N'DataExtraction', 'DataExtraction', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO ""DataSet"" (""dataSetID"", name, description, time_period, ""SLA_required"", supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, ""currentContactInstitutions"", contact_tel_no, contact_email, frequency, method) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 /*create tasks*/
-INSERT INTO DataLoadTask(ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(1, 'Internal', 'Internal', 'Thomas', 1, 0, 'Internal');
-INSERT INTO DataLoadTask (ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(2, 'DataExtraction', 'DataExtraction', 'Thomas', 1, 0, 'DataExtraction');
+INSERT INTO ""DataLoadTask"" (""ID"", description, name, ""userAccount"", ""statusID"", ""isTest"", ""dataSetID"") VALUES(1, 'Internal', 'Internal', 'Thomas', 1, 0, 'Internal');
+INSERT INTO ""DataLoadTask"" (""ID"", description, name, ""userAccount"", ""statusID"", ""isTest"", ""dataSetID"") VALUES(2, 'DataExtraction', 'DataExtraction', 'Thomas', 1, 0, 'DataExtraction');
 ");
 
 
