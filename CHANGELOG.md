@@ -11,7 +11,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Improve error messages for Multi-ExtractionIdentifier extractions
-- Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
 - Add prompt to rename container when adding a cohort filter
 - Allow for column selection when using the RemoteTableAttacher
 - Fix to remove stack trace button from non error popups

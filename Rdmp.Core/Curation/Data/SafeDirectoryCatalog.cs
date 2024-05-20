@@ -98,7 +98,6 @@ public static class SafeDirectoryCatalog
         "libarchive.net.dll",
         "mapsdirectlytodatabasetable.dll",
         "mathnet.numerics.dll",
-        "microsoft.bcl.asyncinterfaces.dll",
         "microsoft.csharp.dll",
         "microsoft.data.sqlclient.dll",
         "microsoft.data.sqlclient.sni.dll",
