@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve error messages for Multi-ExtractionIdentifier extractions
 - Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
 - Add prompt to rename container when adding a cohort filter
+- Allow for column selection when using the RemoteTableAttacher
 - Fix to remove stack trace button from non error popups
 - Add ability to set Extraction Category as "Not Extractable"
 - Replace BadMedicine v1.2.1 with SynthEHR v2.0.0
