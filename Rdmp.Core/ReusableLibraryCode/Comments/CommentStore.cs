@@ -41,10 +41,8 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
     public virtual void ReadComments(params string[] locations)
     {
-        foreach (var location in locations)
+        foreach (var location in locations.Where(l => l is not null))
         {
-            if (location is null)
-                continue;
             if (Directory.Exists(location))
                 foreach (var xml in Directory.EnumerateFiles(location, "*.xml", SearchOption.AllDirectories))
                     using (var content = File.OpenRead(xml))

@@ -343,9 +343,8 @@ public partial class StartupUI : Form, ICheckNotifier
         if (_choosePlatformsUI is { ChangesMade: true })
             DoNotContinue = true;
 
-        if (e.CloseReason == CloseReason.UserClosing)
-            if (ragSmiley1.IsFatal())
-                DoNotContinue = true;
+        if (e.CloseReason == CloseReason.UserClosing && ragSmiley1.IsFatal())
+            DoNotContinue = true;
     }
 
     private void BtnChoosePlatformDatabases_Click(object sender, EventArgs e)

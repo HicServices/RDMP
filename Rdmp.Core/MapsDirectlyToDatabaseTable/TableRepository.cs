@@ -266,9 +266,8 @@ public abstract class TableRepository : ITableRepository
         var typename = Wrap(typeof(T).Name);
 
         //if there is whereSQL make sure it is a legit SQL where
-        if (!string.IsNullOrWhiteSpace(whereSQL))
-            if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
-                throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
+        if (!string.IsNullOrWhiteSpace(whereSQL) && !whereSQL.Trim().ToUpper().StartsWith("WHERE"))
+            throw new ArgumentException($"whereSQL did not start with the word 'WHERE', it was:{whereSQL}");
 
         var toReturn = new List<T>();
 
