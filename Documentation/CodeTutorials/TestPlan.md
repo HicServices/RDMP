@@ -4,6 +4,11 @@ These questions are designed to help highlight any steps in the testing process 
 
 If you are looking to release a new version with this change, please look at the [Release Testing](#release_testing) section below.
 
+## Generating Test Data
+There is functionality to generate example data built into RDMP. This functionality has a 'nightmare' mode, which can generate large amounts of data for testing purposes.
+This mode can be enabled when creating platform databases by adding the 'Nightmare' flag to the example data settings during platform creation.
+Additional data can be used by using the 'Factor' flag to increase the amount of data, this will multiply the number of objects created by your specified Factor.
+
 ## Questions To Ask
 ### Does this change add a database migration?
 If the change adds a database migration, ask yourself the following questions:
