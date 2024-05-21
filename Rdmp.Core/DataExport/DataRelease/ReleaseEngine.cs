@@ -258,8 +258,7 @@ public class ReleaseEngine
             .Select(releasePotential => releasePotential.ExtractDirectory.Parent
                 .EnumerateDirectories(folderName, SearchOption.TopDirectoryOnly)
                 .SingleOrDefault())
-            .Where(globalFolderForThisExtract => globalFolderForThisExtract != null)
-            .Select(globalFolderForThisExtract => globalFolderForThisExtract);
+            .Where(globalFolderForThisExtract => globalFolderForThisExtract != null);
     }
 
     protected static DirectoryInfo GetUniqueDirectoryFrom(List<DirectoryInfo> directoryInfos)

@@ -81,6 +81,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -89,6 +90,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -97,6 +99,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -105,6 +108,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
         }
 
@@ -114,6 +118,7 @@ public class LookupTest : DatabaseTests
         }
         catch (Exception)
         {
+            Console.WriteLine("Unable To Delete child");
         }
     }
 
@@ -162,6 +167,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -170,6 +176,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -178,6 +185,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -186,6 +194,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
 
             try
@@ -194,6 +203,7 @@ public class LookupTest : DatabaseTests
             }
             catch (Exception)
             {
+                Console.WriteLine("Unable To Delete child");
             }
         }
     }

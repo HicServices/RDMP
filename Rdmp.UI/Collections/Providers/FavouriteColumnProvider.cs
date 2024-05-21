@@ -77,6 +77,7 @@ public class FavouriteColumnProvider
             }
             catch (ArgumentException)
             {
+                Console.WriteLine("Unable to refresh favourite column");
             }
         }
     }

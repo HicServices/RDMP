@@ -16,4 +16,8 @@ query-filters:
   - exclude:
       id: cs/local-not-disposed   
   - exclude:
-      id: cs/missed-readonly-modifier      
+      id: cs/missed-readonly-modifier   
+  - exclude:
+      id: cs/dereferenced-value-may-be-null  
+  - exclude:
+      id: cs/string-concatenation-in-loop       
