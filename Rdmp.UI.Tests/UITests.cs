@@ -349,36 +349,35 @@ public class UITests : UnitTests
 
         foreach (var o in objectsToTest)
             //foreach compatible UI
-        foreach (var uiType in uiTypes.Where(a => a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
-        {
-            //todo
-            var methodAndLaunch = methods.Single(m =>
-                m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 &&
-                m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
-
-            //ensure that the method supports the Type
-            var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
-
-            IRDMPSingleDatabaseObjectControl ui;
-
-            try
+            foreach (var uiType in uiTypes.Where(a => a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
             {
-                ui = (IRDMPSingleDatabaseObjectControl)genericAndLaunch.Invoke(this, new object[] { o, true });
+                //todo
+                var methodAndLaunch = methods.Single(m =>
+                    m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 &&
+                    m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
 
-                if (ui is IDisposable d)
-                    d.Dispose();
+                //ensure that the method supports the Type
+                var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
+
+                IRDMPSingleDatabaseObjectControl ui;
+
+                try
+                {
+                    ui = (IRDMPSingleDatabaseObjectControl)genericAndLaunch.Invoke(this, new object[] { o, true });
+
+                    if (ui is IDisposable d)
+                        d.Dispose();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception(
+                        $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",
+                        ex);
+                }
+
+                action(ui);
+                ClearResults();
             }
-            catch (Exception ex)
-            {
-                throw new Exception(
-                    $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",
-                    ex);
-            }
-
-
-            action(ui);
-            ClearResults();
-        }
     }
 
     private static string ShowCode(Type t, Type uiType)

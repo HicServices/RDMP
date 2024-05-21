@@ -421,44 +421,49 @@ public abstract class BasicCommandExecution : IAtomicCommand
         var constructorValues = new List<object>();
 
         var pickerEnumerator = pickerArgsIfAny?.GetEnumerator();
-
-        foreach (var parameterInfo in constructor.GetParameters())
+        try
         {
-            var required = new RequiredArgument(parameterInfo);
-            var parameterDelegate = invoker.GetDelegate(required);
+            foreach (var parameterInfo in constructor.GetParameters())
+            {
+                var required = new RequiredArgument(parameterInfo);
+                var parameterDelegate = invoker.GetDelegate(required);
 
-            if (parameterDelegate.IsAuto)
-            {
-                constructorValues.Add(parameterDelegate.Run(required));
-            }
-            else
-            {
-                //it's not auto
-                if (pickerEnumerator != null)
+                if (parameterDelegate.IsAuto)
                 {
-                    pickerEnumerator.MoveNext();
-
-                    if (pickerEnumerator.Current == null)
-                        throw new ArgumentException(
-                            $"Value needed for parameter '{required.Name}' (of type '{required.Type}')");
-
-                    //construct with the picker arguments
-                    if (!pickerEnumerator.Current.HasValueOfType(required.Type))
-                        throw new NotSupportedException(
-                            $"Argument '{pickerEnumerator.Current.RawValue}' could not be converted to required Type '{required.Type}' for argument {required.Name}");
-
-                    //it is a valid object yay!
-                    constructorValues.Add(pickerEnumerator.Current.GetValueForParameterOfType(required.Type));
+                    constructorValues.Add(parameterDelegate.Run(required));
                 }
                 else
                 {
-                    //construct by prompting user for the values
-                    constructorValues.Add(invoker.GetValueForParameterOfType(parameterInfo));
+                    //it's not auto
+                    if (pickerEnumerator != null)
+                    {
+                        pickerEnumerator.MoveNext();
+
+                        if (pickerEnumerator.Current == null)
+                            throw new ArgumentException(
+                                $"Value needed for parameter '{required.Name}' (of type '{required.Type}')");
+
+                        //construct with the picker arguments
+                        if (!pickerEnumerator.Current.HasValueOfType(required.Type))
+                            throw new NotSupportedException(
+                                $"Argument '{pickerEnumerator.Current.RawValue}' could not be converted to required Type '{required.Type}' for argument {required.Name}");
+
+                        //it is a valid object yay!
+                        constructorValues.Add(pickerEnumerator.Current.GetValueForParameterOfType(required.Type));
+                    }
+                    else
+                    {
+                        //construct by prompting user for the values
+                        constructorValues.Add(invoker.GetValueForParameterOfType(parameterInfo));
+                    }
                 }
             }
         }
+        finally
+        {
 
-        pickerEnumerator?.Dispose();
+            pickerEnumerator?.Dispose();
+        }
 
         return constructor.Invoke(constructorValues.ToArray());
     }

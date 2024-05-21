@@ -381,7 +381,7 @@ public abstract class TableRepository : ITableRepository
                 "Why are you comparing two null things against one another with this method?");
 
         return obj1.GetType() == obj2.GetType() && obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID &&
-               obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
+               ((IMapsDirectlyToDatabaseTable)obj1).Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
     }
 
     /// <inheritdoc/>
