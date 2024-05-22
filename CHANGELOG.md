@@ -1,20 +1,33 @@
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## [8.2.0] - Unreleased
 
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
 
 ## [8.1.6] = Unreleased
+||||||| 694ff48d5
+## [8.1.6] = Unreleased
+=======
+## [8.1.6] - Unreleased
+>>>>>>> 0d59d0fbc88d49e4002e29f126a44ec7a05905d6
 
 ## Changed
 
-- Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
-- Add prompt to reanem container when adding a cohort filter
+- Improve error messages for Multi-ExtractionIdentifier extractions
+- Add prompt to rename container when adding a cohort filter
+- Allow for column selection when using the RemoteTableAttacher
+- Fix to remove stack trace button from non error popups
+- Add ability to set Extraction Category as "Not Extractable"
+- Replace BadMedicine v1.2.1 with SynthEHR v2.0.0
+- Fix issue with RDMP being slow to load when having numerous Load Metadatas
+- Fix issue creating logging databases on PostgreSQL servers
 
 ## [8.1.5] - 2024-04-03
 
