@@ -353,7 +353,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                 new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
                     { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
             });
-        var idColumn = definitionTable.DiscoverColumn("id");
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
             { IsPrimaryKey = true };
@@ -482,7 +481,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
 
         //add new entry here
-        var tblInfo = CatalogueRepository.GetAllObjects<TableInfo>().First();
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
             {
@@ -498,7 +496,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
-        var conf2 = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
+        _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
         conf.SaveToDatabase();
         agg1.SaveToDatabase();
         cic.RootCohortAggregateContainer.AddChild(agg12, 0);
@@ -507,14 +505,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim2.SaveToDatabase();
         agg12.SaveToDatabase();
 
-        var newCohortCmd2 = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
-            new ThrowImmediatelyActivator(RepositoryLocator),
-            cic2,
-            newExternal,
-            "MyCohort2",
-            project,
-            cohortPipeline
-            );
         newCohortCmd.Execute();
         ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
@@ -624,7 +614,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
                 new DatabaseColumnRequest("dtCreated", new DatabaseTypeRequest(typeof(DateTime)))
                     { AllowNulls = false, Default = MandatoryScalarFunctions.GetTodaysDate }
             });
-        var idColumn = definitionTable.DiscoverColumn("id");
         var foreignKey =
             new DatabaseColumnRequest(DefinitionTableForeignKeyField, new DatabaseTypeRequest(typeof(int)), false)
             { IsPrimaryKey = true };
@@ -753,7 +742,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
 
         //add new entry here
-        var tblInfo = CatalogueRepository.GetAllObjects<TableInfo>().First();
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
             {
@@ -769,7 +757,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
-        var conf2 = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
+        _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
         conf.SaveToDatabase();
         agg1.SaveToDatabase();
         cic.RootCohortAggregateContainer.AddChild(agg12, 0);
@@ -778,14 +766,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim2.SaveToDatabase();
         agg12.SaveToDatabase();
 
-        var newCohortCmd2 = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
-            new ThrowImmediatelyActivator(RepositoryLocator),
-            cic2,
-            newExternal,
-            "MyCohort2",
-            project,
-            cohortPipeline
-            );
         newCohortCmd.Execute();
         ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
@@ -1021,7 +1001,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(dt.Rows, Has.Count.EqualTo(1));
 
         //add new entry here
-        var tblInfo = CatalogueRepository.GetAllObjects<TableInfo>().First();
         var tbl = db.DiscoverTables(false).First();
         tbl.Insert(new Dictionary<string, object>
             {
@@ -1037,7 +1016,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
         cic2.CreateRootContainerIfNotExists();
         var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
-        var conf2 = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
+        _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
         conf.SaveToDatabase();
         agg1.SaveToDatabase();
         cic.RootCohortAggregateContainer.AddChild(agg12, 0);
@@ -1046,14 +1025,6 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         dim2.SaveToDatabase();
         agg12.SaveToDatabase();
 
-        var newCohortCmd2 = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
-            new ThrowImmediatelyActivator(RepositoryLocator),
-            cic2,
-            newExternal,
-            "MyCohort2",
-            project,
-            cohortPipeline
-            );
         newCohortCmd.Execute();
         ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
