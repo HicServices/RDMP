@@ -17,12 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Changed
 
 - Improve error messages for Multi-ExtractionIdentifier extractions
-- Add Microsoft.Bcl.AsyncInterfaces 6.0.0 for plugin dependancy tree
-- Add prompt to reanem container when adding a cohort filter
+- Add prompt to rename container when adding a cohort filter
+- Allow for column selection when using the RemoteTableAttacher
 - Fix to remove stack trace button from non error popups
-- Add ability to set Extraction Categort as "Not Extractable"
+- Add ability to set Extraction Category as "Not Extractable"
 - Replace BadMedicine v1.2.1 with SynthEHR v2.0.0
 - Fix issue with RDMP being slow to load when having numerous Load Metadatas
+- Fix issue creating logging databases on PostgreSQL servers
 
 ## [8.1.5] - 2024-04-03
 
