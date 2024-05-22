@@ -499,7 +499,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     /// <inheritdoc/>
     public LoadMetadata[] LoadMetadatas()
     {
-        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID",ID).Select(l => l.LoadMetadataID);
+        var loadMetadataLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("CatalogueID", ID).Select(l => l.LoadMetadataID);
 
         return Repository.GetAllObjects<LoadMetadata>().Where(cat => loadMetadataLinkIDs.Contains(cat.ID)).ToArray();
     }
@@ -511,7 +511,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
     /// <inheritdoc/>
     [NoMappingToDatabase]
-     public ExternalDatabaseServer LiveLoggingServer =>
+    public ExternalDatabaseServer LiveLoggingServer =>
        LiveLoggingServer_ID == null
                    ? null
                    : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
@@ -893,8 +893,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, true);//can just set this to true....has been like this for 7 years
-                //server.Builder.Add("Database", "smi"); //the issue is that we don't provide a database, so fansisql assumes the default
+                var setInitialDatabase = tables.Where(t => t.Database != null).Any();
+                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, setInitialDatabase);
                 using var con = server.GetConnection();
                 con.Open();
 
