@@ -893,7 +893,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var setInitialDatabase = tables.Where(t => t.Database != null).Any();
+                var setInitialDatabase = tables.Any(static t => t.Database != null);
                 var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, setInitialDatabase);
                 using var con = server.GetConnection();
                 con.Open();
