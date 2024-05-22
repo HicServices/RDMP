@@ -244,9 +244,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
                 ResizeColumnsIfRequired(toProcess, listener);
 
-            //push the data
             swTimeSpentWriting.Start();
-            //there is no pks for some reason
             if (AppendDataIfTableExists && pkColumns.Length > 0) //assumes columns are the same
             {
                 //drop any pk clashes

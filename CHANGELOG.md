@@ -1,4 +1,5 @@
 
+elog
 
 # Changelog
 All notable changes to this project will be documented in this file.
@@ -6,17 +7,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<<<<<<< HEAD
 ## [8.2.0] - Unreleased
 
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
 
-## [8.1.6] = Unreleased
-||||||| 694ff48d5
-## [8.1.6] = Unreleased
-=======
 ## [8.1.6] - Unreleased
->>>>>>> 0d59d0fbc88d49e4002e29f126a44ec7a05905d6
 
 ## Changed
 
