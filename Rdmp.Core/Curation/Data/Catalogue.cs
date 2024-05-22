@@ -893,8 +893,8 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
 
             try
             {
-                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, false);
-
+                var server = DataAccessPortal.ExpectDistinctServer(tables, accessContext, true);//can just set this to true....has been like this for 7 years
+                //server.Builder.Add("Database", "smi"); //the issue is that we don't provide a database, so fansisql assumes the default
                 using var con = server.GetConnection();
                 con.Open();
 
