@@ -10,15 +10,12 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
+public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution, IAtomicCommand
 {
     CohortIdentificationConfiguration _cic;
-    IBasicActivateItems _activateItems;
 
-    [UseWithObjectConstructor]
     public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) : base(activator)
     {
-        _activateItems = activator;
         _cic = cic;
     }
 
@@ -27,11 +24,5 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
     {
         base.Execute();
         _cic.SaveCurrentConfigurationAsNewVersion();
-    }
-
-    public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
-    {
-        _cic = (CohortIdentificationConfiguration)target;
-        return this;
     }
 }

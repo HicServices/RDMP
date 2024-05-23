@@ -200,9 +200,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     public void SaveCurrentConfigurationAsNewVersion(string name = null)
     {
-        var version = new CohortConfigurationVersion();
-        version.CohortIdentificationConfigurationId = this.ID;
-        version.Name = name != null ? name : $"{this.Name}: {DateTime.Now}";
+        var version = new CohortConfigurationVersion(CatalogueRepository, this.ID, name ?? $"{this.Name}: {DateTime.Now}");
         version.SaveToDatabase();
     }
 
