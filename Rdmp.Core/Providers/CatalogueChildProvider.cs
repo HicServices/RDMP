@@ -54,6 +54,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 {
     //Load System
     public LoadMetadata[] AllLoadMetadatas { get; set; }
+
+    private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
     public ProcessTask[] AllProcessTasks { get; set; }
     public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
@@ -247,6 +249,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+        AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
         AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
         AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
@@ -390,12 +393,10 @@ public class CatalogueChildProvider : ICoreChildProvider
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
-
         CohortIdentificationConfigurationRootFolder =
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
-
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
@@ -412,7 +413,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         var dec = new DescendancyList(TemplateAggregateConfigurationsNode);
         dec.SetBetterRouteExists();
         AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
-
 
         //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
         //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -824,7 +824,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //add loads in folder
         foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
-
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -987,23 +986,24 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
         DescendancyList descendancy)
     {
-        var chilObjects = new HashSet<object>();
+        var childObjects = new HashSet<object>();
 
+
+        var loadMetadataId = allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID;
+
+        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(link => link.CatalogueID);
         List<Catalogue> usedCatalogues = new();
-        foreach (var catalogue in AllCatalogues)
+        foreach (var catalogueId in linkedCatalogueIDs)
         {
-            var lmds = catalogue.LoadMetadatas();
-            if (lmds.Any() && lmds.Select(lmd => lmd.ID).ToList().Contains(allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID))
-            {
-                usedCatalogues.Add(catalogue);
-                chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-                    catalogue));
-            }
+            var foundCatalogue = AllCatalogues.Where(c => c.ID == catalogueId).FirstOrDefault();
+            if (foundCatalogue is null) continue;
+            usedCatalogues.Add(foundCatalogue);
+            childObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
+                    foundCatalogue));
         }
-
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
-        AddToDictionaries(chilObjects, descendancy);
+        AddToDictionaries(childObjects, descendancy);
     }
 
     #endregion
