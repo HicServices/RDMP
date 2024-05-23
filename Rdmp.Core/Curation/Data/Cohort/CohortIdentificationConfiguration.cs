@@ -198,12 +198,6 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         return CatalogueRepository.GetAllObjectsWhere<CohortConfigurationVersion>("CohortIdentificationConfigurationId", this.ID).ToList();
     }
 
-    public void SaveCurrentConfigurationAsNewVersion(string name = null)
-    {
-        var version = new CohortConfigurationVersion(CatalogueRepository, this.ID, name ?? $"{this.Name}: {DateTime.Now}");
-        version.SaveToDatabase();
-    }
-
     public CohortIdentificationConfiguration()
     {
     }
@@ -239,7 +233,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         FrozenBy = r["FrozenBy"] as string;
         FrozenDate = ObjectToNullableDateTime(r["FrozenDate"]);
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
-
+        Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
     }
 
