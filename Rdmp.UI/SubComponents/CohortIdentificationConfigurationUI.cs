@@ -9,13 +9,17 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Org.BouncyCastle.Tls;
 using Rdmp.Core;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Settings;
@@ -73,7 +77,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
-    private CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -134,6 +138,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
         tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
         tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
+
     }
 
 
@@ -141,7 +146,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         Common.Activator = Activator;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-
 
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
@@ -165,12 +169,30 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
 
+    private void VersionChange(object sender, EventArgs e)
+    {
+        if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei)
+        {
+            Console.WriteLine("Do something");// HERE
+        }
+    }
+
+    private void CommitNewVersion(object sender, EventArgs e)
+    {
+        //this needs a confirm and an optional name
+        var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, $"Some Name {DateTime.Now}");
+        cmd.Execute();
+    }
+
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
-
+        var versions = databaseObject.GetVersions();
+        databaseObject.Name = "Latest";
+        versions.Insert(0, databaseObject);
+        cbKnownVersions.DataSource = versions;
         RebuildClearCacheCommand();
 
         gbCicInfo.Text = $"Name: {databaseObject.Name}";

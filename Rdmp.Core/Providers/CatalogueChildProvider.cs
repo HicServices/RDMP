@@ -298,7 +298,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
         AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.Version is null).ToArray();//make more efficient
 
         FetchCatalogueItems();
 

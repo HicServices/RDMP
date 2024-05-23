@@ -16,11 +16,13 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
 {
     CohortIdentificationConfiguration _cic;
     IBasicActivateItems _activator;
+    string _name;
 
-    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic) : base(activator)
+    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic,string name=null) : base(activator)
     {
         _cic = cic;
         _activator = activator;
+        _name = name;
     }
 
 
@@ -30,13 +32,13 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         CohortIdentificationConfiguration clone = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
         if (clone != null)
         {
-            clone.Name = clone.Name[..^8];//strip out clone
             clone.Version = 1;
             var previousClones = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Version != null);
             if (previousClones.Any())
             {
                 clone.Version = previousClones.Select(pc => pc.Version).Where(v => v != null).Max() + 1;
             }
+            clone.Name = _name ?? $"{clone.Name[..^8]}:{clone.Version}";
             clone.SaveToDatabase();
             Publish(clone);
         }
