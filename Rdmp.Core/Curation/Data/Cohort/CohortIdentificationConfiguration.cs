@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using NPOI.OpenXmlFormats.Spreadsheet;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -39,6 +40,18 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
     /// </summary>
     public const string CICPrefix = "cic_";
+
+
+    private int? _version;
+
+    public int? Version
+    {
+        get => _version;
+        set => _version = value;
+    }
+
+
+
 
     #region Database Properties
 
@@ -178,6 +191,20 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
             : Repository.GetObjectByID<ExternalDatabaseServer>(QueryCachingServer_ID.Value);
 
     #endregion
+
+
+    public List<CohortConfigurationVersion> GetVersions()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CohortConfigurationVersion>("CohortIdentificationConfigurationId", this.ID).ToList();
+    }
+
+    public void SaveCurrentConfigurationAsNewVersion(string name = null)
+    {
+        var version = new CohortConfigurationVersion();
+        version.CohortIdentificationConfigurationId = this.ID;
+        version.Name = name != null ? name : $"{this.Name}: {DateTime.Now}";
+        version.SaveToDatabase();
+    }
 
     public CohortIdentificationConfiguration()
     {
