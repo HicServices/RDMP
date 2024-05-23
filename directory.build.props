@@ -1,13 +1,7 @@
 <Project>
   <PropertyGroup>
     <LangVersion>11.0</LangVersion>
-<<<<<<< HEAD
-    <Version>8.2.0</Version>
-||||||| 694ff48d5
-    <Version>8.1.5</Version>
-=======
     <Version>8.1.4</Version>
->>>>>>> 0d59d0fbc88d49e4002e29f126a44ec7a05905d6
 		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 </Project>
