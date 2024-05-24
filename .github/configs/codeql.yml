@@ -31,4 +31,10 @@ query-filters:
       id: cs/reference-equality-with-object
   - exclude:
       id: cs/virtual-call-in-constructor 
+  - exclude:
+      id: rule:cs/linq/missed-where 
+  - exclude:
+      id: rule:cs/linq/missed-select
+  - exclude:
+      id: cs/nested-if-statements 
       
