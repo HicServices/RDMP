@@ -394,7 +394,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
         CohortIdentificationConfigurationRootFolder =
-            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
+            FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
         var templateAggregateConfigurationIds =
@@ -853,10 +853,9 @@ public class CatalogueChildProvider : ICoreChildProvider
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
 
-        //todi I think it's in here we want to filter out cic with a version ID
 
         //add cics in folder
-        foreach (var cic in folder.ChildObjects.Where(cic => cic.Version ==null)) AddChildren(cic, descendancy.Add(cic));
+        foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(

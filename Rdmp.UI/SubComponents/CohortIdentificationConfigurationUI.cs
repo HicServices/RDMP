@@ -30,6 +30,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using YamlDotNet.Core;
 using static Rdmp.Core.CohortCreation.CohortIdentificationConfigurationUICommon;
 using Timer = System.Windows.Forms.Timer;
 
@@ -174,16 +175,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei)
         {
-            if (ei.Name == "")//todo this should maybe use an ID
-            {
-                //revert back to the current
-            }
-            else
-            {
-                //open up a new tab with the new version
-                Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
-
-            }
+            Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
+            //reset current dropdown
         }
     }
 
@@ -195,6 +188,10 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         {
             var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, dialog.ResultText);
             cmd.Execute();
+            var versions = Common.Configuration.GetVersions();
+            versions.Insert(0, Common.Configuration);
+            cbKnownVersions.DataSource = versions;
+            cbKnownVersions.Enabled = true;
             //needs to refresh the UI
         }
     }
@@ -224,9 +221,17 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
         var versions = databaseObject.GetVersions();
-        //var clone = new CohortIdentificationConfiguration();
-        //clone.Name = "";
-        //versions.Insert(0, clone);
+
+        if (!versions.Any() || databaseObject.Version is not null)
+        {
+            cbKnownVersions.Enabled = false;
+            label1.Enabled = false;
+        }
+        if (databaseObject.Version is not null)
+        {
+            btnSaveCurrentVersion.Enabled = false;
+        }
+        versions.Insert(0, databaseObject);
         cbKnownVersions.DataSource = versions;
         RebuildClearCacheCommand();
 
@@ -240,6 +245,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
             setupTlvCic(activator, databaseObject);
+            tlvCic.SelectedIndex = 0;
         }
 
         CommonFunctionality.AddToMenu(cbIncludeCumulative);

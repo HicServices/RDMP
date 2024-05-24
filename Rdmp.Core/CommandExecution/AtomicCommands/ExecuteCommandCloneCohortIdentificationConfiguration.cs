@@ -13,6 +13,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
+using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -20,6 +21,9 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 {
     private CohortIdentificationConfiguration _cic;
     private Project _project;
+    private string _name;
+    private int? _version;
+    private bool _autoConfirm;
 
     /// <summary>
     /// The clone that was created this command or null if it has not been executed/failed
@@ -28,10 +32,13 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic)
+        CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm=false)
         : base(activator)
     {
         _cic = cic;
+        _name = name;
+        _version = version;
+        _autoConfirm = autoConfirm;
     }
 
     public override string GetCommandHelp() =>
@@ -69,10 +76,16 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
             return;
 
         // Confirm creating yes/no (assuming activator is interactive)
-        if (BasicActivator.IsInteractive && !YesNo(
+        if (!_autoConfirm && BasicActivator.IsInteractive && !YesNo(
                 "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning")) return;
         CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+        if (CloneCreatedIfAny != null)
+        {
+            CloneCreatedIfAny.Version = _version;
+            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^8]}:{CloneCreatedIfAny.Version}";
+            CloneCreatedIfAny.SaveToDatabase();
+        }
 
         if (_project != null) // clone the association
             _ = new ProjectCohortIdentificationConfigurationAssociation(
