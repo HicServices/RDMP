@@ -82,9 +82,10 @@ public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, 
             try
             {
                 var tempFilename = Path.Combine(CacheDirectory.FullName, ".test.txt");
-                var sw = File.CreateText(tempFilename);
-                sw.Close();
-                sw.Dispose();
+                using (var sw = File.CreateText(tempFilename))
+                {
+                    sw.Close();
+                }
                 File.Delete(tempFilename);
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Confirmed could write to/delete from the overridden CacheDirectory: {CacheDirectory.FullName}",

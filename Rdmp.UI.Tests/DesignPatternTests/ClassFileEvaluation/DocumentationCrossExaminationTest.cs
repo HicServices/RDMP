@@ -351,8 +351,8 @@ internal class DocumentationCrossExaminationTest
             var fileContents = File.ReadAllText(mdFile);
 
             foreach (Match m in MatchMdReferences.Matches(fileContents))
-            foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
-                fileCommentTokens[mdFile].Add(word.Value);
+                foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
+                    fileCommentTokens[mdFile].Add(word.Value);
 
             EnsureMaximumGlossaryUse(mdFile, problems);
 

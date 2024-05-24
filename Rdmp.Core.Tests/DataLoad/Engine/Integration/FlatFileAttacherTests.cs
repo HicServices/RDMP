@@ -69,26 +69,27 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_CSV_Attachment(string separator, bool overrideHeaders)
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("name,name2");
-        sw.WriteLine("Bob,Munchousain");
-        sw.WriteLine("Franky,Hollyw9ood");
+            sw.WriteLine("name,name2");
+            sw.WriteLine("Bob,Munchousain");
+            sw.WriteLine("Franky,Hollyw9ood");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
 
 
         var filename2 = Path.Combine(_loadDirectory.ForLoading.FullName, "bob2.csv");
-        var sw2 = new StreamWriter(filename2);
+        using (var sw2 = new StreamWriter(filename2))
+        {
+            sw2.WriteLine("name,name2");
+            sw2.WriteLine("Manny2,Ok");
 
-        sw2.WriteLine("name,name2");
-        sw2.WriteLine("Manny2,Ok");
-
-        sw2.Flush();
-        sw2.Close();
-        sw2.Dispose();
+            sw2.Flush();
+            sw2.Close();
+        };
 
         var attacher = new AnySeparatorFileAttacher();
         attacher.Initialize(_loadDirectory, _database);
@@ -159,15 +160,16 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_ExplicitDateTimeFormat_Attachment()
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("name,name2");
-        sw.WriteLine("Bob,20011301");
-        sw.WriteLine("Franky,20021301");
+            sw.WriteLine("name,name2");
+            sw.WriteLine("Bob,20011301");
+            sw.WriteLine("Franky,20021301");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
 
         var attacher = new AnySeparatorFileAttacher();
         attacher.Initialize(_loadDirectory, _database);
@@ -216,14 +218,15 @@ public class FlatFileAttacherTests : DatabaseTests
     public void TabTestWithOverrideHeaders()
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("Face\tBasher");
-        sw.WriteLine("Candy\tCrusher");
+            sw.WriteLine("Face\tBasher");
+            sw.WriteLine("Candy\tCrusher");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
 
         var attacher = new AnySeparatorFileAttacher();
         attacher.Initialize(_loadDirectory, _database);
@@ -264,14 +267,15 @@ public class FlatFileAttacherTests : DatabaseTests
     public void TabTestWithOverrideHeaders_IncludePath(bool columnExistsInRaw)
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("Face\tBasher");
-        sw.WriteLine("Candy\tCrusher");
+            sw.WriteLine("Face\tBasher");
+            sw.WriteLine("Candy\tCrusher");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
 
         if (columnExistsInRaw)
             _table.AddColumn("FilePath", new DatabaseTypeRequest(typeof(string), 500), true, 30);
@@ -329,16 +333,16 @@ public class FlatFileAttacherTests : DatabaseTests
 #pragma warning restore VSSpell001 // Spell Check
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("name,name2");
-        sw.WriteLine("Bob,Munchousain");
-        sw.WriteLine("Franky,Hollyw9ood");
+            sw.WriteLine("name,name2");
+            sw.WriteLine("Bob,Munchousain");
+            sw.WriteLine("Franky,Hollyw9ood");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
-
+            sw.Flush();
+            sw.Close();
+        }
         Import(_table, out var ti, out _);
 
         var attacher = new AnySeparatorFileAttacher();
@@ -390,15 +394,16 @@ public class FlatFileAttacherTests : DatabaseTests
     public void Test_FlatFileAttacher_IgnoreColumns()
     {
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
 
-        sw.WriteLine("name,name2,address");
-        sw.WriteLine("Bob,Munchousain,\"67, franklin\"");
-        sw.WriteLine("Franky,Hollyw9ood,32 dodgery");
+            sw.WriteLine("name,name2,address");
+            sw.WriteLine("Bob,Munchousain,\"67, franklin\"");
+            sw.WriteLine("Franky,Hollyw9ood,32 dodgery");
 
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
         Import(_table, out var ti, out _);
 
         var attacher = new AnySeparatorFileAttacher
@@ -458,14 +463,14 @@ public class FlatFileAttacherTests : DatabaseTests
         Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
 
         var filename = Path.Combine(_loadDirectory.ForLoading.FullName, "bob.csv");
-        var sw = new StreamWriter(filename);
+        using (var sw = new StreamWriter(filename))
+        {
+            sw.WriteLine("dob");
+            sw.WriteLine(val);
 
-        sw.WriteLine("dob");
-        sw.WriteLine(val);
-
-        sw.Flush();
-        sw.Close();
-        sw.Dispose();
+            sw.Flush();
+            sw.Close();
+        }
 
         var db = GetCleanedServer(type);
 

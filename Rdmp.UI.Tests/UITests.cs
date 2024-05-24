@@ -374,6 +374,10 @@ public class UITests : UnitTests
                         $"Failed to construct '{uiType}'.  Code to reproduce is:{Environment.NewLine}{ShowCode(o.GetType(), uiType)}",
                         ex);
                 }
+                finally
+                {
+
+                }
 
                 action(ui);
                 ClearResults();

@@ -56,19 +56,20 @@ public class RainbowColorPicker
         using var bmp = new Bitmap(count, 1);
         using var G = Graphics.FromImage(bmp);
         var bmpCRect = new Rectangle(Point.Empty, bmp.Size);
-        var br = new LinearGradientBrush
-            (bmpCRect, Color.Empty, Color.Empty, 0, false);
-        var cb = new ColorBlend
+        using (var br = new LinearGradientBrush
+            (bmpCRect, Color.Empty, Color.Empty, 0, false))
         {
-            Positions = new float[gradient.Count]
-        };
-        for (var i = 0; i < gradient.Count; i++)
-            cb.Positions[i] = gradient.ElementAt(i).Key;
-        cb.Colors = gradient.Values.ToArray();
-        br.InterpolationColors = cb;
-        G.FillRectangle(br, bmpCRect);
-        for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
-        br.Dispose();
+            var cb = new ColorBlend
+            {
+                Positions = new float[gradient.Count]
+            };
+            for (var i = 0; i < gradient.Count; i++)
+                cb.Positions[i] = gradient.ElementAt(i).Key;
+            cb.Colors = gradient.Values.ToArray();
+            br.InterpolationColors = cb;
+            G.FillRectangle(br, bmpCRect);
+            for (var i = 0; i < count; i++) ColorList.Add(bmp.GetPixel(i, 0));
+        }
         return ColorList;
     }
 }

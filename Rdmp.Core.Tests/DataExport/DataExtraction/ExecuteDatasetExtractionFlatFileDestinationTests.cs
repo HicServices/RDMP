@@ -27,34 +27,36 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
         var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
         var dt = new DataTable();
-        dt.Columns.Add("Floats", typeof(decimal));
+        try
+        {
+            dt.Columns.Add("Floats", typeof(decimal));
 
-        dt.Rows.Add(Math.PI);
+            dt.Rows.Add(Math.PI);
 
-        var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
-        lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
+            var lm = new LogManager(new DiscoveredServer(UnitTestLoggingConnectionString));
+            lm.CreateNewLoggingTaskIfNotExists("ExtractionDestination_FloatRounding");
 
-        var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding",
-            nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
+            var dli = lm.CreateDataLoadInfo("ExtractionDestination_FloatRounding",
+                nameof(ExecuteDatasetExtractionFlatFileDestinationTests), "test", "", true);
 
-        if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
-        dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
+            if (_request.QueryBuilder == null) _request.GenerateQueryBuilder();
+            dest.RoundFloatsTo = lotsOfDecimalPlaces ? 10 : 2;
 
-        dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
-        dest.PreInitialize(_project, ThrowImmediatelyDataLoadEventListener.Quiet);
-        dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
+            dest.PreInitialize(_request, ThrowImmediatelyDataLoadEventListener.Quiet);
+            dest.PreInitialize(_project, ThrowImmediatelyDataLoadEventListener.Quiet);
+            dest.PreInitialize((DataLoadInfo)dli, ThrowImmediatelyDataLoadEventListener.Quiet);
 
-        dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
-        dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+            dest.ProcessPipelineData(dt, ThrowImmediatelyDataLoadEventListener.Quiet, new GracefulCancellationToken());
+            dest.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
 
-        Assert.That(dest.OutputFile, Is.Not.Null);
-        FileAssert.Exists(dest.OutputFile);
+            Assert.That(dest.OutputFile, Is.Not.Null);
+            FileAssert.Exists(dest.OutputFile);
 
-        Assert.That(
-File.ReadAllText(dest.OutputFile), Is.EqualTo(lotsOfDecimalPlaces
-                ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
-                : $"Floats{Environment.NewLine}3.14{Environment.NewLine}"));
-
-        dt.Dispose();
+            Assert.That(
+    File.ReadAllText(dest.OutputFile), Is.EqualTo(lotsOfDecimalPlaces
+                    ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
+                    : $"Floats{Environment.NewLine}3.14{Environment.NewLine}"));
+        }
+        finally { dt.Dispose(); }
     }
 }
