@@ -5,6 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using BrightIdeasSoftware;
+using MongoDB.Driver;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
@@ -34,6 +38,15 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         olvFrozen.AspectGetter = FrozenAspectGetter;
     }
 
+    //private FolderNode<CohortIdentificationConfiguration> FilterOutVersions(FolderNode<CohortIdentificationConfiguration> folder)
+    //{
+    //    //List<CohortIdentificationConfiguration> childrenClone = new();
+    //    //folder.ChildObjects.CopyTo(childrenClone);
+    //    folder.ChildObjects = folder.ChildObjects.Where(cic => cic.Version is null).ToList();
+    //    folder.ChildFolders = folder.ChildFolders.Select(cf => FilterOutVersions(cf)).ToList();
+    //    return folder;
+    //}
+
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
@@ -57,8 +70,10 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             typeof(AllOrphanAggregateConfigurationsNode),
             typeof(AllTemplateAggregateConfigurationsNode)
         };
-        tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
-            .CohortIdentificationConfigurationRootFolder);
+        var rootFolder = Activator.CoreChildProvider.CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations;
+        rootFolder.ChildFolders = new List<FolderNode<CohortIdentificationConfiguration>>();
+        rootFolder.ChildObjects = new List<CohortIdentificationConfiguration>();
+        tlvCohortIdentificationConfigurations.AddObject(rootFolder);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
@@ -84,8 +99,7 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
             CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
-            tlvCohortIdentificationConfigurations.Expand(Activator.CoreChildProvider
-                .CohortIdentificationConfigurationRootFolder);
+            tlvCohortIdentificationConfigurations.Expand(rootFolder);
 
             _firstTime = false;
         }
