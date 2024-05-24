@@ -371,6 +371,10 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     ///<inheritdoc/>
     public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);

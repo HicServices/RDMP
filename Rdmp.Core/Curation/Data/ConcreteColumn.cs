@@ -132,4 +132,8 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

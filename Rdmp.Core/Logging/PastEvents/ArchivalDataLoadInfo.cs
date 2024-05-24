@@ -112,6 +112,10 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     private List<ArchivalTableLoadInfo> GetTableInfos()
     {

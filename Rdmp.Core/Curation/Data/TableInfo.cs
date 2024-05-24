@@ -508,4 +508,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         DatabaseType == discoveredTable.Database.Server.DatabaseType &&
         (!alsoCheckServer ||
          discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

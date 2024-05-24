@@ -851,6 +851,10 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     /// <summary>
     /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos

@@ -68,4 +68,8 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

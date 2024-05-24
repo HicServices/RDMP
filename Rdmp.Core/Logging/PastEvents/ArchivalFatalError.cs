@@ -53,6 +53,10 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
     {
         return CompareTo(obj) == 1;
     }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {
