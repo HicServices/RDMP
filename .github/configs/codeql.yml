@@ -25,3 +25,8 @@ query-filters:
       id: cs/useless-cast-to-self 
   - exclude:
       id: cs/useless-upcast       
+  - exclude:
+      id: cs/class-missing-equals
+  - exclude:
+      id: cs/reference-equality-with-object
+      

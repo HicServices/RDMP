@@ -179,7 +179,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (collisions.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}{collisions}",
+                $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}",
                 CheckResult.Fail, null));
             return;
         }
