@@ -1251,7 +1251,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.ProcessPipelineData(dt1, toConsole, token);
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType, Is.EqualTo("bit"));
+        // MS SQL is odd and uses "bit" as a boolean, MySQL has a boolean type but aliases it to tinyint(1)
+        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType?.SQLType,
+            Is.EqualTo(dbType == DatabaseType.MicrosoftSQLServer ? "bit" : "tinyint(1)"));
 
         destination.ProcessPipelineData(dt2, toMemory, token);
 
