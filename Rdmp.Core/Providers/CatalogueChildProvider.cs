@@ -298,7 +298,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
         AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
-        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository).Where(cic => cic.Version is null).ToArray();//make more efficient
+        AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);//.Where(cic => cic.Version is null).ToArray();//make more efficient
 
         FetchCatalogueItems();
 
@@ -853,8 +853,10 @@ public class CatalogueChildProvider : ICoreChildProvider
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
 
+        //todi I think it's in here we want to filter out cic with a version ID
+
         //add cics in folder
-        foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
+        foreach (var cic in folder.ChildObjects.Where(cic => cic.Version ==null)) AddChildren(cic, descendancy.Add(cic));
 
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(

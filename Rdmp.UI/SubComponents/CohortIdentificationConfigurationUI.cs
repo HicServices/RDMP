@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using NPOI.OpenXmlFormats.Dml.Diagram;
 using Org.BouncyCastle.Tls;
 using Rdmp.Core;
 using Rdmp.Core.CohortCreation;
@@ -173,15 +174,48 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei)
         {
-            Console.WriteLine("Do something");// HERE
+            if (ei.Name == "")//todo this should maybe use an ID
+            {
+                //revert back to the current
+            }
+            else
+            {
+                //open up a new tab with the new version
+                Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
+
+            }
         }
     }
 
     private void CommitNewVersion(object sender, EventArgs e)
     {
-        //this needs a confirm and an optional name
-        var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, $"Some Name {DateTime.Now}");
-        cmd.Execute();
+        var dialog = new TypeTextOrCancelDialog("Version Name", "enter a name for your stored version", 450);
+        dialog.ShowDialog();
+        if (dialog.DialogResult == DialogResult.OK)
+        {
+            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, dialog.ResultText);
+            cmd.Execute();
+            //needs to refresh the UI
+        }
+    }
+
+    private void setupTlvCic(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
+    {
+        _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
+               new RDMPCollectionCommonFunctionalitySettings
+               {
+                   SuppressActivate = true,
+                   AddFavouriteColumn = false,
+                   AddCheckColumn = false,
+                   AllowSorting =
+                       true //important, we need sorting on so that we can override sort order with our OrderableComparer
+               });
+        _commonFunctionality.MenuBuilt += MenuBuilt;
+        tlvCic.Objects = null;
+        tlvCic.AddObject(databaseObject);
+
+        if (UserSettings.ExpandAllInCohortBuilder)
+            tlvCic.ExpandAll();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
@@ -190,8 +224,9 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
         var versions = databaseObject.GetVersions();
-        databaseObject.Name = "Latest";
-        versions.Insert(0, databaseObject);
+        //var clone = new CohortIdentificationConfiguration();
+        //clone.Name = "";
+        //versions.Insert(0, clone);
         cbKnownVersions.DataSource = versions;
         RebuildClearCacheCommand();
 
@@ -204,20 +239,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             activator.RefreshBus.Subscribe(this);
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
-            _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    SuppressActivate = true,
-                    AddFavouriteColumn = false,
-                    AddCheckColumn = false,
-                    AllowSorting =
-                        true //important, we need sorting on so that we can override sort order with our OrderableComparer
-                });
-            _commonFunctionality.MenuBuilt += MenuBuilt;
-            tlvCic.AddObject(databaseObject);
-
-            if (UserSettings.ExpandAllInCohortBuilder)
-                tlvCic.ExpandAll();
+            setupTlvCic(activator, databaseObject);
         }
 
         CommonFunctionality.AddToMenu(cbIncludeCumulative);
