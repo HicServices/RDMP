@@ -203,7 +203,7 @@ public class ExcelDataFlowSource : IPluginDataFlowSource<DataTable>, IPipelineRe
                     continue;
 
                 //were we expecting this to be blank?
-                if (!nonBlankColumns.ContainsKey(cell.ColumnIndex))
+                if (!nonBlankColumns.TryGetValue(cell.ColumnIndex, out _))
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                         $"Discarded the following data (that was found in unnamed columns):{value}"));

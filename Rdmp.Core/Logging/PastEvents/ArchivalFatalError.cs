@@ -49,6 +49,10 @@ public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent, IHasSummary
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
 
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
     {

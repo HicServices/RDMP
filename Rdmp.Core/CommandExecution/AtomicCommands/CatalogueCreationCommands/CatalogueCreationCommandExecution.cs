@@ -49,8 +49,7 @@ public abstract class CatalogueCreationCommandExecution : BasicCommandExecution,
     {
         base.Execute();
 
-        if (PromptForProject)
-            if (SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
+        if (PromptForProject && SelectOne(BasicActivator.RepositoryLocator.DataExportRepository, out Project p))
                 ProjectSpecific = p;
     }
 }

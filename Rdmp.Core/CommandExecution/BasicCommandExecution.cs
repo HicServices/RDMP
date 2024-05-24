@@ -420,8 +420,7 @@ public abstract class BasicCommandExecution : IAtomicCommand
 
         var constructorValues = new List<object>();
 
-        var pickerEnumerator = pickerArgsIfAny?.GetEnumerator();
-        try
+        using (var pickerEnumerator = pickerArgsIfAny?.GetEnumerator())
         {
             foreach (var parameterInfo in constructor.GetParameters())
             {
@@ -458,11 +457,6 @@ public abstract class BasicCommandExecution : IAtomicCommand
                     }
                 }
             }
-        }
-        finally
-        {
-
-            pickerEnumerator?.Dispose();
         }
 
         return constructor.Invoke(constructorValues.ToArray());

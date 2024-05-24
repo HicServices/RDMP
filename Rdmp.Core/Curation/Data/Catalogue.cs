@@ -847,6 +847,11 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
 
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+
     /// <summary>
     /// Checks that the Catalogue has a sensible Name (See <see cref="IsAcceptableName(string)"/>).  Then checks that there are no missing ColumnInfos
     /// </summary>

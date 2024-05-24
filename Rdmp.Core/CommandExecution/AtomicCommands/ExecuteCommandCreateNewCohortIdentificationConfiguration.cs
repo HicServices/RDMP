@@ -136,14 +136,13 @@ public class ExecuteCommandCreateNewCohortIdentificationConfiguration : BasicCom
     {
         var name = _name;
 
-        if (name == null)
-            if (!BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = "New Cohort Builder Query",
-                TaskDescription = "Enter a name for the Cohort Builder Query.",
-                EntryLabel = "Name"
-            }, 255, null, out name, false))
-                return null;
+        if (name == null && !BasicActivator.TypeText(new DialogArgs
+        {
+            WindowTitle = "New Cohort Builder Query",
+            TaskDescription = "Enter a name for the Cohort Builder Query.",
+            EntryLabel = "Name"
+        }, 255, null, out name, false))
+            return null;
 
         var cic = new CohortIdentificationConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, name);
         cic.CreateRootContainerIfNotExists();
