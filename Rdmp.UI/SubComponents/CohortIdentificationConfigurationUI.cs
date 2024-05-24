@@ -196,25 +196,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         }
     }
 
-    private void setupTlvCic(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
-    {
-        _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
-               new RDMPCollectionCommonFunctionalitySettings
-               {
-                   SuppressActivate = true,
-                   AddFavouriteColumn = false,
-                   AddCheckColumn = false,
-                   AllowSorting =
-                       true //important, we need sorting on so that we can override sort order with our OrderableComparer
-               });
-        _commonFunctionality.MenuBuilt += MenuBuilt;
-        tlvCic.Objects = null;
-        tlvCic.AddObject(databaseObject);
-
-        if (UserSettings.ExpandAllInCohortBuilder)
-            tlvCic.ExpandAll();
-    }
-
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
@@ -244,7 +225,21 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             activator.RefreshBus.Subscribe(this);
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
-            setupTlvCic(activator, databaseObject);
+            _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
+              new RDMPCollectionCommonFunctionalitySettings
+              {
+                  SuppressActivate = true,
+                  AddFavouriteColumn = false,
+                  AddCheckColumn = false,
+                  AllowSorting =
+                      true //important, we need sorting on so that we can override sort order with our OrderableComparer
+              });
+            _commonFunctionality.MenuBuilt += MenuBuilt;
+            tlvCic.Objects = null;
+            tlvCic.AddObject(databaseObject);
+
+            if (UserSettings.ExpandAllInCohortBuilder)
+                tlvCic.ExpandAll();
             tlvCic.SelectedIndex = 0;
         }
 
