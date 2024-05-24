@@ -173,10 +173,11 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private void VersionChange(object sender, EventArgs e)
     {
-        if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei)
+        if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != Common.Configuration.ID)
         {
             Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
             //reset current dropdown
+            cbKnownVersions.SelectedIndex = 0;
         }
     }
 
@@ -201,8 +202,8 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
         base.SetDatabaseObject(activator, databaseObject);
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
+        cbKnownVersions.DropDownStyle = ComboBoxStyle.DropDownList;
         var versions = databaseObject.GetVersions();
-
         if (!versions.Any() || databaseObject.Version is not null)
         {
             cbKnownVersions.Enabled = false;

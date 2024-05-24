@@ -51,15 +51,15 @@ namespace Rdmp.UI.SubComponents
             btnAbortLoad = new System.Windows.Forms.Button();
             btnExecute = new System.Windows.Forms.Button();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
+            cbKnownVersions = new System.Windows.Forms.ComboBox();
+            btnSaveCurrentVersion = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
             gbCicInfo = new System.Windows.Forms.GroupBox();
             tbDescription = new System.Windows.Forms.TextBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
             panel1 = new System.Windows.Forms.Panel();
             btnClearCache = new System.Windows.Forms.Button();
             lblExecuteAllPhase = new System.Windows.Forms.Label();
-            label1 = new System.Windows.Forms.Label();
-            btnSaveCurrentVersion = new System.Windows.Forms.Button();
-            cbKnownVersions = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)tlvCic).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
@@ -216,6 +216,35 @@ namespace Rdmp.UI.SubComponents
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 67;
             // 
+            // cbKnownVersions
+            // 
+            cbKnownVersions.Cursor = System.Windows.Forms.Cursors.Hand;
+            cbKnownVersions.FormattingEnabled = true;
+            cbKnownVersions.Location = new System.Drawing.Point(1154, 56);
+            cbKnownVersions.Name = "cbKnownVersions";
+            cbKnownVersions.Size = new System.Drawing.Size(198, 23);
+            cbKnownVersions.TabIndex = 74;
+            cbKnownVersions.SelectionChangeCommitted += VersionChange;
+            // 
+            // btnSaveCurrentVersion
+            // 
+            btnSaveCurrentVersion.Location = new System.Drawing.Point(1354, 56);
+            btnSaveCurrentVersion.Name = "btnSaveCurrentVersion";
+            btnSaveCurrentVersion.Size = new System.Drawing.Size(91, 23);
+            btnSaveCurrentVersion.TabIndex = 73;
+            btnSaveCurrentVersion.Text = "Save Current";
+            btnSaveCurrentVersion.UseVisualStyleBackColor = true;
+            btnSaveCurrentVersion.Click += CommitNewVersion;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(1104, 60);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(48, 15);
+            label1.TabIndex = 72;
+            label1.Text = "Version:";
+            // 
             // gbCicInfo
             // 
             gbCicInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -285,34 +314,6 @@ namespace Rdmp.UI.SubComponents
             lblExecuteAllPhase.TabIndex = 70;
             lblExecuteAllPhase.Text = "Execution status...";
             lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(1100, 60);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(48, 15);
-            label1.TabIndex = 72;
-            label1.Text = "Version:";
-            // 
-            // btnSaveCurrentVersion
-            // 
-            btnSaveCurrentVersion.Location = new System.Drawing.Point(1354, 56);
-            btnSaveCurrentVersion.Name = "btnSaveCurrentVersion";
-            btnSaveCurrentVersion.Size = new System.Drawing.Size(91, 23);
-            btnSaveCurrentVersion.TabIndex = 73;
-            btnSaveCurrentVersion.Text = "Save Current";
-            btnSaveCurrentVersion.UseVisualStyleBackColor = true;
-            btnSaveCurrentVersion.Click += CommitNewVersion;
-            // 
-            // cbKnownVersions
-            // 
-            cbKnownVersions.FormattingEnabled = true;
-            cbKnownVersions.Location = new System.Drawing.Point(1154, 56);
-            cbKnownVersions.Name = "cbKnownVersions";
-            cbKnownVersions.Size = new System.Drawing.Size(198, 23);
-            cbKnownVersions.TabIndex = 74;
-            cbKnownVersions.SelectionChangeCommitted += new System.EventHandler(this.VersionChange);
             // 
             // CohortIdentificationConfigurationUI
             // 
