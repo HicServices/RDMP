@@ -7,13 +7,10 @@
 using Microsoft.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using System;
-using System.IO;
 using System.Linq;
 using Tests.Common.Scenarios;
 
