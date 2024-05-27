@@ -26,9 +26,9 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
     {
         var dest = new ExecuteDatasetExtractionFlatFileDestination();
 
-        var dt = new DataTable();
-        try
+        using (var dt = new DataTable())
         {
+
             dt.Columns.Add("Floats", typeof(decimal));
 
             dt.Rows.Add(Math.PI);
@@ -57,6 +57,5 @@ internal class ExecuteDatasetExtractionFlatFileDestinationTests : TestsRequiring
                     ? $"Floats{Environment.NewLine}3.1415926536{Environment.NewLine}"
                     : $"Floats{Environment.NewLine}3.14{Environment.NewLine}"));
         }
-        finally { dt.Dispose(); }
     }
 }

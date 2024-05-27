@@ -37,4 +37,6 @@ query-filters:
       id: rule:cs/linq/missed-select
   - exclude:
       id: cs/nested-if-statements
+  - exclude:
+      id: cs/missed-ternary-operator 
       

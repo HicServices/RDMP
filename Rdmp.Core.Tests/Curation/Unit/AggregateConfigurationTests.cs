@@ -17,8 +17,8 @@ internal class AggregateConfigurationTests : UnitTests
     [Test]
     public void TestStripZeroSeries_EmptyTable()
     {
-        var dt = new DataTable();
-        try
+        using (var dt = new DataTable())
+
         {
             dt.Columns.Add("col1");
             dt.Columns.Add("col2");
@@ -29,18 +29,15 @@ internal class AggregateConfigurationTests : UnitTests
             AggregateConfiguration.AdjustGraphDataTable(dt);
             Assert.That(dt.Columns, Has.Count.EqualTo(2));
         }
-        finally
-        {
-            dt.Dispose();
-        }
+
     }
+
 
     [TestCase(true)]
     [TestCase(false)]
     public void TestStripZeroSeries_Nulls(bool includeZeroSeries)
     {
-        var dt = new DataTable();
-        try
+        using (var dt = new DataTable())
         {
             dt.Columns.Add("date");
             dt.Columns.Add("col1");
@@ -65,9 +62,7 @@ internal class AggregateConfigurationTests : UnitTests
                 dt.Columns.Contains("col2");
             }
         }
-        finally
-        {
-            dt.Dispose();
-        }
+
     }
+
 }
