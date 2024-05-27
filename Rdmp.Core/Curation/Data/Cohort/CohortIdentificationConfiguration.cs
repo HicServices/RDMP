@@ -196,7 +196,6 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     public List<CohortIdentificationConfiguration> GetVersions()
     {
         return CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", ID).Where(cic => cic.Version != null).ToList();
-        //return CatalogueRepository.GetAllObjectsWhere<CohortConfigurationVersion>("CohortIdentificationConfigurationId", this.ID).ToList();
     }
 
     public CohortIdentificationConfiguration()
