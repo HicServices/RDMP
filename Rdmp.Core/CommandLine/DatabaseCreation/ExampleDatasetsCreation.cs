@@ -9,8 +9,8 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
@@ -645,7 +645,7 @@ public partial class ExampleDatasetsCreation
         var forwardEngineer = new ForwardEngineerCatalogue(ti, ti.ColumnInfos);
         forwardEngineer.ExecuteForwardEngineering(out var cata, out _, out var eis);
 
-        //get descriptions of the columns from BadMedicine
+        //get descriptions of the columns from SynthEHR
         cata.Description = Trim(Descriptions.Get(cata.Name));
         if (cata.Description != null)
         {

@@ -7,13 +7,13 @@
 using System;
 using System.IO;
 using System.Linq;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 /// <summary>
-///     Generates CSV files on disk for RDMP example datasets (based on BadMedicine library)
+/// Generates CSV files on disk for RDMP example datasets (based on SynthEHR library)
 /// </summary>
 public class ExecuteCommandGenerateTestData : BasicCommandExecution
 {

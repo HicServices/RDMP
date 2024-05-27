@@ -7,6 +7,8 @@
 using System;
 using System.Data;
 using System.Threading;
+using Amazon.Auth.AccessControlPolicy;
+using SynthEHR;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 

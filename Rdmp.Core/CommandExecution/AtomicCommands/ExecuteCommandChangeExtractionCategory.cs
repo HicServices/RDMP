@@ -71,17 +71,25 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
                 "Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
         }
 
-        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
+        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), c == ExtractionCategory.NotExtractable ? "Make Not Extractable" : $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
             Publish(_extractionInformations.First());
     }
 
     private void ExecuteImpl(ExtractionCategory category)
     {
+
         foreach (var ei in _extractionInformations)
         {
-            ei.ExtractionCategory = category;
-            ei.SaveToDatabase();
+            if (category == ExtractionCategory.NotExtractable)
+            {
+                ei.DeleteInDatabase();
+            }
+            else
+            {
+                ei.ExtractionCategory = category;
+                ei.SaveToDatabase();
+            }
         }
     }
 }
