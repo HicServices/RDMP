@@ -452,6 +452,11 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         ExceptionViewer.Show(compileable.CrashMessage);
     }
+
+    private void cbKnownVersions_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
+    }
 }
 
 [TypeDescriptionProvider(

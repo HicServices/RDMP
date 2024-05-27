@@ -1,7 +1,4 @@
 
-elog
-
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -14,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Key-Value store for instance settings
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
-
+- Add ability to create versions of existing cohorts
 
 ## [8.1.6] - 2024-05-27
 

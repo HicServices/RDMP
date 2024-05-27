@@ -60,6 +60,7 @@ namespace Rdmp.UI.SubComponents
             panel1 = new System.Windows.Forms.Panel();
             btnClearCache = new System.Windows.Forms.Button();
             lblExecuteAllPhase = new System.Windows.Forms.Label();
+            Versioning = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)tlvCic).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
@@ -68,6 +69,7 @@ namespace Rdmp.UI.SubComponents
             gbCicInfo.SuspendLayout();
             groupBox1.SuspendLayout();
             panel1.SuspendLayout();
+            Versioning.SuspendLayout();
             SuspendLayout();
             // 
             // tlvCic
@@ -200,9 +202,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // splitContainer2.Panel1
             // 
-            splitContainer2.Panel1.Controls.Add(cbKnownVersions);
-            splitContainer2.Panel1.Controls.Add(btnSaveCurrentVersion);
-            splitContainer2.Panel1.Controls.Add(label1);
+            splitContainer2.Panel1.Controls.Add(Versioning);
             splitContainer2.Panel1.Controls.Add(gbCicInfo);
             splitContainer2.Panel1.Controls.Add(groupBox1);
             splitContainer2.Panel1.Controls.Add(ticket);
@@ -220,15 +220,16 @@ namespace Rdmp.UI.SubComponents
             // 
             cbKnownVersions.Cursor = System.Windows.Forms.Cursors.Hand;
             cbKnownVersions.FormattingEnabled = true;
-            cbKnownVersions.Location = new System.Drawing.Point(1154, 56);
+            cbKnownVersions.Location = new System.Drawing.Point(57, 8);
             cbKnownVersions.Name = "cbKnownVersions";
-            cbKnownVersions.Size = new System.Drawing.Size(198, 23);
+            cbKnownVersions.Size = new System.Drawing.Size(182, 23);
             cbKnownVersions.TabIndex = 74;
+            cbKnownVersions.SelectedIndexChanged += cbKnownVersions_SelectedIndexChanged;
             cbKnownVersions.SelectionChangeCommitted += VersionChange;
             // 
             // btnSaveCurrentVersion
             // 
-            btnSaveCurrentVersion.Location = new System.Drawing.Point(1354, 56);
+            btnSaveCurrentVersion.Location = new System.Drawing.Point(248, 9);
             btnSaveCurrentVersion.Name = "btnSaveCurrentVersion";
             btnSaveCurrentVersion.Size = new System.Drawing.Size(91, 23);
             btnSaveCurrentVersion.TabIndex = 73;
@@ -238,8 +239,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // label1
             // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(1104, 60);
+            label1.Location = new System.Drawing.Point(6, 13);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(48, 15);
             label1.TabIndex = 72;
@@ -315,6 +315,17 @@ namespace Rdmp.UI.SubComponents
             lblExecuteAllPhase.Text = "Execution status...";
             lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
+            // Versioning
+            // 
+            Versioning.Controls.Add(cbKnownVersions);
+            Versioning.Controls.Add(label1);
+            Versioning.Controls.Add(btnSaveCurrentVersion);
+            Versioning.Location = new System.Drawing.Point(1100, 50);
+            Versioning.Name = "Versioning";
+            Versioning.Size = new System.Drawing.Size(345, 31);
+            Versioning.TabIndex = 75;
+            Versioning.TabStop = false;
+            // 
             // CohortIdentificationConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -325,7 +336,6 @@ namespace Rdmp.UI.SubComponents
             Size = new System.Drawing.Size(1450, 801);
             ((System.ComponentModel.ISupportInitialize)tlvCic).EndInit();
             splitContainer2.Panel1.ResumeLayout(false);
-            splitContainer2.Panel1.PerformLayout();
             splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
             splitContainer2.ResumeLayout(false);
@@ -333,6 +343,7 @@ namespace Rdmp.UI.SubComponents
             gbCicInfo.PerformLayout();
             groupBox1.ResumeLayout(false);
             panel1.ResumeLayout(false);
+            Versioning.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -361,5 +372,6 @@ namespace Rdmp.UI.SubComponents
         private System.Windows.Forms.Button btnSaveCurrentVersion;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cbKnownVersions;
+        private System.Windows.Forms.GroupBox Versioning;
     }
 }
