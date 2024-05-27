@@ -32,9 +32,9 @@ query-filters:
   - exclude:
       id: cs/virtual-call-in-constructor 
   - exclude:
-      id: rule:cs/linq/missed-where
+      id: cs/linq/missed-where
   - exclude:
-      id: rule:cs/linq/missed-select
+      id: cs/linq/missed-select
   - exclude:
       id: cs/nested-if-statements
   - exclude:
