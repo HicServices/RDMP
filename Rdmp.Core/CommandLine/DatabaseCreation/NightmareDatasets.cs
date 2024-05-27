@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi.Discovery;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;

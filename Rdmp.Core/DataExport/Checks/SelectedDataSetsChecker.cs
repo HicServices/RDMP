@@ -137,7 +137,7 @@ public class SelectedDataSetsChecker : ICheckable
         {
             notifier.OnCheckPerformed(
                 new CheckEventArgs(
-                    $"Could not generate valid extraction SQL for dataset {ds} in configuration {config}",
+                    $"Could not generate valid extraction SQL for dataset {ds} in configuration {config}. {e.Message}",
                     CheckResult.Fail, e));
             return;
         }

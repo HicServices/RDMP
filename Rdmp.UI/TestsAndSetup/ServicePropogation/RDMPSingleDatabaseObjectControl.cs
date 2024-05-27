@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -12,7 +12,12 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Settings;
+using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -128,6 +133,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 ObjectSaverButton1.BeforeSave += BeforeSave_FinishCommitInProgressIfAny;
                 ObjectSaverButton1.AfterSave += AfterSave_BeginNewCommitIfApplicable;
             }
+            if (this.GetType() == typeof(ExtractionFilterUI) && UserSettings.PromptRenameOnCohortFilterChange)
+            {
+                ObjectSaverButton1.BeforeSave -= BeforeSave_PromptRenameOfExtractionFilterContainer;
+                ObjectSaverButton1.BeforeSave += BeforeSave_PromptRenameOfExtractionFilterContainer;
+            }
 
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
@@ -139,6 +149,32 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
             CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
+    }
+
+    protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(DatabaseEntity _)
+    {
+        if (!ObjectSaverButton1.IsEnabled) return true;
+        AggregateFilter af;
+        try
+        {
+            af = (AggregateFilter)_;
+        }
+        catch (Exception)
+        {
+            //DatabaseEntity was not an aggregateFilter
+            return true;
+        }
+        AggregateFilterContainer afc = af.CatalogueRepository.GetAllObjectsWhere<AggregateFilterContainer>("ID", af.FilterContainer_ID).FirstOrDefault();
+        if (afc != null)
+        {
+            AggregateConfiguration ac = afc.GetAggregate();
+            if (ac != null)
+            {
+                var rename = new ExecuteCommandRename(Activator, ac);
+                rename.Execute();
+            }
+        }
+        return true;
     }
 
 
@@ -308,6 +344,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         if (ObjectSaverButton1 != null)
         {
             ObjectSaverButton1.BeforeSave -= BeforeSave_FinishCommitInProgressIfAny;
+            ObjectSaverButton1.BeforeSave -= BeforeSave_PromptRenameOfExtractionFilterContainer;
             ObjectSaverButton1.AfterSave -= AfterSave_BeginNewCommitIfApplicable;
         }
     }
