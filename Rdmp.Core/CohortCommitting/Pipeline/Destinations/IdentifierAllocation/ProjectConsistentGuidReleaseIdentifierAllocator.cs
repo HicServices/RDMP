@@ -78,10 +78,8 @@ public class ProjectConsistentGuidReleaseIdentifierAllocator : IAllocateReleaseI
         while (r.Read())
         {
             if (toReturn.TryGetValue(r[priv], out var oldValue))
-                continue;
-            // this causes issues with additiona l extractions
-            //    throw new Exception(
-            //        $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", oldValue, r[rel])}");
+                throw new Exception(
+                    $"Private identifier '{r[priv]}' has more than 1 historical release identifier ({string.Join(",", oldValue, r[rel])}");
             toReturn.Add(r[priv], r[rel]);
         }
 
