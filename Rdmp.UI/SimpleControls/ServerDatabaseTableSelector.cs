@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Data.Common;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
@@ -189,7 +190,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshDatabasesToken = new CancellationTokenSource();
         try
         {
-            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token);
+            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token)
+                .ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
         }
         catch (OperationCanceledException)
         {

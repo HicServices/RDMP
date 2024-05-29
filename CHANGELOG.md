@@ -1,5 +1,6 @@
 
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -12,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fix issue with non-default named PostgreSQL Table Info not being checkable
 
-## [8.1.6] - Unreleased
+## [8.1.6] - 2024-05-27
 
 ## Changed
 
