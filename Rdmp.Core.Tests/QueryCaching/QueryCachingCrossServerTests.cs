@@ -7,8 +7,8 @@
 using System;
 using System.Linq;
 using System.Threading;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
