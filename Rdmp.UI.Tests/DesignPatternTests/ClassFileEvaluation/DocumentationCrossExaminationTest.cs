@@ -512,6 +512,7 @@ internal class DocumentationCrossExaminationTest
 
                         var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
                         var markdownLink = $"[{match.Value}]({relPath}#{match.Value})";
+
                         //if it has spaces on either side
                         if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
                                                                           Math.Min(line.Length - 1,

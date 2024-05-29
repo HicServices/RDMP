@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -86,7 +86,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 "age varchar(50),"
             };
 
-            if(createIdentity)
+            if (createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -1251,7 +1251,9 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
         destination.ProcessPipelineData(dt1, toConsole, token);
 
-        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType.SQLType, Is.EqualTo("bit"));
+        // MS SQL is odd and uses "bit" as a boolean, MySQL has a boolean type but aliases it to tinyint(1)
+        Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("TestedCol").DataType?.SQLType,
+            Is.EqualTo(dbType == DatabaseType.MicrosoftSQLServer ? "bit" : "tinyint(1)"));
 
         destination.ProcessPipelineData(dt2, toMemory, token);
 

@@ -35,6 +35,7 @@ public class CataloguePipelinesAndReferencesCreation
     private readonly SqlConnectionStringBuilder _dqe;
     private ExternalDatabaseServer _edsLogging;
 
+
     public CataloguePipelinesAndReferencesCreation(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         SqlConnectionStringBuilder logging, SqlConnectionStringBuilder dqe)
     {

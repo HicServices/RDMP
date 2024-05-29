@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -25,6 +25,7 @@ using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.DataLoadUIs.ModuleUIs;
 using Rdmp.UI.SimpleDialogs;
+using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
 
 namespace Rdmp.UI.LocationsMenu;
@@ -377,6 +378,45 @@ public partial class ChoosePlatformDatabasesUI : Form
     private void btnBack_Click(object sender, EventArgs e)
     {
         SetState(State.PickNewOrExisting);
+    }
+
+    private void btnUseYamlFile_Click(object sender, EventArgs e)
+    {
+        using var fb = new OpenFileDialog();
+        var result = fb.ShowDialog();
+        if (result == DialogResult.OK)
+        {
+            try
+            {
+                var location = new DirectoryInfo(fb.FileName);
+                using (var reader = new StreamReader(location.FullName))
+                {
+                    // Load the stream
+                    var yaml = new YamlStream();
+                    yaml.Load(reader);
+                    var docs = yaml.Documents.First().AllNodes.Select(n => n.ToString());
+                    string catalogueConnectionString = null;
+                    string dataExportConnectionString = null;
+                    foreach (var item in docs.Select((value, i) => new { i, value }))
+                    {
+                        var value = item.value;
+
+                        if (value == "CatalogueConnectionString") catalogueConnectionString = docs.ToList()[item.i + 1];
+                        if (value == "DataExportConnectionString") dataExportConnectionString = docs.ToList()[item.i + 1];
+                    }
+                    if (catalogueConnectionString != null) tbCatalogueConnectionString.Text = catalogueConnectionString;
+                    if (dataExportConnectionString != null) tbDataExportManagerConnectionString.Text = dataExportConnectionString;
+
+                }
+            }
+            catch (Exception)
+            {
+                //Unable to parse yaml file
+                tbCatalogueConnectionString.Text = null;
+                tbDataExportManagerConnectionString.Text = null;
+            }
+
+        };
     }
 
     private void btnBrowseForCatalogue_Click(object sender, EventArgs e)

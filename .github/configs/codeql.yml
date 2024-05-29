@@ -1,0 +1,12 @@
+name: CodeQL Configuration
+
+paths-ignore:
+  - "**/*.md"
+  - "**/*.txt"
+  - "**/obj/**"
+  - "**/bin/**"
+  - "**/*.Designer.cs"
+ 
+query-filters:
+  - exclude:
+      id: cs/catch-of-all-exceptions
