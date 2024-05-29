@@ -21,6 +21,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Progress;
+using Rdmp.Core.Setting;
 using Rdmp.UI.CohortUI.CohortSourceManagement;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SingleControlForms;
@@ -52,15 +53,26 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
     public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
     public Project ProjectCreatedIfAny { get; private set; }
 
+    private void GetNextProjectNumber(IActivateItems activator)
+    {
+
+        var AutoSuggestProjectNumbers = false;
+        var AutoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().Where(s => s.Key == "AutoSuggestProjectNumbers").FirstOrDefault();
+        if (AutoSuggestProjectNumbersSetting is not null) AutoSuggestProjectNumbers = Convert.ToBoolean(AutoSuggestProjectNumbersSetting.Value);
+        if (AutoSuggestProjectNumbers)
+        {
+            _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+            var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
+            tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
+        }
+
+    }
+
     public CreateNewDataExtractionProjectUI(IActivateItems activator) : base(activator)
     {
         InitializeComponent();
 
-        _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
-        var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
-
-        tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
-
+        GetNextProjectNumber(activator);
         pbCohort.Image = activator.CoreIconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration)
             .ImageToBitmap();
         pbCohortFile.Image = activator.CoreIconProvider.GetImage(RDMPConcept.File).ImageToBitmap();

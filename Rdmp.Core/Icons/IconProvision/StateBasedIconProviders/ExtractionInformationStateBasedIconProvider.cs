@@ -35,6 +35,8 @@ internal sealed class ExtractionInformationStateBasedIconProvider : IObjectState
 
     private static readonly Image<Rgba32> NoIconAvailable = Image.Load<Rgba32>(CatalogueIcons.NoIconAvailable);
 
+    private static readonly Image<Rgba32> ExtractionInformationNotExtractable = IconOverlayProvider.GetOverlayNoCache(ExtractionInformationCore, OverlayKind.Delete);
+
     public Image<Rgba32> GetImageIfSupportedObject(object o)
     {
         if (o is ExtractionCategory cat)
@@ -67,6 +69,7 @@ internal sealed class ExtractionInformationStateBasedIconProvider : IObjectState
             ExtractionCategory.Deprecated => ExtractionInformationDeprecated,
             ExtractionCategory.ProjectSpecific => ExtractionInformationProjectSpecific,
             ExtractionCategory.Any => NoIconAvailable,
+            ExtractionCategory.NotExtractable => ExtractionInformationNotExtractable,
             _ => throw new ArgumentOutOfRangeException(nameof(category))
         };
     }

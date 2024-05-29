@@ -1272,6 +1272,18 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
+        public static Byte[] Setting
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("Setting", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
         public static Byte[] LoadMetadataCatalogueLinkage
         {
             get
