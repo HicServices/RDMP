@@ -19,9 +19,7 @@ internal class ExecuteCommandUpdateCatalogueDataLocationUI : BasicUICommandExecu
 {
     private readonly Catalogue _catalogue;
     private readonly ColumnInfo _columnInfo;
-    private IActivateItems _activator;
-
-    public string columnNameMapping = null;
+    private readonly IActivateItems _activator;
 
     public ExecuteCommandUpdateCatalogueDataLocationUI(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
     {
@@ -41,14 +39,8 @@ internal class ExecuteCommandUpdateCatalogueDataLocationUI : BasicUICommandExecu
     public override void Execute()
     {
         UpdateCatalogueDataLocationUI ui;
-        if (_columnInfo is not null)
-        {
-            ui = new UpdateCatalogueDataLocationUI(_activator, _columnInfo);
-        }
-        else
-        {
-            ui = new UpdateCatalogueDataLocationUI(_activator, _catalogue);
-        }
+        ui = _columnInfo is not null ? ui = new UpdateCatalogueDataLocationUI(_activator, _columnInfo) : new UpdateCatalogueDataLocationUI(_activator, _catalogue);
+      
         ui.Show();
     }
 }

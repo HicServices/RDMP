@@ -37,16 +37,17 @@ public class ExecuteCommandUpdateCatalogueDataLocationTests : DatabaseTests
     {
         RemoteDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(RemoteDatabaseName);
         RemoteDatabase.Create(true);
-        var dt = new DataTable();
-        dt.Columns.Add("Column1", typeof(string));
-        dt.Columns.Add("Column2", typeof(int));
+        using (var dt = new DataTable())
+        {
+            dt.Columns.Add("Column1", typeof(string));
+            dt.Columns.Add("Column2", typeof(int));
 
-        var dr = dt.NewRow();
-        dr["Column1"] = "d";
-        dr["Column2"] = 100;
-        dt.Rows.Add(dr);
-        RemoteTable = RemoteDatabase.CreateTable("SomeTable", dt);
-        dt.Dispose();
+            var dr = dt.NewRow();
+            dr["Column1"] = "d";
+            dr["Column2"] = 100;
+            dt.Rows.Add(dr);
+            RemoteTable = RemoteDatabase.CreateTable("SomeTable", dt);
+        }
     }
 
     private void CreateCatalogue()
