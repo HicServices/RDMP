@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-og
-||||||| 72851208f
-=======
 
 # Changelog
 All notable changes to this project will be documented in this file.
