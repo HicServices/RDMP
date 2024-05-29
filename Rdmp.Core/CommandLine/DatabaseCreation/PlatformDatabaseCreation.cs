@@ -44,6 +44,7 @@ public class PlatformDatabaseCreation
         {
             logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
         }
+
         CatalogueRepository.SuppressHelpLoading = true;
 
         var repo = new PlatformDatabaseCreationRepositoryFinder(options);
