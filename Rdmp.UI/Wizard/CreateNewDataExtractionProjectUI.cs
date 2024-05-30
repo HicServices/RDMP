@@ -180,7 +180,7 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         ragProjectNumber.Reset();
 
         //if there is no project number
-        if (string.IsNullOrWhiteSpace(tbProjectNumber.Text)) //here
+        if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
         {
             ragProjectNumber.Warning(new Exception("Project Number is required"));
             _projectNumber = -1;

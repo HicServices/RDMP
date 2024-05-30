@@ -38,15 +38,6 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         olvFrozen.AspectGetter = FrozenAspectGetter;
     }
 
-    //private FolderNode<CohortIdentificationConfiguration> FilterOutVersions(FolderNode<CohortIdentificationConfiguration> folder)
-    //{
-    //    //List<CohortIdentificationConfiguration> childrenClone = new();
-    //    //folder.ChildObjects.CopyTo(childrenClone);
-    //    folder.ChildObjects = folder.ChildObjects.Where(cic => cic.Version is null).ToList();
-    //    folder.ChildFolders = folder.ChildFolders.Select(cf => FilterOutVersions(cf)).ToList();
-    //    return folder;
-    //}
-
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
