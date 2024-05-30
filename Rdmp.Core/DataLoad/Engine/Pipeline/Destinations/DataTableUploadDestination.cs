@@ -19,6 +19,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Repositories.Construction;
@@ -27,6 +29,8 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
+using FAnsi;
+using System.Data.Common;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -138,6 +142,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     {
         if (toProcess == null)
             return null;
+
+        var rowsToDelete = new List<DataRow>();
         var pkColumns = toProcess.PrimaryKey;
         RemoveInvalidCharactersInSchema(toProcess);
 
@@ -229,10 +235,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
-
             _firstTime = false;
         }
-
 
         if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
         {
@@ -249,7 +253,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 //drop any pk clashes
                 var existingData = _discoveredTable.GetDataTable();
-                var rowsToDelete = new List<DataRow>();
 
                 foreach (DataRow row in toProcess.Rows)
                 {
@@ -287,15 +290,39 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         }
                     }
                 }
-                foreach (DataRow row in rowsToDelete)
-                {
-                    toProcess.Rows.Remove(row);
-                }
-                if (toProcess.Rows.Count == 0) return null;
+
             }
 
-            _affectedRows += _bulkcopy.Upload(toProcess);
 
+            foreach (DataRow row in rowsToDelete)
+            {
+                //replace existing 
+                var args = new DatabaseOperationArgs();
+                List<String> columns = new();
+                foreach (DataColumn column in toProcess.Columns)
+                {
+                    if (!pkColumns.Contains(column))
+                    {
+                        columns.Add(column.ColumnName);
+                    }
+                }
+                var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
+                var pkMatch = string.Join(" AND ", pkColumns.Select(pk => $"{pk.ColumnName} = '{row[pk.ColumnName]}'").ToList());
+                var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} where {pkMatch}";
+                var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
+                cmd.ExecuteNonQuery();
+
+            }
+
+            foreach (DataRow row in rowsToDelete)
+            {
+                toProcess.Rows.Remove(row);
+            }
+            if (toProcess.Rows.Count == 0 && !rowsToDelete.Any()) return null;
+            if (toProcess.Rows.Count > 0)
+            {
+                _affectedRows += _bulkcopy.Upload(toProcess);
+            }
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,
                 new ProgressEventArgs($"Uploading to {TargetTableName}",
@@ -533,6 +560,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
         }
+
+        //have to do the tirgger after the PKs have been made
+        var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+        var _triggerImplementer = factory.Create(_discoveredTable);
+        var currentStatus = _triggerImplementer.GetTriggerStatus();
+        if (currentStatus == TriggerStatus.Missing)
+            _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
+
 
         EndAuditIfExists();
     }

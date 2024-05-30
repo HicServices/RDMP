@@ -89,6 +89,10 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
     public bool IncludeTimeStamp { get; set; } = false;
 
+
+    [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
+    public bool IndexTables { get; set; } = true;
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
