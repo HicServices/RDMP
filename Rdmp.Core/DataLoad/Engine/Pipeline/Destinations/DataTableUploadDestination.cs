@@ -287,7 +287,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length).ToList().SequenceEqual(row.ItemArray.ToList())))
                         {
                             //the row is the exact same,so there is no clash
-                            clash = false
+                            clash = false;
                             rowsToDelete.Add(row);
                         }
                         else if (clash)
