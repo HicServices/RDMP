@@ -288,6 +288,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         {
                             //the row is the exact same,so there is no clash
                             clash = false;
+                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length).ToList();
+                            var y = row.ItemArray.ToList();
                             rowsToDelete.Add(row);
                         }
                         else if (clash)
@@ -444,8 +446,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 continue; //skip internally generated columns
             }
             //get what is required for the current batch and the current type that is configured in the live table
-            var oldSqlType = oldTypes[column.ColumnName];
-            var newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
+            oldTypes.TryGetValue(column.ColumnName, out var oldSqlType);
+            //var oldSqlType = oldTypes[column.ColumnName];
+            _dataTypeDictionary.TryGetValue(column.ColumnName, out var knownType);
+
+            var newSqlType = knownType is not null? typeTranslater.GetSQLDBTypeForCSharpType(knownType.Guess) : null;
 
             var changesMade = false;
 
@@ -568,14 +573,16 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 //create the primary key to match user provided columns
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
+
+            //have to do the tirgger after the PKs have been made
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
         }
 
-        //have to do the tirgger after the PKs have been made
-        var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-        var _triggerImplementer = factory.Create(_discoveredTable);
-        var currentStatus = _triggerImplementer.GetTriggerStatus();
-        if (currentStatus == TriggerStatus.Missing)
-            _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
 
 
 
