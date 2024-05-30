@@ -143,7 +143,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (toProcess == null)
             return null;
 
-        var rowsToDelete = new List<DataRow>();
+        var rowsToModify = new List<DataRow>();
         var pkColumns = toProcess.PrimaryKey;
         RemoveInvalidCharactersInSchema(toProcess);
 
@@ -253,7 +253,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 //drop any pk clashes
                 var existingData = _discoveredTable.GetDataTable();
-
+                var rowsToDelete = new List<DataRow>();
                 foreach (DataRow row in toProcess.Rows)
                 {
 
@@ -282,19 +282,28 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         {
                             var val = row[pkCol.ColumnName];
                             clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
+
                         }
-                        if (clash)
+                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length).ToList().SequenceEqual(row.ItemArray.ToList())))
                         {
+                            //the row is the exact same,so there is no clash
+                            clash = false
                             rowsToDelete.Add(row);
+                        }
+                        else if (clash)
+                        {
+                            rowsToModify.Add(row);
                             break;
                         }
                     }
                 }
+                foreach (DataRow row in rowsToDelete)
+                    toProcess.Rows.Remove(row);
 
             }
 
 
-            foreach (DataRow row in rowsToDelete)
+            foreach (DataRow row in rowsToModify)
             {
                 //replace existing 
                 var args = new DatabaseOperationArgs();
@@ -314,11 +323,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             }
 
-            foreach (DataRow row in rowsToDelete)
+            foreach (DataRow row in rowsToModify)
             {
                 toProcess.Rows.Remove(row);
             }
-            if (toProcess.Rows.Count == 0 && !rowsToDelete.Any()) return null;
+            if (toProcess.Rows.Count == 0 && !rowsToModify.Any()) return null;
             if (toProcess.Rows.Count > 0)
             {
                 _affectedRows += _bulkcopy.Upload(toProcess);
