@@ -83,7 +83,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (CloneCreatedIfAny != null)
         {
             CloneCreatedIfAny.Version = _version;
-            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^8]}:{CloneCreatedIfAny.Version}";
+            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^8]}:{CloneCreatedIfAny.Version}"; //what does this do?
             CloneCreatedIfAny.SaveToDatabase();
         }
 
