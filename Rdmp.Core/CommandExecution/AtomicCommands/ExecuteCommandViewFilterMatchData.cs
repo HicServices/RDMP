@@ -116,7 +116,7 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
 
     protected override IViewSQLAndResultsCollection GetCollection()
     {
-        _columnInfo ??= SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
+        _columnInfo = SelectOne(_candidates, _columnInfo != null ? _columnInfo.Name : "");
 
         if (_columnInfo == null)
             return null;

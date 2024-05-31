@@ -124,6 +124,7 @@ public class DbDataCommandDataFlowSource : IDbDataCommandDataFlowSource
         }
         finally
         {
+            schema.Dispose();
             _firstChunk = false;
             timer.Stop();
             job.OnProgress(this,

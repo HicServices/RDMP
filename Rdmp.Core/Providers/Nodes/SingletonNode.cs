@@ -23,8 +23,8 @@ public abstract class SingletonNode : Node
 
     public bool Equals(SingletonNode other) => string.Equals(_caption, other._caption);
 
-    public override bool Equals(object obj) => obj is SingletonNode sn &&
-                                               Equals(sn);
+    public override bool Equals(object obj) => obj.GetType() == typeof(SingletonNode) &&
+                                               Equals((SingletonNode)obj);
 
     public override int GetHashCode() => _caption.GetHashCode();
 }

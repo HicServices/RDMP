@@ -80,10 +80,7 @@ public class ExcelToCSVFilesConverter : IPluginDataProvider
     {
         using var fs = new FileStream(fileInfo.FullName, FileMode.Open);
         IWorkbook wb;
-        if (fileInfo.Extension == ".xls")
-            wb = new HSSFWorkbook(fs);
-        else
-            wb = new XSSFWorkbook(fs);
+        wb = fileInfo.Extension == ".xls" ? new HSSFWorkbook(fs) : new XSSFWorkbook(fs);
 
         try
         {

@@ -456,7 +456,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var e in AllExports)
         {
-            if (!searchables.ContainsKey(e.ReferencedObjectID))
+            if (!searchables.TryGetValue(e.ReferencedObjectID, out _))
                 continue;
 
             var known = searchables[e.ReferencedObjectID]

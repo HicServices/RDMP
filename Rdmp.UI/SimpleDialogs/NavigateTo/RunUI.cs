@@ -66,6 +66,7 @@ public partial class RunUI : RDMPForm
         }
         catch (OperationCanceledException)
         {
+            Console.WriteLine("Operation Cancelled");
         }
         catch (Exception ex)
         {

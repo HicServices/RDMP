@@ -353,7 +353,7 @@ public partial class AggregateEditorUI : AggregateEditor_Design, ISaveableUI
         _aggregate.PivotOnDimensionID = null;
         ddPivotDimension.SelectedItem = null;
 
-        if (sender != btnClearPivotDimension) return;
+        if (sender.GetType() != typeof(Button) && (Button)sender != btnClearPivotDimension) return;
 
         _aggregate.SaveToDatabase();
         Publish();

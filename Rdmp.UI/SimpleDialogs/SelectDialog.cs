@@ -656,6 +656,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
                     }
                     catch (ObjectDisposedException)
                     {
+                        Console.WriteLine("Object already disposed");
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
     }

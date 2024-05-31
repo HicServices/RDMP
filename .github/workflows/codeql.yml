@@ -32,7 +32,6 @@ jobs:
           languages: ${{ matrix.language }}
           queries: +security-and-quality
           config-file: ./.github/configs/codeql.yml
-
       - name: Build
         run: dotnet build
 

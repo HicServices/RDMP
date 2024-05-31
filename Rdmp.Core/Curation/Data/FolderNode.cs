@@ -78,9 +78,7 @@ public class
 
     public override string ToString() => Name;
 
-    public override bool Equals(object obj) =>
-        obj is FolderNode<T> node &&
-        FullName == node.FullName;
+    public override bool Equals(object obj) => obj.GetType() == typeof(FolderNode<T>) && ((FolderNode<T>)obj).Name == FullName;
 
     public override int GetHashCode() => HashCode.Combine(FullName);
 }

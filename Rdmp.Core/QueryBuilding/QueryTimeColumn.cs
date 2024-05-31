@@ -80,10 +80,10 @@ public class QueryTimeColumn : IComparable
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        if (obj is QueryTimeColumn == false)
+        if (obj.GetType() != typeof(QueryTimeColumn))
             throw new Exception(".Equals only works for objects of type QueryTimeColumn");
 
-        var other = obj as QueryTimeColumn;
+        var other = (QueryTimeColumn)obj;
         return
             other.IColumn.Equals(IColumn);
     }

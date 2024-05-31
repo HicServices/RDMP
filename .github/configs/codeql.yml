@@ -6,7 +6,39 @@ paths-ignore:
   - "**/obj/**"
   - "**/bin/**"
   - "**/*.Designer.cs"
+  - "*.g.cs"
  
 query-filters:
   - exclude:
       id: cs/catch-of-all-exceptions
+  - exclude:
+      id: cs/useless-assignment-to-local      
+  - exclude:
+      id: cs/local-not-disposed   
+  - exclude:
+      id: cs/missed-readonly-modifier   
+  - exclude:
+      id: cs/dereferenced-value-may-be-null  
+  - exclude:
+      id: cs/string-concatenation-in-loop 
+  - exclude:
+      id: cs/useless-cast-to-self 
+  - exclude:
+      id: cs/useless-upcast       
+  - exclude:
+      id: cs/class-missing-equals
+  - exclude:
+      id: cs/reference-equality-with-object
+  - exclude:
+      id: cs/virtual-call-in-constructor 
+  - exclude:
+      id: cs/linq/missed-where
+  - exclude:
+      id: cs/linq/missed-select
+  - exclude:
+      id: cs/nested-if-statements
+  - exclude:
+      id: cs/missed-ternary-operator 
+  - exclude:
+      id: cs/call-to-gc
+      

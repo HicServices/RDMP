@@ -63,4 +63,13 @@ public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
 
         return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
     }
+
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

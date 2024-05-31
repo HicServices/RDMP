@@ -71,7 +71,7 @@ internal class BoundDateTest
             Assert.Fail("Expected validation exception, but none came");
 
 
-        Assert.That(result.SourceConstraint, Is.Not.Null);
+        Assert.That(result?.SourceConstraint, Is.Not.Null);
         Assert.That(result.SourceConstraint.Consequence, Is.EqualTo(Consequence.InvalidatesRow));
     }
 

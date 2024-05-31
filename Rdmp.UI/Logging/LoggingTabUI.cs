@@ -170,9 +170,11 @@ public class LoggingTabUI : LoggingTab_Design
     private static void AddFreeTextSearchColumn(DataTable dt)
     {
         var dcRowString = dt.Columns.Add("_RowString", typeof(string));
+        var sb = new StringBuilder();
+
         foreach (DataRow dataRow in dt.Rows)
         {
-            var sb = new StringBuilder();
+            sb.Clear();
             for (var i = 0; i < dt.Columns.Count - 1; i++)
             {
                 sb.Append(dataRow[i]);

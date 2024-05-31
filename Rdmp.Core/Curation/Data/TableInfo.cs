@@ -243,7 +243,10 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
-
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
 
     /// <inheritdoc/>
     public string GetRuntimeName() => GetQuerySyntaxHelper().GetRuntimeName(Name);
@@ -505,4 +508,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         DatabaseType == discoveredTable.Database.Server.DatabaseType &&
         (!alsoCheckServer ||
          discoveredTable.Database.Server.Name.Equals(Server, StringComparison.CurrentCultureIgnoreCase));
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }

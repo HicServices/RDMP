@@ -20,7 +20,7 @@ namespace Rdmp.Core.Logging;
 /// </summary>
 public class LoggingDatabaseChecker : ICheckable
 {
-    private DiscoveredServer _server;
+    private readonly DiscoveredServer _server;
 
 
     public LoggingDatabaseChecker(DiscoveredServer server)
@@ -179,7 +179,7 @@ public class LoggingDatabaseChecker : ICheckable
         if (collisions.Any())
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}{collisions}",
+                $"{tableName} there is a key collision between what we require and what is in the database, the mismatches are:{Environment.NewLine}{collisions.Aggregate("", (s, n) => $"{s}Desired:({n.Key},'{n.Value}') VS Found:({n.Key},'{actual[n.Key]}'){Environment.NewLine}")}",
                 CheckResult.Fail, null));
             return;
         }
@@ -238,7 +238,7 @@ public class LoggingDatabaseChecker : ICheckable
 
 
             //there is a required ID that does not exist e.g. 99,'MyFunkyStatus'
-            if (!actual.ContainsKey(kvp.Key))
+            if (!actual.TryGetValue(kvp.Key, out _))
             {
                 missing.Add(kvp.Key, kvp.Value);
                 continue;

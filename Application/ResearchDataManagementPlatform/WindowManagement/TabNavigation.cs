@@ -35,9 +35,7 @@ public class TabNavigation : INavigation
 
     public override string ToString() => Tab.TabText;
 
-    public override bool Equals(object obj) =>
-        obj is TabNavigation navigation &&
-        EqualityComparer<DockContent>.Default.Equals(Tab, navigation.Tab);
+    public override bool Equals(object obj) => obj.GetType() == typeof(TabNavigation) && EqualityComparer<DockContent>.Default.Equals(Tab, ((TabNavigation)obj).Tab);
 
     public override int GetHashCode()
     {

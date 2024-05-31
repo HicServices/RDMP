@@ -367,6 +367,14 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     ///<inheritdoc/>
     public string GetRuntimeName() => Name == null ? null : GetQuerySyntaxHelper().GetRuntimeName(Name);

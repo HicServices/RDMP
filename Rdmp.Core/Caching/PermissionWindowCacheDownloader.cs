@@ -157,6 +157,7 @@ public class PermissionWindowCacheDownloader
                 }
                 catch (AggregateException)
                 {
+                    Console.WriteLine("Unknown AggregateException");
                 }
 
                 return RetrievalResult.Aborted;

@@ -45,7 +45,9 @@ public class TableLoadInfo : ITableLoadInfo
     public DiscoveredServer DatabaseSettings { get; }
 
     #endregion
-
+    ///<sumary>
+    /// Load table info
+    /// </sumary>
     /// <param name="parent"></param>
     /// <param name="suggestedRollbackCommand">Human readable text indicating how this load might be rolled back, may contain specific SQL or just general advice.</param>
     /// <param name="destinationTable"></param>

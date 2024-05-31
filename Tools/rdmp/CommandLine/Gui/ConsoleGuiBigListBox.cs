@@ -96,7 +96,7 @@ internal class ConsoleGuiBigListBox<T>
 
         public override int GetHashCode() => Object.GetHashCode();
 
-        public override bool Equals(object obj) => obj is ListViewObject<T2> other && Object.Equals(other.Object);
+        public override bool Equals(object obj) => obj.GetType() == typeof(ListViewObject<T2>) && Object.Equals(((ListViewObject<T2>)obj).Object);
     }
 
     /// <summary>

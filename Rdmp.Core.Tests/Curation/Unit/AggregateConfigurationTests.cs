@@ -17,47 +17,52 @@ internal class AggregateConfigurationTests : UnitTests
     [Test]
     public void TestStripZeroSeries_EmptyTable()
     {
-        var dt = new DataTable();
-        dt.Columns.Add("col1");
-        dt.Columns.Add("col2");
+        using (var dt = new DataTable())
 
-        UserSettings.IncludeZeroSeriesInGraphs = false;
+        {
+            dt.Columns.Add("col1");
+            dt.Columns.Add("col2");
 
-        // empty tables should not get nuked
-        AggregateConfiguration.AdjustGraphDataTable(dt);
-        Assert.That(dt.Columns, Has.Count.EqualTo(2));
+            UserSettings.IncludeZeroSeriesInGraphs = false;
 
-        dt.Dispose();
+            // empty tables should not get nuked
+            AggregateConfiguration.AdjustGraphDataTable(dt);
+            Assert.That(dt.Columns, Has.Count.EqualTo(2));
+        }
+
     }
+
 
     [TestCase(true)]
     [TestCase(false)]
     public void TestStripZeroSeries_Nulls(bool includeZeroSeries)
     {
-        var dt = new DataTable();
-        dt.Columns.Add("date");
-        dt.Columns.Add("col1");
-        dt.Columns.Add("col2");
-
-        dt.Rows.Add("2001", 0, 12);
-        dt.Rows.Add("2002", null, 333);
-
-        UserSettings.IncludeZeroSeriesInGraphs = includeZeroSeries;
-
-        AggregateConfiguration.AdjustGraphDataTable(dt);
-
-        if (includeZeroSeries)
+        using (var dt = new DataTable())
         {
-            Assert.That(dt.Columns, Has.Count.EqualTo(3));
-        }
-        else
-        {
-            // col1 should have been gotten rid of
-            Assert.That(dt.Columns, Has.Count.EqualTo(2));
-            dt.Columns.Contains("date");
-            dt.Columns.Contains("col2");
+            dt.Columns.Add("date");
+            dt.Columns.Add("col1");
+            dt.Columns.Add("col2");
+
+            dt.Rows.Add("2001", 0, 12);
+            dt.Rows.Add("2002", null, 333);
+
+            UserSettings.IncludeZeroSeriesInGraphs = includeZeroSeries;
+
+            AggregateConfiguration.AdjustGraphDataTable(dt);
+
+            if (includeZeroSeries)
+            {
+                Assert.That(dt.Columns, Has.Count.EqualTo(3));
+            }
+            else
+            {
+                // col1 should have been gotten rid of
+                Assert.That(dt.Columns, Has.Count.EqualTo(2));
+                dt.Columns.Contains("date");
+                dt.Columns.Contains("col2");
+            }
         }
 
-        dt.Dispose();
     }
+
 }

@@ -317,6 +317,14 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
     }
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 
     /// <summary>
     /// Copies the descriptive metadata from one <see cref="CatalogueItem"/> (this) into a new <see cref="CatalogueItem"/> in the supplied <paramref name="cataToImportTo"/>

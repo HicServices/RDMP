@@ -63,8 +63,9 @@ internal class ZipExtractor : ArchiveExtractor
     protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory,
         IDataLoadEventListener dataLoadEventListener)
     {
-        var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open));
-        archive.ExtractToDirectory(destinationDirectory.FullName);
-        archive.Dispose();
+        using (var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open)))
+        {
+            archive.ExtractToDirectory(destinationDirectory.FullName);
+        }
     }
 }

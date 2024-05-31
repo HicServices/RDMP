@@ -219,6 +219,8 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     /// <inheritdoc/>
     public override int GetHashCode() => ID.GetHashCode();
 
+    public override bool Equals(Object obj ) => base.Equals(obj);
+
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
     {

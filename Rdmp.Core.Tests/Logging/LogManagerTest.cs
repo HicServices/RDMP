@@ -226,7 +226,7 @@ public class LogManagerTest : DatabaseTests
             Assert.That(archival.TableLoadInfos.Single().Updates, Is.EqualTo(0));
             Assert.That(archival.TableLoadInfos.Single().Deletes, Is.EqualTo(0));
             Assert.That(archival.StartTime.Date, Is.EqualTo(DateTime.Now.Date));
-            Assert.That(archival.EndTime.Value.Date, Is.EqualTo(DateTime.Now.Date));
+            Assert.That(archival?.EndTime.Value.Date, Is.EqualTo(DateTime.Now.Date));
 
             Assert.That(archival.Errors.Single().Description, Is.EqualTo("it went bad"));
             Assert.That(archival.Errors.Single().Source, Is.EqualTo("bad.cs"));

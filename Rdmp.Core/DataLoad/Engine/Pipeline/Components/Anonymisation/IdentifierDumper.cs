@@ -146,8 +146,7 @@ public class IdentifierDumper : IHasRuntimeName, IDisposeAfterDataLoad, ICheckab
         con.Open();
 
         var allColumns =
-            pks.Select(col => col) //get the primary keys
-                .Union(
+            pks.Union(
                     ColumnsToRouteToSomewhereElse.Where(
                             c => c.GoesIntoIdentifierDump()) //and the columns due to end up in the dump
                         .Select(dump => dump.RuntimeColumnName))

@@ -54,26 +54,24 @@ public class CommitInProgressTests : DatabaseTests
         Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
             "We just created this Catalogue, how can db copy be different?!");
 
-        var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)
+        using (var start = new CommitInProgress(RepositoryLocator, new CommitInProgressSettings(c)
         {
             UseTransactions = true
-        });
+        }))
+        {
+            // there is a CommitInProgress on c so db should not have
+            c.Name = "abadaba";
+            c.IsDeprecated = true;
 
-        // there is a CommitInProgress on c so db should not have
-        c.Name = "abadaba";
-        c.IsDeprecated = true;
+            Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent),
+                "We have local changes");
 
-        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent),
-            "We have local changes");
+            c.SaveToDatabase();
 
-        c.SaveToDatabase();
+            Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
+                "Should be saved inside the transaction");
 
-        Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.NoChanges),
-            "Should be saved inside the transaction");
-
-        // abandon the commit
-        start.Dispose();
-
+        }
         Assert.That(c.HasLocalChanges().Evaluation, Is.EqualTo(ChangeDescription.DatabaseCopyDifferent),
             "With transaction rolled back the Catalogue should now no longer match db state - i.e. be unsaved");
 

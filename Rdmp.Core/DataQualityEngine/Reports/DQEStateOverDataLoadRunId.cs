@@ -56,12 +56,12 @@ public class DQEStateOverDataLoadRunId
 
         //column level
         //ensure validation failures contain it
-        if (!ColumnValidationFailuresByDataLoadRunID.ContainsKey(dataLoadRunID))
+        if (!ColumnValidationFailuresByDataLoadRunID.TryGetValue(dataLoadRunID, out _))
             ColumnValidationFailuresByDataLoadRunID.Add(dataLoadRunID,
                 new VerboseValidationResults(validator.ItemValidators.ToArray()));
 
         //ensure unconstrained columns have it
-        if (!AllColumnStates.ContainsKey(dataLoadRunID))
+        if (!AllColumnStates.TryGetValue(dataLoadRunID, out _))
         {
             var allColumns = new List<ColumnState>();
 
@@ -88,7 +88,7 @@ public class DQEStateOverDataLoadRunId
 
         //row level
         //ensure key exists in failing rows
-        if (!WorstConsequencesByDataLoadRunID.ContainsKey(dataLoadRunID))
+        if (!WorstConsequencesByDataLoadRunID.TryGetValue(dataLoadRunID, out _))
         {
             //add the data load run id key
             WorstConsequencesByDataLoadRunID.Add(dataLoadRunID, new Dictionary<Consequence, int>());

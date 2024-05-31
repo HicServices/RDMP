@@ -221,7 +221,7 @@ internal class BoundsValidationDateTest : ValidationTests
         if (result == null)
             Assert.Fail();
 
-        var l = result.GetExceptionList();
+        var l = result?.GetExceptionList();
 
         Assert.That(l[0].Message, Does.EndWith($"Expected a date less than [{b.UpperFieldName}]."));
         Console.WriteLine(result.Message);

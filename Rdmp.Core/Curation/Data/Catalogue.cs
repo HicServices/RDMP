@@ -682,7 +682,7 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
             { "LiveLoggingServer_ID", loggingServer == null ? DBNull.Value : loggingServer.ID }
         });
 
-        if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
+        if (ID == 0 || string.IsNullOrWhiteSpace(Name) ||  !repository.Equals(Repository))
             throw new ArgumentException("Repository failed to properly hydrate this class");
 
         //if there is a default logging server
@@ -845,6 +845,15 @@ public class Catalogue : DatabaseEntity, IComparable, ICatalogue, IInjectKnown<C
                 StringComparison.CurrentCulture); //sort alphabetically (reverse)
 
         throw new Exception($"Cannot compare {GetType().Name} to {obj.GetType().Name}");
+    }
+
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
     }
 
     /// <summary>

@@ -223,90 +223,91 @@ public class HICPipelineTests : DatabaseTests
         var testDir = Directory.CreateDirectory(testDirPath);
         var server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
-        var catalogueEntities = new CatalogueEntities();
-        var databaseHelper = new DatabaseHelper();
-        ExternalDatabaseServer external = null;
-
-        try
+        using (var catalogueEntities = new CatalogueEntities())
         {
-            // Set SetUp the dataset's project directory and add the CSV file to ForLoading
-            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestDataset");
-            File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "1.csv"),
-                "Col1\r\n1\r\n2\r\n3\r\n4");
-
-            databaseHelper.SetUp(server);
-
-            // Create the Catalogue entities for the dataset
-            catalogueEntities.Create(CatalogueTableRepository, databaseHelper.DatabaseToLoad, loadDirectory);
-
-            if (overrideRAW)
+            using (var databaseHelper = new DatabaseHelper())
             {
-                external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server", null);
-                external.SetProperties(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("master"));
+                ExternalDatabaseServer external = null;
 
-                if (sendDodgyCredentials)
+                try
                 {
-                    external.Username = "IveGotaLovely";
-                    external.Password = "BunchOfCoconuts";
+                    // Set SetUp the dataset's project directory and add the CSV file to ForLoading
+                    var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestDataset");
+                    File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "1.csv"),
+                        "Col1\r\n1\r\n2\r\n3\r\n4");
+
+                    databaseHelper.SetUp(server);
+
+                    // Create the Catalogue entities for the dataset
+                    catalogueEntities.Create(CatalogueTableRepository, databaseHelper.DatabaseToLoad, loadDirectory);
+
+                    if (overrideRAW)
+                    {
+                        external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server", null);
+                        external.SetProperties(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("master"));
+
+                        if (sendDodgyCredentials)
+                        {
+                            external.Username = "IveGotaLovely";
+                            external.Password = "BunchOfCoconuts";
+                        }
+
+                        external.SaveToDatabase();
+
+                        defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
+                    }
+
+                    var options = new DleOptions
+                    {
+                        LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString(),
+                        Command = CommandLineActivity.check
+                    };
+
+                    //run checks (with ignore errors if we are sending dodgy credentials)
+                    RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options).Run(RepositoryLocator,
+                        ThrowImmediatelyDataLoadEventListener.Quiet,
+                        sendDodgyCredentials
+                            ? (ICheckNotifier)IgnoreAllErrorsCheckNotifier.Instance
+                            : new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+
+                    //run load
+                    options.Command = CommandLineActivity.run;
+                    var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options);
+
+
+                    if (sendDodgyCredentials)
+                    {
+                        var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator,
+                            ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                            new GracefulCancellationToken()));
+                        Assert.That(ex.InnerException.Message, Does.Contain("Login failed for user 'IveGotaLovely'"),
+                            "Error message did not contain expected text");
+                        return;
+                    }
+                    else
+                    {
+                        runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                            new GracefulCancellationToken());
+                    }
+
+
+                    var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f => f.FullName);
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(archiveFile, Is.Not.Null, "Archive file has not been created by the load.");
+                        Assert.That(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any(), Is.False);
+                    });
                 }
+                finally
+                {
+                    //reset the original RAW server
+                    defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
 
-                external.SaveToDatabase();
+                    external?.DeleteInDatabase();
 
-                defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
+                    testDir.Delete(true);
+                }
             }
-
-            var options = new DleOptions
-            {
-                LoadMetadata = catalogueEntities.LoadMetadata.ID.ToString(),
-                Command = CommandLineActivity.check
-            };
-
-            //run checks (with ignore errors if we are sending dodgy credentials)
-            RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options).Run(RepositoryLocator,
-                ThrowImmediatelyDataLoadEventListener.Quiet,
-                sendDodgyCredentials
-                    ? (ICheckNotifier)IgnoreAllErrorsCheckNotifier.Instance
-                    : new AcceptAllCheckNotifier(), new GracefulCancellationToken());
-
-            //run load
-            options.Command = CommandLineActivity.run;
-            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(RepositoryLocator), options);
-
-
-            if (sendDodgyCredentials)
-            {
-                var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator,
-                    ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
-                    new GracefulCancellationToken()));
-                Assert.That(ex.InnerException.Message, Does.Contain("Login failed for user 'IveGotaLovely'"),
-                    "Error message did not contain expected text");
-                return;
-            }
-            else
-            {
-                runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
-                    new GracefulCancellationToken());
-            }
-
-
-            var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").MaxBy(f => f.FullName);
-            Assert.Multiple(() =>
-            {
-                Assert.That(archiveFile, Is.Not.Null, "Archive file has not been created by the load.");
-                Assert.That(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any(), Is.False);
-            });
-        }
-        finally
-        {
-            //reset the original RAW server
-            defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
-
-            external?.DeleteInDatabase();
-
-            testDir.Delete(true);
-
-            databaseHelper.Dispose();
-            catalogueEntities.Dispose();
         }
     }
 }

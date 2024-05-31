@@ -35,11 +35,9 @@ public static class AssemblyResolver
             //start out assuming we cannot load it
             assemblyResolveAttempts.Add(assemblyInfo, null);
 
-            foreach (var dir in dirs)
+            foreach (var dll in dirs.Select(dir => dir.EnumerateFiles($"{name}.dll").SingleOrDefault()).Where(dll => dll != null))
             {
-                var dll = dir.EnumerateFiles($"{name}.dll").SingleOrDefault();
-                if (dll != null)
-                    return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
+                return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
             }
 
             var assembly = AppContext.BaseDirectory;

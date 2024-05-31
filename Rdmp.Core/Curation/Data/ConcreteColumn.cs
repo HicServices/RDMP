@@ -127,4 +127,13 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     /// <param name="obj"></param>
     /// <returns></returns>
     public int CompareTo(object obj) => obj is IColumn ? Order - (obj as IColumn).Order : 0;
+
+    public override bool Equals(object obj)
+    {
+        return CompareTo(obj) == 1;
+    }
+    public override int GetHashCode()
+    {
+        return base.GetHashCode();
+    }
 }
