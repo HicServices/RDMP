@@ -246,12 +246,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
             foreach (DataColumn column in newColumns)
             {
-                //var x = ExplicitTypes.Where(et => et.ColumnName == column.ColumnName).First();
-                //if (x is not null)
-                //{
+                var x = ExplicitTypes.Where(et => et.ColumnName == column.ColumnName).First();
+                if (x is not null)
+                {
+                // todo we want to add any new columns in here, but am struggling to figure out the type
                 //    var y = x.
-                //    _discoveredTable.AddColumn(x.ColumnName, new DatabaseTypeRequest(y), x.AllowNulls, 30000);
-                //}
+                //    _discoveredTable.AddColumn(x.ColumnName, new DatabaseTypeRequest(x.ex), x.AllowNulls, 30000);
+                }
             }
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
