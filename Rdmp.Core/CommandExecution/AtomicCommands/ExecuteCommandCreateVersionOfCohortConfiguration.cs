@@ -4,6 +4,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Checks;
+using Spectre.Console;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution, IAtomicCommand
 {
-    CohortIdentificationConfiguration _cic;
-    IBasicActivateItems _activator;
-    string _name;
+    readonly CohortIdentificationConfiguration _cic;
+    readonly IBasicActivateItems _activator;
+    readonly string _name;
 
     public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null) : base(activator)
     {
@@ -30,12 +31,13 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
     {
         base.Execute();
         int? version = 1;
+
         var previousClones = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Version != null);
         if (previousClones.Any())
         {
             version = previousClones.Select(pc => pc.Version).Where(v => v != null).Max() + 1;
         }
-        var cmd = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator,_cic,_name,version,true);
+        var cmd = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator, _cic, _name, version, true);
         cmd.Execute();
     }
 }

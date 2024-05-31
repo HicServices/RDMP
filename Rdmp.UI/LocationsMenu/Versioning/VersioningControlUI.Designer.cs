@@ -79,6 +79,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             tbTicket.Name = "tbTicket";
             tbTicket.Size = new System.Drawing.Size(187, 23);
             tbTicket.TabIndex = 30;
+            tbTicket.SelectionChangeCommitted += VersionChange;
             //tbTicket.TextChanged += tbTicket_TextChanged;
             // 
             // label6

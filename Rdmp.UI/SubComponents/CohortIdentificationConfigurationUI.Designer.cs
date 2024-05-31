@@ -1,5 +1,6 @@
 ﻿using BrightIdeasSoftware;
 using Rdmp.UI.LocationsMenu.Ticketing;
+using Rdmp.UI.LocationsMenu.Versioning;
 
 namespace Rdmp.UI.SubComponents
 {
@@ -48,19 +49,16 @@ namespace Rdmp.UI.SubComponents
             olvCatalogue = new OLVColumn();
             timer1 = new System.Windows.Forms.Timer(components);
             ticket = new TicketingControlUI();
+            version = new VersioningControlUI();
             btnAbortLoad = new System.Windows.Forms.Button();
             btnExecute = new System.Windows.Forms.Button();
             splitContainer2 = new System.Windows.Forms.SplitContainer();
-            cbKnownVersions = new System.Windows.Forms.ComboBox();
-            btnSaveCurrentVersion = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
             gbCicInfo = new System.Windows.Forms.GroupBox();
             tbDescription = new System.Windows.Forms.TextBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
             panel1 = new System.Windows.Forms.Panel();
             btnClearCache = new System.Windows.Forms.Button();
             lblExecuteAllPhase = new System.Windows.Forms.Label();
-            Versioning = new System.Windows.Forms.GroupBox();
             ((System.ComponentModel.ISupportInitialize)tlvCic).BeginInit();
             ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
             splitContainer2.Panel1.SuspendLayout();
@@ -69,7 +67,6 @@ namespace Rdmp.UI.SubComponents
             gbCicInfo.SuspendLayout();
             groupBox1.SuspendLayout();
             panel1.SuspendLayout();
-            Versioning.SuspendLayout();
             SuspendLayout();
             // 
             // tlvCic
@@ -90,7 +87,7 @@ namespace Rdmp.UI.SubComponents
             tlvCic.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tlvCic.Name = "tlvCic";
             tlvCic.ShowGroups = false;
-            tlvCic.Size = new System.Drawing.Size(1450, 714);
+            tlvCic.Size = new System.Drawing.Size(1450, 691);
             tlvCic.TabIndex = 60;
             tlvCic.UseCompatibleStateImageBehavior = false;
             tlvCic.View = System.Windows.Forms.View.Details;
@@ -164,10 +161,20 @@ namespace Rdmp.UI.SubComponents
             ticket.Location = new System.Drawing.Point(1097, 0);
             ticket.Margin = new System.Windows.Forms.Padding(0);
             ticket.Name = "ticket";
-            ticket.Size = new System.Drawing.Size(348, 58);
+            ticket.Size = new System.Drawing.Size(348, 81);
             ticket.TabIndex = 55;
             ticket.TicketText = "";
             ticket.TicketTextChanged += ticket_TicketTextChanged;
+            // 
+            // version
+            // 
+            version.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            version.Location = new System.Drawing.Point(1097, 50);
+            version.Margin = new System.Windows.Forms.Padding(0);
+            version.Name = "version";
+            version.Size = new System.Drawing.Size(348, 81);
+            version.TabIndex = 55;
+            version.TicketText = "";
             // 
             // btnAbortLoad
             // 
@@ -202,7 +209,7 @@ namespace Rdmp.UI.SubComponents
             // 
             // splitContainer2.Panel1
             // 
-            splitContainer2.Panel1.Controls.Add(Versioning);
+            splitContainer2.Panel1.Controls.Add(version);
             splitContainer2.Panel1.Controls.Add(gbCicInfo);
             splitContainer2.Panel1.Controls.Add(groupBox1);
             splitContainer2.Panel1.Controls.Add(ticket);
@@ -212,38 +219,9 @@ namespace Rdmp.UI.SubComponents
             // 
             splitContainer2.Panel2.Controls.Add(tlvCic);
             splitContainer2.Size = new System.Drawing.Size(1450, 801);
-            splitContainer2.SplitterDistance = 82;
+            splitContainer2.SplitterDistance = 105;
             splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 67;
-            // 
-            // cbKnownVersions
-            // 
-            cbKnownVersions.Cursor = System.Windows.Forms.Cursors.Hand;
-            cbKnownVersions.FormattingEnabled = true;
-            cbKnownVersions.Location = new System.Drawing.Point(57, 8);
-            cbKnownVersions.Name = "cbKnownVersions";
-            cbKnownVersions.Size = new System.Drawing.Size(182, 23);
-            cbKnownVersions.TabIndex = 74;
-            cbKnownVersions.SelectedIndexChanged += cbKnownVersions_SelectedIndexChanged;
-            cbKnownVersions.SelectionChangeCommitted += VersionChange;
-            // 
-            // btnSaveCurrentVersion
-            // 
-            btnSaveCurrentVersion.Location = new System.Drawing.Point(248, 9);
-            btnSaveCurrentVersion.Name = "btnSaveCurrentVersion";
-            btnSaveCurrentVersion.Size = new System.Drawing.Size(91, 23);
-            btnSaveCurrentVersion.TabIndex = 73;
-            btnSaveCurrentVersion.Text = "Save Current";
-            btnSaveCurrentVersion.UseVisualStyleBackColor = true;
-            btnSaveCurrentVersion.Click += CommitNewVersion;
-            // 
-            // label1
-            // 
-            label1.Location = new System.Drawing.Point(6, 13);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(48, 15);
-            label1.TabIndex = 72;
-            label1.Text = "Version:";
             // 
             // gbCicInfo
             // 
@@ -251,7 +229,7 @@ namespace Rdmp.UI.SubComponents
             gbCicInfo.Controls.Add(tbDescription);
             gbCicInfo.Location = new System.Drawing.Point(261, 3);
             gbCicInfo.Name = "gbCicInfo";
-            gbCicInfo.Size = new System.Drawing.Size(833, 76);
+            gbCicInfo.Size = new System.Drawing.Size(833, 99);
             gbCicInfo.TabIndex = 71;
             gbCicInfo.TabStop = false;
             gbCicInfo.Text = "Name:";
@@ -266,7 +244,7 @@ namespace Rdmp.UI.SubComponents
             tbDescription.Name = "tbDescription";
             tbDescription.ReadOnly = true;
             tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            tbDescription.Size = new System.Drawing.Size(824, 57);
+            tbDescription.Size = new System.Drawing.Size(824, 80);
             tbDescription.TabIndex = 54;
             // 
             // groupBox1
@@ -315,17 +293,6 @@ namespace Rdmp.UI.SubComponents
             lblExecuteAllPhase.Text = "Execution status...";
             lblExecuteAllPhase.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
-            // Versioning
-            // 
-            Versioning.Controls.Add(cbKnownVersions);
-            Versioning.Controls.Add(label1);
-            Versioning.Controls.Add(btnSaveCurrentVersion);
-            Versioning.Location = new System.Drawing.Point(1100, 50);
-            Versioning.Name = "Versioning";
-            Versioning.Size = new System.Drawing.Size(345, 31);
-            Versioning.TabIndex = 75;
-            Versioning.TabStop = false;
-            // 
             // CohortIdentificationConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -343,12 +310,12 @@ namespace Rdmp.UI.SubComponents
             gbCicInfo.PerformLayout();
             groupBox1.ResumeLayout(false);
             panel1.ResumeLayout(false);
-            Versioning.ResumeLayout(false);
             ResumeLayout(false);
         }
 
         #endregion
         private TicketingControlUI ticket;
+        private VersioningControlUI version;
         private TreeListView tlvCic;
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
@@ -369,9 +336,5 @@ namespace Rdmp.UI.SubComponents
         private System.Windows.Forms.GroupBox gbCicInfo;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.Button btnClearCache;
-        private System.Windows.Forms.Button btnSaveCurrentVersion;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cbKnownVersions;
-        private System.Windows.Forms.GroupBox Versioning;
     }
 }

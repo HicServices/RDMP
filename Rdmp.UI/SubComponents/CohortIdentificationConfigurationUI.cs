@@ -171,50 +171,51 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             tlvCic.RefreshObjects(tlvCic.Objects.Cast<object>().ToArray());
     }
 
-    private void VersionChange(object sender, EventArgs e)
-    {
-        if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != Common.Configuration.ID)
-        {
-            Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
-            //reset current dropdown
-            cbKnownVersions.SelectedIndex = 0;
-        }
-    }
+    //private void VersionChange(object sender, EventArgs e)
+    //{
+    //    if (cbKnownVersions.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != Common.Configuration.ID)
+    //    {
+    //        Activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
+    //        //reset current dropdown
+    //        cbKnownVersions.SelectedIndex = 0;
+    //    }
+    //}
 
-    private void CommitNewVersion(object sender, EventArgs e)
-    {
-        var dialog = new TypeTextOrCancelDialog("Version Name", "enter a name for your stored version", 450);
-        dialog.ShowDialog();
-        if (dialog.DialogResult == DialogResult.OK)
-        {
-            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, dialog.ResultText);
-            cmd.Execute();
-            var versions = Common.Configuration.GetVersions();
-            versions.Insert(0, Common.Configuration);
-            cbKnownVersions.DataSource = versions;
-            cbKnownVersions.Enabled = true;
-            //needs to refresh the UI
-        }
-    }
+    //private void CommitNewVersion(object sender, EventArgs e)
+    //{
+    //    var dialog = new TypeTextOrCancelDialog("Version Name", "enter a name for your stored version", 450);
+    //    dialog.ShowDialog();
+    //    if (dialog.DialogResult == DialogResult.OK)
+    //    {
+    //        var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(Activator, Common.Configuration, dialog.ResultText);
+    //        cmd.Execute();
+    //        var versions = Common.Configuration.GetVersions();
+    //        versions.Insert(0, Common.Configuration);
+    //        cbKnownVersions.DataSource = versions;
+    //        cbKnownVersions.Enabled = true;
+    //        //needs to refresh the UI
+    //    }
+    //}
 
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
+        version.Setup(databaseObject, activator);
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
-        cbKnownVersions.DropDownStyle = ComboBoxStyle.DropDownList;
-        var versions = databaseObject.GetVersions();
-        if (!versions.Any() || databaseObject.Version is not null)
-        {
-            cbKnownVersions.Enabled = false;
-            label1.Enabled = false;
-        }
-        if (databaseObject.Version is not null)
-        {
-            btnSaveCurrentVersion.Enabled = false;
-        }
-        versions.Insert(0, databaseObject);
-        cbKnownVersions.DataSource = versions;
+        //cbKnownVersions.DropDownStyle = ComboBoxStyle.DropDownList;
+        //var versions = databaseObject.GetVersions();
+        //if (!versions.Any() || databaseObject.Version is not null)
+        //{
+        //    cbKnownVersions.Enabled = false;
+        //    label1.Enabled = false;
+        //}
+        //if (databaseObject.Version is not null)
+        //{
+        //    btnSaveCurrentVersion.Enabled = false;
+        //}
+        //versions.Insert(0, databaseObject);
+        //cbKnownVersions.DataSource = versions;
         RebuildClearCacheCommand();
 
         gbCicInfo.Text = $"Name: {databaseObject.Name}";
