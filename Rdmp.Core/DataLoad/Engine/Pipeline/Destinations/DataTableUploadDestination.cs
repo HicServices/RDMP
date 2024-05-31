@@ -266,14 +266,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 }
 
             }
-            //if (listener.GetType() == typeof(ToLoggingDatabaseDataLoadEventListener))
-            //{
-            //    var job = (ToLoggingDatabaseDataLoadEventListener)listener;
-            //    dataLoadInfo = job.DataLoadInfo;
-            //    DataColumn newColumn = new DataColumn("Foo", typeof(System.Int32));
-            //    newColumn.DefaultValue = dataLoadInfo.ID;
-            //    toProcess.Columns.Add(newColumn);
-            //}
         }
 
         ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
@@ -318,12 +310,12 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
 
                         }
-                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length).ToList().SequenceEqual(row.ItemArray.ToList())))
+                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length-1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
                         {
                             //the row is the exact same,so there is no clash
                             clash = false;
-                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length).ToList();
-                            var y = row.ItemArray.ToList();
+                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length-1).ToList();
+                            var y = row.ItemArray.Take(row.ItemArray.Length - 1).ToList();
                             rowsToDelete.Add(row);
                         }
                         else if (clash)
