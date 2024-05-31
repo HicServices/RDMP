@@ -31,6 +31,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
 using FAnsi;
 using System.Data.Common;
+using Terminal.Gui;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -91,7 +92,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
-
+    public bool UseTrigger { get; set; } = false;
     private IBulkCopy _bulkcopy;
     private int _affectedRows;
 
@@ -170,7 +171,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
 
         StartAuditIfExists(TargetTableName);
 
@@ -243,6 +243,40 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
 
+        if (UseTrigger)
+        {
+            //have to do the tirgger after the PKs have been made
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
+            IDataLoadInfo dataLoadInfo;
+            if (listener.GetType() == typeof(ForkDataLoadEventListener))
+            {
+                var job = (ForkDataLoadEventListener)listener;
+                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+                if(listeners.Count == 1)
+                {
+                    dataLoadInfo = listeners.First().DataLoadInfo;
+                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
+                    newColumn.DefaultValue = dataLoadInfo.ID;
+                    toProcess.Columns.Add(newColumn);
+                }
+
+            }
+            //if (listener.GetType() == typeof(ToLoggingDatabaseDataLoadEventListener))
+            //{
+            //    var job = (ToLoggingDatabaseDataLoadEventListener)listener;
+            //    dataLoadInfo = job.DataLoadInfo;
+            //    DataColumn newColumn = new DataColumn("Foo", typeof(System.Int32));
+            //    newColumn.DefaultValue = dataLoadInfo.ID;
+            //    toProcess.Columns.Add(newColumn);
+            //}
+        }
+
+        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
         try
         {
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
@@ -450,7 +484,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             //var oldSqlType = oldTypes[column.ColumnName];
             _dataTypeDictionary.TryGetValue(column.ColumnName, out var knownType);
 
-            var newSqlType = knownType is not null? typeTranslater.GetSQLDBTypeForCSharpType(knownType.Guess) : null;
+            var newSqlType = knownType is not null ? typeTranslater.GetSQLDBTypeForCSharpType(knownType.Guess) : null;
 
             var changesMade = false;
 
@@ -574,12 +608,19 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
 
-            //have to do the tirgger after the PKs have been made
-            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
-            if (currentStatus == TriggerStatus.Missing)
-                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+            ////have to do the tirgger after the PKs have been made
+            //var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            //var _triggerImplementer = factory.Create(_discoveredTable);
+            //var currentStatus = _triggerImplementer.GetTriggerStatus();
+            //if (currentStatus == TriggerStatus.Missing)
+            //    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
+            //IDataLoadInfo dataLoadInfo;
+            //if (listener.GetType() == typeof(ToLoggingDatabaseDataLoadEventListener)){
+            //    var job = (ToLoggingDatabaseDataLoadEventListener)listener;
+            //    dataLoadInfo = job.DataLoadInfo;
+            //    toPro
+            //}
         }
 
 

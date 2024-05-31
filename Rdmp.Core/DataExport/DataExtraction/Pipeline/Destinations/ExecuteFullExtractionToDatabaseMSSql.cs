@@ -19,6 +19,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -205,6 +206,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.AlterTimeout = AlterTimeout;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
+        _destination.UseTrigger = true;
         _destination.PreInitialize(_destinationDatabase, listener);
 
         return _destination;
