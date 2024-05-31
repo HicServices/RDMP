@@ -32,6 +32,8 @@ using TypeGuesser;
 using FAnsi;
 using System.Data.Common;
 using Terminal.Gui;
+using TB.ComponentModel;
+using FAnsi.Discovery.TypeTranslation;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -232,7 +234,25 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Created table {TargetTableName} successfully."));
             }
-
+            //if there are new column          
+            var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+            var newColumns = new List<DataColumn>();
+            foreach (DataColumn column in toProcess.Columns)
+            {
+                if (!existingColumns.Contains(column.ColumnName))
+                {
+                    newColumns.Add(column);
+                }
+            }
+            foreach (DataColumn column in newColumns)
+            {
+                //var x = ExplicitTypes.Where(et => et.ColumnName == column.ColumnName).First();
+                //if (x is not null)
+                //{
+                //    var y = x.
+                //    _discoveredTable.AddColumn(x.ColumnName, new DatabaseTypeRequest(y), x.AllowNulls, 30000);
+                //}
+            }
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
             _firstTime = false;
@@ -257,7 +277,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 var job = (ForkDataLoadEventListener)listener;
                 var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-                if(listeners.Count == 1)
+                if (listeners.Count == 1)
                 {
                     dataLoadInfo = listeners.First().DataLoadInfo;
                     DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
@@ -310,11 +330,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
 
                         }
-                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length-1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
+                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length - 1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
                         {
                             //the row is the exact same,so there is no clash
                             clash = false;
-                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length-1).ToList();
+                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length - 1).ToList();
                             var y = row.ItemArray.Take(row.ItemArray.Length - 1).ToList();
                             rowsToDelete.Add(row);
                         }
@@ -343,9 +363,14 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         columns.Add(column.ColumnName);
                     }
                 }
+                //need to chekc for removed column and null them out
+                var x = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+                var columnsThatPreviouslyExisted = x.Where(c => !pkColumns.Select(pk => pk.ColumnName).Contains(c) && !columns.Contains(c) && c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
+                var nullEntries = string.Join(" ,", columnsThatPreviouslyExisted.Select(c => $"{c} = NULL"));
+                var nullText = nullEntries.Length > 0 ? $" , {nullEntries}" : "";
                 var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
                 var pkMatch = string.Join(" AND ", pkColumns.Select(pk => $"{pk.ColumnName} = '{row[pk.ColumnName]}'").ToList());
-                var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} where {pkMatch}";
+                var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} {nullText} where {pkMatch}";
                 var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
                 cmd.ExecuteNonQuery();
 
