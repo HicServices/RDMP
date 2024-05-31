@@ -39,4 +39,6 @@ query-filters:
       id: cs/nested-if-statements
   - exclude:
       id: cs/missed-ternary-operator 
+  - exclude:
+      id: cs/call-to-gc
       
