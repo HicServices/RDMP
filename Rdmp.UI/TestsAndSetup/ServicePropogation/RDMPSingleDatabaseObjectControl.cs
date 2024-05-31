@@ -74,7 +74,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
     {
         SetItemActivator(activator);
-        //Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
+        Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
         DatabaseObject = databaseObject;
 
         CommonFunctionality.ClearToolStrip();
