@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -81,6 +81,13 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         "True to apply a distincting operation to the final table when using an ExtractionProgress.  This prevents data duplication from failed batch resumes.",
         DefaultValue = true)]
     public bool MakeFinalTableDistinctWhenBatchResuming { get; set; } = true;
+
+
+    [DemandsInitialization("If this extraction has already been run, it will append the extraction data into the database. There is no duplication protection with this functionality.")]
+    public bool AppendDataIfTableExists { get; set; } = false;
+
+    [DemandsInitialization("If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
+    public bool IncludeTimeStamp { get; set; } = false;
 
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
@@ -186,13 +193,14 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     "Failed to inspect destination for already existing datatables", e));
         }
 
-        _destination = new DataTableUploadDestination();
+        _destination = new DataTableUploadDestination(((IExtractDatasetCommand)_request).ExtractableCohort.ExternalCohortTable);
 
         PrimeDestinationTypesBasedOnCatalogueTypes(listener, toProcess);
 
         _destination.AllowResizingColumnsAtUploadTime = true;
         _destination.AlterTimeout = AlterTimeout;
-
+        _destination.AppendDataIfTableExists = AppendDataIfTableExists;
+        _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.PreInitialize(_destinationDatabase, listener);
 
         return _destination;
@@ -208,7 +216,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         //for every extractable column in the Catalogue
         foreach (var extractionInformation in datasetCommand.ColumnsToExtract.OfType<ExtractableColumn>()
                      .Select(ec =>
-                         ec.CatalogueExtractionInformation)) //.GetAllExtractionInformation(ExtractionCategory.Any))
+                         ec.CatalogueExtractionInformation))
         {
             if (extractionInformation == null)
                 continue;
@@ -257,6 +265,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                 new NotifyEventArgs(ProgressEventType.Information,
                     $"Set Type for {columnName} to {destinationType} (IsPrimaryKey={(addedType.IsPrimaryKey ? "true" : "false")}) to match the source table"));
         }
+
 
         foreach (var sub in datasetCommand.QueryBuilder.SelectColumns.Select(static sc => sc.IColumn)
                      .OfType<ReleaseIdentifierSubstitution>())
@@ -645,8 +654,8 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
                     return;
                 }
 
-                // if the expected table exists and we are not doing a batch resume
-                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume)
+                // if the expected table exists and we are not doing a batch resume or allowing data appending
+                if (tables.Any(t => t.GetRuntimeName().Equals(tableName)) && !_request.IsBatchResume && !AppendDataIfTableExists)
                     notifier.OnCheckPerformed(new CheckEventArgs(ErrorCodes.ExistingExtractionTableInDatabase,
                         tableName, database));
             }
