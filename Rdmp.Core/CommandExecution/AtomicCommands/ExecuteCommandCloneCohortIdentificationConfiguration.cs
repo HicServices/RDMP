@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -13,7 +13,6 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
-using System;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -21,9 +20,9 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 {
     private CohortIdentificationConfiguration _cic;
     private Project _project;
-    private string _name;
-    private int? _version;
-    private bool _autoConfirm;
+    private readonly string _name;
+    private readonly int? _version;
+    private readonly bool _autoConfirm;
 
     /// <summary>
     /// The clone that was created this command or null if it has not been executed/failed
@@ -83,7 +82,8 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
         if (CloneCreatedIfAny != null)
         {
             CloneCreatedIfAny.Version = _version;
-            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^8]}:{CloneCreatedIfAny.Version}"; //what does this do?
+            //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
+            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
             CloneCreatedIfAny.SaveToDatabase();
         }
 
