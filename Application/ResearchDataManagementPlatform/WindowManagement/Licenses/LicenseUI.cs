@@ -25,10 +25,10 @@ public partial class LicenseUI : Form
 
         try
         {
-            _main = new License("LICENSE");
+            var main = new License("LICENSE");
             _thirdParth = new License("LIBRARYLICENSES");
 
-            rtLicense.Text = _main.GetLicenseText();
+            rtLicense.Text = main.GetLicenseText();
             rtLicense.KeyDown += (s, e) =>
             {
                 if (e.KeyCode == Keys.Enter)
@@ -49,7 +49,6 @@ public partial class LicenseUI : Form
 
     private bool allowClose;
 
-    private License _main;
     private License _thirdParth;
 
     private void btnAccept_Click(object sender, EventArgs e)

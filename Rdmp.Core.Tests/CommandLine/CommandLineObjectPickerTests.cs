@@ -112,7 +112,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         cata2.SaveToDatabase();
         cata3.SaveToDatabase();
 
-        var picker = new CommandLineObjectPicker(new[] { $"Catalogue:lol*" }, GetActivator());
+        var picker = new CommandLineObjectPicker(new[] { "Catalogue:lol*" }, GetActivator());
 
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
@@ -214,7 +214,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         cata1.Name = "Biochem";
         cata2.Name = "Haematology";
 
-        var picker = new CommandLineObjectPicker(new[] { $"c:*io*" }, GetActivator());
+        var picker = new CommandLineObjectPicker(new[] { "c:*io*" }, GetActivator());
 
         Assert.Multiple(() =>
         {
@@ -244,7 +244,7 @@ internal class CommandLineObjectPickerTests : UnitTests
 
         // c is short for Catalogue
         // so this would be the use case 'rdmp cmd list Catalogue' where user can instead write 'rdmp cmd list c'
-        var picker = new CommandLineObjectPicker(new[] { $"c" }, GetActivator());
+        var picker = new CommandLineObjectPicker(new[] { "c" }, GetActivator());
 
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(cata1));
@@ -282,7 +282,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         c2.Folder = "\\datasets\\no\\";
         c3.Folder = "\\datasets\\hi\\";
 
-        var picker = new CommandLineObjectPicker(new[] { $"Catalogue?Folder:*hi*" }, GetActivator());
+        var picker = new CommandLineObjectPicker(new[] { "Catalogue?Folder:*hi*" }, GetActivator());
 
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(2));
         Assert.That(picker[0].DatabaseEntities, Does.Contain(c1));
@@ -300,7 +300,7 @@ internal class CommandLineObjectPickerTests : UnitTests
         c1.PivotCategory_ExtractionInformation_ID = 10;
         c2.PivotCategory_ExtractionInformation_ID = null;
 
-        var picker = new CommandLineObjectPicker(new[] { $"Catalogue?PivotCategory_ExtractionInformation_ID:null" },
+        var picker = new CommandLineObjectPicker(new[] { "Catalogue?PivotCategory_ExtractionInformation_ID:null" },
             GetActivator());
 
         Assert.That(picker[0].DatabaseEntities, Has.Count.EqualTo(1));
@@ -311,7 +311,7 @@ internal class CommandLineObjectPickerTests : UnitTests
     public void Test_PickWithPropertyQuery_UnknownProperty()
     {
         var ex = Assert.Throws<Exception>(() =>
-            new CommandLineObjectPicker(new[] { $"Catalogue?Blarg:null" }, GetActivator()));
-        Assert.That(ex.Message, Is.EqualTo("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'"));
+            new CommandLineObjectPicker(new[] { "Catalogue?Blarg:null" }, GetActivator()));
+        Assert.That(ex?.Message, Is.EqualTo("Unknown property 'Blarg'.  Did not exist on Type 'Catalogue'"));
     }
 }

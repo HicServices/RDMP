@@ -76,7 +76,7 @@ public class MemoryRepository : IRepository
     {
         if (val == null)
         {
-            prop.SetValue(toCreate, val);
+            prop.SetValue(toCreate, null);
             return;
         }
 
@@ -85,12 +85,7 @@ public class MemoryRepository : IRepository
 
         if (type.IsEnum)
         {
-            if ( strVal != null)
-                prop.SetValue(toCreate, Enum.Parse(type, strVal));
-            else
-            {
-                prop.SetValue(toCreate, Enum.ToObject(type, val));
-            }
+            prop.SetValue(toCreate, strVal != null ? Enum.Parse(type, strVal) : Enum.ToObject(type, val));
         }
         else
             prop.SetValue(toCreate, Convert.ChangeType(val, type));

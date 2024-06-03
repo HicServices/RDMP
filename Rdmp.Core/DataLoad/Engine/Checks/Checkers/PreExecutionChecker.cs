@@ -162,7 +162,7 @@ public class PreExecutionChecker : ICheckable
             {
                 var shouldCreate = _notifier.OnCheckPerformed(new CheckEventArgs(
                     $"RAW database '{rawDbInfo}' does not exist but load is persistentRaw", CheckResult.Fail, null,
-                    $"Create RAW database?"));
+                    "Create RAW database?"));
                 if (shouldCreate) rawDbInfo.Create();
             }
 
