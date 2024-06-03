@@ -174,7 +174,6 @@ namespace Rdmp.UI.SubComponents
             version.Name = "version";
             version.Size = new System.Drawing.Size(348, 81);
             version.TabIndex = 55;
-            version.TicketText = "";
             // 
             // btnAbortLoad
             // 
