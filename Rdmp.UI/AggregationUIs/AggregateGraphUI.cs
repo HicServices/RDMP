@@ -504,6 +504,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if (index > chart1.Series.Count - 1)
                 chart1.Series.Add(new Series());
 
+            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            chart1.ChartAreas[0].CursorX.AutoScroll = true;
+            chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
+
             chart1.Series[index].XValueMember = _dt.Columns[0].ColumnName;
             chart1.Series[index].YValueMembers = _dt.Columns[index + 1].ColumnName;
 
