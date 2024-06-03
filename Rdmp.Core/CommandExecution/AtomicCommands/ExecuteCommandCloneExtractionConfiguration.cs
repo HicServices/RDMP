@@ -20,13 +20,13 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
     private IBasicActivateItems _activeItems;
-    List<IExtractableDataSet> toRemove = new();
-    List<Catalogue> toAdd = new();
+    List<IExtractableDataSet> toRemove = [];
+    List<Catalogue> toAdd = [];
     private void CheckForDepricatedCatalogues()
     {
         if (_extractionConfiguration.SelectedDataSets.Any(sd => sd.GetCatalogue().IsDeprecated) && _activeItems.IsInteractive)
         {
-            if (YesNo("Replace Depricated Catalogues", "There are depricated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?"))
+            if (YesNo("There are depricated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?", "Replace Depricated Catalogues"))
             {
                 var depricatedDatasets = _extractionConfiguration.SelectedDataSets.Where(sd => sd.GetCatalogue().IsDeprecated).ToList();
                 var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
@@ -35,8 +35,23 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
                     var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == ds.GetCatalogue().ID).FirstOrDefault();
                     if (replacement is not null)
                     {
+                        var replacementCatalogue = _activeItems.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(Int32.Parse(replacement.Value));
+                        while (replacementCatalogue.IsDeprecated)
+                        {
+                            var replacementCatalogueIsReplacedBy = replacedBy.Where(rb => rb.ReferencedObjectID == replacementCatalogue.ID).FirstOrDefault();
+                            if(replacementCatalogueIsReplacedBy is not null)
+                            {
+                                //have found further down the tree
+                                replacementCatalogue = _activeItems.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(Int32.Parse(replacementCatalogueIsReplacedBy.Value));
+                            }
+                            else
+                            {
+                                //there is no replacement
+                                break;
+                            }
+                        }
                         toRemove.Add(ds.ExtractableDataSet);
-                        toAdd.Add(_activeItems.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(Int32.Parse(replacement.Value)));
+                        toAdd.Add(replacementCatalogue);
                     }
                 }
 
@@ -81,8 +96,6 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
             }
             clone.AddDatasetToConfiguration(eds);
         }
-        Console.WriteLine('a');
-        //cataRepo.GetExtendedProperties(ExtendedProperty.ReplacedBy, Deprecated))
         Publish((DatabaseEntity)clone.Project);
         Emphasise(clone);
     }
