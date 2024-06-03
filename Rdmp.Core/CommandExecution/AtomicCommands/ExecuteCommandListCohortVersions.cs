@@ -32,7 +32,7 @@ public class ExecuteCommandListCohortVersions: BasicCommandExecution, IAtomicCom
         }
 
         var output = string.Join(Environment.NewLine,
-            outputDictionary.Select(kvp => $"Name: {kvp.Key}, ID:{kvp.Value}")
+            outputDictionary.Select(kvp => $"{kvp.Value}:{kvp.Key}")
                 .OrderBy(s => s));
         BasicActivator.Show(output);
 
