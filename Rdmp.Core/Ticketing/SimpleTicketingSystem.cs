@@ -30,7 +30,6 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     public void Check(ICheckNotifier notifier)
     {
         // all ticket names are valid
-        return;
     }
 
     public bool IsValidTicketName(string ticketName) =>

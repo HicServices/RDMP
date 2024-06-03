@@ -164,17 +164,14 @@ public partial class BulkProcessCatalogueItemsUI : BulkProcessCatalogueItems_Des
                     else
                     {
                         //multiple matches so ask the user what one he wants
-                        for (var i = 0;
-                             i < guesses.Length;
-                             i++) //note that this sneakily also deals with case where guesses is empty
-                            if (Activator.YesNo(
-                                    $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
-                                    "Multiple matched guesses"))
-                            {
-                                catalogueItem.SetColumnInfo(guesses[i]);
-                                countOfColumnInfoAssociationsCreated++;
-                                break;
-                            }
+                        foreach (var guess in guesses.Where(guess => Activator.YesNo(
+                                     $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guess}",
+                                     "Multiple matched guesses")))
+                        {
+                            catalogueItem.SetColumnInfo(guess);
+                            countOfColumnInfoAssociationsCreated++;
+                            break;
+                        }
                     }
                 }
 

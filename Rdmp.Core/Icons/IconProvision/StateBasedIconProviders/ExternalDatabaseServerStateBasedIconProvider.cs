@@ -44,7 +44,7 @@ public sealed class ExternalDatabaseServerStateBasedIconProvider : IObjectStateB
     public Image<Rgba32> GetIconForAssembly(Assembly assembly)
     {
         var assemblyName = assembly.GetName().Name;
-        return _assemblyToIconDictionary.TryGetValue(assemblyName, out var icon) ? icon : _default;
+        return _assemblyToIconDictionary.GetValueOrDefault(assemblyName, _default);
     }
 
     public Image<Rgba32> GetImageIfSupportedObject(object o)

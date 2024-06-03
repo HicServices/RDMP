@@ -32,7 +32,6 @@ public partial class PipelineWorkAreaUI : UserControl
     private ArgumentCollectionUI _arumentsCollection1;
     private readonly IActivateItems _activator;
     private List<AdvertisedPipelineComponentTypeUnderContext> _allComponents;
-    private readonly IPipelineUseCase _useCase;
     private readonly ICatalogueRepository _catalogueRepository;
 
 
@@ -40,7 +39,7 @@ public partial class PipelineWorkAreaUI : UserControl
         ICatalogueRepository catalogueRepository)
     {
         _activator = activator;
-        _useCase = useCase;
+        var useCase1 = useCase;
         _catalogueRepository = catalogueRepository;
 
         InitializeComponent();
@@ -65,7 +64,7 @@ public partial class PipelineWorkAreaUI : UserControl
         gbArguments.Controls.Add(_arumentsCollection1);
 
         olvComponents.RowFormatter += RowFormatter;
-        var context = _useCase.GetContext();
+        var context = useCase1.GetContext();
 
         try
         {
@@ -78,7 +77,7 @@ public partial class PipelineWorkAreaUI : UserControl
             _allComponents = new List<AdvertisedPipelineComponentTypeUnderContext>();
 
             _allComponents.AddRange(allComponentTypes
-                .Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());
+                .Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase1)).ToArray());
             _allComponents.AddRange(allSourceTypes
                 .Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, useCase)).ToArray());
 

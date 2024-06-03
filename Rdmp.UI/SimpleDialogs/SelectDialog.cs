@@ -580,11 +580,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         //space flips the selectedness of the objects that are selected
         if (e.KeyCode == Keys.Space && AllowMultiSelect && olv.SelectedObjects != null)
         {
-            foreach (T o in olv.SelectedObjects)
-                if (MultiSelected.Contains(o))
-                    MultiSelected.Remove(o);
-                else
-                    MultiSelected.Add(o);
+            foreach (var o in olv.SelectedObjects.Cast<T>().Where(o => !MultiSelected.Add(o)))
+                MultiSelected.Remove(o);
 
             UpdateButtonEnabledness();
         }

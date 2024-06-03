@@ -14,7 +14,7 @@ internal class ExecuteCommandDeleteDatasetTest: CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(() => cmd.Execute());
         Assert.That(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>(), Has.Length.EqualTo(1));
-        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>().Where(ds => ds.Name == "dataset").First();
+        var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First(static ds => ds.Name == "dataset");
         var delCmd = new ExecuteCommandDeleteDataset(GetMockActivator(), founddataset);
         Assert.DoesNotThrow(() => delCmd.Execute());
         Assert.That(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.Curation.Data.Dataset>(), Is.Empty);
