@@ -114,7 +114,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
             _logQueue?.CompleteAdding();
             _logThread?.Join();
             _logQueue = new BlockingCollection<LogEntry>();
-            _logThread = new Thread(new ThreadStart(LogWorker));
+            _logThread = new Thread(LogWorker);
             _logThread.Start();
         }
     }

@@ -55,7 +55,7 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
     private void ShowAutocomplete(Scintilla scintilla, bool all)
     {
         // Find the word start
-        var word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim();
+        var word = scintilla.GetWordFromPosition(scintilla.CurrentPosition)?.Trim() ?? "";
 
         if (string.IsNullOrWhiteSpace(word) && !all)
         {
@@ -63,18 +63,20 @@ public class AutoCompleteProviderWin : AutoCompleteProvider
             return;
         }
 
-        var list = Items.Distinct()
+        var list = Items
             .Where(s => !string.IsNullOrWhiteSpace(s) && s.Contains(word, StringComparison.CurrentCultureIgnoreCase))
-            .OrderBy(a => a);
+            .OrderBy(static a => a)
+            .Select(FormatForAutocomplete)
+            .ToList();
 
-        if (!list.Any())
+        if (list.Count == 0)
         {
             scintilla.AutoCCancel();
             return;
         }
 
         // Display the autocompletion list
-        scintilla.AutoCShow(word.Length, string.Join(Separator, list.Select(FormatForAutocomplete)));
+        scintilla.AutoCShow(word.Length, string.Join(Separator, list));
     }
 
     private string FormatForAutocomplete(string word) =>

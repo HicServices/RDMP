@@ -126,5 +126,5 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     /// </summary>
     /// <param name="obj"></param>
     /// <returns></returns>
-    public int CompareTo(object obj) => obj is IColumn ? Order - (obj as IColumn).Order : 0;
+    public int CompareTo(object obj) => obj is IColumn column ? Order - column.Order : 0;
 }

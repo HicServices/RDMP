@@ -98,18 +98,18 @@ public class ParameterCreatorTests
         [Test]
         public void SingleParameterTest_GlobalOverrides_CreateNotCalled()
         {
-                var f = Substitute.For<IFilter>();
-                f.WhereSQL = "@bob = 'bob'";
-                f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
-                var global = Substitute.For<ISqlParameter>();
-                global.ParameterName.Returns("@bob");
-                var factory = Substitute.For<IFilterFactory>();
-                factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>()).Returns(x => { throw new InvalidOperationException(); });
+            var f = Substitute.For<IFilter>();
+            f.WhereSQL = "@bob = 'bob'";
+            f.GetQuerySyntaxHelper().Returns(MicrosoftQuerySyntaxHelper.Instance);
+            var global = Substitute.For<ISqlParameter>();
+            global.ParameterName.Returns("@bob");
+            var factory = Substitute.For<IFilterFactory>();
+            factory.CreateNewParameter(Arg.Any<IFilter>(), Arg.Any<string>()).Returns(static x => throw new InvalidOperationException());
 
-                var creator = new ParameterCreator(factory, new[] { global }, null);
-                creator.CreateAll(f, null);
+            var creator = new ParameterCreator(factory, new[] { global }, null);
+            creator.CreateAll(f, null);
 
-                factory.Received(1);
+            factory.Received(1);
         }
 
         [Test]

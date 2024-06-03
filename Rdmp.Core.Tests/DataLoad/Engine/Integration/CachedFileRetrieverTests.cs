@@ -29,13 +29,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class CachedFileRetrieverTests : DatabaseTests
 {
     private readonly ILoadProgress _lpMock;
-    private readonly ICacheProgress _cpMock;
 
     public CachedFileRetrieverTests()
     {
-        _cpMock = Substitute.For<ICacheProgress>();
+        var cpMock = Substitute.For<ICacheProgress>();
         _lpMock = Substitute.For<ILoadProgress>();
-        _lpMock.CacheProgress.Returns(_cpMock);
+        _lpMock.CacheProgress.Returns(cpMock);
     }
 
     [Test(Description =

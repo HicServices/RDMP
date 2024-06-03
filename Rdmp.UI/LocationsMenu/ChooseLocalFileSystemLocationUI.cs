@@ -90,19 +90,15 @@ public partial class ChooseLocalFileSystemLocationUI : Form
 
     private void btnConfirm_Click(object sender, EventArgs e)
     {
-        var isValid = false;
-        if(string.IsNullOrEmpty(tbLocalFileSystemLocation.Text)) isValid = false;
+        bool isValid;
+        if (string.IsNullOrEmpty(tbLocalFileSystemLocation.Text)) isValid = false;
         else if (Directory.Exists(tbLocalFileSystemLocation.Text)) isValid = true;
         else
         {
-            try
-            {
-                Directory.CreateDirectory(tbLocalFileSystemLocation.Text);
-                isValid = true;
-            }
-            finally{ }
-           
+            Directory.CreateDirectory(tbLocalFileSystemLocation.Text);
+            isValid = true;
         }
+
         if (isValid)
         {
             lblBadFilePath.Visible = false;

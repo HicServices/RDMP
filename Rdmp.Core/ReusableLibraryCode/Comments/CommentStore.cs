@@ -41,26 +41,23 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
 
     public virtual void ReadComments(params string[] locations)
     {
-        foreach (var location in locations)
+        foreach (var location in locations.Where(static location => location is not null))
         {
-            if (location is null)
-                continue;
             if (Directory.Exists(location))
                 foreach (var xml in Directory.EnumerateFiles(location, "*.xml", SearchOption.AllDirectories))
-                    using (var content = File.OpenRead(xml))
-                    {
-                        ReadComments(content);
-                    }
-            else if (File.Exists(location))
-                using (var zip = new LibArchiveReader(location))
                 {
-                    foreach (var xml in zip.Entries())
-                        if (xml.Name.EndsWith(".xml", true, CultureInfo.InvariantCulture))
-                            using (var content = xml.Stream)
-                            {
-                                ReadComments(content);
-                            }
+                    using var content = File.OpenRead(xml);
+                    ReadComments(content);
                 }
+            else if (File.Exists(location))
+            {
+                using var zip = new LibArchiveReader(location);
+                foreach (var xml in zip.Entries().Where(static xml => xml.Name.EndsWith(".xml", true, CultureInfo.InvariantCulture)))
+                {
+                    using var content = xml.Stream;
+                    ReadComments(content);
+                }
+            }
         }
     }
 
@@ -177,13 +174,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     public void Add(string name, string summary)
     {
         //these are not helpful!
-        if (name == "C" || name == "R")
-            return;
-
-        if (_dictionary.ContainsKey(name))
-            return;
-
-        _dictionary.Add(name, summary);
+        if (name is not ("C" or "R")) _dictionary.TryAdd(name, summary);
     }
 
     public bool ContainsKey(string keyword) => _dictionary.ContainsKey(keyword);
@@ -194,7 +185,7 @@ public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     /// <param name="index"></param>
     /// <returns></returns>
     public string this[string index] =>
-        _dictionary.TryGetValue(index, out var value) ? value : null; // Indexer declaration
+        _dictionary.GetValueOrDefault(index); // Indexer declaration
 
     public IEnumerator<KeyValuePair<string, string>> GetEnumerator() => _dictionary.GetEnumerator();
 
