@@ -49,10 +49,8 @@ public class CohortCompilerRunner
         _timeout = timeout;
         Compiler = compiler;
 
-        if (Compiler.CohortIdentificationConfiguration == null)
-            throw new ArgumentException("CohortCompiler must have a CohortIdentificationConfiguration");
-
-        _cic = Compiler.CohortIdentificationConfiguration;
+        _cic = Compiler.CohortIdentificationConfiguration ??
+               throw new ArgumentException("CohortCompiler must have a CohortIdentificationConfiguration");
 
         if (_cic.QueryCachingServer_ID != null)
             _queryCachingServer = _cic.QueryCachingServer;

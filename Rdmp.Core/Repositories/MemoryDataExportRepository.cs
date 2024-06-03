@@ -50,7 +50,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
     protected Dictionary<DataExportProperty, string> PropertiesDictionary = new();
 
     public virtual string GetValue(DataExportProperty property) =>
-        PropertiesDictionary.TryGetValue(property, out var value) ? value : null;
+        PropertiesDictionary.GetValueOrDefault(property);
 
     public virtual void SetValue(DataExportProperty property, string value)
     {

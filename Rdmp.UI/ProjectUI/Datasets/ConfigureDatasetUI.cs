@@ -664,10 +664,10 @@ public partial class ConfigureDatasetUI : ConfigureDatasetUI_Design, ILifetimeSu
         var eis = Activator.CoreChildProvider.AllExtractionInformationsDictionary;
 
         return olvSelected.Objects.OfType<ExtractableColumn>()
-            .Where(ec => ec.CatalogueExtractionInformation_ID != null)
-            .Select(ec => eis.TryGetValue(ec.CatalogueExtractionInformation_ID.Value, out var extractionInfo) ? extractionInfo : null)
-            .Where(ei => ei != null)
-            .Select(ei => ei.ColumnInfo.TableInfo)
+            .Where(static ec => ec.CatalogueExtractionInformation_ID != null)
+            .Select(ec => eis.GetValueOrDefault(ec.CatalogueExtractionInformation_ID.Value))
+            .Where(static ei => ei != null)
+            .Select(static ei => ei.ColumnInfo.TableInfo)
             .Distinct()
             .Where(t => !t.IsLookupTable(Activator.CoreChildProvider));
     }

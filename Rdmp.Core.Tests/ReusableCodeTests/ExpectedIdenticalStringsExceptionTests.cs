@@ -104,10 +104,12 @@ if the queer clay bas-relief and the disjointed jottings, ramblings, and cutting
 my uncle, in his latter years become credulous of the most superficial impostures? ".Replace("\r", ""));
 
         // .Replace above forces Unix-style strings for test consistency
-        Assert.That(ex.Message, Is.EqualTo($@"These are different
-Strings differ at index 34
-EXPECTED:d be the\nmeaning \nof the que...
-ACTUAL  :d be the\nmeaning \nif the que...
------------------------------^"));
+        Assert.That(ex.Message, Is.EqualTo($"""
+                                            These are different
+                                            Strings differ at index 34
+                                            EXPECTED:d be the\nmeaning \nof the que...
+                                            ACTUAL  :d be the\nmeaning \nif the que...
+                                            -----------------------------^
+                                            """));
     }
 }

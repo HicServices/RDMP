@@ -54,9 +54,7 @@ public class EndToEndCacheTest : DatabaseTests
 
         Clear(_LoadDirectory);
 
-        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
-        {
-        };
+        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
         _cata.SaveToDatabase();
 
         var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, _lmd, _cata);

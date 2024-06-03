@@ -170,7 +170,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
             if (t.Exception != null)
             {
                 Application.MainLoop.Invoke(() =>
-                    _activator.ShowException($"Failed to list tables", t.Exception));
+                    _activator.ShowException("Failed to list tables", t.Exception));
                 return;
             }
 
@@ -202,7 +202,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
             if (t.Exception != null)
             {
                 Application.MainLoop.Invoke(() =>
-                    _activator.ShowException($"Failed to list databases", t.Exception));
+                    _activator.ShowException("Failed to list databases", t.Exception));
                 return;
             }
 
@@ -260,7 +260,7 @@ public partial class ConsoleGuiServerDatabaseTableSelector
             if (t.Exception != null)
             {
                 Application.MainLoop.Invoke(() =>
-                    _activator.ShowException($"Failed to create database", t.Exception));
+                    _activator.ShowException("Failed to create database", t.Exception));
                 return;
             }
 

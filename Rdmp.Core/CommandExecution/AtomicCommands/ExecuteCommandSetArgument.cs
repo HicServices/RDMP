@@ -79,7 +79,7 @@ argValue    New value for argument e.g. Null, True, Catalogue:5 etc")]
             return;
         }
 
-        var args = host.GetAllArguments();
+        var args = host.GetAllArguments().ToList();
 
         _arg = args.FirstOrDefault(a => a.Name.Equals(picker[1].RawValue));
 
