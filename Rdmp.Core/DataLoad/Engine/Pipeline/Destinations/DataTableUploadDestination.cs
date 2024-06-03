@@ -34,6 +34,7 @@ using System.Data.Common;
 using Terminal.Gui;
 using TB.ComponentModel;
 using FAnsi.Discovery.TypeTranslation;
+using System.ComponentModel.DataAnnotations;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -234,26 +235,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Created table {TargetTableName} successfully."));
             }
-            //if there are new column          
-            var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
-            var newColumns = new List<DataColumn>();
-            foreach (DataColumn column in toProcess.Columns)
-            {
-                if (!existingColumns.Contains(column.ColumnName))
-                {
-                    newColumns.Add(column);
-                }
-            }
-            foreach (DataColumn column in newColumns)
-            {
-                var x = ExplicitTypes.Where(et => et.ColumnName == column.ColumnName).First();
-                if (x is not null)
-                {
-                // todo we want to add any new columns in here, but am struggling to figure out the type
-                //    var y = x.
-                //    _discoveredTable.AddColumn(x.ColumnName, new DatabaseTypeRequest(x.ex), x.AllowNulls, 30000);
-                }
-            }
+
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
             _firstTime = false;

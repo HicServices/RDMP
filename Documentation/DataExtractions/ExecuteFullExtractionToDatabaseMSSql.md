@@ -23,3 +23,11 @@ This component has several configurable options that are detailed below
 [Project]: ../CodeTutorials/Glossary.md#Project
 [ExtractionProgress]: ../CodeTutorials/Glossary.md#ExtractionProgress
 [Catalogue]: ../CodeTutorials/Glossary.md#Catalogue
+
+
+## Notes on updating an extraction
+Using the "Append Data If Table Exists" option within this extraction destination component will allow you to re-extract additional information to a database, however there a number of caveats and gotchas with this.
+* Archive Table
+    * Similar to data loads, these database tables will come with an _Archive table that will auto-populate hwne new extractions are ran against the database.
+* Data Structure changing
+    * While the extractor can handle columns being removed, it does not support columns being added beyond the first extraction. For this you will need to write the data to a new databse table. It is reccomneded that the etxraction is cloned in this case.
