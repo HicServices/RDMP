@@ -19,9 +19,9 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution, IAtomicCommand
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private IBasicActivateItems _activeItems;
-    List<IExtractableDataSet> toRemove = [];
-    List<Catalogue> toAdd = [];
+    private readonly IBasicActivateItems _activeItems;
+    private readonly List<IExtractableDataSet> toRemove = [];
+    private readonly List<Catalogue> toAdd = [];
     private void CheckForDepricatedCatalogues()
     {
         if (_extractionConfiguration.SelectedDataSets.Any(sd => sd.GetCatalogue().IsDeprecated) && _activeItems.IsInteractive)
