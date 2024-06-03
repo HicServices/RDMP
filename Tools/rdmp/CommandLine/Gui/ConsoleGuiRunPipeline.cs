@@ -46,7 +46,6 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     public int Count => notifyEventArgs.Count;
     public int Length => notifyEventArgs.Count;
 
-    private Pipeline[] _compatiblePipelines;
     private ColorScheme _red;
     private ColorScheme _yellow;
     private ColorScheme _white;
@@ -66,16 +65,16 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         _pipeline = pipeline;
 
         ColorScheme = ConsoleMainWindow.ColorScheme;
-        _compatiblePipelines = useCase
+        var compatiblePipelines = useCase
             .FilterCompatiblePipelines(activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>())
             .ToArray();
 
         Width = Dim.Fill();
         Height = Dim.Fill();
 
-        if (pipeline == null && _compatiblePipelines.Length == 1) _pipeline = _compatiblePipelines[0];
+        if (pipeline == null && compatiblePipelines.Length == 1) _pipeline = compatiblePipelines[0];
 
-        combobox1.Source = new ListWrapper(_compatiblePipelines);
+        combobox1.Source = new ListWrapper(compatiblePipelines);
         combobox1.AddKeyBinding(Key.CursorDown, Command.Expand);
 
         if (_pipeline != null)

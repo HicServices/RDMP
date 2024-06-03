@@ -36,10 +36,8 @@ public partial class FindAndReplaceUI : RDMPUserControl
 {
     private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
 
-    private IAttributePropertyFinder _adjustableLocationPropertyFinder;
     private List<FindAndReplaceNode> _locationNodes = new();
 
-    private IAttributePropertyFinder _sqlPropertyFinder;
     private List<FindAndReplaceNode> _sqlNodes = new();
 
 
@@ -49,8 +47,8 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
         GetAllObjects(activator);
 
-        _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
-        _sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
+        IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
+        IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
 
         InitializeComponent();
 
@@ -64,12 +62,12 @@ public partial class FindAndReplaceUI : RDMPUserControl
         olvAllObjects.CellEditFinished += OlvAllObjectsCellEditFinished;
 
         //Create all the nodes up front
-        foreach (var o in _allObjects.Where(_adjustableLocationPropertyFinder.ObjectContainsProperty))
-            foreach (var propertyInfo in _adjustableLocationPropertyFinder.GetProperties(o))
+        foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
+            foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
                 _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
-        foreach (var o in _allObjects.Where(_sqlPropertyFinder.ObjectContainsProperty))
-            foreach (var propertyInfo in _sqlPropertyFinder.GetProperties(o))
+        foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
+            foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
                 _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
         olvAllObjects.BeginUpdate();

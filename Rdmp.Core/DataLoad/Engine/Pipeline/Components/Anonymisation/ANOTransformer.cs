@@ -9,7 +9,6 @@ using System.Data;
 using System.Linq;
 using FAnsi.Discovery;
 using Microsoft.Data.SqlClient;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -30,16 +29,15 @@ public class ANOTransformer
     private readonly IDataLoadEventListener _listener;
 
     //the following stored procedures have to exist in the target database;
-    private readonly ExternalDatabaseServer _externalDatabaseServer;
     private readonly DiscoveredServer _server;
 
     private const string SubstitutionStoredProcedure = "sp_substituteANOIdentifiers";
 
     public ANOTransformer(ANOTable anoTable, IDataLoadEventListener listener = null)
     {
-        _externalDatabaseServer = anoTable.Server;
+        var externalDatabaseServer = anoTable.Server;
 
-        _server = DataAccessPortal.ExpectServer(_externalDatabaseServer, DataAccessContext.DataLoad);
+        _server = DataAccessPortal.ExpectServer(externalDatabaseServer, DataAccessContext.DataLoad);
 
         _anoTable = anoTable;
         _listener = listener;

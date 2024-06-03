@@ -80,19 +80,18 @@ public class QueryTimeColumn : IComparable
     /// <inheritdoc/>
     public override bool Equals(object obj)
     {
-        if (obj is QueryTimeColumn == false)
-            throw new Exception(".Equals only works for objects of type QueryTimeColumn");
+        if (obj is QueryTimeColumn other)
+            return
+                other.IColumn.Equals(IColumn);
 
-        var other = obj as QueryTimeColumn;
-        return
-            other.IColumn.Equals(IColumn);
+        throw new Exception(".Equals only works for objects of type QueryTimeColumn");
     }
 
     /// <inheritdoc/>
     public int CompareTo(object obj) =>
-        obj is QueryTimeColumn
+        obj is QueryTimeColumn column
             ? IColumn.Order -
-              (obj as QueryTimeColumn).IColumn.Order
+              column.IColumn.Order
             : 0;
 
     /// <summary>
@@ -113,33 +112,33 @@ public class QueryTimeColumn : IComparable
         if (firstTable != null)
             allAvailableLookups = firstTable.Repository.GetAllObjects<Lookup>();
 
-        for (var i = 0; i < ColumnsInOrder.Length; i++)
+        foreach (var column in ColumnsInOrder)
         {
             //it is a custom column
-            if (ColumnsInOrder[i].UnderlyingColumn == null)
+            if (column.UnderlyingColumn == null)
                 continue;
 
             var foreignKeyLookupInvolvement = allAvailableLookups
-                .Where(l => l.ForeignKey_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+                .Where(l => l.ForeignKey_ID == column.UnderlyingColumn.ID).ToArray();
             var lookupDescriptionInvolvement = allAvailableLookups
-                .Where(l => l.Description_ID == ColumnsInOrder[i].UnderlyingColumn.ID).ToArray();
+                .Where(l => l.Description_ID == column.UnderlyingColumn.ID).ToArray();
 
             if (foreignKeyLookupInvolvement.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().Count() > 1)
                 throw new Exception(
-                    $"Column {ColumnsInOrder[i].UnderlyingColumn} is configured as a foreign key for multiple different Lookup tables");
+                    $"Column {column.UnderlyingColumn} is configured as a foreign key for multiple different Lookup tables");
 
             if (foreignKeyLookupInvolvement.Length > 0)
             {
                 if (lookupDescriptionInvolvement.Length > 0)
                     throw new QueryBuildingException(
-                        $"Column {ColumnsInOrder[i].UnderlyingColumn} is both a Lookup.ForeignKey and a Lookup.Description");
+                        $"Column {column.UnderlyingColumn} is both a Lookup.ForeignKey and a Lookup.Description");
 
 
-                lastForeignKeyFound = ColumnsInOrder[i].UnderlyingColumn;
-                ColumnsInOrder[i].IsLookupForeignKey = true;
-                ColumnsInOrder[i].IsLookupDescription = false;
-                ColumnsInOrder[i].LookupTableAlias = ++lookupTablesFound;
-                ColumnsInOrder[i].LookupTable = foreignKeyLookupInvolvement[0];
+                lastForeignKeyFound = column.UnderlyingColumn;
+                column.IsLookupForeignKey = true;
+                column.IsLookupDescription = false;
+                column.LookupTableAlias = ++lookupTablesFound;
+                column.LookupTable = foreignKeyLookupInvolvement[0];
             }
 
             if (lookupDescriptionInvolvement.Length > 0)
@@ -162,10 +161,10 @@ public class QueryTimeColumn : IComparable
                         lookupDescriptionIsIsolated = true;
                     }
                     else
-                    //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
+                        //otherwise there are multiple foreign keys for this description and the user has not put in a foreign key to let us choose the correct one
                     {
                         throw new QueryBuildingException(
-                            $"Found lookup description before encountering any lookup foreign keys (Description column was {ColumnsInOrder[i].UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
+                            $"Found lookup description before encountering any lookup foreign keys (Description column was {column.UnderlyingColumn}) - make sure you always order Descriptions after their Foreign key and ensure they are in a contiguous block");
                     }
                 }
 
@@ -193,19 +192,19 @@ public class QueryTimeColumn : IComparable
                             $"Possible foreign keys include:{string.Join(",", probableCorrectColumn.Select(l => l.ForeignKey))}";
 
                     throw new QueryBuildingException(
-                        $"Encountered Lookup Description Column ({ColumnsInOrder[i].IColumn}) after first encountering Foreign Key ({lastForeignKeyFound}).  Lookup description columns (_Desc) must come after the associated Foreign key.{suggestions}");
+                        $"Encountered Lookup Description Column ({column.IColumn}) after first encountering Foreign Key ({lastForeignKeyFound}).  Lookup description columns (_Desc) must come after the associated Foreign key.{suggestions}");
                 }
 
                 if (correctLookupDescriptionInvolvement.Length > 1)
                     throw new QueryBuildingException(
-                        $"Lookup description {ColumnsInOrder[i].UnderlyingColumn} appears to be configured as a Lookup Description twice with the same Lookup Table");
+                        $"Lookup description {column.UnderlyingColumn} appears to be configured as a Lookup Description twice with the same Lookup Table");
 
-                ColumnsInOrder[i].IsIsolatedLookupDescription = lookupDescriptionIsIsolated;
-                ColumnsInOrder[i].IsLookupForeignKey = false;
-                ColumnsInOrder[i].IsLookupDescription = true;
-                ColumnsInOrder[i].LookupTableAlias =
+                column.IsIsolatedLookupDescription = lookupDescriptionIsIsolated;
+                column.IsLookupForeignKey = false;
+                column.IsLookupDescription = true;
+                column.LookupTableAlias =
                     lookupTablesFound; // must belong to same one as previously encountered foreign key
-                ColumnsInOrder[i].LookupTable = correctLookupDescriptionInvolvement[0];
+                column.LookupTable = correctLookupDescriptionInvolvement[0];
 
                 //see if there are any supplemental joins to tables that are not involved in the query
                 var supplementalJoins = correctLookupDescriptionInvolvement[0].GetSupplementalJoins();

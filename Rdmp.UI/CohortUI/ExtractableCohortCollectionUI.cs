@@ -168,19 +168,19 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
             var toDelete = node.Cohort;
 
-            if (Activator.YesNo($"Are you sure you want to delete {toDelete} (ID={toDelete.ID})", "Confirm Delete"))
-                try
-                {
-                    toDelete.DeleteInDatabase();
-
-                    lbCohortDatabaseTable.RemoveObject(node);
-                }
-                catch (Exception exception)
-                {
-                    ExceptionViewer.Show(exception);
-                }
-            else
+            if (!Activator.YesNo($"Are you sure you want to delete {toDelete} (ID={toDelete.ID})", "Confirm Delete"))
                 return;
+
+            try
+            {
+                toDelete.DeleteInDatabase();
+
+                lbCohortDatabaseTable.RemoveObject(node);
+            }
+            catch (Exception exception)
+            {
+                ExceptionViewer.Show(exception);
+            }
         }
     }
 

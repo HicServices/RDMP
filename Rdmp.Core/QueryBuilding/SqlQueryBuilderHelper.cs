@@ -400,60 +400,56 @@ public class SqlQueryBuilderHelper
             toReturn += qb.PrimaryExtractionTable.Name;
 
             //now find any joins which involve the primary extraction table
-            for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
-                if (qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
+            foreach (var join in qb.JoinsUsedInQuery)
+                if (join.PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                 {
-                    var fkTableId = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
+                    var fkTableId = join.ForeignKey.TableInfo_ID;
 
                     //don't double JOIN to the same table twice even using different routes (see Test_FourTables_MultipleRoutes)
-                    if (!tablesAddedSoFar.Contains(fkTableId))
-                    {
+                    if (tablesAddedSoFar.Add(fkTableId))
                         //we are joining to a table where the PrimaryExtractionTable is the PK in the relationship so join into the foreign key side
-                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(join) +
                                     Environment.NewLine;
-                        tablesAddedSoFar.Add(fkTableId);
-                    }
                 }
-                else if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
+                else if (join.ForeignKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                 {
-                    var pkTableId = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
+                    var pkTableId = join.PrimaryKey.TableInfo_ID;
 
                     //don't double JOIN to the same table twice even using different routes (see Test_FourTables_MultipleRoutes)
-                    if (!tablesAddedSoFar.Contains(pkTableId))
+                    if (tablesAddedSoFar.Add(pkTableId))
                     {
                         //we are joining to a table where the PrimaryExtractionTable is the FK in the relationship so join into the primary key side
-                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(join) +
                                     Environment.NewLine;
-                        tablesAddedSoFar.Add(pkTableId);
                     }
                 }
 
             //now add any joins which don't involve the primary table
-            for (var i = 0; i < qb.JoinsUsedInQuery.Count; i++)
-                if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID != qb.PrimaryExtractionTable.ID &&
-                    qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
+            foreach (var join in qb.JoinsUsedInQuery)
+                if (join.ForeignKey.TableInfo_ID != qb.PrimaryExtractionTable.ID &&
+                    join.PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
                 {
-                    var pkTableID = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
-                    var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
+                    var pkTableID = join.PrimaryKey.TableInfo_ID;
+                    var fkTableID = join.ForeignKey.TableInfo_ID;
 
 
                     //if we have already seen foreign key table before
                     //if we already have
                     if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
                     {
-                        unneededJoins.Add(qb.JoinsUsedInQuery[i]);
+                        unneededJoins.Add(join);
                     }
                     else if (tablesAddedSoFar.Contains(fkTableID))
                     {
-                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(join) +
                                     Environment.NewLine; //add primary
                         tablesAddedSoFar.Add(pkTableID);
                     }
                     else
-                    //else if we have already seen primary key table before
+                        //else if we have already seen primary key table before
                     if (tablesAddedSoFar.Contains(pkTableID))
                     {
-                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                        toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(join) +
                                     Environment.NewLine; //add foreign instead
                         tablesAddedSoFar.Add(fkTableID);
                     }
