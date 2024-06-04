@@ -169,7 +169,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
         }
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
+        //ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
 
         StartAuditIfExists(TargetTableName);
 
@@ -266,7 +266,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        //ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
+        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
         try
         {
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
