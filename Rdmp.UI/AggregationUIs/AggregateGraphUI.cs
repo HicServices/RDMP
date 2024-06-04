@@ -254,7 +254,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             var axis = AggregateConfiguration.GetAxisIfAny();
             var builder = GetQueryBuilder(AggregateConfiguration);
-
+            //builder.AxisStartDateOverride = "'2000-01-01'";
             UpdateQueryViewerScreenWithQuery(builder.SQL);
 
             var countColumn = builder.SelectColumns.FirstOrDefault(c => c.IColumn is AggregateCountColumn);
