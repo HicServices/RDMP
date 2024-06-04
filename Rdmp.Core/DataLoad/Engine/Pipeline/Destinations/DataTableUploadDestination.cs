@@ -169,7 +169,38 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
         }
-        //ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
+
+        if (UseTrigger)
+        {
+            if (_firstTime)
+            {
+                if (!_database.Exists())
+                    throw new Exception($"Database {_database} does not exist");
+
+                _discoveredTable = _database.ExpectTable(TargetTableName);
+            }
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+
+            if (listener.GetType() == typeof(ForkDataLoadEventListener))
+            {
+                var job = (ForkDataLoadEventListener)listener;
+                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+                if (listeners.Count == 1)
+                {
+                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
+                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
+                    newColumn.DefaultValue = dataLoadInfo.ID;
+                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                        toProcess.Columns.Add(newColumn);
+
+                }
+            }
+        }
+        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
 
         StartAuditIfExists(TargetTableName);
 
@@ -242,31 +273,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
 
-        if (UseTrigger)
-        {
-            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
-            if (currentStatus == TriggerStatus.Missing)
-                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-
-            if (listener.GetType() == typeof(ForkDataLoadEventListener))
-            {
-                var job = (ForkDataLoadEventListener)listener;
-                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-                if (listeners.Count == 1)
-                {
-                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
-                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
-                    newColumn.DefaultValue = dataLoadInfo.ID;
-                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
-                        toProcess.Columns.Add(newColumn);
-
-                }
-            }
-        }
-
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
         try
         {
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
