@@ -255,20 +255,21 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (currentStatus == TriggerStatus.Missing)
                 _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-            //IDataLoadInfo dataLoadInfo;
-            //if (listener.GetType() == typeof(ForkDataLoadEventListener))
-            //{
-            //    var job = (ForkDataLoadEventListener)listener;
-            //    var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-            //    if (listeners.Count == 1)
-            //    {
-            //        dataLoadInfo = listeners.First().DataLoadInfo;
-            //        DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
-            //        newColumn.DefaultValue = dataLoadInfo.ID;
-            //        toProcess.Columns.Add(newColumn);
-            //    }
+            IDataLoadInfo dataLoadInfo;
+            if (listener.GetType() == typeof(ForkDataLoadEventListener))
+            {
+                var job = (ForkDataLoadEventListener)listener;
+                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+                if (listeners.Count == 1)
+                {
+                    dataLoadInfo = listeners.First().DataLoadInfo;
+                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
+                    newColumn.DefaultValue = dataLoadInfo.ID;
+                    if(!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                        toProcess.Columns.Add(newColumn);
+                }
 
-            //}
+            }
         }
 
         ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
