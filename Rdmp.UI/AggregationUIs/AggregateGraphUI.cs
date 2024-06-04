@@ -11,6 +11,7 @@ using System.Data;
 using System.Data.Common;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -295,8 +296,27 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), incriment);
                 var rowsToDelete = _dt.Rows.Cast<DataRow>().Where(r =>
                 {
-                    var templateString = "0000-01-01";
-                    var currentDT = DateTime.Parse(templateString.Replace(templateString[0..r.ItemArray[columnIndex].ToString().Length], r.ItemArray[columnIndex].ToString()));
+                    var currentDT = new DateTime();
+                    if (incriment == AxisIncrement.Day)
+                    {
+                        DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy-mm-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
+                    }
+                    if (incriment == AxisIncrement.Month)
+                    {
+                        DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
+                    }
+                    if (incriment == AxisIncrement.Quarter)
+                    {
+                        var year = r.ItemArray[columnIndex].ToString()[0..4];
+                        var asString = r.ItemArray[columnIndex].ToString();
+                        var quarter = Int32.Parse(asString.Substring(asString.Length - 1)) * 3;
+                        DateTime.TryParseExact($"{year}-{quarter}", "yyyy-mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
+
+                    }
+                    if (incriment == AxisIncrement.Year)
+                    {
+                        DateTime.TryParseExact(r.ItemArray[columnIndex].ToString(), "yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out currentDT);
+                    }
                     return currentDT >= startDate && currentDT <= endDate;
                 }).ToList();
                 foreach (var row in rowsToDelete)
