@@ -14,7 +14,6 @@ using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -30,11 +29,8 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
 using FAnsi;
-using System.Data.Common;
 using Terminal.Gui;
 using TB.ComponentModel;
-using FAnsi.Discovery.TypeTranslation;
-using System.ComponentModel.DataAnnotations;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -255,20 +251,19 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (currentStatus == TriggerStatus.Missing)
                 _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-            IDataLoadInfo dataLoadInfo;
             if (listener.GetType() == typeof(ForkDataLoadEventListener))
             {
                 var job = (ForkDataLoadEventListener)listener;
                 var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
                 if (listeners.Count == 1)
                 {
-                    dataLoadInfo = listeners.First().DataLoadInfo;
+                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
                     DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
                     newColumn.DefaultValue = dataLoadInfo.ID;
-                    if(!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
                         toProcess.Columns.Add(newColumn);
-                }
 
+                }
             }
         }
 
@@ -318,12 +313,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         {
                             //the row is the exact same,so there is no clash
                             clash = false;
-                            var x = existingData.AsEnumerable().FirstOrDefault().ItemArray.Take(row.ItemArray.Length - 1).ToList();
-                            var y = row.ItemArray.Take(row.ItemArray.Length - 1).ToList();
                             rowsToDelete.Add(row);
                         }
                         else if (clash)
                         {
+                            //row needs updated
                             rowsToModify.Add(row);
                             break;
                         }
@@ -347,9 +341,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         columns.Add(column.ColumnName);
                     }
                 }
-                //need to chekc for removed column and null them out
-                var x = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
-                var columnsThatPreviouslyExisted = x.Where(c => !pkColumns.Select(pk => pk.ColumnName).Contains(c) && !columns.Contains(c) && c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
+                //need to check for removed column and null them out
+                var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+                var columnsThatPreviouslyExisted = existingColumns.Where(c => !pkColumns.Select(pk => pk.ColumnName).Contains(c) && !columns.Contains(c) && c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
                 var nullEntries = string.Join(" ,", columnsThatPreviouslyExisted.Select(c => $"{c} = NULL"));
                 var nullText = nullEntries.Length > 0 ? $" , {nullEntries}" : "";
                 var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
@@ -388,6 +382,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         _dataLoadInfo?.CloseAndMarkComplete();
         return null;
     }
+
 
     private static void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
@@ -482,7 +477,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
             //get what is required for the current batch and the current type that is configured in the live table
             oldTypes.TryGetValue(column.ColumnName, out var oldSqlType);
-            //var oldSqlType = oldTypes[column.ColumnName];
             _dataTypeDictionary.TryGetValue(column.ColumnName, out var knownType);
 
             var newSqlType = knownType is not null ? typeTranslater.GetSQLDBTypeForCSharpType(knownType.Guess) : null;
@@ -608,20 +602,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 //create the primary key to match user provided columns
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
-
-            ////have to do the tirgger after the PKs have been made
-            //var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            //var _triggerImplementer = factory.Create(_discoveredTable);
-            //var currentStatus = _triggerImplementer.GetTriggerStatus();
-            //if (currentStatus == TriggerStatus.Missing)
-            //    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-
-            //IDataLoadInfo dataLoadInfo;
-            //if (listener.GetType() == typeof(ToLoggingDatabaseDataLoadEventListener)){
-            //    var job = (ToLoggingDatabaseDataLoadEventListener)listener;
-            //    dataLoadInfo = job.DataLoadInfo;
-            //    toPro
-            //}
         }
 
 
