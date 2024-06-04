@@ -84,16 +84,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private readonly ToolStripMenuItem _miClipboardCsv = new("Comma Separated Format");
     private readonly ToolStripMenuItem _btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
     private readonly ToolStripButton _btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
+    private readonly ToolStripButton _btnRefreshData = new("Refresh Data", FamFamFamIcons.arrow_refresh.ImageToBitmap());
     private readonly ToolStripTimeout _timeoutControls = new();
-
-    private ToolStripMenuItem miSaveImages = new("Save Image", FamFamFamIcons.disk.ImageToBitmap());
-
-    private ToolStripMenuItem miCopyToClipboard = new("Copy to Clipboard", CatalogueIcons.Clipboard.ImageToBitmap());
-    private ToolStripMenuItem miClipboardWord = new("Word Format");
-    private ToolStripMenuItem miClipboardCsv = new("Comma Separated Format");
-    private ToolStripMenuItem btnCache = new("Cache", FamFamFamIcons.picture_save.ImageToBitmap());
-
-    private ToolStripButton btnResendQuery = new("Send Query", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
     public AggregateGraphUI()
     {
@@ -132,6 +124,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         _miClipboardCsv.ToolTipText = "Copies data as CSV formatted";
 
         _btnResendQuery.Click += btnResendQuery_Click;
+        _btnRefreshData.Click += btnRefreshData_Click;
         _miSaveImages.Click += MiSaveImagesClick;
         _btnCache.Click += btnCache_Click;
 
@@ -151,6 +144,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         _miClipboardCsv.Enabled = enabled && _dt is { Rows.Count: > 0 };
         _miClipboardWord.Enabled = enabled && _dt is { Rows.Count: > 0 };
         _btnResendQuery.Enabled = enabled;
+        _btnRefreshData.Enabled = enabled;
     }
 
     public AggregateConfiguration AggregateConfiguration => _aggregateConfiguration;
@@ -175,6 +169,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     public bool Done { get; private set; }
 
     private Task _loadTask;
+
+    public void ReloadDataBetweenDates(string startDate, string endDate)
+    {
+        _loadTask = new Task(() => LoadGraph(true, startDate, endDate));
+        _loadTask.Start();
+    }
 
     public void LoadGraphAsync()
     {
@@ -208,7 +208,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         label1.ForeColor = Color.Black;
         label1.Text = GetDescription();
 
-        _loadTask = new Task(LoadGraph);
+        _loadTask = new Task(() => LoadGraph());
         _loadTask.Start();
     }
 
@@ -230,7 +230,30 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private DataTable _dt;
 
-    private void LoadGraph()
+    int GetQuarterName(DateTime myDate)
+    {
+        return (int)Math.Ceiling(myDate.Month / 3.0);
+    }
+
+    private DateTime ConvertAxisOverridetoDate(string axisOverride, AxisIncrement increment)
+    {
+        var overrideDate = DateTime.Parse(axisOverride);
+        switch (increment)
+        {
+            case AxisIncrement.Day:
+                return overrideDate.Date;
+            case AxisIncrement.Month:
+                return new DateTime(overrideDate.Year, overrideDate.Month, 1);
+            case AxisIncrement.Quarter:
+                return new DateTime(overrideDate.Year, (3 * GetQuarterName(overrideDate)) - 2, 1);
+            case AxisIncrement.Year:
+                return new DateTime(overrideDate.Year, 1, 1);
+            default:
+                return DateTime.Parse(axisOverride);
+        }
+    }
+
+    private void LoadGraph(bool isRefresh = false, string startDateOverride = null, string endDateOverride = null)
     {
         try
         {
@@ -254,6 +277,34 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             var axis = AggregateConfiguration.GetAxisIfAny();
             var builder = GetQueryBuilder(AggregateConfiguration);
+            if (startDateOverride != null)
+                builder.AxisStartDateOverride = startDateOverride;
+            if (endDateOverride != null)
+                builder.AxisEndDateOverride = endDateOverride;
+
+            if (isRefresh)
+            {
+                //wipe out data from dt that is between these dates
+                var dateColumnName = "joinDt";// axis.AggregateDimension.ColumnInfo.Name;
+                var columnIndex = _dt.Columns.IndexOf(dateColumnName);
+
+                var incriment = axis.AxisIncrement;
+
+
+                var startDate = ConvertAxisOverridetoDate(startDateOverride.Trim('\''), incriment);
+                var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), incriment);
+                var rowsToDelete = _dt.Rows.Cast<DataRow>().Where(r =>
+                {
+                    var templateString = "0000-01-01";
+                    var currentDT = DateTime.Parse(templateString.Replace(templateString[0..r.ItemArray[columnIndex].ToString().Length], r.ItemArray[columnIndex].ToString()));
+                    return currentDT >= startDate && currentDT <= endDate;
+                }).ToList();
+                foreach (var row in rowsToDelete)
+                {
+                    _dt.Rows.Remove(row);
+                }
+                Console.WriteLine(dateColumnName);
+            }
             //builder.AxisStartDateOverride = "'2000-01-01'";
             UpdateQueryViewerScreenWithQuery(builder.SQL);
 
@@ -272,7 +323,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 _cmd = server.GetCommand(builder.SQL, con);
                 _cmd.CommandTimeout = Timeout;
 
-                _dt = new DataTable();
+                if (!isRefresh)
+                {
+                    _dt = new DataTable();
+                }
 
                 Invoke(new MethodInvoker(() => { lblLoadStage.Text = "Executing Query..."; }));
 
@@ -281,8 +335,9 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 _cmd = null;
 
                 //trim all leading/trailing whitespace from column
-                foreach (DataColumn c in _dt.Columns)
-                    c.ColumnName = c.ColumnName.Trim();
+                if (!isRefresh)
+                    foreach (DataColumn c in _dt.Columns)
+                        c.ColumnName = c.ColumnName.Trim();
 
                 if (_dt.Rows.Count == 0)
                     throw new Exception("Query Returned No Rows");
@@ -737,6 +792,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
             foreach (var c in _timeoutControls.GetControls())
                 CommonFunctionality.Add(c);
+
+            CommonFunctionality.Add(_btnRefreshData);
         }
     }
 
@@ -839,6 +896,12 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void btnResendQuery_Click(object sender, EventArgs e)
     {
         LoadGraphAsync();
+    }
+
+
+    private void btnRefreshData_Click(object sender, EventArgs e)
+    {
+        ReloadDataBetweenDates("'2000-01-01'", "'2010-01-01'");
     }
 
     public override string GetTabName() => $"Graph:{base.GetTabName()}";
