@@ -169,7 +169,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
         }
-
+        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
 
         StartAuditIfExists(TargetTableName);
 
@@ -244,7 +244,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         if (UseTrigger)
         {
-            //have to do the tirgger after the PKs have been made
             var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
             var _triggerImplementer = factory.Create(_discoveredTable);
             var currentStatus = _triggerImplementer.GetTriggerStatus();
@@ -267,7 +266,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
+        //ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
         try
         {
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
