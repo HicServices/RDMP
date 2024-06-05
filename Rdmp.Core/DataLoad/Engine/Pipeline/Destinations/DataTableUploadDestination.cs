@@ -170,36 +170,36 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        if (UseTrigger)
-        {
-            if (_firstTime)
-            {
-                if (!_database.Exists())
-                    throw new Exception($"Database {_database} does not exist");
+        //if (UseTrigger)
+        //{
+        //    if (_firstTime)
+        //    {
+        //        if (!_database.Exists())
+        //            throw new Exception($"Database {_database} does not exist");
 
-                _discoveredTable = _database.ExpectTable(TargetTableName);
-            }
-            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
-            if (currentStatus == TriggerStatus.Missing)
-                _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+        //        _discoveredTable = _database.ExpectTable(TargetTableName);
+        //    }
+        //    var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+        //    var _triggerImplementer = factory.Create(_discoveredTable);
+        //    var currentStatus = _triggerImplementer.GetTriggerStatus();
+        //    if (currentStatus == TriggerStatus.Missing)
+        //        _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
 
-            if (listener.GetType() == typeof(ForkDataLoadEventListener))
-            {
-                var job = (ForkDataLoadEventListener)listener;
-                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-                if (listeners.Count == 1)
-                {
-                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
-                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
-                    newColumn.DefaultValue = dataLoadInfo.ID;
-                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
-                        toProcess.Columns.Add(newColumn);
+        //    if (listener.GetType() == typeof(ForkDataLoadEventListener))
+        //    {
+        //        var job = (ForkDataLoadEventListener)listener;
+        //        var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+        //        if (listeners.Count == 1)
+        //        {
+        //            IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
+        //            DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
+        //            newColumn.DefaultValue = dataLoadInfo.ID;
+        //            if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+        //                toProcess.Columns.Add(newColumn);
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
         ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
 
         StartAuditIfExists(TargetTableName);
@@ -271,6 +271,37 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
         {
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
+        }
+
+        if (UseTrigger && pkColumns.Length != 0) //can't use triggers without a PK
+        {
+
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                try
+                {
+                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);//this is the issue
+                }catch(Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+
+            if (listener.GetType() == typeof(ForkDataLoadEventListener))
+            {
+                var job = (ForkDataLoadEventListener)listener;
+                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+                if (listeners.Count == 1)
+                {
+                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
+                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
+                    newColumn.DefaultValue = dataLoadInfo.ID;
+                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                        toProcess.Columns.Add(newColumn);
+
+                }
+            }
         }
 
         try
