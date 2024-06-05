@@ -273,7 +273,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
 
-        if (UseTrigger && pkColumns.Length != 0) //can't use triggers without a PK
+        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
         {
 
             var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
