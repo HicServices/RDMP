@@ -929,7 +929,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
         {
             ReloadDataBetweenDates(dialog.StartDate, dialog.EndDate);
         }
-        //ReloadDataBetweenDates("'2000-01-01'", "'2010-01-01'");
     }
 
     public override string GetTabName() => $"Graph:{base.GetTabName()}";
