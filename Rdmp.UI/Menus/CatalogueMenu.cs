@@ -68,7 +68,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
         Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.049f });
-        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, () => Clipboard.GetText())
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText)
         { SuggestedCategory = CatalogueItems, Weight = -99.047f });
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });

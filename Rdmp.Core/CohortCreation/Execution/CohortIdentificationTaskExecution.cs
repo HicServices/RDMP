@@ -77,7 +77,6 @@ public sealed class CohortIdentificationTaskExecution : IDisposable
         Identifiers.Load(rIds);
         Identifiers.EndLoadData();
         rIds.Close();
-        rIds.Dispose();
 
         //if there is cumulative SQL happening
         if (!string.IsNullOrWhiteSpace(_cumulativeSQL))
@@ -91,7 +90,6 @@ public sealed class CohortIdentificationTaskExecution : IDisposable
             using var rCumulative = cumulativeIdentifiersRead.Result;
             CumulativeIdentifiers.Load(rCumulative);
             rCumulative.Close();
-            rCumulative.Dispose();
         }
 
         IsExecuting = false;

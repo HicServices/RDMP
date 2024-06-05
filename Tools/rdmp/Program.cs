@@ -94,25 +94,22 @@ internal class Program
                         ReleaseOptions,
                         CohortCreationOptions,
                         ExecuteCommandOptions>(args)
-                    .MapResult(
-                        (PackOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (ConsoleGuiOptions opts) => RdmpCommandLineBootStrapper.Run(opts, new ConsoleGuiRunner(opts)),
-                        (PlatformDatabaseCreationOptions opts) => Run(opts),
-                        (PatchDatabaseOptions opts) => Run(opts),
-                        (DleOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (DqeOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (CacheOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (ExtractionOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
-                        (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
-                        errs =>
-                        {
-                            return HasHelpArguments(args)
-                                ? returnCode = 0
-                                : returnCode =
-                                    RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger);
-                        });
+                    .MapResult(static (PackOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (ConsoleGuiOptions opts) =>
+                            RdmpCommandLineBootStrapper.Run(opts, new ConsoleGuiRunner(opts)),
+                        static (PlatformDatabaseCreationOptions opts) => Run(opts),
+                        static (PatchDatabaseOptions opts) => Run(opts),
+                        static (DleOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (DqeOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (CacheOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (ExtractionOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (ReleaseOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (CohortCreationOptions opts) => RdmpCommandLineBootStrapper.Run(opts),
+                        static (ExecuteCommandOptions opts) => RdmpCommandLineBootStrapper.RunCmd(opts),
+                        errs => HasHelpArguments(args)
+                            ? returnCode = 0
+                            : returnCode =
+                                RdmpCommandLineBootStrapper.HandleArgumentsWithStandardRunner(args, logger));
 
             logger.Info($"Exiting with code {returnCode}");
             return returnCode;

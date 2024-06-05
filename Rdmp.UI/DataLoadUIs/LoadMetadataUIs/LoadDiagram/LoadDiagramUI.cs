@@ -292,14 +292,12 @@ public partial class LoadDiagramUI : LoadDiagram_Design
 
     private void btnFetch_Click(object sender, EventArgs e)
     {
-        if (taskDiscoverState is { IsCompleted: false })
-        if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
-            return;
+        if (taskDiscoverState is { IsCompleted: false }) return;
 
         CommonFunctionality.ResetChecks();
         _btnFetchData.Enabled = false;
         pbLoading.Visible = true;
-        taskDiscoverState = Task.Run(() => DiscoverStates())
+        taskDiscoverState = Task.Run(DiscoverStates)
             .ContinueWith(UpdateStatesUI, TaskScheduler.FromCurrentSynchronizationContext());
     }
 

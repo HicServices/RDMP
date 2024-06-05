@@ -191,7 +191,7 @@ public class ConsoleInputManager : BasicActivateItems
             if (picker.Examples.Any())
             {
                 sb.AppendLine();
-                sb.Append($"Examples:");
+                sb.Append("Examples:");
                 foreach (var example in picker.Examples)
                 {
                     sb.AppendLine();

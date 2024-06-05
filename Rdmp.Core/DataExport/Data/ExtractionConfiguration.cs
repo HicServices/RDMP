@@ -381,9 +381,8 @@ public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration,
                     var newSelectedDataSet = new SelectedDataSets(repo, clone, selected.ExtractableDataSet, null);
 
                     // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
-                    foreach (IColumn extractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet))
+                    foreach (var cloneExtractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet).Select(static extractableColumn => extractableColumn.ShallowClone()))
                     {
-                        var cloneExtractableColumn = ((ExtractableColumn)extractableColumn).ShallowClone();
                         cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
                         cloneExtractableColumn.SaveToDatabase();
                     }

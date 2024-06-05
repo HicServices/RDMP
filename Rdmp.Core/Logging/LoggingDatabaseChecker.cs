@@ -238,14 +238,14 @@ public class LoggingDatabaseChecker : ICheckable
 
 
             //there is a required ID that does not exist e.g. 99,'MyFunkyStatus'
-            if (!actual.ContainsKey(kvp.Key))
+            if (!actual.TryGetValue(kvp.Key, out var value))
             {
                 missing.Add(kvp.Key, kvp.Value);
                 continue;
             }
 
             //there is an ID but they are different values e.g. 1,'Outstanding' in one and 1,'Resolved' in the other
-            if (!actual[kvp.Key].Equals(kvp.Value))
+            if (!value.Equals(kvp.Value))
                 collisions.Add(kvp.Key, kvp.Value);
         }
     }
