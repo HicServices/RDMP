@@ -287,7 +287,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if (isRefresh)
             {
                 //wipe out data from dt that is between these dates
-                var dateColumnName = "joinDt";// axis.AggregateDimension.ColumnInfo.Name;
+                var dateColumnName = "joinDt";
                 var columnIndex = _dt.Columns.IndexOf(dateColumnName);
 
                 var incriment = axis.AxisIncrement;
@@ -325,7 +325,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 {
                     _dt.Rows.Remove(row);
                 }
-                Console.WriteLine(dateColumnName);
             }
             UpdateQueryViewerScreenWithQuery(builder.SQL);
 
