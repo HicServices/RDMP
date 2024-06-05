@@ -43,7 +43,7 @@
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new System.Drawing.Size(88, 27);
             btnRefresh.TabIndex = 3;
-            btnRefresh.Text = "Refresh Data";
+            btnRefresh.Text = "Partial Refresh";
             btnRefresh.UseVisualStyleBackColor = true;
             btnRefresh.Click += btnRefresh_Click;
             // 
