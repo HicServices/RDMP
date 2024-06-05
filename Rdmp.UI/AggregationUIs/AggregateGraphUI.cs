@@ -32,6 +32,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Extensions;
+using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleDialogs;
@@ -296,6 +297,7 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 var endDate = ConvertAxisOverridetoDate(endDateOverride.Trim('\''), incriment);
                 var rowsToDelete = _dt.Rows.Cast<DataRow>().Where(r =>
                 {
+                    //this could maybe be more efficient with some sort of lookup atfer the first time?
                     var currentDT = new DateTime();
                     if (incriment == AxisIncrement.Day)
                     {
@@ -325,7 +327,6 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 }
                 Console.WriteLine(dateColumnName);
             }
-            //builder.AxisStartDateOverride = "'2000-01-01'";
             UpdateQueryViewerScreenWithQuery(builder.SQL);
 
             var countColumn = builder.SelectColumns.FirstOrDefault(c => c.IColumn is AggregateCountColumn);
@@ -813,7 +814,8 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             foreach (var c in _timeoutControls.GetControls())
                 CommonFunctionality.Add(c);
 
-            CommonFunctionality.Add(_btnRefreshData);
+            if (DatabaseObject.GetType() == typeof(AggregateConfiguration) && ((AggregateConfiguration)DatabaseObject).GetAxisIfAny() != null)
+                CommonFunctionality.Add(_btnRefreshData);
         }
     }
 
@@ -921,7 +923,13 @@ public partial class AggregateGraphUI : AggregateGraph_Design
 
     private void btnRefreshData_Click(object sender, EventArgs e)
     {
-        ReloadDataBetweenDates("'2000-01-01'", "'2010-01-01'");
+        var axis = AggregateConfiguration.GetAxisIfAny();
+        var dialog = new AggregateGraphDateSelector(axis.StartDate, axis.EndDate);
+        if (dialog.ShowDialog() == DialogResult.OK)
+        {
+            ReloadDataBetweenDates(dialog.StartDate, dialog.EndDate);
+        }
+        //ReloadDataBetweenDates("'2000-01-01'", "'2010-01-01'");
     }
 
     public override string GetTabName() => $"Graph:{base.GetTabName()}";
