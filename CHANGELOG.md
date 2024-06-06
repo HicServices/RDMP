@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add ability to update an extraction's cohort from the command line using `SetExtractionConfigurationCohort ExtractionConfiguration:{id} ExtractableCohort:{id}`
 - Fix issue with non-default named PostgreSQL Table Info not being checkable
+- Improve default timeouts on database lookups
 
 
 ## [8.1.6] - 2024-05-27
