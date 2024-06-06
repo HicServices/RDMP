@@ -19,6 +19,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.SimpleDialogs;
+using YamlDotNet.Core.Tokens;
 
 namespace Rdmp.UI.SimpleControls;
 
@@ -190,8 +191,10 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshDatabasesToken = new CancellationTokenSource();
         try
         {
-            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token)
-                .ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
+            using var con = _helper.GetConnection(builder);
+            var openTask = con.OpenAsync(_workerRefreshDatabasesToken.Token);
+            openTask.Wait(_workerRefreshDatabasesToken.Token);
+            _listDatabasesAsyncResult =  _helper.ListDatabases(con).ToAsyncEnumerable().ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
         }
         catch (OperationCanceledException)
         {
