@@ -94,6 +94,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
     public bool IndexTables { get; set; } = true;
 
+    [DemandsInitialization("An optional list of columns to index on e.g \"Coulmn1, Column2\"")]
+    public string UserDefinedIndex { get; set; }
+
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
 
@@ -207,6 +210,9 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
         _destination.UseTrigger = true;
+        _destination.IndexTables = IndexTables;
+        if (UserDefinedIndex is not null)
+            _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
         _destination.PreInitialize(_destinationDatabase, listener);
 
         return _destination;

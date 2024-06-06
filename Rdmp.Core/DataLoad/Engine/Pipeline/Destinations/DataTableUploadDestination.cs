@@ -92,6 +92,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// </summary>
     public bool CreatedTable { get; private set; }
     public bool UseTrigger { get; set; } = false;
+
+    public bool IndexTables { get; set; } = false;
+    public List<String> UserDefinedIndexes { get; set; } = new();
+
     private IBulkCopy _bulkcopy;
     private int _affectedRows;
 
@@ -170,36 +174,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        //if (UseTrigger)
-        //{
-        //    if (_firstTime)
-        //    {
-        //        if (!_database.Exists())
-        //            throw new Exception($"Database {_database} does not exist");
-
-        //        _discoveredTable = _database.ExpectTable(TargetTableName);
-        //    }
-        //    var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-        //    var _triggerImplementer = factory.Create(_discoveredTable);
-        //    var currentStatus = _triggerImplementer.GetTriggerStatus();
-        //    if (currentStatus == TriggerStatus.Missing)
-        //        _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-
-        //    if (listener.GetType() == typeof(ForkDataLoadEventListener))
-        //    {
-        //        var job = (ForkDataLoadEventListener)listener;
-        //        var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-        //        if (listeners.Count == 1)
-        //        {
-        //            IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
-        //            DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
-        //            newColumn.DefaultValue = dataLoadInfo.ID;
-        //            if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
-        //                toProcess.Columns.Add(newColumn);
-
-        //        }
-        //    }
-        //}
         ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
 
         StartAuditIfExists(TargetTableName);
@@ -272,6 +246,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         {
             _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
         }
+        if (IndexTables)
+        {
+            var indexes = UserDefinedIndexes.Any() ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
+            _discoveredTable.CreateIndex("MyIndex", _discoveredTable.DiscoverColumns().Where(c => indexes.Contains(c.GetRuntimeName())).ToArray());
+        }
 
         if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
         {
@@ -283,7 +262,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 try
                 {
                     _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);//this is the issue
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
