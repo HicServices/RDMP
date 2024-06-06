@@ -19,7 +19,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.SimpleDialogs;
-using YamlDotNet.Core.Tokens;
 
 namespace Rdmp.UI.SimpleControls;
 
@@ -191,6 +190,8 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshDatabasesToken = new CancellationTokenSource();
         try
         {
+            // can be replaced with   _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token).ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
+            //once there is a fix in FansiSQL
             using var con = _helper.GetConnection(builder);
             var openTask = con.OpenAsync(_workerRefreshDatabasesToken.Token);
             openTask.Wait(_workerRefreshDatabasesToken.Token);
