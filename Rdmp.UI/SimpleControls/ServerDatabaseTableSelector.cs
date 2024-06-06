@@ -178,7 +178,7 @@ public partial class ServerDatabaseTableSelector : UserControl
     private void UpdateDatabaseListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-        if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout))
+        if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout) && _timeout > 0)
         {
             builder["Timeout"] = _timeout;
         }
