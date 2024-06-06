@@ -94,6 +94,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     public bool UseTrigger { get; set; } = false;
 
     public bool IndexTables { get; set; } = false;
+    public string IndexTableName { get; set; }
     public List<String> UserDefinedIndexes { get; set; } = new();
 
     private IBulkCopy _bulkcopy;
@@ -249,7 +250,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         if (IndexTables)
         {
             var indexes = UserDefinedIndexes.Any() ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
-            _discoveredTable.CreateIndex("MyIndex", _discoveredTable.DiscoverColumns().Where(c => indexes.Contains(c.GetRuntimeName())).ToArray());
+            try
+            {
+                _discoveredTable.CreateIndex(IndexTableName, _discoveredTable.DiscoverColumns().Where(c => indexes.Contains(c.GetRuntimeName())).ToArray());
+            }catch(Exception e)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,e.Message));
+            }
         }
 
         if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
