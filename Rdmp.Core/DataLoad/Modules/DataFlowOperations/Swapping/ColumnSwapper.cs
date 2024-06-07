@@ -193,7 +193,7 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 fromValue = typeConversion(fromValue);
 
             //if we don't have the key value
-            if (!_mappingTable.ContainsKey(fromValue))
+            if (!_mappingTable.TryGetValue(fromValue, out var results))
                 if (CrashIfNoMappingsFound)
                 {
                     throw new KeyNotFoundException($"Could not find mapping for {fromValue}");
@@ -207,7 +207,6 @@ False - Drop the row from the DataTable (and issue a warning)", DefaultValue = t
                 }
 
             //we do have the key value!
-            var results = _mappingTable[fromValue];
 
             //yes 1
             if (results.Count == 1)

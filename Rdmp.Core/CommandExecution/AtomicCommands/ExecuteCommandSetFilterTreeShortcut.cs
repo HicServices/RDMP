@@ -34,7 +34,7 @@ internal class ExecuteCommandSetFilterTreeShortcut : BasicCommandExecution
         _promptChoice = true;
 
         if (_setOn.RootFilterContainer_ID != null)
-            SetImpossible($"Aggregate already has a root filter container");
+            SetImpossible("Aggregate already has a root filter container");
 
         if (_setOn.Catalogue.IsApiCall())
             SetImpossible(ExecuteCommandAddNewFilterContainer.FiltersCannotBeAddedToApiCalls);

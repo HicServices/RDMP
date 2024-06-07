@@ -70,8 +70,9 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         { SuggestedCategory = CatalogueItems, Weight = -99.049f });
         Add(new ExecuteCommandUpdateCatalogueDataLocationUI(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.049f, OverrideCommandName = "Update Catalogue Data Location" });
-        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, () => Clipboard.GetText())
-        { SuggestedCategory = CatalogueItems, Weight = -99.047f });
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText));
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText));
+        { SuggestedCategory = CatalogueItems, Weight = -99.047f }); ;
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)

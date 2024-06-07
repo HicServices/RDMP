@@ -69,7 +69,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
                 return;
             }
 
-            _alreadyMarkedInConfiguration = _selectedDataSetColumns.Where(c => Getter(c)).ToArray();
+            _alreadyMarkedInConfiguration = _selectedDataSetColumns.Where(Getter).ToArray();
         }
         else
         {
@@ -81,7 +81,7 @@ public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
                 return;
             }
 
-            _alreadyMarked = _extractionInformations.Where(c => Getter(c)).ToArray();
+            _alreadyMarked = _extractionInformations.Where(Getter).ToArray();
         }
 
         if (!string.IsNullOrWhiteSpace(column)) toPick = column.Split(',', StringSplitOptions.RemoveEmptyEntries);

@@ -85,7 +85,7 @@ public static class PersistStringHelper
     {
         var dict = LoadDictionaryFromString(persistString);
 
-        return dict.TryGetValue(key, out var s) ? s : null;
+        return dict.GetValueOrDefault(key);
     }
 
     /// <summary>

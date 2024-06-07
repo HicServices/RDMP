@@ -46,7 +46,6 @@ public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisable
     /// <summary>
     /// A serialised JSON object that stores arbitrary configuration for the process task
     /// </summary>
-    #nullable enable
+#nullable enable
     string? SerialisableConfiguration { get; }
-    #nullable disable
 }

@@ -114,7 +114,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
 
         Assert.That(pta.Value, Is.Null);
 
-        var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", $"Catalogue:kapow splat" },
+        var picker = new CommandLineObjectPicker(new[] { $"ProcessTask:{pt.ID}", "fff", "Catalogue:kapow splat" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
@@ -139,7 +139,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
 
         Assert.That(pca.Value, Is.Null);
 
-        var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Catalogue:lolzzzyy" },
+        var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", "Catalogue:lolzzzyy" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
@@ -167,7 +167,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
 
         Assert.That(pca.Value, Is.Null);
 
-        var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Catalogue:kapow*" },
+        var picker = new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", "Catalogue:kapow*" },
             GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
@@ -196,7 +196,7 @@ internal class ExecuteCommandSetArgumentTests : CommandCliTests
         Assert.That((System.Collections.ICollection)pca.GetValueAsSystemType(), Does.Contain(cata1));
 
         var picker =
-            new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", $"Null" }, GetActivator());
+            new CommandLineObjectPicker(new[] { $"PipelineComponent:{pc.ID}", "ggg", "Null" }, GetActivator());
 
         Assert.DoesNotThrow(() => GetInvoker().ExecuteCommand(typeof(ExecuteCommandSetArgument), picker));
 

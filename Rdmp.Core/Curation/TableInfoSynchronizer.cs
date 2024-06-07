@@ -314,7 +314,7 @@ public class TableInfoSynchronizer
     private bool SynchronizeParameters(TableValuedFunctionImporter importer, ICheckNotifier notifier)
     {
         var discoveredParameters = _toSyncTo.GetCurrentDatabase()
-            .ExpectTableValuedFunction(_tableToSync.GetRuntimeName(), _tableToSync.Schema).DiscoverParameters();
+            .ExpectTableValuedFunction(_tableToSync.GetRuntimeName(), _tableToSync.Schema).DiscoverParameters().ToArray();
         var currentParameters = _tableToSync.GetAllParameters();
 
         //For each parameter in underlying database

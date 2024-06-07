@@ -497,7 +497,7 @@ public class ShareManager
                         case RelationshipType.SharedObject:
 
                             //Confirm that the share definition includes the knowledge that there's a parent class to this object
-                            if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
+                            if (!shareDefinition.RelationshipProperties.TryGetValue(relationshipAttribute, out var importGuidOfParent))
                                 //if it doesn't but the field is optional, ignore it
                                 if (relationshipAttribute.Type == RelationshipType.OptionalSharedObject)
                                 {
@@ -505,14 +505,12 @@ public class ShareManager
                                     break;
                                 }
                                 else
-                                //otherwise we are missing a required shared object being referenced. That's bad news.
+                                    //otherwise we are missing a required shared object being referenced. That's bad news.
                                 {
                                     throw new Exception(
                                         $"Share Definition for object of Type {typeof(T)} is missing an expected RelationshipProperty called {property.Name}");
                                 }
-
-                            //Get the SharingUID of the parent for this property
-                            var importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
+                            //Got the SharingUID of the parent for this property in importGuidOfParent
 
                             //Confirm that we have a local import of the parent
                             var parentImport = GetExistingImport(importGuidOfParent);

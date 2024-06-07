@@ -84,12 +84,12 @@ internal class ConsoleMainWindow
         {
             new("_File (F9)", new MenuItem[]
             {
-                new("_New...", "", () => New()),
-                new("_Find...", "", () => Find()),
-                new("_User Settings...", "", () => ShowUserSettings()),
-                new("_Run...", "", () => Run()),
-                new("_Refresh...", "", () => Publish()),
-                new("_Quit", "", () => Quit())
+                new("_New...", "", New),
+                new("_Find...", "", Find),
+                new("_User Settings...", "", ShowUserSettings),
+                new("_Run...", "", Run),
+                new("_Refresh...", "", Publish),
+                new("_Quit", "", Quit)
             }),
             new("_Diagnostics", new MenuItem[]
             {
@@ -166,11 +166,11 @@ internal class ConsoleMainWindow
         _treeView.AspectGetter = AspectGetter;
         var statusBar = new StatusBar(new StatusItem[]
         {
-            new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
-            new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
-            new(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
-            new(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-            new(Key.F5, "~F5~ Refresh", () => Publish())
+            new(Key.Q | Key.CtrlMask, "~^Q~ Quit", Quit),
+            new(Key.R | Key.CtrlMask, "~^R~ Run", action: Run),
+            new(Key.F | Key.CtrlMask, "~^F~ Find", Find),
+            new(Key.N | Key.CtrlMask, "~^N~ New", New),
+            new(Key.F5, "~F5~ Refresh", Publish)
         });
 
         top.Add(statusBar);
