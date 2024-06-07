@@ -260,23 +260,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
             }
         }
-
-        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
+        if (UseTrigger && pkColumns.Length > 0)
         {
-
-            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
-            var _triggerImplementer = factory.Create(_discoveredTable);
-            var currentStatus = _triggerImplementer.GetTriggerStatus();
-            if (currentStatus == TriggerStatus.Missing)
-                try
-                {
-                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
-                }
-
             if (listener.GetType() == typeof(ForkDataLoadEventListener)) //need to add special fields to the datatable if we are logging to a database
             {
                 var job = (ForkDataLoadEventListener)listener;
@@ -288,12 +273,57 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     {
                         DefaultValue = dataLoadInfo.ID
                     };
+                    try
+                    {
+                        _discoveredTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID);
+                    }
+                    catch (Exception)
+                    {
+                        _discoveredTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), false, 30000);
+
+                    }
                     if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
                         toProcess.Columns.Add(newColumn);
+                    foreach (DataRow dr in toProcess.Rows)
+                        dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
 
                 }
             }
         }
+
+        //if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
+        //{
+
+        //    var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+        //    var _triggerImplementer = factory.Create(_discoveredTable);
+        //    var currentStatus = _triggerImplementer.GetTriggerStatus();
+        //    if (currentStatus == TriggerStatus.Missing)
+        //        try
+        //        {
+        //            _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
+        //        }
+
+        //    if (listener.GetType() == typeof(ForkDataLoadEventListener)) //need to add special fields to the datatable if we are logging to a database
+        //    {
+        //        var job = (ForkDataLoadEventListener)listener;
+        //        var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+        //        foreach (var dleListener in listeners)
+        //        {
+        //            IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
+        //            DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
+        //            {
+        //                DefaultValue = dataLoadInfo.ID
+        //            };
+        //            if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+        //                toProcess.Columns.Add(newColumn);
+
+        //        }
+        //    }
+        //}
 
         try
         {
@@ -629,6 +659,22 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 //create the primary key to match user provided columns
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
+        }
+        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
+        {
+
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                try
+                {
+                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
+                }
         }
 
         EndAuditIfExists();
