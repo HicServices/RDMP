@@ -220,7 +220,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.AlterTimeout = AlterTimeout;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
-        _destination.UseTrigger = true;
+        _destination.UseTrigger = AppendDataIfTableExists;
         _destination.IndexTables = IndexTables;
         _destination.IndexTableName = GetIndexName();
         if (UserDefinedIndex is not null)
