@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
@@ -1400,6 +1401,104 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType, Is.EqualTo("real"));
         });
     }
+
+
+    [Test]
+    public void CreateIndex_OK()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" }
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+
+        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows);
+            r.Read();
+            Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
+        }
+    }
+
+    [Test]
+    public void CreateIndex_NO_PK()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK"
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+
+        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows, Is.EqualTo(false));
+        }
+    }
+
+    [Test]
+    public void CreateIndex_RecreateExistingFail()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" }
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+
+        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows);
+            r.Read();
+            Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
+            Assert.That(r.Read(), Is.EqualTo(false));//only 1 row
+        }
+    }
+
+
 
     #endregion
 }
