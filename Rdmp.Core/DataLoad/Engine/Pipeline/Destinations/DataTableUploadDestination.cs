@@ -279,7 +279,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     }
                     catch (Exception)
                     {
-                        _discoveredTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), false, 30000);
+                        _discoveredTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, 30000);
 
                     }
                     if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
