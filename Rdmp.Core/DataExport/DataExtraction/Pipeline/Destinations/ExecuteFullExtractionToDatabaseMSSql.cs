@@ -27,7 +27,6 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using YamlDotNet.Core;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 
@@ -95,7 +94,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
     public bool IndexTables { get; set; } = true;
 
-    [DemandsInitialization(@"How do you want to name datasets, use the following tokens if you need them:   
+    [DemandsInitialization(@"How do you want to name the created index, use the following tokens if you need them:   
          $p - Project Name ('e.g. My Project')
          $n - Project Number (e.g. 234)
          $c - Configuration Name (e.g. 'Cases')

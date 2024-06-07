@@ -175,7 +175,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             }
         }
 
-        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess); //moved to here to try to fix tests, lets see what happens
+        ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
 
         StartAuditIfExists(TargetTableName);
 
@@ -249,13 +249,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         }
         if (IndexTables)
         {
-            var indexes = UserDefinedIndexes.Any() ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
+            var indexes = UserDefinedIndexes.Count != 0 ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
             try
             {
                 _discoveredTable.CreateIndex(IndexTableName, _discoveredTable.DiscoverColumns().Where(c => indexes.Contains(c.GetRuntimeName())).ToArray());
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,e.Message));
+                //We only warn about not creating the index, as it's not  critical
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
             }
         }
 
@@ -268,22 +270,24 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (currentStatus == TriggerStatus.Missing)
                 try
                 {
-                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);//this is the issue
+                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message);
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
                 }
 
-            if (listener.GetType() == typeof(ForkDataLoadEventListener))
+            if (listener.GetType() == typeof(ForkDataLoadEventListener)) //need to add special fields to the datatable if we are logging to a database
             {
                 var job = (ForkDataLoadEventListener)listener;
                 var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
-                if (listeners.Count == 1)
+                foreach (var dleListener in listeners)
                 {
-                    IDataLoadInfo dataLoadInfo = listeners.First().DataLoadInfo;
-                    DataColumn newColumn = new DataColumn(SpecialFieldNames.DataLoadRunID, typeof(System.Int32));
-                    newColumn.DefaultValue = dataLoadInfo.ID;
+                    IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
+                    DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
+                    {
+                        DefaultValue = dataLoadInfo.ID
+                    };
                     if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
                         toProcess.Columns.Add(newColumn);
 
@@ -626,10 +630,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
         }
-
-
-
-
 
         EndAuditIfExists();
     }
