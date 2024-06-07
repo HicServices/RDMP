@@ -14,6 +14,7 @@ using Rdmp.Core.Caching;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -39,7 +40,10 @@ public class CachingHostTests : UnitTests
 
         var cp = WhenIHaveA<CacheProgress>();
         var loadMetadata = cp.LoadProgress.LoadMetadata;
-        loadMetadata.LocationOfFlatFiles = loadDirectory.RootPath.FullName;
+        loadMetadata.LocationOfForLoadingDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultForLoadingPath);
+        loadMetadata.LocationOfForArchivingDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultForArchivingPath);
+        loadMetadata.LocationOfExecutablesDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultExecutablesPath);
+        loadMetadata.LocationOfCacheDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultCachePath);
 
         // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
         var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");
