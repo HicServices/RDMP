@@ -82,6 +82,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     public string HavingSQL { get; set; }
 
+
+    public string AxisStartDateOverride { get; set; }
+    public string AxisEndDateOverride { get; set; }
+
     /// <summary>
     /// Optional, Limit the results returned.
     /// 
@@ -435,6 +439,10 @@ public class AggregateBuilder : ISqlQueryBuilder
         GetGroupBySQL(queryLines, aggregateHelper);
 
         queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
+        if (AxisStartDateOverride != null)
+            _axis.StartDate = AxisStartDateOverride;
+        if (AxisEndDateOverride != null)
+            _axis.EndDate = AxisEndDateOverride;
 
         _sql = aggregateHelper.BuildAggregate(queryLines, _axis);
     }
