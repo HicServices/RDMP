@@ -114,7 +114,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     #region Async Stuff
 
-    private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
+    private async void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
         if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout))
@@ -132,9 +132,9 @@ public partial class ServerDatabaseTableSelector : UserControl
         var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
         try
         {
-            using var con = discoveredDatabase.Server.GetConnection();
-            var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
-            openTask.Wait(_workerRefreshTablesToken.Token);
+            await using var con = discoveredDatabase.Server.GetConnection();
+            await con.OpenAsync(_workerRefreshTablesToken.Token);
+            //openTask.Wait(_workerRefreshTablesToken.Token);
 
             var result = new List<DiscoveredTable>();
 
@@ -190,12 +190,7 @@ public partial class ServerDatabaseTableSelector : UserControl
         _workerRefreshDatabasesToken = new CancellationTokenSource();
         try
         {
-            // can be replaced with   _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token).ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
-            //once there is a fix in FansiSQL
-            using var con = _helper.GetConnection(builder);
-            var openTask = con.OpenAsync(_workerRefreshDatabasesToken.Token);
-            openTask.Wait(_workerRefreshDatabasesToken.Token);
-            _listDatabasesAsyncResult =  _helper.ListDatabases(con).ToAsyncEnumerable().ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
+            _listDatabasesAsyncResult = _helper.ListDatabasesAsync(builder, _workerRefreshDatabasesToken.Token).ToBlockingEnumerable(_workerRefreshDatabasesToken.Token).ToArray();
         }
         catch (OperationCanceledException)
         {
