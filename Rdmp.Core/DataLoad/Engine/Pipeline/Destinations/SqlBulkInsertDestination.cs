@@ -27,7 +27,7 @@ public class SqlBulkInsertDestination : IDataFlowDestination<DataTable>, IPipeli
     private readonly List<string> _columnNamesToIgnore;
     private string _taskBeingPerformed;
 
-    public const int Timeout = 43200;
+    public int Timeout = 5000;
 
     private IBulkCopy _copy;
     private Stopwatch _timer = new();
