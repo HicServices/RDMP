@@ -47,7 +47,7 @@ internal class DataExportPropertyManager : IDataExportPropertyManager
         if (!_allowCaching || _cacheOutOfDate)
             RefreshCache();
 
-        return _cacheDictionary.TryGetValue(property, out var value) ? value : null;
+        return _cacheDictionary.GetValueOrDefault(property);
     }
 
     /// <inheritdoc cref="GetValue(string)"/>

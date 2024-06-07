@@ -62,10 +62,8 @@ public class RecentHistoryOfControls
     public void AddResult(string value, bool save = true)
     {
         // bump it to the top
-        if (_rvContents.Contains(value))
+        if (!_rvContents.Add(value))
             _recentValues.Remove(value);
-        else
-            _rvContents.Add(value);
         _recentValues.Add(value);
         if (save)
             Save();
