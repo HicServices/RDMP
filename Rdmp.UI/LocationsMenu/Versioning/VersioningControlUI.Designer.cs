@@ -68,7 +68,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             btnShowTicket.Name = "btnShowTicket";
             btnShowTicket.Size = new System.Drawing.Size(94, 25);
             btnShowTicket.TabIndex = 32;
-            btnShowTicket.Text = "Save Current";
+            btnShowTicket.Text = "Save Version";
             btnShowTicket.UseVisualStyleBackColor = true;
             btnShowTicket.Click += CommitNewVersion;
             // 
@@ -117,18 +117,19 @@ namespace Rdmp.UI.LocationsMenu.Versioning
 
         private void CommitNewVersion(object sender, EventArgs e)
         {
-            var dialog = new TypeTextOrCancelDialog("Version Name", "Enter a name for your stored version", 450);
-            dialog.ShowDialog();
-            if (dialog.DialogResult == DialogResult.OK)
-            {
-                var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, dialog.ResultText);
-                cmd.Execute();
-                var versions = _cic.GetVersions();
-                versions.Insert(0, _cic);
-                tbTicket.DataSource = versions;
-                tbTicket.Enabled = true;
-                //needs to refresh the UI
-            }
+            //var dialog = new TypeTextOrCancelDialog("Version Name", "Enter a name for your stored version", 450);
+            //dialog.ShowDialog();
+            //if (dialog.DialogResult == DialogResult.OK)
+            //{
+            var versions = _cic.GetVersions();
+            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}");
+            cmd.Execute();
+            versions = _cic.GetVersions();
+            versions.Insert(0, _cic);
+            tbTicket.DataSource = versions;
+            tbTicket.Enabled = true;
+            //needs to refresh the UI
+            //}
         }
 
 
@@ -156,6 +157,6 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         private System.Windows.Forms.Button btnShowTicket;
         private System.Windows.Forms.ComboBox tbTicket;
         private System.Windows.Forms.Label label6;
-        
+
     }
 }

@@ -31,7 +31,7 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm=false)
+        CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm = false)
         : base(activator)
     {
         _cic = cic;
@@ -84,6 +84,8 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
             CloneCreatedIfAny.Version = _version;
             //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
             CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
+            if (_version is not null)
+                CloneCreatedIfAny.Frozen = true;
             CloneCreatedIfAny.SaveToDatabase();
         }
 
