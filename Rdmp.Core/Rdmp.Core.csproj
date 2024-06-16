@@ -306,7 +306,9 @@
 		<PackageReference Include="HIC.SynthEHR" />
 		<PackageReference Include="HIC.FAnsiSql" />
 		<PackageReference Include="LibArchive.Net" />
-		<PackageReference Include="MathNet.Numerics" />
+		<PackageReference Include="MathNet.Numerics.Signed">
+			<ExcludeAssets>all</ExcludeAssets>
+		</PackageReference>
 		<PackageReference Include="Microsoft.SourceLink.GitHub">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
