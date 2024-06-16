@@ -11,6 +11,7 @@
 		<PackageVersion Include="HIC.FAnsiSql" Version="3.2.5"/>
 		<PackageVersion Include="LibArchive.Net" Version="0.1.5"/>
 		<PackageVersion Include="MathNet.Numerics" Version="5.0.0"/>
+		<PackageVersion Include="MathNet.Numerics.Signed" Version="5.0.0"/>
 		<PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
