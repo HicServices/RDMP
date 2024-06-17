@@ -86,10 +86,10 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         {
             foreach (var lmd in catalogue.LoadMetadatas())
             {
-                if (lmd.LocationOfFlatFiles == null) return;
+                if (lmd.GetRootDirectory() == null) return;
                 try
                 {
-                    var dirReal = new DirectoryInfo(lmd.LocationOfFlatFiles);
+                    var dirReal = lmd.GetRootDirectory();
                     Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
                     { OverrideCommandName = "Open Load Directory" });
                 }
