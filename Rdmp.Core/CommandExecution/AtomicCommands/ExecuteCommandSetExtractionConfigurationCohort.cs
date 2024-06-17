@@ -14,8 +14,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandSetExtractionConfigurationCohort : BasicCommandExecution, IAtomicCommand
 {
-    private ExtractionConfiguration _extractionConfiguration;
-    private ExtractableCohort _extractableCohort;
+    private readonly ExtractionConfiguration _extractionConfiguration;
+    private readonly ExtractableCohort _extractableCohort;
 
     public ExecuteCommandSetExtractionConfigurationCohort(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration, ExtractableCohort cohort) : base(activator)
     {
