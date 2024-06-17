@@ -29,10 +29,22 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     ILoadProgress[] LoadProgresses { get; }
 
     /// <summary>
-    /// The root working directory for a load.  Should have subdirectories like Data, Executables etc
-    /// <para>For structured access to this use a new <see cref="ILoadDirectory"/></para>
+    /// Working Directory for Loading Data
     /// </summary>
-    string LocationOfFlatFiles { get; set; }
+    string LocationOfForLoadingDirectory { get; set; }
+    /// <summary>
+    /// Working Directory for archiving data
+    /// </summary>
+    string LocationOfForArchivingDirectory { get; set; }
+    /// <summary>
+    /// Working Directory for storing executalbes
+    /// </summary>
+    string LocationOfExecutablesDirectory { get; set; }
+    /// <summary>
+    /// Woring Directory for caching data
+    /// </summary>
+    string LocationOfCacheDirectory { get; set; }
+
 
     /// <summary>
     /// Set to true to ignore the requirement for live tables to need the backup archive trigger

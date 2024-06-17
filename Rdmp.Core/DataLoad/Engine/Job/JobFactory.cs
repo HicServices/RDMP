@@ -31,8 +31,10 @@ public class JobFactory : IJobFactory
         HICDatabaseConfiguration configuration)
     {
         var description = _loadMetadata.Name;
-        var LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
-        return new DataLoadJob(repositoryLocator, description, _logManager, _loadMetadata, LoadDirectory, listener,
+        LoadDirectory loadDirectory;
+        loadDirectory = new LoadDirectory(_loadMetadata.LocationOfForLoadingDirectory, _loadMetadata.LocationOfForArchivingDirectory, _loadMetadata.LocationOfExecutablesDirectory, _loadMetadata.LocationOfCacheDirectory);
+
+        return new DataLoadJob(repositoryLocator, description, _logManager, _loadMetadata, loadDirectory, listener,
             configuration);
     }
 }

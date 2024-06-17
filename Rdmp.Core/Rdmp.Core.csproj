@@ -121,6 +121,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\082_AddLoadDirectorySplit.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\080_AllowMultipleCatalogueLoadMetadatas.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\081_AddInstanceSettings.sql" />
@@ -248,6 +249,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\076_AddFolders.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\077_AddDataSetMapping.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\082_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\082_AddCohortVersioning.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\081_AddInstanceSettings.sql" />
