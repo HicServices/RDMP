@@ -70,7 +70,7 @@ public class SimpleStringValueEncryption : IEncryptStrings
     /// <returns></returns>
     public string Decrypt(string toDecrypt)
     {
-        if (toDecrypt.StartsWith($"$js1$") && toDecrypt.EndsWith("$"))
+        if (toDecrypt.StartsWith("$js1$", StringComparison.Ordinal) && toDecrypt.EndsWith("$", StringComparison.Ordinal))
         {
             // Good, it's a new-style AES+RSA encrypted string
             var parts = toDecrypt.Split('$');

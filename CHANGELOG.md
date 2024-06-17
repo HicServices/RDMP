@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
 - Add ability to restrict GROUPBY clause in cohort aggregate builder
 
+- Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
+- Add ability to point a catalogue to a new data source [Documentation](./Documentation/Catalogues/UpdateCatalogueDataLocation.md)
+- Allow DQE graphs to be scrollable and scalable
+- Allow for partial refreshes of time-based DQE charts
+
+## [8.1.7] - 2024-06-17
+
+## Changed
+
+- Add ability to update an extraction's cohort from the command line using `SetExtractionConfigurationCohort ExtractionConfiguration:{id} ExtractableCohort:{id}`
+- Fix issue with non-default named PostgreSQL Table Info not being checkable
+- Improve default timeouts on database lookups
+- Implement keepalive and liveness checks for FTP, SFTP fetches before deletion attempt
 
 ## [8.1.6] - 2024-05-27
 

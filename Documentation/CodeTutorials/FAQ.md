@@ -412,7 +412,7 @@ Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload
 
 <a name="dle-folders"></a>
 ### What is the purpose of the the data load folders (ForLoading, ForArchiving etc)?
-RDMP data load jobs are configured by creating a [LoadMetadata].  When you create a new [LoadMetadata] you will be prompted to choose/create a set of load folders.  The current value is stored in the `LocationOfFlatFiles` field of [LoadMetadata].  The directories created have the following layout:
+RDMP data load jobs are configured by creating a [LoadMetadata].  When you create a new [LoadMetadata] you will be prompted to choose/create a set of load folders.  The default directories created have the following layout:
 
 ```
 someFolder

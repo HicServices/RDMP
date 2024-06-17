@@ -155,26 +155,26 @@ public partial class CustomMetadataReport
             c => GetEndDate(c)?.ToString("dd"));
 
         Replacements.Add("$DQE_DateOfEvaluation",
-            c => GetFromEvaluation(c, e => e.DateOfEvaluation));
+            c => GetFromEvaluation(c, static e => e.DateOfEvaluation));
         Replacements.Add("$DQE_CountTotal",
-            c => GetFromEvaluation(c, e => e.GetRecordCount()));
+            c => GetFromEvaluation(c, static e => e.GetRecordCount()));
 
         ReplacementsCatalogueItem.Add("$DQE_PercentNull",
-            ci => GetPercentNull(ci));
+            GetPercentNull);
 
         ReplacementsCatalogueItem.Add("$DQE_CountCorrect",
-            ci => GetFromColumnState(ci, s => s.CountCorrect));
+            ci => GetFromColumnState(ci, static s => s.CountCorrect));
         ReplacementsCatalogueItem.Add("$DQE_CountInvalidatesRow",
-            ci => GetFromColumnState(ci, s => s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, static s => s.CountInvalidatesRow));
         ReplacementsCatalogueItem.Add("$DQE_CountMissing",
-            ci => GetFromColumnState(ci, s => s.CountMissing));
+            ci => GetFromColumnState(ci, static s => s.CountMissing));
         ReplacementsCatalogueItem.Add("$DQE_CountWrong",
-            ci => GetFromColumnState(ci, s => s.CountWrong));
+            ci => GetFromColumnState(ci, static s => s.CountWrong));
         ReplacementsCatalogueItem.Add("$DQE_CountTotal",
-            ci => GetFromColumnState(ci, s => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
+            ci => GetFromColumnState(ci, static s => s.CountCorrect + s.CountMissing + s.CountWrong + s.CountInvalidatesRow));
 
         ReplacementsCatalogueItem.Add("$DQE_CountDBNull",
-            ci => GetFromColumnState(ci, s => s.CountDBNull));
+            ci => GetFromColumnState(ci, static s => s.CountDBNull));
     }
 
     private object GetFromEvaluation(Catalogue c, Func<Evaluation, object> func)

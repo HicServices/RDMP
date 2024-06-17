@@ -818,7 +818,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
     {
         Assert.That(compiler.Tasks, Is.Not.Empty);
 
-        TestContext.WriteLine($"| Task | Type | State | Error | RowCount | CacheUse |");
+        TestContext.WriteLine("| Task | Type | State | Error | RowCount | CacheUse |");
 
 
         var i = 0;

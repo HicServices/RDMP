@@ -99,7 +99,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             Y = 0
         };
 
-        _btnRunOrCancel.Clicked += () => RunOrCancel();
+        _btnRunOrCancel.Clicked += RunOrCancel;
         Add(_btnRunOrCancel);
 
         var resetSql = new Button("Reset Sq_l")
@@ -107,7 +107,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             X = Pos.Right(_btnRunOrCancel) + 1
         };
 
-        resetSql.Clicked += () => ResetSql();
+        resetSql.Clicked += ResetSql;
         Add(resetSql);
 
         var clearSql = new Button("Clear S_ql")
@@ -115,7 +115,7 @@ internal partial class ConsoleGuiSqlEditor : Window
             X = Pos.Right(resetSql) + 1
         };
 
-        clearSql.Clicked += () => ClearSql();
+        clearSql.Clicked += ClearSql;
         Add(clearSql);
 
         var lblTimeout = new Label("Timeout:")
@@ -137,7 +137,7 @@ internal partial class ConsoleGuiSqlEditor : Window
         {
             X = Pos.Right(tbTimeout) + 1
         };
-        btnSave.Clicked += () => Save();
+        btnSave.Clicked += Save;
         Add(btnSave);
 
         var btnOpen = new Button("Open")

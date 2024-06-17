@@ -106,7 +106,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
                     if (runAgain)
                         listener.OnNotify(this,
                             new NotifyEventArgs(ProgressEventType.Information,
-                                $"Running pipeline again for next batch in ExtractionProgress"));
+                                "Running pipeline again for next batch in ExtractionProgress"));
                 }
                 else
                 {
@@ -117,7 +117,7 @@ public sealed class ExtractionPipelineUseCase : PipelineUseCase
 
                     if (runAgain)
                         listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, $"Retrying pipeline"));
+                            new NotifyEventArgs(ProgressEventType.Information, "Retrying pipeline"));
                 }
             } while (runAgain);
         }

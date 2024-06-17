@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using FluentFTP;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -46,6 +45,8 @@ public class SFTPDownloader : FTPDownloader
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new SftpClient(host, username, password);
         c.Connect();
+        if (KeepAlive)
+            c.KeepAliveInterval = TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
         return c;
     }
 
@@ -69,6 +70,10 @@ public class SFTPDownloader : FTPDownloader
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
         if (exitCode != ExitCodeType.Success) return;
+
+        // Reconnect if we got cut off, for example due to idle timers
+        if (!_connection.Value.IsConnected)
+            _connection.Value.Connect();
 
         foreach (var retrievedFiles in _filesRetrieved)
             try

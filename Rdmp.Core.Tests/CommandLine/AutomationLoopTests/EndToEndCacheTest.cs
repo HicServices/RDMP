@@ -49,14 +49,15 @@ public class EndToEndCacheTest : DatabaseTests
         _LoadDirectory =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 @"EndToEndCacheTest", true);
-        _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
+        _lmd.LocationOfForLoadingDirectory = Path.Combine(_LoadDirectory.RootPath.FullName , _lmd.DefaultForLoadingPath);
+        _lmd.LocationOfForArchivingDirectory = Path.Combine(_LoadDirectory.RootPath.FullName , _lmd.DefaultForArchivingPath);
+        _lmd.LocationOfExecutablesDirectory = Path.Combine(_LoadDirectory.RootPath.FullName , _lmd.DefaultExecutablesPath);
+        _lmd.LocationOfCacheDirectory = Path.Combine(_LoadDirectory.RootPath.FullName , _lmd.DefaultCachePath);
         _lmd.SaveToDatabase();
 
         Clear(_LoadDirectory);
 
-        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest")
-        {
-        };
+        _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
         _cata.SaveToDatabase();
 
         var linkage = new LoadMetadataCatalogueLinkage(CatalogueRepository, _lmd, _cata);

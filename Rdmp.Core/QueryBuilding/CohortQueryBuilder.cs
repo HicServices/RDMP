@@ -35,7 +35,6 @@ namespace Rdmp.Core.QueryBuilding;
 public class CohortQueryBuilder
 {
     private ICoreChildProvider _childProvider;
-    private readonly ISqlParameter[] _globals;
     private object oSQLLock = new();
     private string _sql;
 
@@ -79,12 +78,12 @@ public class CohortQueryBuilder
     private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
     {
         _childProvider = childProvider;
-        _globals = globals?.ToArray() ?? Array.Empty<ISqlParameter>();
+        var globals1 = globals?.ToArray() ?? Array.Empty<ISqlParameter>();
         TopX = -1;
 
         SQLOutOfDate = true;
 
-        foreach (var parameter in _globals)
+        foreach (var parameter in globals1)
             ParameterManager.AddGlobalParameter(parameter);
     }
 

@@ -63,13 +63,12 @@ public class YesNoYesToAllDialog : WideMessageBox
 
     private new DialogResult ShowDialog()
     {
-        if (InvokeRequired)
-            return (DialogResult)Invoke(() => ShowDialog());
-
         if (YesToAllClicked)
             return DialogResult.Yes;
+        if (NoToAllClicked)
+            return DialogResult.No;
 
-        return NoToAllClicked ? DialogResult.No : base.ShowDialog();
+        return InvokeRequired ? Invoke(ShowDialog) : base.ShowDialog();
     }
 
     public DialogResult ShowDialog(string message, string caption)

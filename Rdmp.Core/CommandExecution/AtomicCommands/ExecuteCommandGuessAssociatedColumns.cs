@@ -82,17 +82,15 @@ public class ExecuteCommandGuessAssociatedColumns : BasicCommandExecution
 
                 var acceptedOne = false;
 
-                for (var i = 0; i < guesses.Length; i++)
-                    //ask confirmation
-                    if (!BasicActivator.IsInteractive || BasicActivator.YesNo(
-                            $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{guesses[i]}",
-                            "Multiple matched guesses"))
-                    {
-                        catalogueItem.SetColumnInfo(guesses[i]);
-                        successCount++;
-                        acceptedOne = true;
-                        break;
-                    }
+                foreach (var t in guesses.Where(t => !BasicActivator.IsInteractive || BasicActivator.YesNo(
+                             $"Found multiple matches, approve match?:{Environment.NewLine}{catalogueItem.Name}{Environment.NewLine}{t}",
+                             "Multiple matched guesses")))
+                {
+                    catalogueItem.SetColumnInfo(t);
+                    successCount++;
+                    acceptedOne = true;
+                    break;
+                }
 
                 if (!acceptedOne)
                     failCount++;
