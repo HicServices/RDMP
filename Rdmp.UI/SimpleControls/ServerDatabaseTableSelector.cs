@@ -114,7 +114,7 @@ public partial class ServerDatabaseTableSelector : UserControl
 
     #region Async Stuff
 
-    private async void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
+    private void UpdateTablesListAsync(object sender, DoWorkEventArgs e)
     {
         var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
         if (!string.IsNullOrWhiteSpace(Timeout) && int.TryParse(Timeout, out var _timeout))
@@ -132,9 +132,9 @@ public partial class ServerDatabaseTableSelector : UserControl
         var syntaxHelper = discoveredDatabase.Server.GetQuerySyntaxHelper();
         try
         {
-            await using var con = discoveredDatabase.Server.GetConnection();
-            await con.OpenAsync(_workerRefreshTablesToken.Token);
-            //openTask.Wait(_workerRefreshTablesToken.Token);
+            using var con = discoveredDatabase.Server.GetConnection();
+            var openTask = con.OpenAsync(_workerRefreshTablesToken.Token);
+            openTask.Wait(_workerRefreshTablesToken.Token);
 
             var result = new List<DiscoveredTable>();
 
