@@ -107,7 +107,7 @@ public class MigrateRAWTableToStaging : DataLoadComponent
         //pass pre load discard
         var destination = new SqlBulkInsertDestination(destinationDatabase, destinationTableName,
             columnNamesToIgnoreForBulkInsert);
-
+        destination.Timeout = 43200; //set max copy to 12 hours
         //engine that will move data
         _pipeline = new DataFlowPipelineEngine<DataTable>(context, source, destination, job);
 
