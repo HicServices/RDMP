@@ -204,5 +204,6 @@ public enum RDMPConcept
     Memento,
     TableInfoDatabaseNode,
     Dataset,
-    LoadMetadataCatalogueLinkage
+    LoadMetadataCatalogueLinkage,
+    Setting
 }

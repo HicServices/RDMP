@@ -407,6 +407,12 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         settings.Show();
     }
 
+    private void instanceSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var settings = new InstanceSettings(Activator);
+        settings.Show();
+    }
+
     private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var l = new LicenseUI();
@@ -456,6 +462,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         _windowManager.Navigation.Forward(true);
     }
+
+    
 
     private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
     {

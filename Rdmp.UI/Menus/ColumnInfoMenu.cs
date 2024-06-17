@@ -22,5 +22,6 @@ internal sealed class ColumnInfoMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
         Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
+        Add(new ExecuteCommandUpdateCatalogueDataLocationUI(_activator, columnInfo));
     }
 }
