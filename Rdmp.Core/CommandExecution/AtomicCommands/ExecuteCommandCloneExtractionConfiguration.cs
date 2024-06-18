@@ -28,21 +28,22 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
         {
             if (YesNo("There are Deprecated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?", "Replace Deprecated Catalogues"))
             {
+                var repo = _activeItems.RepositoryLocator.CatalogueRepository;
                 var DeprecatedDatasets = _extractionConfiguration.SelectedDataSets.Where(sd => sd.GetCatalogue().IsDeprecated).ToList();
-                var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
+                var replacedBy = repo.GetExtendedProperties(ExtendedProperty.ReplacedBy);
                 foreach (ISelectedDataSets ds in DeprecatedDatasets)
                 {
                     var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == ds.GetCatalogue().ID).FirstOrDefault();
                     if (replacement is not null)
                     {
-                        var replacementCatalogue = _activeItems.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(Int32.Parse(replacement.Value));
+                        var replacementCatalogue = repo.GetObjectByID<Catalogue>(Int32.Parse(replacement.Value));
                         while (replacementCatalogue.IsDeprecated)
                         {
                             var replacementCatalogueIsReplacedBy = replacedBy.Where(rb => rb.ReferencedObjectID == replacementCatalogue.ID).FirstOrDefault();
                             if(replacementCatalogueIsReplacedBy is not null)
                             {
                                 //have found further down the tree
-                                replacementCatalogue = _activeItems.RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(Int32.Parse(replacementCatalogueIsReplacedBy.Value));
+                                replacementCatalogue = repo.GetObjectByID<Catalogue>(Int32.Parse(replacementCatalogueIsReplacedBy.Value));
                             }
                             else
                             {
