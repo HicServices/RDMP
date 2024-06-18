@@ -22,15 +22,15 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
     private readonly IBasicActivateItems _activeItems;
     private readonly List<IExtractableDataSet> toRemove = [];
     private readonly List<Catalogue> toAdd = [];
-    private void CheckForDepricatedCatalogues()
+    private void CheckForDeprecatedCatalogues()
     {
         if (_extractionConfiguration.SelectedDataSets.Any(sd => sd.GetCatalogue().IsDeprecated) && _activeItems.IsInteractive)
         {
-            if (YesNo("There are depricated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?", "Replace Depricated Catalogues"))
+            if (YesNo("There are Deprecated catalogues in this Extraction Configuration. Would you like to replace them with their replacement (where available)?", "Replace Deprecated Catalogues"))
             {
-                var depricatedDatasets = _extractionConfiguration.SelectedDataSets.Where(sd => sd.GetCatalogue().IsDeprecated).ToList();
+                var DeprecatedDatasets = _extractionConfiguration.SelectedDataSets.Where(sd => sd.GetCatalogue().IsDeprecated).ToList();
                 var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
-                foreach (ISelectedDataSets ds in depricatedDatasets)
+                foreach (ISelectedDataSets ds in DeprecatedDatasets)
                 {
                     var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == ds.GetCatalogue().ID).FirstOrDefault();
                     if (replacement is not null)
@@ -78,7 +78,7 @@ public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,
     public override void Execute()
     {
         base.Execute();
-        CheckForDepricatedCatalogues();
+        CheckForDeprecatedCatalogues();
 
         var clone = _extractionConfiguration.DeepCloneWithNewIDs();
         foreach (ExtractableDataSet ds in toRemove)
