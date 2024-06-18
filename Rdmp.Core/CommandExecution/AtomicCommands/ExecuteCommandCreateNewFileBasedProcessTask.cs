@@ -35,10 +35,11 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         try
         {
-            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfForLoadingDirectory);
+            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfForLoadingDirectory, _loadMetadata.LocationOfForArchivingDirectory, _loadMetadata.LocationOfExecutablesDirectory, _loadMetadata.LocationOfCacheDirectory );
         }
-        catch (Exception)
+        catch (Exception e )
         {
+            Console.WriteLine(e.Message);
             SetImpossible("Could not construct LoadDirectory");
         }
 
