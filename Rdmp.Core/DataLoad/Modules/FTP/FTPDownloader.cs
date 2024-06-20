@@ -196,9 +196,9 @@ public class FTPDownloader : IPluginDataProvider
         //if (!_connection.Value.IsStillConnected())
         //    _connection.Value.Connect(true);
         _connection.Value.Disconnect();
-        var asyncConnection = new Lazy<AsyncFtpClient>(AsyncSetupFtp, LazyThreadSafetyMode.ExecutionAndPublication);
+        _connection =  new Lazy<FtpClient>(SetupFtp, LazyThreadSafetyMode.ExecutionAndPublication);
         //AsyncSetupFtp
-        foreach (var file in _filesRetrieved) asyncConnection.Value.DeleteFile(file);
+        foreach (var file in _filesRetrieved) _connection.Value.DeleteFile(file);
     }
 
 
