@@ -105,7 +105,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          ",DefaultValue = "$c_$d")]
     public string IndexNamingPattern { get; set; }
 
-    [DemandsInitialization("An optional list of columns to index on e.g \"Coulmn1, Column2\"")]
+    [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
     public string UserDefinedIndex { get; set; }
 
     private DiscoveredDatabase _destinationDatabase;

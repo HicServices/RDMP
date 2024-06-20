@@ -1190,7 +1190,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         ec.SaveToDatabase();
 
-        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 3");
+        var extractionPipeline = new Pipeline(CatalogueRepository, "Empty extraction pipeline 4");
         var component = new PipelineComponent(CatalogueRepository, extractionPipeline,
             typeof(ExecuteFullExtractionToDatabaseMSSql), 0, "MS SQL Destination");
         var destinationArguments = component.CreateArgumentsForClassIfNotExists<ExecuteFullExtractionToDatabaseMSSql>()
