@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("8.1.7")]
 [assembly: AssemblyFileVersion("8.1.7")]
-[assembly: AssemblyInformationalVersion("8.1.7")]
+[assembly: AssemblyInformationalVersion("8.1.7-special-ftp-test-2024-06-20")]

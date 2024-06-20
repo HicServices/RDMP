@@ -34,7 +34,7 @@ namespace Rdmp.Core.DataLoad.Modules.FTP;
 /// </summary>
 public class FTPDownloader : IPluginDataProvider
 {
-    private readonly Lazy<FtpClient> _connection;
+    private Lazy<FtpClient> _connection;
     protected readonly List<string> _filesRetrieved = new();
     private ILoadDirectory? _directory;
 
@@ -86,6 +86,19 @@ public class FTPDownloader : IPluginDataProvider
         var username = FTPServer.Username ?? "anonymous";
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new FtpClient(host, username, password);
+
+        // Enable periodic NOOP keepalive operations to keep connection active until we're done
+        c.Config.Noop = true;
+        c.AutoConnect();
+        return c;
+    }
+
+    private AsyncFtpClient AsyncSetupFtp()
+    {
+        var host = FTPServer?.Server ?? throw new NullReferenceException("FTP server not set");
+        var username = FTPServer.Username ?? "anonymous";
+        var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
+        var c = new AsyncFtpClient(host, username, password);
 
         // Enable periodic NOOP keepalive operations to keep connection active until we're done
         c.Config.Noop = true;
@@ -179,10 +192,13 @@ public class FTPDownloader : IPluginDataProvider
     {
         if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
 
-        // Force a reconnection attempt if we got cut off
-        if (!_connection.Value.IsStillConnected())
-            _connection.Value.Connect(true);
-        foreach (var file in _filesRetrieved) _connection.Value.DeleteFile(file);
+        //// Force a reconnection attempt if we got cut off
+        //if (!_connection.Value.IsStillConnected())
+        //    _connection.Value.Connect(true);
+        _connection.Value.Disconnect();
+        var asyncConnection = new Lazy<AsyncFtpClient>(AsyncSetupFtp, LazyThreadSafetyMode.ExecutionAndPublication);
+        //AsyncSetupFtp
+        foreach (var file in _filesRetrieved) asyncConnection.Value.DeleteFile(file);
     }
 
 
