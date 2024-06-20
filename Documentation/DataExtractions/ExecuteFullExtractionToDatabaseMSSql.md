@@ -30,4 +30,4 @@ Using the "Append Data If Table Exists" option within this extraction destinatio
 * Archive Table
     * Similar to data loads, these database tables will come with an _Archive table that will auto-populate when new extractions are ran against the database.
 * Data Structure changing
-    * While the extractor can handle columns being removed, it does not support columns being added beyond the first extraction. For this you will need to write the data to a new databse table. It is recommended that the extraction is cloned in this case.
+    * While the extractor can handle columns being removed, it does not support columns being added beyond the first extraction. For this you will need to write the data to a new database table. It is recommended that the extraction is cloned in this case.
