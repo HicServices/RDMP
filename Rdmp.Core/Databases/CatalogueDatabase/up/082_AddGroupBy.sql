@@ -4,7 +4,7 @@
 BEGIN
 ALTER TABLE [dbo].[AggregateDimension] ADD GroupBy int DEFAULT 1
 END
-
+GO
 if exists( select 1 from [dbo].[AggregateDimension] where GroupBy is NULL)
 BEGIN
 UPDATE [dbo].[AggregateDimension] Set GroupBy = 1 WHERE GroupBy is NULL
@@ -14,8 +14,7 @@ END
 BEGIN
 ALTER TABLE [dbo].[ExtractionInformation] ADD GroupBy int DEFAULT 1
 END
-
-
+GO
 if exists( select 1 from [dbo].[ExtractionInformation] where GroupBy is NULL)
 BEGIN
 UPDATE [dbo].[ExtractionInformation] Set GroupBy = 1 WHERE GroupBy is NULL
