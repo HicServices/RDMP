@@ -1652,7 +1652,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             IndexTableName = "CreateIndex_OK",
             UserDefinedIndexes = new List<string>() { "name" },
             AppendDataIfTableExists = true,
-            UseTrigger=true
+            UseTrigger = true
         };
         destination.PreInitialize(db, toConsole);
 
@@ -1710,20 +1710,28 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             destination.ProcessPipelineData(dt1, toConsole, token);
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
-            dt1 = new DataTable();
-            dt1.Columns.Add("name", typeof(string));
-            dt1.Columns.Add("other", typeof(string));
-            dt1.Rows.Add(new[] { "Fish", "Enemy" });
-            dt1.PrimaryKey = new[] { dt1.Columns[0] };
-            dt1.TableName = "DataTableUploadDestinationTests"; ;
-            destination.ProcessPipelineData(dt1, toConsole, token);
-            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
         catch (Exception ex)
         {
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
             throw;
         }
+        dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Enemy" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true
+        };
+        destination.PreInitialize(db, toConsole);
+        Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
         var resultDT = table.GetDataTable();
         Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
@@ -1743,7 +1751,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             IndexTableName = "CreateIndex_OK",
             UserDefinedIndexes = new List<string>() { "name" },
             AppendDataIfTableExists = true,
-            UseTrigger  = true
+            UseTrigger = true
         };
         destination.PreInitialize(db, toConsole);
 
