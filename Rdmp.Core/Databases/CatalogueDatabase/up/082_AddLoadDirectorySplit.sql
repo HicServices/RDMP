@@ -13,16 +13,16 @@ if exists(select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaDat
 BEGIN
 	Declare @SplitMetaDataSQL varchar(max)= '
 	update [dbo].[LoadMetadata] 
-	set LocationOfForLoadingDirectory = LocationOfFlatFiles +"\Data\ForLoading\"
+	set LocationOfForLoadingDirectory = LocationOfFlatFiles +''\Data\ForLoading\''
 	where LocationOfFlatFiles is not null
 	update [dbo].[LoadMetadata]
-	set LocationOfForArchivingDirectory = LocationOfFlatFiles +"\Data\ForArchiving\"
+	set LocationOfForArchivingDirectory = LocationOfFlatFiles +''\Data\ForArchiving\''
 	where LocationOfFlatFiles is not null
 	update [dbo].[LoadMetadata]
-	set LocationOfExecutablesDirectory = LocationOfFlatFiles +"\Executables\"
+	set LocationOfExecutablesDirectory = LocationOfFlatFiles +''\Executables\''
 	where LocationOfFlatFiles is not null
 	update [dbo].[LoadMetadata]
-	set LocationOfCacheDirectory = LocationOfFlatFiles +"\Data\Cache\"
+	set LocationOfCacheDirectory = LocationOfFlatFiles +''\Data\Cache\''
 	where LocationOfFlatFiles is not null
 	'
 	EXEC(@SplitMetaDataSQL)

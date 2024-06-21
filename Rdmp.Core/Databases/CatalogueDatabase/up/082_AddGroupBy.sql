@@ -3,10 +3,13 @@
  if not exists (select 1 from sys.columns where name = 'GroupBy' and OBJECT_NAME(object_id) = 'AggregateDimension')
 BEGIN
 ALTER TABLE AggregateDimension ADD GroupBy int DEFAULT 1
+UPDATE AggregateDimension Set GroupBy = 1
+
 END
 
  if not exists (select 1 from sys.columns where name = 'GroupBy' and OBJECT_NAME(object_id) = 'ExtractionInformation')
 BEGIN
 ALTER TABLE ExtractionInformation ADD GroupBy int DEFAULT 1
+UPDATE ExtractionInformation Set GroupBy = 1
 END
 
