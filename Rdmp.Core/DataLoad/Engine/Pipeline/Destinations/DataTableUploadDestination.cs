@@ -332,7 +332,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
 
                         }
-                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length - 1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
+                        //if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length - 1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
+                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length).ToList()))) //do we have to worry about special field
                         {
                             //the row is the exact same,so there is no clash
                             clash = false;

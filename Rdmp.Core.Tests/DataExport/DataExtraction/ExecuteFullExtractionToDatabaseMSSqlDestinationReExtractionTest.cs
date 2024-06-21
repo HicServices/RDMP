@@ -1263,55 +1263,55 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         Assert.That(columns, Does.Contain(SpecialFieldNames.DataLoadRunID));
         Assert.That(columns, Does.Contain(SpecialFieldNames.ValidFrom));
         ////add new entry here
-        //var tbl = db.DiscoverTables(false).First();
-        //tbl.Insert(new Dictionary<string, object>
-        //    {
-        //        { "chi","1111111111"},
-        //        {"notes","T"},
-        //        {"dtCreated", new DateTime(2001, 1, 2) },
-        //        {"century",19},
-        //        {"surname","1234"},
-        //        {"forename","yes"},
-        //        {"sex","M"},
-        //    });
+        var tbl = db.DiscoverTables(false).First();
+        tbl.Insert(new Dictionary<string, object>
+            {
+                { "chi","1111111111"},
+                {"notes","T"},
+                {"dtCreated", new DateTime(2001, 1, 2) },
+                {"century",19},
+                {"surname","1234"},
+                {"forename","yes"},
+                {"sex","M"},
+            });
 
-        //CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
-        //cic2.CreateRootContainerIfNotExists();
-        //var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
-        //_ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
-        //conf.SaveToDatabase();
-        //agg1.SaveToDatabase();
-        //cic.RootCohortAggregateContainer.AddChild(agg12, 0);
-        //cic.SaveToDatabase();
-        //var dim2 = new AggregateDimension(CatalogueRepository, ei, agg12);
-        //dim2.SaveToDatabase();
-        //agg12.SaveToDatabase();
+        CohortIdentificationConfiguration cic2 = new CohortIdentificationConfiguration(CatalogueRepository, "Cohort1");
+        cic2.CreateRootContainerIfNotExists();
+        var agg12 = new AggregateConfiguration(CatalogueRepository, catalogue, "agg1");
+        _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
+        conf.SaveToDatabase();
+        agg1.SaveToDatabase();
+        cic.RootCohortAggregateContainer.AddChild(agg12, 0);
+        cic.SaveToDatabase();
+        var dim2 = new AggregateDimension(CatalogueRepository, ei, agg12);
+        dim2.SaveToDatabase();
+        agg12.SaveToDatabase();
 
-        //newCohortCmd.Execute();
-        //ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
-        //ec.Cohort_ID = _extractableCohort2.ID;
-        //ec.SaveToDatabase();
+        newCohortCmd.Execute();
+        ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
+        ec.Cohort_ID = _extractableCohort2.ID;
+        ec.SaveToDatabase();
 
-        //runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
-        //{
-        //    Command = CommandLineActivity.run,
-        //    ExtractionConfiguration = ec.ID.ToString(),
-        //    ExtractGlobals = true,
-        //    Pipeline = extractionPipeline.ID.ToString()
-        //});
+        runner = new ExtractionRunner(new ThrowImmediatelyActivator(RepositoryLocator), new ExtractionOptions
+        {
+            Command = CommandLineActivity.run,
+            ExtractionConfiguration = ec.ID.ToString(),
+            ExtractGlobals = true,
+            Pipeline = extractionPipeline.ID.ToString()
+        });
 
-        //returnCode = runner.Run(
-        //    RepositoryLocator,
-        //    ThrowImmediatelyDataLoadEventListener.Quiet,
-        //    ThrowImmediatelyCheckNotifier.Quiet,
-        //    new GracefulCancellationToken());
+        returnCode = runner.Run(
+            RepositoryLocator,
+            ThrowImmediatelyDataLoadEventListener.Quiet,
+            ThrowImmediatelyCheckNotifier.Quiet,
+            new GracefulCancellationToken());
 
-        //Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
+        Assert.That(returnCode, Is.EqualTo(0), "Return code from runner was non zero");
 
-        //Assert.That(destinationTable.Exists());
+        Assert.That(destinationTable.Exists());
 
-        //dt = destinationTable.GetDataTable();
+        dt = destinationTable.GetDataTable();
 
-        //Assert.That(dt.Rows, Has.Count.EqualTo(2));
+        Assert.That(dt.Rows, Has.Count.EqualTo(2));
     }
 }
