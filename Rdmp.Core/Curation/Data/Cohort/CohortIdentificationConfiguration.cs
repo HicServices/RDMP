@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -39,6 +39,18 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
     /// </summary>
     public const string CICPrefix = "cic_";
+
+
+    private int? _version;
+
+    public int? Version
+    {
+        get => _version;
+        set => _version = value;
+    }
+
+
+
 
     #region Database Properties
 
@@ -179,6 +191,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     #endregion
 
+
+    public List<CohortIdentificationConfiguration> GetVersions()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", ID).Where(cic => cic.Version != null).ToList();
+    }
+
     public CohortIdentificationConfiguration()
     {
     }
@@ -214,7 +232,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         FrozenBy = r["FrozenBy"] as string;
         FrozenDate = ObjectToNullableDateTime(r["FrozenDate"]);
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
-
+        Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
     }
 

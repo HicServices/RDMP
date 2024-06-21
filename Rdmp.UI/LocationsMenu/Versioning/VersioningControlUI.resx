@@ -117,43 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="timer1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="btnAbortLoad.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAAE+SURBVDhPrcy7
-        L0NhAIbxs7BgIRIMWDC4DC6Jy0KTugylom2oNtG6pG2oVrTiUom6JG1ClJDwj557X+/Xw2D4TqI6PM/4
-        UwD8q9peOxXUU+MBvZiC9pCFVj6D9lSA+nIL9b0M9bPyKzlwEYV+vfsNZQjloT0SqhB6I/Tx7A4YJ34Y
-        +RChCKE49JsktHtCJQFdESoSKskBM+WBkV6GkV0jFIR+TqggoAShY0I5QpdywIpPwTyYI7QA80hAqzBy
-        AtomFHOgu7QLEB6CFR2DFZuEuU8oKaAlQj5CAULhGiQF7PUe2KF+WFsCGiU0QWiW0LwDZQidbsiB6kob
-        bF8HoW7YQQENEhpxoL0ZmAlCh4tyAB4i3mZCrYTaHSjQ50ARQjvjhKbdgZ+q3iZCLQ7k7yLUC2tzgNCw
-        HPhrjQPqD8oXLYxf8tXze2kAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="btnExecute.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xMzQDW3oAAAEaSURBVDhPnY/t
-        KoVBFEbf/+IupMQ1iIiU3yIppaSkEAk5KR8pKUmJkgiRlJKUFIlEkgtQiBK5huU5pzPTNGO8OrvWNLP3
-        flZNkmRKyKJKCsEKChUFAoO/GMP9Qq5cSb7/a9AQCEy5kvz8b8EX33zwybvOV53PvPHES6rICu545IYH
-        rrnnklvO9TrjilO9TriIiqxgn2N2OWKbQzY5YF2dNfZYZYdltlhig0V1XUkOc5ljhVmtTmt1UqsTLDDO
-        PKOaDGsyxAwDTMUFPWToZowuRuhUpINB2umnjT5a6A2CwReaFGtUrF6xWsVqaKWK5mgwEFTSQDl1lCla
-        SnVq0GAFxVRQJIUbyuIHfKzAx1+MEQj8hTSswB/8D5IfPNWPgsKmIaIAAAAASUVORK5CYII=
-</value>
-  </data>
-  <data name="btnClearCache.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vAAADrwBlbxySQAAABl0RVh0U29mdHdhcmUAcGFpbnQubmV0IDQuMC4xNkRpr/UAAAE+SURBVDhPrcy7
-        L0NhAIbxs7BgIRIMWDC4DC6Jy0KTugylom2oNtG6pG2oVrTiUom6JG1ClJDwj557X+/Xw2D4TqI6PM/4
-        UwD8q9peOxXUU+MBvZiC9pCFVj6D9lSA+nIL9b0M9bPyKzlwEYV+vfsNZQjloT0SqhB6I/Tx7A4YJ34Y
-        +RChCKE49JsktHtCJQFdESoSKskBM+WBkV6GkV0jFIR+TqggoAShY0I5QpdywIpPwTyYI7QA80hAqzBy
-        AtomFHOgu7QLEB6CFR2DFZuEuU8oKaAlQj5CAULhGiQF7PUe2KF+WFsCGiU0QWiW0LwDZQidbsiB6kob
-        bF8HoW7YQQENEhpxoL0ZmAlCh4tyAB4i3mZCrYTaHSjQ50ARQjvjhKbdgZ+q3iZCLQ7k7yLUC2tzgNCw
-        HPhrjQPqD8oXLYxf8tXze2kAAAAASUVORK5CYII=
-</value>
-  </data>
 </root>

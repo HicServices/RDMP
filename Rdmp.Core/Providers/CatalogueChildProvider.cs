@@ -144,6 +144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
     public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -397,6 +398,10 @@ public class CatalogueChildProvider : ICoreChildProvider
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
+
+        CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
+        AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
+           new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
@@ -849,6 +854,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+
 
         //add cics in folder
         foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
