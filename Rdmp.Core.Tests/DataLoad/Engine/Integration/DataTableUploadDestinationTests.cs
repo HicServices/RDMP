@@ -13,6 +13,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.ReusableLibraryCode;
@@ -1422,8 +1423,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Columns.Add("name", typeof(string));
         dt1.Rows.Add(new[] { "Fish" });
         dt1.TableName = "DataTableUploadDestinationTests";
-
-        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
         using (var con = db.Server.GetConnection())
         {
             con.Open();
@@ -1454,7 +1463,16 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Rows.Add(new[] { "Fish" });
         dt1.TableName = "DataTableUploadDestinationTests";
 
-        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
         using (var con = db.Server.GetConnection())
         {
             con.Open();
@@ -1483,9 +1501,19 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         dt1.Columns.Add("name", typeof(string));
         dt1.Rows.Add(new[] { "Fish" });
         dt1.TableName = "DataTableUploadDestinationTests";
-
-        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
-        Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        //Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        //Assert.DoesNotThrow(() => destination.ProcessPipelineData(dt1, toConsole, token));
         using (var con = db.Server.GetConnection())
         {
             con.Open();
