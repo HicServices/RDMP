@@ -338,9 +338,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             clash = false;
                             rowsToDelete.Add(row);
                         }
-                        else if (clash)
+                        else if (clash && UseTrigger) //row needs updated, but only if we're tracking history
                         {
-                            //row needs updated
                             rowsToModify.Add(row);
                             break;
                         }
@@ -356,7 +355,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 //replace existing 
                 var args = new DatabaseOperationArgs();
-                List<String> columns = new();
+                List<String> columns = [];
                 foreach (DataColumn column in toProcess.Columns)
                 {
                     if (!pkColumns.Contains(column))
@@ -374,7 +373,6 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} {nullText} where {pkMatch}";
                 var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
                 cmd.ExecuteNonQuery();
-
             }
 
             foreach (DataRow row in rowsToModify)
