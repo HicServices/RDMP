@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -73,7 +73,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
     private ExecuteCommandClearQueryCache _clearCacheCommand;
 
-    private CohortIdentificationConfigurationUICommon Common = new ();
+    private CohortIdentificationConfigurationUICommon Common = new();
 
     public CohortIdentificationConfigurationUI()
     {
@@ -134,6 +134,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
 
         tt.SetToolTip(btnExecute, "Starts running and caches all cohort sets and containers");
         tt.SetToolTip(btnAbortLoad, "Cancels execution of any running cohort sets");
+
     }
 
 
@@ -141,7 +142,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
         Common.Activator = Activator;
         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
-
 
         //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
         if (descendancy != null && descendancy.Parents.Contains(Common.Configuration))
@@ -168,6 +168,7 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
+        version.Setup(databaseObject, activator);
         Common.Configuration = databaseObject;
         Common.Compiler.CohortIdentificationConfiguration = databaseObject;
 
@@ -183,19 +184,21 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
             _commonFunctionality = new RDMPCollectionCommonFunctionality();
 
             _commonFunctionality.SetUp(RDMPCollection.Cohort, tlvCic, activator, olvNameCol, olvNameCol,
-                new RDMPCollectionCommonFunctionalitySettings
-                {
-                    SuppressActivate = true,
-                    AddFavouriteColumn = false,
-                    AddCheckColumn = false,
-                    AllowSorting =
-                        true //important, we need sorting on so that we can override sort order with our OrderableComparer
-                });
+              new RDMPCollectionCommonFunctionalitySettings
+              {
+                  SuppressActivate = true,
+                  AddFavouriteColumn = false,
+                  AddCheckColumn = false,
+                  AllowSorting =
+                      true //important, we need sorting on so that we can override sort order with our OrderableComparer
+              });
             _commonFunctionality.MenuBuilt += MenuBuilt;
+            tlvCic.Objects = null;
             tlvCic.AddObject(databaseObject);
 
             if (UserSettings.ExpandAllInCohortBuilder)
                 tlvCic.ExpandAll();
+            tlvCic.SelectedIndex = 0;
         }
 
         CommonFunctionality.AddToMenu(cbIncludeCumulative);
@@ -405,6 +408,11 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     private static void ViewCrashMessage(ICompileable compileable)
     {
         ExceptionViewer.Show(compileable.CrashMessage);
+    }
+
+    private void cbKnownVersions_SelectedIndexChanged(object sender, EventArgs e)
+    {
+
     }
 }
 

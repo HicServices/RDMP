@@ -171,6 +171,9 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     private readonly List<IColumn> _skipGroupByForThese = new();
 
+    private readonly List<IColumn> _skipByUserRequest = new();
+
+
     /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
     /// <param name="limitationSQL"></param>
     /// <param name="countSQL"></param>
@@ -241,12 +244,16 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     /// <param name="col"></param>
     /// <param name="includeAsGroupBy"></param>
-    public void AddColumn(IColumn col, bool includeAsGroupBy)
+    /// <param name="useDefinedGroupIgnore"></param>
+    public void AddColumn(IColumn col, bool includeAsGroupBy, bool useDefinedGroupIgnore=false)
     {
         SelectColumns.Add(new QueryTimeColumn(col));
-
         if (!includeAsGroupBy)
             _skipGroupByForThese.Add(col);
+        if (useDefinedGroupIgnore)
+        {
+            _skipByUserRequest.Add(col);
+        }
     }
 
     /// <inheritdoc/>
@@ -476,7 +483,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             //yes there are! better group by then!
             queryLines.Add(new CustomLine("group by ", QueryComponent.GroupBy));
 
-            foreach (var col in SelectColumns)
+            foreach (var col in SelectColumns.Where(col => !_skipByUserRequest.Contains(col.IColumn)))
             {
                 if (col.IColumn is AggregateCountColumn)
                     continue;
