@@ -34,6 +34,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     private string _alias;
     private string _selectSQL;
     private int _order;
+    private bool _groupBy;
 
 
     /// <summary>
@@ -44,6 +45,17 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
     {
         get => _aggregateConfigurationID;
         set => SetField(ref _aggregateConfigurationID, value);
+    }
+
+
+    /// <summary>
+    /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.
+    /// This property returns if the dimention should be added to any GROUP BY section of an <see cref="AggregateConfiguration"/>.
+    /// </summary>
+    public bool GroupBy
+    {
+        get => _groupBy;
+        set => SetField(ref _groupBy, value);
     }
 
     /// <summary>
@@ -157,7 +169,8 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
             { "ExtractionInformation_ID", basedOnColumn.ID },
             { "SelectSQL", basedOnColumn.SelectSQL },
             { "Alias", alias },
-            { "Order", basedOnColumn.Order }
+            { "Order", basedOnColumn.Order },
+            {"GroupBy",true }
         });
 
         ClearAllInjections();
@@ -172,6 +185,7 @@ public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColum
         Alias = r["Alias"] as string;
 
         Order = int.Parse(r["Order"].ToString());
+        GroupBy = int.Parse(r["GroupBy"].ToString()) == 1;
 
         ClearAllInjections();
     }

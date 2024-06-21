@@ -1,5 +1,3 @@
-
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -12,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Key-Value store for instance settings
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
+- Add ability to restrict GROUPBY clause in cohort aggregate builder
 - When cloning an ExtractionConfiguration with a deprecated catalogue, the GUI will ask if you want to replace the deprecated catalogue with the known replacement
 - Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
 - Add ability to point a catalogue to a new data source [Documentation](./Documentation/Catalogues/UpdateCatalogueDataLocation.md)
