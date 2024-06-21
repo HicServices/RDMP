@@ -144,8 +144,7 @@ public class MasterDatabaseScriptExecutor
                 DiscoveredServerHelper.CreateDatabaseTimeoutInSeconds);
         }
 
-        var now = DateTime.Now;
-
+        var now = DateTime.UtcNow;
         Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
             .Insert(new Dictionary<string, object>
             {
@@ -188,7 +187,7 @@ public class MasterDatabaseScriptExecutor
         //repository_path	version	entry_date	modified_date	entered_by
         //Patching	2.6.0.1	2018-02-05 08:26:54.000	2018-02-05 08:26:54.000	DUNDEE\TZNind
 
-        var now = DateTime.Now;
+        var now = DateTime.UtcNow;
 
         versionTable.Insert(new Dictionary<string, object>
         {
