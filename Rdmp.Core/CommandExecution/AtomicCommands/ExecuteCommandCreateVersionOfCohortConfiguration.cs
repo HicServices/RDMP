@@ -38,6 +38,5 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         }
         var cmd = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator, _cic, _name, version, true);
         cmd.Execute();
-        //todo freese the version
     }
 }
