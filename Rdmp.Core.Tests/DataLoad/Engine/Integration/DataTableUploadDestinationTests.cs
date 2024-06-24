@@ -1627,7 +1627,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             dt1.Rows.Add(new[] { "Fish", "Friend" });
             dt1.PrimaryKey = new[] { dt1.Columns[0] };
             dt1.TableName = "DataTableUploadDestinationTests"; ;
-            destination.ProcessPipelineData(dt1, toConsole, token);
+            Assert.Throws<Exception>(()=>destination.ProcessPipelineData(dt1, toConsole, token));
             destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
         }
         catch (Exception ex)

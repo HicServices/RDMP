@@ -391,13 +391,13 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         }
                     }
                 }
-                foreach (DataRow row in rowsToDelete)
+                foreach (DataRow row in rowsToDelete.Distinct())
                     toProcess.Rows.Remove(row);
 
             }
 
 
-            foreach (DataRow row in rowsToModify)
+            foreach (DataRow row in rowsToModify.Distinct())
             {
                 //replace existing 
                 var args = new DatabaseOperationArgs();
@@ -421,7 +421,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 cmd.ExecuteNonQuery();
             }
 
-            foreach (DataRow row in rowsToModify)
+            foreach (DataRow row in rowsToModify.Distinct())
             {
                 toProcess.Rows.Remove(row);
             }

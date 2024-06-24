@@ -761,12 +761,19 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         _ = new AggregateConfiguration(CatalogueRepository, catalogue, "UnitTestShortcutAggregate");
         conf.SaveToDatabase();
         agg1.SaveToDatabase();
-        cic.RootCohortAggregateContainer.AddChild(agg12, 0);
-        cic.SaveToDatabase();
+        cic2.RootCohortAggregateContainer.AddChild(agg12, 0);
+        cic2.SaveToDatabase();
         var dim2 = new AggregateDimension(CatalogueRepository, ei, agg12);
         dim2.SaveToDatabase();
         agg12.SaveToDatabase();
-
+        newCohortCmd = new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(
+           new ThrowImmediatelyActivator(RepositoryLocator),
+           cic2,
+           newExternal,
+           "MyCohort",
+           project,
+           cohortPipeline
+           );
         newCohortCmd.Execute();
         ExtractableCohort _extractableCohort2 = new ExtractableCohort(DataExportRepository, newExternal, 2);
         ec.Cohort_ID = _extractableCohort2.ID;
