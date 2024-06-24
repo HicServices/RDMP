@@ -31,6 +31,8 @@ using TypeGuesser;
 using FAnsi;
 using Terminal.Gui;
 using TB.ComponentModel;
+using Npgsql;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -141,6 +143,44 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         ExplicitTypes = new List<DatabaseColumnRequest>();
         _externalCohortTable = externalCohortTable;
     }
+
+    private static object[] FilterOutItemAtIndex(object[] itemArray, int[] indexes)
+    {
+        if (indexes.Length == 0) return itemArray;
+        return itemArray.Where((source, idx) => !indexes.Contains(idx)).ToArray();
+    }
+    private string GetPKValue(DataColumn pkColumn, DataRow row)
+    {
+        var pkName = pkColumn.ColumnName;
+        var value = row[pkName];
+        if (_externalCohortTable is not null)
+        {
+            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+            if (pkName == releaseIdentifierField)
+            {
+                //going to have to look up the previous relaseID to match
+                DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
+                var lookupDT = cohortTable.GetDataTable();
+                var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
+                var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
+                var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
+                if (foundRow is not null)
+                {
+                    var originalValue = foundRow.ItemArray[privateIdIndex];
+                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
+                    if (existingIDsforReleaseID.Count() > 0)
+                    {
+                        //we don;t know what the current releae ID is ( there may be ones from multiple cohorts)
+                        var ids = existingIDsforReleaseID.ToArray().Select(id => $"'{id}'");
+                        return $"{pkName} in ({string.Join(',', ids)})";
+                    }
+                }
+            }
+        }
+        return $"{pkName} = '{value}'";
+    }
+
 
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
@@ -302,6 +342,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 //drop any pk clashes
                 var existingData = _discoveredTable.GetDataTable();
                 var rowsToDelete = new List<DataRow>();
+                var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
+                int[] toProcessIgnoreColumns = [toProcess.Columns.IndexOf(SpecialFieldNames.DataLoadRunID), toProcess.Columns.IndexOf(releaseIdentifier)];
+                int[] existingDataIgnoreColumns = [existingData.Columns.IndexOf(SpecialFieldNames.DataLoadRunID), existingData.Columns.IndexOf(releaseIdentifier), existingData.Columns.IndexOf(SpecialFieldNames.ValidFrom)];
                 foreach (DataRow row in toProcess.Rows)
                 {
 
@@ -312,8 +355,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                         {
                             // If it's a cohort release identifier
                             // look up the original value and check we've not already extected the same value under a different release ID
-                            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];
-                            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];
+                            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+                            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
                             DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
                             var lookupDT = cohortTable.GetDataTable();
                             var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
@@ -332,17 +375,19 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                             clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
 
                         }
-                        //if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length - 1).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length - 1).ToList())))
-                        if (clash && existingData.AsEnumerable().Any(r => r.ItemArray.Take(row.ItemArray.Length).ToList().SequenceEqual(row.ItemArray.Take(row.ItemArray.Length).ToList()))) //do we have to worry about special field
+                        if (clash && UseTrigger)
                         {
-                            //the row is the exact same,so there is no clash
-                            clash = false;
-                            rowsToDelete.Add(row);
-                        }
-                        else if (clash && UseTrigger) //row needs updated, but only if we're tracking history
-                        {
-                            rowsToModify.Add(row);
-                            break;
+                            if (existingData.AsEnumerable().Any(r => FilterOutItemAtIndex(r.ItemArray, existingDataIgnoreColumns).ToList().SequenceEqual(FilterOutItemAtIndex(row.ItemArray, toProcessIgnoreColumns).ToList()))) //do we have to worry about special field? what if the load ids are different?
+                            {
+                                //the row is the exact same,so there is no clash
+                                clash = false;
+                                rowsToDelete.Add(row);
+                            }
+                            else //row needs updated, but only if we're tracking history
+                            {
+                                rowsToModify.Add(row);//need to know what releaseId to replace
+                                break;
+                            }
                         }
                     }
                 }
@@ -359,10 +404,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 List<String> columns = [];
                 foreach (DataColumn column in toProcess.Columns)
                 {
-                    if (!pkColumns.Contains(column))
-                    {
-                        columns.Add(column.ColumnName);
-                    }
+                    //if (!pkColumns.Contains(column))
+                    //{
+                    columns.Add(column.ColumnName);
+                    //}
                 }
                 //need to check for removed column and null them out
                 var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
@@ -370,7 +415,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 var nullEntries = string.Join(" ,", columnsThatPreviouslyExisted.Select(c => $"{c} = NULL"));
                 var nullText = nullEntries.Length > 0 ? $" , {nullEntries}" : "";
                 var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
-                var pkMatch = string.Join(" AND ", pkColumns.Select(pk => $"{pk.ColumnName} = '{row[pk.ColumnName]}'").ToList());
+                var pkMatch = string.Join(" AND ", pkColumns.Select(pk => GetPKValue(pk, row)).ToList());
                 var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} {nullText} where {pkMatch}";
                 var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
                 cmd.ExecuteNonQuery();
@@ -385,6 +430,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 _affectedRows += _bulkcopy.Upload(toProcess);
             }
+
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,
                 new ProgressEventArgs($"Uploading to {TargetTableName}",
