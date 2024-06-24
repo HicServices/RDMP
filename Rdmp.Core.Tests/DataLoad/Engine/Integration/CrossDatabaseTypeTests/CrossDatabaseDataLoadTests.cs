@@ -292,7 +292,10 @@ MrMurder,2001-01-01,Yella");
         }
         finally
         {
-            Directory.Delete(lmd.LocationOfFlatFiles, true);
+            Directory.Delete(lmd.LocationOfForLoadingDirectory, true);
+            Directory.Delete(lmd.LocationOfForArchivingDirectory, true);
+            Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
+            Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
             foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
@@ -461,7 +464,10 @@ MrMurder,2001-01-01,Yella");
         }
         finally
         {
-            Directory.Delete(lmd.LocationOfFlatFiles, true);
+            Directory.Delete(lmd.LocationOfForLoadingDirectory, true);
+            Directory.Delete(lmd.LocationOfForArchivingDirectory, true);
+            Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
+            Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
             foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();

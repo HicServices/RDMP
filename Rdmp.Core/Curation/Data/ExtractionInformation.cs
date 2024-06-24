@@ -42,6 +42,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
 
     private int _catalogueItemID;
     private ExtractionCategory _extractionCategory;
+    private bool _groupBy = true;
 
     /// <summary>
     /// The virtual column (description, name etc) to which this <see cref="ExtractionInformation"/> provides extraction SELECT SQL for.
@@ -50,6 +51,15 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
     {
         get => _catalogueItemID;
         set => SetField(ref _catalogueItemID, value);
+    }
+
+    /// <summary>
+    /// If the <see cref="ExtractionInformation"/> should be used in any GROUP BY clause  
+    /// </summary>
+    public bool GroupBy
+    {
+        get => _groupBy;
+        set => SetField(ref _groupBy, value);
     }
 
     /// <summary>
@@ -174,6 +184,7 @@ public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKn
         IsExtractionIdentifier = (bool)r["IsExtractionIdentifier"];
         IsPrimaryKey = (bool)r["IsPrimaryKey"];
         CatalogueItem_ID = (int)r["CatalogueItem_ID"];
+        GroupBy = int.Parse(r["GroupBy"].ToString()) == 1;
 
         ClearAllInjections();
     }

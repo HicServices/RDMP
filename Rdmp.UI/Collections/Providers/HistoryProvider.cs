@@ -64,7 +64,6 @@ public class HistoryProvider
         catch (Exception)
         {
             //error reading persisted history, maybe history file is corrupt or something
-            return;
         }
     }
 

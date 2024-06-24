@@ -163,7 +163,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     }
 
     public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field) =>
-        Defaults.TryGetValue(field, out var result) ? result : null;
+        Defaults.GetValueOrDefault(field);
 
     public void ClearDefault(PermissableDefaults toDelete)
     {
@@ -241,7 +241,7 @@ public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository,
     }
 
     public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(ITableInfo tableInfo) =>
-        CredentialsDictionary.TryGetValue(tableInfo, out var credential) ? credential : null;
+        CredentialsDictionary.GetValueOrDefault(tableInfo);
 
     public Dictionary<ITableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(
         DataAccessCredentials[] allCredentials, ITableInfo[] allTableInfos)

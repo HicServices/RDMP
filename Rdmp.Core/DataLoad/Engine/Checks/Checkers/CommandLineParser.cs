@@ -85,7 +85,6 @@ internal class CommandLineParser
 
         // scan over the lead-out quotation mark w/o adding it to the buffer
         if (i < cmd.Length) ++i;
-        return;
     }
 
     /// <summary>
@@ -167,6 +166,5 @@ internal class CommandLineParser
     private void ConsumeWhitespace()
     {
         while (i < cmd.Length && char.IsWhiteSpace(cmd[i])) ++i;
-        return;
     }
 }

@@ -30,9 +30,7 @@ namespace Rdmp.Core.Caching.Pipeline;
 public sealed class CachingPipelineUseCase : PipelineUseCase
 {
     private readonly ICacheProgress _cacheProgress;
-    private readonly ICacheFetchRequestProvider _providerIfAny;
     private readonly IPipeline _pipeline;
-    private readonly IPermissionWindow _permissionWindow;
 
     /// <summary>
     /// Class for helping you to construct a caching pipeline engine instance with the correct context and initialization objects
@@ -44,18 +42,19 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
     public CachingPipelineUseCase(ICacheProgress cacheProgress, bool ignorePermissionWindow = false,
         ICacheFetchRequestProvider providerIfAny = null, bool throwIfNoPipeline = true)
     {
+        IPermissionWindow permissionWindow;
         _cacheProgress = cacheProgress;
-        _providerIfAny = providerIfAny;
+        var providerIfAny1 = providerIfAny;
 
         //if there is no permission window or we are ignoring it
         if (ignorePermissionWindow || cacheProgress.PermissionWindow_ID == null)
-            _permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
+            permissionWindow = new SpontaneouslyInventedPermissionWindow(_cacheProgress);
         else
-            _permissionWindow = cacheProgress.PermissionWindow;
+            permissionWindow = cacheProgress.PermissionWindow;
 
-        _providerIfAny ??= new CacheFetchRequestProvider(_cacheProgress)
+        providerIfAny1 ??= new CacheFetchRequestProvider(_cacheProgress)
         {
-            PermissionWindow = _permissionWindow
+            PermissionWindow = permissionWindow
         };
 
         _pipeline = _cacheProgress.Pipeline;
@@ -68,7 +67,7 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         // Get the LoadDirectory for the engine initialization
         var lmd = _cacheProgress.LoadProgress.LoadMetadata;
 
-        if (string.IsNullOrWhiteSpace(lmd.LocationOfFlatFiles))
+        if (string.IsNullOrWhiteSpace(lmd.LocationOfForLoadingDirectory) || string.IsNullOrWhiteSpace(lmd.LocationOfForArchivingDirectory) || string.IsNullOrWhiteSpace(lmd.LocationOfCacheDirectory) || string.IsNullOrWhiteSpace(lmd.LocationOfExecutablesDirectory))
         {
             if (throwIfNoPipeline)
                 throw new Exception(
@@ -76,11 +75,12 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         }
         else
         {
-            AddInitializationObject(new LoadDirectory(lmd.LocationOfFlatFiles));
+
+            AddInitializationObject(new LoadDirectory(lmd.LocationOfForLoadingDirectory, lmd.LocationOfForArchivingDirectory, lmd.LocationOfExecutablesDirectory, lmd.LocationOfCacheDirectory));
         }
 
-        AddInitializationObject(_providerIfAny);
-        AddInitializationObject(_permissionWindow);
+        AddInitializationObject(providerIfAny1);
+        AddInitializationObject(permissionWindow);
 
         GenerateContext();
     }
@@ -104,10 +104,8 @@ public sealed class CachingPipelineUseCase : PipelineUseCase
         // get the current destination
         var destination = GetEngine(_pipeline, listener).DestinationObject ??
                           throw new Exception($"{_cacheProgress} does not have a DestinationComponent in its Pipeline");
-        return destination is not ICacheFileSystemDestination systemDestination
-            ? throw new NotSupportedException(
-                $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}")
-            : systemDestination;
+        return destination as ICacheFileSystemDestination ?? throw new NotSupportedException(
+            $"{_cacheProgress} pipeline destination is not an ICacheFileSystemDestination, it was {_cacheProgress.GetType().FullName}");
     }
 
     public IDataFlowPipelineEngine GetEngine(IDataLoadEventListener listener) => GetEngine(_pipeline, listener);

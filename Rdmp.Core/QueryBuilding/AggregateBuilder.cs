@@ -82,6 +82,10 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     public string HavingSQL { get; set; }
 
+
+    public string AxisStartDateOverride { get; set; }
+    public string AxisEndDateOverride { get; set; }
+
     /// <summary>
     /// Optional, Limit the results returned.
     /// 
@@ -167,6 +171,9 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     private readonly List<IColumn> _skipGroupByForThese = new();
 
+    private readonly List<IColumn> _skipByUserRequest = new();
+
+
     /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
     /// <param name="limitationSQL"></param>
     /// <param name="countSQL"></param>
@@ -237,12 +244,16 @@ public class AggregateBuilder : ISqlQueryBuilder
     /// </summary>
     /// <param name="col"></param>
     /// <param name="includeAsGroupBy"></param>
-    public void AddColumn(IColumn col, bool includeAsGroupBy)
+    /// <param name="useDefinedGroupIgnore"></param>
+    public void AddColumn(IColumn col, bool includeAsGroupBy, bool useDefinedGroupIgnore=false)
     {
         SelectColumns.Add(new QueryTimeColumn(col));
-
         if (!includeAsGroupBy)
             _skipGroupByForThese.Add(col);
+        if (useDefinedGroupIgnore)
+        {
+            _skipByUserRequest.Add(col);
+        }
     }
 
     /// <inheritdoc/>
@@ -435,6 +446,10 @@ public class AggregateBuilder : ISqlQueryBuilder
         GetGroupBySQL(queryLines, aggregateHelper);
 
         queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
+        if (AxisStartDateOverride != null)
+            _axis.StartDate = AxisStartDateOverride;
+        if (AxisEndDateOverride != null)
+            _axis.EndDate = AxisEndDateOverride;
 
         _sql = aggregateHelper.BuildAggregate(queryLines, _axis);
     }
@@ -468,7 +483,7 @@ public class AggregateBuilder : ISqlQueryBuilder
             //yes there are! better group by then!
             queryLines.Add(new CustomLine("group by ", QueryComponent.GroupBy));
 
-            foreach (var col in SelectColumns)
+            foreach (var col in SelectColumns.Where(col => !_skipByUserRequest.Contains(col.IColumn)))
             {
                 if (col.IColumn is AggregateCountColumn)
                     continue;
