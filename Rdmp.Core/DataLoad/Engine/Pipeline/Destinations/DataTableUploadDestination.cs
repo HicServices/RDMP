@@ -161,7 +161,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             {
                 //going to have to look up the previous relaseID to match
                 DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
-                var lookupDT = cohortTable.GetDataTable();
+                using var lookupDT = cohortTable.GetDataTable();
                 var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
                 var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
                 var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
@@ -171,8 +171,8 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
                     if (existingIDsforReleaseID.Count() > 0)
                     {
-                        //we don;t know what the current releae ID is ( there may be ones from multiple cohorts)
-                        var ids = existingIDsforReleaseID.ToArray().Select(id => $"'{id}'");
+                        //we don't know what the current releae ID is ( there may be ones from multiple cohorts)
+                        var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
                         return $"{pkName} in ({string.Join(',', ids)})";
                     }
                 }
