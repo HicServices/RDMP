@@ -1525,7 +1525,6 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
     }
 
-    //need to test for useTrigger ln 263 && ln 627
     [Test]
     public void UseTriggerwithoutPrimaryKey()
     {

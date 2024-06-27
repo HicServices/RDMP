@@ -102,7 +102,7 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
          $a - Dataset acronym (e.g. 'Presc') 
 
          You must have either $a or $d
-         ",DefaultValue = "$c_$d")]
+         ",DefaultValue = "Index_$c_$d")]
     public string IndexNamingPattern { get; set; }
 
     [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]

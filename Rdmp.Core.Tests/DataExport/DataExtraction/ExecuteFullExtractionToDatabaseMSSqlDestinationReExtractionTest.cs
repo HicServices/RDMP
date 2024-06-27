@@ -10,7 +10,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using SynthEHR;
-using SynthEHR.Datasets;
+using SynthEHR.Datasets;    
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
@@ -531,7 +531,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
 
         dt = destinationTable.GetDataTable();
 
-        Assert.That(dt.Rows, Has.Count.EqualTo(2)); //The release ID is a PK, so won't extract the same relase ID twice
+        Assert.That(dt.Rows, Has.Count.EqualTo(2)); 
     }
 
     [Test]
