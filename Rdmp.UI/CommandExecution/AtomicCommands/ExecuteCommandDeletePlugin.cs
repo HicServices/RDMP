@@ -21,7 +21,7 @@ public sealed class ExecuteCommandDeletePlugin : BasicUICommandExecution
     public ExecuteCommandDeletePlugin(IActivateItems activator, LoadModuleAssembly assembly) : base(activator)
     {
         _assembly = assembly;
-    }
+      }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>
         iconProvider.GetImage(RDMPConcept.Plugin, OverlayKind.Delete);

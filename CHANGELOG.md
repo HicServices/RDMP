@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Key-Value store for instance settings
 - Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
+- Add ability to use .rdmp plugin files
 - Add the ability to store versions of cohort configurations, see [Cohort Versioning](Documentation\Cohorts\CohortVersioning.md)
 - Add ability to restrict GROUPBY clause in cohort aggregate builder
 - When cloning an ExtractionConfiguration with a deprecated catalogue, the GUI will ask if you want to replace the deprecated catalogue with the known replacement
@@ -72,7 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Terminal.Gui from 1.15.1 to 1.16.0 
 - Bump HIC.BadMedicine from 1.2.0 to 1.2.1 
 - Bump NPOI from 2.6.2 to 2.7.0 
-
 
 ## [8.1.4] - 2024-02-19
 

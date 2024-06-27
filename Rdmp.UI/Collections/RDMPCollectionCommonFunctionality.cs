@@ -353,11 +353,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
-        if (DateTime.Now.CompareTo(nextInvalidateCache)>0)
+        if (DateTime.Now.CompareTo(nextInvalidateCache) > 0)
         {
             cache.Clear();
             nextInvalidateCache = DateTime.Now.AddSeconds(10);
-        } else if (cache.TryGetValue(sum, out var body))
+        }
+        else if (cache.TryGetValue(sum, out var body))
             return body;
 
         var sb = new StringBuilder();

@@ -13,6 +13,6 @@ internal class LoadModuleAssemblyMenu : RDMPContextMenuStrip
 {
     public LoadModuleAssemblyMenu(RDMPContextMenuStripArgs args, LoadModuleAssembly assembly) : base(args, assembly)
     {
-         Add(new ExecuteCommandDeletePlugin(_activator, assembly));
+         Add(new ExecuteCommandDeletePlugin(_activator, assembly),System.Windows.Forms.Keys.Delete);
     }
 }
