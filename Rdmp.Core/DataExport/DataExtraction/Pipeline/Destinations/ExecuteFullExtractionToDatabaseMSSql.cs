@@ -19,6 +19,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -88,6 +89,24 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
 
     [DemandsInitialization("If checked, a column names 'extraction_timestamp' will be included in the extraction that denotes the time the record was added to the extraction.")]
     public bool IncludeTimeStamp { get; set; } = false;
+
+
+    [DemandsInitialization("If chekced, indexed will be created using the primary keys specified")]
+    public bool IndexTables { get; set; } = true;
+
+    [DemandsInitialization(@"How do you want to name the created index, use the following tokens if you need them:   
+         $p - Project Name ('e.g. My Project')
+         $n - Project Number (e.g. 234)
+         $c - Configuration Name (e.g. 'Cases')
+         $d - Dataset name (e.g. 'Prescribing')
+         $a - Dataset acronym (e.g. 'Presc') 
+
+         You must have either $a or $d
+         ",DefaultValue = "Index_$c_$d")]
+    public string IndexNamingPattern { get; set; }
+
+    [DemandsInitialization("An optional list of columns to index on e.g \"Column1, Column2\"")]
+    public string UserDefinedIndex { get; set; }
 
     private DiscoveredDatabase _destinationDatabase;
     private DataTableUploadDestination _destination;
@@ -201,6 +220,11 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         _destination.AlterTimeout = AlterTimeout;
         _destination.AppendDataIfTableExists = AppendDataIfTableExists;
         _destination.IncludeTimeStamp = IncludeTimeStamp;
+        _destination.UseTrigger = AppendDataIfTableExists;
+        _destination.IndexTables = IndexTables;
+        _destination.IndexTableName = GetIndexName();
+        if (UserDefinedIndex is not null)
+            _destination.UserDefinedIndexes = UserDefinedIndex.Split(',').Select(i => i.Trim()).ToList();
         _destination.PreInitialize(_destinationDatabase, listener);
 
         return _destination;
@@ -295,6 +319,29 @@ public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
         }
 
         return col.ColumnInfo.Data_type;
+    }
+
+    private string GetIndexName()
+    {
+        string indexName = IndexNamingPattern;
+        var project = _request.Configuration.Project;
+        indexName = indexName.Replace("$p", project.Name);
+        indexName = indexName.Replace("$n", project.ProjectNumber.ToString());
+        indexName = indexName.Replace("$c", _request.Configuration.Name);
+        if (_request is ExtractDatasetCommand extractDatasetCommand)
+        {
+            indexName = indexName.Replace("$d", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Name);
+            indexName = indexName.Replace("$a", extractDatasetCommand.DatasetBundle.DataSet.Catalogue.Acronym);
+        }
+
+        if (_request is ExtractGlobalsCommand)
+        {
+            indexName = indexName.Replace("$d", ExtractionDirectory.GLOBALS_DATA_NAME);
+            indexName = indexName.Replace("$a", "G");
+        }
+
+
+        return indexName.Replace(" ","");
     }
 
     private string GetTableName(string suffix = null)
