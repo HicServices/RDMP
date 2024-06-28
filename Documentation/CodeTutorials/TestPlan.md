@@ -19,6 +19,8 @@ If the change adds a database migration, ask yourself the following questions:
     * Patch releases contain small improvements and should be usable interchangably with other versions within the same minor version e.g v8.1.4 and v8.1.5
     * Minor released contain new functionality and should be backwards compatable with other versions in the same major version e.g. v8.1.0 and v8.2.0
     * Major releases contain changes that are not backwards compatable
+* Have I tested the change with file system storage?
+    * Does the update need a note on how to migrate an existing YAML instance to this version?
 
 ### Does this change add new functionality?
 If the change adds new functionality, ask yourself the following questions:
