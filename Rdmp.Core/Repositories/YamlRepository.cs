@@ -38,46 +38,8 @@ public class YamlRepository : MemoryDataExportRepository
 
     private object lockFs = new();
 
-    private Version GetYAMLVersion()
-    {
-        string versionPath = Path.Combine(Directory.FullName, "version.yaml");
-        if (File.Exists(versionPath))
-        {
-            return new Version(File.ReadAllText(versionPath));
-        }
-        else
-        {
-            File.WriteAllText(versionPath, GetVersion().ToString());
-            return GetVersion();
-        }
-    }
+    private YamlRepositoryPatcher _patcher;
 
-    private static bool RequiresPatching(Version currentVersion, Version incomingVersion)
-    {
-        return incomingVersion > currentVersion;
-    }
-
-    private void PatchYamlRepository() { 
-        var currentVersion = GetYAMLVersion();
-        var newVersion = GetVersion();
-        DirectoryInfo yamlPatches = new DirectoryInfo("somewhere");//this has to point somewherwe
-        var patches = yamlPatches.GetFiles();
-        Array.Sort(patches, delegate (FileInfo x, FileInfo y) { //todo check this sort works as expectted for 01_XXX anmd 02_YYY etc
-            return string.Compare(x.Name, y.Name);
-        });
-        // find all patchers that are > current verion and run them in order
-        foreach (FileInfo f in patches)
-        {
-            using (StreamReader reader = new StreamReader(f.FullName))
-            {
-                var firstLine = reader.ReadLine() ?? "";
-                if (Version.TryParse(firstLine[1..], out var foundVersion) && foundVersion > currentVersion)
-                {
-                    //run the patch
-                }
-            }
-        }
-    }
 
     public YamlRepository(DirectoryInfo dir)
     {
@@ -85,12 +47,12 @@ public class YamlRepository : MemoryDataExportRepository
 
         if (!Directory.Exists)
             Directory.Create();
-
+        _patcher = new YamlRepositoryPatcher(Directory, this);
         // Build the serializer
         _serializer = CreateSerializer(GetCompatibleTypes());
-        if (RequiresPatching(GetVersion(), GetYAMLVersion()))
+        if (_patcher.RequiresPatching(_patcher.GetYAMLVersion(), GetVersion()))
         {
-            PatchYamlRepository();
+            _patcher.PatchYamlRepository();
         }
         LoadObjects();
 
