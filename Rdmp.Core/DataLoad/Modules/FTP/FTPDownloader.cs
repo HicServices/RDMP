@@ -66,18 +66,18 @@ public class FTPDownloader : IPluginDataProvider
     [DemandsInitialization("The directory on the FTP server that you want to download files from")]
     public string? RemoteDirectory { get; set; }
 
-    [DemandsInitialization("True to set keep alive",DefaultValue = true)]
+    [DemandsInitialization("True to set keep alive", DefaultValue = true)]
     public bool KeepAlive { get; set; }
 
 
-    public void Initialize(ILoadDirectory directory,DiscoveredDatabase dbInfo)
+    public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
         _directory = directory;
     }
 
-    public ExitCodeType Fetch(IDataLoadJob job,GracefulCancellationToken cancellationToken)
+    public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
     {
-        return DownloadFilesOnFTP(_directory ?? throw new InvalidOperationException("No output directory set"),job);
+        return DownloadFilesOnFTP(_directory ?? throw new InvalidOperationException("No output directory set"), job);
     }
 
     private FtpClient SetupFtp()
@@ -93,41 +93,28 @@ public class FTPDownloader : IPluginDataProvider
         return c;
     }
 
-    private AsyncFtpClient AsyncSetupFtp()
-    {
-        var host = FTPServer?.Server ?? throw new NullReferenceException("FTP server not set");
-        var username = FTPServer.Username ?? "anonymous";
-        var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
-        var c = new AsyncFtpClient(host, username, password);
-
-        // Enable periodic NOOP keepalive operations to keep connection active until we're done
-        c.Config.Noop = true;
-        c.AutoConnect();
-        return c;
-    }
-
-    private ExitCodeType DownloadFilesOnFTP(ILoadDirectory destination,IDataLoadEventListener listener)
+    private ExitCodeType DownloadFilesOnFTP(ILoadDirectory destination, IDataLoadEventListener listener)
     {
         var files = GetFileList().ToArray();
 
-        listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
-            $"Identified the following files on the FTP server:{string.Join(',',files)}"));
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+            $"Identified the following files on the FTP server:{string.Join(',', files)}"));
 
         var forLoadingContainedCachedFiles = false;
 
         foreach (var file in files)
         {
-            var action = GetSkipActionForFile(file,destination);
+            var action = GetSkipActionForFile(file, destination);
 
-            listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                 $"File {file} was evaluated as {action}"));
 
             switch (action)
             {
                 case SkipReason.DoNotSkip:
                     listener.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information,$"About to download {file}"));
-                    Download(file,destination);
+                        new NotifyEventArgs(ProgressEventType.Information, $"About to download {file}"));
+                    Download(file, destination);
                     break;
                 case SkipReason.InForLoading:
                     forLoadingContainedCachedFiles = true;
@@ -154,9 +141,9 @@ public class FTPDownloader : IPluginDataProvider
         IsImaginaryFile
     }
 
-    protected SkipReason GetSkipActionForFile(string file,ILoadDirectory destination)
+    protected SkipReason GetSkipActionForFile(string file, ILoadDirectory destination)
     {
-        if (file.StartsWith(".",StringComparison.Ordinal))
+        if (file.StartsWith(".", StringComparison.Ordinal))
             return SkipReason.IsImaginaryFile;
 
         //if there is a regex pattern
@@ -168,7 +155,7 @@ public class FTPDownloader : IPluginDataProvider
     }
 
 
-    private static bool ValidateServerCertificate(object _1,X509Certificate _2,X509Chain _3,
+    private static bool ValidateServerCertificate(object _1, X509Certificate _2, X509Chain _3,
         SslPolicyErrors _4) => true; //any cert will do! yay
 
 
@@ -177,28 +164,43 @@ public class FTPDownloader : IPluginDataProvider
         return _connection.Value.GetNameListing().ToList().Where(_connection.Value.FileExists);
     }
 
-    protected virtual void Download(string file,ILoadDirectory destination)
+    protected virtual void Download(string file, ILoadDirectory destination)
     {
         var remotePath = !string.IsNullOrWhiteSpace(RemoteDirectory)
             ? $"{RemoteDirectory}/{file}"
             : file;
 
-        var destinationFileName = Path.Combine(destination.ForLoading.FullName,file);
-        _connection.Value.DownloadFile(destinationFileName,remotePath);
+        var destinationFileName = Path.Combine(destination.ForLoading.FullName, file);
+        _connection.Value.DownloadFile(destinationFileName, remotePath);
         _filesRetrieved.Add(remotePath);
     }
 
-    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode,IDataLoadEventListener postLoadEventListener)
+    public virtual void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
+        postLoadEventListener.OnNotify(this,
+                  new NotifyEventArgs(ProgressEventType.Information,
+                      $"FTPDownloader ExitCode:{exitCode.GetTypeCode()}. Success={exitCode == ExitCodeType.Success}"));
         if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
-
-        //// Force a reconnection attempt if we got cut off
-        //if (!_connection.Value.IsStillConnected())
-        //    _connection.Value.Connect(true);
+        postLoadEventListener.OnNotify(this,
+                  new NotifyEventArgs(ProgressEventType.Information,
+                      $"FTPDownloader: Attempting to create new connwection"));
         _connection.Value.Disconnect();
-        _connection =  new Lazy<FtpClient>(SetupFtp, LazyThreadSafetyMode.ExecutionAndPublication);
-        //AsyncSetupFtp
+        postLoadEventListener.OnNotify(this,
+               new NotifyEventArgs(ProgressEventType.Information,
+                   $"FTPDownloader:Dropped Old Connection"));
+        _connection = new Lazy<FtpClient>(SetupFtp, LazyThreadSafetyMode.ExecutionAndPublication);
+        if (!_connection.Value.IsConnected)
+            _connection.Value.Connect();
+        postLoadEventListener.OnNotify(this,
+                 new NotifyEventArgs(ProgressEventType.Information,
+                     $"FTPDownloader:Established Connection"));
+        postLoadEventListener.OnNotify(this,
+                 new NotifyEventArgs(ProgressEventType.Information,
+                     $"FTPDownloader files:{string.Join(',', _filesRetrieved)}"));
         foreach (var file in _filesRetrieved) _connection.Value.DeleteFile(file);
+        postLoadEventListener.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "FTPDownloader: Successfully Deleted files"));
     }
 
 
@@ -210,7 +212,7 @@ public class FTPDownloader : IPluginDataProvider
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs("Failed to SetupFTP",CheckResult.Fail,e));
+            notifier.OnCheckPerformed(new CheckEventArgs("Failed to SetupFTP", CheckResult.Fail, e));
         }
     }
 }
