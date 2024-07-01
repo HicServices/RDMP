@@ -48,14 +48,24 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             "ILoadMetadata.LocationOfFlatFiles", false, true);
 
         helpIcon1.SetHelpText("Location Of Flat Files", help);
-
-        tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
-        tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
-        tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
-        tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
-        rbChooseYourOwn.Checked = true;
-        rbCreateNew.Checked = false;
-        rbUseExisting.Checked = false;
+        //if all the same root
+        var rootDirectory = ((LoadMetadata)loadMetadata).GetRootDirectory();
+        if (rootDirectory != null)
+        {
+            tbUseExisting.Text = rootDirectory.FullName;
+            rbUseExisting.Checked = true;
+        }
+        else
+        {
+            //if different        
+            tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
+            tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
+            tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
+            tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
+            rbChooseYourOwn.Checked = true;
+            rbCreateNew.Checked = false;
+            rbUseExisting.Checked = false;
+        }
         rb_CheckedChanged(null, null);
     }
 
