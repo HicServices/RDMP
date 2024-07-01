@@ -323,11 +323,15 @@
 		<PackageReference Include="YamlDotNet" />
 	</ItemGroup>
 	<ItemGroup>
+		<EmbeddedResource Include="Repositories\YAMLPatches\windows\*.bat"/>
+	</ItemGroup>
+	<ItemGroup>
 		<EmbeddedResource Include="Curation\KeywordHelp.txt">
 			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 	</ItemGroup>
 	<ItemGroup>
+		<Folder Include="Repositories\YAMLPatches\linux\" />
 		<Folder Include="Resources\" />
 		<Folder Include="ReusableLibraryCode\" />
 	</ItemGroup>
