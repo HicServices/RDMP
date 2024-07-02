@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Ticketing;
@@ -48,6 +49,8 @@ public interface ITicketingSystem : ICheckable
         string releaseTicket, out string reason, out Exception exception);
 
     string GetProjectFolderName(string masterTicket);
+
+    List<string> GetAvailableStatuses();
 }
 
 public enum TicketingReleaseabilityEvaluation

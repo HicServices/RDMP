@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -29,4 +30,7 @@ public abstract class PluginTicketingSystem : ITicketingSystem
         string requestTicket, string releaseTicket, out string reason, out Exception exception);
 
     public abstract string GetProjectFolderName(string masterTicket);
+
+    public abstract List<string> GetAvailableStatuses();
+
 }

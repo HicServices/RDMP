@@ -19,7 +19,7 @@ namespace Rdmp.Core.Curation;
 /// </summary>
 public class SimpleStringValueEncryption : IEncryptStrings
 {
-    private readonly RSACryptoServiceProvider _turing = new();
+    private readonly RSACryptoServiceProvider _turing = new RSACryptoServiceProvider(1024);
 
     private const string Key =
         @"<?xml version=""1.0"" encoding=""utf-16""?>

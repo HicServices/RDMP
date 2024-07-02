@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -55,4 +56,9 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
 
     public string GetProjectFolderName(string masterTicket) =>
         UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
+
+    public List<string> GetAvailableStatuses()
+    {
+        return new List<string>();
+    }
 }

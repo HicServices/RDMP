@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -118,6 +119,11 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
         });
     }
 
+    public List<TicketingSystemReleaseStatus> GetReleaseStatuses()
+    {
+        return Repository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", this.ID).ToList();
+    }
+
     /// <inheritdoc/>
     internal TicketingSystemConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
@@ -127,4 +133,5 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
         Name = r["Name"] as string;
         DataAccessCredentials_ID = ObjectToNullableInt(r["DataAccessCredentials_ID"]);
     }
+
 }
