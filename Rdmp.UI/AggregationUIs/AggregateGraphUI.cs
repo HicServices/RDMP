@@ -284,10 +284,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
             if (endDateOverride != null)
                 builder.AxisEndDateOverride = endDateOverride;
 
+            var dateColumnName = "joinDt";
             if (isRefresh)
             {
                 //wipe out data from dt that is between these dates
-                var dateColumnName = "joinDt";
+
                 var columnIndex = _dt.Columns.IndexOf(dateColumnName);
 
                 var incriment = axis.AxisIncrement;
@@ -353,7 +354,11 @@ public partial class AggregateGraphUI : AggregateGraph_Design
                 var adapter = server.GetDataAdapter(_cmd);
                 adapter.Fill(_dt);
                 _cmd = null;
-
+                if (isRefresh)
+                {
+                    _dt.DefaultView.Sort = dateColumnName;
+                    _dt = _dt.DefaultView.ToTable();
+                }
                 //trim all leading/trailing whitespace from column
                 if (!isRefresh)
                     foreach (DataColumn c in _dt.Columns)
@@ -923,7 +928,10 @@ public partial class AggregateGraphUI : AggregateGraph_Design
     private void btnRefreshData_Click(object sender, EventArgs e)
     {
         var axis = AggregateConfiguration.GetAxisIfAny();
-        var dialog = new AggregateGraphDateSelector(axis.StartDate, axis.EndDate);
+        var getDateString = "GETDATE()";
+        var startDate = axis.StartDate == getDateString ? "" : axis.StartDate;
+        var endDate = axis.EndDate == getDateString ? "" : axis.EndDate;
+        var dialog = new AggregateGraphDateSelector(startDate, endDate);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
             ReloadDataBetweenDates(dialog.StartDate, dialog.EndDate);
