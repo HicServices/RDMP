@@ -1,8 +1,8 @@
 # Cohort Versioning
-Cohort Identitiy Configurations can be versioned, allowing you to store copies of cohort configurations prior to making updates.
-you may want to use versioning instead of cloning the cohort to keep the tree list of cohort configurations simple, as versions do not appearin the traditional RDMP tree structure.
+Cohort Identity Configurations can be versioned, allowing you to store copies of cohort configurations prior to making updates.
+you may want to use versioning instead of cloning the cohort to keep the tree list of cohort configurations simple, as versions do not appear in the traditional RDMP tree structure.
 
-Cohort versioning is accessable via the Cohort creation page within RDMP, from here you can open existing versions of the cohort, or save the current configuration as a new version.
+Cohort versioning is accessible via the Cohort creation page within RDMP, from here you can open existing versions of the cohort, or save the current configuration as a new version.
 
 ## Command Line
 Versioning can be performed by using the CreateVersionOfCohortConfiguration command.
