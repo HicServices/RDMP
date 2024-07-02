@@ -115,7 +115,7 @@ CREATE TABLE [dbo].[AggregateDimension](
 	[Alias] [varchar](100) NULL,
 	[Order] [int] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
-	[GroupBy] [int] DEFAULT 1 WITH VALUES,
+	[GroupBy] [int] DEFAULT 1,
  CONSTRAINT [PK_AggregateDimension] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -513,7 +513,7 @@ CREATE TABLE [dbo].[ExtractionInformation](
 	[IsExtractionIdentifier] [bit] NOT NULL,
 	[IsPrimaryKey] [bit] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
-	[GroupBy] [int] DEFAULT 1 WITH VALUES
+	[GroupBy] [int] DEFAULT 1,
  CONSTRAINT [PK_ExtractionInformation] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
