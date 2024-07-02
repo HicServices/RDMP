@@ -1,9 +1,24 @@
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [8.2.0] - Unreleased
+
+## Changed
+
+- Add Key-Value store for instance settings
+- Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
+- Add ability to use .rdmp plugin files
+- Add the ability to store versions of cohort configurations, see [Cohort Versioning](Documentation\Cohorts\CohortVersioning.md)
+- Add ability to restrict GROUPBY clause in cohort aggregate builder
+- When cloning an ExtractionConfiguration with a deprecated catalogue, the GUI will ask if you want to replace the deprecated catalogue with the known replacement
+- Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
+- Add ability to point a catalogue to a new data source [Documentation](./Documentation/Catalogues/UpdateCatalogueDataLocation.md)
+- Allow DQE graphs to be scrollable and scalable
+- Allow for partial refreshes of time-based DQE charts
+- Fix issue when creating PostgreSQL Logging Server
 
 ## [8.1.7] - 2024-06-17
 
@@ -58,7 +73,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bump Terminal.Gui from 1.15.1 to 1.16.0 
 - Bump HIC.BadMedicine from 1.2.0 to 1.2.1 
 - Bump NPOI from 2.6.2 to 2.7.0 
-
 
 ## [8.1.4] - 2024-02-19
 

@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,8 +15,11 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Repositories.Construction;
@@ -25,6 +28,11 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
+using FAnsi;
+using Terminal.Gui;
+using TB.ComponentModel;
+using Npgsql;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
@@ -65,6 +73,10 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
     public Type Adjuster { get; set; }
 
+    public bool AppendDataIfTableExists { get; set; }
+
+    public bool IncludeTimeStamp { get; set; }
+
     private CultureInfo _culture;
 
     [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
@@ -81,6 +93,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     /// the table already existed e.g. data was simply added
     /// </summary>
     public bool CreatedTable { get; private set; }
+    public bool UseTrigger { get; set; } = false;
+
+    public bool IndexTables { get; set; } = false;
+    public string IndexTableName { get; set; }
+    public List<String> UserDefinedIndexes { get; set; } = new();
 
     private IBulkCopy _bulkcopy;
     private int _affectedRows;
@@ -103,6 +120,9 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
     private bool _firstTime = true;
     private HashSet<string> _primaryKey = new(StringComparer.CurrentCultureIgnoreCase);
     private DiscoveredTable _discoveredTable;
+    private readonly string _extractionTimeStamp = "extraction_timestamp";
+
+    private readonly IExternalCohortTable _externalCohortTable;
 
     //All column values sent to server so far
     private Dictionary<string, Guesser> _dataTypeDictionary;
@@ -118,12 +138,58 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         ExplicitTypes = new List<DatabaseColumnRequest>();
     }
 
+    public DataTableUploadDestination(IExternalCohortTable externalCohortTable)
+    {
+        ExplicitTypes = new List<DatabaseColumnRequest>();
+        _externalCohortTable = externalCohortTable;
+    }
+
+    private static object[] FilterOutItemAtIndex(object[] itemArray, int[] indexes)
+    {
+        if (indexes.Length == 0) return itemArray;
+        return itemArray.Where((source, idx) => !indexes.Contains(idx)).ToArray();
+    }
+    private string GetPKValue(DataColumn pkColumn, DataRow row)
+    {
+        var pkName = pkColumn.ColumnName;
+        var value = row[pkName];
+        if (_externalCohortTable is not null)
+        {
+            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+            if (pkName == releaseIdentifierField)
+            {
+                //going to have to look up the previous relaseID to match
+                DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
+                using var lookupDT = cohortTable.GetDataTable();
+                var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
+                var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
+                var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == value.ToString()).LastOrDefault();
+                if (foundRow is not null)
+                {
+                    var originalValue = foundRow.ItemArray[privateIdIndex];
+                    var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
+                    if (existingIDsforReleaseID.Count() > 0)
+                    {
+                        //we don't know what the current releae ID is ( there may be ones from multiple cohorts)
+                        var ids = existingIDsforReleaseID.Select(id => $"'{id}'");
+                        return $"{pkName} in ({string.Join(',', ids)})";
+                    }
+                }
+            }
+        }
+        return $"{pkName} = '{value}'";
+    }
+
+
     public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,
         GracefulCancellationToken cancellationToken)
     {
         if (toProcess == null)
             return null;
 
+        var rowsToModify = new List<DataRow>();
+        var pkColumns = toProcess.PrimaryKey;
         RemoveInvalidCharactersInSchema(toProcess);
 
         IDatabaseColumnRequestAdjuster adjuster = null;
@@ -153,6 +219,11 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
         StartAuditIfExists(TargetTableName);
 
+        if (IncludeTimeStamp)
+        {
+            AddTimeStampToExtractionData(toProcess);
+        }
+
         if (_loggingDatabaseListener != null)
             listener = new ForkDataLoadEventListener(listener, _loggingDatabaseListener);
 
@@ -178,7 +249,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                     if (_discoveredTable.IsEmpty())
                         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
                             $"Found table {TargetTableName} already, normally this would forbid you from loading it (data duplication / no primary key etc) but it is empty so we are happy to load it, it will not be created"));
-                    else
+                    else if (!AppendDataIfTableExists)
                         throw new Exception(
                             $"There is already a table called {TargetTableName} at the destination {_database}");
 
@@ -209,8 +280,55 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
 
             _managedConnection = _server.BeginNewTransactedConnection();
             _bulkcopy = _discoveredTable.BeginBulkInsert(Culture, _managedConnection.ManagedTransaction);
-
             _firstTime = false;
+        }
+
+        if (IncludeTimeStamp && !_discoveredTable.DiscoverColumns().Where(c => c.GetRuntimeName() == _extractionTimeStamp).Any())
+        {
+            _discoveredTable.AddColumn(_extractionTimeStamp, new DatabaseTypeRequest(typeof(DateTime)), true, 30000);
+        }
+        if (IndexTables)
+        {
+            var indexes = UserDefinedIndexes.Count != 0 ? UserDefinedIndexes : pkColumns.Select(c => c.ColumnName);
+            try
+            {
+                _discoveredTable.CreateIndex(IndexTableName, _discoveredTable.DiscoverColumns().Where(c => indexes.Contains(c.GetRuntimeName())).ToArray());
+            }
+            catch (Exception e)
+            {
+                //We only warn about not creating the index, as it's not  critical
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
+            }
+        }
+        if (UseTrigger && pkColumns.Length > 0)
+        {
+            if (listener.GetType() == typeof(ForkDataLoadEventListener)) //need to add special fields to the datatable if we are logging to a database
+            {
+                var job = (ForkDataLoadEventListener)listener;
+                var listeners = job.GetToLoggingDatabaseDataLoadEventListenersIfany();
+                foreach (var dleListener in listeners)
+                {
+                    IDataLoadInfo dataLoadInfo = dleListener.DataLoadInfo;
+                    DataColumn newColumn = new(SpecialFieldNames.DataLoadRunID, typeof(int))
+                    {
+                        DefaultValue = dataLoadInfo.ID
+                    };
+                    try
+                    {
+                        _discoveredTable.DiscoverColumn(SpecialFieldNames.DataLoadRunID);
+                    }
+                    catch (Exception)
+                    {
+                        _discoveredTable.AddColumn(SpecialFieldNames.DataLoadRunID, new DatabaseTypeRequest(typeof(int)), true, 30000);
+
+                    }
+                    if (!toProcess.Columns.Contains(SpecialFieldNames.DataLoadRunID))
+                        toProcess.Columns.Add(newColumn);
+                    foreach (DataRow dr in toProcess.Rows)
+                        dr[SpecialFieldNames.DataLoadRunID] = dataLoadInfo.ID;
+
+                }
+            }
         }
 
         try
@@ -218,10 +336,100 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
             if (AllowResizingColumnsAtUploadTime && !CreatedTable)
                 ResizeColumnsIfRequired(toProcess, listener);
 
-            //push the data
             swTimeSpentWriting.Start();
+            if (AppendDataIfTableExists && pkColumns.Length > 0) //assumes columns are the same
+            {
+                //drop any pk clashes
+                var existingData = _discoveredTable.GetDataTable();
+                var rowsToDelete = new List<DataRow>();
+                var releaseIdentifier = _externalCohortTable is not null ? _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1] : "ReleaseId";
+                int[] toProcessIgnoreColumns = [toProcess.Columns.IndexOf(SpecialFieldNames.DataLoadRunID), toProcess.Columns.IndexOf(releaseIdentifier)];
+                int[] existingDataIgnoreColumns = [existingData.Columns.IndexOf(SpecialFieldNames.DataLoadRunID), existingData.Columns.IndexOf(releaseIdentifier), existingData.Columns.IndexOf(SpecialFieldNames.ValidFrom)];
+                foreach (DataRow row in toProcess.Rows)
+                {
 
-            _affectedRows += _bulkcopy.Upload(toProcess);
+                    foreach (DataColumn pkCol in pkColumns)
+                    {
+                        bool clash = false;
+                        if (_externalCohortTable is not null && pkCol.ColumnName == _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1])
+                        {
+                            // If it's a cohort release identifier
+                            // look up the original value and check we've not already extected the same value under a different release ID
+                            var privateIdentifierField = _externalCohortTable.PrivateIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+                            var releaseIdentifierField = _externalCohortTable.ReleaseIdentifierField.Split('.').Last()[1..^1];//remove the "[]" from the identifier field
+                            DiscoveredTable cohortTable = _externalCohortTable.DiscoverCohortTable();
+                            var lookupDT = cohortTable.GetDataTable();
+                            var releaseIdIndex = lookupDT.Columns.IndexOf(releaseIdentifierField);
+                            var privateIdIndex = lookupDT.Columns.IndexOf(privateIdentifierField);
+                            var foundRow = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[releaseIdIndex].ToString() == row[pkCol.ColumnName].ToString()).FirstOrDefault();
+                            if (foundRow is not null)
+                            {
+                                var originalValue = foundRow.ItemArray[privateIdIndex];
+                                var existingIDsforReleaseID = lookupDT.Rows.Cast<DataRow>().Where(r => r.ItemArray[privateIdIndex].ToString() == originalValue.ToString()).Select(s => s.ItemArray[releaseIdIndex].ToString());
+                                clash = existingData.AsEnumerable().Any(r => existingIDsforReleaseID.Contains(r[pkCol.ColumnName].ToString()));
+                            }
+                        }
+                        else
+                        {
+                            var val = row[pkCol.ColumnName];
+                            clash = existingData.AsEnumerable().Any(r => r[pkCol.ColumnName].ToString() == val.ToString());
+
+                        }
+                        if (clash && UseTrigger)
+                        {
+                            if (existingData.AsEnumerable().Any(r => FilterOutItemAtIndex(r.ItemArray, existingDataIgnoreColumns).ToList().SequenceEqual(FilterOutItemAtIndex(row.ItemArray, toProcessIgnoreColumns).ToList()))) //do we have to worry about special field? what if the load ids are different?
+                            {
+                                //the row is the exact same,so there is no clash
+                                clash = false;
+                                rowsToDelete.Add(row);
+                            }
+                            else //row needs updated, but only if we're tracking history
+                            {
+                                rowsToModify.Add(row);//need to know what releaseId to replace
+                                break;
+                            }
+                        }
+                    }
+                }
+                foreach (DataRow row in rowsToDelete.Distinct())
+                    toProcess.Rows.Remove(row);
+
+            }
+
+
+            foreach (DataRow row in rowsToModify.Distinct())
+            {
+                //replace existing 
+                var args = new DatabaseOperationArgs();
+                List<String> columns = [];
+                foreach (DataColumn column in toProcess.Columns)
+                {
+                    //if (!pkColumns.Contains(column))
+                    //{
+                    columns.Add(column.ColumnName);
+                    //}
+                }
+                //need to check for removed column and null them out
+                var existingColumns = _discoveredTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+                var columnsThatPreviouslyExisted = existingColumns.Where(c => !pkColumns.Select(pk => pk.ColumnName).Contains(c) && !columns.Contains(c) && c != SpecialFieldNames.DataLoadRunID && c != SpecialFieldNames.ValidFrom);
+                var nullEntries = string.Join(" ,", columnsThatPreviouslyExisted.Select(c => $"{c} = NULL"));
+                var nullText = nullEntries.Length > 0 ? $" , {nullEntries}" : "";
+                var columnString = string.Join(" , ", columns.Select(col => $"{col} = '{row[col]}'").ToList());
+                var pkMatch = string.Join(" AND ", pkColumns.Select(pk => GetPKValue(pk, row)).ToList());
+                var sql = $"update {_discoveredTable.GetFullyQualifiedName()} set {columnString} {nullText} where {pkMatch}";
+                var cmd = _discoveredTable.GetCommand(sql, args.GetManagedConnection(_discoveredTable).Connection);
+                cmd.ExecuteNonQuery();
+            }
+
+            foreach (DataRow row in rowsToModify.Distinct())
+            {
+                toProcess.Rows.Remove(row);
+            }
+            if (toProcess.Rows.Count == 0 && !rowsToModify.Any()) return null;
+            if (toProcess.Rows.Count > 0)
+            {
+                _affectedRows += _bulkcopy.Upload(toProcess);
+            }
 
             swTimeSpentWriting.Stop();
             listener.OnProgress(this,
@@ -242,6 +450,7 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         _dataLoadInfo?.CloseAndMarkComplete();
         return null;
     }
+
 
     private static void RemoveInvalidCharactersInSchema(DataTable toProcess)
     {
@@ -276,6 +485,17 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         {
             dcr.IsPrimaryKey = false;
             _primaryKey.Add(dcr.ColumnName);
+        }
+    }
+
+
+    private void AddTimeStampToExtractionData(DataTable toProcess)
+    {
+        var timeStamp = DateTime.Now;
+        toProcess.Columns.Add(_extractionTimeStamp);
+        foreach (DataRow row in toProcess.Rows)
+        {
+            row[_extractionTimeStamp] = timeStamp;
         }
     }
 
@@ -319,9 +539,15 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
         //see if any have changed
         foreach (DataColumn column in toProcess.Columns)
         {
+            if (column.ColumnName == _extractionTimeStamp && IncludeTimeStamp)
+            {
+                continue; //skip internally generated columns
+            }
             //get what is required for the current batch and the current type that is configured in the live table
-            var oldSqlType = oldTypes[column.ColumnName];
-            var newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
+            oldTypes.TryGetValue(column.ColumnName, out var oldSqlType);
+            _dataTypeDictionary.TryGetValue(column.ColumnName, out var knownType);
+
+            var newSqlType = knownType is not null ? typeTranslater.GetSQLDBTypeForCSharpType(knownType.Guess) : null;
 
             var changesMade = false;
 
@@ -444,6 +670,22 @@ public class DataTableUploadDestination : IPluginDataFlowComponent<DataTable>, I
                 //create the primary key to match user provided columns
                 _discoveredTable.CreatePrimaryKey(AlterTimeout, pkColumnsToCreate);
             }
+        }
+        if (UseTrigger && _discoveredTable.DiscoverColumns().Where(col => col.IsPrimaryKey).Any()) //can't use triggers without a PK
+        {
+
+            var factory = new TriggerImplementerFactory(_database.Server.DatabaseType);
+            var _triggerImplementer = factory.Create(_discoveredTable);
+            var currentStatus = _triggerImplementer.GetTriggerStatus();
+            if (currentStatus == TriggerStatus.Missing)
+                try
+                {
+                    _triggerImplementer.CreateTrigger(ThrowImmediatelyCheckNotifier.Quiet);
+                }
+                catch (Exception e)
+                {
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, e.Message));
+                }
         }
 
         EndAuditIfExists();
