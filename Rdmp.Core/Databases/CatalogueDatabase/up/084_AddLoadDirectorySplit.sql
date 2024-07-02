@@ -28,9 +28,3 @@ BEGIN
 	EXEC(@SplitMetaDataSQL)
 END
 GO
-
-if exists(select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='LoadMetaData' and COLUMN_NAME='LocationOfFlatFiles')
-BEGIN
-	ALTER TABLE LoadMetadata
-	DROP Column LocationOfFlatFiles
-END

@@ -79,7 +79,7 @@ public partial class UpdateCatalogueDataLocationUI : Form
         }
         else
         {
-            var location = _catalogue.CatalogueItems.Select(ci => DropColumnIdentifierFromName(ci.ColumnInfo.Name))
+            var location = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo is not null).Select(ci => DropColumnIdentifierFromName(ci.ColumnInfo.Name))
                 .ToList();
 
             tbCurrentLocation.Text =
@@ -133,7 +133,7 @@ public partial class UpdateCatalogueDataLocationUI : Form
                 _activator.RefreshBus.Publish(_catalogue, new RefreshObjectEventArgs(_catalogue));
             if (_columnInfo is not null)
                 _activator.RefreshBus.Publish(_columnInfo, new RefreshObjectEventArgs(_columnInfo));
-            //todo some sort of UI update to let the user know it's worked
+            this.Close();
         }
         else
         {
