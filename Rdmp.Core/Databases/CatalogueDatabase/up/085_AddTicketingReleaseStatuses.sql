@@ -1,4 +1,4 @@
-﻿--Version 8.2.1
+﻿--Version: 8.2.1
 --Description: Add lookup table of release status names for a ticketing configuration
 
 
