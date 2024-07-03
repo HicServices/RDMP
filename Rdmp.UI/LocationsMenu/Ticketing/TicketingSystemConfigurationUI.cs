@@ -108,7 +108,6 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             btnCreate.Enabled = false;
             btnDelete.Enabled = true;
             btnSave.Enabled = false;
-            var x = _ticketingSystemConfiguration.GetReleaseStatuses();
             tbReleases.Text = string.Join(',', _ticketingSystemConfiguration.GetReleaseStatuses().Select(s => s.Name).ToList());
         }
 

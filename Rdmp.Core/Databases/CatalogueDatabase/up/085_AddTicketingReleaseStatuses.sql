@@ -7,7 +7,6 @@ BEGIN
 CREATE TABLE [dbo].[TicketingSystemReleaseStatus](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Status] [nvarchar](250) NOT NULL,
-	[StatusID] [int] NULL,
 	[TicketingSystemConfigurationID] [int] NOT NULL,
 	    FOREIGN KEY (TicketingSystemConfigurationID) REFERENCES TicketingSystemConfiguration(ID),
 

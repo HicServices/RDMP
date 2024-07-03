@@ -20,12 +20,10 @@ namespace Rdmp.Core.Curation
     {
 
         private string _status;
-        private int? _statusID;
         private int _ticketingSystemConfiguratonID;
 
         [NotNull]
         public string Name { get => _status; set => SetField(ref _status, value); }
-        public int? StatusID { get => _statusID; set => SetField(ref _statusID, value); }
 
         [NotNull]
         public int TicketingSystemConfigurationID { get => _ticketingSystemConfiguratonID; set => SetField(ref _ticketingSystemConfiguratonID, value); }
@@ -36,8 +34,7 @@ namespace Rdmp.Core.Curation
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                //{"Status", status},
-                {"StatusID", statusID is null? statusID: DBNull.Value },
+                {"Status", status},
                 {"TicketingSystemConfigurationID", config.ID }
             });
         }
@@ -45,7 +42,6 @@ namespace Rdmp.Core.Curation
         public TicketingSystemReleaseStatus(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             Name = r["Status"] as string;
-            StatusID = r["StatusID"] as int?;
             TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());
         }
     }
