@@ -2,9 +2,10 @@ name: Build
 
 # Run this workflow every time a new commit pushed to your repository
 
-on: 
+on:
   schedule:
-    - cron '40 * * * *'
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '30 5,17 * * *'
 
 env:
   DOTNET_NOLOGO: 1
