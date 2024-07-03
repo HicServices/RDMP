@@ -4,7 +4,7 @@ name: Build
 
 on: 
     schedule:
-        - cron '30 * * * *'
+        - cron '40 * * * *'
 
 env:
   DOTNET_NOLOGO: 1
@@ -74,8 +74,7 @@ jobs:
           files: ./db-ui.lcov ./db-core.lcov
           flag-name: unit tests
 
-  
-  tests_file_system:
+   tests_file_system:
     name: Run File System Tests
     runs-on: windows-latest
     steps:
