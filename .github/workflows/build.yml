@@ -135,7 +135,7 @@ jobs:
           files: ./fs-ui.lcov ./fs-core.lcov
           flag-name: unit tests
 
-  bundle:
+   bundle:
     name: Bundle Build
     runs-on: windows-latest
     steps:
@@ -268,7 +268,7 @@ jobs:
           path: ${{ github.workspace }}/
           key: ${{ github.sha }}-your-cache-key-bundled
 
-  production-upload:
+   production-upload:
     name: Production Upload
     runs-on: windows-latest
     needs: ['bundle','tests_db','tests_file_system']
