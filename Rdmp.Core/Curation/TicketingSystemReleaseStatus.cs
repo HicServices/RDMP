@@ -40,7 +40,7 @@ namespace Rdmp.Core.Curation
         {
             Name = r["Status"] as string;
             StatusID = r["StatusID"] as int?;
-            TicketingSystemConfigurationID = Int32.Parse(r["TicketingSystemConfigurationID"] as string);
+            TicketingSystemConfigurationID = 1;// Int32.Parse(r["TicketingSystemConfigurationID"] as string);
         }
     }
 }
