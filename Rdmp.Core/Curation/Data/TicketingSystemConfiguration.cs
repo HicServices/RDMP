@@ -121,7 +121,6 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
 
     public List<TicketingSystemReleaseStatus> GetReleaseStatuses()
     {
-        var x = Repository.GetAllObjects<TicketingSystemReleaseStatus>();
         return [.. Repository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", this.ID)];
     }
 

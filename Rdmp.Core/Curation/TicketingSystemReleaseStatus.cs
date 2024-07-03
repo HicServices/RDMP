@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -13,6 +12,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 namespace Rdmp.Core.Curation
 {
+    /// <summary>
+    /// Stored a status name and which ticketing system it coresponds to
+    /// </summary>
     public class TicketingSystemReleaseStatus : DatabaseEntity, INamed
     {
 
@@ -30,7 +32,7 @@ namespace Rdmp.Core.Curation
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Status", status },
+                //{"Status", status},
                 {"StatusID", statusID is null? statusID: DBNull.Value },
                 {"TicketingSystemConfigurationID", config.ID }
             });
@@ -40,7 +42,7 @@ namespace Rdmp.Core.Curation
         {
             Name = r["Status"] as string;
             StatusID = r["StatusID"] as int?;
-            TicketingSystemConfigurationID = 1;// Int32.Parse(r["TicketingSystemConfigurationID"] as string);
+            TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());
         }
     }
 }

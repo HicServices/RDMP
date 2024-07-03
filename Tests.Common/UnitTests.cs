@@ -19,6 +19,7 @@ using FAnsi.Implementations.PostgreSql;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -408,7 +409,12 @@ public class UnitTests
 
         if (typeof(T) == typeof(TicketingSystemConfiguration))
             return (T)(object)new TicketingSystemConfiguration(repository, "My Ticketing System");
-
+        if (typeof(T) == typeof(TicketingSystemReleaseStatus))
+        {
+            var ticketingSystem = WhenIHaveA<TicketingSystemConfiguration>(repository);
+            ticketingSystem.SaveToDatabase();
+            return (T)(object)new TicketingSystemReleaseStatus(repository, "my_status", null, ticketingSystem);
+        }
         if (typeof(T) == typeof(SupportingDocument))
             return (T)(object)new SupportingDocument(repository, WhenIHaveA<Catalogue>(repository), "HelpFile.docx");
 
@@ -571,16 +577,17 @@ public class UnitTests
             return (T)(object)new Memento(repository, commit, MementoType.Add, cata, null, "placeholder");
         }
 
-        if(typeof(T) == typeof(LoadMetadataCatalogueLinkage))
+        if (typeof(T) == typeof(LoadMetadataCatalogueLinkage))
         {
             var cata = WhenIHaveA<Catalogue>(repository);
 
             var lmd = WhenIHaveA<LoadMetadata>(repository);
 
-            return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd,cata);
+            return (T)(object)new LoadMetadataCatalogueLinkage(repository, lmd, cata);
         }
 
-        if (typeof(T) == typeof(Setting)) {
+        if (typeof(T) == typeof(Setting))
+        {
             return (T)(object)new Setting(repository.CatalogueRepository, "", "");
         }
 
