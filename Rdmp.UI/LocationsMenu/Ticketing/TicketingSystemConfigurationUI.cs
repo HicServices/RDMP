@@ -9,6 +9,7 @@ using System.Linq;
 using FluentFTP.Helpers;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
@@ -121,7 +122,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         var releases = tbReleases.Text.Split(',');
         var existingReleases = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", _ticketingSystemConfiguration.ID);
         var toDelete = existingReleases.Where(s => !releases.Contains(s.Name)).ToList();
-        foreach (var release in releases.Where(rs => !existingReleases.Select(er => er.Name).Contains(rs)))
+        foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Name).Contains(rs)))
         {
             var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release, null, _ticketingSystemConfiguration);
             rs.SaveToDatabase();
@@ -162,13 +163,14 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             if (instance != null)
             {
                 var knownStatuses = instance.GetAvailableStatuses();
-                var requestedStatuses = tbReleases.Text.Split(',');
+                var requestedStatuses = tbReleases.Text.Split(',').Where(s => s != "");
+                if (!requestedStatuses.Any()) checksUI1.OnCheckPerformed(new CheckEventArgs($"No Release status set", CheckResult.Fail));
+
                 foreach (var status in requestedStatuses)
                 {
                     if (!knownStatuses.Contains(status))
                     {
                         checksUI1.OnCheckPerformed(new CheckEventArgs($"{status} is not a known status within the ticketing system", CheckResult.Fail));
-                        //throw new Exception("Unknown status"); //do something, but maybe on save?
                     }
                 }
             }
