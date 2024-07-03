@@ -205,5 +205,6 @@ public enum RDMPConcept
     TableInfoDatabaseNode,
     Dataset,
     LoadMetadataCatalogueLinkage,
-    Setting
+    Setting,
+    TicketingSystemReleaseStatus
 }

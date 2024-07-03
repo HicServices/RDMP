@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -22,8 +23,11 @@ namespace Rdmp.Core.Curation
         private int? _statusID;
         private int _ticketingSystemConfiguratonID;
 
+        [NotNull]
         public string Name { get => _status; set => SetField(ref _status, value); }
         public int? StatusID { get => _statusID; set => SetField(ref _statusID, value); }
+
+        [NotNull]
         public int TicketingSystemConfigurationID { get => _ticketingSystemConfiguratonID; set => SetField(ref _ticketingSystemConfiguratonID, value); }
 
         public TicketingSystemReleaseStatus() { }
