@@ -2,7 +2,9 @@ name: Build
 
 # Run this workflow every time a new commit pushed to your repository
 
-on: push
+on: 
+    schedule:
+        - cron '30 * * * *'
 
 env:
   DOTNET_NOLOGO: 1
@@ -11,7 +13,7 @@ env:
 jobs:
   # Set the job key. The key is displayed as the job name
   # when a job name is not provided
-  tests_db:
+   tests_db:
     name: Run Database Tests
     runs-on: windows-latest
     steps:
