@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.Curation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
@@ -27,7 +28,7 @@ public abstract class PluginTicketingSystem : ITicketingSystem
     public abstract void NavigateToTicket(string ticketName);
 
     public abstract TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket,
-        string requestTicket, string releaseTicket, out string reason, out Exception exception);
+        string requestTicket, string releaseTicket, List<TicketingSystemReleaseStatus> acceptedStatuses,out string reason, out Exception exception);
 
     public abstract string GetProjectFolderName(string masterTicket);
 

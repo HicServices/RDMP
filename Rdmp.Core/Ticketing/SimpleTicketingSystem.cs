@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.Curation;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -46,7 +47,7 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     }
 
     public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
-        string releaseTicket, out string reason, out Exception exception)
+        string releaseTicket, List<TicketingSystemReleaseStatus> acceptedStatuses, out string reason, out Exception exception)
     {
         reason = null;
         exception = null;

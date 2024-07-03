@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.Curation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Ticketing;
@@ -42,11 +43,12 @@ public interface ITicketingSystem : ICheckable
     /// <param name="masterTicket"></param>
     /// <param name="requestTicket"></param>
     /// <param name="releaseTicket"></param>
+    /// <param name="acceptedStatuses"></param>
     /// <param name="reason"></param>
     /// <param name="exception"></param>
     /// <returns></returns>
     TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
-        string releaseTicket, out string reason, out Exception exception);
+        string releaseTicket, List<TicketingSystemReleaseStatus> acceptedStatuses,out string reason, out Exception exception);
 
     string GetProjectFolderName(string masterTicket);
 

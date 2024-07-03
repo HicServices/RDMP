@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Threading;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
@@ -44,7 +45,6 @@ public class ReleaseEnvironmentPotential : ICheckable
         var configuration = _repository.CatalogueRepository
             .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
         if (configuration == null) return;
-
         var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
 
 
@@ -66,7 +66,7 @@ public class ReleaseEnvironmentPotential : ICheckable
         try
         {
             Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
-                Configuration.RequestTicket, Configuration.ReleaseTicket, out var reason, out var e);
+                Configuration.RequestTicket, Configuration.ReleaseTicket, _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", configuration.ID).ToList(), out var reason, out var e);
             Exception = e;
             Reason = reason;
         }
