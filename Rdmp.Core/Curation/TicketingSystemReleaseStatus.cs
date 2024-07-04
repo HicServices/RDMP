@@ -16,14 +16,14 @@ namespace Rdmp.Core.Curation
     /// <summary>
     /// Stored a status name and which ticketing system it coresponds to
     /// </summary>
-    public class TicketingSystemReleaseStatus : DatabaseEntity, INamed
+    public class TicketingSystemReleaseStatus : DatabaseEntity
     {
 
         private string _status;
         private int _ticketingSystemConfiguratonID;
 
         [NotNull]
-        public string Name { get => _status; set => SetField(ref _status, value); }
+        public string Status { get => _status; set => SetField(ref _status, value); }
 
         [NotNull]
         public int TicketingSystemConfigurationID { get => _ticketingSystemConfiguratonID; set => SetField(ref _ticketingSystemConfiguratonID, value); }
@@ -41,7 +41,7 @@ namespace Rdmp.Core.Curation
 
         public TicketingSystemReleaseStatus(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
-            Name = r["Status"] as string;
+            Status = r["Status"] as string;
             TicketingSystemConfigurationID = int.Parse(r["TicketingSystemConfigurationID"].ToString());
         }
     }

@@ -108,7 +108,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             btnCreate.Enabled = false;
             btnDelete.Enabled = true;
             btnSave.Enabled = false;
-            tbReleases.Text = string.Join(',', _ticketingSystemConfiguration.GetReleaseStatuses().Select(s => s.Name).ToList());
+            tbReleases.Text = string.Join(',', _ticketingSystemConfiguration.GetReleaseStatuses().Select(s => s.Status).ToList());
         }
 
         _bLoading = false;
@@ -120,8 +120,8 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
         var releases = tbReleases.Text.Split(',');
         var existingReleases = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", _ticketingSystemConfiguration.ID);
-        var toDelete = existingReleases.Where(s => !releases.Contains(s.Name)).ToList();
-        foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Name).Contains(rs)))
+        var toDelete = existingReleases.Where(s => !releases.Contains(s.Status)).ToList();
+        foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Status).Contains(rs)))
         {
             var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release, null, _ticketingSystemConfiguration);
             rs.SaveToDatabase();
