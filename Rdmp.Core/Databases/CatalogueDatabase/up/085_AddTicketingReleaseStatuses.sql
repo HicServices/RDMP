@@ -17,3 +17,5 @@ CONSTRAINT [PK_TicketingSystemReleaseStatus] PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 END
 GO
+
+-- add cascade delete when we delete a ticketing system
