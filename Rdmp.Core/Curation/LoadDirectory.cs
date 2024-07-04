@@ -140,4 +140,13 @@ public class LoadDirectory : ILoadDirectory
 
         return new LoadDirectory(projectDir.FullName);
     }
+
+    public void PopulateLoadMetadata(ILoadMetadata loadMetadata)
+    {
+        loadMetadata.LocationOfForLoadingDirectory = ForLoading.FullName;
+        loadMetadata.LocationOfForArchivingDirectory = ForArchiving.FullName;
+        loadMetadata.LocationOfExecutablesDirectory = ExecutablesPath.FullName;
+        loadMetadata.LocationOfCacheDirectory = Cache.FullName;
+
+    }
 }
