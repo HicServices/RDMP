@@ -123,7 +123,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         var toDelete = existingReleases.Where(s => !releases.Contains(s.Status)).ToList();
         foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Status).Contains(rs)))
         {
-            var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release, null, _ticketingSystemConfiguration);
+            var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release.Trim(), null, _ticketingSystemConfiguration);
             rs.SaveToDatabase();
         }
         toDelete.ForEach(rs => rs.DeleteInDatabase());
@@ -133,7 +133,6 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
-        new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
         RefreshUIFromDatabase();
     }
 
@@ -167,7 +166,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
                 foreach (var status in requestedStatuses)
                 {
-                    if (!knownStatuses.Contains(status))
+                    if (!knownStatuses.Contains(status.Trim()))
                     {
                         checksUI1.OnCheckPerformed(new CheckEventArgs($"{status} is not a known status within the ticketing system", CheckResult.Fail));
                     }
