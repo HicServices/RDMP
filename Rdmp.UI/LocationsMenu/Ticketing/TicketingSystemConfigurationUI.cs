@@ -133,6 +133,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
 
     private void btnCreate_Click(object sender, EventArgs e)
     {
+        new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
         RefreshUIFromDatabase();
     }
 

@@ -314,7 +314,7 @@
             btnCreate.TabIndex = 17;
             btnCreate.Text = "Create";
             btnCreate.UseVisualStyleBackColor = true;
-            btnCreate.Click += btnCreate_Click;
+            this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
             // btnDelete
             // 
