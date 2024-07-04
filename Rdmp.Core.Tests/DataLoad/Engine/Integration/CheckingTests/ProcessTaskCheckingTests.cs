@@ -35,11 +35,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProcessTaskCheckingTests"));
         _dir.Create();
 
-        var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true);
-        _lmd.LocationOfForLoadingDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-        _lmd.LocationOfForArchivingDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-        _lmd.LocationOfExecutablesDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-        _lmd.LocationOfCacheDirectory = Path.Combine(hicdir.RootPath.FullName, _lmd.DefaultCachePath);
+        var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true, _lmd);
         _lmd.SaveToDatabase();
 
         var c = new Catalogue(CatalogueRepository, "c");
@@ -128,13 +124,9 @@ public class ProcessTaskCheckingTests : DatabaseTests
     {
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                "DelMeProjDir", true);
+                "DelMeProjDir", true, _lmd);
         try
         {
-            _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-            _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-            _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-            _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
             _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
@@ -158,13 +150,9 @@ public class ProcessTaskCheckingTests : DatabaseTests
     {
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                "DelMeProjDir", true);
+                "DelMeProjDir", true, _lmd);
         try
         {
-            _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-            _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-            _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-            _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
             _task.ProcessTaskType = ProcessTaskType.Attacher;
             _task.LoadStage = LoadStage.Mounting;
             _task.Path = typeof(AnySeparatorFileAttacher).FullName;
