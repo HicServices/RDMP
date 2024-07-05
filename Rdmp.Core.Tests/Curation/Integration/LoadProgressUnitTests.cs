@@ -68,7 +68,7 @@ public class LoadProgressUnitTests : UnitTests
         var lmd = lp.LoadMetadata;
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
-            "LoadProgress_JobFactory_NoDates", true, lmd);
+            "LoadProgress_JobFactory_NoDates", true, (LoadMetadata)lmd);
 
         foreach (var cata in lmd.GetAllCatalogues())
         {

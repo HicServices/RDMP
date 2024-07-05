@@ -106,7 +106,7 @@ public class LoadDirectory : ILoadDirectory
     /// <param name="loadMetadataToPopulate">Optional loadMetadata object to populate with the created locations</param>
     /// <returns></returns>
     public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName,
-        bool overrideExistsCheck = false, ILoadMetadata loadMetadataToPopulate = null)
+        bool overrideExistsCheck = false, LoadMetadata loadMetadataToPopulate = null)
     {
         if (!parentDir.Exists)
             parentDir.Create();
@@ -132,10 +132,10 @@ public class LoadDirectory : ILoadDirectory
         projectDir.CreateSubdirectory("Executables");
         if (loadMetadataToPopulate != null)
         {
-            loadMetadataToPopulate.LocationOfForLoadingDirectory = Path.Join(dataDir.FullName, "ForLoading");
-            loadMetadataToPopulate.LocationOfForArchivingDirectory = Path.Join(dataDir.FullName, "ForArchiving");
-            loadMetadataToPopulate.LocationOfExecutablesDirectory = Path.Join(dataDir.FullName, "Executables");
-            loadMetadataToPopulate.LocationOfCacheDirectory = Path.Join(dataDir.FullName, "Cache");
+            loadMetadataToPopulate.LocationOfForLoadingDirectory = Path.Combine(projectDir.FullName, loadMetadataToPopulate.DefaultForLoadingPath);
+            loadMetadataToPopulate.LocationOfForArchivingDirectory = Path.Combine(projectDir.FullName, loadMetadataToPopulate.DefaultForArchivingPath);
+            loadMetadataToPopulate.LocationOfExecutablesDirectory = Path.Combine(projectDir.FullName, loadMetadataToPopulate.DefaultExecutablesPath);
+            loadMetadataToPopulate.LocationOfCacheDirectory = Path.Combine(projectDir.FullName, loadMetadataToPopulate.DefaultCachePath);
         }
 
         return new LoadDirectory(projectDir.FullName);

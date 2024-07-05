@@ -59,7 +59,7 @@ public class CustomDateCachingTests : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true, lmd);
+                true, (LoadMetadata)lmd);
 
         var loadProgress = Substitute.For<ILoadProgress>();
         loadProgress.OriginDate.Returns(new DateTime(2001, 01, 01));

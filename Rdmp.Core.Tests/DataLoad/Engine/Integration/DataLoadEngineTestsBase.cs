@@ -72,6 +72,7 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         var projectDirectory =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                 "MyLoadDir", true,lmd);
+
         lmd.SaveToDatabase();
 
         return projectDirectory;
