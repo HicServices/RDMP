@@ -102,8 +102,43 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void ClearRelations()
     {
+        foreach(var pk in PKRelations)
+        {
+            gbAddRelation.Controls.Remove(pk);
+        }
+        foreach (var fk in FKRelations)
+        {
+            gbAddRelation.Controls.Remove(fk);
+        }
+        foreach (var l in Labels)
+        {
+            gbAddRelation.Controls.Remove(l);
+        }
+        foreach (var btn in RemoveButtons)
+        {
+            gbAddRelation.Controls.Remove(btn);
+        }
+        PKRelations = new();
+        FKRelations = new();
+        Labels = new();
+        RemoveButtons = new();
+    }
 
-        //todo remove all relations
+    private void RemoveSingleRelation(object sender, EventArgs e)
+    {
+        if(sender.GetType() == typeof(Button))
+        {
+            var btn = (Button)sender;
+            var index = btn.ImageIndex;
+            gbAddRelation.Controls.Remove(PKRelations[index]);
+            gbAddRelation.Controls.Remove(FKRelations[index]);
+            gbAddRelation.Controls.Remove(Labels[index]);
+            gbAddRelation.Controls.Remove(RemoveButtons[index]);
+            PKRelations.RemoveAt(index);
+            FKRelations.RemoveAt(index);
+            Labels.RemoveAt(index);
+            RemoveButtons.RemoveAt(index);
+        }
     }
 
     private void AddRelationOption()
@@ -146,6 +181,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         removeBtn.Width = 100;
         removeBtn.Left = 850;
         removeBtn.Top = 50 + (FKRelations.Count * 25);
+        removeBtn.Click += RemoveSingleRelation;
         PKRelations.Add(pk);
         Labels.Add(label);
         FKRelations.Add(fk);

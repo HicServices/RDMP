@@ -38,6 +38,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             cbSelectLookupTable = new System.Windows.Forms.ComboBox();
             btnAddAnotherRelation = new System.Windows.Forms.Button();
             gbAddRelation = new System.Windows.Forms.GroupBox();
+            label1 = new System.Windows.Forms.Label();
             gbAddRelation.SuspendLayout();
             SuspendLayout();
             // 
@@ -94,11 +95,21 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             gbAddRelation.TabStop = false;
             gbAddRelation.Text = "Add Relation:";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(18, 251);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(172, 15);
+            label1.TabIndex = 6;
+            label1.Text = "Select The Description Column:";
+            // 
             // LookupConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoScroll = true;
+            Controls.Add(label1);
             Controls.Add(gbAddRelation);
             Controls.Add(cbSelectLookupTable);
             Controls.Add(label2);
@@ -118,5 +129,6 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.ComboBox cbSelectLookupTable;
         private System.Windows.Forms.Button btnAddAnotherRelation;
         private System.Windows.Forms.GroupBox gbAddRelation;
+        private System.Windows.Forms.Label label1;
     }
 }
