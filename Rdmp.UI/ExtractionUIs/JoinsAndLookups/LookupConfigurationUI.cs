@@ -88,6 +88,12 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         {
             cbSelectLookupTable.Items.Add(tb);
         }
+        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
+        foreach (var item in selectedLookup.ColumnInfos)
+        {
+            cbSelectDescription.Items.Add(item);
+        }
+        cbSelectDescription.Enabled = true;
         _allExtractionInformationFromCatalogue =
            new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         _allExtractionInformationFromCatalogue.Sort();
@@ -99,10 +105,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private List<Label> Labels = new();
     private List<Button> RemoveButtons = new();
 
-
     private void ClearRelations()
     {
-        foreach(var pk in PKRelations)
+        foreach (var pk in PKRelations)
         {
             gbAddRelation.Controls.Remove(pk);
         }
@@ -126,7 +131,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void RemoveSingleRelation(object sender, EventArgs e)
     {
-        if(sender.GetType() == typeof(Button))
+        if (sender.GetType() == typeof(Button))
         {
             var btn = (Button)sender;
             var index = btn.ImageIndex;

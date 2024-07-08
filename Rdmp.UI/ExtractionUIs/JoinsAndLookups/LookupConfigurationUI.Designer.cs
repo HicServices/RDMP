@@ -39,6 +39,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             btnAddAnotherRelation = new System.Windows.Forms.Button();
             gbAddRelation = new System.Windows.Forms.GroupBox();
             label1 = new System.Windows.Forms.Label();
+            cbSelectDescription = new System.Windows.Forms.ComboBox();
             gbAddRelation.SuspendLayout();
             SuspendLayout();
             // 
@@ -104,16 +105,27 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             label1.TabIndex = 6;
             label1.Text = "Select The Description Column:";
             // 
+            // cbSelectDescription
+            // 
+            cbSelectDescription.Enabled = false;
+            cbSelectDescription.FormattingEnabled = true;
+            cbSelectDescription.Location = new System.Drawing.Point(196, 248);
+            cbSelectDescription.Name = "cbSelectDescription";
+            cbSelectDescription.Size = new System.Drawing.Size(281, 23);
+            cbSelectDescription.TabIndex = 7;
+            // 
             // LookupConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoScroll = true;
+            Controls.Add(cbSelectDescription);
             Controls.Add(label1);
             Controls.Add(gbAddRelation);
             Controls.Add(cbSelectLookupTable);
             Controls.Add(label2);
             Controls.Add(lblTitle);
+            Enabled = false;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "LookupConfigurationUI";
             Size = new System.Drawing.Size(1287, 891);
@@ -130,5 +142,6 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.Button btnAddAnotherRelation;
         private System.Windows.Forms.GroupBox gbAddRelation;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox cbSelectDescription;
     }
 }
