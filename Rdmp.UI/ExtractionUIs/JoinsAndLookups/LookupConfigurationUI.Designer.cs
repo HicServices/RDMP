@@ -38,9 +38,17 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             cbSelectLookupTable = new System.Windows.Forms.ComboBox();
             btnAddAnotherRelation = new System.Windows.Forms.Button();
             gbAddRelation = new System.Windows.Forms.GroupBox();
+            gbDescription = new System.Windows.Forms.GroupBox();
+            btnAddDescription = new System.Windows.Forms.Button();
             label1 = new System.Windows.Forms.Label();
-            cbSelectDescription = new System.Windows.Forms.ComboBox();
+            tbCollation = new System.Windows.Forms.TextBox();
+            btnCreateLookup = new System.Windows.Forms.Button();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            gbSubmit = new System.Windows.Forms.GroupBox();
             gbAddRelation.SuspendLayout();
+            gbDescription.SuspendLayout();
+            groupBox1.SuspendLayout();
+            gbSubmit.SuspendLayout();
             SuspendLayout();
             // 
             // lblTitle
@@ -66,7 +74,6 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             // 
             // cbSelectLookupTable
             // 
-            cbSelectLookupTable.Enabled = false;
             cbSelectLookupTable.FormattingEnabled = true;
             cbSelectLookupTable.Location = new System.Drawing.Point(138, 63);
             cbSelectLookupTable.Name = "cbSelectLookupTable";
@@ -89,47 +96,105 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             // 
             gbAddRelation.AutoSize = true;
             gbAddRelation.Controls.Add(btnAddAnotherRelation);
-            gbAddRelation.Location = new System.Drawing.Point(18, 139);
+            gbAddRelation.Location = new System.Drawing.Point(15, 22);
             gbAddRelation.Name = "gbAddRelation";
-            gbAddRelation.Size = new System.Drawing.Size(300, 74);
+            gbAddRelation.Size = new System.Drawing.Size(580, 72);
             gbAddRelation.TabIndex = 5;
             gbAddRelation.TabStop = false;
             gbAddRelation.Text = "Add Relation:";
+            gbAddRelation.Enter += gbAddRelation_Enter;
+            // 
+            // gbDescription
+            // 
+            gbDescription.AutoSize = true;
+            gbDescription.Controls.Add(btnAddDescription);
+            gbDescription.Location = new System.Drawing.Point(15, 109);
+            gbDescription.Name = "gbDescription";
+            gbDescription.Size = new System.Drawing.Size(318, 74);
+            gbDescription.TabIndex = 6;
+            gbDescription.TabStop = false;
+            gbDescription.Text = "Add Description Column(s):";
+            // 
+            // btnAddDescription
+            // 
+            btnAddDescription.Enabled = false;
+            btnAddDescription.Location = new System.Drawing.Point(0, 22);
+            btnAddDescription.Name = "btnAddDescription";
+            btnAddDescription.Size = new System.Drawing.Size(153, 23);
+            btnAddDescription.TabIndex = 4;
+            btnAddDescription.Text = "Add Another";
+            btnAddDescription.UseVisualStyleBackColor = true;
+            btnAddDescription.Click += btnAddDescription_Click;
             // 
             // label1
             // 
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(18, 251);
+            label1.Location = new System.Drawing.Point(6, 19);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(172, 15);
-            label1.TabIndex = 6;
-            label1.Text = "Select The Description Column:";
+            label1.Size = new System.Drawing.Size(58, 15);
+            label1.TabIndex = 7;
+            label1.Text = "Collation:";
             // 
-            // cbSelectDescription
+            // tbCollation
             // 
-            cbSelectDescription.Enabled = false;
-            cbSelectDescription.FormattingEnabled = true;
-            cbSelectDescription.Location = new System.Drawing.Point(196, 248);
-            cbSelectDescription.Name = "cbSelectDescription";
-            cbSelectDescription.Size = new System.Drawing.Size(281, 23);
-            cbSelectDescription.TabIndex = 7;
+            tbCollation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            tbCollation.Location = new System.Drawing.Point(64, 16);
+            tbCollation.Name = "tbCollation";
+            tbCollation.Size = new System.Drawing.Size(254, 23);
+            tbCollation.TabIndex = 8;
+            // 
+            // btnCreateLookup
+            // 
+            btnCreateLookup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            btnCreateLookup.Location = new System.Drawing.Point(6, 71);
+            btnCreateLookup.Name = "btnCreateLookup";
+            btnCreateLookup.Size = new System.Drawing.Size(114, 23);
+            btnCreateLookup.TabIndex = 9;
+            btnCreateLookup.Text = "Create Lookup";
+            btnCreateLookup.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            groupBox1.AutoSize = true;
+            groupBox1.Controls.Add(gbSubmit);
+            groupBox1.Controls.Add(gbAddRelation);
+            groupBox1.Controls.Add(gbDescription);
+            groupBox1.Location = new System.Drawing.Point(18, 92);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(1141, 871);
+            groupBox1.TabIndex = 10;
+            groupBox1.TabStop = false;
+            // 
+            // gbSubmit
+            // 
+            gbSubmit.Controls.Add(btnCreateLookup);
+            gbSubmit.Controls.Add(tbCollation);
+            gbSubmit.Controls.Add(label1);
+            gbSubmit.Location = new System.Drawing.Point(15, 203);
+            gbSubmit.Name = "gbSubmit";
+            gbSubmit.Size = new System.Drawing.Size(439, 100);
+            gbSubmit.TabIndex = 10;
+            gbSubmit.TabStop = false;
             // 
             // LookupConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoScroll = true;
-            Controls.Add(cbSelectDescription);
-            Controls.Add(label1);
-            Controls.Add(gbAddRelation);
+            Controls.Add(groupBox1);
             Controls.Add(cbSelectLookupTable);
             Controls.Add(label2);
             Controls.Add(lblTitle);
-            Enabled = false;
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "LookupConfigurationUI";
-            Size = new System.Drawing.Size(1287, 891);
+            Size = new System.Drawing.Size(1236, 891);
             gbAddRelation.ResumeLayout(false);
+            gbDescription.ResumeLayout(false);
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            gbSubmit.ResumeLayout(false);
+            gbSubmit.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -141,7 +206,12 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.ComboBox cbSelectLookupTable;
         private System.Windows.Forms.Button btnAddAnotherRelation;
         private System.Windows.Forms.GroupBox gbAddRelation;
+        private System.Windows.Forms.GroupBox gbDescription;
+        private System.Windows.Forms.Button btnAddDescription;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.ComboBox cbSelectDescription;
+        private System.Windows.Forms.TextBox tbCollation;
+        private System.Windows.Forms.Button btnCreateLookup;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbSubmit;
     }
 }

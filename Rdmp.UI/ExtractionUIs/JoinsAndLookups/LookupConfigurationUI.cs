@@ -88,22 +88,17 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         {
             cbSelectLookupTable.Items.Add(tb);
         }
-        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
-        foreach (var item in selectedLookup.ColumnInfos)
-        {
-            cbSelectDescription.Items.Add(item);
-        }
-        cbSelectDescription.Enabled = true;
         _allExtractionInformationFromCatalogue =
            new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
         _allExtractionInformationFromCatalogue.Sort();
         AddRelationOption();
+        AddDescriptionOption();
     }
 
     private List<ComboBox> PKRelations = new();
     private List<ComboBox> FKRelations = new();
     private List<Label> Labels = new();
-    private List<Button> RemoveButtons = new();
+    //private List<Button> RemoveButtons = new();
 
     private void ClearRelations()
     {
@@ -119,14 +114,14 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         {
             gbAddRelation.Controls.Remove(l);
         }
-        foreach (var btn in RemoveButtons)
-        {
-            gbAddRelation.Controls.Remove(btn);
-        }
+        //foreach (var btn in RemoveButtons)
+        //{
+        //    gbAddRelation.Controls.Remove(btn);
+        //}
         PKRelations = new();
         FKRelations = new();
         Labels = new();
-        RemoveButtons = new();
+        //RemoveButtons = new();
     }
 
     private void RemoveSingleRelation(object sender, EventArgs e)
@@ -138,11 +133,11 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             gbAddRelation.Controls.Remove(PKRelations[index]);
             gbAddRelation.Controls.Remove(FKRelations[index]);
             gbAddRelation.Controls.Remove(Labels[index]);
-            gbAddRelation.Controls.Remove(RemoveButtons[index]);
+            //gbAddRelation.Controls.Remove(RemoveButtons[index]);
             PKRelations.RemoveAt(index);
             FKRelations.RemoveAt(index);
             Labels.RemoveAt(index);
-            RemoveButtons.RemoveAt(index);
+            //RemoveButtons.RemoveAt(index);
         }
     }
 
@@ -180,21 +175,23 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         label.Width = 20;
         label.Left = 410;
         label.Top = 50 + (FKRelations.Count * 25);
-        var removeBtn = new Button();
-        removeBtn.Text = "Remove";
-        removeBtn.ImageIndex = RemoveButtons.Count;
-        removeBtn.Width = 100;
-        removeBtn.Left = 850;
-        removeBtn.Top = 50 + (FKRelations.Count * 25);
-        removeBtn.Click += RemoveSingleRelation;
+        //var removeBtn = new Button();
+        //removeBtn.Text = "Remove";
+        //removeBtn.ImageIndex = RemoveButtons.Count;
+        //removeBtn.Width = 100;
+        //removeBtn.Left = 850;
+        //removeBtn.Top = 50 + (FKRelations.Count * 25);
+        //removeBtn.Click += RemoveSingleRelation;
         PKRelations.Add(pk);
         Labels.Add(label);
         FKRelations.Add(fk);
-        RemoveButtons.Add(removeBtn);
+        //RemoveButtons.Add(removeBtn);
         gbAddRelation.Controls.Add(pk);
         gbAddRelation.Controls.Add(label);
         gbAddRelation.Controls.Add(fk);
-        gbAddRelation.Controls.Add(removeBtn);
+        //gbAddRelation.Controls.Add(removeBtn);
+        gbDescription.Top = gbDescription.Top + 25;
+        gbSubmit.Top = gbSubmit.Top + 25;
         if (PKRelations.Count > _allExtractionInformationFromCatalogue.Count)
         {
             //no possible entries
@@ -209,6 +206,31 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     public void SetLookupTableInfo(TableInfo tableInfo) { }
 
+    private List<ComboBox> Descriptions = new();
+
+    private void AddDescriptionOption()
+    {
+        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
+        if (selectedLookup == null) return;
+        var cb = new ComboBox();
+        foreach (var item in selectedLookup.ColumnInfos)
+        {
+            cb.Items.Add(item);
+        }
+        cb.Width = 400;
+        cb.Top = 50 + (Descriptions.Count * 25);
+        Descriptions.Add(cb);
+        gbDescription.Controls.Add(cb);
+        gbSubmit.Top = gbSubmit.Top + 25;
+        if (Descriptions.Count == selectedLookup.ColumnInfos.Count())
+        {
+            btnAddDescription.Enabled = false;
+        }
+        else
+        {
+            btnAddDescription.Enabled = true;
+        }
+    }
 
     public override string GetTabName() => $"Add Lookup ({base.GetTabName()})";
 
@@ -226,11 +248,23 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     {
         ClearRelations();
         AddRelationOption();
+        AddDescriptionOption();
     }
 
     private void btnAddAnotherRelation_Click(object sender, EventArgs e)
     {
         AddRelationOption();
+    }
+
+    private void btnAddDescription_Click(object sender, EventArgs e)
+    {
+        AddDescriptionOption();
+
+    }
+
+    private void gbAddRelation_Enter(object sender, EventArgs e)
+    {
+
     }
 }
 
