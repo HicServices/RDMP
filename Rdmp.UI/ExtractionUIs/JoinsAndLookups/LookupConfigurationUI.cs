@@ -97,45 +97,54 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private List<ComboBox> PKRelations = new();
     private List<ComboBox> FKRelations = new();
     private List<Label> Labels = new();
-    private List<Button> RemoveButtons= new();
+    private List<Button> RemoveButtons = new();
+
+
+    private void ClearRelations()
+    {
+
+        //todo remove all relations
+    }
 
     private void AddRelationOption()
     {
-        if (PKRelations.Count == _allExtractionInformationFromCatalogue.Count)
+        if (cbSelectLookupTable.SelectedItem == null) return;
+        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
+        if (PKRelations.Count == selectedLookup.ColumnInfos.Length)
         {
             //no possible entries
             btnAddAnotherRelation.Enabled = false;
             return;
         }
         var pk = new ComboBox();
-        foreach (var item in _allExtractionInformationFromCatalogue)
+        foreach (var item in selectedLookup.ColumnInfos)
         {
             pk.Items.Add(item);
         }
         pk.Height = 20;
         pk.Top = 50 + (PKRelations.Count * 25);
-        pk.Width = 100;
+        pk.Width = 400;
         pk.Text = "(Primary Key)";
         var fk = new ComboBox();
         foreach (var item in _catalogue.CatalogueItems)
         {
-            pk.Items.Add(item.ColumnInfo);
+            fk.Items.Add(item.ColumnInfo);
         }
         fk.Height = 20;
         fk.Top = 50 + (FKRelations.Count * 25);
-        fk.Left = 140;
-        fk.Width = 100;
+        fk.Left = 440;
+        fk.Width = 400;
         fk.Text = "(Foreign Key)";
         var label = new Label();
         label.Text = "=>";
         label.Width = 20;
-        label.Left = 110;
+        label.Left = 410;
         label.Top = 50 + (FKRelations.Count * 25);
         var removeBtn = new Button();
         removeBtn.Text = "Remove";
         removeBtn.ImageIndex = RemoveButtons.Count;
-        removeBtn.Width = 50;
-        removeBtn.Left = 250;
+        removeBtn.Width = 100;
+        removeBtn.Left = 850;
         removeBtn.Top = 50 + (FKRelations.Count * 25);
         PKRelations.Add(pk);
         Labels.Add(label);
@@ -170,6 +179,12 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private void label2_Click(object sender, EventArgs e)
     {
 
+    }
+
+    private void cbSelectLookupTable_SelectedIndexchanged(object sender, EventArgs e)
+    {
+        ClearRelations();
+        AddRelationOption();
     }
 
     private void btnAddAnotherRelation_Click(object sender, EventArgs e)

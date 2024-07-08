@@ -70,6 +70,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             cbSelectLookupTable.Name = "cbSelectLookupTable";
             cbSelectLookupTable.Size = new System.Drawing.Size(281, 23);
             cbSelectLookupTable.TabIndex = 2;
+            cbSelectLookupTable.SelectedIndexChanged += cbSelectLookupTable_SelectedIndexchanged;
             // 
             // btnAddAnotherRelation
             // 
