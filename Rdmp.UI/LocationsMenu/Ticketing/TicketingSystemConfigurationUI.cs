@@ -11,6 +11,7 @@ using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
@@ -162,15 +163,12 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             if (instance != null)
             {
                 var knownStatuses = instance.GetAvailableStatuses();
-                var requestedStatuses = tbReleases.Text.Split(',').Where(s => s != "");
+                var requestedStatuses = tbReleases.Text.Split(',').Where(s => s.Trim() != "");
                 if (!requestedStatuses.Any()) checksUI1.OnCheckPerformed(new CheckEventArgs($"No Release status set", CheckResult.Fail));
 
-                foreach (var status in requestedStatuses)
+                foreach (var status in requestedStatuses.Where(s => !knownStatuses.Contains(s.Trim())))
                 {
-                    if (!knownStatuses.Contains(status.Trim()))
-                    {
-                        checksUI1.OnCheckPerformed(new CheckEventArgs($"{status} is not a known status within the ticketing system", CheckResult.Fail));
-                    }
+                    checksUI1.OnCheckPerformed(new CheckEventArgs($"{status} is not a known status within the ticketing system", CheckResult.Fail));
                 }
             }
 
