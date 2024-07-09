@@ -159,6 +159,7 @@ internal class DocumentationCrossExaminationTest
         "ProposedFixes",
         "PropertyX",
         "FamilyMembers",
+        "LookupConfiguration",
 
         //CreatingANewCollectionTreeNode.md
         "FolderOfX",
