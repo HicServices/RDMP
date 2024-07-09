@@ -44,6 +44,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             tbCollation = new System.Windows.Forms.TextBox();
             btnCreateLookup = new System.Windows.Forms.Button();
             groupBox1 = new System.Windows.Forms.GroupBox();
+            lblErrorText = new System.Windows.Forms.Label();
             gbSubmit = new System.Windows.Forms.GroupBox();
             gbAddRelation.SuspendLayout();
             gbDescription.SuspendLayout();
@@ -147,12 +148,14 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             // btnCreateLookup
             // 
             btnCreateLookup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
-            btnCreateLookup.Location = new System.Drawing.Point(6, 71);
+            btnCreateLookup.Enabled = false;
+            btnCreateLookup.Location = new System.Drawing.Point(6, 45);
             btnCreateLookup.Name = "btnCreateLookup";
             btnCreateLookup.Size = new System.Drawing.Size(114, 23);
             btnCreateLookup.TabIndex = 9;
             btnCreateLookup.Text = "Create Lookup";
             btnCreateLookup.UseVisualStyleBackColor = true;
+            btnCreateLookup.Click += btnCreateLookup_Click;
             // 
             // groupBox1
             // 
@@ -166,14 +169,27 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             groupBox1.TabIndex = 10;
             groupBox1.TabStop = false;
             // 
+            // lblErrorText
+            // 
+            lblErrorText.AutoSize = true;
+            lblErrorText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblErrorText.ForeColor = System.Drawing.Color.Red;
+            lblErrorText.Location = new System.Drawing.Point(7, 90);
+            lblErrorText.Name = "lblErrorText";
+            lblErrorText.Size = new System.Drawing.Size(57, 21);
+            lblErrorText.TabIndex = 11;
+            lblErrorText.Text = "label3";
+            lblErrorText.Visible = false;
+            // 
             // gbSubmit
             // 
+            gbSubmit.Controls.Add(lblErrorText);
             gbSubmit.Controls.Add(btnCreateLookup);
             gbSubmit.Controls.Add(tbCollation);
             gbSubmit.Controls.Add(label1);
             gbSubmit.Location = new System.Drawing.Point(15, 203);
             gbSubmit.Name = "gbSubmit";
-            gbSubmit.Size = new System.Drawing.Size(439, 100);
+            gbSubmit.Size = new System.Drawing.Size(1081, 123);
             gbSubmit.TabIndex = 10;
             gbSubmit.TabStop = false;
             // 
@@ -188,7 +204,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             Controls.Add(lblTitle);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "LookupConfigurationUI";
-            Size = new System.Drawing.Size(1236, 891);
+            Size = new System.Drawing.Size(1168, 891);
             gbAddRelation.ResumeLayout(false);
             gbDescription.ResumeLayout(false);
             groupBox1.ResumeLayout(false);
@@ -213,5 +229,6 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.Button btnCreateLookup;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox gbSubmit;
+        private System.Windows.Forms.Label lblErrorText;
     }
 }

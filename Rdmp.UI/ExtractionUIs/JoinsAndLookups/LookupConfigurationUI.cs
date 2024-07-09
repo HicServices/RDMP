@@ -12,6 +12,7 @@ using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using NPOI.POIFS.Crypt.Agile;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -25,6 +26,7 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using static System.Linq.Enumerable;
 using DragDropEffects = System.Windows.Forms.DragDropEffects;
 using Point = System.Drawing.Point;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
@@ -98,7 +100,15 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private List<ComboBox> PKRelations = new();
     private List<ComboBox> FKRelations = new();
     private List<Label> Labels = new();
-    //private List<Button> RemoveButtons = new();
+
+    private void ClearDescriptions()
+    {
+        foreach (var desc in Descriptions)
+        {
+            gbDescription.Controls.Remove(desc);
+        }
+        Descriptions = new List<ComboBox>();
+    }
 
     private void ClearRelations()
     {
@@ -114,14 +124,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         {
             gbAddRelation.Controls.Remove(l);
         }
-        //foreach (var btn in RemoveButtons)
-        //{
-        //    gbAddRelation.Controls.Remove(btn);
-        //}
         PKRelations = new();
         FKRelations = new();
         Labels = new();
-        //RemoveButtons = new();
     }
 
     private void RemoveSingleRelation(object sender, EventArgs e)
@@ -133,11 +138,9 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
             gbAddRelation.Controls.Remove(PKRelations[index]);
             gbAddRelation.Controls.Remove(FKRelations[index]);
             gbAddRelation.Controls.Remove(Labels[index]);
-            //gbAddRelation.Controls.Remove(RemoveButtons[index]);
             PKRelations.RemoveAt(index);
             FKRelations.RemoveAt(index);
             Labels.RemoveAt(index);
-            //RemoveButtons.RemoveAt(index);
         }
     }
 
@@ -175,21 +178,12 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
         label.Width = 20;
         label.Left = 410;
         label.Top = 50 + (FKRelations.Count * 25);
-        //var removeBtn = new Button();
-        //removeBtn.Text = "Remove";
-        //removeBtn.ImageIndex = RemoveButtons.Count;
-        //removeBtn.Width = 100;
-        //removeBtn.Left = 850;
-        //removeBtn.Top = 50 + (FKRelations.Count * 25);
-        //removeBtn.Click += RemoveSingleRelation;
         PKRelations.Add(pk);
         Labels.Add(label);
         FKRelations.Add(fk);
-        //RemoveButtons.Add(removeBtn);
         gbAddRelation.Controls.Add(pk);
         gbAddRelation.Controls.Add(label);
         gbAddRelation.Controls.Add(fk);
-        //gbAddRelation.Controls.Add(removeBtn);
         gbDescription.Top = gbDescription.Top + 25;
         gbSubmit.Top = gbSubmit.Top + 25;
         if (PKRelations.Count > _allExtractionInformationFromCatalogue.Count)
@@ -237,6 +231,8 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     private void HandleError(string msg)
     {
         _errorMessage = msg;
+        lblErrorText.Text = _errorMessage;
+        lblErrorText.Visible = true;
     }
 
     private void label2_Click(object sender, EventArgs e)
@@ -246,9 +242,13 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 
     private void cbSelectLookupTable_SelectedIndexchanged(object sender, EventArgs e)
     {
+        lblErrorText.Text = null;
+        lblErrorText.Visible = false;
         ClearRelations();
+        ClearDescriptions();
         AddRelationOption();
         AddDescriptionOption();
+        btnCreateLookup.Enabled = true;
     }
 
     private void btnAddAnotherRelation_Click(object sender, EventArgs e)
@@ -263,6 +263,81 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     }
 
     private void gbAddRelation_Enter(object sender, EventArgs e)
+    {
+
+    }
+
+    private bool ValidateUserInput()
+    {
+        //has lookup
+        if (cbSelectLookupTable.SelectedItem == null)
+        {
+            HandleError("No Lookup table selected");
+            return false;
+        }
+        if (PKRelations.Where(d => d.SelectedItem != null).Count() == 0 || FKRelations.Where(d => d.SelectedItem != null).Count() == 0)
+        {
+            HandleError("At least one PK FK mapping must be set");
+            return false;
+        }
+        if (PKRelations.Where(d => d.SelectedItem != null).Count() != FKRelations.Where(d => d.SelectedItem != null).Count())
+        {
+            HandleError("Must have a 1-to-1 mapping of PK and FK mappings");
+            return false;
+        }
+        if (Descriptions.Where(d => d.SelectedItem != null).Count ()== 0)
+        {
+            HandleError("At least one Description column must be set");
+            return false;
+        }
+        var descColumnInfos = Descriptions.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        var pkColumnInfos = PKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        var fkColumnInfos = FKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        if (pkColumnInfos.Intersect(descColumnInfos).Any() || fkColumnInfos.Intersect(descColumnInfos).Any())
+        {
+            HandleError("A Description Column cannot be used in the PK FK mapping");
+            return false;
+        }
+        return true;
+    }
+
+    private void Clear()
+    {
+        ClearRelations();
+        btnAddAnotherRelation.Enabled = false;
+        ClearDescriptions();
+        btnAddDescription.Enabled = false;
+        cbSelectLookupTable.SelectedItem = null;
+        tbCollation.Text = null;
+        btnCreateLookup.Enabled = false;
+    }
+
+    private void btnCreateLookup_Click(object sender, EventArgs e)
+    {
+        if (ValidateUserInput())
+        {
+            var alsoCreateExtractionInformation =
+                  Activator.YesNo(
+                      $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
+                      "Create Extractable Column?");
+            var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { };
+            keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<ColumnInfo, ColumnInfo>((ColumnInfo)x.SelectedItem, (ColumnInfo)y.SelectedItem)).ToList();
+            var descs = Descriptions.Select(d => (ColumnInfo)d.SelectedItem).ToArray();
+            var foreignKeyExtractionInformation =
+               _allExtractionInformationFromCatalogue.SingleOrDefault(e =>
+                   e.ColumnInfo != null && e.ColumnInfo.Equals((ColumnInfo)FKRelations[0].SelectedItem)) ??
+               throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
+            var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,
+                   foreignKeyExtractionInformation, descs,
+                   keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
+
+            cmd.Execute();
+            MessageBox.Show($"Successfully created lookup for {_catalogue.Name}");
+            Clear();
+        }
+    }
+
+    private void tbCollation_TextChanged(object sender, EventArgs e)
     {
 
     }
