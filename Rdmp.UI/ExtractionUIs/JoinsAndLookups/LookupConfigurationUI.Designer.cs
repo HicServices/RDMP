@@ -151,6 +151,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             pictureBox3.Size = new System.Drawing.Size(21, 21);
             pictureBox3.TabIndex = 13;
             pictureBox3.TabStop = false;
+            pictureBox3.Click += pictureBox3_Click;
             // 
             // btnAddDescription
             // 
@@ -201,7 +202,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             groupBox1.Controls.Add(gbDescription);
             groupBox1.Location = new System.Drawing.Point(18, 92);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new System.Drawing.Size(1141, 871);
+            groupBox1.Size = new System.Drawing.Size(1141, 471);
             groupBox1.TabIndex = 10;
             groupBox1.TabStop = false;
             // 
@@ -279,7 +280,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             Controls.Add(lblTitle);
             Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "LookupConfigurationUI";
-            Size = new System.Drawing.Size(1083, 806);
+            Size = new System.Drawing.Size(1083, 789);
             gbAddRelation.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             gbDescription.ResumeLayout(false);

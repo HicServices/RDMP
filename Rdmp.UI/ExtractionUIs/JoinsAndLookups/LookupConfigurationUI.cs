@@ -351,23 +351,28 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
     {
         WideMessageBox.Show("Lookup Relations Help",
             @"Lookup relations are between two tables.
-            Select one column from the current Catalogue table and one from the selected lookup table.
-            You typically only need one relation per lookup, but for more complicated cases you can add as many as required.
+Select one column from the current Catalogue table and one from the selected lookup table.
+You typically only need one relation per lookup, but for more complicated cases you can add as many as required.
             ");
     }
 
-    private void pictureBox4_Click(object sender, EventArgs e)
+    private void pictureBox3_Click(object sender, EventArgs e)
     {
-        WideMessageBox.Show("Description Help","Select a column that provides a description of what the lookup is doing.");
+        WideMessageBox.Show("Description Help", "Select a column that provides a description of what the lookup is doing.");
     }
 
     private void pictureBox5_Click(object sender, EventArgs e)
     {
         WideMessageBox.Show("Creating A Lookup",
             @"Creating a lookup will generate a new lookup table linking this Catalogue with the selected table above.
-            It will check that all the details you have entered are correct before proceeding.
-            You will be asked if you wish to add a description field. We recommend selecting 'yes'.
+It will check that all the details you have entered are correct before proceeding.
+You will be asked if you wish to add a description field. We recommend selecting 'yes'.
             ");
+    }
+
+    private void pictureBox4_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Collation Help", "This is an optional step where you can set the collation to use when linking the columns");
     }
 }
 
