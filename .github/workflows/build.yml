@@ -179,15 +179,14 @@ jobs:
           for plugin in https://api.github.com/repos/SMI/RdmpDicom/releases/latest https://api.github.com/repos/HICServices/HicPlugin/releases/latest https://api.github.com/repos/HICServices/RdmpExtensions/releases/latest
           do
             PluginName="$(cut -d/ -f6 <<< $plugin)"
-            NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*nupkg" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
+            NAME="$(curl -s $plugin | grep "browser_download_url.*$PluginName.*rdmp" | cut -d : -f 2,3 | cut -d "\"" -f 2)"
             curl -OL  $NAME
           done
-          ls *.nupkg > rdmpplugins.txt
           for platform in PublishWindows PublishLinux PublishWinForms
           do
-            cp rdmpplugins.txt *.nupkg $platform
+            cp *.rdmp $platform
           done
-          rm rdmpplugins.txt *.nupkg
+          rm *.rdmp
       - name: Sign & zip
         shell: bash
         run: |
@@ -203,7 +202,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.29.0
+        uses: shogo82148/actions-setup-perl@v1.30.0
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar

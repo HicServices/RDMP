@@ -144,6 +144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
     public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -397,6 +398,10 @@ public class CatalogueChildProvider : ICoreChildProvider
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
+
+        CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
+        AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
+           new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
@@ -419,12 +424,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         var joinableDictionaryByAggregateConfigurationId =
             AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
-        foreach (var ac in AllAggregateConfigurations)
-            ac.InjectKnown(
-                joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
-                    out var joinable) //if there's a joinable
-                    ? joinable //inject that we know the joinable (and what it is)
-                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
+        foreach (var ac in AllAggregateConfigurations) //if there's a joinable
+            ac.InjectKnown( //inject that we know the joinable (and what it is)
+                joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
 
         ReportProgress("After AggregateConfiguration injection");
 
@@ -456,10 +458,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var e in AllExports)
         {
-            if (!searchables.ContainsKey(e.ReferencedObjectID))
+            if (!searchables.TryGetValue(e.ReferencedObjectID, out var searchable))
                 continue;
 
-            var known = searchables[e.ReferencedObjectID]
+            var known = searchable
                 .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
             if (known != null)
@@ -853,6 +855,7 @@ public class CatalogueChildProvider : ICoreChildProvider
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
 
+
         //add cics in folder
         foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
 
@@ -986,22 +989,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
         DescendancyList descendancy)
     {
-        var childObjects = new HashSet<object>();
-
-
         var loadMetadataId = allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID;
-
-        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(link => link.CatalogueID);
-        List<Catalogue> usedCatalogues = new();
-        foreach (var catalogueId in linkedCatalogueIDs)
-        {
-            var foundCatalogue = AllCatalogues.Where(c => c.ID == catalogueId).FirstOrDefault();
-            if (foundCatalogue is null) continue;
-            usedCatalogues.Add(foundCatalogue);
-            childObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-                    foundCatalogue));
-        }
+        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(static link => link.CatalogueID);
+        var usedCatalogues = linkedCatalogueIDs.Select(catalogueId => AllCatalogues.FirstOrDefault(c => c.ID == catalogueId)).Where(static foundCatalogue => foundCatalogue is not null).ToList();
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
+        var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
 
         AddToDictionaries(childObjects, descendancy);
     }
@@ -1560,7 +1552,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return _descendancyDictionary.TryGetValue(model, out var result) ? result : null;
+            return _descendancyDictionary.GetValueOrDefault(model);
         }
     }
 

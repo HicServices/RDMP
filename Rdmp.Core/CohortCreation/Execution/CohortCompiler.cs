@@ -137,14 +137,13 @@ public class CohortCompiler
     /// <returns></returns>
     public List<ICompileable> AddAllTasks(bool addSubcontainerTasks = true)
     {
-        var toReturn = new List<ICompileable>();
-        var globals = CohortIdentificationConfiguration.GetAllParameters();
+        var globals = CohortIdentificationConfiguration.GetAllParameters().ToArray();
         CohortIdentificationConfiguration.CreateRootContainerIfNotExists();
 
-        foreach (var joinable in CohortIdentificationConfiguration.GetAllJoinables())
-            toReturn.Add(AddTask(joinable, globals));
+        var toReturn = CohortIdentificationConfiguration.GetAllJoinables()
+            .Select(joinable => AddTask(joinable, globals)).ToList();
 
-        toReturn.AddRange(AddTasksRecursively(globals, CohortIdentificationConfiguration.RootCohortAggregateContainer,
+        toReturn.AddRange(AddTasksRecursively(globals.ToArray(), CohortIdentificationConfiguration.RootCohortAggregateContainer,
             addSubcontainerTasks));
 
         return toReturn;
@@ -207,7 +206,7 @@ public class CohortCompiler
     /// <param name="runnable">An AggregateConfiguration, CohortAggregateContainer or JoinableCohortAggregateConfiguration you want to schedule for execution</param>
     /// <param name="globals"></param>
     /// <returns></returns>
-    public ICompileable AddTask(IMapsDirectlyToDatabaseTable runnable, IEnumerable<ISqlParameter> globals)
+    public ICompileable AddTask(IMapsDirectlyToDatabaseTable runnable, ISqlParameter[] globals)
     {
         var aggregate = runnable as AggregateConfiguration;
         var container = runnable as CohortAggregateContainer;

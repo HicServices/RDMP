@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -20,6 +20,9 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 {
     private CohortIdentificationConfiguration _cic;
     private Project _project;
+    private readonly string _name;
+    private readonly int? _version;
+    private readonly bool _autoConfirm;
 
     /// <summary>
     /// The clone that was created this command or null if it has not been executed/failed
@@ -28,10 +31,13 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
 
     [UseWithObjectConstructor]
     public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,
-        CohortIdentificationConfiguration cic)
+        CohortIdentificationConfiguration cic, string name = null, int? version = null, bool autoConfirm = false)
         : base(activator)
     {
         _cic = cic;
+        _name = name;
+        _version = version;
+        _autoConfirm = autoConfirm;
     }
 
     public override string GetCommandHelp() =>
@@ -69,10 +75,19 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
             return;
 
         // Confirm creating yes/no (assuming activator is interactive)
-        if (BasicActivator.IsInteractive && !YesNo(
+        if (!_autoConfirm && BasicActivator.IsInteractive && !YesNo(
                 "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning")) return;
         CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
+        if (CloneCreatedIfAny != null)
+        {
+            CloneCreatedIfAny.Version = _version;
+            //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
+            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
+            if (_version is not null)
+                CloneCreatedIfAny.Frozen = true;
+            CloneCreatedIfAny.SaveToDatabase();
+        }
 
         if (_project != null) // clone the association
             _ = new ProjectCohortIdentificationConfigurationAssociation(

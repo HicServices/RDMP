@@ -33,7 +33,8 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     /// <summary>
     /// The users final choice of project directory, also check DialogResult for Ok / Cancel
     /// </summary>
-    public string Result { get; private set; }
+    //public string Result { get; private set; }
+    public LoadDirectory ResultDirectory { get; private set; }
 
     private Regex _endsWithDataFolder = new(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
@@ -47,24 +48,42 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             "ILoadMetadata.LocationOfFlatFiles", false, true);
 
         helpIcon1.SetHelpText("Location Of Flat Files", help);
-
-        if (!string.IsNullOrWhiteSpace(loadMetadata.LocationOfFlatFiles))
+        //if all the same root
+        var rootDirectory = ((LoadMetadata)loadMetadata).GetRootDirectory();
+        if (rootDirectory != null)
         {
-            tbUseExisting.Text = loadMetadata.LocationOfFlatFiles;
-            CheckExistingProjectDirectory();
+            tbUseExisting.Text = rootDirectory.FullName;
+            rbUseExisting.Checked = true;
         }
+        else
+        {
+            //if different        
+            tbForLoadingPath.Text = loadMetadata.LocationOfForLoadingDirectory;
+            tbForArchivingPath.Text = loadMetadata.LocationOfForArchivingDirectory;
+            tbExecutablesPath.Text = loadMetadata.LocationOfExecutablesDirectory;
+            tbCachePath.Text = loadMetadata.LocationOfCacheDirectory;
+            rbChooseYourOwn.Checked = true;
+            rbCreateNew.Checked = false;
+            rbUseExisting.Checked = false;
+        }
+        rb_CheckedChanged(null, null);
     }
 
     private void rb_CheckedChanged(object sender, EventArgs e)
     {
         tbCreateNew.Enabled = rbCreateNew.Checked;
         tbUseExisting.Enabled = rbUseExisting.Checked;
+        tbForLoadingPath.Enabled = rbChooseYourOwn.Checked;
+        tbForArchivingPath.Enabled = rbChooseYourOwn.Checked;
+        tbExecutablesPath.Enabled = rbChooseYourOwn.Checked;
+        tbCachePath.Enabled = rbChooseYourOwn.Checked;
         btnOk.Enabled = true;
     }
 
     private void tbUseExisting_Leave(object sender, EventArgs e)
     {
-        CheckExistingProjectDirectory();
+        if (rbUseExisting.Checked)
+            CheckExistingProjectDirectory();
     }
 
     private void CheckExistingProjectDirectory()
@@ -92,7 +111,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
                 if (!dir.Exists)
                     dir.Create();
 
-                Result = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name).RootPath.FullName;
+                ResultDirectory = LoadDirectory.CreateDirectoryStructure(dir.Parent, dir.Name);
 
                 DialogResult = DialogResult.OK;
                 Close();
@@ -106,7 +125,7 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             try
             {
                 var dir = new LoadDirectory(tbUseExisting.Text);
-                Result = dir.RootPath.FullName;
+                ResultDirectory = dir;
                 DialogResult = DialogResult.OK;
                 Close();
             }
@@ -114,11 +133,47 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
             {
                 if (Activator.YesNo($"Path is invalid, use anyway? ({exception.Message})", "Invalid Path"))
                 {
-                    Result = tbUseExisting.Text;
+                    ResultDirectory = new LoadDirectory(tbUseExisting.Text);
                     DialogResult = DialogResult.OK;
                     Close();
                 }
             }
+        if (rbChooseYourOwn.Checked)
+        {
+            var hasError = false;
+            lblForLoadingError.Visible = false;
+            lblForArchivingError.Visible = false;
+            lblExecutablesError.Visible = false;
+            lblCacheError.Visible = false;
+
+            if (string.IsNullOrWhiteSpace(tbForLoadingPath.Text))
+            {
+                lblForLoadingError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbForArchivingPath.Text))
+            {
+                lblForArchivingError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbExecutablesPath.Text))
+            {
+                lblExecutablesError.Visible = true;
+                hasError = true;
+            }
+            if (string.IsNullOrWhiteSpace(tbCachePath.Text))
+            {
+                lblCacheError.Visible = true;
+                hasError = true;
+            }
+            if (hasError) return;
+            var dir = new LoadDirectory(tbForLoadingPath.Text, tbForArchivingPath.Text, tbExecutablesPath.Text, tbCachePath.Text);
+            ResultDirectory = dir;
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+
     }
 
     private void btnCancel_Click(object sender, EventArgs e)
@@ -149,6 +204,63 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
         }
     }
 
+    private void btnBrowseForLoading_Click(object sender, EventArgs e)
+    {
+        using var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbForLoadingPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForArchiving_Click(object sender, EventArgs e)
+    {
+        using var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbForArchivingPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForExecutables_Click(object sender, EventArgs e)
+    {
+        using var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbExecutablesPath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+    private void btnBrowseForCache_Click(object sender, EventArgs e)
+    {
+        using var fbd = new FolderBrowserDialog
+        {
+            ShowNewFolderButton = false
+        };
+
+        if (fbd.ShowDialog() == DialogResult.OK)
+        {
+            tbCachePath.Text = fbd.SelectedPath;
+            CheckExistingProjectDirectory();
+        }
+    }
+
+
     private void tbUseExisting_TextChanged(object sender, EventArgs e)
     {
         lblDataIsReservedWordExisting.Visible = _endsWithDataFolder.IsMatch(tbUseExisting.Text);
@@ -157,5 +269,41 @@ public partial class ChooseLoadDirectoryUI : RDMPForm
     private void tbCreateNew_TextChanged(object sender, EventArgs e)
     {
         lblDataIsReservedWordNew.Visible = _endsWithDataFolder.IsMatch(tbCreateNew.Text);
+    }
+
+    private void tbForLoadingPath_TextChanged(object sender, EventArgs e)
+    {
+        lblForLoadingError.Visible = string.IsNullOrWhiteSpace(tbForLoadingPath.Text);
+    }
+
+    private void tbForArchivingPath_TextChanged(object sender, EventArgs e)
+    {
+        lblForArchivingError.Visible = string.IsNullOrWhiteSpace(tbForArchivingPath.Text);
+    }
+
+    private void tbCachePath_TextChanged(object sender, EventArgs e)
+    {
+        lblCacheError.Visible = string.IsNullOrWhiteSpace(tbCachePath.Text);
+    }
+
+    private void tbExecutablesPath_TextChanged(object sender, EventArgs e)
+    {
+        lblExecutablesError.Visible = string.IsNullOrWhiteSpace(tbExecutablesPath.Text);
+    }
+
+
+    private void label3_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label7_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label8_Click(object sender, EventArgs e)
+    {
+
     }
 }

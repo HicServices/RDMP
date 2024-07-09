@@ -42,10 +42,10 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
                 };
 
                 foreach (var f in selected)
-                    using (var stream = File.Open(f.FullName, FileMode.Open))
-                    {
-                        shareManager.ImportSharedObject(stream);
-                    }
+                {
+                    using var stream = File.Open(f.FullName, FileMode.Open);
+                    shareManager.ImportSharedObject(stream);
+                }
             }
             catch (Exception e)
             {

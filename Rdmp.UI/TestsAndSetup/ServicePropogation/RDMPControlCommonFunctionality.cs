@@ -302,10 +302,8 @@ public class RDMPControlCommonFunctionality
     public void AddHelpString(Control c, string title, string body, AnchorStyles anchor = AnchorStyles.None)
     {
         //don't add help to the control more than once
-        if (_helpAdded.Contains(c))
+        if (_helpAdded.Add(c))
             return;
-
-        _helpAdded.Add(c);
 
         var help = new HelpIcon();
         help.SetHelpText(title, body);

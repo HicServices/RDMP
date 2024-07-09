@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -35,7 +36,24 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
         if (dialog.ShowDialog() == DialogResult.OK)
         {
-            _loadMetadata.LocationOfFlatFiles = dialog.Result;
+            if (dialog.ResultDirectory.RootPath != null)
+            {
+                //todo check these are correct & make it work with linux
+                _loadMetadata.LocationOfForLoadingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForLoadingPath);
+                _loadMetadata.LocationOfForArchivingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForArchivingPath);
+                _loadMetadata.LocationOfExecutablesDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultExecutablesPath);
+                _loadMetadata.LocationOfCacheDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultCachePath);
+            }
+            else if (dialog.ResultDirectory.ForLoading != null &&
+                dialog.ResultDirectory.ForArchiving != null &&
+                dialog.ResultDirectory.ExecutablesPath != null &&
+                dialog.ResultDirectory.Cache != null)
+            {
+                _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.ForLoading.FullName;
+                _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.ForArchiving.FullName;
+                _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.ExecutablesPath.FullName;
+                _loadMetadata.LocationOfCacheDirectory = dialog.ResultDirectory.Cache.FullName;
+            }
             _loadMetadata.SaveToDatabase();
             Publish(_loadMetadata);
         }

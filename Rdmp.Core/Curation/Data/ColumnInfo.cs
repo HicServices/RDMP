@@ -61,7 +61,7 @@ public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHas
     public int TableInfo_ID
     {
         get => _tableInfoID;
-        private set => SetField(ref _tableInfoID, value);
+        set => SetField(ref _tableInfoID, value);
     }
 
     /// <summary>

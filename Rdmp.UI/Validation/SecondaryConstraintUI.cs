@@ -39,10 +39,6 @@ internal delegate void RequestDeletionHandler(object sender);
 /// </summary>
 public partial class SecondaryConstraintUI : UserControl
 {
-    private readonly string[] _otherColumns;
-
-    private readonly ICatalogueRepository _repository;
-
     /// <summary>
     /// this UI exists to modify this property, the secondary constraint, it is entirely driven by reflection so should handle any SecondaryConstraint you throw at it
     /// </summary>
@@ -64,10 +60,7 @@ public partial class SecondaryConstraintUI : UserControl
         const int rowHeight = 30;
         //the amount of additional space required to accomodate description labels
         var inflation = 0;
-        _repository = repository;
         SecondaryConstriant = secondaryConstriant;
-
-        _otherColumns = otherColumns;
 
         InitializeComponent();
 
@@ -167,7 +160,7 @@ public partial class SecondaryConstraintUI : UserControl
                         Tag = i,
                         Width = 350
                     };
-                    cbx.Items.AddRange(_otherColumns);
+                    cbx.Items.AddRange(otherColumns);
                     cbx.Items.Add("");
                     cbx.SelectedIndexChanged += (s, e) =>
                         _requiredProperties[(int)cbx.Tag].SetValue(SecondaryConstriant,
@@ -186,7 +179,7 @@ public partial class SecondaryConstraintUI : UserControl
                         AutoCompleteSource = AutoCompleteSource.ListItems,
                         AutoCompleteMode = AutoCompleteMode.Suggest
                     };
-                    var entities = _repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
+                    var entities = repository.GetAllObjects(_requiredProperties[i].PropertyType).ToArray();
 
                     if (!entities.Any())
                     {

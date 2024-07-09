@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -7,13 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
+using NUnit.Framework.Internal;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
@@ -86,7 +89,7 @@ public class DataTableUploadDestinationTests : DatabaseTests
                 "age varchar(50),"
             };
 
-            if(createIdentity)
+            if (createIdentity)
                 leftToCreate.Add("id int IDENTITY(1,1),");
 
             var invalid = false;
@@ -1400,6 +1403,446 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.That(db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("FloatCol").DataType.SQLType, Is.EqualTo("real"));
         });
     }
+
+
+    [Test]
+    public void CreateIndex_OK()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" }
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows);
+            r.Read();
+            Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
+        }
+    }
+
+    [Test]
+    public void CreateIndex_NO_PK()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK"
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows, Is.EqualTo(false));
+        }
+    }
+
+    [Test]
+    public void CreateIndex_RecreateExistingFail()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" }
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        using (var con = db.Server.GetConnection())
+        {
+            con.Open();
+            DbCommand cmd = db.Server.GetCommand("select * from sys.indexes where name = 'CreateIndex_OK'", con);
+            var r = cmd.ExecuteReader();
+            Assert.That(r.HasRows);
+            r.Read();
+            Assert.That(r["name"], Is.EqualTo("CreateIndex_OK"));
+            Assert.That(r.Read(), Is.EqualTo(false));//only 1 row
+        }
+    }
+
+    [Test]
+    public void UseTriggerwithoutPrimaryKey()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            UseTrigger = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var t = db.DiscoverTables(false).Select(t => t.GetRuntimeName()).ToList();
+        Assert.That(t.Contains("DataTableUploadDestinationTests_Archive"), Is.EqualTo(false));
+        var destinationTable = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var columns = destinationTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+        Assert.That(columns.Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(false));
+    }
+
+    [Test]
+    public void UseTriggerwithPrimaryKey()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            UseTrigger = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Rows.Add(new[] { "Fish" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var t = db.DiscoverTables(false).Select(t => t.GetRuntimeName()).ToList();
+        Assert.That(t.Contains("DataTableUploadDestinationTests_Archive"), Is.EqualTo(true));
+        var destinationTable = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var columns = destinationTable.DiscoverColumns().Select(c => c.GetRuntimeName());
+        Assert.That(columns.Contains(SpecialFieldNames.DataLoadRunID), Is.EqualTo(true));
+    }
+
+    [Test]
+    public void DataTableUploadClashSameRow()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+            dt1 = new DataTable();
+            dt1.Columns.Add("name", typeof(string));
+            dt1.Columns.Add("other", typeof(string));
+            dt1.Rows.Add(new[] { "Fish", "Friend" });
+            dt1.PrimaryKey = new[] { dt1.Columns[0] };
+            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            Assert.Throws<Exception>(()=>destination.ProcessPipelineData(dt1, toConsole, token));
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+    }
+    [Test]
+    public void DataTableUploadClashSameRowWithTrigger()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true,
+            UseTrigger = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+            dt1 = new DataTable();
+            dt1.Columns.Add("name", typeof(string));
+            dt1.Columns.Add("other", typeof(string));
+            dt1.Rows.Add(new[] { "Fish", "Friend" });
+            dt1.PrimaryKey = new[] { dt1.Columns[0] };
+            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+    }
+    [Test]
+    public void DataTableUploadClashUpdateNoTrigger()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Enemy" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true
+        };
+        destination.PreInitialize(db, toConsole);
+        Assert.Throws<Exception>(() => destination.ProcessPipelineData(dt1, toConsole, token));
+        destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo("Friend"));
+    }
+    [Test]
+    public void DataTableUploadClashUpdateWithTrigger()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true,
+            UseTrigger = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+            dt1 = new DataTable();
+            dt1.Columns.Add("name", typeof(string));
+            dt1.Columns.Add("other", typeof(string));
+            dt1.Rows.Add(new[] { "Fish", "Enemy" });
+            dt1.PrimaryKey = new[] { dt1.Columns[0] };
+            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo("Enemy"));
+        table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive").First();
+        resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+    }
+    //need to test rows to modify ln 354
+    //test when we drop a column
+    [Test]
+    public void DataTableUploadClashUpdateDropColumnWithTrigger()
+    {
+        var token = new GracefulCancellationToken();
+        var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+        var toConsole = ThrowImmediatelyDataLoadEventListener.Quiet;
+
+        var destination = new DataTableUploadDestination
+        {
+            IndexTables = true,
+            IndexTableName = "CreateIndex_OK",
+            UserDefinedIndexes = new List<string>() { "name" },
+            AppendDataIfTableExists = true,
+            UseTrigger = true
+        };
+        destination.PreInitialize(db, toConsole);
+
+        var dt1 = new DataTable();
+        dt1.Columns.Add("name", typeof(string));
+        dt1.Columns.Add("other", typeof(string));
+        dt1.Rows.Add(new[] { "Fish", "Friend" });
+        dt1.PrimaryKey = new[] { dt1.Columns[0] };
+        dt1.TableName = "DataTableUploadDestinationTests";
+        try
+        {
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+            dt1 = new DataTable();
+            dt1.Columns.Add("name", typeof(string));
+            dt1.Columns.Add("other", typeof(string));
+            dt1.Rows.Add(new[] { "Fish" });
+            dt1.PrimaryKey = new[] { dt1.Columns[0] };
+            dt1.TableName = "DataTableUploadDestinationTests"; ;
+            destination.ProcessPipelineData(dt1, toConsole, token);
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, null);
+        }
+        catch (Exception ex)
+        {
+            destination.Dispose(ThrowImmediatelyDataLoadEventListener.Quiet, ex);
+            throw;
+        }
+        var table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests").First();
+        var resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+        Assert.That(resultDT.Rows[0].ItemArray[1], Is.EqualTo(string.Empty));
+        table = db.DiscoverTables(false).Where(t => t.GetRuntimeName() == "DataTableUploadDestinationTests_Archive").First();
+        resultDT = table.GetDataTable();
+        Assert.That(resultDT.Rows.Count, Is.EqualTo(1));
+        Assert.That(resultDT.Rows[0].ItemArray[0], Is.EqualTo("Fish"));
+    }
+
+
 
     #endregion
 }

@@ -94,3 +94,4 @@ FK_RowState_Evaluation: Ensures that when a DQE Evaluation is deleted all child 
 FK_PeriodicityState_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
 FK_DQEGraphAnnotation_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
 FK_Memento_Commit: Ensures that when a Commit is deleted all its child database objects are also deleted
+UNIQUE_SettingKey: Ensures the uniqueness of key values in the setting table 
