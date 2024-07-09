@@ -38,7 +38,7 @@ public class CachingHostTests : UnitTests
         var cp = WhenIHaveA<CacheProgress>();
         var loadMetadata = cp.LoadProgress.LoadMetadata;
 
-        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test", false, (LoadMetadata)loadMetadata);
+        LoadDirectory.CreateDirectoryStructure(testDir, "Test", false, (LoadMetadata)loadMetadata);
 
         // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
         var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");

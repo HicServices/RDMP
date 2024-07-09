@@ -35,7 +35,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         _dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "ProcessTaskCheckingTests"));
         _dir.Create();
 
-        var hicdir = LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true, _lmd);
+        LoadDirectory.CreateDirectoryStructure(_dir, "ProjDir", true, _lmd);
         _lmd.SaveToDatabase();
 
         var c = new Catalogue(CatalogueRepository, "c");
