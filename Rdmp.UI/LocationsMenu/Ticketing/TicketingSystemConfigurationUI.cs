@@ -6,8 +6,12 @@
 
 using System;
 using System.Linq;
+using FluentFTP.Helpers;
+using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
@@ -76,6 +80,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository
             .GetAllObjects<DataAccessCredentials>().ToArray());
 
+
         if (_ticketingSystemConfiguration == null)
         {
             gbTicketingSystem.Enabled = false;
@@ -104,6 +109,7 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             btnCreate.Enabled = false;
             btnDelete.Enabled = true;
             btnSave.Enabled = false;
+            tbReleases.Text = string.Join(',', _ticketingSystemConfiguration.GetReleaseStatuses().Select(s => s.Status).ToList());
         }
 
         _bLoading = false;
@@ -112,6 +118,16 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
     private void btnSave_Click(object sender, EventArgs e)
     {
         _ticketingSystemConfiguration.SaveToDatabase();
+
+        var releases = tbReleases.Text.Split(',');
+        var existingReleases = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<TicketingSystemReleaseStatus>("TicketingSystemConfigurationID", _ticketingSystemConfiguration.ID);
+        var toDelete = existingReleases.Where(s => !releases.Contains(s.Status)).ToList();
+        foreach (var release in releases.Where(rs => rs != "" && !existingReleases.Select(er => er.Status).Contains(rs)))
+        {
+            var rs = new TicketingSystemReleaseStatus(_activator.RepositoryLocator.CatalogueRepository, release.Trim(), null, _ticketingSystemConfiguration);
+            rs.SaveToDatabase();
+        }
+        toDelete.ForEach(rs => rs.DeleteInDatabase());
         btnSave.Enabled = false;
         RefreshUIFromDatabase();
     }
@@ -143,6 +159,18 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         {
             var factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
             instance = factory.CreateIfExists(_ticketingSystemConfiguration);
+
+            if (instance != null)
+            {
+                var knownStatuses = instance.GetAvailableStatuses();
+                var requestedStatuses = tbReleases.Text.Split(',').Where(s => s.Trim() != "");
+                if (!requestedStatuses.Any()) checksUI1.OnCheckPerformed(new CheckEventArgs($"No Release status set", CheckResult.Fail));
+
+                foreach (var status in requestedStatuses.Where(s => !knownStatuses.Contains(s.Trim())))
+                {
+                    checksUI1.OnCheckPerformed(new CheckEventArgs($"{status} is not a known status within the ticketing system", CheckResult.Fail));
+                }
+            }
 
             checksUI1.OnCheckPerformed(
                 new CheckEventArgs($"successfully created a instance of {instance.GetType().FullName}",
@@ -191,6 +219,11 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
         RefreshUIFromDatabase();
     }
 
+    private void tReleases_TextChanged(object sender, EventArgs e)
+    {
+        btnSave.Enabled = true;
+    }
+
     private void tb_TextChanged(object sender, EventArgs e)
     {
         if (_bLoading)
@@ -235,5 +268,10 @@ public partial class TicketingSystemConfigurationUI : RDMPUserControl
             _ticketingSystemConfiguration.IsActive = !cbDisabled.Checked;
             _ticketingSystemConfiguration.SaveToDatabase();
         }
+    }
+
+    private void label5_Click(object sender, EventArgs e)
+    {
+
     }
 }

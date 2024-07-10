@@ -757,7 +757,10 @@
   <data name="LoadMetadataCatalogueLinkage" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\LoadMetadataCatalogueLinkage.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-	<data name="Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
-		<value>..\famfamfam\cog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-	</data>
+  <data name="Setting" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\famfamfam\cog.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="TicketingSystemReleaseStatus" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\TicketingSystemReleaseStatus.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
 </root>
