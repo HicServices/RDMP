@@ -2,7 +2,10 @@ name: Build
 
 # Run this workflow every time a new commit pushed to your repository
 
-on: push
+on: 
+  push:
+  schedule:
+    - cron: '0 1 * * *'
 
 env:
   DOTNET_NOLOGO: 1
@@ -72,7 +75,6 @@ jobs:
           files: ./db-ui.lcov ./db-core.lcov
           flag-name: unit tests
 
-  
   tests_file_system:
     name: Run File System Tests
     runs-on: windows-latest
