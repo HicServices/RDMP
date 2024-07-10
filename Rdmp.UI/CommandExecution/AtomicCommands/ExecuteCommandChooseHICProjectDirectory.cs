@@ -39,20 +39,14 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
             if (dialog.ResultDirectory.RootPath != null)
             {
                 //todo check these are correct & make it work with linux
-                _loadMetadata.LocationOfForLoadingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForLoadingPath);
-                _loadMetadata.LocationOfForArchivingDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultForArchivingPath);
-                _loadMetadata.LocationOfExecutablesDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultExecutablesPath);
-                _loadMetadata.LocationOfCacheDirectory = Path.Combine(dialog.ResultDirectory.RootPath.FullName, _loadMetadata.DefaultCachePath);
+                dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
             }
             else if (dialog.ResultDirectory.ForLoading != null &&
                 dialog.ResultDirectory.ForArchiving != null &&
                 dialog.ResultDirectory.ExecutablesPath != null &&
                 dialog.ResultDirectory.Cache != null)
             {
-                _loadMetadata.LocationOfForLoadingDirectory = dialog.ResultDirectory.ForLoading.FullName;
-                _loadMetadata.LocationOfForArchivingDirectory = dialog.ResultDirectory.ForArchiving.FullName;
-                _loadMetadata.LocationOfExecutablesDirectory = dialog.ResultDirectory.ExecutablesPath.FullName;
-                _loadMetadata.LocationOfCacheDirectory = dialog.ResultDirectory.Cache.FullName;
+                dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
             }
             _loadMetadata.SaveToDatabase();
             Publish(_loadMetadata);

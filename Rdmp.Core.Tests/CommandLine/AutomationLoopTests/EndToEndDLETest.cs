@@ -46,10 +46,7 @@ public class EndToEndDLETest : TestsRequiringADle
 
         var cata = Import(tbl);
         var lmd = new LoadMetadata(CatalogueRepository, nameof(TestDle_DodgyColumnNames));
-        lmd.LocationOfForLoadingDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultForLoadingPath);
-        lmd.LocationOfForArchivingDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultForArchivingPath);
-        lmd.LocationOfExecutablesDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultExecutablesPath);
-        lmd.LocationOfCacheDirectory = Path.Combine(LoadDirectory.RootPath.FullName , lmd.DefaultCachePath);
+        LoadDirectory.PopulateLoadMetadata(lmd);
         lmd.SaveToDatabase();
 
         CreateFlatFileAttacher(lmd, "Troll.csv", cata.GetTableInfoList(false).Single());

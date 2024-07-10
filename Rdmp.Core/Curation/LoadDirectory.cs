@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data.DataLoad;
 using System;
 using System.IO;
 using System.Linq;
@@ -52,7 +53,7 @@ public class LoadDirectory : ILoadDirectory
     /// </summary>
     /// <param name="rootPath"></param>
     /// <param name="validate"></param>
-    public LoadDirectory(string rootPath, bool validate=true)
+    public LoadDirectory(string rootPath, bool validate = true)
     {
         if (string.IsNullOrWhiteSpace(rootPath))
             throw new Exception("Root path was blank, there is no LoadDirectory path specified?");
@@ -81,7 +82,7 @@ public class LoadDirectory : ILoadDirectory
             throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Cache: {CachePath}. Extractables:{ExecutablesPath}");
         ForLoading = new DirectoryInfo(ForLoadingPath);
         ForArchiving = new DirectoryInfo(ForArchivingPath);
-        ExecutablesPath =new DirectoryInfo(ExecutablesPathString);
+        ExecutablesPath = new DirectoryInfo(ExecutablesPathString);
         Cache = new DirectoryInfo(CachePath);
     }
 
@@ -102,9 +103,10 @@ public class LoadDirectory : ILoadDirectory
     /// <param name="parentDir">Parent folder to create the tree in e.g. c:\temp</param>
     /// <param name="dirName">Root folder name for the DLE e.g. LoadingBiochem</param>
     /// <param name="overrideExistsCheck">Determines behaviour if the folder already exists and contains files.  True to carry on, False to throw an Exception</param>
+    /// <param name="loadMetadataToPopulate">Optional loadMetadata object to populate with the created locations</param>
     /// <returns></returns>
     public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName,
-        bool overrideExistsCheck = false)
+        bool overrideExistsCheck = false, ILoadMetadata loadMetadataToPopulate = null)
     {
         if (!parentDir.Exists)
             parentDir.Create();
@@ -128,7 +130,23 @@ public class LoadDirectory : ILoadDirectory
         swExampleFixedWidth.Close();
 
         projectDir.CreateSubdirectory("Executables");
+        if (loadMetadataToPopulate != null)
+        {
+            loadMetadataToPopulate.LocationOfForLoadingDirectory = Path.Combine(projectDir.FullName, "Data", "ForLoading");
+            loadMetadataToPopulate.LocationOfForArchivingDirectory = Path.Combine(projectDir.FullName, "Data", "ForArchiving");
+            loadMetadataToPopulate.LocationOfExecutablesDirectory = Path.Combine(projectDir.FullName, "Executables");
+            loadMetadataToPopulate.LocationOfCacheDirectory = Path.Combine(projectDir.FullName, "Data", "Cache");
+        }
 
         return new LoadDirectory(projectDir.FullName);
+    }
+
+    public void PopulateLoadMetadata(ILoadMetadata loadMetadata)
+    {
+        loadMetadata.LocationOfForLoadingDirectory = ForLoading.FullName;
+        loadMetadata.LocationOfForArchivingDirectory = ForArchiving.FullName;
+        loadMetadata.LocationOfExecutablesDirectory = ExecutablesPath.FullName;
+        loadMetadata.LocationOfCacheDirectory = Cache.FullName;
+
     }
 }

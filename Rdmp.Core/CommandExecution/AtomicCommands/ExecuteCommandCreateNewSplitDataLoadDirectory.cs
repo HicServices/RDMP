@@ -114,11 +114,7 @@ public class ExecuteCommandCreateNewSplitDataLoadDirectory : BasicCommandExecuti
         // if we have a load then update the path to this location we just created
         if (LoadMetadata != null)
         {
-            LoadMetadata.LocationOfForLoadingDirectory = loadDir.ForLoading.FullName;
-            LoadMetadata.LocationOfForArchivingDirectory = loadDir.ForArchiving.FullName;
-            LoadMetadata.LocationOfExecutablesDirectory = loadDir.ExecutablesPath.FullName;
-            LoadMetadata.LocationOfCacheDirectory = loadDir.Cache.FullName;
-            LoadMetadata.SaveToDatabase();
+            loadDir.PopulateLoadMetadata(LoadMetadata);
             Publish(LoadMetadata);
         }
     }

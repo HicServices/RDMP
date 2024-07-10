@@ -126,11 +126,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-        _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-        _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-        _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
+                true, _lmd);
         _lmd.SaveToDatabase();
         try
         {
@@ -156,11 +152,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-        _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-        _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-        _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
+                true, _lmd);
         _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
@@ -197,11 +189,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfForLoadingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForLoadingPath);
-        _lmd.LocationOfForArchivingDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultForArchivingPath);
-        _lmd.LocationOfExecutablesDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultExecutablesPath);
-        _lmd.LocationOfCacheDirectory = Path.Combine(projDir.RootPath.FullName, _lmd.DefaultCachePath);
+                true, _lmd);
         _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);

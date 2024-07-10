@@ -155,7 +155,6 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 
         //define a new load configuration
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
-
         if (testCase == TestCase.NoTrigger)
         {
             lmd.IgnoreTrigger = true;
