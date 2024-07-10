@@ -320,8 +320,7 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
                   Activator.YesNo(
                       $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
                       "Create Extractable Column?");
-            var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { };
-            keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<ColumnInfo, ColumnInfo>((ColumnInfo)x.SelectedItem, (ColumnInfo)y.SelectedItem)).ToList();
+            var keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<ColumnInfo, ColumnInfo>((ColumnInfo)x.SelectedItem, (ColumnInfo)y.SelectedItem)).ToList();
             var descs = Descriptions.Select(d => (ColumnInfo)d.SelectedItem).ToArray();
             var foreignKeyExtractionInformation =
                _allExtractionInformationFromCatalogue.SingleOrDefault(e =>
