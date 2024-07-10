@@ -31,8 +31,8 @@ public class BinderWithErrorProviderFactory
         DataSourceUpdateMode updateMode, Func<T, object> getter) where T : IMapsDirectlyToDatabaseTable
     {
         c.DataBindings.Clear();
-        c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
-
+        var dataBinding = c.DataBindings.Add(propertyName, databaseObject, dataMember, formattingEnabled, updateMode);
+        dataBinding.BindingComplete += new BindingCompleteEventHandler(BindingHandler);
         var property = databaseObject.GetType().GetProperty(dataMember);
 
         if (property.GetCustomAttributes(typeof(UniqueAttribute), true).Any())
@@ -46,5 +46,11 @@ public class BinderWithErrorProviderFactory
 
         if (dataMember.Equals("Name") && databaseObject is INamed)
             new NoBadNamesRule<T>(_activator, databaseObject, getter, c, dataMember);
+    }
+
+    private void BindingHandler(object sender, BindingCompleteEventArgs e)
+    {
+        if (e.BindingCompleteState != BindingCompleteState.Success)
+            MessageBox.Show("Error: " + e.ErrorText);
     }
 }

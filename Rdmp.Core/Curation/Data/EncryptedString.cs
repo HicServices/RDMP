@@ -40,7 +40,7 @@ public class EncryptedString : IEncryptedString
                 }
                 catch (Exception e)
                 {
-                    if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
+                   if (e.Message.Contains("Bad Length") || e.Message.Contains("data too large for key size"))
                         throw new InvalidOperationException(
                             $"The free text Value supplied to this class was too long to be encrypted (Length of string was {value.Length})",
                             e);
