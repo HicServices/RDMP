@@ -49,6 +49,7 @@ public partial class MetadataReportUI : RDMPForm
         InitializeComponent();
 
         _catalogues = Activator.CoreChildProvider.AllCatalogues;
+        Array.Sort(_catalogues, delegate (Catalogue x, Catalogue y) { return x.Name.CompareTo(y.Name); });
         cbxCatalogues.Items.AddRange(_catalogues);
 
         if (initialSelection != null)
