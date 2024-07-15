@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MongoDB.Driver.Core.Operations;
 using Rdmp.Core.Curation.Data.DataLoad;
 using System;
 using System.IO;
@@ -147,6 +148,10 @@ public class LoadDirectory : ILoadDirectory
         loadMetadata.LocationOfForArchivingDirectory = ForArchiving.FullName;
         loadMetadata.LocationOfExecutablesDirectory = ExecutablesPath.FullName;
         loadMetadata.LocationOfCacheDirectory = Cache.FullName;
+    }
 
+    public bool AllSubdirectoriesExist()
+    {
+        return Directory.Exists(ForLoading.FullName) && Directory.Exists(ForArchiving.FullName) && Directory.Exists(Cache.FullName) && Directory.Exists(ExecutablesPath.FullName);
     }
 }

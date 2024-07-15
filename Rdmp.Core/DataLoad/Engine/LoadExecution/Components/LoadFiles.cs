@@ -40,12 +40,22 @@ public class LoadFiles : CompositeDataLoadComponent
         {
             if (Components.Any())
                 toReturn = base.Run(job, cancellationToken);
-            else if (job.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Using existing files in '{job.LoadDirectory.ForLoading.FullName}', there are no GetFiles processes or DataProviders configured"));
             else
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-                    $"There are no GetFiles tasks and there are no files in the ForLoading directory ({job.LoadDirectory.ForLoading.FullName})"));
+            {
+                if (((LoadDirectory)job.LoadDirectory).AllSubdirectoriesExist())
+                {
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error,
+                            $"One or more of the Load Metadata directories does not exist. Check the following locations exits: {string.Join(", ", [job.LoadDirectory.ForLoading.FullName, job.LoadDirectory.ForArchiving.FullName, job.LoadDirectory.Cache.FullName, job.LoadDirectory.ExecutablesPath.FullName])}"));
+                    return ExitCodeType.Error;
+                }
+                else if (job.LoadDirectory.ForLoading.EnumerateFileSystemInfos().Any())
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Using existing files in '{job.LoadDirectory.ForLoading.FullName}', there are no GetFiles processes or DataProviders configured"));
+                else
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                        $"There are no GetFiles tasks and there are no files in the ForLoading directory ({job.LoadDirectory.ForLoading.FullName})"));
+            }
+
         }
         finally
         {
