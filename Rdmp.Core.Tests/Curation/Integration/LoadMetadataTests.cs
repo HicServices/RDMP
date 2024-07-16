@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using NUnit.Framework;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;

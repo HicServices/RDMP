@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;

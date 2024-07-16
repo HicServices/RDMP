@@ -29,10 +29,6 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
 using FAnsi;
-using Terminal.Gui;
-using TB.ComponentModel;
-using Npgsql;
-using MathNet.Numerics.LinearAlgebra;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 

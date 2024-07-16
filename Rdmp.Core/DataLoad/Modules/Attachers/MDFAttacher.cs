@@ -6,10 +6,8 @@
 
 using System;
 using System.Data;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics.Distributions;
 using Microsoft.Data.SqlClient;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
