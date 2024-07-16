@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
@@ -32,6 +33,12 @@ internal class CatalogueLoadChecks : ICheckable
         _loadMetadata = loadMetadata;
         _loadConfigurationFlags = loadConfigurationFlags;
         _databaseConfiguration = databaseConfiguration;
+    }
+
+
+    private bool ValidateFilePath(string directoryPath)
+    {
+        return Path.Exists(directoryPath);
     }
 
     public void Check(ICheckNotifier notifier)
@@ -69,6 +76,18 @@ internal class CatalogueLoadChecks : ICheckable
                     $"Catalogue {catalogue.Name} does not have any TableInfos", CheckResult.Fail, null));
 
             tablesFound.AddRange(tableInfos.Where(tableInfo => !tablesFound.Contains(tableInfo)));
+            if(_loadMetadata.LocationOfForLoadingDirectory != null && !ValidateFilePath(_loadMetadata.LocationOfForLoadingDirectory))
+                 notifier.OnCheckPerformed(new CheckEventArgs($"The ForLoading directory for this load ({_loadMetadata.LocationOfForLoadingDirectory}) does not exist.",
+                CheckResult.Fail, null));
+            if (_loadMetadata.LocationOfForArchivingDirectory!= null && !ValidateFilePath(_loadMetadata.LocationOfForArchivingDirectory))
+                notifier.OnCheckPerformed(new CheckEventArgs($"The ForArchiving directory for this load ({_loadMetadata.LocationOfForArchivingDirectory}) does not exist.",
+               CheckResult.Fail, null));
+            if (_loadMetadata.LocationOfCacheDirectory != null && _loadMetadata.LocationOfForLoadingDirectory != null && !ValidateFilePath(_loadMetadata.LocationOfCacheDirectory))
+                notifier.OnCheckPerformed(new CheckEventArgs($"The Cache directory for this load ({_loadMetadata.LocationOfCacheDirectory}) does not exist.",
+               CheckResult.Fail, null));
+            if (_loadMetadata.LocationOfExecutablesDirectory != null && !ValidateFilePath(_loadMetadata.LocationOfExecutablesDirectory))
+                notifier.OnCheckPerformed(new CheckEventArgs($"The Executables directory for this load ({_loadMetadata.LocationOfExecutablesDirectory}) does not exist.",
+               CheckResult.Fail, null));
         }
 
 
