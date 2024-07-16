@@ -159,6 +159,8 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         foreach (var annotation in evaluations)
         {
             var a = new DQEGraphAnnotationUI(annotation, chart1);
+            a.TextAnnotation.AllowMoving = true;
+            //chart1.Ann
             chart1.Annotations.Add(a.Annotation);
             chart1.Annotations.Add(a.TextAnnotation);
         }
