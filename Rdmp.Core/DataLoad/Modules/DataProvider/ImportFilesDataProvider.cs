@@ -48,7 +48,6 @@ public class ImportFilesDataProvider : IPluginDataProvider
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "No FilePattern has been specified, this should be a pattern that matches files in the remote folder you want to copy files out of e.g. *.*",
                 CheckResult.Fail));
-
         notifier.OnCheckPerformed(new DirectoryInfo(DirectoryPath).Exists
             ? new CheckEventArgs($"Path {DirectoryPath} was found", CheckResult.Success)
             : new CheckEventArgs($"Path {DirectoryPath} was not found", CheckResult.Fail));
