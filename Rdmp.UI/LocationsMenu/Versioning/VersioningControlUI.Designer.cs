@@ -143,6 +143,8 @@ namespace Rdmp.UI.LocationsMenu.Versioning
                 btnShowTicket.Enabled = false;
             }
             versions.Insert(0, databaseObject);
+            if(_cic.Frozen)
+                btnShowTicket.Enabled = false;
             tbTicket.DataSource = versions;
         }
         #endregion
