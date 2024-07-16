@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Release status options to the ticketing system
 - Improve Interface for Lookup table generation
-- Inprove read/write access to plugin files for linux systems
+- Improve read/write access to plugin files for linux systems
+- Add instance setting to prompt for cohort versioning when comitting
 
 ## [8.2.0] - 2024-07-09
 
