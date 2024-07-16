@@ -52,7 +52,7 @@ public sealed class LoadModuleAssembly
         var pluginFiles = Directory.EnumerateFiles(AppDomain.CurrentDomain.BaseDirectory, "*.rdmp");
         foreach (var pluginFile in pluginFiles)
         {
-            using FileStream fs = new(pluginFile, FileMode.Open);
+            using FileStream fs = new(pluginFile, FileMode.Open,FileAccess.Read);
             using ZipFile zip = new(fs);
             foreach (ZipEntry ze in zip)
             {
