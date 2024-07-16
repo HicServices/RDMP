@@ -108,6 +108,7 @@ public partial class MetadataReportUI : RDMPForm
 
         aggregateGraph1.Width = (int)_report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
+        aggregateGraph1.Left = -(int)_report.PageWidthInPixels; //push the render off screen 
 
 
         //only graph extractable aggregates
