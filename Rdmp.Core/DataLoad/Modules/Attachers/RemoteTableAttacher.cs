@@ -6,7 +6,6 @@
 
 using System;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
@@ -27,7 +26,6 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using TypeGuesser;
-using static NPOI.HSSF.Util.HSSFColor;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;
 

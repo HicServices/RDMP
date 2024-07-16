@@ -7,7 +7,6 @@
 using System;
 using System.Runtime.InteropServices;
 using CommandLine;
-using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Settings;

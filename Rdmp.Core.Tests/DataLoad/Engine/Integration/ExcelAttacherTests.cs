@@ -6,7 +6,6 @@
 
 using FAnsi;
 using FAnsi.Discovery;
-using NPOI.SS.Formula.Functions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using NUnit.Framework;
@@ -17,12 +16,8 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
-using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;

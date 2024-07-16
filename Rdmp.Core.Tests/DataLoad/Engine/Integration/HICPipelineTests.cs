@@ -27,7 +27,6 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using Terminal.Gui;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;

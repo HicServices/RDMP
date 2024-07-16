@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using FAnsi;
-using MongoDB.Driver.Linq;
-using NPOI.SS.Formula.Functions;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
