@@ -1,3 +1,4 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -8,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Release status options to the ticketing system
 - Improve Interface for Lookup table generation
+- Add directory validity checking to data loads
 
 ## [8.2.0] - 2024-07-09
 
