@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -13,6 +14,7 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.Setting;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -68,7 +70,19 @@ public class ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfig
         if (cic == null)
             return;
 
+        if (BasicActivator.IsInteractive) {
+            var PromptForVersionOnCohortCommit = false;
+            var PromptForVersionOnCohortCommitSetting = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting.Setting>().Where(s => s.Key == "PromptForVersionOnCohortCommit").FirstOrDefault();
+            if (PromptForVersionOnCohortCommitSetting is not null) PromptForVersionOnCohortCommit = Convert.ToBoolean(PromptForVersionOnCohortCommitSetting.Value);
+            if (PromptForVersionOnCohortCommit && BasicActivator.YesNo("It is recommended to save your cohort as a new version before committing. Would you like to do this?", "Save cohort as new version before committing?"))
+            {
+                var newVersion = new ExecuteCommandCreateVersionOfCohortConfiguration(BasicActivator, cic);
+                newVersion.Execute();
+                var versions = cic.GetVersions();
+                cic = versions.Last();
+            }
 
+        }
         if (Project == null && BasicActivator.CoreChildProvider is DataExportChildProvider dx)
         {
             var projAssociations = dx.AllProjectAssociatedCics
