@@ -35,15 +35,10 @@ public class CachingHostTests : UnitTests
         if (testDir.Exists)
             Directory.Delete(testDir.FullName, true);
 
-        var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test");
-
-
         var cp = WhenIHaveA<CacheProgress>();
         var loadMetadata = cp.LoadProgress.LoadMetadata;
-        loadMetadata.LocationOfForLoadingDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultForLoadingPath);
-        loadMetadata.LocationOfForArchivingDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultForArchivingPath);
-        loadMetadata.LocationOfExecutablesDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultExecutablesPath);
-        loadMetadata.LocationOfCacheDirectory = Path.Combine(loadDirectory.RootPath.FullName , ((LoadMetadata)loadMetadata).DefaultCachePath);
+
+        LoadDirectory.CreateDirectoryStructure(testDir, "Test", false, (LoadMetadata)loadMetadata);
 
         // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
         var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");

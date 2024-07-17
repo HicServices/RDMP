@@ -6,7 +6,6 @@
 
 using Microsoft.Data.SqlClient;
 using NUnit.Framework;
-using System;
 using System.Linq;
 using Tests.Common;
 
