@@ -162,6 +162,13 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         new ExecuteCommandConfigureDefaultServers(Activator).Execute();
     }
 
+    private void launchDefaultInstance(object sender, EventArgs e)
+    {
+        var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName,
+        Process.GetCurrentProcess().ProcessName);
+        Process.Start(exeName);
+    }
+
     private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var ui = new TicketingSystemConfigurationUI();
@@ -291,7 +298,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // Location menu
         instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
             new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)
-                { OverrideCommandName = "Change Default Instance" }));
+            { OverrideCommandName = "Change Default Instance" }));
 
         Activator.Theme.ApplyTo(menuStrip1);
 
@@ -463,7 +470,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         _windowManager.Navigation.Forward(true);
     }
 
-    
+
 
     private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
     {
