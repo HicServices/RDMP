@@ -159,6 +159,7 @@ internal class DocumentationCrossExaminationTest
         "ProposedFixes",
         "PropertyX",
         "FamilyMembers",
+        "LookupConfiguration",
 
         //CreatingANewCollectionTreeNode.md
         "FolderOfX",
@@ -278,7 +279,10 @@ internal class DocumentationCrossExaminationTest
         "BuildInParallel",
 
         //Quickstart.md
-        "ResearchDataManagmentPlatform"
+        "ResearchDataManagmentPlatform",
+
+        // CSVHandling
+        "TypeTranslation"
     };
 
     #endregion

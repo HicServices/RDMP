@@ -48,7 +48,9 @@ public class TestsRequiringADle : TestsRequiringA
 
         var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var subdir = rootFolder.CreateSubdirectory("TestsRequiringADle");
-        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder, subdir.FullName, true);
+        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue");
+
+        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder, subdir.FullName, true, TestLoadMetadata);
 
         Clear(LoadDirectory);
 
@@ -62,12 +64,6 @@ public class TestsRequiringADle : TestsRequiringA
 
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
-
-        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue");
-        TestLoadMetadata.LocationOfForLoadingDirectory = Path.Combine(LoadDirectory.RootPath.FullName, TestLoadMetadata.DefaultForLoadingPath);
-        TestLoadMetadata.LocationOfForArchivingDirectory = Path.Combine(LoadDirectory.RootPath.FullName, TestLoadMetadata.DefaultForArchivingPath);
-        TestLoadMetadata.LocationOfExecutablesDirectory = Path.Combine(LoadDirectory.RootPath.FullName, TestLoadMetadata.DefaultExecutablesPath);
-        TestLoadMetadata.LocationOfCacheDirectory = Path.Combine(LoadDirectory.RootPath.FullName, TestLoadMetadata.DefaultCachePath);
 
         TestLoadMetadata.SaveToDatabase();
 

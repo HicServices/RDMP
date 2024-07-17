@@ -61,16 +61,12 @@ public class ExecuteCommandCreateNewDataLoadDirectory : BasicCommandExecution
 
         var loadDir =
             string.IsNullOrWhiteSpace(newFolderName)
-                ? LoadDirectory.CreateDirectoryStructure(d.Parent, d.Name, true)
-                : LoadDirectory.CreateDirectoryStructure(d, newFolderName, true);
+                ? LoadDirectory.CreateDirectoryStructure(d.Parent, d.Name, true, LoadMetadata)
+                : LoadDirectory.CreateDirectoryStructure(d, newFolderName, true, LoadMetadata);
 
         // if we have a load then update the path to this location we just created
         if (LoadMetadata != null)
         {
-            LoadMetadata.LocationOfForLoadingDirectory = Path.Combine(loadDir.RootPath.FullName ,LoadMetadata.DefaultForLoadingPath);
-            LoadMetadata.LocationOfForArchivingDirectory = Path.Combine(loadDir.RootPath.FullName, LoadMetadata.DefaultForArchivingPath);
-            LoadMetadata.LocationOfExecutablesDirectory = Path.Combine(loadDir.RootPath.FullName , LoadMetadata.DefaultExecutablesPath);
-            LoadMetadata.LocationOfCacheDirectory = Path.Combine(loadDir.RootPath.FullName , LoadMetadata.DefaultCachePath);
             LoadMetadata.SaveToDatabase();
             Publish(LoadMetadata);
         }
