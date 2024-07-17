@@ -86,6 +86,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
+        ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
         var project = new Project(DataExportRepository, "MyProject")
         {
@@ -312,6 +313,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
+        ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
         var project = new Project(DataExportRepository, "MyProject")
         {
@@ -568,6 +570,7 @@ public class ExecuteFullExtractionToDatabaseMSSqlDestinationReExtractionTest : D
         var chiColumnInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "chi").First();
         var ei = chiColumnInfo.ExtractionInformation;
         ei.IsExtractionIdentifier = true;
+        ei.IsPrimaryKey = true;
         ei.SaveToDatabase();
 
         var surnameInfo = catalogue.CatalogueItems.Where(ci => ci.Name == "surname").First();
