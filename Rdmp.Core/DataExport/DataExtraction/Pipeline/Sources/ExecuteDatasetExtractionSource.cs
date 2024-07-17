@@ -323,7 +323,11 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         if (includesReleaseIdentifier)
             foreach (var idx in _extractionIdentifiersidx.Distinct().ToList())
             {
-                //pks.Add(chunk.Columns[idx]);//this is wrong
+                var sub = Request.ReleaseIdentifierSubstitutions.Where(s => s.Alias == chunk.Columns[idx].ColumnName).FirstOrDefault();
+                if (sub != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault() != null && sub.ColumnInfo.ExtractionInformations.FirstOrDefault().IsPrimaryKey)
+                {
+                    pks.Add(chunk.Columns[idx]);
+                }
                 foreach (DataRow r in chunk.Rows)
                 {
                     if (r[idx] == DBNull.Value)
