@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace ResearchDataManagementPlatform.Menus
 {
@@ -216,6 +217,9 @@ namespace ResearchDataManagementPlatform.Menus
             launchNewWithDefaultSettings.Size = new System.Drawing.Size(112, 22);
             launchNewWithDefaultSettings.Text = "Default";
             launchNewWithDefaultSettings.ToolTipText = "The RDMP instance recorded in your user settings";
+            launchNewWithDefaultSettings.Click += launchDefaultInstance;
+
+
             // 
             // switchToInstanceToolStripMenuItem
             // 

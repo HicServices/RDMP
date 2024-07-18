@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.SimpleControls;
+using System;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
@@ -32,445 +33,288 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
-            this.olvExtractionInformations = new BrightIdeasSoftware.ObjectListView();
-            this.olvExtractionInformationsNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.tbCollation = new System.Windows.Forms.TextBox();
-            this.label13 = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.olvSelectedDescriptionColumns = new BrightIdeasSoftware.ObjectListView();
-            this.olvDescriptionsColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvLookupColumns = new BrightIdeasSoftware.ObjectListView();
-            this.olvLookupNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnImportNewTableInfo = new System.Windows.Forms.Button();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cbxLookup = new SelectIMapsDirectlyToDatabaseTableComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tbCatalogue = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.btnPrimaryKeyCompositeHelp = new System.Windows.Forms.Button();
-            this.btnCreateLookup = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new RAGSmiley();
-            this.fk3 = new KeyDropLocationUI();
-            this.fk2 = new KeyDropLocationUI();
-            this.fk1 = new KeyDropLocationUI();
-            this.pk2 = new KeyDropLocationUI();
-            this.pk3 = new KeyDropLocationUI();
-            this.pk1 = new KeyDropLocationUI();
-            this.tbFilter = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvSelectedDescriptionColumns)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvLookupColumns)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            this.SuspendLayout();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LookupConfigurationUI));
+            lblTitle = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            cbSelectLookupTable = new System.Windows.Forms.ComboBox();
+            btnAddAnotherRelation = new System.Windows.Forms.Button();
+            gbAddRelation = new System.Windows.Forms.GroupBox();
+            pictureBox2 = new System.Windows.Forms.PictureBox();
+            gbDescription = new System.Windows.Forms.GroupBox();
+            pictureBox3 = new System.Windows.Forms.PictureBox();
+            btnAddDescription = new System.Windows.Forms.Button();
+            label1 = new System.Windows.Forms.Label();
+            tbCollation = new System.Windows.Forms.TextBox();
+            btnCreateLookup = new System.Windows.Forms.Button();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            gbSubmit = new System.Windows.Forms.GroupBox();
+            pictureBox5 = new System.Windows.Forms.PictureBox();
+            pictureBox4 = new System.Windows.Forms.PictureBox();
+            lblErrorText = new System.Windows.Forms.Label();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            gbAddRelation.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            gbDescription.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            groupBox1.SuspendLayout();
+            gbSubmit.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            SuspendLayout();
             // 
-            // label1
+            // lblTitle
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 354);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(143, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Extractable Dataset Columns";
-            // 
-            // olvExtractionInformations
-            // 
-            this.olvExtractionInformations.AllColumns.Add(this.olvExtractionInformationsNameColumn);
-            this.olvExtractionInformations.AllowDrop = true;
-            this.olvExtractionInformations.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-            this.olvExtractionInformations.CellEditUseWholeCell = false;
-            this.olvExtractionInformations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvExtractionInformationsNameColumn});
-            this.olvExtractionInformations.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvExtractionInformations.Location = new System.Drawing.Point(9, 370);
-            this.olvExtractionInformations.Name = "olvExtractionInformations";
-            this.olvExtractionInformations.Size = new System.Drawing.Size(476, 369);
-            this.olvExtractionInformations.TabIndex = 1;
-            this.olvExtractionInformations.UseCompatibleStateImageBehavior = false;
-            this.olvExtractionInformations.View = System.Windows.Forms.View.Details;
-            this.olvExtractionInformations.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
-            // 
-            // olvExtractionInformationsNameColumn
-            // 
-            this.olvExtractionInformationsNameColumn.AspectName = "ToString";
-            this.olvExtractionInformationsNameColumn.FillsFreeSpace = true;
-            this.olvExtractionInformationsNameColumn.Groupable = false;
-            this.olvExtractionInformationsNameColumn.Text = "ExtractionInformations";
-            this.olvExtractionInformationsNameColumn.MinimumWidth = 100;
-            // 
-            // tbCollation
-            // 
-            this.tbCollation.Location = new System.Drawing.Point(661, 595);
-            this.tbCollation.Name = "tbCollation";
-            this.tbCollation.Size = new System.Drawing.Size(229, 20);
-            this.tbCollation.TabIndex = 18;
-            // 
-            // label13
-            // 
-            this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(605, 599);
-            this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(50, 13);
-            this.label13.TabIndex = 17;
-            this.label13.Text = "Collation:";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(605, 437);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(146, 13);
-            this.label12.TabIndex = 15;
-            this.label12.Text = "Drag in Description Column(s)";
-            // 
-            // olvSelectedDescriptionColumns
-            // 
-            this.olvSelectedDescriptionColumns.AllColumns.Add(this.olvDescriptionsColumn);
-            this.olvSelectedDescriptionColumns.CellEditUseWholeCell = false;
-            this.olvSelectedDescriptionColumns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvDescriptionsColumn});
-            this.olvSelectedDescriptionColumns.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvSelectedDescriptionColumns.IsSimpleDropSink = true;
-            this.olvSelectedDescriptionColumns.Location = new System.Drawing.Point(603, 456);
-            this.olvSelectedDescriptionColumns.Name = "olvSelectedDescriptionColumns";
-            this.olvSelectedDescriptionColumns.Size = new System.Drawing.Size(406, 134);
-            this.olvSelectedDescriptionColumns.TabIndex = 14;
-            this.olvSelectedDescriptionColumns.UseCompatibleStateImageBehavior = false;
-            this.olvSelectedDescriptionColumns.View = System.Windows.Forms.View.Details;
-            this.olvSelectedDescriptionColumns.ModelCanDrop += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelectedDescriptionColumns_ModelCanDrop);
-            this.olvSelectedDescriptionColumns.ModelDropped += new System.EventHandler<BrightIdeasSoftware.ModelDropEventArgs>(this.olvSelectedDescriptionColumns_ModelDropped);
-            this.olvSelectedDescriptionColumns.KeyUp += new System.Windows.Forms.KeyEventHandler(this.olvSelectedDescriptionColumns_KeyUp);
-            // 
-            // olvDescriptionsColumn
-            // 
-            this.olvDescriptionsColumn.AspectName = "ToString";
-            this.olvDescriptionsColumn.FillsFreeSpace = true;
-            this.olvDescriptionsColumn.Groupable = false;
-            this.olvDescriptionsColumn.Text = "Description Fields";
-            this.olvDescriptionsColumn.MinimumWidth = 100;
-            // 
-            // olvLookupColumns
-            // 
-            this.olvLookupColumns.AllColumns.Add(this.olvLookupNameColumn);
-            this.olvLookupColumns.AllowDrop = true;
-            this.olvLookupColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.olvLookupColumns.CellEditUseWholeCell = false;
-            this.olvLookupColumns.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvLookupNameColumn});
-            this.olvLookupColumns.Cursor = System.Windows.Forms.Cursors.Default;
-            this.olvLookupColumns.Location = new System.Drawing.Point(6, 67);
-            this.olvLookupColumns.Name = "olvLookupColumns";
-            this.olvLookupColumns.Size = new System.Drawing.Size(461, 148);
-            this.olvLookupColumns.TabIndex = 12;
-            this.olvLookupColumns.UseCompatibleStateImageBehavior = false;
-            this.olvLookupColumns.View = System.Windows.Forms.View.Details;
-            this.olvLookupColumns.CellRightClick += new System.EventHandler<BrightIdeasSoftware.CellRightClickEventArgs>(this.olvLookupColumns_CellRightClick);
-            this.olvLookupColumns.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
-            // 
-            // olvLookupNameColumn
-            // 
-            this.olvLookupNameColumn.AspectName = "ToString";
-            this.olvLookupNameColumn.FillsFreeSpace = true;
-            this.olvLookupNameColumn.Groupable = false;
-            this.olvLookupNameColumn.Text = "ColumnInfos";
-            this.olvLookupNameColumn.MinimumWidth = 100;
-            // 
-            // btnImportNewTableInfo
-            // 
-            this.btnImportNewTableInfo.Location = new System.Drawing.Point(441, 24);
-            this.btnImportNewTableInfo.Name = "btnImportNewTableInfo";
-            this.btnImportNewTableInfo.Size = new System.Drawing.Size(26, 26);
-            this.btnImportNewTableInfo.TabIndex = 148;
-            this.btnImportNewTableInfo.UseVisualStyleBackColor = true;
-            this.btnImportNewTableInfo.Click += new System.EventHandler(this.btnImportNewTableInfo_Click);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.cbxLookup);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.label6);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.olvLookupColumns);
-            this.groupBox1.Controls.Add(this.btnImportNewTableInfo);
-            this.groupBox1.Location = new System.Drawing.Point(3, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(473, 234);
-            this.groupBox1.TabIndex = 149;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "1.Choose Lookup Table (contains the codes and descriptions e.g. T = Tayside, F = " +
-    "Fife";
-            // 
-            // cbxLookup
-            // 
-            this.cbxLookup.Location = new System.Drawing.Point(9, 26);
-            this.cbxLookup.Name = "cbxLookup";
-            this.cbxLookup.SelectedItem = null;
-            this.cbxLookup.Size = new System.Drawing.Size(426, 24);
-            this.cbxLookup.TabIndex = 152;
-            this.cbxLookup.SelectedItemChanged += new System.EventHandler<System.EventArgs>(this.cbxLookup_SelectedItemChanged);
-            // 
-            // label3
-            // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label3.AutoSize = true;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(224, 218);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(53, 13);
-            this.label3.TabIndex = 151;
-            this.label3.Text = "(Columns)";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(435, 51);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(36, 13);
-            this.label6.TabIndex = 151;
-            this.label6.Text = "Import";
+            lblTitle.AutoSize = true;
+            lblTitle.Font = new System.Drawing.Font("Segoe UI", 16F);
+            lblTitle.Location = new System.Drawing.Point(3, 9);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new System.Drawing.Size(385, 30);
+            lblTitle.TabIndex = 0;
+            lblTitle.Text = "Create Lookup For SOME_CATALOGUE";
+            lblTitle.Visible = false;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(121, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(79, 13);
-            this.label2.TabIndex = 151;
-            this.label2.Text = "(Lookup Table)";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(18, 66);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(114, 15);
+            label2.TabIndex = 1;
+            label2.Text = "Select Lookup Table:";
+            label2.Click += label2_Click;
             // 
-            // pictureBox1
+            // cbSelectLookupTable
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 325);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(25, 25);
-            this.pictureBox1.TabIndex = 150;
-            this.pictureBox1.TabStop = false;
+            cbSelectLookupTable.FormattingEnabled = true;
+            cbSelectLookupTable.Location = new System.Drawing.Point(138, 63);
+            cbSelectLookupTable.Name = "cbSelectLookupTable";
+            cbSelectLookupTable.Size = new System.Drawing.Size(281, 23);
+            cbSelectLookupTable.TabIndex = 2;
+            cbSelectLookupTable.SelectedIndexChanged += cbSelectLookupTable_SelectedIndexchanged;
             // 
-            // tbCatalogue
+            // btnAddAnotherRelation
             // 
-            this.tbCatalogue.Location = new System.Drawing.Point(43, 331);
-            this.tbCatalogue.Name = "tbCatalogue";
-            this.tbCatalogue.ReadOnly = true;
-            this.tbCatalogue.Size = new System.Drawing.Size(442, 20);
-            this.tbCatalogue.TabIndex = 151;
+            btnAddAnotherRelation.Enabled = false;
+            btnAddAnotherRelation.Location = new System.Drawing.Point(0, 22);
+            btnAddAnotherRelation.Name = "btnAddAnotherRelation";
+            btnAddAnotherRelation.Size = new System.Drawing.Size(153, 23);
+            btnAddAnotherRelation.TabIndex = 4;
+            btnAddAnotherRelation.Text = "Add Another";
+            btnAddAnotherRelation.UseVisualStyleBackColor = true;
+            btnAddAnotherRelation.Click += btnAddAnotherRelation_Click;
             // 
-            // label4
+            // gbAddRelation
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(807, 295);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(13, 13);
-            this.label4.TabIndex = 152;
-            this.label4.Text = "=";
+            gbAddRelation.AutoSize = true;
+            gbAddRelation.Controls.Add(pictureBox2);
+            gbAddRelation.Controls.Add(btnAddAnotherRelation);
+            gbAddRelation.Location = new System.Drawing.Point(15, 22);
+            gbAddRelation.Name = "gbAddRelation";
+            gbAddRelation.Size = new System.Drawing.Size(580, 72);
+            gbAddRelation.TabIndex = 5;
+            gbAddRelation.TabStop = false;
+            gbAddRelation.Text = "Add Relation:";
+            gbAddRelation.Enter += gbAddRelation_Enter;
             // 
-            // label7
+            // pictureBox2
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(807, 334);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(13, 13);
-            this.label7.TabIndex = 152;
-            this.label7.Text = "=";
+            pictureBox2.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox2.ErrorImage");
+            pictureBox2.Image = (System.Drawing.Image)resources.GetObject("pictureBox2.Image");
+            pictureBox2.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox2.InitialImage");
+            pictureBox2.Location = new System.Drawing.Point(159, 22);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new System.Drawing.Size(21, 21);
+            pictureBox2.TabIndex = 12;
+            pictureBox2.TabStop = false;
+            pictureBox2.Click += pictureBox2_Click;
             // 
-            // label10
+            // gbDescription
             // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(807, 373);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(13, 13);
-            this.label10.TabIndex = 152;
-            this.label10.Text = "=";
+            gbDescription.AutoSize = true;
+            gbDescription.Controls.Add(pictureBox3);
+            gbDescription.Controls.Add(btnAddDescription);
+            gbDescription.Location = new System.Drawing.Point(15, 109);
+            gbDescription.Name = "gbDescription";
+            gbDescription.Size = new System.Drawing.Size(318, 74);
+            gbDescription.TabIndex = 6;
+            gbDescription.TabStop = false;
+            gbDescription.Text = "Add Description Column(s):";
             // 
-            // btnPrimaryKeyCompositeHelp
+            // pictureBox3
             // 
-            this.btnPrimaryKeyCompositeHelp.Location = new System.Drawing.Point(1058, 328);
-            this.btnPrimaryKeyCompositeHelp.Name = "btnPrimaryKeyCompositeHelp";
-            this.btnPrimaryKeyCompositeHelp.Size = new System.Drawing.Size(26, 26);
-            this.btnPrimaryKeyCompositeHelp.TabIndex = 153;
-            this.btnPrimaryKeyCompositeHelp.UseVisualStyleBackColor = true;
-            this.btnPrimaryKeyCompositeHelp.Click += new System.EventHandler(this.btnPrimaryKeyCompositeHelp_Click);
+            pictureBox3.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox3.ErrorImage");
+            pictureBox3.Image = (System.Drawing.Image)resources.GetObject("pictureBox3.Image");
+            pictureBox3.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox3.InitialImage");
+            pictureBox3.Location = new System.Drawing.Point(159, 24);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new System.Drawing.Size(21, 21);
+            pictureBox3.TabIndex = 13;
+            pictureBox3.TabStop = false;
+            pictureBox3.Click += pictureBox3_Click;
+            // 
+            // btnAddDescription
+            // 
+            btnAddDescription.Enabled = false;
+            btnAddDescription.Location = new System.Drawing.Point(0, 22);
+            btnAddDescription.Name = "btnAddDescription";
+            btnAddDescription.Size = new System.Drawing.Size(153, 23);
+            btnAddDescription.TabIndex = 4;
+            btnAddDescription.Text = "Add Another";
+            btnAddDescription.UseVisualStyleBackColor = true;
+            btnAddDescription.Click += btnAddDescription_Click;
+            // 
+            // label1
+            // 
+            label1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(6, 19);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(58, 15);
+            label1.TabIndex = 7;
+            label1.Text = "Collation:";
+            // 
+            // tbCollation
+            // 
+            tbCollation.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            tbCollation.Location = new System.Drawing.Point(64, 16);
+            tbCollation.Name = "tbCollation";
+            tbCollation.Size = new System.Drawing.Size(254, 23);
+            tbCollation.TabIndex = 8;
             // 
             // btnCreateLookup
             // 
-            this.btnCreateLookup.Enabled = false;
-            this.btnCreateLookup.Location = new System.Drawing.Point(603, 621);
-            this.btnCreateLookup.Name = "btnCreateLookup";
-            this.btnCreateLookup.Size = new System.Drawing.Size(109, 23);
-            this.btnCreateLookup.TabIndex = 162;
-            this.btnCreateLookup.Text = "Create Lookup";
-            this.btnCreateLookup.UseVisualStyleBackColor = true;
-            this.btnCreateLookup.Click += new System.EventHandler(this.btnCreateLookup_Click);
+            btnCreateLookup.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            btnCreateLookup.Enabled = false;
+            btnCreateLookup.Location = new System.Drawing.Point(6, 45);
+            btnCreateLookup.Name = "btnCreateLookup";
+            btnCreateLookup.Size = new System.Drawing.Size(114, 23);
+            btnCreateLookup.TabIndex = 9;
+            btnCreateLookup.Text = "Create Lookup";
+            btnCreateLookup.UseVisualStyleBackColor = true;
+            btnCreateLookup.Click += btnCreateLookup_Click;
             // 
-            // ragSmiley1
+            // groupBox1
             // 
-            this.ragSmiley1.AlwaysShowHandCursor = false;
-            this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
-            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
-            this.ragSmiley1.Location = new System.Drawing.Point(572, 619);
-            this.ragSmiley1.Name = "ragSmiley1";
-            this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
-            this.ragSmiley1.TabIndex = 163;
+            groupBox1.AutoSize = true;
+            groupBox1.Controls.Add(gbSubmit);
+            groupBox1.Controls.Add(gbAddRelation);
+            groupBox1.Controls.Add(gbDescription);
+            groupBox1.Location = new System.Drawing.Point(18, 92);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(1141, 471);
+            groupBox1.TabIndex = 10;
+            groupBox1.TabStop = false;
             // 
-            // fk3
+            // gbSubmit
             // 
-            this.fk3.IsValidGetter = null;
-            this.fk3.KeyType = JoinKeyType.PrimaryKey;
-            this.fk3.Location = new System.Drawing.Point(826, 369);
-            this.fk3.Name = "fk3";
-            this.fk3.Size = new System.Drawing.Size(226, 35);
-            this.fk3.TabIndex = 161;
+            gbSubmit.Controls.Add(pictureBox5);
+            gbSubmit.Controls.Add(pictureBox4);
+            gbSubmit.Controls.Add(lblErrorText);
+            gbSubmit.Controls.Add(btnCreateLookup);
+            gbSubmit.Controls.Add(tbCollation);
+            gbSubmit.Controls.Add(label1);
+            gbSubmit.Location = new System.Drawing.Point(15, 203);
+            gbSubmit.Name = "gbSubmit";
+            gbSubmit.Size = new System.Drawing.Size(1081, 123);
+            gbSubmit.TabIndex = 10;
+            gbSubmit.TabStop = false;
             // 
-            // fk2
+            // pictureBox5
             // 
-            this.fk2.IsValidGetter = null;
-            this.fk2.KeyType = JoinKeyType.PrimaryKey;
-            this.fk2.Location = new System.Drawing.Point(826, 328);
-            this.fk2.Name = "fk2";
-            this.fk2.Size = new System.Drawing.Size(226, 35);
-            this.fk2.TabIndex = 160;
+            pictureBox5.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox5.ErrorImage");
+            pictureBox5.Image = (System.Drawing.Image)resources.GetObject("pictureBox5.Image");
+            pictureBox5.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox5.InitialImage");
+            pictureBox5.Location = new System.Drawing.Point(132, 45);
+            pictureBox5.Name = "pictureBox5";
+            pictureBox5.Size = new System.Drawing.Size(21, 21);
+            pictureBox5.TabIndex = 15;
+            pictureBox5.TabStop = false;
+            pictureBox5.Click += pictureBox5_Click;
             // 
-            // fk1
+            // pictureBox4
             // 
-            this.fk1.IsValidGetter = null;
-            this.fk1.KeyType = JoinKeyType.PrimaryKey;
-            this.fk1.Location = new System.Drawing.Point(826, 285);
-            this.fk1.Name = "fk1";
-            this.fk1.Size = new System.Drawing.Size(226, 35);
-            this.fk1.TabIndex = 159;
+            pictureBox4.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox4.ErrorImage");
+            pictureBox4.Image = (System.Drawing.Image)resources.GetObject("pictureBox4.Image");
+            pictureBox4.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox4.InitialImage");
+            pictureBox4.Location = new System.Drawing.Point(324, 18);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new System.Drawing.Size(21, 21);
+            pictureBox4.TabIndex = 14;
+            pictureBox4.TabStop = false;
+            pictureBox4.Click += pictureBox4_Click;
             // 
-            // pk2
+            // lblErrorText
             // 
-            this.pk2.IsValidGetter = null;
-            this.pk2.KeyType = JoinKeyType.PrimaryKey;
-            this.pk2.Location = new System.Drawing.Point(575, 328);
-            this.pk2.Name = "pk2";
-            this.pk2.Size = new System.Drawing.Size(226, 35);
-            this.pk2.TabIndex = 158;
+            lblErrorText.AutoSize = true;
+            lblErrorText.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
+            lblErrorText.ForeColor = System.Drawing.Color.Red;
+            lblErrorText.Location = new System.Drawing.Point(7, 90);
+            lblErrorText.Name = "lblErrorText";
+            lblErrorText.Size = new System.Drawing.Size(57, 21);
+            lblErrorText.TabIndex = 11;
+            lblErrorText.Text = "label3";
+            lblErrorText.Visible = false;
             // 
-            // pk3
+            // pictureBox1
             // 
-            this.pk3.IsValidGetter = null;
-            this.pk3.KeyType = JoinKeyType.PrimaryKey;
-            this.pk3.Location = new System.Drawing.Point(575, 369);
-            this.pk3.Name = "pk3";
-            this.pk3.Size = new System.Drawing.Size(226, 35);
-            this.pk3.TabIndex = 157;
+            pictureBox1.ErrorImage = (System.Drawing.Image)resources.GetObject("pictureBox1.ErrorImage");
+            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
+            pictureBox1.InitialImage = (System.Drawing.Image)resources.GetObject("pictureBox1.InitialImage");
+            pictureBox1.Location = new System.Drawing.Point(425, 60);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(21, 21);
+            pictureBox1.TabIndex = 11;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
             // 
-            // pk1
+            // LookupConfigurationUI
             // 
-            this.pk1.IsValidGetter = null;
-            this.pk1.KeyType = JoinKeyType.PrimaryKey;
-            this.pk1.Location = new System.Drawing.Point(575, 285);
-            this.pk1.Name = "pk1";
-            this.pk1.Size = new System.Drawing.Size(226, 35);
-            this.pk1.TabIndex = 156;
-            // 
-            // tbFilter
-            // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbFilter.Location = new System.Drawing.Point(43, 745);
-            this.tbFilter.Name = "tbFilter";
-            this.tbFilter.Size = new System.Drawing.Size(442, 20);
-            this.tbFilter.TabIndex = 164;
-            this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
-            // 
-            // label5
-            // 
-            this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 748);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(32, 13);
-            this.label5.TabIndex = 165;
-            this.label5.Text = "Filter:";
-            // 
-            // LookupConfiguration
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.AutoScroll = true;
-            this.Controls.Add(this.label5);
-            this.Controls.Add(this.tbFilter);
-            this.Controls.Add(this.ragSmiley1);
-            this.Controls.Add(this.btnCreateLookup);
-            this.Controls.Add(this.fk3);
-            this.Controls.Add(this.fk2);
-            this.Controls.Add(this.fk1);
-            this.Controls.Add(this.pk2);
-            this.Controls.Add(this.pk3);
-            this.Controls.Add(this.pk1);
-            this.Controls.Add(this.btnPrimaryKeyCompositeHelp);
-            this.Controls.Add(this.label10);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label4);
-            this.Controls.Add(this.tbCatalogue);
-            this.Controls.Add(this.pictureBox1);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.tbCollation);
-            this.Controls.Add(this.label13);
-            this.Controls.Add(this.label12);
-            this.Controls.Add(this.olvSelectedDescriptionColumns);
-            this.Controls.Add(this.olvExtractionInformations);
-            this.Controls.Add(this.label1);
-            this.Name = "LookupConfiguration";
-            this.Size = new System.Drawing.Size(1103, 772);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.LookupConfiguration_Paint);
-            ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvSelectedDescriptionColumns)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.olvLookupColumns)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScroll = true;
+            Controls.Add(pictureBox1);
+            Controls.Add(groupBox1);
+            Controls.Add(cbSelectLookupTable);
+            Controls.Add(label2);
+            Controls.Add(lblTitle);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "LookupConfigurationUI";
+            Size = new System.Drawing.Size(1083, 789);
+            gbAddRelation.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            gbDescription.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            gbSubmit.ResumeLayout(false);
+            gbSubmit.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox5).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
-        private ObjectListView olvExtractionInformations;
-        private ObjectListView olvLookupColumns;
-        private ObjectListView olvSelectedDescriptionColumns;
-        private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.TextBox tbCollation;
-        private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Button btnImportNewTableInfo;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label label2;
-        private OLVColumn olvLookupNameColumn;
-        private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.TextBox tbCatalogue;
-        private OLVColumn olvExtractionInformationsNameColumn;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button btnPrimaryKeyCompositeHelp;
-        private KeyDropLocationUI pk1;
-        private KeyDropLocationUI pk3;
-        private KeyDropLocationUI pk2;
-        private KeyDropLocationUI fk1;
-        private KeyDropLocationUI fk2;
-        private KeyDropLocationUI fk3;
-        private OLVColumn olvDescriptionsColumn;
+        private System.Windows.Forms.ComboBox cbSelectLookupTable;
+        private System.Windows.Forms.Button btnAddAnotherRelation;
+        private System.Windows.Forms.GroupBox gbAddRelation;
+        private System.Windows.Forms.GroupBox gbDescription;
+        private System.Windows.Forms.Button btnAddDescription;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TextBox tbCollation;
         private System.Windows.Forms.Button btnCreateLookup;
-        private RAGSmiley ragSmiley1;
-        private System.Windows.Forms.TextBox tbFilter;
-        private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
-        private SelectIMapsDirectlyToDatabaseTableComboBox cbxLookup;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbSubmit;
+        private System.Windows.Forms.Label lblErrorText;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.PictureBox pictureBox5;
+        private System.Windows.Forms.PictureBox pictureBox4;
     }
 }

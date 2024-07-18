@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using FAnsi;
 using FAnsi.Discovery;
 using NSubstitute;
@@ -25,7 +24,6 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using TypeGuesser;
-using static Rdmp.Core.Tests.DataLoad.Engine.Integration.RemoteDatabaseAttacherTests;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers;
 
@@ -269,19 +267,19 @@ internal class RemoteTableAttacherTests : DatabaseTests
         switch (duration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return DateTime.Now.AddHours(-1).ToString();
+                return DateTime.UtcNow.AddHours(-1).ToString();
             case AttacherHistoricalDurations.Past7Days:
-                return DateTime.Now.AddHours(-1).ToString();
+                return DateTime.UtcNow.AddHours(-1).ToString();
             case AttacherHistoricalDurations.PastMonth:
-                return DateTime.Now.AddHours(-1).ToString();
+                return DateTime.UtcNow.AddHours(-1).ToString();
             case AttacherHistoricalDurations.PastYear:
-                return DateTime.Now.AddHours(-1).ToString();
+                return DateTime.UtcNow.AddHours(-1).ToString();
             case AttacherHistoricalDurations.SinceLastUse:
-                return DateTime.Now.AddHours(-1).ToString();
+                return DateTime.UtcNow.AddHours(-1).ToString();
             case AttacherHistoricalDurations.Custom:
-                return DateTime.Now.AddDays(-1).ToString();
+                return DateTime.UtcNow.AddDays(-1).ToString();
             case AttacherHistoricalDurations.DeltaReading:
-                return DateTime.Now.AddDays(-4).ToString();
+                return DateTime.UtcNow.AddDays(-4).ToString();
             default:
                 return "fail";
         }
@@ -292,19 +290,19 @@ internal class RemoteTableAttacherTests : DatabaseTests
         switch (duration)
         {
             case AttacherHistoricalDurations.Past24Hours:
-                return DateTime.Now.AddDays(-2).ToString();
+                return DateTime.UtcNow.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Past7Days:
-                return DateTime.Now.AddDays(-8).ToString();
+                return DateTime.UtcNow.AddDays(-8).ToString();
             case AttacherHistoricalDurations.PastMonth:
-                return DateTime.Now.AddMonths(-2).ToString();
+                return DateTime.UtcNow.AddMonths(-2).ToString();
             case AttacherHistoricalDurations.PastYear:
-                return DateTime.Now.AddYears(-2).ToString();
+                return DateTime.UtcNow.AddYears(-2).ToString();
             case AttacherHistoricalDurations.SinceLastUse:
-                return DateTime.Now.AddDays(-2).ToString();
+                return DateTime.UtcNow.AddDays(-2).ToString();
             case AttacherHistoricalDurations.Custom:
-                return DateTime.Now.AddDays(-14).ToString();
+                return DateTime.UtcNow.AddDays(-14).ToString();
             case AttacherHistoricalDurations.DeltaReading:
-                return DateTime.Now.AddDays(-10).ToString();
+                return DateTime.UtcNow.AddDays(-10).ToString();
             default:
                 return "fail";
         }
@@ -351,17 +349,17 @@ internal class RemoteTableAttacherTests : DatabaseTests
         job.StartLogging();
         if (duration == AttacherHistoricalDurations.SinceLastUse)
         {
-            job.LoadMetadata.LastLoadTime = DateTime.Now.AddDays(-1);// last used yesterday
+            job.LoadMetadata.LastLoadTime = DateTime.UtcNow.AddDays(-1);// last used yesterday
             job.LoadMetadata.SaveToDatabase();
         }
         if (duration == AttacherHistoricalDurations.Custom)
         {
-            attacher.CustomFetchDurationStartDate = DateTime.Now.AddDays(-7);
-            attacher.CustomFetchDurationEndDate = DateTime.Now;
+            attacher.CustomFetchDurationStartDate = DateTime.UtcNow.AddDays(-7);
+            attacher.CustomFetchDurationEndDate = DateTime.UtcNow;
         }
         if (duration == AttacherHistoricalDurations.DeltaReading)
         {
-            attacher.DeltaReadingStartDate = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingStartDate = DateTime.UtcNow.AddDays(-7);
             attacher.DeltaReadingLookBackDays = 0;
             attacher.DeltaReadingLookForwardDays = 5;
         }

@@ -193,7 +193,7 @@ public partial class ExtractionConfigurationUI : ExtractionConfigurationUI_Desig
 
         //the user is DefaultPipeline_ID field of ExtractionConfiguration
         var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"),
-            _extractionConfiguration);
+            _extractionConfiguration,Activator.RepositoryLocator.CatalogueRepository);
 
         //create the UI for this situation
         var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);

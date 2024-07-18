@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using FAnsi;
-using MongoDB.Driver.Linq;
-using NPOI.SS.Formula.Functions;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -213,13 +211,13 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         if (duration == AttacherHistoricalDurations.Custom)
         {
-            attacher.CustomFetchDurationStartDate = DateTime.Now.AddDays(-7);
-            attacher.CustomFetchDurationEndDate = DateTime.Now;
+            attacher.CustomFetchDurationStartDate = DateTime.UtcNow.AddDays(-7);
+            attacher.CustomFetchDurationEndDate = DateTime.UtcNow;
         }
 
         if (duration == AttacherHistoricalDurations.DeltaReading)
         {
-            attacher.DeltaReadingStartDate = DateTime.Now.AddDays(-7);
+            attacher.DeltaReadingStartDate = DateTime.UtcNow.AddDays(-7);
             attacher.DeltaReadingLookBackDays = 0;
             attacher.DeltaReadingLookForwardDays = 5;
         }
@@ -236,7 +234,7 @@ public class RemoteDatabaseAttacherTests : DatabaseTests
 
         if (duration == AttacherHistoricalDurations.SinceLastUse)
         {
-            job.LoadMetadata.LastLoadTime = DateTime.Now.AddDays(-1);// last used yesterday
+            job.LoadMetadata.LastLoadTime = DateTime.UtcNow.AddDays(-1);// last used yesterday
             job.LoadMetadata.SaveToDatabase();
         }
         if (scenario == Scenario.MissingPreLoadDiscardedColumn)
