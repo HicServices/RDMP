@@ -21,10 +21,6 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 public class DQEPostLoadRunner : IMutilateDataTables
 {
 
-    [DemandsInitialization(
-      "Open the resulting DQE graphs once the load has completed",
-      Mandatory = false)]
-    public bool OpenDQEResultsPostLoad { get; set; }
     public void Check(ICheckNotifier notifier)
     {
     }
@@ -78,11 +74,6 @@ public class DQEPostLoadRunner : IMutilateDataTables
         runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                     new GracefulCancellationToken());//does the whole catalogue, rather than just the new stuff
 
-        //if user has selected to pop uI, open the UI //TODO
-        if (OpenDQEResultsPostLoad)
-        {
-
-        }
         return ExitCodeType.Success;
     }
 }
