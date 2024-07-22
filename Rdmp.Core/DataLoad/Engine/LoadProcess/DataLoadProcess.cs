@@ -43,6 +43,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
     protected readonly ILogManager LogManager;
 
     private readonly ICheckable _preExecutionChecker;
+    private readonly ICheckNotifier _checkNotifier;
 
     public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ILoadMetadata loadMetadata,
         ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener,
@@ -51,6 +52,23 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         _repositoryLocator = repositoryLocator;
         LoadMetadata = loadMetadata;
         DataLoadEventListener = dataLoadEventListener;
+        _configuration = configuration;
+        LoadExecution = loadExecution;
+        _preExecutionChecker = preExecutionChecker;
+        LogManager = logManager;
+        ExitCode = ExitCodeType.Success;
+
+        JobProvider = new JobFactory(loadMetadata, logManager);
+    }
+
+    public DataLoadProcess(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ILoadMetadata loadMetadata,
+      ICheckable preExecutionChecker, ILogManager logManager, IDataLoadEventListener dataLoadEventListener, ICheckNotifier notifier,
+      IDataLoadExecution loadExecution, HICDatabaseConfiguration configuration)
+    {
+        _repositoryLocator = repositoryLocator;
+        LoadMetadata = loadMetadata;
+        DataLoadEventListener = dataLoadEventListener;
+        _checkNotifier = notifier;
         _configuration = configuration;
         LoadExecution = loadExecution;
         _preExecutionChecker = preExecutionChecker;
@@ -83,7 +101,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
         {
             DataLoadEventListener.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information, "Performing pre-execution checks"));
-            var thrower = ThrowImmediatelyCheckNotifier.Quiet;
+            var thrower = _checkNotifier ?? ThrowImmediatelyCheckNotifier.Quiet;
             _preExecutionChecker.Check(thrower);
         }
         catch (Exception e)

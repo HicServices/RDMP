@@ -32,8 +32,8 @@ public class DataLoadDataProvider : IDataProvider
     private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     private DleRunner _runner;
-    private ToMemoryCheckNotifier _checker;
-    private ToMemoryDataLoadEventListener _listener;
+    private ICheckNotifier _checker;
+    private IDataLoadEventListener _listener;
 
     public void Check(ICheckNotifier notifier)
     {
@@ -64,15 +64,17 @@ public class DataLoadDataProvider : IDataProvider
             Command = CommandLineActivity.check,
         };
         _runner = new DleRunner(dleOptions);
-        var exitCode = _runner.Run(finder, _listener, _checker, new GracefulCancellationToken());
+        _checker = notifier;
+        _listener = new FromCheckNotifierToDataLoadEventListener(notifier);
+        var exitCode = _runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
 
-        var y = _checker.Messages.Where(m => m.ProposedFix is not null).ToList();
+        //var y = _checker.Messages.Where(m => m.ProposedFix is not null).ToList();
 
-        foreach (var log in _checker.Messages)
-        {
-            var x = notifier.OnCheckPerformed(log);
-            Console.WriteLine(x);
-        }
+        //foreach (var log in _checker.Messages)
+        //{
+        //    var x = notifier.OnCheckPerformed(log);
+        //    Console.WriteLine(x);
+        //}
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
@@ -85,22 +87,22 @@ public class DataLoadDataProvider : IDataProvider
         _runner = new DleRunner(dleOptions);
 
         _repositoryLocator = job.RepositoryLocator;
-        var exitCode = _runner.Run(_repositoryLocator, _listener, _checker, cancellationToken);
-        foreach (var log in _listener.EventsReceivedBySender)
-        {
-            foreach (var args in log.Value)
-            {
-                job.OnNotify(log.Key.ToString(), args);
-            }
-        }
+        var exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
+        //foreach (var log in _listener.EventsReceivedBySender)
+        //{
+        //    foreach (var args in log.Value)
+        //    {
+        //        job.OnNotify(log.Key.ToString(), args);
+        //    }
+        //}
         return (ExitCodeType)exitCode;
     }
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-
-        _listener = new ToMemoryDataLoadEventListener(false);
-        _checker = new ToMemoryCheckNotifier();
+        Console.WriteLine("a");
+        //_listener = new ToMemoryDataLoadEventListener(false);
+        //_checker = new ToMemoryCheckNotifier();
 
     }
 
