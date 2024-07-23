@@ -8,7 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.2.2] - Unreleased
 
 - Add DQE PostLoad runner
-- Misc improvements to the DQE 
+- Misc improvements to the DQE
+- Fix issue with whitespace confusing encryption key paths
 
 ## [8.2.1] - 2024-07-18
 
