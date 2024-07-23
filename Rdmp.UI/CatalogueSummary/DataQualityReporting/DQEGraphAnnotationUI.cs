@@ -66,9 +66,4 @@ internal class DQEGraphAnnotationUI
         chart.Annotations.Remove(Annotation);
         chart.Annotations.Remove(TextAnnotation);
     }
-
-    public void UpdatePosition(double x, double y)
-    {
-
-    }
 }
