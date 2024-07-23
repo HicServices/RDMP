@@ -30,6 +30,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
 using System.Linq;
+using Microsoft.Data.SqlClient;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
@@ -734,22 +735,24 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
     }
 
-    private class Sorter : IComparer
-    {
-        int IComparer.Compare(Object x, Object y)
-        {
-            return ((new CaseInsensitiveComparer()).Compare(y, x));
-        }
-    }
-
     public void Sort(OLVColumn column, SortOrder order)
     {
-        var index = this.olv.Columns.IndexOf(column);
-        var objects = this.olv.Objects;
-        var sorter = new Sorter();
-        //objects.Sort(sorter);
-        var x = objects.
+        if (order != SortOrder.None)
+        {
+            ModelObjectComparer comparer = new ModelObjectComparer(column, order, this.olv.SecondarySortColumn, this.olv.SecondarySortOrder);
+            var fullObjectList = ObjectListView.EnumerableToArray(this.olv.Objects, true);
+            fullObjectList.Sort(comparer);
+            var filteredObjectList = new ArrayList(fullObjectList);
+            filteredObjectList.Sort(comparer);
+        }
+        this.RebuildIndexMap();
+    }
 
+    protected void RebuildIndexMap()
+    {
+        this.objectsToIndexMap.Clear();
+        for (int i = 0; i < this.filteredObjectList.Count; i++)
+            this.objectsToIndexMap[this.filteredObjectList[i]] = i;
     }
 
     public void UpdateObject(int index, object modelObject)
