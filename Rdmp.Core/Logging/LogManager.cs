@@ -13,7 +13,6 @@ using System.Text;
 using System.Threading;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;

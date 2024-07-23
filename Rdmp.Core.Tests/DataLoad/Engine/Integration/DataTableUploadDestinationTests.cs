@@ -13,7 +13,6 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Triggers;

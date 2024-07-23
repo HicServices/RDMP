@@ -279,7 +279,10 @@ internal class DocumentationCrossExaminationTest
         "BuildInParallel",
 
         //Quickstart.md
-        "ResearchDataManagmentPlatform"
+        "ResearchDataManagmentPlatform",
+
+        // CSVHandling
+        "TypeTranslation"
     };
 
     #endregion

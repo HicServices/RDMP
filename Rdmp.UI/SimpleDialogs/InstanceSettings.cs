@@ -8,7 +8,6 @@ using Rdmp.Core.Setting;
 using Rdmp.UI.ItemActivation;
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 

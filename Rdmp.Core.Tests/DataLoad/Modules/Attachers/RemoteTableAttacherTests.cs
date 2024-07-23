@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Globalization;
 using FAnsi;
 using FAnsi.Discovery;
 using NSubstitute;
@@ -25,7 +24,6 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
 using TypeGuesser;
-using static Rdmp.Core.Tests.DataLoad.Engine.Integration.RemoteDatabaseAttacherTests;
 
 namespace Rdmp.Core.Tests.DataLoad.Modules.Attachers;
 
