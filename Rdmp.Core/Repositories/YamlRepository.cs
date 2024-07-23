@@ -51,7 +51,15 @@ public class YamlRepository : MemoryDataExportRepository
         LoadObjects();
 
         if (File.Exists(GetEncryptionKeyPathFile()))
-            EncryptionKeyPath = File.ReadAllText(GetEncryptionKeyPathFile());
+        {
+            EncryptionKeyPath = File.ReadLines(GetEncryptionKeyPathFile()).First();
+            // Check if the file does exist but we were confused by stray whitespace:
+            if (!File.Exists(EncryptionKeyPath) && char.IsWhiteSpace(EncryptionKeyPath[^1]))
+            {
+                var trimmed = EncryptionKeyPath.TrimEnd();
+                if (File.Exists(trimmed)) EncryptionKeyPath = trimmed;
+            }
+        }
 
         // Don't create new objects with the ID of existing objects
         NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);

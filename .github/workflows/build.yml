@@ -5,7 +5,7 @@ name: Build
 on: 
   push:
   schedule:
-    - cron: '0 1 * * *'
+    - cron: '0 0 * * *'
 
 env:
   DOTNET_NOLOGO: 1
