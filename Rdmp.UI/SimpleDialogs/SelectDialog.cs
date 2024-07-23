@@ -29,13 +29,12 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
-using System.Linq;
 using Microsoft.Data.SqlClient;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
 
-public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : class
+public partial class SelectDialog<T> : Form where T : class
 {
     private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
     private readonly AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
@@ -210,7 +209,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olvHierarchy.ImageGetter = GetHierarchyImage;
         olv.UseCellFormatEvents = true;
         olv.FormatCell += Olv_FormatCell;
-        olv.CustomSorter += Sort;
 
         olvName.ImageGetter = GetImage;
         olv.RowHeight = 19;
@@ -261,9 +259,14 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             RecentHistoryOfControls.SetValueToMostRecentlySavedValue(tbFilter);
         }
 
-        if (IsDatabaseObjects()) tbFilter_TextChanged(null, null);
-
-        olv.VirtualListDataSource = this;
+        if (IsDatabaseObjects()){
+            tbFilter_TextChanged(null, null);
+        }
+        else
+        {
+            olv.RemoveObjects(_allObjects);
+            olv.AddObjects(_allObjects.Where(o => IsSimpleTextMatch(o, tbFilter.Text)).ToList());
+        }
 
         Width = UserSettings.FindWindowWidth;
         Height = UserSettings.FindWindowHeight;
@@ -464,7 +467,8 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
         UpdateButtonEnabledness();
         stateChanged = true;
-        olv.VirtualListDataSource = this;
+        olv.RemoveObjects(_allObjects);
+        olv.AddObjects(_allObjects.Where(o => IsSimpleTextMatch(o, tbFilter.Text)).ToList());
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e)
@@ -733,26 +737,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
 
     public void SetObjects(IEnumerable collection)
     {
-    }
-
-    public void Sort(OLVColumn column, SortOrder order)
-    {
-        if (order != SortOrder.None)
-        {
-            ModelObjectComparer comparer = new ModelObjectComparer(column, order, this.olv.SecondarySortColumn, this.olv.SecondarySortOrder);
-            var fullObjectList = ObjectListView.EnumerableToArray(this.olv.Objects, true);
-            fullObjectList.Sort(comparer);
-            var filteredObjectList = new ArrayList(fullObjectList);
-            filteredObjectList.Sort(comparer);
-        }
-        this.RebuildIndexMap();
-    }
-
-    protected void RebuildIndexMap()
-    {
-        this.objectsToIndexMap.Clear();
-        for (int i = 0; i < this.filteredObjectList.Count; i++)
-            this.objectsToIndexMap[this.filteredObjectList[i]] = i;
     }
 
     public void UpdateObject(int index, object modelObject)

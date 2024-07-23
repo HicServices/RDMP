@@ -34,7 +34,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SelectDialog<>));
-            this.olv = new BrightIdeasSoftware.VirtualObjectListView();
+            this.olv = new BrightIdeasSoftware.FastDataListView();
             this.olvSelected = new BrightIdeasSoftware.OLVColumn();
             this.olvID = new BrightIdeasSoftware.OLVColumn();
             this.olvName = new BrightIdeasSoftware.OLVColumn();
@@ -79,7 +79,6 @@ namespace Rdmp.UI.SimpleDialogs
             this.olv.TabIndex = 5;
             this.olv.UseCompatibleStateImageBehavior = false;
             this.olv.View = System.Windows.Forms.View.Details;
-            this.olv.VirtualMode = true;
             this.olv.CellClick += new System.EventHandler<BrightIdeasSoftware.CellClickEventArgs>(this.listBox1_CellClick);
             this.olv.SelectedIndexChanged += new System.EventHandler(this.listBox1_SelectedIndexChanged);
             this.olv.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyUp);
@@ -252,7 +251,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         #endregion
 
-        private BrightIdeasSoftware.VirtualObjectListView olv;
+        private BrightIdeasSoftware.FastDataListView olv;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
         private System.Windows.Forms.Button btnSelect;
