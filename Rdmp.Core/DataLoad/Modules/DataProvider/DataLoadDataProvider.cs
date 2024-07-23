@@ -1,5 +1,10 @@
-﻿using FAnsi.Discovery;
-using Rdmp.Core.CommandExecution;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using FAnsi.Discovery;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
@@ -8,22 +13,19 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
-using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 
+/// <summary>
+/// Triggers another data load run
+/// Checks are run during initial checks of primary data load, and assumed to be correct hwne running post-load
+/// </summary>
 public class DataLoadDataProvider : IDataProvider
 {
     [DemandsInitialization("The Data Load you wish to run", Mandatory = true)]
@@ -43,7 +45,6 @@ public class DataLoadDataProvider : IDataProvider
         }
         var catalogueString = UserSettings.CatalogueConnectionString;
 
-        //user may have a DataExportManager
         var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
 
         LinkedRepositoryProvider newrepo;
@@ -85,7 +86,7 @@ public class DataLoadDataProvider : IDataProvider
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-        _checker = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());//this has to be used as the fetch doesn't guarantee the check was ran...
+        _checker = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());//checker is not populated when running the data provider
 
     }
 

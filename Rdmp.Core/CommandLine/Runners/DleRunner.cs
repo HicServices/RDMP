@@ -98,7 +98,7 @@ public class DleRunner : Runner
                 else
                 //OnDemand
                 {
-                    dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener, checkNotifier,
+                    dataLoadProcess = new DataLoadProcess(locator, loadMetadata, checkable, logManager, listener,
                         execution, databaseConfiguration);
                 }
 
