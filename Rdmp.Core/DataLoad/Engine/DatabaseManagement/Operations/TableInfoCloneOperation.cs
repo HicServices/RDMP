@@ -74,7 +74,8 @@ public class TableInfoCloneOperation
             throw new Exception("Cannot undo operation because it has not yet been executed");
 
         var tableToRemove = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
-        RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
+        if (_hicDatabaseConfiguration.DeployInfo[_copyToBubble].Exists())
+            RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
     }
 
 

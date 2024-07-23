@@ -131,6 +131,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
         foreach (var cloneOperation in _tablesCreated) cloneOperation.Undo();
 
         foreach (var dbInfo in _databasesCreated)
-            dbInfo.Drop();
+            if (dbInfo.Exists())
+                dbInfo.Drop();
     }
 }
