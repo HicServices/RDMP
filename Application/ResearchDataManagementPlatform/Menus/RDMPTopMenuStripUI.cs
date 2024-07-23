@@ -74,6 +74,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private SaveMenuItem _saveToolStripMenuItem;
     private AtomicCommandUIFactory _atomicCommandUIFactory;
+    private ConnectionStringsYamlFile _connectionStringsFileInUse;
 
     public RDMPTopMenuStripUI()
     {
@@ -87,10 +88,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // somehow app was launched without populating the load args
         if (args == null) return;
 
-        var origYamlFile = args.ConnectionStringsFileLoaded;
+        _connectionStringsFileInUse = args.ConnectionStringsFileLoaded;
 
         //default settings were used if no yaml file was specified or the file specified did not exist
-        var defaultsUsed = origYamlFile == null;
+        var defaultsUsed = _connectionStringsFileInUse == null;
 
         // if defaults were not used then it is valid to switch to them
         switchToDefaultSettings.Enabled = !defaultsUsed;
@@ -100,11 +101,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         // load the yaml files in the RDMP binary directory
         var exeDir = UsefulStuff.GetExecutableDirectory();
-        AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
+        AddMenuItemsForSwitchingToInstancesInYamlFilesOf(_connectionStringsFileInUse, exeDir);
 
         // also add yaml files from wherever they got their original yaml file
-        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
-            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
+        if (_connectionStringsFileInUse?.FileLoaded != null && !exeDir.FullName.Equals(_connectionStringsFileInUse.FileLoaded.Directory?.FullName))
+            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(_connectionStringsFileInUse, _connectionStringsFileInUse.FileLoaded.Directory);
     }
 
     private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile,
@@ -160,6 +161,16 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
     {
         new ExecuteCommandConfigureDefaultServers(Activator).Execute();
+    }
+
+    private void launchDefaultInstance(object sender, EventArgs e)
+    {
+        if (_connectionStringsFileInUse != null)
+        {
+            var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName,
+            Process.GetCurrentProcess().ProcessName);
+            Process.Start(exeName);
+        }
     }
 
     private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -291,7 +302,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // Location menu
         instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
             new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)
-                { OverrideCommandName = "Change Default Instance" }));
+            { OverrideCommandName = "Change Default Instance" }));
 
         Activator.Theme.ApplyTo(menuStrip1);
 
@@ -463,7 +474,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         _windowManager.Navigation.Forward(true);
     }
 
-    
+
 
     private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
     {

@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
-using System.IO;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests;
 

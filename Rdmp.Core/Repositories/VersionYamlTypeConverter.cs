@@ -15,18 +15,20 @@ namespace Rdmp.Core.Repositories;
 /// <summary>
 /// Reads/Writes <see cref="Version"/> as a simple string value
 /// </summary>
-internal class VersionYamlTypeConverter : IYamlTypeConverter
+internal sealed class VersionYamlTypeConverter : IYamlTypeConverter
 {
     public bool Accepts(Type type) => type == typeof(Version);
 
-    public object ReadYaml(IParser parser, Type type)
+    public object ReadYaml(IParser parser, Type _1, ObjectDeserializer _2)
     {
         var s = parser.Consume<Scalar>();
         return new Version(s.Value);
     }
 
-    public void WriteYaml(IEmitter emitter, object value, Type type)
+    public void WriteYaml(IEmitter emitter, object value, Type _1, ObjectSerializer _2)
     {
-        emitter.Emit(new Scalar(((Version)value).ToString()));
+        if (value is not Version v) throw new ArgumentException("Non-Version argument", nameof(value));
+
+        emitter.Emit(new Scalar(v.ToString()));
     }
 }
