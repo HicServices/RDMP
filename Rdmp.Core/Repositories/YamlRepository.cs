@@ -53,14 +53,11 @@ public class YamlRepository : MemoryDataExportRepository
         if (File.Exists(GetEncryptionKeyPathFile()))
         {
             EncryptionKeyPath = File.ReadLines(GetEncryptionKeyPathFile()).First();
-            if (!File.Exists(EncryptionKeyPath))
+            // Check if the file does exist but we were confused by stray whitespace:
+            if (!File.Exists(EncryptionKeyPath) && char.IsWhiteSpace(EncryptionKeyPath[^1]))
             {
-                // Check if the file does exist but we were confused by stray whitespace:
-                if (char.IsWhiteSpace(EncryptionKeyPath[^1]))
-                {
-                    var trimmed = EncryptionKeyPath.TrimEnd();
-                    if (File.Exists(trimmed)) EncryptionKeyPath = trimmed;
-                }
+                var trimmed = EncryptionKeyPath.TrimEnd();
+                if (File.Exists(trimmed)) EncryptionKeyPath = trimmed;
             }
         }
 
