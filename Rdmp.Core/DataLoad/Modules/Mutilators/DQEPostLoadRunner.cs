@@ -70,16 +70,14 @@ public class DQEPostLoadRunner : IMutilateDataTables
             return ExitCodeType.Success;
         }
 
-        //This does everything, we just want the new data load bits
-
-        DqeOptions options = new DqeOptions()
+        DqeOptions options = new()
         {
             Catalogue = catalogue.ID.ToString(),
             Command = CommandLineActivity.run
         };
         var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);
         runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
-                    new GracefulCancellationToken());//does the whole catalogue, rather than just the new stuff
+                    new GracefulCancellationToken());
 
         return ExitCodeType.Success;
     }
