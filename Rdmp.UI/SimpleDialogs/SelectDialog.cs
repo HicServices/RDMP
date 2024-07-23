@@ -29,6 +29,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
+using System.Linq;
 
 namespace Rdmp.UI.SimpleDialogs;
 // IMPORTANT: To edit this in Designer rename 'SelectDialog`1.resx' to 'SelectDialog.resx'
@@ -208,6 +209,7 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
         olvHierarchy.ImageGetter = GetHierarchyImage;
         olv.UseCellFormatEvents = true;
         olv.FormatCell += Olv_FormatCell;
+        olv.CustomSorter += Sort;
 
         olvName.ImageGetter = GetImage;
         olv.RowHeight = 19;
@@ -309,7 +311,6 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
             RDMPCollectionCommonFunctionality.SetupColumnTracking(olv, newCol, $"Useful_{propertyInfo.Name}");
         }
     }
-
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
@@ -733,8 +734,22 @@ public partial class SelectDialog<T> : Form, IVirtualListDataSource where T : cl
     {
     }
 
+    private class Sorter : IComparer
+    {
+        int IComparer.Compare(Object x, Object y)
+        {
+            return ((new CaseInsensitiveComparer()).Compare(y, x));
+        }
+    }
+
     public void Sort(OLVColumn column, SortOrder order)
     {
+        var index = this.olv.Columns.IndexOf(column);
+        var objects = this.olv.Objects;
+        var sorter = new Sorter();
+        //objects.Sort(sorter);
+        var x = objects.
+
     }
 
     public void UpdateObject(int index, object modelObject)
