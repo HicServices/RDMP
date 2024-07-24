@@ -113,7 +113,7 @@
             this.gbControls.Size = new System.Drawing.Size(956, 100);
             this.gbControls.TabIndex = 1;
             this.gbControls.TabStop = false;
-            this.gbControls.Text = "Find and Replace";
+            this.gbControls.Text = _showReplace ? "Find and Replace" : "Find";
             // 
             // cbMatchCase
             // 
@@ -144,6 +144,7 @@
             this.btnReplaceAll.Text = "Replace All";
             this.btnReplaceAll.UseVisualStyleBackColor = true;
             this.btnReplaceAll.Click += new System.EventHandler(this.btnReplaceAll_Click);
+            this.btnReplaceAll.Visible = _showReplace;
             // 
             // tbReplace
             // 
@@ -151,6 +152,7 @@
             this.tbReplace.Name = "tbReplace";
             this.tbReplace.Size = new System.Drawing.Size(442, 20);
             this.tbReplace.TabIndex = 7;
+            this.tbReplace.Visible = _showReplace;
             // 
             // tbFind
             // 
@@ -169,6 +171,7 @@
             this.label3.Size = new System.Drawing.Size(127, 13);
             this.label3.TabIndex = 9;
             this.label3.Text = "(This Cannot be undone!)";
+            this.label3.Visible = _showReplace;
             // 
             // label2
             // 
@@ -178,6 +181,7 @@
             this.label2.Size = new System.Drawing.Size(50, 13);
             this.label2.TabIndex = 6;
             this.label2.Text = "Replace:";
+            this.label2.Visible = _showReplace;
             // 
             // label1
             // 

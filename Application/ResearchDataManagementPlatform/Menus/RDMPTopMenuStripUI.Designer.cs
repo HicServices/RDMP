@@ -40,6 +40,7 @@ namespace ResearchDataManagementPlatform.Menus
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findMultipleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            findAdvancedToolStripMenuItem = new System.Windows.Forms .ToolStripMenuItem();
             findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,7 +101,7 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, newSessionToolStripMenuItem, runToolStripMenuItem, openToolStripMenuItem, findToolStripMenuItem, findMultipleToolStripMenuItem, findAndReplaceToolStripMenuItem, closeToolStripMenuItem, quitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, newSessionToolStripMenuItem, runToolStripMenuItem, openToolStripMenuItem, findToolStripMenuItem, findMultipleToolStripMenuItem, findAdvancedToolStripMenuItem, findAndReplaceToolStripMenuItem, closeToolStripMenuItem, quitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -151,6 +152,16 @@ namespace ResearchDataManagementPlatform.Menus
             findMultipleToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             findMultipleToolStripMenuItem.Text = "Find Multiple";
             findMultipleToolStripMenuItem.Click += findMultipleToolStripMenuItem_Click;
+
+            //
+            // findAdvancedToolStripMenuItem
+            // 
+            findAdvancedToolStripMenuItem.Name = "findAdvancedToolStripMenuItem";
+            findAdvancedToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F;
+            findAdvancedToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            findAdvancedToolStripMenuItem.Text = "Find (Advanced)";
+            findAdvancedToolStripMenuItem.Click += findAdvancedToolStripMenuItem_Click;
+
             // 
             // findAndReplaceToolStripMenuItem
             // 
@@ -550,6 +561,7 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem switchToDefaultSettings;
         private System.Windows.Forms.ToolStripMenuItem terminateProcessToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findMultipleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findAdvancedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewHistoryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem instanceSettingsToolStripMenuItem;
     }

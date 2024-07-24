@@ -464,6 +464,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         Activator.ShowWindow(new FindAndReplaceUI(Activator), true);
     }
 
+    private void findAdvancedToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Activator.ShowWindow(new FindAndReplaceUI(Activator,false), true);
+    }
+
     private void navigateBackwardToolStripMenuItem_Click(object sender, EventArgs e)
     {
         _windowManager.Navigation.Back(true);

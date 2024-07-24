@@ -40,12 +40,15 @@ public partial class FindAndReplaceUI : RDMPUserControl
 
     private List<FindAndReplaceNode> _sqlNodes = new();
 
+    private bool _showReplace = true;
 
-    public FindAndReplaceUI(IActivateItems activator)
+    public FindAndReplaceUI(IActivateItems activator,bool showReplace=true)
     {
         SetItemActivator(activator);
 
         GetAllObjects(activator);
+
+        _showReplace = showReplace;
 
         IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
         IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
