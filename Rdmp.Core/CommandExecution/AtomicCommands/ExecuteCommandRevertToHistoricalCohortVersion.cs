@@ -16,7 +16,7 @@ public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecuti
 {
 
     private readonly IBasicActivateItems _activator;
-    private CohortIdentificationConfiguration _configuration;
+    private readonly CohortIdentificationConfiguration _configuration;
     private readonly CohortIdentificationConfiguration _historicalConfiguration;
 
     /// <summary>
