@@ -15,12 +15,14 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
     readonly CohortIdentificationConfiguration _cic;
     readonly IBasicActivateItems _activator;
     readonly string _name;
+    readonly string _description;
 
-    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null) : base(activator)
+    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null,string description=null) : base(activator)
     {
         _cic = cic;
         _activator = activator;
         _name = name;
+        _description = description;
     }
 
 
@@ -36,5 +38,17 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         }
         var cmd = new ExecuteCommandCloneCohortIdentificationConfiguration(_activator, _cic, _name, version, true);
         cmd.Execute();
+        if (_description is not null)
+        {
+            var knownIds = previousClones.Select(cic => cic.ID);
+            var createdItem = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
+            if (createdItem.Any())
+            {
+                createdItem.First().Description = _description;
+                createdItem.First().SaveToDatabase();
+                Publish(createdItem.First());
+            }
+        }
+
     }
 }
