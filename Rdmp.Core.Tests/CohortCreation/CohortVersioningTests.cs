@@ -51,6 +51,23 @@ public class CohortVersioningTests : CohortQueryBuilderWithCacheTests
     }
 
     [Test]
+    public void TestCreationOfNewVersionOfCohortWithDescription()
+    {
+        var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
+        { DisallowInput = true };
+        var cic = GenerateCIC();
+        var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(activator, cic,"Name","Description");
+        Assert.DoesNotThrow(() => cmd.Execute());
+        var newCic = CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", cic.ID);
+        Assert.That(newCic, Has.Length.EqualTo(1));
+        Assert.That(newCic.First().Version, Is.EqualTo(1));
+        Assert.That(newCic.First().Name, Is.EqualTo("Name"));
+        Assert.That(newCic.First().Description, Is.EqualTo("Description"));
+
+
+    }
+
+    [Test]
     public void TestCreatingCohortVersionWithName()
     {
         var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet)
