@@ -78,6 +78,9 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
             this.cacheState.Size = new System.Drawing.Size(916, 125);
             this.cacheState.TabIndex = 3;
             this.cacheState.Text = "catalogueStackChart";
+            this.cacheState.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            this.cacheState.ChartAreas[0].CursorX.AutoScroll = true;
+            this.cacheState.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             // 
             // splitContainer1
             // 
@@ -144,6 +147,9 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
             this.cataloguesRowCountChart.TabIndex = 5;
             this.cataloguesRowCountChart.Text = "catalogueStackChart";
             this.cataloguesRowCountChart.AnnotationPositionChanged += new System.EventHandler(this.cataloguesRowCountChart_AnnotationPositionChanged);
+            this.cataloguesRowCountChart.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            this.cataloguesRowCountChart.ChartAreas[0].CursorX.AutoScroll = true;
+            this.cataloguesRowCountChart.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             // 
             // olvDQERuns
             // 
