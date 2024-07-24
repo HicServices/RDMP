@@ -59,9 +59,9 @@ public partial class CreateNewDataExtractionProjectUI : RDMPForm
         var AutoSuggestProjectNumbers = false;
         var AutoSuggestProjectNumbersSetting = activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>().Where(s => s.Key == "AutoSuggestProjectNumbers").FirstOrDefault();
         if (AutoSuggestProjectNumbersSetting is not null) AutoSuggestProjectNumbers = Convert.ToBoolean(AutoSuggestProjectNumbersSetting.Value);
+        _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
         if (AutoSuggestProjectNumbers)
         {
-            _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
             var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
             tbProjectNumber.Text = highestNumber == null ? "1" : (highestNumber.Value + 1).ToString();
         }
