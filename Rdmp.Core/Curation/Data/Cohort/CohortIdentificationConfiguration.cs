@@ -348,7 +348,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <returns></returns>
     public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
     {
-        var clone = new CohortIdentificationConfiguration();
+        var clone = new CohortIdentificationConfiguration((ICatalogueRepository)Repository, $"{Name} (Clone)");
         return CloneIntoExistingConfiguration(notifier, clone);
     }
 
