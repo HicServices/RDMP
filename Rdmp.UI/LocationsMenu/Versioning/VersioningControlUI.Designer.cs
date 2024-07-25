@@ -117,13 +117,16 @@ namespace Rdmp.UI.LocationsMenu.Versioning
 
         private void CommitNewVersion(object sender, EventArgs e)
         {
-            if (_cic.Version != null && _activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
+            if (_cic.Version != null)
             {
-                var rootCic = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", _cic.ClonedFrom_ID).FirstOrDefault();
-                if (rootCic != null)
+                if (_activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
                 {
-                    var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);
-                    revertCmd.Execute();
+                    var rootCic = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", _cic.ClonedFrom_ID).FirstOrDefault();
+                    if (rootCic != null)
+                    {
+                        var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);
+                        revertCmd.Execute();
+                    }
                 }
                 return;
             }
