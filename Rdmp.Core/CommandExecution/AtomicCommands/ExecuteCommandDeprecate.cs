@@ -54,7 +54,8 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
                 var c = (Catalogue) o;
                 var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
                 var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == c.ID).FirstOrDefault();
-                replacement.DeleteInDatabase();
+                if(replacedBy != null)
+                    replacement.DeleteInDatabase();
             }
         }
 
