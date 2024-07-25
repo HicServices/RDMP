@@ -135,6 +135,19 @@ namespace Rdmp.UI.LocationsMenu.Versioning
 
         private void CommitNewVersion(object sender, EventArgs e)
         {
+            if (_cic.Version != null)
+            {
+                if (_activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
+                {
+                    var rootCic = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", _cic.ClonedFrom_ID).FirstOrDefault();
+                    if (rootCic != null)
+                    {
+                        var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);
+                        revertCmd.Execute();
+                    }
+                }
+                return;
+            }
             var versions = _cic.GetVersions();
             var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}");
             cmd.Execute();
@@ -159,8 +172,10 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             }
             if (databaseObject.Version is not null)
             {
-                btnShowTicket.Enabled = false;
+                //btnShowTicket.Enabled = false;
             }
+            if (_cic is not null)
+                btnShowTicket.Text = _cic.Version is null ? "Save Version" : "Restore";
             versions.Insert(0, databaseObject);
             tbTicket.DataSource = versions;
             foreach (var version in versions)
