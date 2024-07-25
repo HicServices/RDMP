@@ -149,7 +149,8 @@ namespace Rdmp.UI.LocationsMenu.Versioning
                 return;
             }
             var versions = _cic.GetVersions();
-            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}");
+            var addedNewDescription = _activator.TypeText("Add a description of this new version", "Would you like to update the description of this new cohort version?", 250, _cic.Description, out string newDescription, false);
+            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}", addedNewDescription ? newDescription : null);
             cmd.Execute();
             versions = _cic.GetVersions();
             versions.Insert(0, _cic);
