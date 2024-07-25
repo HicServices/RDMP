@@ -10,7 +10,7 @@ using Rdmp.Core.Providers;
 using Rdmp.UI.SimpleDialogs;
 using System.Linq;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands;
 public class ExecuteCommandViewParentTree : BasicCommandExecution, IAtomicCommand
 {
 
