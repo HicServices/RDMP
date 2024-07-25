@@ -14,6 +14,7 @@ using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
@@ -101,6 +102,7 @@ public class RDMPControlCommonFunctionality
         _runChecksToolStripButton.Enabled = false;
         _runChecksToolStripButton.Visible = false;
 
+        //todo this isn't appearing in all panels
         _refresh = new ToolStripMenuItem
         {
             Visible = true,
@@ -113,6 +115,9 @@ public class RDMPControlCommonFunctionality
 
     private void Refresh(object sender, EventArgs e)
     {
+        //var cmd = new ExecuteCommandRefreshObject(_activator, DatabaseObject);
+        //cmd.Execute();
+        Console.WriteLine("yearp!");
         //todo figure this one out
         //_hostControl.RefreshBus_RefreshObject(sender, e);
     }

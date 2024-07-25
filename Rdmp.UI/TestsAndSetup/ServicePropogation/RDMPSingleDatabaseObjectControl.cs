@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -60,6 +61,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private ToolStripMenuItem _refresh;
 
+    private IActivateItems _activator;
+
 
     public DatabaseEntity DatabaseObject { get; private set; }
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -77,6 +80,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
     {
         SetItemActivator(activator);
+        _activator = activator;
         Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
         DatabaseObject = databaseObject;
 
@@ -168,8 +172,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private void Refresh(object sender, EventArgs e)
     {
-        //todo figure this one out
-        //_hostControl.RefreshBus_RefreshObject(sender, e);
+        var cmd = new ExecuteCommandRefreshObject(_activator, DatabaseObject);
+        cmd.Execute();
     }
 
     protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(DatabaseEntity _)
