@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix Project Creation UI issue
 - Fix issue with whitespace confusing encryption key paths
 - Add ability to add description to new cohort versions
+- Add functionality to revert to historical cohort version
 
 ## [8.2.1] - 2024-07-18
 
