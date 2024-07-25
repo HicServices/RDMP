@@ -13,6 +13,8 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
@@ -55,6 +57,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     private BinderWithErrorProviderFactory _binder;
 
     protected ObjectSaverButton ObjectSaverButton1 = new();
+
+    private ToolStripMenuItem _refresh;
+
 
     public DatabaseEntity DatabaseObject { get; private set; }
     protected RDMPCollection AssociatedCollection = RDMPCollection.None;
@@ -147,6 +152,24 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
             CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
+
+
+        //add refresh
+        _refresh = new ToolStripMenuItem
+        {
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText= "Refresh Object"
+        };
+        _refresh.Click += Refresh;
+        CommonFunctionality.Add(_refresh);
+    }
+
+    private void Refresh(object sender, EventArgs e)
+    {
+        //todo figure this one out
+        //_hostControl.RefreshBus_RefreshObject(sender, e);
     }
 
     protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(DatabaseEntity _)
