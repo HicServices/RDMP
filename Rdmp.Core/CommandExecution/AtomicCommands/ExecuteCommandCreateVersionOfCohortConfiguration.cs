@@ -40,7 +40,6 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
         cmd.Execute();
         if (_description is not null)
         {
-            var knownIds = previousClones.Select(cic => cic.ID);
             var createdItem = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", _cic.ID).Where(cic => cic.Name == _name);
             if (createdItem.Any())
             {
