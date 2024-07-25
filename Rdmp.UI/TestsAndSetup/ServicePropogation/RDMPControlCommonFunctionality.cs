@@ -61,6 +61,8 @@ public class RDMPControlCommonFunctionality
 
     private readonly RAGSmileyToolStrip _ragSmileyToolStrip;
 
+    private readonly ToolStripMenuItem _refresh;
+
     private readonly ToolStripButton _runChecksToolStripButton =
         new("Run Checks", FamFamFamIcons.arrow_refresh.ImageToBitmap());
 
@@ -98,6 +100,21 @@ public class RDMPControlCommonFunctionality
         _ragSmileyToolStrip.Visible = false;
         _runChecksToolStripButton.Enabled = false;
         _runChecksToolStripButton.Visible = false;
+
+        _refresh = new ToolStripMenuItem
+        {
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right
+        };
+        _refresh.Click += Refresh;
+        ToolStrip.Items.Add(_refresh);
+    }
+
+    private void Refresh(object sender, EventArgs e)
+    {
+        //todo figure this one out
+        //_hostControl.RefreshBus_RefreshObject(sender, e);
     }
 
     public void SetItemActivator(IActivateItems activator)
