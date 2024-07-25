@@ -6,10 +6,7 @@
 
 using Rdmp.Core.Providers;
 using Rdmp.UI.SimpleDialogs;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using System;
-using System.Drawing;
 using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -36,22 +33,12 @@ public class ExecuteCommandViewParentTree : BasicCommandExecution, IAtomicComman
     {
         base.Execute();
         BuildTree();
-        //todo pop a dialog
         if (_activator.IsInteractive)
         {
-            //pop the dialog
             var tree = _tree.GetUsefulParents().ToList();
             tree.Add(_databaseObject);
             var dialog = new ViewParentTreeDialog(_activator, tree);
             dialog.ShowDialog();
-        }
-        else
-        {
-            //todo see if this works (and how?)
-            foreach (var item in _tree.GetUsefulParents())
-            {
-                Console.WriteLine(item);
-            }
         }
     }
 }
