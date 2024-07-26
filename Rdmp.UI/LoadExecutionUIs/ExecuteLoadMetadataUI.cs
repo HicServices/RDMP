@@ -83,7 +83,7 @@ public partial class ExecuteLoadMetadataUI : DatasetLoadControl_Design
 
         CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
 
-        //CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata)databaseObject));
+        CommonFunctionality.Add(new ExecuteCommandViewLogs(activator, (LoadMetadata)databaseObject));
 
         CommonFunctionality.Add(dd_DebugOptions);
     }

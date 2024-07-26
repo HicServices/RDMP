@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Misc improvements to the DQE
 - Fix Project Creation UI issue
 - Fix issue with whitespace confusing encryption key paths
+- Add Refresh button to UI panels
 
 ## [8.2.1] - 2024-07-18
 
