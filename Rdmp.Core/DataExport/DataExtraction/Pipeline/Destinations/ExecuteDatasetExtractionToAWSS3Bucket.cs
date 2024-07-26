@@ -19,6 +19,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.AWS;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
 using System.Data;
@@ -48,9 +49,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("Replace the fileid it already exisist in the S3 bucket")]
         public bool ReplaceExistingFiles { get; set; } = false;
 
-        [DemandsInitialization("The kind of flat file to generate for the extraction", DemandType.Unspecified,
-    ExecuteExtractionToFlatFileType.CSV)]
-        public ExecuteExtractionToFlatFileType FlatFileType { get; set; }
+        private ExecuteExtractionToFlatFileType FlatFileType = ExecuteExtractionToFlatFileType.CSV;
 
         [DemandsInitialization(
             "The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values",
@@ -226,6 +225,47 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 job.OnNotify(this,
                         new NotifyEventArgs(ProgressEventType.Error, ex.Message));
             }
+        }
+
+        public override async void Check(ICheckNotifier notifier)
+        {
+            if (string.IsNullOrWhiteSpace(AWS_Profile))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("AWS Profile is not set.", CheckResult.Fail));
+                return;
+            }
+            _region = RegionEndpoint.GetBySystemName(AWS_Region);
+            if (_region.DisplayName == "Unknown")
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Region {AWS_Region} is not valid.", CheckResult.Fail));
+                return;
+            }
+
+            try
+            {
+                _s3Helper = new AWSS3(AWS_Profile, _region);
+            }
+            catch (Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs(ex.Message, CheckResult.Fail));
+                return;
+            }
+            try
+            {
+                _bucket = await _s3Helper.GetBucket(BucketName);
+            }
+            catch (Exception)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs($"Bucket '{BucketName}' does not exist.", CheckResult.Fail));
+                return;
+            }
+
+            if (!ReplaceExistingFiles && _s3Helper.ObjectExists(AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv"), _bucket.BucketName))
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Object already exists. Please update configuration if you wish to overrwrite", CheckResult.Fail));
+                return;
+            }
+            base.Check(notifier);
         }
     }
 }
