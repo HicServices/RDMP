@@ -49,8 +49,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("Replace the fileid it already exisist in the S3 bucket")]
         public bool ReplaceExistingFiles { get; set; } = false;
 
-        private ExecuteExtractionToFlatFileType FlatFileType = ExecuteExtractionToFlatFileType.CSV;
-
         [DemandsInitialization(
             "The number of decimal places to round floating point numbers to.  This only applies to data in the pipeline which is hard typed Float and not to string values",
             DemandType.Unspecified)]
@@ -136,48 +134,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (!_request.IsBatchResume) _output.WriteHeaders(toProcess);
         }
 
-        protected async override void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
+        protected override async void PreInitializeImpl(IExtractCommand request, IDataLoadEventListener listener)
         {
-            if (string.IsNullOrWhiteSpace(AWS_Profile))
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "AWS Profile is not set."));
-                return;
-            }
             _region = RegionEndpoint.GetBySystemName(AWS_Region);
-            if (_region.DisplayName == "Unknown")
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Region {AWS_Region} is not valid."));
-                return;
-            }
-
-            try
-            {
-                _s3Helper = new AWSS3(AWS_Profile, _region);
-            }
-            catch (Exception ex)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, ex.Message));
-                return;
-            }
-            try
-            {
-                _bucket = await _s3Helper.GetBucket(BucketName);
-            }
-            catch (Exception)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"Bucket '{BucketName}' does not exist."));
-                return;
-            }
-
-            if (!ReplaceExistingFiles && _s3Helper.ObjectExists(AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv"), _bucket.BucketName))
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Object already exists. Please update configuration if you wish to overrwrite"));
-                return;
-            }
-
-            var tempLocation = Path.GetTempPath();
-            if (FlatFileType != ExecuteExtractionToFlatFileType.CSV)
-                throw new Exception($"Unhandled File Type {FlatFileType}");
+            _s3Helper = new AWSS3(AWS_Profile, _region);
+            _bucket = await _s3Helper.GetBucket(BucketName);
             OutputFile = Path.Combine(Path.GetTempPath(), $"{GetFilename()}.csv");
             _output = request.Configuration != null
                 ? new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat)
@@ -186,7 +147,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         protected override async void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
-
             foreach (DataRow row in toProcess.Rows)
             {
                 _output.Append(row);
@@ -259,10 +219,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs($"Bucket '{BucketName}' does not exist.", CheckResult.Fail));
                 return;
             }
+            var key = AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv");
 
-            if (!ReplaceExistingFiles && _s3Helper.ObjectExists(AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv"), _bucket.BucketName))
+            if (!ReplaceExistingFiles && _s3Helper.ObjectExists(key, _bucket.BucketName))
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Object already exists. Please update configuration if you wish to overrwrite", CheckResult.Fail));
+                notifier.OnCheckPerformed(new CheckEventArgs($"{key} already exists. Please update configuration if you wish to overrwrite", CheckResult.Fail));
                 return;
             }
             base.Check(notifier);

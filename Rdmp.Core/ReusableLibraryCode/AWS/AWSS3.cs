@@ -65,20 +65,23 @@ namespace Rdmp.Core.ReusableLibraryCode.AWS
         {
             try
             {
-                _ = _client.GetObjectMetadataAsync(new GetObjectMetadataRequest()
+                var response = _client.GetObjectMetadataAsync(new GetObjectMetadataRequest()
                 {
                     BucketName = bucketName,
                     Key = fileKey
                 });
+                var result = response.Result;
 
                 return true;
             }
 
-            catch (AmazonS3Exception ex)
+            catch (Exception ex)
             {
-                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                    return false;
-                throw;
+                //if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                //    return false;
+                //throw;
+                Console.WriteLine(ex.Message);
+                return false;
             }
         }
 
