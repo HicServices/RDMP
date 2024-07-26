@@ -6,13 +6,16 @@
 
 using System;
 using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -93,7 +96,6 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             CommonTreeFunctionality.SetupColumnTracking(olvValue, new Guid("facab93a-6950-4815-9f5f-5f076277adb5"));
 
             tlvLoadMetadata.Expand(Activator.CoreChildProvider.LoadMetadataRootFolder);
-
             _isFirstTime = false;
         }
     }
@@ -121,5 +123,21 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         CommonFunctionality.ClearToolStrip();
         CommonFunctionality.Add(new ExecuteCommandCreateNewLoadMetadata(Activator), "New");
+        var _refresh = new ToolStripMenuItem
+        {
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText = "Refresh Object"
+        };
+        _refresh.Click += delegate (object sender, EventArgs e) {
+            var lmd = Activator.CoreChildProvider.AllLoadMetadatas.First();
+            if (lmd is not null)
+            {
+                var cmd = new ExecuteCommandRefreshObject(Activator, lmd);
+                cmd.Execute();
+            }
+        };
+        CommonFunctionality.Add(_refresh);
     }
 }

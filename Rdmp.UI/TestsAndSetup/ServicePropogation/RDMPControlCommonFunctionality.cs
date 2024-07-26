@@ -110,7 +110,7 @@ public class RDMPControlCommonFunctionality
             Alignment = ToolStripItemAlignment.Right
         };
         _refresh.Click += Refresh;
-        ToolStrip.Items.Add(_refresh);
+        //ToolStrip.Items.Add(_refresh);
     }
 
     private void Refresh(object sender, EventArgs e)

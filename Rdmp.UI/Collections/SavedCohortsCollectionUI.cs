@@ -5,11 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 
@@ -66,6 +70,22 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
         CommonFunctionality.Add(
             new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator, null),
             "From Query", null, "New...");
+        var _refresh = new ToolStripMenuItem
+        {
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText = "Refresh Object"
+        };
+        _refresh.Click += delegate (object sender, EventArgs e) {
+            var cohort = ((DataExportChildProvider)Activator.CoreChildProvider).CohortSources.First();
+            if (cohort is not null)
+            {
+                var cmd = new ExecuteCommandRefreshObject(Activator, cohort);
+                cmd.Execute();
+            }
+        };
+        CommonFunctionality.Add(_refresh);
     }
 
     public static bool IsRootObject(object root) => root is AllCohortsNode;
