@@ -264,10 +264,15 @@ public class GoToCommandFactory : CommandFactoryBase
 
         if (Is(forObject, out Catalogue catalogue))
         {
-            foreach(var lmd in catalogue.LoadMetadatas())
+            foreach (var lmd in catalogue.LoadMetadatas())
             {
                 yield return new ExecuteCommandShow(_activator, lmd.ID, typeof(LoadMetadata))
                 { OverrideCommandName = $"Data Load ({lmd.Name})", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
+            }
+            if (catalogue.LoadMetadatas().Length == 0)
+            {
+                yield return new ExecuteCommandShow(_activator, null, typeof(LoadMetadata))
+                { OverrideCommandName = $"Data Load", OverrideIcon = GetImage(RDMPConcept.LoadMetadata) };
             }
 
 
@@ -278,6 +283,7 @@ public class GoToCommandFactory : CommandFactoryBase
                 if (cataEds != null)
                 {
                     if (cataEds.Project_ID != null)
+                    {
                         yield return new ExecuteCommandShow(_activator,
                             () =>
                             {
@@ -292,6 +298,22 @@ public class GoToCommandFactory : CommandFactoryBase
                             OverrideCommandName = "Associated Project",
                             OverrideIcon = GetImage(RDMPConcept.Project)
                         };
+                    }
+                    else
+                    {
+                        yield return new ExecuteCommandShow(_activator,
+                          () =>
+                          {
+                              return new Project[]
+                              {
+                              };
+                          }
+                      )
+                        {
+                            OverrideCommandName = "Associated Project",
+                            OverrideIcon = GetImage(RDMPConcept.Project)
+                        };
+                    }
 
                     yield return new ExecuteCommandShow(_activator,
                         () => cataEds.ExtractionConfigurations.Select(c => c.Project).Distinct())
@@ -300,6 +322,40 @@ public class GoToCommandFactory : CommandFactoryBase
                         OverrideIcon = GetImage(RDMPConcept.Project)
                     };
                     yield return new ExecuteCommandShow(_activator, () => cataEds.ExtractionConfigurations)
+                    {
+                        OverrideCommandName = "Extracted In (Extraction Configuration)",
+                        OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
+                    };
+                }
+                else
+                {
+                    //no values, show disabled options
+                    yield return new ExecuteCommandShow(_activator,
+                          () =>
+                          {
+                              return new Project[] { };
+                          }
+                      )
+                    {
+                        OverrideCommandName = "Associated Project",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                                             () =>
+                                             {
+                                                 return new Project[] { };
+                                             }
+                                         )
+                    {
+                        OverrideCommandName = "Extracted In (Project)",
+                        OverrideIcon = GetImage(RDMPConcept.Project)
+                    };
+                    yield return new ExecuteCommandShow(_activator,
+                        () =>
+                        {
+                            return new ExtractionConfiguration[] { };
+                        }
+                    )
                     {
                         OverrideCommandName = "Extracted In (Extraction Configuration)",
                         OverrideIcon = GetImage(RDMPConcept.ExtractionConfiguration)
