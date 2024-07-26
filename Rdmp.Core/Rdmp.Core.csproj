@@ -309,6 +309,10 @@
 		<EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
 	</ItemGroup>
 	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" />
+		<PackageReference Include="AWSSDK.SecurityToken" />
+		<PackageReference Include="AWSSDK.SSO" />
+		<PackageReference Include="AWSSDK.SSOOIDC" />
 		<PackageReference Include="CommandLineParser" />
 		<PackageReference Include="Equ" />
 		<PackageReference Include="ExcelNumberFormat" />
@@ -339,7 +343,6 @@
 	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="Resources\" />
-		<Folder Include="ReusableLibraryCode\" />
 	</ItemGroup>
 	<ItemGroup>
 		<Compile Update="GlobalStrings.Designer.cs">
