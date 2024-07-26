@@ -1,12 +1,15 @@
-﻿using Rdmp.Core.CommandExecution.AtomicCommands;
+﻿using NPOI.OpenXmlFormats.Spreadsheet;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Terminal.Gui;
 using static Azure.Core.HttpHeader;
 
 namespace Rdmp.UI.LocationsMenu.Versioning
@@ -80,7 +83,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             tbTicket.Size = new System.Drawing.Size(187, 23);
             tbTicket.TabIndex = 30;
             tbTicket.SelectionChangeCommitted += VersionChange;
-            //tbTicket.TextChanged += tbTicket_TextChanged;
+            tbTicket.MouseHover += tbTicket_MouseOver;
             // 
             // label6
             // 
@@ -115,10 +118,39 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             }
         }
 
+        private void tbTicket_MouseOver(object sender, EventArgs e)
+        {
+            ToolTip buttonToolTip = new ToolTip();
+            buttonToolTip.ToolTipTitle = "Value";
+            buttonToolTip.UseFading = true;
+            buttonToolTip.UseAnimation = true;
+            buttonToolTip.IsBalloon = true;
+            buttonToolTip.ShowAlways = true;
+            buttonToolTip.AutoPopDelay = 5000;
+            buttonToolTip.InitialDelay = 1000;
+            buttonToolTip.ReshowDelay = 0;
+
+            buttonToolTip.SetToolTip(tbTicket, tbTicket.Text);
+        }
+
         private void CommitNewVersion(object sender, EventArgs e)
         {
+            if (_cic.Version != null)
+            {
+                if (_activator.YesNo("Are you sure you want to revert the cohort to this version?", "Revert Cohort to this Version"))
+                {
+                    var rootCic = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", _cic.ClonedFrom_ID).FirstOrDefault();
+                    if (rootCic != null)
+                    {
+                        var revertCmd = new ExecuteCommandRevertToHistoricalCohortVersion(_activator, rootCic, _cic);
+                        revertCmd.Execute();
+                    }
+                }
+                return;
+            }
             var versions = _cic.GetVersions();
-            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}");
+            var addedNewDescription = _activator.TypeText("Add a description of this new version", "Would you like to update the description of this new cohort version?", 250, _cic.Description, out string newDescription, false);
+            var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}", addedNewDescription ? newDescription : null);
             cmd.Execute();
             versions = _cic.GetVersions();
             versions.Insert(0, _cic);
@@ -132,6 +164,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             _cic = databaseObject;
             _activator = activator;
             tbTicket.DropDownStyle = ComboBoxStyle.DropDownList;
+            int cbWidth = (int)tbTicket.DropDownWidth;
             var versions = databaseObject.GetVersions();
             if (!versions.Any() || databaseObject.Version is not null)
             {
@@ -140,10 +173,23 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             }
             if (databaseObject.Version is not null)
             {
-                btnShowTicket.Enabled = false;
+                //btnShowTicket.Enabled = false;
             }
+            if (_cic is not null)
+                btnShowTicket.Text = _cic.Version is null ? "Save Version" : "Restore";
             versions.Insert(0, databaseObject);
             tbTicket.DataSource = versions;
+            foreach (var version in versions)
+            {
+                var longestItem = CreateGraphics().MeasureString(version.Name, SystemFonts.MessageBoxFont).Width;
+                if (longestItem > cbWidth)
+                {
+                    cbWidth = (int)longestItem + 1;
+                }
+
+            }
+            tbTicket.DropDownWidth = cbWidth;
+
         }
         #endregion
 
