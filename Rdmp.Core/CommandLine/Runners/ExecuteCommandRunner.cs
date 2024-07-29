@@ -38,7 +38,7 @@ internal class ExecuteCommandRunner : IRunner
     }
 
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         _input = new ConsoleInputManager(repositoryLocator, checkNotifier)
         {

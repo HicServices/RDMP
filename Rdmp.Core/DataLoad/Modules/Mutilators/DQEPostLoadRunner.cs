@@ -75,9 +75,10 @@ public class DQEPostLoadRunner : IMutilateDataTables
             Catalogue = catalogue.ID.ToString(),
             Command = CommandLineActivity.run
         };
+
         var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);
         runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
-                    new GracefulCancellationToken());
+                    new GracefulCancellationToken(), job.DataLoadInfo.ID);
 
         return ExitCodeType.Success;
     }

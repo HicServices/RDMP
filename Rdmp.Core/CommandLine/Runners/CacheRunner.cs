@@ -31,7 +31,7 @@ public class CacheRunner : Runner
     }
 
     public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         var cp = GetObjectFromCommandLineString<CacheProgress>(repositoryLocator, _options.CacheProgress);
         var dataLoadTask = cp.GetDistinctLoggingTask();

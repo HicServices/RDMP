@@ -295,7 +295,7 @@ public partial class ConfigureAndExecutePipelineUI : RDMPUserControl, IPipelineR
     }
 
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         Activator.ShowDialog(new SingleControlForm(this));
         return 0;

@@ -38,7 +38,7 @@ public abstract class ManyRunner : Runner
     }
 
     public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         RepositoryLocator = repositoryLocator;
         Token = token;

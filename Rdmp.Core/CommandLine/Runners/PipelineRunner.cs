@@ -34,7 +34,7 @@ public class PipelineRunner : IPipelineRunner
     }
 
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         // if we have no listener use a throw immediately one (generate exceptions if it went badly)
         listener ??= ThrowImmediatelyDataLoadEventListener.Quiet;

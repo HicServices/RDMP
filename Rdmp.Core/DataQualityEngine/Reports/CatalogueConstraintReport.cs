@@ -13,6 +13,7 @@ using System.Threading;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
@@ -25,6 +26,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
+using Spectre.Console;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
@@ -91,8 +93,22 @@ public class CatalogueConstraintReport : DataQualityReport
 
     private bool haveComplainedAboutNullCategories;
 
+
+    public void UpdateReport(ICatalogue catalogue, int dataLoadId, IDataLoadEventListener listener,
+        CancellationToken cancellationToken)
+    {
+        _ReportGeneration(catalogue, listener, cancellationToken, dataLoadId);
+    }
+
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
+    {
+        _ReportGeneration(c, listener, cancellationToken, 0);      
+    }
+
+
+    private void _ReportGeneration(ICatalogue c, IDataLoadEventListener listener,
+        CancellationToken cancellationToken,int dataLoadId)
     {
         SetupLogging(c.CatalogueRepository);
 
@@ -100,7 +116,6 @@ public class CatalogueConstraintReport : DataQualityReport
             $"DQE evaluation of {c}");
 
         var forker = new ForkDataLoadEventListener(listener, toDatabaseLogger);
-
         try
         {
             _catalogue = c;
@@ -134,7 +149,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     cancellationToken.ThrowIfCancellationRequested();
 
                     progress++;
-                    var dataLoadRunIDOfCurrentRecord = 0;
+                    var dataLoadRunIDOfCurrentRecord = dataLoadId;
                     //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
 
                     //if the DataReader is likely to have a data load run ID column

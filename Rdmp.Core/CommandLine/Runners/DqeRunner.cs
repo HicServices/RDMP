@@ -26,7 +26,7 @@ internal class DqeRunner : Runner
     }
 
     public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         var catalogue = GetObjectFromCommandLineString<Catalogue>(repositoryLocator, _options.Catalogue);
         var report = new CatalogueConstraintReport(catalogue, SpecialFieldNames.DataLoadRunID);
@@ -34,7 +34,10 @@ internal class DqeRunner : Runner
         switch (_options.Command)
         {
             case CommandLineActivity.run:
-                report.GenerateReport(catalogue, listener, token.AbortToken);
+                if (dataLoadId is not null)
+                    report.UpdateReport(catalogue, (int)dataLoadId, listener, token.AbortToken);
+                else
+                    report.GenerateReport(catalogue, listener, token.AbortToken);
                 return 0;
 
             case CommandLineActivity.check:

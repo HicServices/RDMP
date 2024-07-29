@@ -24,7 +24,7 @@ namespace Rdmp.Core.CommandLine.Runners;
 public abstract class Runner : IRunner
 {
     public abstract int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token);
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null);
 
     /// <summary>
     /// Translates a string <paramref name="arg"/> into an object of type <typeparamref name="T"/>.  String can

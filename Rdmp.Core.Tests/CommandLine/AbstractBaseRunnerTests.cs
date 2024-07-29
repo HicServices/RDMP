@@ -167,6 +167,6 @@ public class AbstractBaseRunnerTests : UnitTests
             where T : IMapsDirectlyToDatabaseTable => Runner.GetObjectsFromCommandLineString<T>(locator, arg);
 
         public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
-            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token) => 0;
+            IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null) => 0;
     }
 }

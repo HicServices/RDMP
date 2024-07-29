@@ -32,7 +32,7 @@ public class CohortCreationRunner : Runner
     }
 
     public override int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId = null)
     {
         if (HasConfigurationPreviouslyBeenReleased())
             throw new Exception("Extraction Configuration has already been released");
