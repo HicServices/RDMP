@@ -23,6 +23,7 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.Theme;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
@@ -156,17 +157,19 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
 
-
         //add refresh
         _refresh = new ToolStripMenuItem
         {
             Visible = true,
             Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
             Alignment = ToolStripItemAlignment.Right,
-            ToolTipText= "Refresh Object"
+            ToolTipText = "Refresh Object"
         };
         _refresh.Click += Refresh;
         CommonFunctionality.Add(_refresh);
+
+        var viewParentTreeCmd = new ExecuteCommandViewParentTree(activator, databaseObject);
+        CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
     }
 
     private void Refresh(object sender, EventArgs e)
