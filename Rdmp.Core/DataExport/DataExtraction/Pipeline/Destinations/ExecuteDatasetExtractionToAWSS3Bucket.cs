@@ -101,7 +101,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public override string GetDestinationDescription()
         {
-            return $"AWS({_region}).Bucket{_bucket.BucketName}/{AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv")}";
+            //TODO
+            if (_bucket is not null)
+            {
+                return $"AWS({_region}).Bucket{_bucket.BucketName}/{AWSS3.KeyGenerator(LocationWithinBucket, $"{GetFilename()}.csv")}";
+            }
+            return "AWS";
         }
 
         public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
