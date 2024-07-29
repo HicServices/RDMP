@@ -64,6 +64,7 @@ public class AtomicCommandFactory : CommandFactoryBase
     public const string Advanced = "Advanced";
     public const string View = "View";
     public const string Deprecation = "Deprecation";
+    public const string ViewParentTree = "View Parent Tree";
 
     public AtomicCommandFactory(IBasicActivateItems activator)
     {

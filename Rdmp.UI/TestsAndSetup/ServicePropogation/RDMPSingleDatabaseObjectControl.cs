@@ -13,14 +13,17 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.Theme;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation;
 
@@ -147,6 +150,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
             CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
+        var viewParentTreeCmd = new ExecuteCommandViewParentTree(activator, databaseObject);
+        CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
     }
 
     protected bool BeforeSave_PromptRenameOfExtractionFilterContainer(DatabaseEntity _)
