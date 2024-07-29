@@ -97,18 +97,17 @@ public class CatalogueConstraintReport : DataQualityReport
     public void UpdateReport(ICatalogue catalogue, int dataLoadId, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
-        _ReportGeneration(catalogue, listener, cancellationToken, dataLoadId);
+        _ReportGeneration(catalogue, dataLoadId, listener, cancellationToken);
     }
 
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
-        _ReportGeneration(c, listener, cancellationToken, 0);      
+        _ReportGeneration(c, 0, listener, cancellationToken);
     }
 
-
-    private void _ReportGeneration(ICatalogue c, IDataLoadEventListener listener,
-        CancellationToken cancellationToken,int dataLoadId)
+    private void _ReportGeneration(ICatalogue c, int dataLoadId, IDataLoadEventListener listener,
+        CancellationToken cancellationToken)
     {
         SetupLogging(c.CatalogueRepository);
 
