@@ -42,12 +42,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     [SetUp]
     protected override void SetUp()
     {
-        base.SetUp();
-
-        BlitzMainDataTables();
-
-        DeleteTables(From);
-        DeleteTables(To);
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
