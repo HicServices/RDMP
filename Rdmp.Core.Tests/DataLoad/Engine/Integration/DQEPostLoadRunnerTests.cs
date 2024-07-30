@@ -39,7 +39,16 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
 {
 
+    [SetUp]
+    protected override void SetUp()
+    {
+        base.SetUp();
 
+        BlitzMainDataTables();
+
+        DeleteTables(From);
+        DeleteTables(To);
+    }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     [TestCase(DatabaseType.MySql)]
