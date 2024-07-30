@@ -86,7 +86,13 @@ public class FTPDownloader : IPluginDataProvider
         var username = FTPServer.Username ?? "anonymous";
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new FtpClient(host, username, password);
-
+        if (TimeoutInSeconds > 0)
+        {
+            c.Config.ConnectTimeout = TimeoutInSeconds * 1000;
+            c.Config.ReadTimeout = TimeoutInSeconds * 1000;
+            c.Config.DataConnectionConnectTimeout = TimeoutInSeconds * 1000;
+            c.Config.DataConnectionReadTimeout = TimeoutInSeconds * 1000;
+        }
         // Enable periodic NOOP keepalive operations to keep connection active until we're done
         c.Config.Noop = true;
         c.AutoConnect();
