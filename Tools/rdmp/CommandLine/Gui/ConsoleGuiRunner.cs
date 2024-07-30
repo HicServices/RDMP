@@ -26,7 +26,7 @@ internal class ConsoleGuiRunner : IRunner
     }
 
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId)
     {
         Program.DisableConsoleLogging();
 

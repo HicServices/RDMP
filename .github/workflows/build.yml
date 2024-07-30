@@ -3,9 +3,7 @@ name: Build
 # Run this workflow every time a new commit pushed to your repository
 
 on: 
-  push:
-  schedule:
-    - cron: '0 0 * * *'
+  push
 
 env:
   DOTNET_NOLOGO: 1

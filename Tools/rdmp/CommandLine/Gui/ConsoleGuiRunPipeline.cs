@@ -210,7 +210,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     }
 
     public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
-        ICheckNotifier checkNotifier, GracefulCancellationToken token)
+        ICheckNotifier checkNotifier, GracefulCancellationToken token, int? dataLoadId)
     {
         // this blocks while the window is run
         Application.Run(this, ConsoleMainWindow.ExceptionPopup);
