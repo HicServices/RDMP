@@ -52,12 +52,8 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     [TestCase(DatabaseType.MicrosoftSQLServer)]
     public void TestDEQPostLoad_NoPreviousDQE(DatabaseType dbType)
     {
-        var db = GetCleanedServer(dbType, "DQETempTestDb");
-        var patcher = new DataQualityEnginePatcher();
-
-        var mds = new MasterDatabaseScriptExecutor(db);
-        mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
-        var dqeRepository = new DQERepository(CatalogueRepository, db);
+        SingleTableSetup();
+        var dqeRepository = new DQERepository(_catalogue.CatalogueRepository);
         var numberOfRecordsToGenerate = 1000;
         var startTime = DateTime.Now;
 
@@ -69,13 +65,13 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
         var lmd = new LoadMetadata(CatalogueRepository, "test");
         lmd.LinkToCatalogue(_catalogue);
         lmd.SaveToDatabase();
-        var dqePostLoad = new DQEPostLoadRunner();
-        Assert.DoesNotThrow(() => dqePostLoad.Initialize(db, LoadStage.PostLoad));
+        //var dqePostLoad = new DQEPostLoadRunner();
+        //Assert.DoesNotThrow(() => dqePostLoad.Initialize(db, LoadStage.PostLoad));
         var job = Substitute.For<IDataLoadJob>();
         job.RepositoryLocator.Returns(RepositoryLocator);
         job.DataLoadInfo.ID.Returns(1);
         job.LoadMetadata.Returns(lmd);
-        Assert.DoesNotThrow(() => dqePostLoad.Mutilate(job));
+        Assert.DoesNotThrow(() => Mutilate(job));
         //todo test that no dqe was tgenerated
         Assert.That(dqeRepository.GetAllEvaluationsFor(_catalogue), Is.Empty);
 
@@ -249,7 +245,7 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
         job.LoadMetadata.Returns(_lmd);
         Mutilate(job);
         Assert.That(dqeRepository.GetAllEvaluationsFor(_catalogue).Count, Is.EqualTo(2));
-        var periodicityState = PeriodicityState.GetPeriodicityCountsForEvaluation(dqeRepository.GetMostRecentEvaluationFor(_catalogue),false);
+        var periodicityState = PeriodicityState.GetPeriodicityCountsForEvaluation(dqeRepository.GetMostRecentEvaluationFor(_catalogue), false);
         Assert.That(periodicityState.Count, Is.EqualTo(2));
     }
 
@@ -273,13 +269,13 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
         while (--length >= 0)
             chars[length] = sourceAlphabet[Random.Next(sourceAlphabet.Length)];
 
-    return new string(chars);
+        return new string(chars);
     }
 
 
     private string SingleTableSetup()
     {
-        var name= GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",8);
+        var name = GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ", 8);
         CreateTables(name, "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
