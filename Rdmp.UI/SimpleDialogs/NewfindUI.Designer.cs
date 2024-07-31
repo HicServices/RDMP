@@ -32,6 +32,9 @@ namespace Rdmp.UI.SimpleDialogs
         private void InitializeComponent()
         {
             panel1 = new System.Windows.Forms.Panel();
+            rbLocations = new System.Windows.Forms.RadioButton();
+            rbSqlMode = new System.Windows.Forms.RadioButton();
+            rbStandard = new System.Windows.Forms.RadioButton();
             cbCaseSensitive = new System.Windows.Forms.CheckBox();
             btnReplace = new System.Windows.Forms.Button();
             newFindToolStrip = new System.Windows.Forms.ToolStrip();
@@ -45,13 +48,22 @@ namespace Rdmp.UI.SimpleDialogs
             olvID = new OLVColumn();
             olvName = new OLVColumn();
             olvHierarchy = new OLVColumn();
+            olvObject = new OLVColumn();
+            olvProperty = new OLVColumn();
+            olvValue = new OLVColumn();
+            panel3 = new System.Windows.Forms.Panel();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)folv).BeginInit();
+            panel3.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
             // 
+            panel1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panel1.Controls.Add(rbLocations);
+            panel1.Controls.Add(rbSqlMode);
+            panel1.Controls.Add(rbStandard);
             panel1.Controls.Add(cbCaseSensitive);
             panel1.Controls.Add(btnReplace);
             panel1.Controls.Add(newFindToolStrip);
@@ -60,16 +72,54 @@ namespace Rdmp.UI.SimpleDialogs
             panel1.Controls.Add(tbReplace);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(tbFind);
-            panel1.Location = new System.Drawing.Point(12, 12);
+            panel1.Location = new System.Drawing.Point(3, 3);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(776, 100);
             panel1.TabIndex = 0;
+            // 
+            // rbLocations
+            // 
+            rbLocations.AutoCheck = false;
+            rbLocations.AutoSize = true;
+            rbLocations.Location = new System.Drawing.Point(169, 28);
+            rbLocations.Name = "rbLocations";
+            rbLocations.Size = new System.Drawing.Size(122, 19);
+            rbLocations.TabIndex = 10;
+            rbLocations.Text = "Physical Locations";
+            rbLocations.UseVisualStyleBackColor = true;
+            rbLocations.Click += cbLocationMode_checkChanged;
+            // 
+            // rbSqlMode
+            // 
+            rbSqlMode.AutoCheck = false;
+            rbSqlMode.AutoSize = true;
+            rbSqlMode.Location = new System.Drawing.Point(88, 28);
+            rbSqlMode.Name = "rbSqlMode";
+            rbSqlMode.Size = new System.Drawing.Size(75, 19);
+            rbSqlMode.TabIndex = 9;
+            rbSqlMode.Text = "Sql Mode";
+            rbSqlMode.UseVisualStyleBackColor = true;
+            rbSqlMode.Click += cbSqlMode_checkChanged;
+            // 
+            // rbStandard
+            // 
+            rbStandard.AutoCheck = false;
+            rbStandard.AutoSize = true;
+            rbStandard.Checked = true;
+            rbStandard.Location = new System.Drawing.Point(3, 28);
+            rbStandard.Name = "rbStandard";
+            rbStandard.Size = new System.Drawing.Size(72, 19);
+            rbStandard.TabIndex = 8;
+            rbStandard.TabStop = true;
+            rbStandard.Text = "Standard";
+            rbStandard.UseVisualStyleBackColor = true;
+            rbStandard.Click += cbStandard_checkChanged;
             // 
             // cbCaseSensitive
             // 
             cbCaseSensitive.AutoCheck = false;
             cbCaseSensitive.AutoSize = true;
-            cbCaseSensitive.Location = new System.Drawing.Point(604, 46);
+            cbCaseSensitive.Location = new System.Drawing.Point(592, 49);
             cbCaseSensitive.Name = "cbCaseSensitive";
             cbCaseSensitive.Size = new System.Drawing.Size(100, 19);
             cbCaseSensitive.TabIndex = 7;
@@ -96,8 +146,9 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // cbRegex
             // 
+            cbRegex.AutoCheck = false;
             cbRegex.AutoSize = true;
-            cbRegex.Location = new System.Drawing.Point(502, 47);
+            cbRegex.Location = new System.Drawing.Point(490, 49);
             cbRegex.Name = "cbRegex";
             cbRegex.Size = new System.Drawing.Size(96, 19);
             cbRegex.TabIndex = 4;
@@ -140,10 +191,12 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             // panel2
             // 
+            panel2.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            panel2.BackColor = System.Drawing.SystemColors.Control;
             panel2.Controls.Add(folv);
-            panel2.Location = new System.Drawing.Point(12, 118);
+            panel2.Location = new System.Drawing.Point(0, 129);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(776, 320);
+            panel2.Size = new System.Drawing.Size(800, 321);
             panel2.TabIndex = 1;
             // 
             // folv
@@ -151,11 +204,15 @@ namespace Rdmp.UI.SimpleDialogs
             folv.AllColumns.Add(olvID);
             folv.AllColumns.Add(olvName);
             folv.AllColumns.Add(olvHierarchy);
-            folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvID, olvName, olvHierarchy });
-            folv.Location = new System.Drawing.Point(3, 3);
+            folv.AllColumns.Add(olvObject);
+            folv.AllColumns.Add(olvProperty);
+            folv.AllColumns.Add(olvValue);
+            folv.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvID, olvName, olvHierarchy, olvObject, olvProperty, olvValue });
+            folv.Location = new System.Drawing.Point(0, 0);
             folv.Name = "folv";
             folv.ShowGroups = false;
-            folv.Size = new System.Drawing.Size(770, 314);
+            folv.Size = new System.Drawing.Size(800, 321);
             folv.TabIndex = 0;
             folv.View = System.Windows.Forms.View.Details;
             folv.CellClick += folv_CellClick;
@@ -168,6 +225,7 @@ namespace Rdmp.UI.SimpleDialogs
             // olvName
             // 
             olvName.AspectName = "";
+            olvName.FillsFreeSpace = true;
             olvName.MinimumWidth = 100;
             olvName.Text = "Name";
             olvName.Width = 100;
@@ -175,23 +233,61 @@ namespace Rdmp.UI.SimpleDialogs
             // olvHierarchy
             // 
             olvHierarchy.AspectName = "";
+            olvHierarchy.FillsFreeSpace = true;
             olvHierarchy.MinimumWidth = 100;
             olvHierarchy.Text = "Hierarchy";
             olvHierarchy.Width = 100;
+            // 
+            // olvObject
+            // 
+            olvObject.AspectName = "ToString";
+            olvObject.FillsFreeSpace = true;
+            olvObject.IsVisible = false;
+            olvObject.MinimumWidth = 100;
+            olvObject.Text = "Object";
+            olvObject.Width = 100;
+            // 
+            // olvProperty
+            // 
+            olvProperty.AspectName = "";
+            olvProperty.FillsFreeSpace = true;
+            olvProperty.IsVisible = false;
+            olvProperty.MinimumWidth = 100;
+            olvProperty.Text = "Property";
+            olvProperty.Width = 100;
+            // 
+            // olvValue
+            // 
+            olvValue.AspectName = "";
+            olvValue.FillsFreeSpace = true;
+            olvValue.IsVisible = false;
+            olvValue.MinimumWidth = 100;
+            olvValue.Text = "Value";
+            olvValue.Width = 100;
+            // 
+            // panel3
+            // 
+            panel3.Controls.Add(panel1);
+            panel3.Controls.Add(panel2);
+            panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            panel3.Location = new System.Drawing.Point(0, 0);
+            panel3.Name = "panel3";
+            panel3.Size = new System.Drawing.Size(800, 450);
+            panel3.TabIndex = 2;
             // 
             // NewfindUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
-            Controls.Add(panel2);
-            Controls.Add(panel1);
+            Controls.Add(panel3);
             Name = "NewfindUI";
             Text = "NewfindUI";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)folv).EndInit();
+            panel3.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -208,8 +304,15 @@ namespace Rdmp.UI.SimpleDialogs
         private OLVColumn olvName;
         private OLVColumn olvHierarchy;
         private OLVColumn olvID;
+        private OLVColumn olvObject;
+        private OLVColumn olvProperty;
+        private OLVColumn olvValue;
         private System.Windows.Forms.ToolStrip newFindToolStrip;
         private System.Windows.Forms.Button btnReplace;
         private System.Windows.Forms.CheckBox cbCaseSensitive;
+        private System.Windows.Forms.RadioButton rbLocations;
+        private System.Windows.Forms.RadioButton rbSqlMode;
+        private System.Windows.Forms.RadioButton rbStandard;
+        private System.Windows.Forms.Panel panel3;
     }
 }

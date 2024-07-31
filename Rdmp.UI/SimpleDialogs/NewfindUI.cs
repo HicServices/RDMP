@@ -28,6 +28,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.ComponentModel.Design.ObjectSelectorEditor;
 using Org.BouncyCastle.Asn1.BC;
+using Rdmp.Core.Sharing.Dependency.Gathering;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
+using System.Runtime.InteropServices.Marshalling;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -38,13 +41,15 @@ namespace Rdmp.UI.SimpleDialogs
         private Type[] _types;
         private HashSet<string> _typeNames;
         private List<Type> showOnlyTypes = new();
-        private bool _showReplaceOptions = true;
+        private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
+        private List<FindAndReplaceNode> _locationNodes = new();
+        private List<FindAndReplaceNode> _sqlNodes = new();
+
 
 
         public NewfindUI(IActivateItems activator, bool showReplaceOptions = true)
         {
             _activator = activator;
-            _showReplaceOptions = showReplaceOptions;
             _items = _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
             if (!showReplaceOptions)
@@ -58,23 +63,112 @@ namespace Rdmp.UI.SimpleDialogs
             olvName.AspectGetter = m => m?.ToString();
             olvHierarchy.AspectGetter = GetHierarchy;
             olvHierarchy.ImageGetter = GetHierarchyImage;
+            olvObject.ImageGetter += ImageGetter;
+            olvProperty.AspectGetter += PropertyAspectGetter;
+            olvValue.AspectGetter += ValueAspectGetter;
             olvName.ImageGetter = GetImage;
             folv.RowHeight = 19;
             BuildToolStripForDatabaseObjects(RDMPCollection.None);
             RefreshData();
         }
 
+        private Bitmap ImageGetter(object rowObject)
+        {
+            if (rowObject == null || rowObject.GetType() != typeof(FindAndReplaceNode)) return null;
+            return _activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance).ImageToBitmap();
+        }
+
+        private object ValueAspectGetter(object rowObject)
+        {
+            if (rowObject == null || rowObject.GetType() != typeof(FindAndReplaceNode)) return null;
+            return ((FindAndReplaceNode)rowObject).GetCurrentValue();
+        }
+
+        private object PropertyAspectGetter(object rowObject)
+        {
+            if (rowObject == null || rowObject.GetType() != typeof(FindAndReplaceNode)) return null;
+            var node = (FindAndReplaceNode)rowObject;
+            return node.PropertyName;
+        }
 
         private void RefreshData()
         {
-            _items = _activator.CoreChildProvider.GetAllSearchables();
-            //filter based on showOnlyTypes
-            if (showOnlyTypes.Count > 0)
+            if (rbStandard.Checked)
             {
-                _items = _items.Where(i => showOnlyTypes.Contains(i.Key.GetType())).ToDictionary(i => i.Key, i => i.Value);
+                _items = _activator.CoreChildProvider.GetAllSearchables();
+                //filter based on showOnlyTypes
+                if (showOnlyTypes.Count > 0)
+                {
+                    _items = _items.Where(i => showOnlyTypes.Contains(i.Key.GetType())).ToDictionary(i => i.Key, i => i.Value);
+                }
+                this.folv.BeginUpdate();
+
+                this.folv.ClearObjects();
+                this.folv.SetObjects(_items.Keys.ToArray());
+                this.folv.RebuildColumns();
+                this.folv.EndUpdate();
             }
-            this.folv.SetObjects(_items.Keys.ToArray());
-            this.folv.RebuildColumns();
+            if(rbSqlMode.Checked)
+            {
+                GetAllObjects(_activator);
+                IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
+                IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
+
+                foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
+                    foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
+                        _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+
+                foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
+                    foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
+                        _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+                this.folv.BeginUpdate();
+                this.folv.ClearObjects();
+                this.folv.AddObjects(_sqlNodes);
+                //this.folv.AddObjects(_locationNodes);
+                this.folv.RebuildColumns();
+                this.folv.EndUpdate();
+            }
+            if (rbLocations.Checked)
+            {
+                GetAllObjects(_activator);
+                IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
+                IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
+
+                foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
+                    foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
+                        _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+
+                foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
+                    foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
+                        _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+                this.folv.BeginUpdate();
+                this.folv.ClearObjects();
+                //this.folv.AddObjects(_sqlNodes);
+                this.folv.AddObjects(_locationNodes);
+                this.folv.RebuildColumns();
+                this.folv.EndUpdate();
+            }
+        }
+
+        private void GetAllObjects(IActivateItems activator)
+        {
+            var g = new Gatherer(activator.RepositoryLocator);
+
+            //We get these from the child provider because some objects (those below go off looking stuff up if you get them
+            //and do not inject known good values first)
+            foreach (var o in activator.CoreChildProvider.AllExtractionInformations)
+                _allObjects.Add(o);
+
+            foreach (var o in activator.CoreChildProvider.AllCatalogueItems)
+                _allObjects.Add(o);
+
+            if (activator.CoreChildProvider is DataExportChildProvider dxmChildProvider)
+                foreach (var o in dxmChildProvider.GetAllExtractableColumns(
+                             activator.RepositoryLocator.DataExportRepository))
+                    _allObjects.Add(o);
+
+            foreach (var o in g.GetAllObjectsInAllDatabases())
+                _allObjects.Add(o);
         }
 
 
@@ -290,9 +384,75 @@ namespace Rdmp.UI.SimpleDialogs
         private void cbRegex_CheckedChanged(object sender, EventArgs e)
         {
             cbRegex.Checked = !cbRegex.Checked;
-            if(cbRegex.Checked)
+            if (cbRegex.Checked)
                 cbCaseSensitive.Checked = false;
             tbFilter_TextChanged(null, null);
+        }
+
+        private void cbSqlMode_checkChanged(object sender, EventArgs e)
+        {
+            if (!rbSqlMode.Checked)
+            {
+                newFindToolStrip.Visible = false;
+                showOnlyTypes = new();
+                rbSqlMode.Checked = true;
+                rbLocations.Checked = false;
+                rbStandard.Checked = false;
+                RefreshData();
+
+                olvObject.IsVisible = true;
+                olvProperty.IsVisible = true;
+                olvValue.IsVisible = true;
+                olvName.IsVisible = false;
+                olvID.Width = 0;
+                olvHierarchy.IsVisible = false;
+                olvID.IsVisible = false;
+                folv.RebuildColumns();
+            }
+        }
+
+        private void cbLocationMode_checkChanged(object sender, EventArgs e)
+        {
+            if (!rbLocations.Checked)
+            {
+                newFindToolStrip.Visible = false;
+                showOnlyTypes = new();
+                rbLocations.Checked = true;
+                rbStandard.Checked = false;
+                rbSqlMode.Checked = false;
+                RefreshData();
+
+                olvObject.IsVisible = true;
+                olvProperty.IsVisible = true;
+                olvValue.IsVisible = true;
+                olvName.IsVisible = false;
+                olvID.Width = 0;
+                olvHierarchy.IsVisible = false;
+                olvID.IsVisible = false;
+                folv.RebuildColumns();
+            }
+        }
+
+        private void cbStandard_checkChanged(object sender, EventArgs e)
+        {
+            if (!rbStandard.Checked)
+            {
+                newFindToolStrip.Visible = true;
+                showOnlyTypes = new();
+                rbStandard.Checked = true;
+                rbLocations.Checked = false;
+                rbSqlMode.Checked = false;
+                RefreshData();
+
+                olvObject.IsVisible = false;
+                olvProperty.IsVisible = false;
+                olvValue.IsVisible = false;
+                olvName.IsVisible = true;
+                olvID.Width = 50;
+                olvHierarchy.IsVisible = true;
+                olvID.IsVisible = true;
+                folv.RebuildColumns();
+            }
         }
     }
 }
