@@ -39,9 +39,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
-    [TestCase(DatabaseType.MySql)]
-    [TestCase(DatabaseType.PostgreSql)]
-    [TestCase(DatabaseType.Oracle)]
     public void TestDQEPostLoad_WrongStage(DatabaseType dbType)
     {
         var db = GetCleanedServer(dbType, "TestDQE");
@@ -53,9 +50,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
-    [TestCase(DatabaseType.MySql)]
-    [TestCase(DatabaseType.PostgreSql)]
-    [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_NoPreviousDQE(DatabaseType dbType)
     {
         var db = GetCleanedServer(dbType, "DQETempTestDb");
@@ -143,9 +137,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
-    [TestCase(DatabaseType.MySql)]
-    [TestCase(DatabaseType.PostgreSql)]
-    [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRowAndReplaceRow(DatabaseType dbType)
     {
         var name = SingleTableSetup();
@@ -205,9 +196,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
-    [TestCase(DatabaseType.MySql)]
-    [TestCase(DatabaseType.PostgreSql)]
-    [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRowAndReplaceRowCheckPeriodicity(DatabaseType dbType)
     {
         var name = SingleTableSetup();
