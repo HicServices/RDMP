@@ -445,7 +445,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
     {
-
+        var nf = new NewfindUI(Activator);
+        nf.ShowDialog();
     }
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
