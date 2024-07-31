@@ -135,6 +135,7 @@ namespace Rdmp.UI.SimpleDialogs
             btnReplace.TabIndex = 6;
             btnReplace.Text = "Replace";
             btnReplace.UseVisualStyleBackColor = true;
+            btnReplace.Click += btnReplace_Click;
             // 
             // newFindToolStrip
             // 

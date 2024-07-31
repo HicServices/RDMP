@@ -45,20 +45,18 @@ namespace Rdmp.UI.SimpleDialogs
         private List<FindAndReplaceNode> _locationNodes = new();
         private List<FindAndReplaceNode> _sqlNodes = new();
 
-
+        private bool _showReplaceOptions = false;
 
         public NewfindUI(IActivateItems activator, bool showReplaceOptions = true)
         {
             _activator = activator;
             _items = _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
-            if (!showReplaceOptions)
-            {
-                tbReplace.Visible = false;
-                label2.Visible = false;
-                btnReplace.Visible = false;
-                btnReplace.Enabled = false;
-            }
+            _showReplaceOptions = showReplaceOptions;
+            tbReplace.Visible = false;
+            label2.Visible = false;
+            btnReplace.Visible = false;
+            btnReplace.Enabled = false;
             this.olvID.AspectGetter = m => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
             olvName.AspectGetter = m => m?.ToString();
             olvHierarchy.AspectGetter = GetHierarchy;
@@ -69,6 +67,11 @@ namespace Rdmp.UI.SimpleDialogs
             olvName.ImageGetter = GetImage;
             folv.RowHeight = 19;
             BuildToolStripForDatabaseObjects(RDMPCollection.None);
+            if (_showReplaceOptions)
+            {
+                rbStandard.Visible = false;
+                cbSqlMode_checkChanged(null, null);
+            }
             RefreshData();
         }
 
@@ -108,7 +111,7 @@ namespace Rdmp.UI.SimpleDialogs
                 this.folv.RebuildColumns();
                 this.folv.EndUpdate();
             }
-            if(rbSqlMode.Checked)
+            if (rbSqlMode.Checked)
             {
                 GetAllObjects(_activator);
                 IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
@@ -393,6 +396,13 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (!rbSqlMode.Checked)
             {
+                if (_showReplaceOptions)
+                {
+                    tbReplace.Visible = true;
+                    label2.Visible = true;
+                    btnReplace.Visible = true;
+                    btnReplace.Enabled = true;
+                }
                 newFindToolStrip.Visible = false;
                 showOnlyTypes = new();
                 rbSqlMode.Checked = true;
@@ -415,6 +425,13 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (!rbLocations.Checked)
             {
+                if (_showReplaceOptions)
+                {
+                    tbReplace.Visible = true;
+                    label2.Visible = true;
+                    btnReplace.Visible = true;
+                    btnReplace.Enabled = true;
+                }
                 newFindToolStrip.Visible = false;
                 showOnlyTypes = new();
                 rbLocations.Checked = true;
@@ -437,6 +454,13 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (!rbStandard.Checked)
             {
+                if (_showReplaceOptions)
+                {
+                    tbReplace.Visible = false;
+                    label2.Visible = false;
+                    btnReplace.Visible = false;
+                    btnReplace.Enabled = false;
+                }
                 newFindToolStrip.Visible = true;
                 showOnlyTypes = new();
                 rbStandard.Checked = true;
