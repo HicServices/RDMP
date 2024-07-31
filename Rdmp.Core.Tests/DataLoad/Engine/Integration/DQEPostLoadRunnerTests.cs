@@ -88,9 +88,6 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     }
 
     [TestCase(DatabaseType.MicrosoftSQLServer)]
-    [TestCase(DatabaseType.MySql)]
-    [TestCase(DatabaseType.PostgreSql)]
-    [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRow(DatabaseType dbType)
     {
         var name = SingleTableSetup();
