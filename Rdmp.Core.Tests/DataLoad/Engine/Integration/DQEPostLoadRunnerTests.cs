@@ -6,7 +6,6 @@
 
 using FAnsi;
 using Microsoft.Data.SqlClient;
-using Newtonsoft.Json.Linq;
 using NSubstitute;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -14,25 +13,20 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Engine.Job;
-using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using Tests.Common;
 using Tests.Common.Scenarios;
-using YamlDotNet.Core.Tokens;
-using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
+
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration;
 
@@ -285,8 +279,8 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
 
     private LoadMetadata _lmd;
 
-    private static readonly Random Random = new();
-    private static string GenerateRandomString(this string sourceAlphabet, int length)
+    private readonly Random Random = new();
+    private string GenerateRandomString(string sourceAlphabet, int length)
     {
         var chars = new char[length];
 
