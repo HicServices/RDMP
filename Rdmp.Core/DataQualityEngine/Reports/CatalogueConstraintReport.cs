@@ -26,7 +26,6 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
-using Spectre.Console;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
@@ -129,7 +128,10 @@ public class CatalogueConstraintReport : DataQualityReport
             using (var con = _server.GetConnection())
             {
                 con.Open();
-
+                if(dataLoadId != 0)
+                {
+                    _queryBuilder.AddCustomLine($"{SpecialFieldNames.DataLoadRunID}='{dataLoadId}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+                }
                 var cmd = _server.GetCommand(_queryBuilder.SQL, con);
                 cmd.CommandTimeout = 500000;
 
