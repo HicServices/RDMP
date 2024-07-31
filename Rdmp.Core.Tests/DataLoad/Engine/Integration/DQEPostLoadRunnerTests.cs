@@ -99,13 +99,13 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRow(DatabaseType dbType)
     {
-        SingleTableSetup();
+        var name = SingleTableSetup();
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
                 connection);
             cmd.ExecuteNonQuery();
         }
@@ -136,7 +136,7 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2017-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2017-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
                 connection);
             cmd.ExecuteNonQuery();
         }
@@ -157,13 +157,13 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRowAndReplaceRow(DatabaseType dbType)
     {
-        SingleTableSetup();
+        var name = SingleTableSetup();
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
                 connection);
             cmd.ExecuteNonQuery();
         }
@@ -194,11 +194,11 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2017-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2017-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
                 connection);
             cmd.ExecuteNonQuery();
             cmd = new SqlCommand(
-               $"UPDATE[Samples] SET Description='c', {SpecialFieldNames.ValidFrom}= '2016-01-10T12:00:00', {SpecialFieldNames.DataLoadRunID}=1 WHERE ID=1",
+               $"UPDATE[{name}] SET Description='c', {SpecialFieldNames.ValidFrom}= '2016-01-10T12:00:00', {SpecialFieldNames.DataLoadRunID}=1 WHERE ID=1",
                connection);
             cmd.ExecuteNonQuery();
         }
@@ -219,13 +219,13 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
     [TestCase(DatabaseType.Oracle)]
     public void TestDEQPostLoad_AddRowAndReplaceRowCheckPeriodicity(DatabaseType dbType)
     {
-        SingleTableSetup();
+        var name = SingleTableSetup();
         using (var connection = (SqlConnection)To.Server.GetConnection())
         {
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (1, '2016-01-10T12:00:00', 'A', NULL, NULL)",
                 connection);
             cmd.ExecuteNonQuery();
         }
@@ -256,11 +256,11 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
             connection.Open();
 
             var cmd = new SqlCommand(
-                $"INSERT INTO [Samples] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2025-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
+                $"INSERT INTO [{name}] (ID, SampleDate, Description, {SpecialFieldNames.ValidFrom}, {SpecialFieldNames.DataLoadRunID}) VALUES (2, '2025-01-10T12:00:00', 'B', '2016-01-10T12:00:00', 1)",
                 connection);
             cmd.ExecuteNonQuery();
             cmd = new SqlCommand(
-               $"UPDATE[Samples] SET Description='c', {SpecialFieldNames.ValidFrom}= '2016-01-10T12:00:00', {SpecialFieldNames.DataLoadRunID}=1 WHERE ID=1",
+               $"UPDATE[{name}] SET Description='c', {SpecialFieldNames.ValidFrom}= '2016-01-10T12:00:00', {SpecialFieldNames.DataLoadRunID}=1 WHERE ID=1",
                connection);
             cmd.ExecuteNonQuery();
         }
@@ -285,17 +285,32 @@ public class DQEPostLoadRunnerTests : TestsRequiringAnExtractionConfiguration
 
     private LoadMetadata _lmd;
 
-    private void SingleTableSetup()
+    private static readonly Random Random = new();
+    private static string GenerateRandomString(this string sourceAlphabet, int length)
     {
-        CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
+        var chars = new char[length];
+
+        // reuse local 'length' var for iteration
+        while (--length >= 0)
+            chars[length] = sourceAlphabet[Random.Next(sourceAlphabet.Length)];
+
+    return new string(chars);
+    }
+
+
+    private string SingleTableSetup()
+    {
+        var name= GenerateRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",8);
+        CreateTables(name, "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
         // Set SetUp catalogue entities
-        AddTableToCatalogue(DatabaseName, "Samples", "ID", out _, true);
+        AddTableToCatalogue(DatabaseName, name, "ID", out _, true);
 
         Assert.That(_catalogue.CatalogueItems, Has.Length.EqualTo(5), "Unexpected number of items in catalogue");
         _lmd = new LoadMetadata(CatalogueRepository, "test");
         _lmd.LinkToCatalogue(_catalogue);
         _lmd.SaveToDatabase();
+        return name;
     }
 
     private ITableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName,
