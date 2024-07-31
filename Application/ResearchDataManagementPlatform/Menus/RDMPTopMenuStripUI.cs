@@ -443,6 +443,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
 
+    private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+
+    }
+
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
     {
         Activator.SelectAnythingThen(new DialogArgs
