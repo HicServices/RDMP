@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Renci.SshNet;
 
@@ -30,7 +31,7 @@ public class SFTPDownloader : FTPDownloader
 
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
-        _connection = new Lazy<SftpClient>(SetupSftp,LazyThreadSafetyMode.ExecutionAndPublication);
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public SFTPDownloader()
@@ -44,10 +45,25 @@ public class SFTPDownloader : FTPDownloader
         var username = FTPServer.Username ?? "anonymous";
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new SftpClient(host, username, password);
+        if (TimeoutInSeconds > 0)
+            c.OperationTimeout = new TimeSpan(10000 * TimeoutInSeconds);
+            c.ConnectionInfo.Timeout = new TimeSpan(10000 * TimeoutInSeconds);
         c.Connect();
         if (KeepAlive)
             c.KeepAliveInterval = TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
         return c;
+    }
+
+    public override void Check(ICheckNotifier notifier)
+    {
+        try
+        {
+            SetupSftp();
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Failed to SetupSFTP", CheckResult.Fail, e));
+        }
     }
 
 
@@ -61,8 +77,8 @@ public class SFTPDownloader : FTPDownloader
 
         var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
-        using (var dest=File.Create(destinationFilePath))
-            _connection.Value.DownloadFile(fullFilePath,dest);
+        using (var dest = File.Create(destinationFilePath))
+            _connection.Value.DownloadFile(fullFilePath, dest);
         _filesRetrieved.Add(fullFilePath);
     }
 

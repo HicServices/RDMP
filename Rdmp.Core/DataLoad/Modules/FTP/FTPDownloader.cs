@@ -97,30 +97,7 @@ public class FTPDownloader : IPluginDataProvider
         // Enable periodic NOOP keepalive operations to keep connection active until we're done
         c.Config.Noop = true;
         List<FtpProfile> profileLists = new();
-        if (TimeoutInSeconds is 0)
-        {
-            c.AutoConnect();
-
-        }
-        else
-        {
-            profileLists = c.AutoDetect(new FtpAutoDetectConfig
-            {
-                FirstOnly = true,
-                CloneConnection = false,
-                AbortOnTimeout = false
-            });
-            if (profileLists.Count > 0)
-            {
-                FtpProfile ftpProfile = profileLists[0];
-                ftpProfile.Timeout = TimeoutInSeconds * 1000;
-                c.LoadProfile(ftpProfile);
-            }
-            else
-            {
-                throw new Exception("Unable to find a profile on the FTP server");
-            }
-        }
+        c.AutoConnect();
 
 
         return c;
@@ -219,7 +196,7 @@ public class FTPDownloader : IPluginDataProvider
     }
 
 
-    public void Check(ICheckNotifier notifier)
+    public virtual void Check(ICheckNotifier notifier)
     {
         try
         {
