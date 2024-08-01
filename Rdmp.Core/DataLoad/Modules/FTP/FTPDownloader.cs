@@ -107,13 +107,18 @@ public class FTPDownloader : IPluginDataProvider
             profileLists = c.AutoDetect(new FtpAutoDetectConfig
             {
                 FirstOnly = true,
-                CloneConnection = false
+                CloneConnection = false,
+                AbortOnTimeout = false
             });
             if (profileLists.Count > 0)
             {
                 FtpProfile ftpProfile = profileLists[0];
                 ftpProfile.Timeout = TimeoutInSeconds * 1000;
                 c.LoadProfile(ftpProfile);
+            }
+            else
+            {
+                throw new Exception("Unable to find a profile on the FTP server");
             }
         }
 
