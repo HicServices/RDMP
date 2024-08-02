@@ -108,7 +108,7 @@
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(38, 13);
             this.label8.TabIndex = 0;
-            this.label8.Text = "Invalid";
+            this.label8.Text = "Invalidates Row";
             // 
             // lblHasValue
             // 

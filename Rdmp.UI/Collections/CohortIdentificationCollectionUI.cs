@@ -6,11 +6,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -88,6 +92,22 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
 
             tlvCohortIdentificationConfigurations.Expand(rootFolder);
+            var _refresh = new ToolStripMenuItem
+            {
+                Visible = true,
+                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Alignment = ToolStripItemAlignment.Right,
+                ToolTipText = "Refresh Object"
+            };
+            _refresh.Click += delegate (object sender, EventArgs e) {
+                var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
+                if (cic is not null)
+                {
+                    var cmd = new ExecuteCommandRefreshObject(Activator, cic);
+                    cmd.Execute();
+                }
+            };
+            CommonFunctionality.Add(_refresh);
 
             _firstTime = false;
         }
