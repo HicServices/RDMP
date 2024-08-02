@@ -46,6 +46,7 @@ namespace Rdmp.UI.SimpleDialogs
         private void PresetFiltersBasedOnFocusItem(RDMPUserControl focusItem)
         {
             var focusItemType = focusItem.GetType();
+            //todo this doesn't work as the <something> doesn't get checked correctly
             var types = new List<Type>() {
                 typeof(RDMPSingleDatabaseObjectControl<LoadMetadata>),
                 typeof(RDMPSingleDatabaseObjectControl<ColumnInfo>),
