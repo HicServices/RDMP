@@ -1,9 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using NPOI.OpenXmlFormats.Spreadsheet;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data;
@@ -13,25 +10,18 @@ using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.ReusableLibraryCode.Settings;
-using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Theme;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static System.ComponentModel.Design.ObjectSelectorEditor;
-using Org.BouncyCastle.Asn1.BC;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
-using System.Runtime.InteropServices.Marshalling;
-
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class NewfindUI : Form
@@ -47,8 +37,40 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _showReplaceOptions = false;
 
-        public NewfindUI(IActivateItems activator, bool showReplaceOptions = true)
+        private void SimulateClickForautoFilter<T>()
         {
+            var item = newFindToolStrip.Items.Find((typeof(T)).Name, false).FirstOrDefault();
+            if (item is not null)
+                item.PerformClick();
+        }
+        private void PresetFiltersBasedOnFocusItem(RDMPUserControl focusItem)
+        {
+            var focusItemType = focusItem.GetType();
+            var types = new List<Type>() {
+                typeof(RDMPSingleDatabaseObjectControl<LoadMetadata>),
+                typeof(RDMPSingleDatabaseObjectControl<ColumnInfo>),
+                typeof(RDMPSingleDatabaseObjectControl<Catalogue>),
+                typeof(RDMPSingleDatabaseObjectControl<CatalogueItem>),
+                typeof(RDMPSingleDatabaseObjectControl<SupportingDocument>),
+                typeof(RDMPSingleDatabaseObjectControl<Project>),
+                typeof(RDMPSingleDatabaseObjectControl<ExtractionConfiguration>),
+                typeof(RDMPSingleDatabaseObjectControl<ExtractableCohort>),
+                typeof(RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>),
+                typeof(RDMPSingleDatabaseObjectControl<TableInfo>),
+            };
+            foreach (var t in types)
+            {
+                if (focusItemType.IsSubclassOf(t))
+                {
+                    SimulateClickForautoFilter<LoadMetadata>();
+                    break;
+                }
+            }
+        }
+
+        public NewfindUI(IActivateItems activator, bool showReplaceOptions = true, RDMPUserControl focusItem = null)
+        {
+
             _activator = activator;
             _items = _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
@@ -73,6 +95,8 @@ namespace Rdmp.UI.SimpleDialogs
                 cbSqlMode_checkChanged(null, null);
             }
             RefreshData();
+            if(focusItem is not null)
+                PresetFiltersBasedOnFocusItem(focusItem);
         }
 
         private Bitmap ImageGetter(object rowObject)
@@ -127,7 +151,6 @@ namespace Rdmp.UI.SimpleDialogs
                 this.folv.BeginUpdate();
                 this.folv.ClearObjects();
                 this.folv.AddObjects(_sqlNodes);
-                //this.folv.AddObjects(_locationNodes);
                 this.folv.RebuildColumns();
                 this.folv.EndUpdate();
             }
@@ -146,7 +169,6 @@ namespace Rdmp.UI.SimpleDialogs
                         _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
                 this.folv.BeginUpdate();
                 this.folv.ClearObjects();
-                //this.folv.AddObjects(_sqlNodes);
                 this.folv.AddObjects(_locationNodes);
                 this.folv.RebuildColumns();
                 this.folv.EndUpdate();
@@ -295,6 +317,7 @@ namespace Rdmp.UI.SimpleDialogs
                         DisplayStyle = ToolStripItemDisplayStyle.Image,
                         CheckOnClick = true,
                         Tag = t,
+                        Name = t.Name,
                         Text = $"{t.Name} ({shortCode})"
                     };
 

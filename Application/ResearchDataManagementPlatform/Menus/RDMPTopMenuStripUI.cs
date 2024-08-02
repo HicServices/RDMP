@@ -17,8 +17,10 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Reports;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -445,7 +447,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var nf = new NewfindUI(Activator, false);
+        var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus == true).FirstOrDefault();
+        var nf = new NewfindUI(Activator, false,focusItem);
         nf.ShowDialog();
     }
     private void newReplaceToolStripMenuItem_Click(object sender, EventArgs e)
