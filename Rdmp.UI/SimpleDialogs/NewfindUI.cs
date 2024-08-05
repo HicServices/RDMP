@@ -22,6 +22,8 @@ using System.Windows.Forms;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using System.Collections;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class NewfindUI : Form
@@ -37,7 +39,7 @@ namespace Rdmp.UI.SimpleDialogs
 
         private bool _showReplaceOptions = false;
 
-        private void SimulateClickForautoFilter<T>()
+        private void SimulateClickForAutoFilter<T>()
         {
             var item = newFindToolStrip.Items.Find((typeof(T)).Name, false).FirstOrDefault();
             if (item is not null)
@@ -46,24 +48,57 @@ namespace Rdmp.UI.SimpleDialogs
         private void PresetFiltersBasedOnFocusItem(RDMPUserControl focusItem)
         {
             var focusItemType = focusItem.GetType();
-            //todo this doesn't work as the <something> doesn't get checked correctly
             var types = new List<Type>() {
-                typeof(RDMPSingleDatabaseObjectControl<LoadMetadata>),
-                typeof(RDMPSingleDatabaseObjectControl<ColumnInfo>),
-                typeof(RDMPSingleDatabaseObjectControl<Catalogue>),
-                typeof(RDMPSingleDatabaseObjectControl<CatalogueItem>),
-                typeof(RDMPSingleDatabaseObjectControl<SupportingDocument>),
-                typeof(RDMPSingleDatabaseObjectControl<Project>),
-                typeof(RDMPSingleDatabaseObjectControl<ExtractionConfiguration>),
-                typeof(RDMPSingleDatabaseObjectControl<ExtractableCohort>),
-                typeof(RDMPSingleDatabaseObjectControl<CohortIdentificationConfiguration>),
-                typeof(RDMPSingleDatabaseObjectControl<TableInfo>),
+                 typeof(LoadMetadata),
+              typeof(ColumnInfo),
+                typeof(Catalogue),
+                typeof(CatalogueItem),
+                typeof(SupportingDocument),
+                typeof(Project),
+               typeof(ExtractionConfiguration),
+                typeof(ExtractableCohort),
+                typeof(CohortIdentificationConfiguration),
+                typeof(TableInfo)
             };
-            foreach (var t in types)
+            foreach (var t in types.Select((value, i) => new { i, value }))
             {
-                if (focusItemType.IsSubclassOf(t))
+                if (focusItemType.BaseType.BaseType.GenericTypeArguments.FirstOrDefault() == t.value)
                 {
-                    SimulateClickForautoFilter<LoadMetadata>();
+                    switch (t.i)
+                    {
+                        case 0:
+                            SimulateClickForAutoFilter<LoadMetadata>();
+                            break;
+                        case 1:
+                            SimulateClickForAutoFilter<ColumnInfo>();
+                            break;
+                        case 2:
+                            SimulateClickForAutoFilter<Catalogue>();
+                            break;
+                        case 3:
+                            SimulateClickForAutoFilter<CatalogueItem>();
+                            break;
+                        case 4:
+                            SimulateClickForAutoFilter<SupportingDocument>();
+                            break;
+                        case 5:
+                            SimulateClickForAutoFilter<Project>();
+                            break;
+                        case 6:
+                            SimulateClickForAutoFilter<ExtractionConfiguration>();
+                            break;
+                        case 7:
+                            SimulateClickForAutoFilter<ExtractableCohort>();
+                            break;
+                        case 8:
+                            SimulateClickForAutoFilter<CohortIdentificationConfiguration>();
+                            break;
+                        case 9:
+                            SimulateClickForAutoFilter<TableInfo>();
+                            break;
+                        default:
+                            break;
+                    }
                     break;
                 }
             }
@@ -96,7 +131,7 @@ namespace Rdmp.UI.SimpleDialogs
                 cbSqlMode_checkChanged(null, null);
             }
             RefreshData();
-            if(focusItem is not null)
+            if (focusItem is not null)
                 PresetFiltersBasedOnFocusItem(focusItem);
         }
 
