@@ -231,7 +231,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
             folv.UseFiltering = true;
             var catalogueFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
-            var aggregateFilter = new CohortaggregateContainerFilter();
+            var aggregateFilter = new CohortAggregateContainerFilter();
 
 
             if (cbRegex.Checked)
