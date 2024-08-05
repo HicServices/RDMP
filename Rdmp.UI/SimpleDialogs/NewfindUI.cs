@@ -25,6 +25,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System.Collections;
 using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.UI.Collections.Providers.Filtering;
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class NewfindUI : Form
@@ -237,7 +238,7 @@ namespace Rdmp.UI.SimpleDialogs
             else
             {
                 var filter = new TextMatchFilter(folv, tbFind.Text, cbCaseSensitive.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
-                folv.ModelFilter = filter;
+                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>(){ filter, new CatalogueCollectionFilter(_activator.CoreChildProvider) });
             }
         }
 
