@@ -230,15 +230,18 @@ namespace Rdmp.UI.SimpleDialogs
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
             folv.UseFiltering = true;
+            var catalogueFilter = new CatalogueCollectionFilter(_activator.CoreChildProvider);
+            var aggregateFilter = new CohortaggregateContainerFilter();
+
 
             if (cbRegex.Checked)
             {
-                folv.ModelFilter = TextMatchFilter.Regex(folv, new[] { tbFind.Text });
+                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>() { TextMatchFilter.Regex(folv, new[] { tbFind.Text }), catalogueFilter, aggregateFilter });
             }
             else
             {
                 var filter = new TextMatchFilter(folv, tbFind.Text, cbCaseSensitive.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
-                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>(){ filter, new CatalogueCollectionFilter(_activator.CoreChildProvider) });
+                folv.ModelFilter = new CompositeAllFilter(new List<IModelFilter>() { filter, catalogueFilter, aggregateFilter });
             }
         }
 
