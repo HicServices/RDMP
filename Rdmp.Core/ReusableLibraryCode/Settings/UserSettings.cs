@@ -180,7 +180,7 @@ public static class UserSettings
     public static bool NewFindAndReplace
     {
         get => AppSettings.GetValueOrDefault("NewFindAndReplace", false);
-        set => AppSettings.GetValueOrDefault("NewFindAndReplace", value);
+        set => AppSettings.AddOrUpdateValue("NewFindAndReplace", value);
     }
 
 

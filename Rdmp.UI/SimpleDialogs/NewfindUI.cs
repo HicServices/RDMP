@@ -373,11 +373,10 @@ namespace Rdmp.UI.SimpleDialogs
 
                     newFindToolStrip.Items.Add(b);
                 }
-            //else
-            //    toolStripLabel1.Visible = false;
 
             if (UserSettings.AdvancedFindFilters)
             {
+                // these filters do nothing currently
                 AddUserSettingCheckbox(() => UserSettings.ShowInternalCatalogues,
                     v => UserSettings.ShowInternalCatalogues = v, "I", "Include Internal");
                 AddUserSettingCheckbox(() => UserSettings.ShowDeprecatedCatalogues,

@@ -153,7 +153,7 @@ namespace ResearchDataManagementPlatform.Menus
             newFindToolStripMenuItem.Name = "newFindToolStripMenuItem";
             newFindToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F;
             newFindToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            newFindToolStripMenuItem.Text = "New Find";
+            newFindToolStripMenuItem.Text = "Find";
             newFindToolStripMenuItem.Click += newFindToolStripMenuItem_Click;
            
             // 
@@ -171,7 +171,7 @@ namespace ResearchDataManagementPlatform.Menus
             newReplaceToolStripMenuItem.Name = "newReplaceToolStripMenuItem";
             newReplaceToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H;
             newReplaceToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            newReplaceToolStripMenuItem.Text = "New Replace";
+            newReplaceToolStripMenuItem.Text = "Find & Replace";
             newReplaceToolStripMenuItem.Click += newReplaceToolStripMenuItem_Click;
             // 
             // findAndReplaceToolStripMenuItem
