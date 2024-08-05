@@ -46,8 +46,10 @@ public class SFTPDownloader : FTPDownloader
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new SftpClient(host, username, password);
         if (TimeoutInSeconds > 0)
-            c.OperationTimeout = new TimeSpan(10000 * TimeoutInSeconds);
-            c.ConnectionInfo.Timeout = new TimeSpan(10000 * TimeoutInSeconds);
+        {
+            c.OperationTimeout = TimeSpan.FromSeconds(TimeoutInSeconds);
+            c.ConnectionInfo.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
+        }
         c.Connect();
         if (KeepAlive)
             c.KeepAliveInterval = TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
