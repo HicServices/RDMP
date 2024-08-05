@@ -48,7 +48,7 @@ public partial class MetadataReportUI : RDMPForm
     {
         InitializeComponent();
 
-        _catalogues = Activator.CoreChildProvider.AllCatalogues;
+        _catalogues = Activator.CoreChildProvider.AllCatalogues.OrderBy(static x => x.Name).ToArray();
         cbxCatalogues.Items.AddRange(_catalogues);
 
         if (initialSelection != null)
@@ -107,6 +107,7 @@ public partial class MetadataReportUI : RDMPForm
 
         aggregateGraph1.Width = (int)_report.PageWidthInPixels;
         aggregateGraph1.Visible = true;
+        aggregateGraph1.Left = -(int)_report.PageWidthInPixels; //push the render off screen 
 
 
         //only graph extractable aggregates

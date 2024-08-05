@@ -1,10 +1,11 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -34,10 +35,11 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
 
     private const string NewMenu = "New...";
 
+    private IActivateItems _activator;
+
     public DataExportCollectionUI()
     {
         InitializeComponent();
-
 
         olvProjectNumber.IsEditable = false;
         olvProjectNumber.AspectGetter = ProjectNumberAspectGetter;
@@ -78,6 +80,7 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
+        _activator = activator;
 
         CommonTreeFunctionality.SetUp(
             RDMPCollection.DataExport,
@@ -130,6 +133,26 @@ public partial class DataExportCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         CommonFunctionality.ClearToolStrip();
         CommonFunctionality.Add(new ExecuteCommandCreateNewDataExtractionProject(Activator), "Project", null, NewMenu);
         CommonFunctionality.Add(new ToolStripSeparator(), NewMenu);
+
+        var _refresh = new ToolStripMenuItem
+        {
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText = "Refresh Object"
+        };
+        var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
+
+        _refresh.Click += delegate (object sender, EventArgs e)
+        {
+            var project = dataExportChildProvider.Projects.First();
+            if (project is not null)
+            {
+                var cmd = new ExecuteCommandRefreshObject(Activator, project);
+                cmd.Execute();
+            }
+        };
+        CommonFunctionality.Add(_refresh);
 
         CommonFunctionality.Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)
         { PromptToPickAProject = true }, "Cohort Builder Query", null, NewMenu);
