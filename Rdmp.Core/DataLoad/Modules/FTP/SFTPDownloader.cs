@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Renci.SshNet;
 
@@ -30,7 +31,7 @@ public class SFTPDownloader : FTPDownloader
 
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
-        _connection = new Lazy<SftpClient>(SetupSftp,LazyThreadSafetyMode.ExecutionAndPublication);
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
     }
 
     public SFTPDownloader()
@@ -44,10 +45,27 @@ public class SFTPDownloader : FTPDownloader
         var username = FTPServer.Username ?? "anonymous";
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new SftpClient(host, username, password);
+        if (TimeoutInSeconds > 0)
+        {
+            c.OperationTimeout = TimeSpan.FromSeconds(TimeoutInSeconds);
+            c.ConnectionInfo.Timeout = TimeSpan.FromSeconds(TimeoutInSeconds);
+        }
         c.Connect();
         if (KeepAlive)
             c.KeepAliveInterval = TimeSpan.FromMilliseconds(KeepAliveIntervalMilliseconds);
         return c;
+    }
+
+    public override void Check(ICheckNotifier notifier)
+    {
+        try
+        {
+            SetupSftp();
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Failed to SetupSFTP", CheckResult.Fail, e));
+        }
     }
 
 
@@ -61,8 +79,8 @@ public class SFTPDownloader : FTPDownloader
 
         var destinationFilePath = Path.Combine(destination.ForLoading.FullName, file);
 
-        using (var dest=File.Create(destinationFilePath))
-            _connection.Value.DownloadFile(fullFilePath,dest);
+        using (var dest = File.Create(destinationFilePath))
+            _connection.Value.DownloadFile(fullFilePath, dest);
         _filesRetrieved.Add(fullFilePath);
     }
 

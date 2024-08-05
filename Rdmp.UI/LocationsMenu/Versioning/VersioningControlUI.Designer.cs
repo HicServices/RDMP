@@ -171,10 +171,6 @@ namespace Rdmp.UI.LocationsMenu.Versioning
                 tbTicket.Enabled = false;
                 label6.Enabled = false;
             }
-            if (databaseObject.Version is not null)
-            {
-                //btnShowTicket.Enabled = false;
-            }
             if (_cic is not null)
                 btnShowTicket.Text = _cic.Version is null ? "Save Version" : "Restore";
             versions.Insert(0, databaseObject);
