@@ -177,6 +177,12 @@ public static class UserSettings
         set => AppSettings.AddOrUpdateValue("PromptRenameOnCohortFilterChange", value);
     }
 
+    public static bool NewFindAndReplace
+    {
+        get => AppSettings.GetValueOrDefault("NewFindAndReplace", false);
+        set => AppSettings.GetValueOrDefault("NewFindAndReplace", value);
+    }
+
 
     #region Catalogue flag visibility settings
 

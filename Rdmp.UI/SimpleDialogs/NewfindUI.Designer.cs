@@ -282,8 +282,8 @@ namespace Rdmp.UI.SimpleDialogs
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
             Controls.Add(panel3);
-            Name = "NewfindUI";
-            Text = "NewfindUI";
+            Name = this._showReplaceOptions ? "Find and Replace" : "Find";
+            Text = this._showReplaceOptions ? "Find and Replace" : "Find";
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             panel2.ResumeLayout(false);

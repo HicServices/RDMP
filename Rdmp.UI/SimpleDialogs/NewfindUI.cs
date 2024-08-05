@@ -24,6 +24,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System.Collections;
 using Org.BouncyCastle.Asn1.X509.Qualified;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 namespace Rdmp.UI.SimpleDialogs
 {
     public partial class NewfindUI : Form
@@ -111,6 +112,7 @@ namespace Rdmp.UI.SimpleDialogs
             _items = _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
             _showReplaceOptions = showReplaceOptions;
+            this.Text = _showReplaceOptions ? "Find and Replace" : "Find";
             tbReplace.Visible = false;
             label2.Visible = false;
             btnReplace.Visible = false;
@@ -156,6 +158,18 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void RefreshData()
         {
+            GetAllObjects(_activator);
+            IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
+            IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
+            _locationNodes.Clear();
+            _sqlNodes.Clear();
+            foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
+                foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
+                    _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
+
+            foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
+                foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
+                    _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
             if (rbStandard.Checked)
             {
                 _items = _activator.CoreChildProvider.GetAllSearchables();
@@ -173,17 +187,6 @@ namespace Rdmp.UI.SimpleDialogs
             }
             if (rbSqlMode.Checked)
             {
-                GetAllObjects(_activator);
-                IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
-                IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
-
-                foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
-                    foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
-                        _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
-
-                foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
-                    foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
-                        _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
                 this.folv.BeginUpdate();
                 this.folv.ClearObjects();
                 this.folv.AddObjects(_sqlNodes);
@@ -192,17 +195,7 @@ namespace Rdmp.UI.SimpleDialogs
             }
             if (rbLocations.Checked)
             {
-                GetAllObjects(_activator);
-                IAttributePropertyFinder adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
-                IAttributePropertyFinder sqlPropertyFinder = new AttributePropertyFinder<SqlAttribute>(_allObjects);
 
-                foreach (var o in _allObjects.Where(adjustableLocationPropertyFinder.ObjectContainsProperty))
-                    foreach (var propertyInfo in adjustableLocationPropertyFinder.GetProperties(o))
-                        _locationNodes.Add(new FindAndReplaceNode(o, propertyInfo));
-
-                foreach (var o in _allObjects.Where(sqlPropertyFinder.ObjectContainsProperty))
-                    foreach (var propertyInfo in sqlPropertyFinder.GetProperties(o))
-                        _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
                 this.folv.BeginUpdate();
                 this.folv.ClearObjects();
                 this.folv.AddObjects(_locationNodes);
@@ -243,8 +236,8 @@ namespace Rdmp.UI.SimpleDialogs
             }
             else
             {
-                var x = new TextMatchFilter(folv, tbFind.Text, cbCaseSensitive.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
-                folv.ModelFilter = x;//TextMatchFilter.Contains(folv, new[] { tbFind.Text },cbCaseSensitive.Checked? StringComparison.CurrentCulture: StringComparison.CurrentCultureIgnoreCase);
+                var filter = new TextMatchFilter(folv, tbFind.Text, cbCaseSensitive.Checked ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase);
+                folv.ModelFilter = filter;
             }
         }
 
@@ -253,9 +246,26 @@ namespace Rdmp.UI.SimpleDialogs
             if (e.ClickCount >= 2)
             {
                 var rowObject = e.HitTest.RowObject;
-                _activator.Activate(rowObject);
-                DialogResult = DialogResult.OK;
-                Close();
+                if (rowObject is not FindAndReplaceNode node)
+                {
+                    _activator.Activate(rowObject);
+                }
+                else
+                {
+                    var cmd = new ExecuteCommandActivate(_activator, node.Instance);
+                    if (!cmd.IsImpossible)
+                        cmd.Execute();
+                }
+                if (!_showReplaceOptions)
+                {
+                    //the edit values dissapear when we close the dialog, so keep them around when we're in replace mode
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    RefreshData();
+                }
             }
         }
 
@@ -390,7 +400,9 @@ namespace Rdmp.UI.SimpleDialogs
             {
                 foreach (FindAndReplaceNode node in folv.FilteredObjects)
                     node.FindAndReplace(tbFind.Text, tbReplace.Text, !cbCaseSensitive.Checked);
-
+                tbFind.Text = tbReplace.Text;
+                tbReplace.Text = null;
+                RefreshData();
             }
 
         }
