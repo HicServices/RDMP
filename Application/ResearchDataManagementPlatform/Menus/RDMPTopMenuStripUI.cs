@@ -445,7 +445,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus == true).FirstOrDefault();
+        var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus).FirstOrDefault();
         var nf = new NewfindUI(Activator, false,focusItem);
         nf.ShowDialog();
     }

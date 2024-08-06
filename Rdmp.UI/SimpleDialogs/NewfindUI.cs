@@ -33,11 +33,11 @@ namespace Rdmp.UI.SimpleDialogs
         private Type[] _types;
         private HashSet<string> _typeNames;
         private List<Type> showOnlyTypes = new();
-        private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
-        private List<FindAndReplaceNode> _locationNodes = new();
-        private List<FindAndReplaceNode> _sqlNodes = new();
+        private readonly HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
+        private readonly List<FindAndReplaceNode> _locationNodes = new();
+        private readonly List<FindAndReplaceNode> _sqlNodes = new();
 
-        private bool _showReplaceOptions = false;
+        private readonly bool _showReplaceOptions = false;
 
         private void SimulateClickForAutoFilter<T>()
         {
@@ -60,47 +60,44 @@ namespace Rdmp.UI.SimpleDialogs
                 typeof(CohortIdentificationConfiguration),
                 typeof(TableInfo)
             };
-            foreach (var t in types.Select((value, i) => new { i, value }))
+            foreach (var t in types.Select((value, i) => new { i, value }).Where(t => focusItemType.BaseType.BaseType.GenericTypeArguments.FirstOrDefault() == t.value))
             {
-                if (focusItemType.BaseType.BaseType.GenericTypeArguments.FirstOrDefault() == t.value)
+                switch (t.i)
                 {
-                    switch (t.i)
-                    {
-                        case 0:
-                            SimulateClickForAutoFilter<LoadMetadata>();
-                            break;
-                        case 1:
-                            SimulateClickForAutoFilter<ColumnInfo>();
-                            break;
-                        case 2:
-                            SimulateClickForAutoFilter<Catalogue>();
-                            break;
-                        case 3:
-                            SimulateClickForAutoFilter<CatalogueItem>();
-                            break;
-                        case 4:
-                            SimulateClickForAutoFilter<SupportingDocument>();
-                            break;
-                        case 5:
-                            SimulateClickForAutoFilter<Project>();
-                            break;
-                        case 6:
-                            SimulateClickForAutoFilter<ExtractionConfiguration>();
-                            break;
-                        case 7:
-                            SimulateClickForAutoFilter<ExtractableCohort>();
-                            break;
-                        case 8:
-                            SimulateClickForAutoFilter<CohortIdentificationConfiguration>();
-                            break;
-                        case 9:
-                            SimulateClickForAutoFilter<TableInfo>();
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
+                    case 0:
+                        SimulateClickForAutoFilter<LoadMetadata>();
+                        break;
+                    case 1:
+                        SimulateClickForAutoFilter<ColumnInfo>();
+                        break;
+                    case 2:
+                        SimulateClickForAutoFilter<Catalogue>();
+                        break;
+                    case 3:
+                        SimulateClickForAutoFilter<CatalogueItem>();
+                        break;
+                    case 4:
+                        SimulateClickForAutoFilter<SupportingDocument>();
+                        break;
+                    case 5:
+                        SimulateClickForAutoFilter<Project>();
+                        break;
+                    case 6:
+                        SimulateClickForAutoFilter<ExtractionConfiguration>();
+                        break;
+                    case 7:
+                        SimulateClickForAutoFilter<ExtractableCohort>();
+                        break;
+                    case 8:
+                        SimulateClickForAutoFilter<CohortIdentificationConfiguration>();
+                        break;
+                    case 9:
+                        SimulateClickForAutoFilter<TableInfo>();
+                        break;
+                    default:
+                        break;
                 }
+                break;
             }
         }
 
@@ -111,12 +108,12 @@ namespace Rdmp.UI.SimpleDialogs
             _items = _activator.CoreChildProvider.GetAllSearchables();
             InitializeComponent();
             _showReplaceOptions = showReplaceOptions;
-            this.Text = _showReplaceOptions ? "Find and Replace" : "Find";
+            Text = _showReplaceOptions ? "Find and Replace" : "Find";
             tbReplace.Visible = false;
             label2.Visible = false;
             btnReplace.Visible = false;
             btnReplace.Enabled = false;
-            this.olvID.AspectGetter = m => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
+            olvID.AspectGetter = m => (m as IMapsDirectlyToDatabaseTable)?.ID ?? null;
             olvName.AspectGetter = m => m?.ToString();
             olvHierarchy.AspectGetter = GetHierarchy;
             olvHierarchy.ImageGetter = GetHierarchyImage;
@@ -307,7 +304,7 @@ namespace Rdmp.UI.SimpleDialogs
             return null;
         }
 
-        private Dictionary<RDMPCollection, Type[]> StartingEasyFilters
+        private readonly Dictionary<RDMPCollection, Type[]> StartingEasyFilters
         = new()
         {
             { RDMPCollection.Catalogue, new[] { typeof(Catalogue) } },
@@ -321,7 +318,7 @@ namespace Rdmp.UI.SimpleDialogs
             } //Add all other Type checkboxes here so that they are recognised as Typenames
         };
 
-        private Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
+        private readonly Dictionary<Type, RDMPCollection> EasyFilterTypesAndAssociatedCollections = new()
     {
         { typeof(Catalogue), RDMPCollection.Catalogue },
         { typeof(CatalogueItem), RDMPCollection.Catalogue },
