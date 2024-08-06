@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -14,6 +14,7 @@ using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -151,6 +152,22 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
                 NewMenu);
             CommonFunctionality.Add(new ExecuteCommandAddNewGovernanceDocument(Activator, null), "Governance Document",
                 null, NewMenu);
+            var _refresh = new ToolStripMenuItem
+            {
+                Visible = true,
+                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Alignment = ToolStripItemAlignment.Right,
+                ToolTipText = "Refresh Object"
+            };
+            _refresh.Click += delegate (object sender, EventArgs e) {
+                var catalogue = Activator.CoreChildProvider.AllCatalogues.First();
+                if (catalogue is not null)
+                {
+                    var cmd = new ExecuteCommandRefreshObject(Activator, catalogue);
+                    cmd.Execute();
+                }
+            };
+            CommonFunctionality.Add(_refresh);
         }
 
         if (isFirstTime || Equals(oRefreshFrom, rootFolder))
