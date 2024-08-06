@@ -11,6 +11,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 
@@ -50,7 +51,7 @@ public class DQEStateOverDataLoadRunId
         RowsPassingValidationByDataLoadRunID = new Dictionary<int, int>();
     }
 
-    public void AddKeyToDictionaries(int dataLoadRunID, Validator validator, QueryBuilder queryBuilder)
+    public void AddKeyToDictionaries(int dataLoadRunID, Validator validator, QueryBuilder queryBuilder, Evaluation mostRecentEvaluation = null)
     {
         //ensure keys exit (if it is a novel data load run ID then we will add it to the dictionaries
 
@@ -79,7 +80,21 @@ public class DQEStateOverDataLoadRunId
                 //else it is an unconstrained column, ah well still interesting
 
                 //add the state regardless
-                allColumns.Add(new ColumnState(runtimeName, dataLoadRunID, validationXML));
+                var columnState = new ColumnState(runtimeName, dataLoadRunID, validationXML);
+                if (mostRecentEvaluation is not null)
+                {
+                    var existingColumn = mostRecentEvaluation.ColumnStates.Where(c => c.TargetProperty.Equals(runtimeName) && c.PivotCategory.Equals(_pivotCategory)).FirstOrDefault();
+                    if (dataLoadRunID > 0 && existingColumn is not null)
+                    {
+                        //use the last state as the starting value
+                        columnState.CountMissing = existingColumn.CountMissing;
+                        columnState.CountCorrect = existingColumn.CountCorrect;
+                        columnState.CountDBNull = existingColumn.CountDBNull;
+                        columnState.CountInvalidatesRow = existingColumn.CountInvalidatesRow;
+                        columnState.CountWrong = existingColumn.CountWrong;
+                    }
+                }
+                allColumns.Add(columnState);
             }
 
             //and add it to our dictionary under the load batch

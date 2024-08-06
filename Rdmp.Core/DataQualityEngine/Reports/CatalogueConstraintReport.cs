@@ -18,6 +18,7 @@ using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -105,19 +106,40 @@ public class CatalogueConstraintReport : DataQualityReport
         _ReportGeneration(c, 0, listener, cancellationToken);
     }
 
+    private Dictionary<DateTime, ArchivalPeriodicityCount> existingPeriodicityCounts = null;
+
+
     private void _ReportGeneration(ICatalogue c, int dataLoadId, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
         SetupLogging(c.CatalogueRepository);
+        var isUpdate = dataLoadId != 0;
 
         var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask,
             $"DQE evaluation of {c}");
 
+
+        List<String> foundPivotValues = new() { "ALL" };
         var forker = new ForkDataLoadEventListener(listener, toDatabaseLogger);
         try
         {
             _catalogue = c;
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
+            if (isUpdate)
+            {
+                //byPivotCategoryCubesOverTime
+                var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
+                if (evaluation is not null)
+                {
+                    existingPeriodicityCounts = PeriodicityState.GetPeriodicityCountsForEvaluation(evaluation, false);
+                    //foreach(var period in periodicityCounts)
+                    //{
+                    //    byPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(period.Key.Year,period.Key.Month,period.Value.CountGood)
+                    //        //periodicityCubesOverTime
+                    //    //byPivotCategoryCubesOverTime.Add(period.Key, period.Value);
+                    //}
+                }
+            }
 
             byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
             byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
@@ -128,7 +150,7 @@ public class CatalogueConstraintReport : DataQualityReport
             using (var con = _server.GetConnection())
             {
                 con.Open();
-                if(dataLoadId != 0)
+                if (dataLoadId != 0)
                 {
                     _queryBuilder.AddCustomLine($"{SpecialFieldNames.DataLoadRunID}='{dataLoadId}'", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                 }
@@ -144,13 +166,13 @@ public class CatalogueConstraintReport : DataQualityReport
                 var r = t.Result;
 
                 var progress = 0;
+                var dataLoadRunIDOfCurrentRecord = dataLoadId;
 
                 while (r.Read())
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
                     progress++;
-                    var dataLoadRunIDOfCurrentRecord = dataLoadId;
                     //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
 
                     //if the DataReader is likely to have a data load run ID column
@@ -170,7 +192,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     if (_pivotCategory != null)
                     {
                         pivotValue = GetStringValueForPivotField(r[_pivotCategory], forker);
-
+                        foundPivotValues.Add(pivotValue);
                         if (!haveComplainedAboutNullCategories && string.IsNullOrWhiteSpace(pivotValue))
                         {
                             forker.OnNotify(this,
@@ -183,7 +205,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                     //always increase the "ALL" category
                     ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-                        byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
+                        byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"], isUpdate);
 
                     //if there is a value in the current record for the pivot column
                     if (pivotValue != null)
@@ -205,7 +227,7 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         //now we are sure that the dictionaries have the category field we can increment it
                         ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
+periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue], isUpdate);
                     }
 
                     if (progress % 5000 == 0)
@@ -213,6 +235,55 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                             new ProgressEventArgs($"Processing {_catalogue}",
                                 new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
                 }
+                //TODO the pivot categories that do not exist in the load, but do in the catalogue do not exist in the new DQE
+                //if (isUpdate)
+                //{
+                //    var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
+                //    var knownPivotValues = evaluation.ColumnStates.Select(c => c.PivotCategory).ToList();
+                //    var pivotValuesInThisLoad = byPivotRowStatesOverDataLoadRunId.Keys;
+                //    var oldPivotValuesToAdd = knownPivotValues.Where(v => !pivotValuesInThisLoad.Contains(v)).ToList();
+                //    foreach(var oldValue in oldPivotValuesToAdd)
+                //    {
+                //        if(!byPivotRowStatesOverDataLoadRunId.TryGetValue(oldValue,out _))
+                //            byPivotRowStatesOverDataLoadRunId.Add(oldValue, new DQEStateOverDataLoadRunId(oldValue));
+                //        byPivotRowStatesOverDataLoadRunId[oldValue].AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder, dqeRepository.GetMostRecentEvaluationFor(_catalogue));
+                //    }
+                //    //states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder, isUpdate ? dqeRepository.GetMostRecentEvaluationFor(_catalogue) : null);
+
+                //    //byPivotRowStatesOverDataLoadRunId[pivotValue]
+                //}
+                //// Add old pivotValues
+                //if (isUpdate)
+                //{
+                //    var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
+                //    var pivotColumnsToAdd = evaluation.ColumnStates.Where(c => !foundPivotValues.Contains(c.PivotCategory)).ToList();
+                //    foreach (var pivotColumn in pivotColumnsToAdd)
+                //    {
+                //        if (!byPivotRowStatesOverDataLoadRunId.TryGetValue(pivotColumn.PivotCategory, out _))
+                //        {
+                //            var dqeStateOverDataLoadRunId = new DQEStateOverDataLoadRunId(pivotColumn.PivotCategory);
+                //            dqeStateOverDataLoadRunId.AddKeyToDictionaries(dataLoadId, _validator, _queryBuilder, null);
+                //            byPivotRowStatesOverDataLoadRunId.Add(pivotColumn.PivotCategory,
+                //                dqeStateOverDataLoadRunId);
+                //            var periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotColumn.PivotCategory);
+                //            byPivotCategoryCubesOverTime.Add(pivotColumn.PivotCategory, periodicityCubesOverTime);
+                //        }
+
+                //        if (byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates.TryGetValue(dataLoadId, out _))
+                //        {
+                //            var x = byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId];
+                //            var y = byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId];
+                //            ColumnState[] z = [ ..y,pivotColumn];
+                //            byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId] = z;// [.. byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId], pivotColumn]; //.Add(dataLoadId, [pivotColumn]);
+
+                //        }
+                //        else
+                //        {
+                //            byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates.Add(dataLoadId, [pivotColumn]); //.Add(dataLoadId, [pivotColumn]);
+
+                //        }
+                //    }
+                //}
 
                 //final value
                 forker.OnProgress(this,
@@ -546,10 +617,10 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
     }
 
     private void ProcessRecord(DQERepository dqeRepository, int dataLoadRunIDOfCurrentRecord, DbDataReader r,
-        PeriodicityCubesOverTime periodicity, DQEStateOverDataLoadRunId states)
+        PeriodicityCubesOverTime periodicity, DQEStateOverDataLoadRunId states, bool isUpdate)
     {
         //make sure all the results dictionaries
-        states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder);
+        states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder, isUpdate ? dqeRepository.GetMostRecentEvaluationFor(_catalogue) : null);
 
         //ask the validator to validate!
         _validator.ValidateVerboseAdditive(
@@ -574,10 +645,19 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                     $"Found value {r[_timePeriodicityField]} of type {r[_timePeriodicityField].GetType().Name} in your time periodicity field which was not a valid date time, make sure your time periodicity field is a datetime datatype",
                     e);
             }
-
+            if (existingPeriodicityCounts is not null)
+            {
+                foreach (var period in existingPeriodicityCounts)
+                {
+                    periodicity.IncrementHyperCube(period.Key.Year, period.Key.Month, worstConsequence);
+                }
+            }
             if (dt != null)
                 periodicity.IncrementHyperCube(dt.Value.Year, dt.Value.Month, worstConsequence);
         }
+
+        //want to start at existing values
+        //then once done, remove any items that were overriden with this data load
 
         //now we need to update everything we know about all the columns
         foreach (var state in states.AllColumnStates[dataLoadRunIDOfCurrentRecord])
