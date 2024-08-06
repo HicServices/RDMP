@@ -22,8 +22,6 @@ using System.Windows.Forms;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using System.Collections;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.Collections.Providers.Filtering;
 namespace Rdmp.UI.SimpleDialogs
@@ -289,28 +287,22 @@ namespace Rdmp.UI.SimpleDialogs
             if (rowObject is not IMapsDirectlyToDatabaseTable m)
                 return null;
 
-            //lock (oMatches)
-            //{
             if (_items?.TryGetValue(m, out var searchable) != true) return null;
 
             var parent = searchable?.GetMostDescriptiveParent();
             return parent == null
                 ? null
                 : IconOverlayProvider.GetGreyscale(_activator.CoreIconProvider.GetImage(parent)).ImageToBitmap();
-            //}
         }
         private object GetHierarchy(object rowObject)
         {
             if (rowObject is not IMapsDirectlyToDatabaseTable m)
                 return null;
 
-            //lock (oMatches)
-            //{
             if (_items?.TryGetValue(m, out var descendancy) == true)
                 return descendancy != null
                     ? Backslashes().Replace(string.Join('\\', descendancy.GetUsefulParents()), "\\").Trim('\\')
                     : null;
-            //}
 
             return null;
         }

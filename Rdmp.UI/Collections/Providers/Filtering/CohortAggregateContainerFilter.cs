@@ -11,6 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Collections.Providers.Filtering;
+
 /// <summary>
 /// Filters objects in a <see cref="NewfindUI"/> based on whether the <see cref="Catalogue"/> is marked
 /// with various flags (e.g. <see cref="Catalogue.IsDeprecated"/>

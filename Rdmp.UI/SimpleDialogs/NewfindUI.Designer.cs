@@ -1,5 +1,4 @@
 ﻿using BrightIdeasSoftware;
-using System.Text.RegularExpressions;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -133,7 +132,7 @@ namespace Rdmp.UI.SimpleDialogs
             btnReplace.Name = "btnReplace";
             btnReplace.Size = new System.Drawing.Size(75, 23);
             btnReplace.TabIndex = 6;
-            btnReplace.Text = "Replace";
+            btnReplace.Text = "Replace All";
             btnReplace.UseVisualStyleBackColor = true;
             btnReplace.Click += btnReplace_Click;
             // 

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
+﻿
 namespace ResearchDataManagementPlatform.Menus
 {
     partial class RDMPTopMenuStripUI
@@ -171,7 +169,7 @@ namespace ResearchDataManagementPlatform.Menus
             newReplaceToolStripMenuItem.Name = "newReplaceToolStripMenuItem";
             newReplaceToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H;
             newReplaceToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
-            newReplaceToolStripMenuItem.Text = "Find & Replace";
+            newReplaceToolStripMenuItem.Text = "Find and Replace";
             newReplaceToolStripMenuItem.Click += newReplaceToolStripMenuItem_Click;
             // 
             // findAndReplaceToolStripMenuItem
