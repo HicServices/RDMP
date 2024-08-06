@@ -31,7 +31,6 @@ namespace Rdmp.UI.SimpleDialogs
         private readonly IActivateItems _activator;
         private Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _items;
         private Type[] _types;
-        private HashSet<string> _typeNames;
         private List<Type> showOnlyTypes = new();
         private readonly HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new();
         private readonly List<FindAndReplaceNode> _locationNodes = new();
@@ -335,9 +334,6 @@ namespace Rdmp.UI.SimpleDialogs
         private void BuildToolStripForDatabaseObjects(RDMPCollection focusedCollection)
         {
             _types = _items.Keys.Select(k => k.GetType()).Distinct().ToArray();
-            _typeNames = new HashSet<string>(_types.Select(t => t.Name));
-
-            foreach (var t in StartingEasyFilters.SelectMany(v => v.Value)) _typeNames.Add(t.Name);
             Type[] startingFilters = null;
 
             if (focusedCollection != RDMPCollection.None &&
