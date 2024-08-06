@@ -8,11 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -69,6 +71,25 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider.OrphanAggregateConfigurationsNode);
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
+
+
+        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x) {
+            if(x is CohortIdentificationConfiguration){
+                return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
+            }
+
+            return true;
+        };
+
+        tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
+        {
+            if (x is CohortIdentificationConfiguration)
+            {
+                CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
+                return cic.GetVersions();
+            }
+            return Activator.CoreChildProvider.GetChildren(x);
+        };
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
         {

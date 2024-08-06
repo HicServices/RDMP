@@ -43,31 +43,26 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         /// </summary>
         private void InitializeComponent()
         {
-            gbTicketing = new System.Windows.Forms.GroupBox();
+            gbTicketing = new GroupBox();
             btnShowTicket = new System.Windows.Forms.Button();
-            tbTicket = new System.Windows.Forms.ComboBox();
-            label6 = new System.Windows.Forms.Label();
             gbTicketing.SuspendLayout();
             SuspendLayout();
             // 
             // gbTicketing
             // 
             gbTicketing.Controls.Add(btnShowTicket);
-            gbTicketing.Controls.Add(tbTicket);
-            gbTicketing.Controls.Add(label6);
-            gbTicketing.Location = new System.Drawing.Point(4, 3);
-            gbTicketing.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            gbTicketing.Location = new System.Drawing.Point(4, 0);
+            gbTicketing.Margin = new Padding(4, 3, 4, 3);
             gbTicketing.Name = "gbTicketing";
-            gbTicketing.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            gbTicketing.Size = new System.Drawing.Size(343, 53);
+            gbTicketing.Padding = new Padding(4, 3, 4, 3);
+            gbTicketing.Size = new System.Drawing.Size(99, 34);
             gbTicketing.TabIndex = 37;
             gbTicketing.TabStop = false;
-            gbTicketing.Text = "Versioning";
             // 
             // btnShowTicket
             // 
-            btnShowTicket.Location = new System.Drawing.Point(241, 19);
-            btnShowTicket.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            btnShowTicket.Location = new System.Drawing.Point(0, 3);
+            btnShowTicket.Margin = new Padding(4, 3, 4, 3);
             btnShowTicket.Name = "btnShowTicket";
             btnShowTicket.Size = new System.Drawing.Size(94, 25);
             btnShowTicket.TabIndex = 32;
@@ -75,48 +70,27 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             btnShowTicket.UseVisualStyleBackColor = true;
             btnShowTicket.Click += CommitNewVersion;
             // 
-            // tbTicket
-            // 
-            tbTicket.Location = new System.Drawing.Point(50, 20);
-            tbTicket.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tbTicket.Name = "tbTicket";
-            tbTicket.Size = new System.Drawing.Size(187, 23);
-            tbTicket.TabIndex = 30;
-            tbTicket.SelectionChangeCommitted += VersionChange;
-            tbTicket.MouseHover += tbTicket_MouseOver;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(6, 23);
-            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(48, 15);
-            label6.TabIndex = 31;
-            label6.Text = "Version:";
-            // 
             // VersioningControlUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            AutoScaleMode = AutoScaleMode.Font;
             Controls.Add(gbTicketing);
-            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Margin = new Padding(4, 3, 4, 3);
             Name = "VersioningControlUI";
-            Size = new System.Drawing.Size(354, 62);
+            Size = new System.Drawing.Size(103, 33);
             gbTicketing.ResumeLayout(false);
-            gbTicketing.PerformLayout();
             ResumeLayout(false);
         }
 
-        private void VersionChange(object sender, EventArgs e)
-        {
-            if (tbTicket.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != _cic.ID)
-            {
-                _activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
-                //reset current dropdown
-                tbTicket.SelectedIndex = 0;
-            }
-        }
+        //private void VersionChange(object sender, EventArgs e)
+        //{
+        //    if (tbTicket.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != _cic.ID)
+        //    {
+        //        _activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
+        //        //reset current dropdown
+        //        tbTicket.SelectedIndex = 0;
+        //    }
+        //}
 
         private void tbTicket_MouseOver(object sender, EventArgs e)
         {
@@ -130,7 +104,7 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             buttonToolTip.InitialDelay = 1000;
             buttonToolTip.ReshowDelay = 0;
 
-            buttonToolTip.SetToolTip(tbTicket, tbTicket.Text);
+            //buttonToolTip.SetToolTip(tbTicket, tbTicket.Text);
         }
 
         private void CommitNewVersion(object sender, EventArgs e)
@@ -154,8 +128,8 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             cmd.Execute();
             versions = _cic.GetVersions();
             versions.Insert(0, _cic);
-            tbTicket.DataSource = versions;
-            tbTicket.Enabled = true;
+            //tbTicket.DataSource = versions;
+            //tbTicket.Enabled = true;
         }
 
 
@@ -163,36 +137,33 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         {
             _cic = databaseObject;
             _activator = activator;
-            tbTicket.DropDownStyle = ComboBoxStyle.DropDownList;
-            int cbWidth = (int)tbTicket.DropDownWidth;
+            //tbTicket.DropDownStyle = ComboBoxStyle.DropDownList;
+            //int cbWidth = (int)tbTicket.DropDownWidth;
             var versions = databaseObject.GetVersions();
             if (!versions.Any() || databaseObject.Version is not null)
             {
-                tbTicket.Enabled = false;
-                label6.Enabled = false;
+                //tbTicket.Enabled = false;
+                //label6.Enabled = false;
             }
             if (_cic is not null)
                 btnShowTicket.Text = _cic.Version is null ? "Save Version" : "Restore";
             versions.Insert(0, databaseObject);
-            tbTicket.DataSource = versions;
+            //tbTicket.DataSource = versions;
             foreach (var version in versions)
             {
                 var longestItem = CreateGraphics().MeasureString(version.Name, SystemFonts.MessageBoxFont).Width;
-                if (longestItem > cbWidth)
-                {
-                    cbWidth = (int)longestItem + 1;
-                }
+                //if (longestItem > cbWidth)
+                //{
+                //    cbWidth = (int)longestItem + 1;
+                //}
 
             }
-            tbTicket.DropDownWidth = cbWidth;
+            //tbTicket.DropDownWidth = cbWidth;
 
         }
         #endregion
 
         private System.Windows.Forms.GroupBox gbTicketing;
         private System.Windows.Forms.Button btnShowTicket;
-        private System.Windows.Forms.ComboBox tbTicket;
-        private System.Windows.Forms.Label label6;
-
     }
 }

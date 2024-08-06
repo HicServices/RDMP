@@ -169,11 +169,12 @@ namespace Rdmp.UI.SubComponents
             // version
             // 
             version.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            version.Location = new System.Drawing.Point(1097, 50);
+            version.Location = new System.Drawing.Point(21, 74);
             version.Margin = new System.Windows.Forms.Padding(0);
             version.Name = "version";
-            version.Size = new System.Drawing.Size(348, 81);
+            version.Size = new System.Drawing.Size(109, 81);
             version.TabIndex = 55;
+            version.Load += version_Load;
             // 
             // btnAbortLoad
             // 
