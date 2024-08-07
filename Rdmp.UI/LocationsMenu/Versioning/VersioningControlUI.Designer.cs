@@ -1,16 +1,9 @@
-﻿using NPOI.OpenXmlFormats.Spreadsheet;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+﻿using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.ChecksUI;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
-using Rdmp.UI.SubComponents;
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Terminal.Gui;
-using static Azure.Core.HttpHeader;
 
 namespace Rdmp.UI.LocationsMenu.Versioning
 {
@@ -43,25 +36,15 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         /// </summary>
         private void InitializeComponent()
         {
+            btnShowTicket = new Button();
             gbTicketing = new GroupBox();
-            btnShowTicket = new System.Windows.Forms.Button();
+            label1 = new Label();
             gbTicketing.SuspendLayout();
             SuspendLayout();
             // 
-            // gbTicketing
-            // 
-            gbTicketing.Controls.Add(btnShowTicket);
-            gbTicketing.Location = new System.Drawing.Point(4, 0);
-            gbTicketing.Margin = new Padding(4, 3, 4, 3);
-            gbTicketing.Name = "gbTicketing";
-            gbTicketing.Padding = new Padding(4, 3, 4, 3);
-            gbTicketing.Size = new System.Drawing.Size(99, 34);
-            gbTicketing.TabIndex = 37;
-            gbTicketing.TabStop = false;
-            // 
             // btnShowTicket
             // 
-            btnShowTicket.Location = new System.Drawing.Point(0, 3);
+            btnShowTicket.Location = new System.Drawing.Point(67, 13);
             btnShowTicket.Margin = new Padding(4, 3, 4, 3);
             btnShowTicket.Name = "btnShowTicket";
             btnShowTicket.Size = new System.Drawing.Size(94, 25);
@@ -70,6 +53,27 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             btnShowTicket.UseVisualStyleBackColor = true;
             btnShowTicket.Click += CommitNewVersion;
             // 
+            // gbTicketing
+            // 
+            gbTicketing.Controls.Add(label1);
+            gbTicketing.Controls.Add(btnShowTicket);
+            gbTicketing.Location = new System.Drawing.Point(0, -8);
+            gbTicketing.Margin = new Padding(4, 3, 4, 3);
+            gbTicketing.Name = "gbTicketing";
+            gbTicketing.Padding = new Padding(4, 3, 4, 3);
+            gbTicketing.Size = new System.Drawing.Size(168, 41);
+            gbTicketing.TabIndex = 37;
+            gbTicketing.TabStop = false;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(3, 18);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(65, 15);
+            label1.TabIndex = 33;
+            label1.Text = "Versioning:";
+            // 
             // VersioningControlUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -77,34 +81,10 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             Controls.Add(gbTicketing);
             Margin = new Padding(4, 3, 4, 3);
             Name = "VersioningControlUI";
-            Size = new System.Drawing.Size(103, 33);
+            Size = new System.Drawing.Size(168, 33);
             gbTicketing.ResumeLayout(false);
+            gbTicketing.PerformLayout();
             ResumeLayout(false);
-        }
-
-        //private void VersionChange(object sender, EventArgs e)
-        //{
-        //    if (tbTicket.SelectedItem is CohortIdentificationConfiguration ei && ei.ID != _cic.ID)
-        //    {
-        //        _activator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(ei);
-        //        //reset current dropdown
-        //        tbTicket.SelectedIndex = 0;
-        //    }
-        //}
-
-        private void tbTicket_MouseOver(object sender, EventArgs e)
-        {
-            ToolTip buttonToolTip = new ToolTip();
-            buttonToolTip.ToolTipTitle = "Value";
-            buttonToolTip.UseFading = true;
-            buttonToolTip.UseAnimation = true;
-            buttonToolTip.IsBalloon = true;
-            buttonToolTip.ShowAlways = true;
-            buttonToolTip.AutoPopDelay = 5000;
-            buttonToolTip.InitialDelay = 1000;
-            buttonToolTip.ReshowDelay = 0;
-
-            //buttonToolTip.SetToolTip(tbTicket, tbTicket.Text);
         }
 
         private void CommitNewVersion(object sender, EventArgs e)
@@ -126,10 +106,6 @@ namespace Rdmp.UI.LocationsMenu.Versioning
             var addedNewDescription = _activator.TypeText("Add a description of this new version", "Would you like to update the description of this new cohort version?", 250, _cic.Description, out string newDescription, false);
             var cmd = new ExecuteCommandCreateVersionOfCohortConfiguration(_activator, _cic, $"{_cic.Name}-v{versions.Count + 1}-{DateTime.Now.ToString("yyyy-MM-dd")}", addedNewDescription ? newDescription : null);
             cmd.Execute();
-            versions = _cic.GetVersions();
-            versions.Insert(0, _cic);
-            //tbTicket.DataSource = versions;
-            //tbTicket.Enabled = true;
         }
 
 
@@ -137,33 +113,16 @@ namespace Rdmp.UI.LocationsMenu.Versioning
         {
             _cic = databaseObject;
             _activator = activator;
-            //tbTicket.DropDownStyle = ComboBoxStyle.DropDownList;
-            //int cbWidth = (int)tbTicket.DropDownWidth;
             var versions = databaseObject.GetVersions();
-            if (!versions.Any() || databaseObject.Version is not null)
-            {
-                //tbTicket.Enabled = false;
-                //label6.Enabled = false;
-            }
             if (_cic is not null)
                 btnShowTicket.Text = _cic.Version is null ? "Save Version" : "Restore";
             versions.Insert(0, databaseObject);
-            //tbTicket.DataSource = versions;
-            foreach (var version in versions)
-            {
-                var longestItem = CreateGraphics().MeasureString(version.Name, SystemFonts.MessageBoxFont).Width;
-                //if (longestItem > cbWidth)
-                //{
-                //    cbWidth = (int)longestItem + 1;
-                //}
-
-            }
-            //tbTicket.DropDownWidth = cbWidth;
-
         }
+
         #endregion
 
-        private System.Windows.Forms.GroupBox gbTicketing;
-        private System.Windows.Forms.Button btnShowTicket;
+        private Button btnShowTicket;
+        private GroupBox gbTicketing;
+        private Label label1;
     }
 }

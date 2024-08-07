@@ -8,13 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -73,12 +71,14 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             .TemplateAggregateConfigurationsNode);
 
 
-        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x) {
-            if(x is CohortIdentificationConfiguration){
+        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x)
+        {
+            if (x is CohortIdentificationConfiguration)
+            {
                 return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
             }
 
-            return true;
+            return Activator.CoreChildProvider.GetChildren(x).Length > 0;
         };
 
         tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
@@ -120,7 +120,8 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
-            _refresh.Click += delegate (object sender, EventArgs e) {
+            _refresh.Click += delegate (object sender, EventArgs e)
+            {
                 var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
                 if (cic is not null)
                 {

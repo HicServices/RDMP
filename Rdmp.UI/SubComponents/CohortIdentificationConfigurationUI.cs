@@ -414,11 +414,6 @@ public partial class CohortIdentificationConfigurationUI : CohortIdentificationC
     {
 
     }
-
-    private void version_Load(object sender, EventArgs e)
-    {
-
-    }
 }
 
 [TypeDescriptionProvider(
