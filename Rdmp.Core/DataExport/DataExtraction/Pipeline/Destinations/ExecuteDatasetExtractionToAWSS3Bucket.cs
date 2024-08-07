@@ -143,7 +143,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
             _region = RegionEndpoint.GetBySystemName(AWS_Region);
             _s3Helper = new AWSS3(AWS_Profile, _region);
-            _bucket = await _s3Helper.GetBucket(BucketName);
+            if (_bucket is null)
+            {
+                try
+                {
+                    _bucket = await _s3Helper.GetBucket(BucketName);
+                }
+                catch (Exception) { }
+            }
             OutputFile = Path.Combine(Path.GetTempPath(), $"{GetFilename()}.csv");
             _output = request.Configuration != null
                 ? new CSVOutputFormat(OutputFile, request.Configuration.Separator, DateFormat)
