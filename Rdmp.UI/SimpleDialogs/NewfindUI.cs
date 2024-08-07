@@ -248,7 +248,7 @@ namespace Rdmp.UI.SimpleDialogs
                 {
                     _activator.Activate(rowObject);
                 }
-                else
+                else if (_showReplaceOptions)
                 {
                     var cmd = new ExecuteCommandActivate(_activator, node.Instance);
                     if (!cmd.IsImpossible)
