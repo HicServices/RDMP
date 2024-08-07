@@ -27,7 +27,7 @@ public class SFTPDownloader : FTPDownloader
     [DemandsInitialization("The keep-alive interval.  In milliseconds.  Requires KeepAlive to be set to take effect.")]
     public int KeepAliveIntervalMilliseconds { get; set; }
 
-    private readonly Lazy<SftpClient> _connection;
+    private Lazy<SftpClient> _connection;
 
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
@@ -87,11 +87,12 @@ public class SFTPDownloader : FTPDownloader
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (exitCode != ExitCodeType.Success) return;
+        if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
 
         // Reconnect if we got cut off, for example due to idle timers
-        if (!_connection.Value.IsConnected)
-            _connection.Value.Connect();
+        //if (!_connection.Value.IsConnected)
+        //    _connection.Value.Connect();
+        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
 
         foreach (var retrievedFiles in _filesRetrieved)
             try
