@@ -70,6 +70,27 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
         tlvCohortIdentificationConfigurations.AddObject(Activator.CoreChildProvider
             .TemplateAggregateConfigurationsNode);
 
+
+        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x)
+        {
+            if (x is CohortIdentificationConfiguration)
+            {
+                return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
+            }
+
+            return Activator.CoreChildProvider.GetChildren(x).Length > 0;
+        };
+
+        tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
+        {
+            if (x is CohortIdentificationConfiguration)
+            {
+                CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
+                return cic.GetVersions();
+            }
+            return Activator.CoreChildProvider.GetChildren(x);
+        };
+
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
@@ -99,7 +120,8 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
-            _refresh.Click += delegate (object sender, EventArgs e) {
+            _refresh.Click += delegate (object sender, EventArgs e)
+            {
                 var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
                 if (cic is not null)
                 {
