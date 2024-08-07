@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.2.4] - Unreleased
 
 - Add instance setting to prompt for cohort versioning when comitting
-
+- Improve Cohort Versioning Interface
 
 ## [8.2.3] - 2024-08-05
 
