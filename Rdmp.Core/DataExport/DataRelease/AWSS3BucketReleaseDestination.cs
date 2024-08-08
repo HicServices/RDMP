@@ -111,7 +111,9 @@ namespace Rdmp.Core.DataExport.DataRelease
         {
             if (releaseAudit == null)
                 return null;
-
+            _region = RegionEndpoint.GetBySystemName(AWS_Region);
+            _s3Helper = new AWSS3(AWS_Profile, _region);
+            _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
             if (releaseAudit.ReleaseFolder == null)
             {
                 if (string.IsNullOrWhiteSpace(BucketFolder))
@@ -143,7 +145,7 @@ namespace Rdmp.Core.DataExport.DataRelease
             }
             _region = RegionEndpoint.GetBySystemName(AWS_Region);
             _s3Helper = new AWSS3(AWS_Profile, _region);
-            _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, listener, releaseAudit);
+            _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder,listener, releaseAudit);
             _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
                 _releaseData.ReleaseState == ReleaseState.DoingPatch);
 
