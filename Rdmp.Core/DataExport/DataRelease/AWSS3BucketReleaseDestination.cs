@@ -81,7 +81,7 @@ namespace Rdmp.Core.DataExport.DataRelease
             _s3Helper = new AWSS3(AWS_Profile, _region);
             try
             {
-                _bucket = Task.Run(async() => await _s3Helper.GetBucket(BucketName)).Result;
+                _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
             }
             catch (Exception e)
             {
@@ -89,6 +89,13 @@ namespace Rdmp.Core.DataExport.DataRelease
                 return;
             }
             //todo check location on bucket doesn't already exists
+            //check if the folder exists
+            if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
+                return;
+            }
+
 
         }
 
@@ -114,13 +121,13 @@ namespace Rdmp.Core.DataExport.DataRelease
             _region = RegionEndpoint.GetBySystemName(AWS_Region);
             _s3Helper = new AWSS3(AWS_Profile, _region);
             _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
-            if (releaseAudit.ReleaseFolder == null)
-            {
-                if (string.IsNullOrWhiteSpace(BucketFolder))
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Release Folder or S3 Bucket path were specified. Files will be placed in the root of the S3 Bucket"));
-                }
-            }
+            //if (releaseAudit.ReleaseFolder == null)
+            //{
+            //    if (string.IsNullOrWhiteSpace(BucketFolder))
+            //    {
+            //        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Release Folder or S3 Bucket path were specified. Files will be placed in the root of the S3 Bucket"));
+            //    }
+            //}
             if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
             {
                 //TODO this is untested, but a blind copy from the other release destination
@@ -145,7 +152,7 @@ namespace Rdmp.Core.DataExport.DataRelease
             }
             _region = RegionEndpoint.GetBySystemName(AWS_Region);
             _s3Helper = new AWSS3(AWS_Profile, _region);
-            _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder,listener, releaseAudit);
+            _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder, listener, releaseAudit);
             _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
                 _releaseData.ReleaseState == ReleaseState.DoingPatch);
 

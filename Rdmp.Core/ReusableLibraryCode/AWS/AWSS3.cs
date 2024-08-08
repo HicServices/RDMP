@@ -10,6 +10,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Azure;
+using MathNet.Numerics.Statistics;
 using Renci.SshNet;
 using SharpCompress.Common;
 using System;
@@ -58,6 +59,27 @@ namespace Rdmp.Core.ReusableLibraryCode.AWS
         public static string KeyGenerator(string path, string file)
         {
             return Path.Join(path, file).Replace("\\", "/");//todo there is probably a better way to do this
+        }
+
+        public async Task<bool> DoesObjectExists(string Key, string bucketName)
+        {
+            ListObjectsResponse response = null;
+            try
+            {
+
+                ListObjectsRequest request = new ListObjectsRequest
+                {
+                    BucketName = bucketName,
+                    Prefix = Key
+                };
+                response = await _client.ListObjectsAsync(request);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            return (response != null && response.S3Objects != null && response.S3Objects.Count > 0 && response.S3Objects.Any(o => o.Key == Key));
         }
 
 

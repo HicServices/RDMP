@@ -41,6 +41,7 @@ namespace Rdmp.Core.DataExport.DataRelease
             {
                 ReleaseGlobalFolder();
                 // Audit Global Folder if there are any
+                //TODO actually test globals
                 if (ReleaseAudit.SourceGlobalFolder != null)
                 {
                     AuditDirectoryCreation(ReleaseAudit.SourceGlobalFolder.FullName, sw, 0);
@@ -55,7 +56,7 @@ namespace Rdmp.Core.DataExport.DataRelease
 
                 Task.Run(async () =>
                 {
-                    await _s3Helper.PutObject(_bucket.BucketName, "contents.txt", auditFilePath, GetLocation(ReleaseAudit.ReleaseFolder != null ? ReleaseAudit.ReleaseFolder.Name : null, null));
+                    await _s3Helper.PutObject(_bucket.BucketName, "contents.txt", auditFilePath, GetLocation( null, null));
                 }
                 ).Wait();
                 File.Delete(auditFilePath);
@@ -100,7 +101,7 @@ namespace Rdmp.Core.DataExport.DataRelease
             foreach (var kvp in toRelease)
             {
                 var extractionIdentifier = $"{kvp.Key.Name}_{kvp.Key.ID}";
-                var locationWithinBucket = GetLocation(ReleaseAudit.ReleaseFolder != null ? ReleaseAudit.ReleaseFolder.Name : null, extractionIdentifier);// $"{!string.IsNullOrWhiteSpace(_bucketFolder)?}{ReleaseAudit.ReleaseFolder.Name}/{extractionIdentifier}";
+                var locationWithinBucket = GetLocation( null, extractionIdentifier);
                 AuditExtractionConfigurationDetails(sw, locationWithinBucket, kvp, extractionIdentifier);
                 AuditDirectoryCreation(locationWithinBucket, sw, 0);
                 var customDataFolder = ReleaseCustomData(kvp, locationWithinBucket);
