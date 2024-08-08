@@ -12,6 +12,7 @@ using SynthEHR;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using Rdmp.Core.ReusableLibraryCode.Settings;
+using System.Diagnostics;
 
 namespace Rdmp.Core.Logging;
 
@@ -182,6 +183,7 @@ public class TableLoadInfo : ITableLoadInfo
 
     public void CloseAndArchive()
     {
+        DatabaseSettings.Builder.Add("Command Timeout", 86400);//wait up to 1 day to perform the command
         using var con = DatabaseSettings.BeginNewTransactedConnection();
         using var cmdCloseRecord = DatabaseSettings.GetCommand(
             "UPDATE TableLoadRun SET endTime=@endTime,inserts=@inserts,updates=@updates,deletes=@deletes,errorRows=@errorRows,duplicates=@duplicates, notes=@notes WHERE ID=@ID",
@@ -198,7 +200,18 @@ public class TableLoadInfo : ITableLoadInfo
                 string.IsNullOrWhiteSpace(Notes) ? DBNull.Value : Notes);
             DatabaseSettings.AddParameterWithValueToCommand("@ID", cmdCloseRecord, ID);
 
-            var affectedRows = cmdCloseRecord.ExecuteNonQuery();
+            int affectedRows = 0;
+            var timer = Stopwatch.StartNew();
+            try
+            {
+                affectedRows = cmdCloseRecord.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                timer.Stop();
+                throw new Exception($"Guneet Logging Test: Waited - {timer.ElapsedMilliseconds}ms.{e.Message}");
+            }
+            timer.Stop();
 
             if (affectedRows != 1)
                 throw new Exception(
