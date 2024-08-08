@@ -1,6 +1,4 @@
-﻿using System;
-using System.Windows.Forms;
-
+﻿
 namespace ResearchDataManagementPlatform.Menus
 {
     partial class RDMPTopMenuStripUI
@@ -39,6 +37,8 @@ namespace ResearchDataManagementPlatform.Menus
             runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            newFindToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            newReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findMultipleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             findAndReplaceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -100,7 +100,7 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, newSessionToolStripMenuItem, runToolStripMenuItem, openToolStripMenuItem, findToolStripMenuItem, findMultipleToolStripMenuItem, findAndReplaceToolStripMenuItem, closeToolStripMenuItem, quitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { newToolStripMenuItem, newSessionToolStripMenuItem, runToolStripMenuItem, openToolStripMenuItem, findToolStripMenuItem, newFindToolStripMenuItem, newReplaceToolStripMenuItem,findMultipleToolStripMenuItem, findAndReplaceToolStripMenuItem, closeToolStripMenuItem, quitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -138,11 +138,22 @@ namespace ResearchDataManagementPlatform.Menus
             // 
             // findToolStripMenuItem
             // 
+            findToolStripMenuItem.Visible = !Rdmp.Core.ReusableLibraryCode.Settings.UserSettings.NewFindAndReplace;
             findToolStripMenuItem.Name = "findToolStripMenuItem";
             findToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F;
             findToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             findToolStripMenuItem.Text = "Find";
             findToolStripMenuItem.Click += findToolStripMenuItem_Click;
+            //
+            // newFindToolStripMenuItem
+            //
+            newFindToolStripMenuItem.Visible = Rdmp.Core.ReusableLibraryCode.Settings.UserSettings.NewFindAndReplace;
+            newFindToolStripMenuItem.Name = "newFindToolStripMenuItem";
+            newFindToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.F;
+            newFindToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            newFindToolStripMenuItem.Text = "Find";
+            newFindToolStripMenuItem.Click += newFindToolStripMenuItem_Click;
+           
             // 
             // findMultipleToolStripMenuItem
             // 
@@ -151,9 +162,19 @@ namespace ResearchDataManagementPlatform.Menus
             findMultipleToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
             findMultipleToolStripMenuItem.Text = "Find Multiple";
             findMultipleToolStripMenuItem.Click += findMultipleToolStripMenuItem_Click;
+            //
+            // newReplaceToolStripMenuItem
+            //
+            newReplaceToolStripMenuItem.Visible = Rdmp.Core.ReusableLibraryCode.Settings.UserSettings.NewFindAndReplace;
+            newReplaceToolStripMenuItem.Name = "newReplaceToolStripMenuItem";
+            newReplaceToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H;
+            newReplaceToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
+            newReplaceToolStripMenuItem.Text = "Find and Replace";
+            newReplaceToolStripMenuItem.Click += newReplaceToolStripMenuItem_Click;
             // 
             // findAndReplaceToolStripMenuItem
             // 
+            findAndReplaceToolStripMenuItem.Visible = !Rdmp.Core.ReusableLibraryCode.Settings.UserSettings.NewFindAndReplace;
             findAndReplaceToolStripMenuItem.Name = "findAndReplaceToolStripMenuItem";
             findAndReplaceToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.H;
             findAndReplaceToolStripMenuItem.Size = new System.Drawing.Size(216, 22);
@@ -532,6 +553,8 @@ namespace ResearchDataManagementPlatform.Menus
         private System.Windows.Forms.ToolStripMenuItem licenseToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newFindToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newReplaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem findAndReplaceToolStripMenuItem;
