@@ -27,6 +27,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 
+// todo
+// check if file exists fist
+// make user options pop up
+// test encryption
+//turn into release engine thing
+//respect folder style options
+//dump files in same directory pattern as csv extraction
+
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
     /// <summary>

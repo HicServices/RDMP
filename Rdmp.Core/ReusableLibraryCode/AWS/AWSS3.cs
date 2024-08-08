@@ -77,9 +77,6 @@ namespace Rdmp.Core.ReusableLibraryCode.AWS
 
             catch (Exception ex)
             {
-                //if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-                //    return false;
-                //throw;
                 Console.WriteLine(ex.Message);
                 return false;
             }
