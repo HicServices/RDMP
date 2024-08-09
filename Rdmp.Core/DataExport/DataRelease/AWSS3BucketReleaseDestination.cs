@@ -47,7 +47,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     public string BucketFolder { get; set; }
 
     [DemandsInitialization("If selected, AWS configuration will be asked for at runtime", defaultValue: false)]
-    public bool ConfigureInteractivelyOnRelease { get; set; } 
+    public bool ConfigureInteractivelyOnRelease { get; set; }
 
     private ReleaseData _releaseData;
     private Project _project;
@@ -57,6 +57,8 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     private RegionEndpoint _region;
     private S3Bucket _bucket;
     private List<IExtractionConfiguration> _configurationReleased;
+
+    private IBasicActivateItems _activator;
 
 
     public void Abort(IDataLoadEventListener listener)
@@ -70,12 +72,22 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     {
         ((ICheckable)ReleaseSettings).Check(notifier);
         //TODO make the aws stuff pop up if not configured
+        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        {
+            _activator.TypeText("Set AWS Region", "What AWS region is your bucket in?", 128, AWS_Region, out var newRegion, false);
+            AWS_Region = newRegion;
+        }
         if (string.IsNullOrWhiteSpace(AWS_Region))
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No AWS Region Specified.", CheckResult.Fail));
             return;
         }
         _region = RegionEndpoint.GetBySystemName(AWS_Region);
+        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        {
+            _activator.TypeText("Set AWS Profile", "What AWS profile do you want to use?", 128, AWS_Profile, out var newProfile, false);
+            AWS_Profile = newProfile;
+        }
         if (string.IsNullOrWhiteSpace(AWS_Profile))
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No AWS Profile Specified.", CheckResult.Fail));
@@ -83,6 +95,12 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
         }
 
         _s3Helper = new AWSS3(AWS_Profile, _region);
+        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        {
+            _activator.TypeText("Set S3 Bucket", "What S3 Bucket do you want to use?", 128, BucketName, out var newBucket, false);
+            BucketName = newBucket;
+        }
+
         try
         {
             _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
@@ -91,6 +109,11 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
         {
             notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail));
             return;
+        }
+        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        {
+            _activator.TypeText("Set Subdirectory", "What is the name of the subfolder you want to use?", 128, BucketFolder, out var newFolder, false);
+            BucketFolder = newFolder;
         }
         if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
         {
