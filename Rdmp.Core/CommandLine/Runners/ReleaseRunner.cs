@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -37,7 +38,7 @@ public class ReleaseRunner : ManyRunner
     private IExtractionConfiguration[] _configurations;
     private ISelectedDataSets[] _selectedDatasets;
 
-    public ReleaseRunner(ReleaseOptions options) : base(options)
+    public ReleaseRunner(IBasicActivateItems activator, ReleaseOptions options) : base(activator, options)
     {
         _options = options;
     }

@@ -9,7 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using NPOI.HSSF.Record.Chart;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners;
 using Rdmp.Core.Repositories;
@@ -21,6 +25,7 @@ namespace Rdmp.Core.CommandLine.Runners;
 public abstract class ManyRunner : Runner
 {
     private readonly ConcurrentRDMPCommandLineOptions _options;
+    private readonly IBasicActivateItems _activator;
 
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected GracefulCancellationToken Token { get; private set; }
@@ -32,8 +37,9 @@ public abstract class ManyRunner : Runner
     /// </summary>
     private readonly object _oLock = new();
 
-    protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
+    protected ManyRunner(IBasicActivateItems activator, ConcurrentRDMPCommandLineOptions options)
     {
+        _activator = activator;
         _options = options;
     }
 
@@ -88,7 +94,12 @@ public abstract class ManyRunner : Runner
                 foreach (var checkable in checkables)
                 {
                     semaphore?.WaitOne();
-
+                    if(checkable is IDataFlowPipelineEngine)
+                    {
+                        if (((IDataFlowPipelineEngine)checkable).DestinationObject is IInteractiveCheckable){
+                            ((IInteractiveCheckable)(((IDataFlowPipelineEngine)checkable).DestinationObject)).SetActivator(_activator);
+                        }
+                    }
                     var checkable1 = checkable;
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
 

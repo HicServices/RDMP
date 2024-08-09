@@ -29,7 +29,7 @@ namespace Rdmp.Core.DataExport.DataRelease;
 /// Release engine Destination for writing data to an AWS S3 Bucket
 /// </summary>
 public class AWSS3BucketReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>,
-IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
+IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCheckable
 {
 
     [DemandsNestedInitialization] public ReleaseEngineSettings ReleaseSettings { get; set; }
@@ -46,7 +46,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     [DemandsInitialization("The folder in the S3 bucket you wish to release to", defaultValue: "")]
     public string BucketFolder { get; set; }
 
-    [DemandsInitialization("If selected, AWS configuration will be asked for at runtime", defaultValue: false)]
+    [DemandsInitialization("If selected, AWS configuration will be asked for at runtime", defaultValue: true)]
     public bool ConfigureInteractivelyOnRelease { get; set; }
 
     private ReleaseData _releaseData;
@@ -60,7 +60,6 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 
     private IBasicActivateItems _activator;
 
-
     public void Abort(IDataLoadEventListener listener)
     {
 
@@ -71,8 +70,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     public void Check(ICheckNotifier notifier)
     {
         ((ICheckable)ReleaseSettings).Check(notifier);
-        //TODO make the aws stuff pop up if not configured
-        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set AWS Region", "What AWS region is your bucket in?", 128, AWS_Region, out var newRegion, false);
             AWS_Region = newRegion;
@@ -83,7 +81,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
             return;
         }
         _region = RegionEndpoint.GetBySystemName(AWS_Region);
-        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set AWS Profile", "What AWS profile do you want to use?", 128, AWS_Profile, out var newProfile, false);
             AWS_Profile = newProfile;
@@ -95,7 +93,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
         }
 
         _s3Helper = new AWSS3(AWS_Profile, _region);
-        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set S3 Bucket", "What S3 Bucket do you want to use?", 128, BucketName, out var newBucket, false);
             BucketName = newBucket;
@@ -110,7 +108,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
             notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail));
             return;
         }
-        if (ConfigureInteractivelyOnRelease && _activator is not null)
+        if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set Subdirectory", "What is the name of the subfolder you want to use?", 128, BucketFolder, out var newFolder, false);
             BucketFolder = newFolder;
@@ -217,5 +215,10 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
             _releaseData.ReleaseState == ReleaseState.DoingPatch);
         _configurationReleased = _engine.ConfigurationsReleased;
         return null;
+    }
+
+    public void SetActivator(IBasicActivateItems activator)
+    {
+        _activator = activator;
     }
 }
