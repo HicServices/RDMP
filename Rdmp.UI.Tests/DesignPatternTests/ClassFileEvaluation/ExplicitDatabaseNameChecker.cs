@@ -42,7 +42,8 @@ public class ExplicitDatabaseNameChecker
                 "PlatformDatabaseCreationOptions.cs",
                 "PackOptions.cs",
                 "PasswordEncryptionKeyLocation.cs",
-                "ToLoggingDatabaseDataLoadEventListener.cs"
+                "ToLoggingDatabaseDataLoadEventListener.cs",
+                "AWSS3BucketReleaseDestination,cs"
             }); //allowed because it's default arguments for CLI
 
         prohibitedStrings.Add("TEST_");
