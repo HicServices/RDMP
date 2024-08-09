@@ -22,6 +22,7 @@ using Amazon;
 using System.IO;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using NPOI.HPSF;
 
 namespace Rdmp.Core.DataExport.DataRelease;
 
@@ -67,6 +68,48 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
 
     }
 
+    private void StoreInteractiveConfig(string value, string fileName)
+    {
+        var file = Path.Combine(Path.GetTempPath(), fileName);
+        if (File.Exists(file))
+        {
+            File.Delete(file);
+        }
+        using (StreamWriter outputFile = new StreamWriter(file))
+        {
+            outputFile.Write(value);
+        }
+    }
+
+
+    private void RetrieveInteractiveConfiguration()
+    {
+        var file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_REGION.txt");
+        if (File.Exists(file))
+        {
+            AWS_Region = File.ReadAllText(file);
+            File.Delete(file);
+        }
+        file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_PROFILE.txt");
+        if (File.Exists(file))
+        {
+            AWS_Profile = File.ReadAllText(file);
+            File.Delete(file);
+        }
+        file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_BUCKET_NAME.txt");
+        if (File.Exists(file))
+        {
+            BucketName = File.ReadAllText(file);
+            File.Delete(file);
+        }
+        file = Path.Combine(Path.GetTempPath(), "RDMP_AWS_BUCKET_FOLDER.txt");
+        if (File.Exists(file))
+        {
+            BucketFolder = File.ReadAllText(file);
+            File.Delete(file);
+        }
+    }
+
     public void Check(ICheckNotifier notifier)
     {
         ((ICheckable)ReleaseSettings).Check(notifier);
@@ -74,6 +117,8 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
         {
             _activator.TypeText("Set AWS Region", "What AWS region is your bucket in?", 128, AWS_Region, out var newRegion, false);
             AWS_Region = newRegion;
+            StoreInteractiveConfig(AWS_Region, "RDMP_AWS_REGION.txt");
+
         }
         if (string.IsNullOrWhiteSpace(AWS_Region))
         {
@@ -85,6 +130,8 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
         {
             _activator.TypeText("Set AWS Profile", "What AWS profile do you want to use?", 128, AWS_Profile, out var newProfile, false);
             AWS_Profile = newProfile;
+            StoreInteractiveConfig(AWS_Profile, "RDMP_AWS_PROFILE.txt");
+
         }
         if (string.IsNullOrWhiteSpace(AWS_Profile))
         {
@@ -92,11 +139,14 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             return;
         }
 
+
         _s3Helper = new AWSS3(AWS_Profile, _region);
+
         if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set S3 Bucket", "What S3 Bucket do you want to use?", 128, BucketName, out var newBucket, false);
             BucketName = newBucket;
+            StoreInteractiveConfig(BucketName, "RDMP_AWS_BUCKET_NAME.txt");
         }
 
         try
@@ -105,21 +155,21 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
         }
         catch (Exception e)
         {
-            notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail));
+            notifier.OnCheckPerformed(new CheckEventArgs("Unable to locate bucket", CheckResult.Fail, e));
             return;
         }
         if (ConfigureInteractivelyOnRelease && _activator is not null && _activator.IsInteractive)
         {
             _activator.TypeText("Set Subdirectory", "What is the name of the subfolder you want to use?", 128, BucketFolder, out var newFolder, false);
             BucketFolder = newFolder;
+            StoreInteractiveConfig(BucketFolder, "RDMP_AWS_BUCKET_FOLDER.txt");
+
         }
         if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
             return;
         }
-
-
     }
 
     public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
@@ -182,6 +232,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
     {
         if (releaseAudit == null)
             return null;
+        RetrieveInteractiveConfiguration();
         _region = RegionEndpoint.GetBySystemName(AWS_Region);
         _s3Helper = new AWSS3(AWS_Profile, _region);
         _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
@@ -208,8 +259,6 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
                 $"Deleted {recordsDeleted} old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
 
         }
-        _region = RegionEndpoint.GetBySystemName(AWS_Region);
-        _s3Helper = new AWSS3(AWS_Profile, _region);
         _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder, listener, releaseAudit);
         _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
             _releaseData.ReleaseState == ReleaseState.DoingPatch);

@@ -25,7 +25,6 @@ namespace Rdmp.Core.CommandLine.Runners;
 public abstract class ManyRunner : Runner
 {
     private readonly ConcurrentRDMPCommandLineOptions _options;
-    private readonly IBasicActivateItems _activator;
 
     protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
     protected GracefulCancellationToken Token { get; private set; }
@@ -37,9 +36,8 @@ public abstract class ManyRunner : Runner
     /// </summary>
     private readonly object _oLock = new();
 
-    protected ManyRunner(IBasicActivateItems activator, ConcurrentRDMPCommandLineOptions options)
+    protected ManyRunner(ConcurrentRDMPCommandLineOptions options)
     {
-        _activator = activator;
         _options = options;
     }
 
@@ -94,12 +92,6 @@ public abstract class ManyRunner : Runner
                 foreach (var checkable in checkables)
                 {
                     semaphore?.WaitOne();
-                    if(checkable is IDataFlowPipelineEngine)
-                    {
-                        if (((IDataFlowPipelineEngine)checkable).DestinationObject is IInteractiveCheckable){
-                            ((IInteractiveCheckable)(((IDataFlowPipelineEngine)checkable).DestinationObject)).SetActivator(_activator);
-                        }
-                    }
                     var checkable1 = checkable;
                     var memory = new ToMemoryCheckNotifier(checkNotifier);
 
