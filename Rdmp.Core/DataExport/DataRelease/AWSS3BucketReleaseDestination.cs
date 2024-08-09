@@ -46,6 +46,9 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
     [DemandsInitialization("The folder in the S3 bucket you wish to release to", defaultValue: "")]
     public string BucketFolder { get; set; }
 
+    [DemandsInitialization("If selected, AWS configuration will be asked for at runtime", defaultValue: false)]
+    public bool ConfigureInteractivelyOnRelease { get; set; } 
+
     private ReleaseData _releaseData;
     private Project _project;
     private AWSReleaseEngine _engine;

@@ -9,123 +9,120 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Azure;
-using MathNet.Numerics.Statistics;
-using Renci.SshNet;
-using SharpCompress.Common;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 
-namespace Rdmp.Core.ReusableLibraryCode.AWS
+namespace Rdmp.Core.ReusableLibraryCode.AWS;
+
+/// <summary>
+/// Helper Class to interact with AWS and S3 Buckets
+/// </summary>
+public class AWSS3
 {
-    public class AWSS3
+
+    public readonly string Profile;
+    public readonly RegionEndpoint Region;
+    private readonly AWSCredentials _credentials;
+    private readonly AmazonS3Client _client;
+
+    public AWSS3(string profile, RegionEndpoint region)
+    {
+        Profile = profile ?? "default";
+        Region = region;
+        _credentials = AWSCredentialsHelper.LoadSsoCredentials(Profile);
+        _client = new AmazonS3Client(_credentials, Region);
+    }
+
+    public async Task<List<S3Bucket>> ListAvailableBuckets()
+    {
+        var foundBuckets = await _client.ListBucketsAsync();
+        return foundBuckets.Buckets;
+    }
+
+    public async Task<S3Bucket> GetBucket(string bucketName)
+    {
+        var foundBuckets = await _client.ListBucketsAsync();
+        var bucket = foundBuckets.Buckets.Single(bucket => bucket.BucketName == bucketName);
+        if (bucket == null)
+        {
+            throw new Exception("Bucket not found...");
+        }
+        return bucket;
+    }
+
+    public static string KeyGenerator(string path, string file)
+    {
+        return Path.Join(path, file).Replace("\\", "/");//todo there is probably a better way to do this
+    }
+
+    public async Task<bool> DoesObjectExists(string Key, string bucketName)
+    {
+        ListObjectsResponse response = null;
+        try
+        {
+
+            ListObjectsRequest request = new ListObjectsRequest
+            {
+                BucketName = bucketName,
+                Prefix = Key
+            };
+            response = await _client.ListObjectsAsync(request);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        return (response != null && response.S3Objects != null && response.S3Objects.Count > 0 && response.S3Objects.Any(o => o.Key == Key));
+    }
+
+
+    public bool ObjectExists(string fileKey, string bucketName)
+    {
+        try
+        {
+            var response = _client.GetObjectMetadataAsync(new GetObjectMetadataRequest()
+            {
+                BucketName = bucketName,
+                Key = fileKey
+            });
+            var result = response.Result;
+
+            return true;
+        }
+
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+            return false;
+        }
+    }
+
+    public void DeleteObject(string fileKey, string bucketName)
+    {
+        _client.DeleteObjectAsync(new DeleteObjectRequest()
+        {
+            BucketName = bucketName,
+            Key = fileKey,
+        });
+    }
+    public async Task<HttpStatusCode> PutObject(string bucketName, string objectName, string localFilePath, string bucketSubdirectory = null)
     {
 
-        public readonly string Profile;
-        public readonly RegionEndpoint Region;
-        private readonly AWSCredentials _credentials;
-        private readonly AmazonS3Client _client;
-
-        public AWSS3(string profile, RegionEndpoint region)
+        var key = objectName;
+        if (bucketSubdirectory != null)
+            key = KeyGenerator(bucketSubdirectory, key);
+        var request = new PutObjectRequest
         {
-            Profile = profile ?? "default";
-            Region = region;
-            _credentials = AWSCredentialsHelper.LoadSsoCredentials(Profile);
-            _client = new AmazonS3Client(_credentials, Region);
-        }
-
-        public async Task<List<S3Bucket>> ListAvailableBuckets()
-        {
-            var foundBuckets = await _client.ListBucketsAsync();
-            return foundBuckets.Buckets;
-        }
-
-        public async Task<S3Bucket> GetBucket(string bucketName)
-        {
-            var foundBuckets = await _client.ListBucketsAsync();
-            var bucket = foundBuckets.Buckets.Single(bucket => bucket.BucketName == bucketName);
-            if (bucket == null)
-            {
-                throw new Exception("Bucket not found...");
-            }
-            return bucket;
-        }
-
-        public static string KeyGenerator(string path, string file)
-        {
-            return Path.Join(path, file).Replace("\\", "/");//todo there is probably a better way to do this
-        }
-
-        public async Task<bool> DoesObjectExists(string Key, string bucketName)
-        {
-            ListObjectsResponse response = null;
-            try
-            {
-
-                ListObjectsRequest request = new ListObjectsRequest
-                {
-                    BucketName = bucketName,
-                    Prefix = Key
-                };
-                response = await _client.ListObjectsAsync(request);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return (response != null && response.S3Objects != null && response.S3Objects.Count > 0 && response.S3Objects.Any(o => o.Key == Key));
-        }
-
-
-        public bool ObjectExists(string fileKey, string bucketName)
-        {
-            try
-            {
-                var response = _client.GetObjectMetadataAsync(new GetObjectMetadataRequest()
-                {
-                    BucketName = bucketName,
-                    Key = fileKey
-                });
-                var result = response.Result;
-
-                return true;
-            }
-
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-                return false;
-            }
-        }
-
-        public void DeleteObject(string fileKey, string bucketName)
-        {
-            _client.DeleteObjectAsync(new DeleteObjectRequest()
-            {
-                BucketName = bucketName,
-                Key = fileKey,
-            });
-        }
-        public async Task<HttpStatusCode> PutObject(string bucketName, string objectName, string localFilePath, string bucketSubdirectory = null)
-        {
-
-            var key = objectName;
-            if (bucketSubdirectory != null)
-                key = KeyGenerator(bucketSubdirectory, key);
-            var request = new PutObjectRequest
-            {
-                BucketName = bucketName,
-                Key = key,
-                FilePath = localFilePath,
-            };
-            var response = await _client.PutObjectAsync(request);
-            return response.HttpStatusCode;
-        }
+            BucketName = bucketName,
+            Key = key,
+            FilePath = localFilePath,
+        };
+        var response = await _client.PutObjectAsync(request);
+        return response.HttpStatusCode;
     }
 }
