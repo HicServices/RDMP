@@ -1,4 +1,9 @@
-﻿using Rdmp.Core.DataExport.Data;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataFlowPipeline;
@@ -14,152 +19,177 @@ using Rdmp.Core.CommandExecution;
 using Amazon.S3.Model;
 using Rdmp.Core.ReusableLibraryCode.AWS;
 using Amazon;
-using Org.BouncyCastle.Crypto.Fpe;
 using System.IO;
-using System.Globalization;
+using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataExport.DataRelease.Audit;
 
-namespace Rdmp.Core.DataExport.DataRelease
+namespace Rdmp.Core.DataExport.DataRelease;
+
+/// <summary>
+/// Release engine Destination for writing data to an AWS S3 Bucket
+/// </summary>
+public class AWSS3BucketReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>,
+IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
 {
-    public class AWSS3BucketReleaseDestination : IPluginDataFlowComponent<ReleaseAudit>, IDataFlowDestination<ReleaseAudit>,
-    IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>
+
+    [DemandsNestedInitialization] public ReleaseEngineSettings ReleaseSettings { get; set; }
+    [DemandsInitialization("The local AWS profile you wish to use for the extraction")]
+    public string AWS_Profile { get; set; }
+
+    [DemandsInitialization("The name of the bucket you wish to write to")]
+    public string BucketName { get; set; }
+
+    [DemandsInitialization("The AWS Region you wish to use")]
+    public string AWS_Region { get; set; }
+
+
+    [DemandsInitialization("The folder in the S3 bucket you wish to release to", defaultValue: "")]
+    public string BucketFolder { get; set; }
+
+    private ReleaseData _releaseData;
+    private Project _project;
+    private AWSReleaseEngine _engine;
+
+    private AWSS3 _s3Helper;
+    private RegionEndpoint _region;
+    private S3Bucket _bucket;
+    private List<IExtractionConfiguration> _configurationReleased;
+
+
+    public void Abort(IDataLoadEventListener listener)
     {
 
-        [DemandsNestedInitialization] public ReleaseEngineSettings ReleaseSettings { get; set; }
-        [DemandsInitialization("The local AWS profile you wish to use for the extraction")]
-        public string AWS_Profile { get; set; }
+        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "This component cannot Abort!"));
 
-        [DemandsInitialization("The name of the bucket you wish to write to")]
-        public string BucketName { get; set; }
+    }
 
-        [DemandsInitialization("The AWS Region you wish to use")]
-        public string AWS_Region { get; set; }
-
-
-        [DemandsInitialization("The folder in the S3 bucket you wish to release to", defaultValue: "")]
-        public string BucketFolder { get; set; }
-
-        private ReleaseData _releaseData;
-        private Project _project;
-        private AWSReleaseEngine _engine;
-        private List<IExtractionConfiguration> _configurationReleased;
-        private DirectoryInfo _destinationFolder;
-
-        private IBasicActivateItems _activator;
-
-
-        public void SetActivator(IBasicActivateItems activator)
+    public void Check(ICheckNotifier notifier)
+    {
+        ((ICheckable)ReleaseSettings).Check(notifier);
+        //TODO make the aws stuff pop up if not configured
+        if (string.IsNullOrWhiteSpace(AWS_Region))
         {
-            _activator = activator;
+            notifier.OnCheckPerformed(new CheckEventArgs("No AWS Region Specified.", CheckResult.Fail));
+            return;
+        }
+        _region = RegionEndpoint.GetBySystemName(AWS_Region);
+        if (string.IsNullOrWhiteSpace(AWS_Profile))
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("No AWS Profile Specified.", CheckResult.Fail));
+            return;
+        }
+
+        _s3Helper = new AWSS3(AWS_Profile, _region);
+        try
+        {
+            _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
+        }
+        catch (Exception e)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail));
+            return;
+        }
+        if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
+            return;
         }
 
 
-        private AWSS3 _s3Helper;
-        private RegionEndpoint _region;
-        private S3Bucket _bucket;
+    }
 
-        public void Abort(IDataLoadEventListener listener)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Check(ICheckNotifier notifier)
-        {
-            ((ICheckable)ReleaseSettings).Check(notifier);
-            //TODO make the aws stuff pop up if not configured
-            if (string.IsNullOrWhiteSpace(AWS_Region))
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("No AWS Region Specified.", CheckResult.Fail));
-                return;
-            }
-            _region = RegionEndpoint.GetBySystemName(AWS_Region);
-            if (string.IsNullOrWhiteSpace(AWS_Profile))
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("No AWS Profile Specified.", CheckResult.Fail));
-                return;
-            }
-
-            _s3Helper = new AWSS3(AWS_Profile, _region);
+    public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+    {
+        if (pipelineFailureExceptionIfAny != null && _releaseData != null)
             try
             {
-                _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(e.Message, CheckResult.Fail));
-                return;
-            }
-            //todo check location on bucket doesn't already exists
-            //check if the folder exists
-            if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
-                return;
-            }
+                var remnantsDeleted = 0;
 
-
-        }
-
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void PreInitialize(Project value, IDataLoadEventListener listener)
-        {
-            _project = value;
-        }
-
-        public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
-        {
-            _releaseData = value;
-        }
-
-        public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            if (releaseAudit == null)
-                return null;
-            _region = RegionEndpoint.GetBySystemName(AWS_Region);
-            _s3Helper = new AWSS3(AWS_Profile, _region);
-            _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
-            //if (releaseAudit.ReleaseFolder == null)
-            //{
-            //    if (string.IsNullOrWhiteSpace(BucketFolder))
-            //    {
-            //        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Release Folder or S3 Bucket path were specified. Files will be placed in the root of the S3 Bucket"));
-            //    }
-            //}
-            if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
-            {
-                //TODO this is untested, but a blind copy from the other release destination
-                listener.OnNotify(this,
-                new NotifyEventArgs(ProgressEventType.Information,
-                    "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
-
-                var recordsDeleted = 0;
-
-                foreach (var (configuration, potentials) in _releaseData.ConfigurationsForRelease)
-                    //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
-                    foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r =>
-                                 potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                foreach (ExtractionConfiguration configuration in _releaseData.ConfigurationsForRelease.Keys)
+                    foreach (ReleaseLog remnant in configuration.ReleaseLog)
                     {
-                        redundantResult.DeleteInDatabase();
-                        recordsDeleted++;
+                        remnant.DeleteInDatabase();
+                        remnantsDeleted++;
                     }
 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-                    $"Deleted {recordsDeleted} old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
-
+                if (remnantsDeleted > 0)
+                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                        $"Because release failed we are deleting ReleaseLogEntries, this resulted in {remnantsDeleted} deleted records, you will likely need to re-extract these datasets or retrieve them from the Release directory"));
             }
-            _region = RegionEndpoint.GetBySystemName(AWS_Region);
-            _s3Helper = new AWSS3(AWS_Profile, _region);
-            _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder, listener, releaseAudit);
-            _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
-                _releaseData.ReleaseState == ReleaseState.DoingPatch);
+            catch (Exception e1)
+            {
+                listener.OnNotify(this,
+                    new NotifyEventArgs(ProgressEventType.Error,
+                        "Error occurred when trying to clean up remnant ReleaseLogEntries", e1));
+            }
 
-            _destinationFolder = _engine.ReleaseAudit.ReleaseFolder;
-            _configurationReleased = _engine.ConfigurationsReleased;
+        if (pipelineFailureExceptionIfAny == null)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Data release succeeded into:{_bucket.BucketName}"));
+            //mark configuration as released
+            foreach (var config in _configurationReleased)
+            {
+                config.IsReleased = true;
+                config.SaveToDatabase();
+            }
 
-            return null;
+            if (ReleaseSettings.DeleteFilesOnSuccess)
+            {
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Cleaning up..."));
+                ExtractionDirectory.CleanupExtractionDirectory(this, _project.ExtractionDirectory,
+                    _configurationReleased, listener);
+            }
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "All done!"));
         }
+    }
+
+    public void PreInitialize(Project value, IDataLoadEventListener listener)
+    {
+        _project = value;
+    }
+
+    public void PreInitialize(ReleaseData value, IDataLoadEventListener listener)
+    {
+        _releaseData = value;
+    }
+
+    public ReleaseAudit ProcessPipelineData(ReleaseAudit releaseAudit, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+    {
+        if (releaseAudit == null)
+            return null;
+        _region = RegionEndpoint.GetBySystemName(AWS_Region);
+        _s3Helper = new AWSS3(AWS_Profile, _region);
+        _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
+
+        if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
+        {
+            //TODO this is untested, but a blind copy from the other release destination
+            listener.OnNotify(this,
+            new NotifyEventArgs(ProgressEventType.Information,
+                "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
+
+            var recordsDeleted = 0;
+
+            foreach (var (configuration, potentials) in _releaseData.ConfigurationsForRelease)
+                //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
+                foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r =>
+                             potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
+                {
+                    redundantResult.DeleteInDatabase();
+                    recordsDeleted++;
+                }
+
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
+                $"Deleted {recordsDeleted} old CumulativeExtractionResults (That were not included in the final Patch you are preparing)"));
+
+        }
+        _region = RegionEndpoint.GetBySystemName(AWS_Region);
+        _s3Helper = new AWSS3(AWS_Profile, _region);
+        _engine = new AWSReleaseEngine(_project, ReleaseSettings, _s3Helper, _bucket, BucketFolder, listener, releaseAudit);
+        _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
+            _releaseData.ReleaseState == ReleaseState.DoingPatch);
+        _configurationReleased = _engine.ConfigurationsReleased;
+        return null;
     }
 }
