@@ -34,9 +34,9 @@ public partial class TimePeriodicityChart : RDMPUserControl, IDataQualityReporti
         chart1.PaletteCustomColors = new Color[]
         {
             ConsequenceBar.CorrectColor,
-            ConsequenceBar.InvalidColor,
+            ConsequenceBar.WrongColor,
             ConsequenceBar.MissingColor,
-            ConsequenceBar.WrongColor
+            ConsequenceBar.InvalidColor
         };
         chart1.Palette = ChartColorPalette.None;
         chart1.KeyUp += chart1_KeyUp;

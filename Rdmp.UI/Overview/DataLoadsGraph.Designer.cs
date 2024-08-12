@@ -70,6 +70,9 @@ namespace Rdmp.UI.Overview
             this.chart1.Size = new System.Drawing.Size(634, 261);
             this.chart1.TabIndex = 0;
             this.chart1.Text = "chart1";
+            this.chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+            this.chart1.ChartAreas[0].CursorX.AutoScroll = true;
+            this.chart1.ChartAreas[0].CursorX.IsUserSelectionEnabled = true;
             // 
             // groupBox1
             // 

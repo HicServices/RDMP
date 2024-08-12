@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -442,6 +442,19 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             WindowTitle = "Open"
         }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
+
+    private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus).FirstOrDefault();
+        var nf = new NewfindUI(Activator, false,focusItem);
+        nf.ShowDialog();
+    }
+    private void newReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var nf = new NewfindUI(Activator, true);
+        nf.ShowDialog();
+    }
+
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
     {

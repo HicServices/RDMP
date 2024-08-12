@@ -79,11 +79,12 @@ public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommand
                 "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, filters, parameters and set operations. Are you sure this is what you want?",
                 "Confirm Cloning")) return;
         CloneCreatedIfAny = _cic.CreateClone(ThrowImmediatelyCheckNotifier.Quiet);
-        if (CloneCreatedIfAny != null)
+        if (CloneCreatedIfAny != null && _version is not null)
         {
             CloneCreatedIfAny.Version = _version;
             //If no name is provided, use the existing name, but repalce the "(Clone) with the version number"
-            CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
+            if(CloneCreatedIfAny.Version != null)
+                CloneCreatedIfAny.Name = _name ?? $"{CloneCreatedIfAny.Name[..^7]}:{CloneCreatedIfAny.Version}";
             if (_version is not null)
                 CloneCreatedIfAny.Frozen = true;
             CloneCreatedIfAny.SaveToDatabase();
