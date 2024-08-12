@@ -66,10 +66,12 @@
             cbAutoRunSqlQueries = new System.Windows.Forms.CheckBox();
             label8 = new System.Windows.Forms.Label();
             groupBox4 = new System.Windows.Forms.GroupBox();
+            cbNewFind = new System.Windows.Forms.CheckBox();
             groupBox5 = new System.Windows.Forms.GroupBox();
             cbUseAliasInsteadOfTransformInGroupByAggregateGraphs = new System.Windows.Forms.CheckBox();
             flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             groupBox8 = new System.Windows.Forms.GroupBox();
+            cbPromptFilterRename = new System.Windows.Forms.CheckBox();
             cbExpandAllInCohortBuilder = new System.Windows.Forms.CheckBox();
             cbStrictValidationForCohortBuilderContainers = new System.Windows.Forms.CheckBox();
             groupBox6 = new System.Windows.Forms.GroupBox();
@@ -93,7 +95,6 @@
             userSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             tbFind = new System.Windows.Forms.TextBox();
             label14 = new System.Windows.Forms.Label();
-            cbPromptFilterRename = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)olvErrorCodes).BeginInit();
             groupBox2.SuspendLayout();
@@ -468,6 +469,7 @@
             // 
             // groupBox4
             // 
+            groupBox4.Controls.Add(cbNewFind);
             groupBox4.Controls.Add(cbScoreZeroForCohortAggregateContainers);
             groupBox4.Controls.Add(cbAdvancedFindFilters);
             groupBox4.Controls.Add(cbFindShouldPin);
@@ -477,6 +479,17 @@
             groupBox4.TabIndex = 22;
             groupBox4.TabStop = false;
             groupBox4.Text = "Find (CTRL + F) Options";
+            // 
+            // cbNewFind
+            // 
+            cbNewFind.AutoSize = true;
+            cbNewFind.Location = new System.Drawing.Point(6, 97);
+            cbNewFind.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            cbNewFind.Name = "cbNewFind";
+            cbNewFind.Size = new System.Drawing.Size(98, 19);
+            cbNewFind.TabIndex = 20;
+            cbNewFind.Text = "Use New Find";
+            cbNewFind.UseVisualStyleBackColor = true;
             // 
             // groupBox5
             // 
@@ -532,6 +545,18 @@
             groupBox8.TabIndex = 26;
             groupBox8.TabStop = false;
             groupBox8.Text = "Cohort Building";
+            // 
+            // cbPromptFilterRename
+            // 
+            cbPromptFilterRename.AutoSize = true;
+            cbPromptFilterRename.Checked = true;
+            cbPromptFilterRename.CheckState = System.Windows.Forms.CheckState.Checked;
+            cbPromptFilterRename.Location = new System.Drawing.Point(6, 89);
+            cbPromptFilterRename.Name = "cbPromptFilterRename";
+            cbPromptFilterRename.Size = new System.Drawing.Size(222, 19);
+            cbPromptFilterRename.TabIndex = 4;
+            cbPromptFilterRename.Text = "Prompt For Rename on Filter Change";
+            cbPromptFilterRename.UseVisualStyleBackColor = true;
             // 
             // cbExpandAllInCohortBuilder
             // 
@@ -768,18 +793,6 @@
             label14.TabIndex = 26;
             label14.Text = "Find Setting:";
             // 
-            // cbPromptFilterRename
-            // 
-            cbPromptFilterRename.AutoSize = true;
-            cbPromptFilterRename.Checked = true;
-            cbPromptFilterRename.CheckState = System.Windows.Forms.CheckState.Checked;
-            cbPromptFilterRename.Location = new System.Drawing.Point(6, 89);
-            cbPromptFilterRename.Name = "cbPromptFilterRename";
-            cbPromptFilterRename.Size = new System.Drawing.Size(222, 19);
-            cbPromptFilterRename.TabIndex = 4;
-            cbPromptFilterRename.Text = "Prompt For Rename on Filter Change";
-            cbPromptFilterRename.UseVisualStyleBackColor = true;
-            // 
             // UserSettingsFileUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -885,5 +898,6 @@
         private System.Windows.Forms.Label label16;
         private System.Windows.Forms.TextBox tbLogLocation;
         private System.Windows.Forms.CheckBox cbPromptFilterRename;
+        private System.Windows.Forms.CheckBox cbNewFind;
     }
 }

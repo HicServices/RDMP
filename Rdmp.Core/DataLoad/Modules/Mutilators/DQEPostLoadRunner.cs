@@ -45,23 +45,6 @@ public class DQEPostLoadRunner : IMutilateDataTables
 
     public ExitCodeType Mutilate(IDataLoadJob job)
     {
-        var lmdID = job.LoadMetadata.ID;
-        var linkage = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID).FirstOrDefault();
-        var catalogue = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Catalogue>("ID", linkage.CatalogueID).FirstOrDefault();
-        if (catalogue is null) return ExitCodeType.Success;
-        if (catalogue.TimeCoverage_ExtractionInformation_ID == null)
-        {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-           "Catalogue does not have a Time Coverage column set. DQE will not be run"));
-            return ExitCodeType.Success;
-        }
-
-        if (string.IsNullOrWhiteSpace(catalogue.ValidatorXML))
-        {
-            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
-            "Catalogue does not have any validation rules configured.DQE will not be run."));
-            return ExitCodeType.Success;
-        }
         var dqeServer = job.RepositoryLocator.CatalogueRepository.GetDefaultFor(PermissableDefaults.DQE);
         if (dqeServer == null)
         {
@@ -69,17 +52,34 @@ public class DQEPostLoadRunner : IMutilateDataTables
             "There is no DQE server. DQE will not be run."));
             return ExitCodeType.Success;
         }
-
-        DqeOptions options = new()
+        var lmdID = job.LoadMetadata.ID;
+        var linkage = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", lmdID);
+        foreach (var link in linkage)
         {
-            Catalogue = catalogue.ID.ToString(),
-            Command = CommandLineActivity.run
-        };
+            var catalogue = job.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Catalogue>("ID", link.CatalogueID).FirstOrDefault();
+            if (catalogue is null) continue;
+            if (catalogue.TimeCoverage_ExtractionInformation_ID == null)
+            {
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+               $"Catalogue '{catalogue.Name}' does not have a Time Coverage column set. DQE will not be run"));
+            }
 
-        var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);
-        runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
-                    new GracefulCancellationToken(), job.DataLoadInfo.ID);
+            if (string.IsNullOrWhiteSpace(catalogue.ValidatorXML))
+            {
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning,
+                 $"Catalogue '{catalogue.Name}' does not have any validation rules configured.DQE will not be run."));
+            }
 
+            DqeOptions options = new()
+            {
+                Catalogue = catalogue.ID.ToString(),
+                Command = CommandLineActivity.run
+            };
+            var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);
+            runner.Run(job.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
+                        new GracefulCancellationToken());
+        }
         return ExitCodeType.Success;
+
     }
 }

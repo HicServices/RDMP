@@ -47,9 +47,7 @@ public class YamlRepository : MemoryDataExportRepository
 
         // Build the serializer
         _serializer = CreateSerializer(GetCompatibleTypes());
-
-        LoadObjects();
-
+        
         if (File.Exists(GetEncryptionKeyPathFile()))
         {
             EncryptionKeyPath = File.ReadLines(GetEncryptionKeyPathFile()).First();
@@ -60,6 +58,8 @@ public class YamlRepository : MemoryDataExportRepository
                 if (File.Exists(trimmed)) EncryptionKeyPath = trimmed;
             }
         }
+        
+        LoadObjects();      
 
         // Don't create new objects with the ID of existing objects
         NextObjectId = Objects.IsEmpty ? 0 : Objects.Max(o => o.Key.ID);

@@ -235,55 +235,16 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue], isUpdat
                             new ProgressEventArgs($"Processing {_catalogue}",
                                 new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
                 }
-                //TODO the pivot categories that do not exist in the load, but do in the catalogue do not exist in the new DQE
-                //if (isUpdate)
-                //{
-                //    var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
-                //    var knownPivotValues = evaluation.ColumnStates.Select(c => c.PivotCategory).ToList();
-                //    var pivotValuesInThisLoad = byPivotRowStatesOverDataLoadRunId.Keys;
-                //    var oldPivotValuesToAdd = knownPivotValues.Where(v => !pivotValuesInThisLoad.Contains(v)).ToList();
-                //    foreach(var oldValue in oldPivotValuesToAdd)
-                //    {
-                //        if(!byPivotRowStatesOverDataLoadRunId.TryGetValue(oldValue,out _))
-                //            byPivotRowStatesOverDataLoadRunId.Add(oldValue, new DQEStateOverDataLoadRunId(oldValue));
-                //        byPivotRowStatesOverDataLoadRunId[oldValue].AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder, dqeRepository.GetMostRecentEvaluationFor(_catalogue));
-                //    }
-                //    //states.AddKeyToDictionaries(dataLoadRunIDOfCurrentRecord, _validator, _queryBuilder, isUpdate ? dqeRepository.GetMostRecentEvaluationFor(_catalogue) : null);
+                if (isUpdate)
+                {
+                    //pivot categories
+                    //add missing categories
+                    var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
+                    var previousCategories = evaluation.ColumnStates.Select(cs => cs.PivotCategory).ToList().Distinct();
+                    var categoriesToAdd = previousCategories.Where(c => !byPivotRowStatesOverDataLoadRunId.Keys.Contains(c));
+                    Console.WriteLine("A");
 
-                //    //byPivotRowStatesOverDataLoadRunId[pivotValue]
-                //}
-                //// Add old pivotValues
-                //if (isUpdate)
-                //{
-                //    var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
-                //    var pivotColumnsToAdd = evaluation.ColumnStates.Where(c => !foundPivotValues.Contains(c.PivotCategory)).ToList();
-                //    foreach (var pivotColumn in pivotColumnsToAdd)
-                //    {
-                //        if (!byPivotRowStatesOverDataLoadRunId.TryGetValue(pivotColumn.PivotCategory, out _))
-                //        {
-                //            var dqeStateOverDataLoadRunId = new DQEStateOverDataLoadRunId(pivotColumn.PivotCategory);
-                //            dqeStateOverDataLoadRunId.AddKeyToDictionaries(dataLoadId, _validator, _queryBuilder, null);
-                //            byPivotRowStatesOverDataLoadRunId.Add(pivotColumn.PivotCategory,
-                //                dqeStateOverDataLoadRunId);
-                //            var periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotColumn.PivotCategory);
-                //            byPivotCategoryCubesOverTime.Add(pivotColumn.PivotCategory, periodicityCubesOverTime);
-                //        }
-
-                //        if (byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates.TryGetValue(dataLoadId, out _))
-                //        {
-                //            var x = byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId];
-                //            var y = byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId];
-                //            ColumnState[] z = [ ..y,pivotColumn];
-                //            byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId] = z;// [.. byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates[dataLoadId], pivotColumn]; //.Add(dataLoadId, [pivotColumn]);
-
-                //        }
-                //        else
-                //        {
-                //            byPivotRowStatesOverDataLoadRunId[pivotColumn.PivotCategory].AllColumnStates.Add(dataLoadId, [pivotColumn]); //.Add(dataLoadId, [pivotColumn]);
-
-                //        }
-                //    }
-                //}
+                }
 
                 //final value
                 forker.OnProgress(this,

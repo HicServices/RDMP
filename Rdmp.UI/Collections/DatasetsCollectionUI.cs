@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
+using System.Windows.Forms;
 
 namespace Rdmp.UI.Collections;
 
@@ -43,6 +45,22 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
         {
             CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8b0481e-378c-4996-9400-cb039c2efc5c"));
             _firstTime = false;
+            var _refresh = new ToolStripMenuItem
+            {
+                Visible = true,
+                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+                Alignment = ToolStripItemAlignment.Right,
+                ToolTipText = "Refresh Object"
+            };
+            _refresh.Click += delegate (object sender, EventArgs e) {
+                var dataset = Activator.CoreChildProvider.AllDatasets.First();
+                if (dataset is not null)
+                {
+                    var cmd = new ExecuteCommandRefreshObject(Activator, dataset);
+                    cmd.Execute();
+                }
+            };
+            CommonFunctionality.Add(_refresh);
         }
     }
 
