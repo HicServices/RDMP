@@ -127,17 +127,10 @@ public class CatalogueConstraintReport : DataQualityReport
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
             if (isUpdate)
             {
-                //byPivotCategoryCubesOverTime
                 var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
                 if (evaluation is not null)
                 {
                     existingPeriodicityCounts = PeriodicityState.GetPeriodicityCountsForEvaluation(evaluation, false);
-                    //foreach(var period in periodicityCounts)
-                    //{
-                    //    byPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(period.Key.Year,period.Key.Month,period.Value.CountGood)
-                    //        //periodicityCubesOverTime
-                    //    //byPivotCategoryCubesOverTime.Add(period.Key, period.Value);
-                    //}
                 }
             }
 
@@ -241,9 +234,26 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue], isUpdat
                     //add missing categories
                     var evaluation = dqeRepository.GetMostRecentEvaluationFor(_catalogue);
                     var previousCategories = evaluation.ColumnStates.Select(cs => cs.PivotCategory).ToList().Distinct();
-                    var categoriesToAdd = previousCategories.Where(c => !byPivotRowStatesOverDataLoadRunId.Keys.Contains(c));
-                    Console.WriteLine("A");
+                    var categoriesToAdd = previousCategories.Where(c => !byPivotRowStatesOverDataLoadRunId.Keys.Contains(c)).ToList();
+                    var columnStatesToAdd = evaluation.ColumnStates.Where(cs => categoriesToAdd.Contains(cs.PivotCategory)).ToList();
+                    foreach(var columnState in columnStatesToAdd)
+                    {
+                        //byPivotRowStatesOverDataLoadRunId[columnState.PivotCategory] = new DQEStateOverDataLoadRunId(columnState.PivotCategory);
 
+                        if (!byPivotCategoryCubesOverTime.TryGetValue(columnState.PivotCategory, out var periodicityCubesOverTime))
+                        {
+                            //we will need to expand the dictionaries
+                            if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
+                                throw new OverflowException(
+                                    $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
+
+                            //expand both the time periodicity and the state results
+                            byPivotRowStatesOverDataLoadRunId.Add(columnState.PivotCategory,
+                                new DQEStateOverDataLoadRunId(columnState.PivotCategory));
+                            periodicityCubesOverTime = new PeriodicityCubesOverTime(columnState.PivotCategory);
+                            byPivotCategoryCubesOverTime.Add(columnState.PivotCategory, periodicityCubesOverTime);
+                        }
+                    }
                 }
 
                 //final value
