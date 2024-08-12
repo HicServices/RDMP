@@ -34,7 +34,7 @@
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
     <PackageVersion Include="NunitXml.TestLogger" Version="4.0.254" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="4.2.0" />
+    <PackageVersion Include="NUnit.Analyzers" Version="4.3.0" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="coverlet.collector" Version="6.0.2" />
