@@ -85,6 +85,14 @@ public class AWSReleaseEngine : ReleaseEngine
                 var location = GetLocation("Globals", null);
                 Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location)).Wait();
             }
+            foreach (var dir in directory.EnumerateDirectories())
+            {
+                foreach (var file in dir.EnumerateFiles())
+                {
+                    var location = GetLocation("Globals", dir.Name);
+                    Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, file.Name, file.FullName, location)).Wait();
+                }
+            }
         }
     }
 
