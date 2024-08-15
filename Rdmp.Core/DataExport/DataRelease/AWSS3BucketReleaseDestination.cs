@@ -230,14 +230,14 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
     {
         if (releaseAudit == null)
             return null;
-        RetrieveInteractiveConfiguration();
+        if(ConfigureInteractivelyOnRelease)
+            RetrieveInteractiveConfiguration();
         _region = RegionEndpoint.GetBySystemName(AWS_Region);
         _s3Helper = new AWSS3(AWS_Profile, _region);
         _bucket = Task.Run(async () => await _s3Helper.GetBucket(BucketName)).Result;
 
         if (_releaseData.ReleaseState == ReleaseState.DoingPatch)
         {
-            //TODO this is untested, but a blind copy from the other release destination
             listener.OnNotify(this,
             new NotifyEventArgs(ProgressEventType.Information,
                 "CumulativeExtractionResults for datasets not included in the Patch will now be erased."));
@@ -245,7 +245,6 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             var recordsDeleted = 0;
 
             foreach (var (configuration, potentials) in _releaseData.ConfigurationsForRelease)
-                //foreach existing CumulativeExtractionResults if it is not included in the patch then it should be deleted
                 foreach (var redundantResult in configuration.CumulativeExtractionResults.Where(r =>
                              potentials.All(rp => rp.DataSet.ID != r.ExtractableDataSet_ID)))
                 {

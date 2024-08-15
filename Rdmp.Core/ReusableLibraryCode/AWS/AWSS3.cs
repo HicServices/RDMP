@@ -34,7 +34,23 @@ public class AWSS3
         Profile = profile ?? "default";
         Region = region;
         _credentials = AWSCredentialsHelper.LoadSsoCredentials(Profile);
-        _client = new AmazonS3Client(_credentials, Region);
+        var awsEndpoint = "http://127.0.0.1:9000";// Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL");
+        if (awsEndpoint != null)
+        {
+            AmazonS3Config config = new AmazonS3Config()
+            {
+                ServiceURL = awsEndpoint,
+                UseHttp = true,
+                ForcePathStyle = true,
+                //ProxyHost = "127.0.0.1",
+                //ProxyPort = 9000
+            };
+            _client = new AmazonS3Client(_credentials, config);
+        }
+        else
+        {
+            _client = new AmazonS3Client(_credentials, Region);
+        }
     }
 
     public async Task<List<S3Bucket>> ListAvailableBuckets()
@@ -56,7 +72,7 @@ public class AWSS3
 
     public static string KeyGenerator(string path, string file)
     {
-        return Path.Join(path, file).Replace("\\", "/");//todo there is probably a better way to do this
+        return Path.Join(path, file).Replace("\\", "/");
     }
 
     public async Task<bool> DoesObjectExists(string Key, string bucketName)
