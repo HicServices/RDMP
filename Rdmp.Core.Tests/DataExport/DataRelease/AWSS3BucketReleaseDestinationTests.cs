@@ -1,29 +1,18 @@
 ﻿using NUnit.Framework;
 using Minio;
-using Tests.Common;
 using Rdmp.Core.ReusableLibraryCode.AWS;
 using System.Threading.Tasks;
-using Amazon.Runtime;
 using Tests.Common.Scenarios;
-using FAnsi.Discovery;
-using NUnit.Framework.Legacy;
-using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Logging;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using Rdmp.Core.Tests.DataExport.DataExtraction;
-using System.Data;
 using System;
-using System.IO;
 using Rdmp.Core.Curation.Data.Pipelines;
-using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System.Linq;
-using NPOI.POIFS.Crypt;
 using Minio.DataModel.Args;
 using System.Collections.Generic;
 using Minio.DataModel;
@@ -134,6 +123,208 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
             Assert.That(foundObjects.Count, Is.EqualTo(1));
             DeleteBucket("releasetoawsbasictest");
         }
+
+        [Test]
+        public void NoRegion()
+        {
+            DoExtraction();
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+            var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+            var match = args.Single(a => a.Name == "AWS_Profile");
+            match.SetValue("minio");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketName");
+            match.SetValue("releasetoawsbasictest");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            var optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
+            var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+
+        }
+
+        [Test]
+        public void NoProfile()
+        {
+            DoExtraction();
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+            var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+            var match = args.Single(a => a.Name == "AWS_Region");
+            match.SetValue("eu-west-2");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketName");
+            match.SetValue("releasetoawsbasictest");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            var optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
+            var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+
+        }
+
+        [Test]
+        public void BadProfile()
+        {
+            DoExtraction();
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+            var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+            var match = args.Single(a => a.Name == "AWS_Region");
+            match.SetValue("eu-west-2");
+            match = args.Single(a => a.Name == "AWS_Profile");
+            match.SetValue("junk-profile");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketName");
+            match.SetValue("releasetoawsbasictest");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            var optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
+            var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+
+        }
+
+
+        [Test]
+        public void NoBucket()
+        {
+            DoExtraction();
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+            var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+            var match = args.Single(a => a.Name == "AWS_Region");
+            match.SetValue("eu-west-2");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "AWS_Profile");
+            match.SetValue("minio");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            var optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
+            var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+
+        }
+
+        [Test]
+        public void BadBucket()
+        {
+            DoExtraction();
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+            var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+            var match = args.Single(a => a.Name == "AWS_Region");
+            match.SetValue("eu-west-2");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "AWS_Profile");
+            match.SetValue("minio");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketName");
+            match.SetValue("doesNotExist");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            var optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+            };
+            var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+
+        }
+
 
         [Test]
         public void LocationAlreadyExists()

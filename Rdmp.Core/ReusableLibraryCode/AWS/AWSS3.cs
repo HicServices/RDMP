@@ -34,7 +34,7 @@ public class AWSS3
         Profile = profile ?? "default";
         Region = region;
         _credentials = AWSCredentialsHelper.LoadSsoCredentials(Profile);
-        var awsEndpoint = "http://127.0.0.1:9000";// Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL");
+        var awsEndpoint = Environment.GetEnvironmentVariable("AWS_ENDPOINT_URL");
         if (awsEndpoint != null)
         {
             AmazonS3Config config = new AmazonS3Config()
@@ -42,8 +42,6 @@ public class AWSS3
                 ServiceURL = awsEndpoint,
                 UseHttp = true,
                 ForcePathStyle = true,
-                //ProxyHost = "127.0.0.1",
-                //ProxyPort = 9000
             };
             _client = new AmazonS3Client(_credentials, config);
         }
