@@ -96,7 +96,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         {
             MakeBucket("releasetoawsbasictest");
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe1");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -140,21 +140,8 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         {
             MakeBucket("releasetoawsbasictest");
 
-            var file = Path.GetTempFileName();
-            using (var sw = new StreamWriter(file))
-            {
-                sw.WriteLine("Name,Surname,Age,Healthiness,DateOfImagining");
-                sw.WriteLine("Frank,\"Mortus,M\",41,0.00,2005-12-01");
-                sw.WriteLine("Bob,Balie,12,1,2013-06-11");
-                sw.WriteLine("Munchen,'Smith',43,0.3,2002-01-01");
-                sw.WriteLine("Carnage,Here there is,29,0.91,2005-01-01");
-                sw.WriteLine("Nathan,Crumble,51,0.78,2005-01-01");
-                sw.Close();
-            }
-            var opArgs = new PutObjectArgs().WithBucket("releasetoawsbasictest").WithObject("release").WithFileName(file);
-            _minioClient.PutObjectAsync(opArgs);
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe2");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -187,8 +174,47 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
                 Pipeline = pipe.ID.ToString()
             };
             var runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
-            var ex = Assert.Throws<Exception>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+            Assert.DoesNotThrow(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
             var foundObjects = GetObjects("releasetoawsbasictest");
+            Assert.That(foundObjects.Count, Is.EqualTo(1));
+            DoExtraction();
+            pipe = new Pipeline(CatalogueRepository, "NestedPipe3");
+            pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
+                "AWS S3 Release");
+            pc.SaveToDatabase();
+
+             args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
+
+            Assert.That(pc.GetAllArguments().Any());
+
+             match = args.Single(a => a.Name == "AWS_Profile");
+            match.SetValue("minio");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketName");
+            match.SetValue("releasetoawsbasictest");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "AWS_Region");
+            match.SetValue("eu-west-2");
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "ConfigureInteractivelyOnRelease");
+            match.SetValue(false);
+            match.SaveToDatabase();
+            match = args.Single(a => a.Name == "BucketFolder");
+            match.SetValue("release");
+            match.SaveToDatabase();
+
+            pipe.DestinationPipelineComponent_ID = pc.ID;
+            pipe.SaveToDatabase();
+            optsRelease = new ReleaseOptions
+            {
+                Configurations = _configuration.ID.ToString(),
+                Pipeline = pipe.ID.ToString(),
+                Command = CommandLineActivity.check
+
+            };
+            runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
+            var ex = Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+            foundObjects = GetObjects("releasetoawsbasictest");
             Assert.That(foundObjects.Count, Is.EqualTo(1));
             DeleteBucket("releasetoawsbasictest");
         }
