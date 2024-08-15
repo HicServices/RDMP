@@ -35,7 +35,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         private readonly string APILocation = "http://172.17.0.2:9000 ";
         private readonly string username = "minioadmin";
         private readonly string password = "minioadmin";
-        private readonly string endpoint = "127.0.0.1:9000";//"play.min.io";
+        private readonly string endpoint = "127.0.0.1:9000";
         private static IMinioClient _minioClient;
 
 
