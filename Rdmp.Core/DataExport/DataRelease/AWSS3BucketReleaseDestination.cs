@@ -10,7 +10,6 @@ using Rdmp.Core.DataFlowPipeline;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -22,7 +21,6 @@ using Amazon;
 using System.IO;
 using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataExport.DataRelease.Audit;
-using NPOI.HPSF;
 
 namespace Rdmp.Core.DataExport.DataRelease;
 
