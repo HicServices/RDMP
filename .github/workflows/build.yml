@@ -63,7 +63,7 @@ jobs:
         shell: bash
         run: |
           rm -rf coverage
-          wget https://dl.min.io/server/minio/release/windows-amd64/minio.exe
+          curl -o minio.exe "https://dl.min.io/server/minio/release/windows-amd64/minio.exe""
           .\minio.exe server .\minio --console-address :9001 &
           $ENV:AWS_ENDPOINT_URL="http://127.0.0.1:9000"
           $ENV:AWS_ACCESS_KEY_ID="minioadmin"
