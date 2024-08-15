@@ -129,6 +129,12 @@ jobs:
         shell: bash
         run:  |
           echo "UseFileSystemRepo: true" >> Tests.Common/TestDatabases.txt
+          curl -L "https://dl.min.io/server/minio/release/windows-amd64/minio.exe" > minio.exe
+          ./minio.exe server ./minio --console-address :9001 &
+          AWS_ENDPOINT_URL="http://127.0.0.1:9000"
+          mkdir ~/.aws
+          echo -e "[minio]\naws_access_key_id=minioadmin\naws_secret_access_key=minioadmin\naws_endpoint_url=http:127.0.0.1:9001" > ~/.aws/credentials
+          
           dotnet test Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
