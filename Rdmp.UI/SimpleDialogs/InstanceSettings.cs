@@ -26,6 +26,7 @@ namespace Rdmp.UI.SimpleDialogs
             _settings = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Setting>();
 
             RegisterCheckbox(cbAutoSuggestProjectNumbers, "AutoSuggestProjectNumbers");
+            RegisterCheckbox(cbCohortVersioningOnCommit, "PromptForVersionOnCohortCommit");
             _loaded = true;
         }
 

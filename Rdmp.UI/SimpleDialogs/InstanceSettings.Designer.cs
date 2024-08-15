@@ -32,6 +32,7 @@
             cbAutoSuggestProjectNumbers = new System.Windows.Forms.CheckBox();
             instanceSettingsToolTips = new System.Windows.Forms.ToolTip(components);
             label1 = new System.Windows.Forms.Label();
+            cbCohortVersioningOnCommit = new System.Windows.Forms.CheckBox();
             SuspendLayout();
             // 
             // cbAutoSuggestProjectNumbers
@@ -54,11 +55,22 @@
             label1.TabIndex = 2;
             label1.Text = "Settings will automatically be Saved as you change them ";
             // 
+            // cbCohortVersioningOnCommit
+            // 
+            cbCohortVersioningOnCommit.AutoSize = true;
+            cbCohortVersioningOnCommit.Location = new System.Drawing.Point(12, 65);
+            cbCohortVersioningOnCommit.Name = "cbCohortVersioningOnCommit";
+            cbCohortVersioningOnCommit.Size = new System.Drawing.Size(364, 19);
+            cbCohortVersioningOnCommit.TabIndex = 3;
+            cbCohortVersioningOnCommit.Text = "Prompt user to create a new version of the cohort before committing it";
+            cbCohortVersioningOnCommit.UseVisualStyleBackColor = true;
+            // 
             // InstanceSettings
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(cbCohortVersioningOnCommit);
             Controls.Add(label1);
             Controls.Add(cbAutoSuggestProjectNumbers);
             Name = "InstanceSettings";
@@ -72,5 +84,6 @@
         private System.Windows.Forms.CheckBox cbAutoSuggestProjectNumbers;
         private System.Windows.Forms.ToolTip instanceSettingsToolTips;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox cbCohortVersioningOnCommit;
     }
 }
