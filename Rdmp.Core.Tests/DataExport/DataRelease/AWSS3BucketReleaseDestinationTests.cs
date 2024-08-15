@@ -39,6 +39,13 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         private static IMinioClient _minioClient;
 
 
+        [TearDown]
+        public void TearDown()
+        {
+            if (_minioClient is not null)
+                _minioClient.Dispose();
+        }
+
         [SetUp]
         public void Setup()
         {
