@@ -57,6 +57,12 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         {
             //ColumnInfo 
             var matchValue = $"'{match[pk.GetRuntimeName()]}'";
+            var dataType = pk.Data_type;
+            //if(dataType == "datetime2")
+            //{
+            //    var date = new DateTime(match[pk.GetRuntimeName()].ToString());
+            //}
+            
             //doesn;t work for datePKS
 
             sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
