@@ -43,7 +43,7 @@ namespace Rdmp.UI.SimpleDialogs
             label1 = new System.Windows.Forms.Label();
             tbFind = new System.Windows.Forms.TextBox();
             panel2 = new System.Windows.Forms.Panel();
-            folv = new ObjectListView();
+            folv = new FastObjectListView();
             olvID = new OLVColumn();
             olvName = new OLVColumn();
             olvHierarchy = new OLVColumn();
