@@ -35,7 +35,7 @@ public class ReleaseEngine
     public Project Project { get; private set; }
     public bool ReleaseSuccessful { get; protected set; }
     public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
-    public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; private set; }
+    public Dictionary<IExtractionConfiguration, List<ReleasePotential>> ConfigurationsToRelease { get; protected set; }
 
     public ReleaseEngineSettings ReleaseSettings { get; set; }
 
