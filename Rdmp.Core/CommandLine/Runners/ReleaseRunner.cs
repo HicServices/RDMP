@@ -120,9 +120,9 @@ public class ReleaseRunner : ManyRunner
         if (useCase != null)
         {
             var engine = useCase.GetEngine(_pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
-            if (((IDataFlowPipelineEngine)engine).DestinationObject is IInteractiveCheckable)
+            if (engine.DestinationObject is IInteractiveCheckable)
             {
-                ((IInteractiveCheckable)(((IDataFlowPipelineEngine)engine).DestinationObject)).SetActivator(_activator);
+                ((IInteractiveCheckable)engine.DestinationObject).SetActivator(_activator);
             }
             toReturn.Add(engine);
         }

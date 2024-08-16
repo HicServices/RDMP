@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Terminal.Gui;
 
 namespace Rdmp.Core.DataExport.DataRelease;
 
@@ -29,9 +30,9 @@ namespace Rdmp.Core.DataExport.DataRelease;
 public class AWSReleaseEngine : ReleaseEngine
 {
 
-    AWSS3 _s3Helper;
-    S3Bucket _bucket;
-    string _bucketFolder;
+    private readonly AWSS3 _s3Helper;
+    private readonly S3Bucket _bucket;
+    private readonly string _bucketFolder;
 
     public AWSReleaseEngine(Project project, ReleaseEngineSettings settings, AWSS3 s3Helper, S3Bucket bucket, string bucketFolder, IDataLoadEventListener listener, ReleaseAudit releaseAudit) : base(project, settings, listener, releaseAudit)
     {
@@ -134,10 +135,8 @@ public class AWSReleaseEngine : ReleaseEngine
             Task.Run(async () => await _s3Helper.PutObject(_bucket.BucketName, wordDocName, wordDocPath, locationWithinBucket)).Wait();
             AuditFileCreation(wordDocName, sw, 1);
 
-            foreach (var rp in kvp.Value)
+            foreach (var rp in kvp.Value.Where(rp => rp.ExtractDirectory != null))
             {
-                if (rp.ExtractDirectory == null)
-                    continue;
                 var rpDirectory = !string.IsNullOrWhiteSpace(locationWithinBucket) ? $"{locationWithinBucket}/{rp.ExtractDirectory.Name}" : rp.ExtractDirectory.Name;
                 AuditDirectoryCreation(rpDirectory, sw, 1);
                 CutTreeRecursive(rp.ExtractDirectory, rpDirectory, sw, 2);
@@ -181,14 +180,11 @@ public class AWSReleaseEngine : ReleaseEngine
         }
 
         //found subdirectory
-        foreach (var dir in from.GetDirectories())
-            //if it is not completely empty, copy it across
-            if (dir.GetFiles().Any() || dir.GetDirectories().Any())
-            {
-                //audit as +DirectoryName at tab indent
-                AuditDirectoryCreation(dir.Name, audit, tabDepth);
-                CutTreeRecursive(dir, !string.IsNullOrWhiteSpace(into) ? $"{into}/{dir.Name}" : dir.Name, audit, tabDepth + 1);
-            }
+        foreach (var dir in from.GetDirectories().Where(dir => dir.GetFiles().Any() || dir.GetDirectories().Any()){
+            //audit as +DirectoryName at tab indent
+            AuditDirectoryCreation(dir.Name, audit, tabDepth);
+            CutTreeRecursive(dir, !string.IsNullOrWhiteSpace(into) ? $"{into}/{dir.Name}" : dir.Name, audit, tabDepth + 1);
+        }
     }
     protected string ReleaseMetadata(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> kvp,
   string configurationSubDirectory)
