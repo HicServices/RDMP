@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -51,7 +52,7 @@ public class ProcessTaskCheckingTests : DatabaseTests
         c.SaveToDatabase();
         _lmd.LinkToCatalogue(c);
         _task = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles);
-        _checker = new ProcessTaskChecks(_lmd);
+        _checker = new ProcessTaskChecks(_lmd, new ThrowImmediatelyActivator(RepositoryLocator));
     }
 
 

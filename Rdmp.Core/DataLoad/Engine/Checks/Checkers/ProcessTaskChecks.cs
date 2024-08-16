@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
@@ -22,10 +23,12 @@ public class ProcessTaskChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
     private LoadArgsDictionary dictionary;
+    private IBasicActivateItems _activator;
 
-    public ProcessTaskChecks(ILoadMetadata loadMetadata)
+    public ProcessTaskChecks(ILoadMetadata loadMetadata, IBasicActivateItems activator)
     {
         _loadMetadata = loadMetadata;
+        _activator = activator;
     }
 
     public void Check(ProcessTask processTask, ICheckNotifier notifier)
@@ -46,7 +49,8 @@ public class ProcessTaskChecks : ICheckable
 
 
         var created = RuntimeTaskFactory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
-
+        if (created is DataProviderRuntimeTask)
+            ((DataProviderRuntimeTask)created).SetActivator(_activator);
         created.Check(notifier);
     }
 

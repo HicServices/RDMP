@@ -14,6 +14,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -179,7 +180,7 @@ MrMurder,2001-01-01,Yella");
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker =
-            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+            new CheckEntireDataLoadProcess(new ThrowImmediatelyActivator(RepositoryLocator),lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         //create a reader
@@ -407,7 +408,7 @@ MrMurder,2001-01-01,Yella");
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker =
-            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+            new CheckEntireDataLoadProcess(new ThrowImmediatelyActivator(RepositoryLocator),lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         var config = new HICDatabaseConfiguration(lmd);

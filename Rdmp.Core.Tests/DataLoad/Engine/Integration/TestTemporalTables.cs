@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -91,7 +92,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker =
-            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+            new CheckEntireDataLoadProcess(new ThrowImmediatelyActivator(RepositoryLocator),lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         if (ignoreWithGlobalPattern)

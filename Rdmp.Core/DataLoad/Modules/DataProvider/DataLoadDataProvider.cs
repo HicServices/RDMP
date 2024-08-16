@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
@@ -27,7 +28,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 /// Triggers another data load run
 /// Checks are run during initial checks of primary data load, and assumed to be correct hwne running post-load
 /// </summary>
-public class DataLoadDataProvider : IDataProvider
+public class DataLoadDataProvider : IDataProvider, IInteractiveCheckable
 {
     [DemandsInitialization("The Data Load you wish to run", Mandatory = true)]
     public LoadMetadata DataLoad { get; set; }
@@ -40,6 +41,7 @@ public class DataLoadDataProvider : IDataProvider
 
     private DleRunner _runner;
     private ICheckNotifier _checker;
+    private IBasicActivateItems _activator;
     private IDataLoadEventListener _listener;
 
     public void Check(ICheckNotifier notifier)
@@ -50,10 +52,9 @@ public class DataLoadDataProvider : IDataProvider
             return;
         }
 
-        //TODO maybe we want to use the inseractive check from the AWS ticket to pass in an activator?...
-        var catalogueString = UserSettings.CatalogueConnectionString;
+        var catalogueString = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).ConnectionString;
 
-        var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
+        var dataExportManagerConnectionString = (_activator.RepositoryLocator.DataExportRepository as TableRepository).ConnectionString;
 
         LinkedRepositoryProvider newrepo;
 
@@ -72,7 +73,7 @@ public class DataLoadDataProvider : IDataProvider
             LoadMetadata = DataLoad.ID.ToString(),
             Command = CommandLineActivity.check,
         };
-        _runner = new DleRunner(dleOptions);
+        _runner = new DleRunner(_activator, dleOptions);
         _checker = notifier;
         _listener = new FromCheckNotifierToDataLoadEventListener(notifier);
         var exitCode = _runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
@@ -85,7 +86,7 @@ public class DataLoadDataProvider : IDataProvider
             LoadMetadata = DataLoad.ID.ToString(),
             Command = CommandLineActivity.check,
         };
-        _runner = new DleRunner(dleOptions);
+        _runner = new DleRunner(_activator, dleOptions);
 
         _repositoryLocator = job.RepositoryLocator;
         var exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
@@ -96,7 +97,7 @@ public class DataLoadDataProvider : IDataProvider
                 LoadMetadata = DataLoad.ID.ToString(),
                 Command = CommandLineActivity.run,
             };
-            _runner = new DleRunner(dleOptions);
+            _runner = new DleRunner(_activator, dleOptions);
 
             _repositoryLocator = job.RepositoryLocator;
             exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
@@ -112,5 +113,10 @@ public class DataLoadDataProvider : IDataProvider
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
+    }
+
+    public void SetActivator(IBasicActivateItems activator)
+    {
+        _activator = activator;
     }
 }

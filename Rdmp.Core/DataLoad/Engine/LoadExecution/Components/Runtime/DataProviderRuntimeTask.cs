@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
@@ -25,6 +26,8 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     public IDataProvider Provider { get; private set; }
     public ICheckable MEFPluginClassInstance => Provider;
 
+    private IBasicActivateItems _activator;
+
     public DataProviderRuntimeTask(IProcessTask task, RuntimeArgumentCollection args)
         : base(task, args)
     {
@@ -35,6 +38,10 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
                 $"Path is blank for ProcessTask '{task}' - it should be a class name of type {nameof(IDataProvider)}");
 
         Provider = MEF.CreateA<IDataProvider>(classNameToInstantiate);
+        if(Provider is IInteractiveCheckable)
+        {
+            ((IInteractiveCheckable)Provider).SetActivator(_activator);
+        }
 
         try
         {
@@ -55,7 +62,10 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
         job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
             $"About to fetch data using class {Provider.GetType().FullName}"));
-
+        if (Provider is IInteractiveCheckable)
+        {
+            ((IInteractiveCheckable)Provider).SetActivator(_activator);
+        }
         return Provider.Fetch(job, cancellationToken);
     }
 
@@ -65,6 +75,11 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
     {
     }
 
+    public void SetActivator(IBasicActivateItems activator)
+    {
+        _activator = activator;
+    }
+
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
         Provider.LoadCompletedSoDispose(exitCode, postLoadEventListener);
@@ -72,6 +87,10 @@ public class DataProviderRuntimeTask : RuntimeTask, IMEFRuntimeTask
 
     public override void Check(ICheckNotifier checker)
     {
+        if (Provider is IInteractiveCheckable)
+        {
+            ((IInteractiveCheckable)Provider).SetActivator(_activator);
+        }
         new MandatoryPropertyChecker(Provider).Check(checker);
         Provider.Check(checker);
     }
