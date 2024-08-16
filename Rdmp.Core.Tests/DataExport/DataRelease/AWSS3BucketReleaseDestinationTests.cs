@@ -128,7 +128,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         public void NoRegion()
         {
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe2");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -167,7 +167,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         public void NoProfile()
         {
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe3");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -248,7 +248,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         public void NoBucket()
         {
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe5");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -287,7 +287,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
         public void BadBucket()
         {
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe4");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe6");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -332,7 +332,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
             MakeBucket("releasetoawsbasictest");
 
             DoExtraction();
-            var pipe = new Pipeline(CatalogueRepository, "NestedPipe2");
+            var pipe = new Pipeline(CatalogueRepository, "NestedPipe7");
             var pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
@@ -369,7 +369,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
             var foundObjects = GetObjects("releasetoawsbasictest");
             Assert.That(foundObjects.Count, Is.EqualTo(1));
             DoExtraction();
-            pipe = new Pipeline(CatalogueRepository, "NestedPipe3");
+            pipe = new Pipeline(CatalogueRepository, "NestedPipe8");
             pc = new PipelineComponent(CatalogueRepository, pipe, typeof(AWSS3BucketReleaseDestination), -1,
                 "AWS S3 Release");
             pc.SaveToDatabase();
