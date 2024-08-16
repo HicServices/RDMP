@@ -75,12 +75,24 @@ public class DataLoadDataProvider : IDataProvider
         var dleOptions = new DleOptions()
         {
             LoadMetadata = DataLoad.ID.ToString(),
-            Command = CommandLineActivity.run,
+            Command = CommandLineActivity.check,
         };
         _runner = new DleRunner(dleOptions);
 
         _repositoryLocator = job.RepositoryLocator;
         var exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
+        if(exitCode == 0)
+        {
+            dleOptions = new DleOptions()
+            {
+                LoadMetadata = DataLoad.ID.ToString(),
+                Command = CommandLineActivity.run,
+            };
+            _runner = new DleRunner(dleOptions);
+
+            _repositoryLocator = job.RepositoryLocator;
+            exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
+        }
         return (ExitCodeType)exitCode;
     }
 
