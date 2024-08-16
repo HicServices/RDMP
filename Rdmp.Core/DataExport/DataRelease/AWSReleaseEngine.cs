@@ -180,7 +180,7 @@ public class AWSReleaseEngine : ReleaseEngine
         }
 
         //found subdirectory
-        foreach (var dir in from.GetDirectories().Where(dir => dir.GetFiles().Any() || dir.GetDirectories().Any()){
+        foreach (var dir in from.GetDirectories().Where(dir => dir.GetFiles().Any() || dir.GetDirectories().Any())){
             //audit as +DirectoryName at tab indent
             AuditDirectoryCreation(dir.Name, audit, tabDepth);
             CutTreeRecursive(dir, !string.IsNullOrWhiteSpace(into) ? $"{into}/{dir.Name}" : dir.Name, audit, tabDepth + 1);
