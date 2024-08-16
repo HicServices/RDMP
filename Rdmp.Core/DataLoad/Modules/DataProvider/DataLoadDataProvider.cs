@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
@@ -46,7 +47,10 @@ public class DataLoadDataProvider : IDataProvider
         if (DataLoad is null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No LoadMetadata Configured", CheckResult.Fail));
+            return;
         }
+
+        //TODO maybe we want to use the inseractive check from the AWS ticket to pass in an activator?...
         var catalogueString = UserSettings.CatalogueConnectionString;
 
         var dataExportManagerConnectionString = UserSettings.DataExportConnectionString;
@@ -59,8 +63,8 @@ public class DataLoadDataProvider : IDataProvider
         }
         catch (Exception ex)
         {
-            throw new CorruptRepositoryConnectionDetailsException(
-                $"Unable to create {nameof(LinkedRepositoryProvider)}", ex);
+            notifier.OnCheckPerformed(new CheckEventArgs($"Unable to create {nameof(LinkedRepositoryProvider)}", CheckResult.Fail, ex));
+            return;
         }
         var finder = newrepo;
         var dleOptions = new DleOptions()
