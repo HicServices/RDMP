@@ -31,6 +31,10 @@ public class DataLoadDataProvider : IDataProvider
     [DemandsInitialization("The Data Load you wish to run", Mandatory = true)]
     public LoadMetadata DataLoad { get; set; }
 
+
+    [DemandsInitialization("When running the chained data load, accept all check changes RDMP wishes to make.", Mandatory = true)]
+    public bool AcceptAllCheckNotificationOnRun{ get; set; }
+
     private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
     private DleRunner _runner;
@@ -81,7 +85,7 @@ public class DataLoadDataProvider : IDataProvider
 
         _repositoryLocator = job.RepositoryLocator;
         var exitCode = _runner.Run(_repositoryLocator, job, _checker, cancellationToken);
-        if(exitCode == 0)
+        if (exitCode == 0)
         {
             dleOptions = new DleOptions()
             {
@@ -98,7 +102,7 @@ public class DataLoadDataProvider : IDataProvider
 
     public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
     {
-        _checker = new ToMemoryCheckNotifier(new AcceptAllCheckNotifier());//checker is not populated when running the data provider
+        _checker = new ToMemoryCheckNotifier(AcceptAllCheckNotificationOnRun?new AcceptAllCheckNotifier():null);
 
     }
 
