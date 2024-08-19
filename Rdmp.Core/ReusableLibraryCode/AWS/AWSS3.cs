@@ -73,7 +73,7 @@ public class AWSS3
         return Path.Join(path, file).Replace("\\", "/");
     }
 
-    public async Task<bool> DoesObjectExists(string Key, string bucketName)
+    public async Task<bool> DoesObjectExist(string Key, string bucketName)
     {
         ListObjectsResponse response = null;
         try

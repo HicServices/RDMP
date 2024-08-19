@@ -163,7 +163,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             StoreInteractiveConfig(BucketFolder, "RDMP_AWS_BUCKET_FOLDER.txt");
 
         }
-        if (_s3Helper.DoesObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
+        if (_s3Helper.DoesObjectExist(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
             return;
@@ -260,7 +260,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
         _engine.DoRelease(_releaseData.ConfigurationsForRelease, _releaseData.EnvironmentPotentials,
             _releaseData.ReleaseState == ReleaseState.DoingPatch);
         _configurationReleased = _engine.ConfigurationsReleased;
-        return null;
+        return releaseAudit;
     }
 
     public void SetActivator(IBasicActivateItems activator)
