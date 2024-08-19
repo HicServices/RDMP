@@ -28,7 +28,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider;
 /// Triggers another data load run
 /// Checks are run during initial checks of primary data load, and assumed to be correct hwne running post-load
 /// </summary>
-public class DataLoadDataProvider : IDataProvider, IInteractiveCheckable
+public class DataLoadChainer : IDataProvider, IInteractiveCheckable
 {
     [DemandsInitialization("The Data Load you wish to run", Mandatory = true)]
     public LoadMetadata DataLoad { get; set; }
@@ -49,6 +49,12 @@ public class DataLoadDataProvider : IDataProvider, IInteractiveCheckable
         if (DataLoad is null)
         {
             notifier.OnCheckPerformed(new CheckEventArgs("No LoadMetadata Configured", CheckResult.Fail));
+            return;
+        }
+
+        if (_activator is null)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("No Activator Set", CheckResult.Fail));
             return;
         }
 

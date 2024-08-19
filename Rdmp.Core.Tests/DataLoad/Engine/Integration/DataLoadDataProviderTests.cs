@@ -16,7 +16,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void RunWithNoLoadMetaData()
         {
             //var fakeDataLoad = Substitute.For<LoadMetadata>();
-            var provider = new DataLoadDataProvider();
+            var provider = new DataLoadChainer();
             Assert.Throws<Exception>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
             //provider.DataLoad = fakeDataLoad;
         }
@@ -25,7 +25,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void RunWithBadLoadMetaData()
         {
             var fakeDataLoad = Substitute.For<LoadMetadata>();
-            var provider = new DataLoadDataProvider();
+            var provider = new DataLoadChainer();
             provider.DataLoad = fakeDataLoad;
             Assert.Throws<ArgumentException>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
         }
@@ -42,7 +42,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             cata.SaveToDatabase();
             var linkage2 = new LoadMetadataCatalogueLinkage(CatalogueRepository, lmd, cata);
             linkage2.SaveToDatabase();
-            var provider = new DataLoadDataProvider();
+            var provider = new DataLoadChainer();
             provider.DataLoad = lmd;
             Assert.Throws<ArgumentException>(() => provider.Check(ThrowImmediatelyCheckNotifier.Quiet));
         }
