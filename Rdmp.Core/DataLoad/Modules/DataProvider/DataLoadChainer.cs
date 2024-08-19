@@ -18,7 +18,6 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Startup;
 using System;
 

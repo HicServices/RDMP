@@ -1,25 +1,16 @@
 ﻿using NUnit.Framework;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
-using NSubstitute;
 using Tests.Common;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using System;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.CommandLine.Interactive;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Repositories;
-using NPOI.SS.Formula.Functions;
 using FAnsi;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Logging;
-using System.Data;
 using Rdmp.Core.Curation;
-using static System.Runtime.InteropServices.Marshalling.IIUnknownCacheStrategy;
 using System.IO;
-using System.Linq;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
