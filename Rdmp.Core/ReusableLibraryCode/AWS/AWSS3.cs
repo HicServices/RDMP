@@ -9,6 +9,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Org.BouncyCastle.Security.Certificates;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -73,28 +74,6 @@ public class AWSS3
         return Path.Join(path, file).Replace("\\", "/");
     }
 
-    public async Task<bool> DoesObjectExists(string Key, string bucketName)
-    {
-        ListObjectsResponse response = null;
-        try
-        {
-
-            ListObjectsRequest request = new ListObjectsRequest
-            {
-                BucketName = bucketName,
-                Prefix = Key
-            };
-            response = await _client.ListObjectsAsync(request);
-
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        return (response != null && response.S3Objects != null && response.S3Objects.Count > 0 && response.S3Objects.Any(o => o.Key == Key));
-    }
-
-
     public bool ObjectExists(string fileKey, string bucketName)
     {
         try
@@ -104,9 +83,9 @@ public class AWSS3
                 BucketName = bucketName,
                 Key = fileKey
             });
-            var result = response.Result;
-
-            return true;
+            if (response.Result is not null)
+                return true;
+            return false;
         }
 
         catch (Exception ex)

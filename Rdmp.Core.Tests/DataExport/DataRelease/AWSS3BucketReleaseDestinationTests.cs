@@ -65,11 +65,11 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
             Task.Run(async () => await _minioClient.RemoveBucketAsync(rbArgs)).Wait();
         }
 
-        private List<Item> GetObjects(string bucketName)
+        private static List<Item> GetObjects(string bucketName)
         {
             var loArgs = new ListObjectsArgs().WithBucket(bucketName);
             var x =  _minioClient.ListObjectsEnumAsync(loArgs);
-            return Task.Run(async () => await x.ToListAsync()).Result as List<Item> ;
+            return Task.Run(async () => await x.ToListAsync()).Result;
         }
 
 
@@ -404,7 +404,7 @@ namespace Rdmp.Core.Tests.DataExport.DataRelease
 
             };
             runner = new ReleaseRunner(new ThrowImmediatelyActivator(RepositoryLocator), optsRelease);
-            var ex = Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
+            Assert.Throws<AggregateException>(() => runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet, new GracefulCancellationToken()));
             foundObjects = GetObjects("releasetoawsbasictest");
             Assert.That(foundObjects.Count, Is.EqualTo(1));
             DeleteBucket("releasetoawsbasictest");
