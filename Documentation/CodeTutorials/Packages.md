@@ -1,5 +1,3 @@
-ataf
-
 # Packages Used By RDMP
 
 ### Risk Assessment common to all:

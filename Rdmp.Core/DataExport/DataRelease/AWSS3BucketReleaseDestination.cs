@@ -163,7 +163,7 @@ IPipelineRequirement<Project>, IPipelineRequirement<ReleaseData>, IInteractiveCh
             StoreInteractiveConfig(BucketFolder, "RDMP_AWS_BUCKET_FOLDER.txt");
 
         }
-        if (_s3Helper.DoesObjectExist(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName).Result)
+        if (_s3Helper.ObjectExists(!string.IsNullOrWhiteSpace(BucketFolder) ? $"{BucketFolder}/contents.txt" : "contents.txt", _bucket.BucketName))
         {
             notifier.OnCheckPerformed(new CheckEventArgs("Bucket Folder Already exists", CheckResult.Fail));
             return;
