@@ -8,7 +8,6 @@
 using System;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
-using Equ;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace ResearchDataManagementPlatform.WindowManagement;
