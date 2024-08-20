@@ -13,6 +13,8 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
         string RedactedValue { get; protected set; }
         string ReplacementValue { get; protected set; }
 
-        int startingIndex { get; protected set; }
+        int StartingIndex { get; protected set; }
+
+        int ColumnInfo_ID { get; protected set; }
     }
 }

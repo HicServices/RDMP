@@ -2,22 +2,17 @@
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using NPOI.SS.Formula.Functions;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
-using SixLabors.ImageSharp.Drawing;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -29,6 +24,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private readonly List<ColumnInfo> _columns;
     private readonly DiscoveredServer _server;
     private DiscoveredColumn[] _discoveredPKColumns;
+    private List<CatalogueItem> _cataloguePKs;
 
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns)
@@ -41,16 +37,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
     }
 
-    //public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator)
-    //{
-    //    _activator = activator;
-    //    _catalogue = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Catalogue>("Name", "Biochemistry").First();
-    //    _redactionConfiguration = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().First();
-    //    _columns = _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).Where(c => c.Name == "[RDMP_ExampleData].[dbo].[Biochemistry].[SampleType]").ToList();
-    //    _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-    //}
-
-    private string GetRedactionValue(string value)
+    private string GetRedactionValue(string value, ColumnInfo column, Dictionary<ColumnInfo, string> pkLookup)
     {
         var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
         foreach (var match in matches)
@@ -79,7 +66,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             value = value.Substring(0, startingIndex) + replacementValue + value.Substring(startingIndex + foundMatch.Length);
 
             //create redaction
-            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue);
+            int columnID = column.ID;
+            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue,columnID,pkLookup);
             redaction.SaveToDatabase();
         }
 
@@ -90,7 +78,17 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     {
         var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
         var index = columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToList().IndexOf(column.GetRuntimeName());
-        var redactedValue = GetRedactionValue(match[index].ToString());
+
+        Dictionary<ColumnInfo, string> pkLookup = new();
+        foreach(int i in Range(0,columns.Count).Where(n => n != index))
+        {
+            //these are all the PK values
+            var name = columns.Cast<DataColumn>().ToList()[i].ColumnName;
+            var pkCatalogueItem = _cataloguePKs.Where(c => c.Name == name).First();
+            pkLookup.Add(pkCatalogueItem.ColumnInfo, match[i].ToString());
+        }
+
+        var redactedValue = GetRedactionValue(match[index].ToString(),column,pkLookup);
 
         var sqlLines = new List<CustomLine>
         {
@@ -132,12 +130,12 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
             if (_discoveredPKColumns.Any())
             {
-                var cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey);
+                _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
                 var qb = new QueryBuilder(null, null, null);
                 qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, catalogueItem.ColumnInfo));
                 foreach (var pk in _discoveredPKColumns)
                 {
-                    var cataloguePk = cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
+                    var cataloguePk = _cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
                     qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
                 }
                 var sql = qb.SQL;
