@@ -206,5 +206,8 @@ public enum RDMPConcept
     Dataset,
     LoadMetadataCatalogueLinkage,
     Setting,
-    TicketingSystemReleaseStatus
+    TicketingSystemReleaseStatus,
+    RegexRedaction,
+    RegexRedactionConfiguration,
+    RegexRedactionKey
 }

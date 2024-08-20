@@ -43,13 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             foreach (var rk in _redaction.RedactionKeys)
             {
                 var pkColumnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
-                var matchValue = $"'{rk.Value}'";
-                if (pkColumnInfo.Data_type == "datetime2" || pkColumnInfo.Data_type == "datetime")
-                {
-                    var x = DateTime.Parse(rk.Value);
-                    var format = "yyyy-MM-dd HH:mm:ss:fff";
-                    matchValue = $"'{x.ToString(format)}'";
-                }
+                var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(rk.Value, pkColumnInfo.Data_type);
                 qb.AddCustomLine($"{pkColumnInfo.Name} = {matchValue}", QueryComponent.WHERE);
             }
 
@@ -77,13 +71,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 foreach (var rk in _redaction.RedactionKeys)
                 {
                     var pkColumnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
-                    var matchValue = $"'{rk.Value}'";
-                    if (pkColumnInfo.Data_type == "datetime2" || pkColumnInfo.Data_type == "datetime")
-                    {
-                        var x = DateTime.Parse(rk.Value);
-                        var format = "yyyy-MM-dd HH:mm:ss:fff";
-                        matchValue = $"'{x.ToString(format)}'";
-                    }
+                    var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(rk.Value, pkColumnInfo.Data_type);
                     sqlLines.Add(new CustomLine($"t1.{pkColumnInfo.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
                     sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pkColumnInfo.GetRuntimeName()), QueryComponent.JoinInfoJoin));
                 }

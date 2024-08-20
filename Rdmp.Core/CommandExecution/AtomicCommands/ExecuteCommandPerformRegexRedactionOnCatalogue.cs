@@ -67,7 +67,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
             //create redaction
             int columnID = column.ID;
-            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue,columnID,pkLookup);
+            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, columnID, pkLookup);
             redaction.SaveToDatabase();
         }
 
@@ -80,7 +80,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var index = columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToList().IndexOf(column.GetRuntimeName());
 
         Dictionary<ColumnInfo, string> pkLookup = new();
-        foreach(int i in Range(0,columns.Count).Where(n => n != index))
+        foreach (int i in Range(0, columns.Count).Where(n => n != index))
         {
             //these are all the PK values
             var name = columns.Cast<DataColumn>().ToList()[i].ColumnName;
@@ -88,7 +88,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             pkLookup.Add(pkCatalogueItem.ColumnInfo, match[i].ToString());
         }
 
-        var redactedValue = GetRedactionValue(match[index].ToString(),column,pkLookup);
+        var redactedValue = GetRedactionValue(match[index].ToString(), column, pkLookup);
 
         var sqlLines = new List<CustomLine>
         {
@@ -96,13 +96,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         };
         foreach (var pk in _discoveredPKColumns)
         {
-            var matchValue = $"'{match[pk.GetRuntimeName()]}'";
-            if (pk.DataType.SQLType == "datetime2" || pk.DataType.SQLType == "datetime" )
-            {
-                var x = DateTime.Parse(match[pk.GetRuntimeName()].ToString());
-                var format = "yyyy-MM-dd HH:mm:ss:fff";
-                matchValue = $"'{x.ToString(format)}'";
-            }
+            var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(match[pk.GetRuntimeName()].ToString(), pk.DataType.SQLType);
 
             sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
             sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
