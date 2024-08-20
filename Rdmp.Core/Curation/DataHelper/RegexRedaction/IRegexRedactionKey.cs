@@ -1,4 +1,5 @@
 ﻿using Rdmp.Core.Curation.Data;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
-    public interface IRegexRedactionKey
+    public interface IRegexRedactionKey: IMapsDirectlyToDatabaseTable
     {
 
         int RegexRedaction_ID { get; protected set; }
