@@ -26,6 +26,8 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
     private string _replacementValue;
     private int _columnInfoID;
 
+    #region Database Properties
+
     public int RedactionConfiguration_ID
     {
         get => _redactionConfigurationID;
@@ -55,10 +57,12 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
         get => _columnInfoID;
         set => SetField(ref _columnInfoID, value);
     }
+    #endregion
 
+    #region Relationships
     [NoMappingToDatabase]
     public List<RegexRedactionKey> RedactionKeys => [.. CatalogueRepository.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", this.ID)];
-
+    #endregion
 
     public RegexRedaction() { }
 
