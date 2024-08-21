@@ -2,6 +2,7 @@
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using NPOI.OpenXmlFormats;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
@@ -10,6 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using static System.Linq.Enumerable;
@@ -25,7 +27,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private readonly DiscoveredServer _server;
     private DiscoveredColumn[] _discoveredPKColumns;
     private List<CatalogueItem> _cataloguePKs;
-
+    //private DbConnection _conn;
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns)
     {
@@ -55,7 +57,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             {
                 var start = (int)Math.Floor((float)(lengthDiff / 2));
                 var end = (int)Math.Ceiling((float)(lengthDiff / 2));
-                replacementValue = replacementValue.PadLeft(start, '<').PadRight(end, '>');
+                replacementValue = replacementValue.PadLeft(start + replacementValue.Length, '<');
+                replacementValue = replacementValue.PadRight(end+replacementValue.Length, '>');
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
 
