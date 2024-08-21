@@ -6,7 +6,9 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
@@ -34,18 +36,23 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
         set => SetField(ref _redactionConfigurationID, value);
     }
 
+    [UsefulProperty]
+    [NotNull]
     public string RedactedValue
     {
         get => _redactedValue;
         set => SetField(ref _redactedValue, value.ToString());
     }
 
+    [UsefulProperty]
+    [NotNull]
     public string ReplacementValue
     {
         get => _replacementValue;
         set => SetField(ref _replacementValue, value.ToString());
     }
 
+    [NotNull]
     public int StartingIndex
     {
         get => _startingIndex;
@@ -63,6 +70,7 @@ public class RegexRedaction : DatabaseEntity, IRegexRedaction
     [NoMappingToDatabase]
     public List<RegexRedactionKey> RedactionKeys => [.. CatalogueRepository.GetAllObjectsWhere<RegexRedactionKey>("RegexRedaction_ID", this.ID)];
     #endregion
+
 
     public RegexRedaction() { }
 
