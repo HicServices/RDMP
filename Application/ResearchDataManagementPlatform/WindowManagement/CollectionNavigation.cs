@@ -4,9 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+#nullable enable
+using System;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
-using Equ;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace ResearchDataManagementPlatform.WindowManagement;
@@ -14,25 +15,36 @@ namespace ResearchDataManagementPlatform.WindowManagement;
 /// <summary>
 /// Records the fact that the user visited a specific object in a tree collection
 /// </summary>
-public sealed class CollectionNavigation : PropertywiseEquatable<CollectionNavigation>, INavigation
+public sealed class CollectionNavigation : IEquatable<CollectionNavigation>, INavigation
 {
-    public IMapsDirectlyToDatabaseTable Object { get; }
+    private readonly IMapsDirectlyToDatabaseTable _object;
 
-    [MemberwiseEqualityIgnore] public bool IsAlive => Object is not IMightNotExist o || o.Exists();
+    public bool IsAlive => _object is not IMightNotExist o || o.Exists();
 
     public CollectionNavigation(IMapsDirectlyToDatabaseTable @object)
     {
-        Object = @object;
+        _object = @object;
     }
 
     public void Activate(ActivateItems activateItems)
     {
-        activateItems.RequestItemEmphasis(this, new EmphasiseRequest(Object, 0));
+        activateItems.RequestItemEmphasis(this, new EmphasiseRequest(_object, 0));
     }
 
     public void Close()
     {
     }
 
-    public override string ToString() => Object.ToString();
+    public override string? ToString() => _object.ToString();
+
+    public bool Equals(CollectionNavigation? other)
+    {
+        if (other is null) return false;
+
+        return ReferenceEquals(this, other) || Equals(_object, other._object);
+    }
+
+    public override bool Equals(object? obj) => ReferenceEquals(this, obj) || (obj is CollectionNavigation other && Equals(other));
+
+    public override int GetHashCode() => HashCode.Combine(_object);
 }

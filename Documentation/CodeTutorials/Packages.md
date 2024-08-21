@@ -7,7 +7,6 @@
 
 | Package | Source Code | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| ------- | ------- | -------------------------- |
-| Equ | [GitHub](https://github.com/thedmi/Equ) | [MIT](https://opensource.org/licenses/MIT) | Simplifies object equality implementation | |
 | FluentFTP | [Github](https://github.com/robinrodricks/FluentFTP/) | [MIT](https://opensource.org/licenses/MIT) | FTP(S) client | |
 | MongoDB.Driver | [GitHub](https://github.com/mongodb/mongo-csharp-driver) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0) | Database driver for MongoDB | |
 | Microsoft.SourceLink.GitHub | [GitHub](https://github.com/dotnet/sourcelink) | [MIT](https://opensource.org/licenses/MIT) | Enable source linkage from nupkg | Official MS project |
