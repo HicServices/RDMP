@@ -12,8 +12,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -27,7 +29,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private readonly DiscoveredServer _server;
     private DiscoveredColumn[] _discoveredPKColumns;
     private List<CatalogueItem> _cataloguePKs;
-    //private DbConnection _conn;
+    private DbConnection _conn;
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns)
     {
@@ -48,17 +50,17 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             var startingIndex = value.IndexOf(foundMatch);
             string replacementValue = _redactionConfiguration.RedactionString;
 
-            int lengthDiff = foundMatch.Length - replacementValue.Length;
+            var lengthDiff = (float)foundMatch.Length - replacementValue.Length;
             if (lengthDiff < 1)
             {
                 throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
             }
             if (lengthDiff > 0)
             {
-                var start = (int)Math.Floor((float)(lengthDiff / 2));
-                var end = (int)Math.Ceiling((float)(lengthDiff / 2));
+                var start = (int)Math.Floor(lengthDiff / 2);
+                var end = (int)Math.Ceiling(lengthDiff / 2);
                 replacementValue = replacementValue.PadLeft(start + replacementValue.Length, '<');
-                replacementValue = replacementValue.PadRight(end+replacementValue.Length, '>');
+                replacementValue = replacementValue.PadRight(end + replacementValue.Length, '>');
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
 
@@ -106,10 +108,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
         }
         var sql = updateHelper.BuildUpdate(table, table, sqlLines);
-        var conn = _server.GetConnection();
-        using (var cmd = _server.GetCommand(sql, conn))
+        using (var cmd = _server.GetCommand(sql, _conn))
         {
-            conn.Open();
             cmd.ExecuteNonQuery();
         }
     }
@@ -118,6 +118,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     {
         base.Execute();
         var memoryRepo = new MemoryCatalogueRepository();
+        _conn = _server.GetConnection();
+        _conn.Open();
         foreach (var catalogueItem in _catalogue.CatalogueItems.Where(ci => !ci.ColumnInfo.IsPrimaryKey && _columns.Contains(ci.ColumnInfo)))
         {
             var columnName = catalogueItem.ColumnInfo.Name;
@@ -138,7 +140,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
-                using (var cmd = _server.GetCommand(sql, _server.GetConnection()))
+                using (var cmd = _server.GetCommand(sql, _conn))
                 {
                     using var da = _server.GetDataAdapter(cmd);
                     da.Fill(dt);
