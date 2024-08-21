@@ -47,7 +47,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             string replacementValue = _redactionConfiguration.RedactionString;
 
             int lengthDiff = foundMatch.Length - replacementValue.Length;
-            if(lengthDiff < 1)
+            if (lengthDiff < 1)
             {
                 throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
             }
@@ -55,7 +55,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             {
                 var start = (int)Math.Floor((float)(lengthDiff / 2));
                 var end = (int)Math.Ceiling((float)(lengthDiff / 2));
-                replacementValue = replacementValue.PadLeft(start, '<').PadRight(end,'>');
+                replacementValue = replacementValue.PadLeft(start, '<').PadRight(end, '>');
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
 
@@ -69,18 +69,26 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private void Redact(DiscoveredTable table, ColumnInfo column, DataRow match, DataColumnCollection columns)
     {
         var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
-        var index = columns.Cast<DataColumn>().Select(dc => dc.ColumnName).ToList().IndexOf(column.GetRuntimeName());
-
+        int columnIndex = -1;
+        var dcColumnIndexes = columns.Cast<DataColumn>().Select((item, index) =>
+        {
+            if (item.ColumnName == column.GetRuntimeName())
+            {
+                columnIndex = index;
+            }
+            return index;
+        });
+        var columnNames = columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
         Dictionary<ColumnInfo, string> pkLookup = new();
-        foreach (int i in Range(0, columns.Count).Where(n => n != index))
+        foreach (int i in dcColumnIndexes.Where(n => n != columnIndex))
         {
             //these are all the PK values
-            var name = columns.Cast<DataColumn>().ToList()[i].ColumnName;
+            var name = columnNames[i];
             var pkCatalogueItem = _cataloguePKs.Where(c => c.Name == name).First();
             pkLookup.Add(pkCatalogueItem.ColumnInfo, match[i].ToString());
         }
 
-        var redactedValue = GetRedactionValue(match[index].ToString(), column, pkLookup);
+        var redactedValue = GetRedactionValue(match[columnIndex].ToString(), column, pkLookup);
 
         var sqlLines = new List<CustomLine>
         {
