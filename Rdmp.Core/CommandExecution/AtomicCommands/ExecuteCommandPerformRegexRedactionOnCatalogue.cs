@@ -46,28 +46,20 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             var startingIndex = value.IndexOf(foundMatch);
             string replacementValue = _redactionConfiguration.RedactionString;
 
-            if (foundMatch.Length < _redactionConfiguration.RedactionString.Length)
+            int lengthDiff = foundMatch.Length - replacementValue.Length;
+            if(lengthDiff < 1)
             {
                 throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
             }
-            var paddingValue = '>';
-            while (foundMatch.Length > replacementValue.Length)
+            if (lengthDiff > 0)
             {
-                if (paddingValue == '>')
-                {
-                    replacementValue += paddingValue;
-                }
-                else
-                {
-                    replacementValue = paddingValue + replacementValue;
-                }
-                paddingValue = paddingValue == '>' ? '<' : '>';
+                var start = (int)Math.Floor((float)(lengthDiff / 2));
+                var end = (int)Math.Ceiling((float)(lengthDiff / 2));
+                replacementValue = replacementValue.PadLeft(start, '<').PadRight(end,'>');
             }
-            value = value.Substring(0, startingIndex) + replacementValue + value.Substring(startingIndex + foundMatch.Length);
+            value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
 
-            //create redaction
-            int columnID = column.ID;
-            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, columnID, pkLookup);
+            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, column.ID, pkLookup);
             redaction.SaveToDatabase();
         }
 
