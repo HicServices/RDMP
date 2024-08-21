@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                     var pkColumnInfo = _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<ColumnInfo>(rk.ColumnInfo_ID);
                     var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(rk.Value, pkColumnInfo.Data_type);
                     sqlLines.Add(new CustomLine($"t1.{pkColumnInfo.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
-                    //todo add original value for column into where
+                    sqlLines.Add(new CustomLine($"t1.{columnInfo.GetRuntimeName()} = '{dt.Rows[0][0]}'", QueryComponent.WHERE));
                     sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pkColumnInfo.GetRuntimeName()), QueryComponent.JoinInfoJoin));
                 }
                 var updateSql = updateHelper.BuildUpdate(discoveredTable, discoveredTable, sqlLines);

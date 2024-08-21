@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 
@@ -13,7 +14,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 /// </summary>
 public interface IRegexRedactionKey: IMapsDirectlyToDatabaseTable
 {
-
+    ICatalogueRepository CatalogueRepository { get; }
     int RegexRedaction_ID { get; protected set; }
     int ColumnInfo_ID { get; protected set; }
     string Value { get; protected set; }
