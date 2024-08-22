@@ -28,8 +28,8 @@ CREATE TABLE [dbo].RegexRedaction(
 	StartingIndex [int] NOT NULL,
 	RedactedValue [nvarchar](250),
 	ReplacementValue [nvarchar](250) NOT NULL,
-	FOREIGN KEY (RedactionConfiguration_ID) REFERENCES RegexRedactionConfiguration(ID),
-    FOREIGN KEY (ColumnInfo_ID) REFERENCES ColumnInfo(ID) ON DELETE CASCADE,
+	CONSTRAINT FK_Redaction_RedactionConfiguration_ID FOREIGN KEY (RedactionConfiguration_ID) REFERENCES RegexRedactionConfiguration(ID),
+    CONSTRAINT FK_Redaction_ColumnInfo_ID FOREIGN KEY (ColumnInfo_ID) REFERENCES ColumnInfo(ID) ON DELETE CASCADE,
 CONSTRAINT [PK_RegexRedaction] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -45,8 +45,8 @@ CREATE TABLE [dbo].RegexRedactionKey(
 	RegexRedaction_ID [int] NOT NULL,
 	ColumnInfo_ID [int] NOT NULL,
 	Value [nvarchar](max),
-	FOREIGN KEY (RegexRedaction_ID) REFERENCES RegexRedaction(ID)  ON DELETE CASCADE,
-	FOREIGN KEY (ColumnInfo_ID) REFERENCES ColumnInfo(ID),
+	CONSTRAINT FK_RedactionKey_Redaction_ID FOREIGN KEY (RegexRedaction_ID) REFERENCES RegexRedaction(ID)  ON DELETE CASCADE,
+	CONSTRAINT FK_RedactionKey_ColumnInfo_ID FOREIGN KEY (ColumnInfo_ID) REFERENCES ColumnInfo(ID),
 CONSTRAINT [PK_RegexRedactionKey] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
