@@ -323,7 +323,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
         private string GetInsert(int i)
         {
-            var text = i % 66 == 0 ? "TEST" : "";
+            var text = i % 7 == 0 ? "TEST" : "";
             return @$"
                 ({i}, N'{i}', N'1234{text}1234')";
         }

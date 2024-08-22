@@ -97,54 +97,12 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         redactionTable.Drop();
     }
 
-    private void Redact(DiscoveredTable table, ColumnInfo column, DataRow match, DataColumnCollection columns)
+    private void Redact(DiscoveredTable table, ColumnInfo column, DataRow match)
     {
-
-
-
-        //var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
-        int columnIndex = -1;
-        var dcColumnIndexes = columns.Cast<DataColumn>().Select((item, index) =>
-        {
-            if (item.ColumnName == column.GetRuntimeName())
-            {
-                columnIndex = index;
-            }
-            return index;
-        });
-        var columnNames = columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
-
-        //feel like we could do this PK stuff just once?
-        Dictionary<ColumnInfo, string> pkLookup = new();
-        foreach (int i in dcColumnIndexes.Where(n => n != columnIndex))
-        {
-            //these are all the PK values
-            var name = columnNames[i];
-            var pkCatalogueItem = _cataloguePKs.Where(c => c.Name == name).First();
-            pkLookup.Add(pkCatalogueItem.ColumnInfo, match[i].ToString());
-        }
-
+        int columnIndex = 0;// -1;
+        Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => match[i + 1].ToString());
         var redactedValue = GetRedactionValue(match[columnIndex].ToString(), column, pkLookup);
         match[columnIndex] = redactedValue;
-
-        //var sqlLines = new List<CustomLine>
-        //{
-        //    new CustomLine($"t1.{column.GetRuntimeName()} = '{redactedValue}'", QueryComponent.SET)
-        //};
-        //foreach (var pk in _discoveredPKColumns)
-        //{
-        //    var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(match[pk.GetRuntimeName()].ToString(), pk.DataType.SQLType);
-
-        //    sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
-        //    sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
-
-        //}
-        //var sql = updateHelper.BuildUpdate(table, table, sqlLines);
-        //using (var cmd = _server.GetCommand(sql, _conn))
-        //{
-        //   cmd.ExecuteNonQuery();
-        //}
-
         redactionUpates.ImportRow(match);
     }
 
@@ -186,17 +144,24 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 timer.Stop();
                 var y = timer.ElapsedMilliseconds;
                 timer.Start();
+
                 redactionUpates = dt.Clone();
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
                 {
-                    Redact(_discoveredTable, columnInfo, row, dt.Columns);
+                    Redact(_discoveredTable, columnInfo, row);
                 }
                 redactionUpates.EndLoadData();
+                timer.Stop();
+                Console.WriteLine(timer.ElapsedMilliseconds);
+                timer.Start();
                 if (dt.Rows.Count > 0)
                 {
                     DoJoinUpdate(columnInfo);
                 }
+                timer.Stop();
+                Console.WriteLine(timer.ElapsedMilliseconds);
+                timer.Start();
 
             }
             else
