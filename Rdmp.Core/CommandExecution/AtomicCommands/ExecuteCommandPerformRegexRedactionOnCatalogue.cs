@@ -1,9 +1,6 @@
-﻿using CommandLine;
-using FAnsi;
-using FAnsi.Discovery;
+﻿using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MongoDB.Driver;
-using NPOI.OpenXmlFormats;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -17,7 +14,6 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -32,8 +28,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DiscoveredColumn[] _discoveredPKColumns;
     private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
-    private DbConnection _conn;
-    private DataTable redactionsToSaveTable = new();
+    private readonly DataTable redactionsToSaveTable = new();
 
 
     private DataTable redactionUpates = new();
@@ -76,8 +71,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
             redactionsToSaveTable.Rows.Add([_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch]);
-            //var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, column.ID, pkLookup);
-            //redaction.SaveToDatabase();
         }
 
         return value;
@@ -99,21 +92,21 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
         }
         var sql = updateHelper.BuildUpdate(_discoveredTable, redactionTable, sqlLines);
-        _conn = _server.GetConnection();
-        _conn.Open();
-        using (var cmd = _server.GetCommand(sql, _conn))
+        var conn = _server.GetConnection();
+        conn.Open();
+        using (var cmd = _server.GetCommand(sql, conn))
         {
             cmd.ExecuteNonQuery();
         }
+        conn.Close();
         redactionTable.Drop();
     }
 
-    private void Redact(DiscoveredTable table, ColumnInfo column, DataRow match)
+    private void Redact(ColumnInfo column, DataRow match)
     {
-        int columnIndex = 0;// -1;
         Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => match[i + 1].ToString());
-        var redactedValue = GetRedactionValue(match[columnIndex].ToString(), column, pkLookup);
-        match[columnIndex] = redactedValue;
+        var redactedValue = GetRedactionValue(match[0].ToString(), column, pkLookup);
+        match[0] = redactedValue;
         redactionUpates.ImportRow(match);
     }
 
@@ -136,11 +129,10 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             {insertValue}
         ";
                 (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
-                    sql, new Dictionary<string, object>()
+                    sql, []
                     );
-                read = read + 1000;
+                read += 1000;
             }
-            //dt drop 
         }
         else
         {
@@ -154,7 +146,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             {insertValue}
         ";
             (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
-                sql, new Dictionary<string, object>()
+                sql, []
                 );
         }
 
@@ -164,8 +156,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     {
         base.Execute();
         var memoryRepo = new MemoryCatalogueRepository();
-        _conn = _server.GetConnection();
-        _conn.Open();
+     
         var timer = Stopwatch.StartNew();
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
@@ -175,7 +166,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
             DiscoveredColumn[] discoveredColumns = _discoveredTable.DiscoverColumns();
             _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
-            if (_discoveredPKColumns.Any())
+            if (_discoveredPKColumns.Length != 0)
             {
                 _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
                 var qb = new QueryBuilder(null, null, null);
@@ -189,27 +180,23 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
-
-                using (var cmd = _server.GetCommand(sql, _conn))
+                var conn = _server.GetConnection();
+                conn.Open();
+                using (var cmd = _server.GetCommand(sql, conn))
                 {
                     using var da = _server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
-                timer.Stop();
-                var y = timer.ElapsedMilliseconds;
-                timer.Start();
+                conn.Close();
 
                 redactionUpates = dt.Clone();
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
                 {
-                    Redact(_discoveredTable, columnInfo, row);
+                    Redact(columnInfo, row);
                 }
                 redactionUpates.EndLoadData();
                 SaveRedactions();
-                timer.Stop();
-                Console.WriteLine(timer.ElapsedMilliseconds);
-                timer.Start();
                 if (dt.Rows.Count > 0)
                 {
                     DoJoinUpdate(columnInfo);
@@ -221,7 +208,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             }
             else
             {
-                //Unable to find any primary keys
                 throw new Exception($"Unable to identify any primary keys in table '{table}'. Redactions cannot be performed on tables without primary keys");
             }
         }
