@@ -2,9 +2,11 @@
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
 using NPOI.OpenXmlFormats;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -31,6 +33,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
     private DbConnection _conn;
+    private DataTable redactionsToSaveTable = new();
+
 
     private DataTable redactionUpates = new();
 
@@ -41,8 +45,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _redactionConfiguration = redactionConfiguration;
         _columns = columns;
         _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-
+        redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
+        redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
+        redactionsToSaveTable.Columns.Add("startingIndex");
+        redactionsToSaveTable.Columns.Add("ReplacementValue");
+        redactionsToSaveTable.Columns.Add("RedactedValue");
     }
+
 
     private string GetRedactionValue(string value, ColumnInfo column, Dictionary<ColumnInfo, string> pkLookup)
     {
@@ -66,9 +75,9 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 replacementValue = replacementValue.PadRight(end + replacementValue.Length, '>');
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
-
-            var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, column.ID, pkLookup);
-            redaction.SaveToDatabase();
+            redactionsToSaveTable.Rows.Add([_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch]);
+            //var redaction = new RegexRedaction(_activator.RepositoryLocator.CatalogueRepository, _redactionConfiguration.ID, startingIndex, foundMatch, replacementValue, column.ID, pkLookup);
+            //redaction.SaveToDatabase();
         }
 
         return value;
@@ -90,6 +99,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
         }
         var sql = updateHelper.BuildUpdate(_discoveredTable, redactionTable, sqlLines);
+        _conn = _server.GetConnection();
+        _conn.Open();
         using (var cmd = _server.GetCommand(sql, _conn))
         {
             cmd.ExecuteNonQuery();
@@ -104,6 +115,49 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var redactedValue = GetRedactionValue(match[columnIndex].ToString(), column, pkLookup);
         match[columnIndex] = redactedValue;
         redactionUpates.ImportRow(match);
+    }
+
+
+
+    private void SaveRedactions()
+    {
+        if (redactionsToSaveTable.Rows.Count > 1000)
+        {
+            var read = 0;
+            while(read < redactionsToSaveTable.Rows.Count)
+            {
+                var rows = redactionsToSaveTable.AsEnumerable().Skip(read).Take(1000);
+                var insertValue = string.Join(
+               @",
+            ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
+                var sql = @$"
+            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
+            VALUES
+            {insertValue}
+        ";
+                (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
+                    sql, new Dictionary<string, object>()
+                    );
+                read = read + 1000;
+            }
+            //dt drop 
+        }
+        else
+        {
+
+            var insertValue = string.Join(
+                @",
+            ", redactionsToSaveTable.AsEnumerable().Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
+            var sql = @$"
+            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
+            VALUES
+            {insertValue}
+        ";
+            (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
+                sql, new Dictionary<string, object>()
+                );
+        }
+
     }
 
     public override void Execute()
@@ -152,6 +206,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     Redact(_discoveredTable, columnInfo, row);
                 }
                 redactionUpates.EndLoadData();
+                SaveRedactions();
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();
