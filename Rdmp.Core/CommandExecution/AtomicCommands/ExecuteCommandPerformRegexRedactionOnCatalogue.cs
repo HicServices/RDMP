@@ -110,7 +110,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var sql = updateHelper.BuildUpdate(table, table, sqlLines);
         using (var cmd = _server.GetCommand(sql, _conn))
         {
-            cmd.ExecuteNonQuery();
+           cmd.ExecuteNonQuery();
         }
     }
 
@@ -120,41 +120,43 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var memoryRepo = new MemoryCatalogueRepository();
         _conn = _server.GetConnection();
         _conn.Open();
-        foreach (var catalogueItem in _catalogue.CatalogueItems.Where(ci => !ci.ColumnInfo.IsPrimaryKey && _columns.Contains(ci.ColumnInfo)))
+        var timer = Stopwatch.StartNew();
+        foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
-            var columnName = catalogueItem.ColumnInfo.Name;
-            var table = catalogueItem.ColumnInfo.TableInfo.Name;
-            DiscoveredTable discoveredTable = catalogueItem.ColumnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+            
+            var columnName = columnInfo.Name;
+            var table = columnInfo.TableInfo.Name;
+            DiscoveredTable discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
             DiscoveredColumn[] discoveredColumns = discoveredTable.DiscoverColumns();
             _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
             if (_discoveredPKColumns.Any())
             {
                 _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
                 var qb = new QueryBuilder(null, null, null);
-                qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, catalogueItem.ColumnInfo));
+                qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
                 foreach (var pk in _discoveredPKColumns)
                 {
                     var cataloguePk = _cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
                     qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
                 }
+                qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%'", QueryComponent.WHERE);
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
+               
                 using (var cmd = _server.GetCommand(sql, _conn))
                 {
                     using var da = _server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
-                DataTable _regexMatches = new();
-                _regexMatches.BeginLoadData();
-                _regexMatches = dt.AsEnumerable().Where(row => Regex.IsMatch(row[catalogueItem.ColumnInfo.GetRuntimeName()].ToString(), _redactionConfiguration.RegexPattern)).CopyToDataTable();
-                _regexMatches.EndLoadData();
-                dt.EndLoadData();
-
-                foreach (DataRow row in _regexMatches.Rows)
+                timer.Stop();
+                var y = timer.ElapsedMilliseconds;
+                timer.Start();
+                foreach (DataRow row in dt.Rows)
                 {
-                    Redact(discoveredTable, catalogueItem.ColumnInfo, row, _regexMatches.Columns);
+                    Redact(discoveredTable, columnInfo, row, dt.Columns);
                 }
+
             }
             else
             {
@@ -162,5 +164,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 throw new Exception($"Unable to identify any primary keys in table '{table}'. Redactions cannot be performed on tables without primary keys");
             }
         }
+        timer.Stop();
+        var x = timer.ElapsedMilliseconds;
     }
 }

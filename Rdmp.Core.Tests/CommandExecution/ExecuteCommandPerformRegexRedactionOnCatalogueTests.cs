@@ -323,7 +323,7 @@ namespace Rdmp.Core.Tests.CommandExecution
 
         private string GetInsert(int i)
         {
-            var text = i % 7 == 0 ? "TEST" : "";
+            var text = i % 66 == 0 ? "TEST" : "";
             return @$"
                 ({i}, N'{i}', N'1234{text}1234')";
         }
@@ -342,6 +342,53 @@ namespace Rdmp.Core.Tests.CommandExecution
                 con.Open();
                 server.GetCommand(sql, con).ExecuteNonQuery();
             }
+        }
+
+
+        [Test]
+        public void Redaction_SpeedTest()
+        {
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var server = db.Server;
+            string sql = $@"
+                  CREATE TABLE [RedactionTest](
+                    [DischargeDate] [int] NOT NULL,
+                    [Condition1] [varchar](400) NOT NULL,
+                    [Condition2] [varchar](400) NOT NULL
+                    CONSTRAINT [PK_DLCTest] PRIMARY KEY CLUSTERED 
+                    (
+                    [DischargeDate] ASC,
+                    [Condition1] ASC
+                    )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+                  ) ON [PRIMARY]
+                ";
+            using (var con = server.GetConnection())
+            {
+                con.Open();
+                server.GetCommand(sql, con).ExecuteNonQuery();
+            }
+            var rowCount = 1000;
+            foreach (var i in Enumerable.Range(0, rowCount / 1000))
+            {
+                InsertIntoDB(db, i * 1000);
+            }
+            var table = db.ExpectTable("RedactionTest");
+            var catalogue = new Catalogue(CatalogueRepository, "RedactionTest");
+            var importer = new TableInfoImporter(CatalogueRepository, table);
+            importer.DoImport(out var _tableInfo, out var _columnInfos);
+            foreach (var columnInfo in _columnInfos)
+            {
+                var ci = new CatalogueItem(CatalogueRepository, catalogue, columnInfo.GetRuntimeName());
+                ci.SaveToDatabase();
+                var ei = new ExtractionInformation(CatalogueRepository, ci, columnInfo, "");
+                ei.SaveToDatabase();
+            }
+            var activator = new ConsoleInputManager(RepositoryLocator, ThrowImmediatelyCheckNotifier.Quiet);
+            var regexConfiguration = new RegexRedactionConfiguration(CatalogueRepository, "TestReplacer", new Regex("TEST"), "GG", "Replace TEST with GG");
+            regexConfiguration.SaveToDatabase();
+            var columns = new []{ catalogue.CatalogueItems.Where(c => c.Name == "Condition2").First().ColumnInfo};
+            var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, columns.ToList());
+            cmd.Execute();
         }
 
         //[Test]
