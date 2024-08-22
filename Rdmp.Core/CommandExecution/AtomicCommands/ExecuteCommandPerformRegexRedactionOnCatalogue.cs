@@ -28,8 +28,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private readonly List<ColumnInfo> _columns;
     private readonly DiscoveredServer _server;
     private DiscoveredColumn[] _discoveredPKColumns;
+    private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
     private DbConnection _conn;
+
+    private DataTable redactionUpates = new();
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns)
     {
@@ -71,9 +74,35 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         return value;
     }
 
+    private void DoJoinUpdate(ColumnInfo column)
+    {
+        var redactionTable = _discoveredTable.Database.CreateTable("TEMP_RedactionUpdates", redactionUpates);
+        var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
+
+        var sqlLines = new List<CustomLine>
+        {
+            new CustomLine($"t1.{column.GetRuntimeName()} = t2.{column.GetRuntimeName()}", QueryComponent.SET)
+        };
+        foreach (var pk in _discoveredPKColumns)
+        {
+            sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}", QueryComponent.WHERE));
+            sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
+
+        }
+        var sql = updateHelper.BuildUpdate(_discoveredTable, redactionTable, sqlLines);
+        using (var cmd = _server.GetCommand(sql, _conn))
+        {
+            cmd.ExecuteNonQuery();
+        }
+        redactionTable.Drop();
+    }
+
     private void Redact(DiscoveredTable table, ColumnInfo column, DataRow match, DataColumnCollection columns)
     {
-        var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
+
+
+
+        //var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
         int columnIndex = -1;
         var dcColumnIndexes = columns.Cast<DataColumn>().Select((item, index) =>
         {
@@ -84,6 +113,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             return index;
         });
         var columnNames = columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
+
+        //feel like we could do this PK stuff just once?
         Dictionary<ColumnInfo, string> pkLookup = new();
         foreach (int i in dcColumnIndexes.Where(n => n != columnIndex))
         {
@@ -94,24 +125,27 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         }
 
         var redactedValue = GetRedactionValue(match[columnIndex].ToString(), column, pkLookup);
+        match[columnIndex] = redactedValue;
 
-        var sqlLines = new List<CustomLine>
-        {
-            new CustomLine($"t1.{column.GetRuntimeName()} = '{redactedValue}'", QueryComponent.SET)
-        };
-        foreach (var pk in _discoveredPKColumns)
-        {
-            var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(match[pk.GetRuntimeName()].ToString(), pk.DataType.SQLType);
+        //var sqlLines = new List<CustomLine>
+        //{
+        //    new CustomLine($"t1.{column.GetRuntimeName()} = '{redactedValue}'", QueryComponent.SET)
+        //};
+        //foreach (var pk in _discoveredPKColumns)
+        //{
+        //    var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(match[pk.GetRuntimeName()].ToString(), pk.DataType.SQLType);
 
-            sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
-            sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
+        //    sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
+        //    sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
 
-        }
-        var sql = updateHelper.BuildUpdate(table, table, sqlLines);
-        using (var cmd = _server.GetCommand(sql, _conn))
-        {
-           cmd.ExecuteNonQuery();
-        }
+        //}
+        //var sql = updateHelper.BuildUpdate(table, table, sqlLines);
+        //using (var cmd = _server.GetCommand(sql, _conn))
+        //{
+        //   cmd.ExecuteNonQuery();
+        //}
+
+        redactionUpates.ImportRow(match);
     }
 
     public override void Execute()
@@ -123,11 +157,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var timer = Stopwatch.StartNew();
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
-            
+
             var columnName = columnInfo.Name;
             var table = columnInfo.TableInfo.Name;
-            DiscoveredTable discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
-            DiscoveredColumn[] discoveredColumns = discoveredTable.DiscoverColumns();
+            _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+            DiscoveredColumn[] discoveredColumns = _discoveredTable.DiscoverColumns();
             _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
             if (_discoveredPKColumns.Any())
             {
@@ -143,7 +177,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
-               
+
                 using (var cmd = _server.GetCommand(sql, _conn))
                 {
                     using var da = _server.GetDataAdapter(cmd);
@@ -152,9 +186,16 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 timer.Stop();
                 var y = timer.ElapsedMilliseconds;
                 timer.Start();
+                redactionUpates = dt.Clone();
+                redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
                 {
-                    Redact(discoveredTable, columnInfo, row, dt.Columns);
+                    Redact(_discoveredTable, columnInfo, row, dt.Columns);
+                }
+                redactionUpates.EndLoadData();
+                if (dt.Rows.Count > 0)
+                {
+                    DoJoinUpdate(columnInfo);
                 }
 
             }
