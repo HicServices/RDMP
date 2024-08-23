@@ -1,5 +1,6 @@
 ﻿using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Microsoft.Data.SqlClient;
 using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
@@ -54,6 +55,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
     private string GetRedactionValue(string value, ColumnInfo column, DataRow m)
     {
+        
         Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
         var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
         var offset = 0;
@@ -121,78 +123,155 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         redactionUpates.ImportRow(match);
     }
 
-    private void DoInsertForRedactionKey(IEnumerable<DataRow> pks, DataTable ids)
+    //private void DoInsertForRedactionKey(IEnumerable<DataRow> pks, DataTable ids)
+    //{
+    //    var pkValues = string.Join(
+    //       @",
+    //        ", pks.Select(r => $"({r[0]},{r[1]},'{r[2]}')"));
+    //    var pksql = $@"
+    //          INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
+    //          VALUES
+    //          {pkValues}
+    //        ";
+    //    (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(pksql, null);
+    //}
+
+
+    //private void DoInsertForRedactions(IEnumerable<DataRow> rows, DataTable dt)
+    //{
+    //    var insertValue = string.Join(
+    //           @",
+    //        ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
+    //    var sql = @$"
+    //        DECLARE @output TABLE (id int)
+    //        INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID INTO @output
+    //        VALUES
+    //        {insertValue};
+    //        SELECT * from @output
+    //    ";
+    //    var conn = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).GetConnection();
+    //    using (var cmd = _server.GetCommand(sql, conn.Connection))
+    //    {
+    //        using var da = _server.GetDataAdapter(cmd);
+    //        da.Fill(dt);
+    //    }
+    //    conn.Connection.Close();
+    //}
+
+    private void DoInsert(IEnumerable<DataRow> redactionRows, IEnumerable<DataRow> pkRows, int offset)
     {
-
-        var x = ids.Rows.Count;
-        var y = pks.Count();
-        var pkValues = string.Join(
-           @",
-            ", pks.Select(r => $"({ids.Rows[int.Parse(r[0].ToString())][0]},{r[1]},'{r[2]}')"));
-        var pksql = $@"
-              INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
-              VALUES
-              {pkValues}
-            ";
-        (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(pksql, null);
-    }
-
-
-    private void DoInsertForRedactions(IEnumerable<DataRow> rows, DataTable dt)
-    {
-        var insertValue = string.Join(
+        string redactionString = string.Join(
                @",
-            ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-        var sql = @$"
-            DECLARE @output TABLE (id int)
-            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID INTO @output
-            VALUES
-            {insertValue};
-            SELECT * from @output
+            ", redactionRows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
+        string keysString = string.Join(
+           @",
+            ", pkRows.Select(r => $"({r[0]},{r[1]},'{r[2]}')"));
+
+        var sql = $@"
+        DECLARE @output TABLE (id int, inc int IDENTITY(1,1))
+        INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id INTO @output
+        VALUES
+           {redactionString};
+        DECLARE @redactionKeys TABLE (id int IDENTITY(1,1),RegexRedaction_ID int,ColumnInfo_ID int , Value varchar(max));
+		INSERT INTO @redactionKeys(RegexRedaction_ID,ColumnInfo_ID,Value)
+        VALUES
+           {keysString};
+		UPDATE t1
+		SET t1.RegexRedaction_ID = t2.id
+		FROM @redactionKeys as t1
+		INNER JOIN @output AS t2
+		ON  (t1.RegexRedaction_ID -{offset} +1) = t2.inc
+		WHERE (t1.RegexRedaction_ID -{offset} +1) = t2.inc;
+			INSERT INTO RegexRedactionKey
+			select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @redactionKeys;
+			select * from RegexRedactionKey
         ";
-        var conn = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).GetConnection();
-        using (var cmd = _server.GetCommand(sql, conn.Connection))
+        try
         {
-            using var da = _server.GetDataAdapter(cmd);
-            da.Fill(dt);
+            (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(sql, null);
         }
-        conn.Connection.Close();
+        catch (SqlException ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        //DECLARE @output TABLE(id int, inc int IDENTITY(1, 1))
+        //    INSERT INTO Test_Catalogue.dbo.RegexRedaction(RedactionConfiguration_ID, ColumnInfo_ID, startingIndex, ReplacementValue, RedactedValue) OUTPUT inserted.id INTO @output
+        //    VALUES
+        //    (253, 854, 4, '<GG>', 'TEST');
+        //DECLARE @redactionKeys TABLE(id int IDENTITY(1, 1), RegexRedaction_ID int, ColumnInfo_ID int, Value varchar(max));
+        //INSERT INTO @redactionKeys(RegexRedaction_ID, ColumnInfo_ID, Value)
+        //    VALUES
+        //    (0, 854, '12/03/1901 00:00:00'),
+        //    (0, 855, '1')
+
+        //    UPDATE t1
+
+        //    SET t1.RegexRedaction_ID = t2.id
+
+        //    FROM @redactionKeys as t1
+
+        //    INNER JOIN @output AS t2
+        //    ON t1.RegexRedaction_ID = t2.inc - 1
+
+        //    WHERE t1.RegexRedaction_ID = t2.inc - 1;
+        //INSERT INTO Test_Catalogue.dbo.RegexRedactionKey
+        //select RegexRedaction_ID,ColumnInfo_ID,Value FROM @redactionKeys
     }
 
 
     private void SaveRedactions()
     {
-        DataTable dt = new();
-        if (redactionsToSaveTable.Rows.Count > 1000)
+        var max = 1000;
+        //there will be an equal or greater number of PKs, so use that and take as many redactions as we can
+        if(pksToSave.Rows.Count > max)
         {
             var read = 0;
-            while (read < redactionsToSaveTable.Rows.Count)
+            var minColIndex = 0;
+            while(read < pksToSave.Rows.Count)
             {
-                var rows = redactionsToSaveTable.AsEnumerable().Skip(read).Take(1000);
-                var pkRows = pksToSave.AsEnumerable().Where(r => int.Parse(r[0].ToString()) >= read && int.Parse(r[0].ToString()) < (read + 1000));
-                DoInsertForRedactions(rows, dt);
-                read += 1000;
+                var pkRows = pksToSave.AsEnumerable().Skip(read).Take(max);
+                var colIndex = int.Parse(pkRows.Last()[0].ToString());
+                var redactionRows = redactionsToSaveTable.AsEnumerable().Skip(minColIndex).Take(colIndex - minColIndex+1);
+                DoInsert(redactionRows.AsEnumerable(), pkRows.AsEnumerable(), minColIndex);
+                minColIndex = colIndex;
+                read += max;
             }
         }
         else
         {
-            DoInsertForRedactions(redactionsToSaveTable.AsEnumerable(), dt);
+            DoInsert(redactionsToSaveTable.AsEnumerable(), pksToSave.AsEnumerable(),0);
         }
-        if (pksToSave.Rows.Count > 1000)
-        {
-            var read = 0;
-            while (read < pksToSave.Rows.Count)
-            {
-                DoInsertForRedactionKey(pksToSave.AsEnumerable().Skip(read).Take(1000), dt);
-                read += 1000;
-            }
-        }
-        else
-        {
-            var x = dt.Rows.Count;
-            var y = pksToSave.Rows.Count;
-            DoInsertForRedactionKey(pksToSave.AsEnumerable(), dt);
-        }
+
+        //DataTable dt = new();
+        //if (redactionsToSaveTable.Rows.Count > 1000)
+        //{
+        //    var read = 0;
+        //    while (read < redactionsToSaveTable.Rows.Count)
+        //    {
+        //        var rows = redactionsToSaveTable.AsEnumerable().Skip(read).Take(1000);
+        //        var pkRows = pksToSave.AsEnumerable().Where(r => int.Parse(r[0].ToString()) >= read && int.Parse(r[0].ToString()) < (read + 1000));
+        //        DoInsertForRedactions(rows, dt);
+        //        read += 1000;
+        //    }
+        //}
+        //else
+        //{
+        //    DoInsertForRedactions(redactionsToSaveTable.AsEnumerable(), dt);
+        //}
+        //replace pk column[0] with valur at row indxo of dt
+        //if (pksToSave.Rows.Count > 1000)
+        //{
+        //    var read = 0;
+        //    while (read < pksToSave.Rows.Count)
+        //    {
+        //        DoInsertForRedactionKey(pksToSave.AsEnumerable().Skip(read).Take(1000), dt);
+        //        read += 1000;
+        //    }
+        //}
+        //else
+        //{
+        //    DoInsertForRedactionKey(pksToSave.AsEnumerable(), dt);
+        //}
 
     }
 
@@ -232,7 +311,9 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     da.Fill(dt);
                 }
                 conn.Close();
-
+                timer.Stop();
+                Console.WriteLine(timer.ElapsedMilliseconds);
+                timer.Start();
                 redactionUpates = dt.Clone();
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
@@ -240,7 +321,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     Redact(columnInfo, row);
                 }
                 redactionUpates.EndLoadData();
+                timer.Stop();
+                Console.WriteLine(timer.ElapsedMilliseconds);
+                timer.Start();
                 SaveRedactions();
+                timer.Stop();
+                Console.WriteLine(timer.ElapsedMilliseconds);
+                timer.Start();
                 if (dt.Rows.Count > 0)
                 {
                     DoJoinUpdate(columnInfo);

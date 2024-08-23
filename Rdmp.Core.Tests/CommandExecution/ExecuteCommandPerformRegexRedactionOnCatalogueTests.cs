@@ -40,7 +40,9 @@ namespace Rdmp.Core.Tests.CommandExecution
                 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
               ) ON [PRIMARY]
               INSERT [RedactionTest]([DischargeDate],[Condition1],[Condition2])
-              VALUES (CAST(0x000001B300000000 AS DateTime),N'1',N'1234TEST1234')           
+              VALUES
+               (CAST(0x000001B300000000 AS DateTime),N'1',N'1234TEST1234'),           
+               (CAST(0x000001B400000000 AS DateTime),N'2',N'1234TEST1234')           
             ";
             var server = db.Server;
             using (var con = server.GetConnection())
@@ -72,8 +74,9 @@ namespace Rdmp.Core.Tests.CommandExecution
                 using var da = server.GetDataAdapter(fetchCmd);
                 da.Fill(dt);
             }
-            Assert.That(dt.Rows.Count, Is.EqualTo(1));
+            Assert.That(dt.Rows.Count, Is.EqualTo(2));
             Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
+            Assert.That(dt.Rows[1].ItemArray[0], Is.EqualTo("1234<GG>1234"));
         }
 
 
@@ -367,7 +370,7 @@ namespace Rdmp.Core.Tests.CommandExecution
                 con.Open();
                 server.GetCommand(sql, con).ExecuteNonQuery();
             }
-            var rowCount = 15000;
+            var rowCount = 5000000;
             foreach (var i in Enumerable.Range(0, rowCount / 1000))
             {
                 InsertIntoDB(db, i * 1000);
