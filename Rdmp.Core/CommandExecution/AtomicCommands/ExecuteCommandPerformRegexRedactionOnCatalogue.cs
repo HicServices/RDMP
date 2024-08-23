@@ -14,6 +14,7 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Terminal.Gui;
 using static System.Linq.Enumerable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -29,7 +30,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
     private readonly DataTable redactionsToSaveTable = new();
-
+    private readonly DataTable pksToSave = new();
 
     private DataTable redactionUpates = new();
 
@@ -45,12 +46,17 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         redactionsToSaveTable.Columns.Add("startingIndex");
         redactionsToSaveTable.Columns.Add("ReplacementValue");
         redactionsToSaveTable.Columns.Add("RedactedValue");
+        pksToSave.Columns.Add("redactionsToSaveTable_Index");
+        pksToSave.Columns.Add("ColumnInfo_ID");
+        pksToSave.Columns.Add("Value");
     }
 
 
-    private string GetRedactionValue(string value, ColumnInfo column, Dictionary<ColumnInfo, string> pkLookup)
+    private string GetRedactionValue(string value, ColumnInfo column, DataRow m)
     {
+        Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
         var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
+        var offset = 0;
         foreach (var match in matches)
         {
             var foundMatch = match.ToString();
@@ -71,6 +77,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             }
             value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
             redactionsToSaveTable.Rows.Add([_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch]);
+            foreach (var pk in pkLookup)
+            {
+                pksToSave.Rows.Add([redactionUpates.Rows.Count + offset, pk.Key.ID, pk.Value]);
+            }
+            offset++;
         }
 
         return value;
@@ -104,50 +115,83 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
 
     private void Redact(ColumnInfo column, DataRow match)
     {
-        Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => match[i + 1].ToString());
-        var redactedValue = GetRedactionValue(match[0].ToString(), column, pkLookup);
+
+        var redactedValue = GetRedactionValue(match[0].ToString(), column, match);
         match[0] = redactedValue;
         redactionUpates.ImportRow(match);
     }
 
+    private void DoInsertForRedactionKey(IEnumerable<DataRow> pks, DataTable ids)
+    {
+
+        var x = ids.Rows.Count;
+        var y = pks.Count();
+        var pkValues = string.Join(
+           @",
+            ", pks.Select(r => $"({ids.Rows[int.Parse(r[0].ToString())][0]},{r[1]},'{r[2]}')"));
+        var pksql = $@"
+              INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
+              VALUES
+              {pkValues}
+            ";
+        (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(pksql, null);
+    }
+
+
+    private void DoInsertForRedactions(IEnumerable<DataRow> rows, DataTable dt)
+    {
+        var insertValue = string.Join(
+               @",
+            ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
+        var sql = @$"
+            DECLARE @output TABLE (id int)
+            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID INTO @output
+            VALUES
+            {insertValue};
+            SELECT * from @output
+        ";
+        var conn = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).GetConnection();
+        using (var cmd = _server.GetCommand(sql, conn.Connection))
+        {
+            using var da = _server.GetDataAdapter(cmd);
+            da.Fill(dt);
+        }
+        conn.Connection.Close();
+    }
 
 
     private void SaveRedactions()
     {
+        DataTable dt = new();
         if (redactionsToSaveTable.Rows.Count > 1000)
         {
             var read = 0;
-            while(read < redactionsToSaveTable.Rows.Count)
+            while (read < redactionsToSaveTable.Rows.Count)
             {
                 var rows = redactionsToSaveTable.AsEnumerable().Skip(read).Take(1000);
-                var insertValue = string.Join(
-               @",
-            ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-                var sql = @$"
-            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
-            VALUES
-            {insertValue}
-        ";
-                (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
-                    sql, []
-                    );
+                var pkRows = pksToSave.AsEnumerable().Where(r => int.Parse(r[0].ToString()) >= read && int.Parse(r[0].ToString()) < (read + 1000));
+                DoInsertForRedactions(rows, dt);
                 read += 1000;
             }
         }
         else
         {
-
-            var insertValue = string.Join(
-                @",
-            ", redactionsToSaveTable.AsEnumerable().Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-            var sql = @$"
-            INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
-            VALUES
-            {insertValue}
-        ";
-            (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(
-                sql, []
-                );
+            DoInsertForRedactions(redactionsToSaveTable.AsEnumerable(), dt);
+        }
+        if (pksToSave.Rows.Count > 1000)
+        {
+            var read = 0;
+            while (read < pksToSave.Rows.Count)
+            {
+                DoInsertForRedactionKey(pksToSave.AsEnumerable().Skip(read).Take(1000), dt);
+                read += 1000;
+            }
+        }
+        else
+        {
+            var x = dt.Rows.Count;
+            var y = pksToSave.Rows.Count;
+            DoInsertForRedactionKey(pksToSave.AsEnumerable(), dt);
         }
 
     }
@@ -156,7 +200,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     {
         base.Execute();
         var memoryRepo = new MemoryCatalogueRepository();
-     
+
         var timer = Stopwatch.StartNew();
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {

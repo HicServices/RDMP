@@ -149,6 +149,7 @@ public class ExecuteCommandRestoreRegexRedactedValueInCatalogueTests: DatabaseTe
         }
         Assert.That(dt.Rows.Count, Is.EqualTo(1));
         Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234"));
+        cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
         Assert.DoesNotThrow(() => cmd.Execute());
         dt = new DataTable();
         dt.BeginLoadData();
