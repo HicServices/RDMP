@@ -39,16 +39,6 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         if (cata.Length == 1)
             _isProjectSpecific = cata[0].IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository);
 
-        // if project specific only let them set to project specific
-        if (_category != null && _isProjectSpecific && _category != ExtractionCategory.ProjectSpecific)
-        {
-            // user is trying to set to Core
-            if (_category == ExtractionCategory.Core)
-                // surely they meant project specific!
-                _category = ExtractionCategory.ProjectSpecific;
-            else
-                SetImpossible("CatalogueItems can only be ProjectSpecific extraction category");
-        }
     }
 
     public override string GetCommandName() =>
@@ -64,30 +54,40 @@ public sealed class ExecuteCommandChangeExtractionCategory : BasicCommandExecuti
         base.Execute();
 
         var c = _category;
-
         if (c == null && BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory),
                 ExtractionCategory.Core, out var category))
+        {
             c = (ExtractionCategory)category;
+        }
 
         if (c == null)
             return;
+        if (_isProjectSpecific && c == ExtractionCategory.Core)
+        {
+            // Don't allow project specific catalogue items to become core
+            c = ExtractionCategory.ProjectSpecific;
+            Show("Cannot set the Extraction Category to 'Core' for a  Project Specific Catalogue item. It will be saved as 'Project Specific'.");
+        }
 
-        // if project specific only let them set to project specific
-        if (_isProjectSpecific && c != ExtractionCategory.ProjectSpecific)
-            throw new Exception(
-                "All CatalogueItems in ProjectSpecific Catalogues must have ExtractionCategory of 'ProjectSpecific'");
-
-        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), $"Set ExtractionCategory to '{c}'", _extractionInformations))
+        if (ExecuteWithCommit(() => ExecuteImpl(c.Value), c == ExtractionCategory.NotExtractable ? "Make Not Extractable" : $"Set ExtractionCategory to '{c}'", _extractionInformations))
             //publish the root Catalogue
             Publish(_extractionInformations.First());
     }
 
     private void ExecuteImpl(ExtractionCategory category)
     {
+
         foreach (var ei in _extractionInformations)
         {
-            ei.ExtractionCategory = category;
-            ei.SaveToDatabase();
+            if (category == ExtractionCategory.NotExtractable)
+            {
+                ei.DeleteInDatabase();
+            }
+            else
+            {
+                ei.ExtractionCategory = category;
+                ei.SaveToDatabase();
+            }
         }
     }
 }

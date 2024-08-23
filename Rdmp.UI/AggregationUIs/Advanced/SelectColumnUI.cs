@@ -72,11 +72,56 @@ public partial class SelectColumnUI : RDMPUserControl
         olvEditInPopup.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Edit..." : null;
 
         olvIncluded.AspectGetter = rowObject => _includedColumns.Contains(rowObject) ? "Included" : "Not Included";
+
+
+        olvGroupBy.AspectGetter = rowObject =>
+        {
+            var ad = rowObject as AggregateDimension;
+            if(ad != null)
+            {
+                return ((AggregateDimension)rowObject).GroupBy;
+            }
+            var ei = rowObject as ExtractionInformation;
+            if (ei != null)
+            {
+                return ((ExtractionInformation)rowObject).GroupBy;
+            }
+            var acc = rowObject as AggregateCountColumn;
+            if (acc != null)
+            {
+                return ((AggregateCountColumn)rowObject).GroupBy;
+            }
+            return null;
+        };
+
         olvSelectColumns.AlwaysGroupByColumn = olvIncluded;
         olvSelectColumns.RowFormatter += RowFormatter;
 
         olvSelectColumns.CellEditStarting += CellEditStarting;
         olvSelectColumns.CellEditFinished += CellEditFinished;
+
+
+        olvSelectColumns.SubItemChecking += (object sender, SubItemCheckingEventArgs args) =>
+        {
+            if (args.Column == olvGroupBy)
+            {
+                var ad = args.RowObject as AggregateDimension;
+                if (ad != null)
+                {
+                    ad.GroupBy = !ad.GroupBy;
+                    ad.SaveToDatabase();
+                    return;
+                }
+                var ei = args.RowObject as ExtractionInformation;
+                if (ei != null )
+                {
+                    ei.GroupBy = !ei.GroupBy;
+                    ei.SaveToDatabase();
+                    return;
+                }
+
+            }
+        };
 
         olvAddRemove.ImageGetter += ImageGetter;
         olvSelectColumns.CellClick += olvSelectColumns_CellClick;

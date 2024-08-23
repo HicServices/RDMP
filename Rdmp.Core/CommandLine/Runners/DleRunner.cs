@@ -5,8 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
+using System.Reflection;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -109,26 +110,26 @@ public class DleRunner : Runner
                     //Store the date of the last successful load
                     loadMetadata.LastLoadTime = DateTime.Now;
                     loadMetadata.SaveToDatabase();
-                    List<IProcessTask> processTasks = loadMetadata.ProcessTasks.Where(ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
-                    if (processTasks.Count() > 0) //if using a remote attacher, there may be some additional work to do
+                    var processTasks = loadMetadata.ProcessTasks.Where(static ipt => ipt.Path == typeof(RemoteDatabaseAttacher).FullName || ipt.Path == typeof(RemoteTableAttacher).FullName).ToList();
+
+                    //if using a remote attacher, there may be some additional work to do
+                    foreach (var arguments in processTasks.Select(static task => task.GetAllArguments().ToList()))
                     {
-                        foreach (IEnumerable<Argument> arguments in processTasks.Select(task => task.GetAllArguments()))
+                        foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
                         {
-                            foreach (var argument in arguments.Where(arg => arg.Name == RemoteAttacherPropertiesValidator("DeltaReadingStartDate") && arg.Value is not null))
+                            var scanForwardDate = arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays"));
+                            var arg = (ProcessTaskArgument)argument;
+                            arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(int.Parse(scanForwardDate.Value)).ToString();
+                            if (arguments.First(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).Value == "True")
                             {
-                                var scanForwardDate = arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("DeltaReadingLookForwardDays")).First();
-                                var arg = (ProcessTaskArgument)argument;
-                                arg.Value = DateTime.Parse(argument.Value.ToString()).AddDays(Int32.Parse(scanForwardDate.Value)).ToString();
-                                if (arguments.Where(a => a.Name == RemoteAttacherPropertiesValidator("SetDeltaReadingToLatestSeenDatePostLoad")).First().Value == "True")
+                                var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
+                                if (mostRecentValue is not null)
                                 {
-                                    var mostRecentValue = arguments.Single(a => a.Name == RemoteAttacherPropertiesValidator("MostRecentlySeenDate")).Value;
-                                    if (mostRecentValue is not null)
-                                    {
-                                        arg.Value = DateTime.Parse(mostRecentValue).ToString();
-                                    }
+                                    arg.Value = DateTime.Parse(mostRecentValue).ToString();
                                 }
-                                arg.SaveToDatabase();
                             }
+
+                            arg.SaveToDatabase();
                         }
                     }
                 }
@@ -145,15 +146,12 @@ public class DleRunner : Runner
         }
     }
 
-    private string RemoteAttacherPropertiesValidator(string propertyName)
-    {
-        var properties = typeof(RemoteAttacher).GetProperties();
-        var foundProperties = properties.Where(p => p.Name == propertyName);
-        if (foundProperties.Any())
-        {
-            return foundProperties.First().Name;
-        }
-        throw new Exception($"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+    private static readonly ImmutableDictionary<string, PropertyInfo> Properties = typeof(RemoteAttacher).GetProperties().ToImmutableDictionary(static p => p.Name);
 
+    private static string RemoteAttacherPropertiesValidator(string propertyName)
+    {
+        var foundProperty = Properties.GetValueOrDefault(propertyName) ?? throw new Exception(
+            $"Attempting to access the property {propertyName} of the RemoteAttacher class. This property does not exist.");
+        return foundProperty.Name;
     }
 }

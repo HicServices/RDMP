@@ -353,11 +353,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
     private static string GetToolTipBody(IActivateItems activator, ICanBeSummarised sum)
     {
-        if (DateTime.Now.CompareTo(nextInvalidateCache)>0)
+        if (DateTime.Now.CompareTo(nextInvalidateCache) > 0)
         {
             cache.Clear();
             nextInvalidateCache = DateTime.Now.AddSeconds(10);
-        } else if (cache.TryGetValue(sum, out var body))
+        }
+        else if (cache.TryGetValue(sum, out var body))
             return body;
 
         var sb = new StringBuilder();
@@ -783,13 +784,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         for (var i = 0; i < buckets.Length; i++)
         {
             // add all the items
-            foreach (var item in buckets[i].Value.OrderBy(i => GetWeight(i)))
+            foreach (var item in buckets[i].Value.OrderBy(GetWeight))
             {
                 coll.Add(item);
 
                 if (item is ToolStripMenuItem { DropDownItems.Count: > 0 } mi)
-                    // if menu item has submenus
-                    // sort those too - recurisvely
+                    // if menu item has submenus sort those too - recursively
                     OrderMenuItems(mi.DropDownItems);
             }
 
@@ -798,18 +798,15 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         }
     }
 
-    private float GetWeight(ToolStripItem oItem)
+    private static float GetWeight(ToolStripItem oItem)
     {
         if (oItem.Tag is IAtomicCommand cmd) return cmd.Weight;
+        if (oItem is not ToolStripMenuItem mi) return 0;
+        if (mi.DropDownItems.Count > 0)
+            return mi.DropDownItems.Cast<ToolStripItem>().Min(GetWeight);
 
-        if (oItem is ToolStripMenuItem mi)
-        {
-            if (mi.DropDownItems.Count > 0)
-                return mi.DropDownItems.Cast<ToolStripItem>().Min(GetWeight);
-
-            if (mi.Tag is float f)
-                return f;
-        }
+        if (mi.Tag is float f)
+            return f;
 
         return 0;
     }

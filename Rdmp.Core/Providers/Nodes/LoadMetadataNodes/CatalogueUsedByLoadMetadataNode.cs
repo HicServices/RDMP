@@ -22,8 +22,7 @@ public class CatalogueUsedByLoadMetadataNode : ObjectUsedByOtherObjectNode<LoadM
 
     public void DeleteInDatabase()
     {
-        ObjectBeingUsed.LoadMetadata_ID = null;
-        ObjectBeingUsed.SaveToDatabase();
+        User.UnlinkFromCatalogue(ObjectBeingUsed);
     }
 
     public string GetDeleteMessage() => $"remove Catalogue '{ObjectBeingUsed}' from Load";

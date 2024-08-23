@@ -81,29 +81,30 @@ public sealed class LoggingDatabasePatcher : Patcher
         sql.AppendLine(
             $"{db.Helper.GetCreateTableSql(db, "z_RowErrorType", new[] { new DatabaseColumnRequest("ID", new DatabaseTypeRequest(typeof(int))) { AllowNulls = false, IsPrimaryKey = true }, new DatabaseColumnRequest("type", new DatabaseTypeRequest(typeof(string), 20) { Unicode = true }) }, null, true).TrimEnd()};");
 
+        var sh = db.Server.GetQuerySyntaxHelper();
+        sql.AppendLine($"""
 
-        sql.AppendLine(@"
+                        INSERT INTO {db.ExpectTable("z_DataLoadTaskStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}, {sh.EnsureWrapped("description")}) VALUES(1, 'Open', NULL);
+                        INSERT INTO {db.ExpectTable("z_DataLoadTaskStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}, {sh.EnsureWrapped("description")}) VALUES(2, 'Ready', NULL);
+                        INSERT INTO {db.ExpectTable("z_DataLoadTaskStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}, {sh.EnsureWrapped("description")}) VALUES(3, 'Committed', NULL);
+                        INSERT INTO {db.ExpectTable("z_FatalErrorStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}) VALUES(1, 'Outstanding');
+                        INSERT INTO {db.ExpectTable("z_FatalErrorStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}) VALUES(2, 'Resolved');
+                        INSERT INTO {db.ExpectTable("z_FatalErrorStatus").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("status")}) VALUES(3, 'Blocked');
+                        INSERT INTO {db.ExpectTable("z_RowErrorType").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("type")}) VALUES(1, 'LoadRow');
+                        INSERT INTO {db.ExpectTable("z_RowErrorType").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("type")}) VALUES(2, 'Duplication');
+                        INSERT INTO {db.ExpectTable("z_RowErrorType").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("type")}) VALUES(3, 'Validation');
+                        INSERT INTO {db.ExpectTable("z_RowErrorType").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("type")}) VALUES(4, 'DatabaseOperation');
+                        INSERT INTO {db.ExpectTable("z_RowErrorType").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("type")}) VALUES(5, 'Unknown');
 
-INSERT INTO z_DataLoadTaskStatus(ID, status, description) VALUES(1, 'Open', NULL);
-INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(2, 'Ready', NULL);
-INSERT INTO z_DataLoadTaskStatus (ID, status, description) VALUES(3, 'Committed', NULL);
-INSERT INTO z_FatalErrorStatus(ID, status) VALUES(1, 'Outstanding');
-INSERT INTO z_FatalErrorStatus (ID, status) VALUES(2, 'Resolved');
-INSERT INTO z_FatalErrorStatus (ID, status) VALUES(3, 'Blocked');
-INSERT INTO z_RowErrorType(ID, type) VALUES(1, 'LoadRow');
-INSERT INTO z_RowErrorType (ID, type) VALUES(2, 'Duplication');
-INSERT INTO z_RowErrorType (ID, type) VALUES(3, 'Validation');
-INSERT INTO z_RowErrorType (ID, type) VALUES(4, 'DatabaseOperation');
-INSERT INTO z_RowErrorType (ID, type) VALUES(5, 'Unknown');
+                        /*create datasets*/
+                        INSERT INTO {db.ExpectTable("DataSet").GetWrappedName()} ({sh.EnsureWrapped("dataSetID")}, {sh.EnsureWrapped("name")}, {sh.EnsureWrapped("description")}, {sh.EnsureWrapped("time_period")}, {sh.EnsureWrapped("SLA_required")}, {sh.EnsureWrapped("supplier_name")}, {sh.EnsureWrapped("supplier_tel_no")}, {sh.EnsureWrapped("supplier_email")}, {sh.EnsureWrapped("contact_name")}, {sh.EnsureWrapped("contact_position")}, {sh.EnsureWrapped("currentContactInstitutions")}, {sh.EnsureWrapped("contact_tel_no")}, {sh.EnsureWrapped("contact_email")}, {sh.EnsureWrapped("frequency")}, {sh.EnsureWrapped("method")}) VALUES(N'DataExtraction', 'DataExtraction', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+                        INSERT INTO {db.ExpectTable("DataSet").GetWrappedName()} ({sh.EnsureWrapped("dataSetID")}, {sh.EnsureWrapped("name")}, {sh.EnsureWrapped("description")}, {sh.EnsureWrapped("time_period")}, {sh.EnsureWrapped("SLA_required")}, {sh.EnsureWrapped("supplier_name")}, {sh.EnsureWrapped("supplier_tel_no")}, {sh.EnsureWrapped("supplier_email")}, {sh.EnsureWrapped("contact_name")}, {sh.EnsureWrapped("contact_position")}, {sh.EnsureWrapped("currentContactInstitutions")}, {sh.EnsureWrapped("contact_tel_no")}, {sh.EnsureWrapped("contact_email")}, {sh.EnsureWrapped("frequency")}, {sh.EnsureWrapped("method")}) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
-/*create datasets*/
-INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'DataExtraction', 'DataExtraction', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO DataSet (dataSetID, name, description, time_period, SLA_required, supplier_name, supplier_tel_no, supplier_email, contact_name, contact_position, currentContactInstitutions, contact_tel_no, contact_email, frequency, method) VALUES(N'Internal', 'Internal', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-/*create tasks*/
-INSERT INTO DataLoadTask(ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(1, 'Internal', 'Internal', 'Thomas', 1, 0, 'Internal');
-INSERT INTO DataLoadTask (ID, description, name, userAccount, statusID, isTest, dataSetID) VALUES(2, 'DataExtraction', 'DataExtraction', 'Thomas', 1, 0, 'DataExtraction');
-");
+                        /*create tasks*/
+                        INSERT INTO {db.ExpectTable("DataLoadTask").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("description")}, {sh.EnsureWrapped("name")}, {sh.EnsureWrapped("userAccount")}, {sh.EnsureWrapped("statusID")}, {sh.EnsureWrapped("isTest")}, {sh.EnsureWrapped("dataSetID")}) VALUES(1, 'Internal', 'Internal', 'Thomas', 1, {(sh.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer ? 0 : "FALSE")}, 'Internal');
+                        INSERT INTO {db.ExpectTable("DataLoadTask").GetWrappedName()} ({sh.EnsureWrapped("ID")}, {sh.EnsureWrapped("description")}, {sh.EnsureWrapped("name")}, {sh.EnsureWrapped("userAccount")}, {sh.EnsureWrapped("statusID")}, {sh.EnsureWrapped("isTest")}, {sh.EnsureWrapped("dataSetID")}) VALUES(2, 'DataExtraction', 'DataExtraction', 'Thomas', 1, {(sh.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer ? 0 : "FALSE")}, 'DataExtraction');
+                                               
+                        """);
 
 
         return new Patch(InitialScriptName, header + sql);

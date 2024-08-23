@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -239,8 +238,7 @@ public class ColumnInfoANOPlan : ICheckable
         var sourceTypeTranslater = _querySyntaxHelper.TypeTranslater;
 
         //if we have picked a destination
-        ITypeTranslater destinationTypeTranslater;
-        destinationTypeTranslater = _planManager.TargetDatabase != null
+        var destinationTypeTranslater = _planManager.TargetDatabase != null
             ? _planManager.TargetDatabase.Server.GetQuerySyntaxHelper().TypeTranslater
             : //ensure we handle type translation between the two platforms
             sourceTypeTranslater; //otherwise (we haven't picked a destination yet)

@@ -47,7 +47,7 @@ public interface ICoreChildProvider : IChildProvider
     FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; }
     FolderNode<LoadMetadata> LoadMetadataRootFolder { get; }
     FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; }
-
+    FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; }
     Catalogue[] AllCatalogues { get; }
     Curation.Data.Dataset[] AllDatasets { get; }
     Dictionary<int, Catalogue> AllCataloguesDictionary { get; }

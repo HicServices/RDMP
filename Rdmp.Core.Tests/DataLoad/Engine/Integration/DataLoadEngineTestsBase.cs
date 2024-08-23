@@ -71,8 +71,8 @@ internal class DataLoadEngineTestsBase : DatabaseTests
     {
         var projectDirectory =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
-                "MyLoadDir", true);
-        lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
+                "MyLoadDir", true,lmd);
+
         lmd.SaveToDatabase();
 
         return projectDirectory;
@@ -91,11 +91,10 @@ internal class DataLoadEngineTestsBase : DatabaseTests
         forwardEngineer.ExecuteForwardEngineering(out var cata, out var cataItems, out var eis);
 
         //make the catalogue use the load configuration
-        cata.LoadMetadata_ID = lmd.ID;
         cata.LoggingDataTask = lmd.Name;
         Assert.That(cata.LiveLoggingServer_ID, Is.Not.Null); //catalogue should have one of these because of system defaults
         cata.SaveToDatabase();
-
+        lmd.LinkToCatalogue(cata);
         return ti;
     }
 }

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
-using Rdmp.Core.ReusableLibraryCode.Settings;
 
 namespace Rdmp.Core.Logging;
 
@@ -114,7 +113,7 @@ public sealed class DataLoadInfo : IDataLoadInfo
             _logQueue?.CompleteAdding();
             _logThread?.Join();
             _logQueue = new BlockingCollection<LogEntry>();
-            _logThread = new Thread(new ThreadStart(LogWorker));
+            _logThread = new Thread(LogWorker);
             _logThread.Start();
         }
     }

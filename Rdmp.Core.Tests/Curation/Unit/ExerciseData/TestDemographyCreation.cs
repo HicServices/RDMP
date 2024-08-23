@@ -6,8 +6,8 @@
 
 using System;
 using System.IO;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using NUnit.Framework;
 
 namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData;

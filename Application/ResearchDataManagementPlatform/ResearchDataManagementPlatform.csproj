@@ -1,8 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <UseWindowsForms>true</UseWindowsForms>
     <EnableWindowsTargeting>true</EnableWindowsTargeting>
@@ -29,10 +29,10 @@
     <EmbeddedResource Remove="Updates\UpdaterUI.resx" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ConsoleControl" Version="1.3.0" />
-    <PackageReference Include="Autoupdater.NET.Official" Version="1.8.4" />
-    <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0" />
-    <PackageReference Include="System.Resources.Extensions" Version="7.0.0" />
+    <PackageReference Include="ConsoleControl"/>
+    <PackageReference Include="Autoupdater.NET.Official"/>
+    <PackageReference Include="DockPanelSuite.ThemeVS2015" />
+    <PackageReference Include="System.Resources.Extensions" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -36,7 +35,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
-        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
+        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().First(static c => c.Name == "Dataset1");
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset);
         Assert.DoesNotThrow(linkCmd.Execute);
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<ColumnInfo>();
@@ -74,7 +73,7 @@ internal class ExecuteCommandLinkCatalogueToDatasetTests : CommandCliTests
         var cmd = new ExecuteCommandCreateDataset(GetMockActivator(), "dataset");
         Assert.DoesNotThrow(cmd.Execute);
         var founddataset = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Dataset>().First();
-        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name == "Dataset1").First();
+        var foundCatalogue = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().First(c => c.Name == "Dataset1");
         var linkCmd = new ExecuteCommandLinkCatalogueToDataset(GetMockActivator(), foundCatalogue, founddataset, false);
         Assert.DoesNotThrow(linkCmd.Execute);
         var columInfo = GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueItem>().Where(ci => _cata1.CatalogueItems.Contains(ci));

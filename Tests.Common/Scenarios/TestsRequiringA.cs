@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
@@ -43,8 +43,7 @@ public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequ
     protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, PersonCollection people, int rows, Random r)
         where T : IDataGenerator
     {
-        var f = new DataGeneratorFactory();
-        var instance = f.Create<T>(r);
+        var instance = DataGeneratorFactory.Create<T>(r);
 
         var dt = instance.GetDataTable(people, rows);
 

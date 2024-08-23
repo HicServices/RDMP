@@ -12,7 +12,7 @@ namespace Rdmp.Core.DataLoad.Triggers;
 /// <summary>
 /// Container class for constant variables for the names of special columns required by the backup trigger (_Archive table and general DLE audit columns).
 /// </summary>
-public class SpecialFieldNames
+public static class SpecialFieldNames
 {
     public const string ValidFrom = "hic_validFrom";
     public const string DataLoadRunID = "hic_dataLoadRunID";
@@ -20,5 +20,5 @@ public class SpecialFieldNames
     public static bool IsHicPrefixed(IHasRuntimeName col) => IsHicPrefixed(col.GetRuntimeName());
 
     public static bool IsHicPrefixed(string runtimeName) =>
-        runtimeName.StartsWith("hic_", StringComparison.CurrentCultureIgnoreCase);
+        runtimeName.StartsWith("hic_", StringComparison.OrdinalIgnoreCase);
 }

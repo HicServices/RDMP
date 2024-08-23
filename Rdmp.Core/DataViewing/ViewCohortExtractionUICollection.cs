@@ -79,13 +79,14 @@ public class ViewCohortExtractionUICollection : PersistableObjectCollection, IVi
         var selectSql = GetSelectList(ect);
 
         // Don't bother with top/limit SQL if theres none set
-        if (Top <= 0) response.SQL = "";
+        var responseSQL = response.SQL;
+        if (Top <= 0) responseSQL = "";
 
         return response.Location switch
         {
-            QueryComponent.SELECT => $"Select {response.SQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
-            QueryComponent.WHERE => $"Select {selectSql} from {tableName} WHERE {response.SQL} AND {Cohort.WhereSQL()}",
-            QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {response.SQL}",
+            QueryComponent.SELECT => $"Select {responseSQL} {selectSql} from {tableName} WHERE {Cohort.WhereSQL()}",
+            QueryComponent.WHERE => $"Select {selectSql} from {tableName} WHERE {responseSQL} AND {Cohort.WhereSQL()}",
+            QueryComponent.Postfix => $"Select {selectSql} from {tableName} WHERE {Cohort.WhereSQL()} {responseSQL}",
             _ => throw new ArgumentOutOfRangeException()
         };
     }

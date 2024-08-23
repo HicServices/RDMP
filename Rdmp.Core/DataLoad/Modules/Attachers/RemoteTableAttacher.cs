@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -93,6 +92,9 @@ public class RemoteTableAttacher : RemoteAttacher
     [DemandsInitialization("The database type you are attempting to connect to",
         DefaultValue = DatabaseType.MicrosoftSQLServer)]
     public DatabaseType DatabaseType { get; set; }
+
+    [DemandsInitialization("The Columns you wish to pull from the remote table", DefaultValue = "*")]
+    public string SelectedColumns { get; set; } = "*";
 
     private const string StartDateParameter = "@startDate";
     private const string EndDateParameter = "@endDate";
@@ -359,9 +361,16 @@ public class RemoteTableAttacher : RemoteAttacher
 
         var syntax = _remoteDatabase.Server.GetQuerySyntaxHelper();
 
-        var sql = !string.IsNullOrWhiteSpace(RemoteSelectSQL)
-            ? RemoteSelectSQL
-            : $"Select * from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata,DatabaseType)}";
+        string sql;
+        if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
+        {
+            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType).Replace(" WHERE", "");
+            sql = Regex.Replace(RemoteSelectSQL, "\\$RDMPDefinedWhereClause", injectedWhereClause);
+        }
+        else
+        {
+            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
+        }
 
         var scheduleMismatch = false;
         //if there is a load progress
@@ -457,7 +466,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         if (SetDeltaReadingToLatestSeenDatePostLoad)
         {
-            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType ,rawTableName, job);
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job);
         }
 
 

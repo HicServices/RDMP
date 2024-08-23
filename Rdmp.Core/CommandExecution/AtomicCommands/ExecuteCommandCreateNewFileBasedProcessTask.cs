@@ -35,10 +35,11 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
 
         try
         {
-            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
+            _loadDirectory = new LoadDirectory(_loadMetadata.LocationOfForLoadingDirectory, _loadMetadata.LocationOfForArchivingDirectory, _loadMetadata.LocationOfExecutablesDirectory, _loadMetadata.LocationOfCacheDirectory );
         }
-        catch (Exception)
+        catch (Exception e )
         {
+            Console.WriteLine(e.Message);
             SetImpossible("Could not construct LoadDirectory");
         }
 
@@ -60,18 +61,7 @@ public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
         {
             if (_taskType == ProcessTaskType.SQLBakFile)
             {
-                if (!BasicActivator.TypeText("Enter a name for the SQL Bak file", "File name", 100, "database.bak",
-                       out var selected, false)) return;
-
-                var target = Path.Combine(_loadDirectory.ExecutablesPath.FullName, selected);
-
-                if (!File.Exists(target))
-                {
-                    return; //File doesn't exist
-                }
-
-                _file = new FileInfo(target);
-
+                _file = BasicActivator.SelectFile("Enter the .bak file's path", "*.bak", "*.bak");
             }
             else if (_taskType == ProcessTaskType.SQLFile)
             {

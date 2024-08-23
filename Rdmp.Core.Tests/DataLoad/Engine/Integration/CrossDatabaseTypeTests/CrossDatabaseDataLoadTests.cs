@@ -155,7 +155,6 @@ internal class CrossDatabaseDataLoadTests : DataLoadEngineTestsBase
 
         //define a new load configuration
         var lmd = new LoadMetadata(CatalogueRepository, "MyLoad");
-
         if (testCase == TestCase.NoTrigger)
         {
             lmd.IgnoreTrigger = true;
@@ -292,7 +291,10 @@ MrMurder,2001-01-01,Yella");
         }
         finally
         {
-            Directory.Delete(lmd.LocationOfFlatFiles, true);
+            Directory.Delete(lmd.LocationOfForLoadingDirectory, true);
+            Directory.Delete(lmd.LocationOfForArchivingDirectory, true);
+            Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
+            Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
             foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();
@@ -461,7 +463,10 @@ MrMurder,2001-01-01,Yella");
         }
         finally
         {
-            Directory.Delete(lmd.LocationOfFlatFiles, true);
+            Directory.Delete(lmd.LocationOfForLoadingDirectory, true);
+            Directory.Delete(lmd.LocationOfForArchivingDirectory, true);
+            Directory.Delete(lmd.LocationOfExecutablesDirectory, true);
+            Directory.Delete(lmd.LocationOfCacheDirectory, true);
 
             foreach (var c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                 c.DeleteInDatabase();

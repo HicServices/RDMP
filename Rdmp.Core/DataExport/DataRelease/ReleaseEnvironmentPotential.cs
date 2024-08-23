@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -44,7 +44,6 @@ public class ReleaseEnvironmentPotential : ICheckable
         var configuration = _repository.CatalogueRepository
             .GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive", 1).SingleOrDefault();
         if (configuration == null) return;
-
         var factory = new TicketingSystemFactory(_repository.CatalogueRepository);
 
 
@@ -66,7 +65,7 @@ public class ReleaseEnvironmentPotential : ICheckable
         try
         {
             Assesment = ticketingSystem.GetDataReleaseabilityOfTicket(Project.MasterTicket,
-                Configuration.RequestTicket, Configuration.ReleaseTicket, out var reason, out var e);
+                Configuration.RequestTicket, Configuration.ReleaseTicket, configuration.GetReleaseStatuses(), out var reason, out var e);
             Exception = e;
             Reason = reason;
         }

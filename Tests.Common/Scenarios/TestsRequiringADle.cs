@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Options;
@@ -48,7 +48,9 @@ public class TestsRequiringADle : TestsRequiringA
 
         var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
         var subdir = rootFolder.CreateSubdirectory("TestsRequiringADle");
-        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder, subdir.FullName, true);
+        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue");
+
+        LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder, subdir.FullName, true, TestLoadMetadata);
 
         Clear(LoadDirectory);
 
@@ -63,22 +65,17 @@ public class TestsRequiringADle : TestsRequiringA
         TestCatalogue = Import(LiveTable);
         RowsBefore = 5000;
 
-        TestLoadMetadata = new LoadMetadata(CatalogueRepository, "Loading Test Catalogue")
-        {
-            LocationOfFlatFiles = LoadDirectory.RootPath.FullName
-        };
         TestLoadMetadata.SaveToDatabase();
 
 
         //make the load load the table
-        TestCatalogue.LoadMetadata_ID = TestLoadMetadata.ID;
         TestCatalogue.SaveToDatabase();
-
+        TestLoadMetadata.LinkToCatalogue(TestCatalogue);
         CreateFlatFileAttacher(TestLoadMetadata, "*.csv", TestCatalogue.GetTableInfoList(false).Single(), ",");
 
         //Get DleRunner to run pre load checks (includes trigger creation etc)
         var runner = new DleRunner(new DleOptions
-            { LoadMetadata = TestLoadMetadata.ID.ToString(), Command = CommandLineActivity.check });
+        { LoadMetadata = TestLoadMetadata.ID.ToString(), Command = CommandLineActivity.check });
         runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
             new GracefulCancellationToken());
     }
@@ -172,13 +169,13 @@ public class TestsRequiringADle : TestsRequiringA
         {
             //Get DleRunner to run pre load checks (includes trigger creation etc)
             var checker = new DleRunner(new DleOptions
-                { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check });
+            { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.check });
             checker.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, new AcceptAllCheckNotifier(),
                 new GracefulCancellationToken(timeout, timeout));
         }
 
         var runner = new DleRunner(new DleOptions
-            { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run });
+        { LoadMetadata = lmd.ID.ToString(), Command = CommandLineActivity.run });
         runner.Run(RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet, ThrowImmediatelyCheckNotifier.Quiet,
             new GracefulCancellationToken(timeout, timeout));
     }

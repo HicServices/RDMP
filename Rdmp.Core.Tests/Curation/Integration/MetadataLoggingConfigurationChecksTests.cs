@@ -1,4 +1,4 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -21,10 +21,8 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
     public void Test_NoLoggingTask()
     {
         var lmd = WhenIHaveA<LoadMetadata>();
-        var cata1 = lmd.GetAllCatalogues().Single();
-        var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        var cata = WhenIHaveA<Catalogue>();
+        lmd.LinkToCatalogue(cata);
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
 
         var checks = new MetadataLoggingConfigurationChecks(lmd);
@@ -41,8 +39,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
 
         Assert.That(lmd.GetAllCatalogues().Count(), Is.EqualTo(2));
@@ -60,8 +57,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         var lmd = WhenIHaveA<LoadMetadata>();
         var cata1 = lmd.GetAllCatalogues().Single();
         var cata2 = WhenIHaveA<Catalogue>();
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = 2;
         cata2.LoggingDataTask = "OMG YEAGH";
@@ -87,8 +83,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         eds.Name = "My Logging Server";
         eds.SaveToDatabase();
 
-        cata2.LoadMetadata_ID = lmd.ID;
-
+        lmd.LinkToCatalogue(cata2);
         cata1.LoggingDataTask = "OMG YEAGH";
         cata1.LiveLoggingServer_ID = null;
         cata2.LoggingDataTask = "OMG YEAGH";
@@ -104,7 +99,7 @@ public class MetadataLoggingConfigurationChecksTests : UnitTests
         checks.Check(toMem);
 
         AssertFailWithFix("Some catalogues have NULL LiveLoggingServer_ID",
-            $"Set LiveLoggingServer_ID to 'My Logging Server' (the default)", toMem);
+            "Set LiveLoggingServer_ID to 'My Logging Server' (the default)", toMem);
     }
 
     private static void AssertFailWithFix(string expectedMessage, string expectedFix, ToMemoryCheckNotifier toMem)

@@ -37,6 +37,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvColumnSQL = new BrightIdeasSoftware.OLVColumn();
             this.olvEditInPopup = new BrightIdeasSoftware.OLVColumn();
             this.olvAlias = new BrightIdeasSoftware.OLVColumn();
+            this.olvGroupBy = new BrightIdeasSoftware.OLVColumn();
             this.olvIncluded = new BrightIdeasSoftware.OLVColumn();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -49,6 +50,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvSelectColumns.AllColumns.Add(this.olvColumnSQL);
             this.olvSelectColumns.AllColumns.Add(this.olvEditInPopup);
             this.olvSelectColumns.AllColumns.Add(this.olvAlias);
+            this.olvSelectColumns.AllColumns.Add(this.olvGroupBy);
             this.olvSelectColumns.AllColumns.Add(this.olvIncluded);
             this.olvSelectColumns.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -59,7 +61,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvAddRemove,
             this.olvColumnSQL,
             this.olvEditInPopup,
-            this.olvAlias});
+            this.olvAlias,this.olvGroupBy});
             this.olvSelectColumns.Cursor = System.Windows.Forms.Cursors.Default;
             this.olvSelectColumns.HideSelection = false;
             this.olvSelectColumns.Location = new System.Drawing.Point(0, 3);
@@ -98,7 +100,15 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvAlias.AspectName = "Alias";
             this.olvAlias.Groupable = false;
             this.olvAlias.Text = "Alias";
-            this.olvAlias.Width = 100;
+            this.olvAlias.Width = 100;  // 
+            // olvGroupBy
+            // 
+            this.olvGroupBy.AspectName = "GroupBy";
+            this.olvGroupBy.Groupable = true;
+            this.olvGroupBy.CheckBoxes = true;
+            this.olvGroupBy.Text = "Group By";
+            this.olvGroupBy.Width = 100;
+
             // 
             // olvIncluded
             // 
@@ -149,6 +159,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
         private OLVColumn olvColumnSQL;
         private OLVColumn olvEditInPopup;
         private OLVColumn olvAlias;
+        private OLVColumn olvGroupBy;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label1;
         private OLVColumn olvIncluded;

@@ -1,9 +1,10 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data.DataLoad;
 using System;
 using System.IO;
 using System.Linq;
@@ -51,12 +52,15 @@ public class LoadDirectory : ILoadDirectory
     /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
     /// </summary>
     /// <param name="rootPath"></param>
-    public LoadDirectory(string rootPath)
+    /// <param name="validate"></param>
+    public LoadDirectory(string rootPath, bool validate = true)
     {
         if (string.IsNullOrWhiteSpace(rootPath))
             throw new Exception("Root path was blank, there is no LoadDirectory path specified?");
 
         RootPath = new DirectoryInfo(rootPath);
+
+        if (!validate) return;
 
         if (RootPath.Name.Equals("Data", StringComparison.CurrentCultureIgnoreCase))
             throw new ArgumentException("LoadDirectory should be passed the root folder, not the Data folder");
@@ -66,11 +70,20 @@ public class LoadDirectory : ILoadDirectory
         if (!DataPath.Exists)
             throw new DirectoryNotFoundException(
                 $"Could not find directory '{DataPath.FullName}', every LoadDirectory must have a Data folder, the root folder was:{RootPath}");
-
         ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
         ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
         ExecutablesPath = FindFolderInPathOrThrow(RootPath, "Executables");
         Cache = FindFolderInPath(DataPath, "Cache");
+    }
+
+    public LoadDirectory(string ForLoadingPath, string ForArchivingPath, string ExecutablesPathString, string CachePath)
+    {
+        if (string.IsNullOrWhiteSpace(ForLoadingPath) || string.IsNullOrWhiteSpace(ForArchivingPath) || string.IsNullOrWhiteSpace(ExecutablesPathString) || string.IsNullOrWhiteSpace(CachePath))
+            throw new Exception($"One if the LoadDirectory Paths was blank. ForLoading: {ForLoading}. ForArchiving: {ForArchivingPath}. Cache: {CachePath}. Extractables:{ExecutablesPath}");
+        ForLoading = new DirectoryInfo(ForLoadingPath);
+        ForArchiving = new DirectoryInfo(ForArchivingPath);
+        ExecutablesPath = new DirectoryInfo(ExecutablesPathString);
+        Cache = new DirectoryInfo(CachePath);
     }
 
     private static DirectoryInfo FindFolderInPath(DirectoryInfo path, string folderName) =>
@@ -90,9 +103,10 @@ public class LoadDirectory : ILoadDirectory
     /// <param name="parentDir">Parent folder to create the tree in e.g. c:\temp</param>
     /// <param name="dirName">Root folder name for the DLE e.g. LoadingBiochem</param>
     /// <param name="overrideExistsCheck">Determines behaviour if the folder already exists and contains files.  True to carry on, False to throw an Exception</param>
+    /// <param name="loadMetadataToPopulate">Optional loadMetadata object to populate with the created locations</param>
     /// <returns></returns>
     public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName,
-        bool overrideExistsCheck = false)
+        bool overrideExistsCheck = false, ILoadMetadata loadMetadataToPopulate = null)
     {
         if (!parentDir.Exists)
             parentDir.Create();
@@ -116,7 +130,27 @@ public class LoadDirectory : ILoadDirectory
         swExampleFixedWidth.Close();
 
         projectDir.CreateSubdirectory("Executables");
+        if (loadMetadataToPopulate != null)
+        {
+            loadMetadataToPopulate.LocationOfForLoadingDirectory = Path.Combine(projectDir.FullName, "Data", "ForLoading");
+            loadMetadataToPopulate.LocationOfForArchivingDirectory = Path.Combine(projectDir.FullName, "Data", "ForArchiving");
+            loadMetadataToPopulate.LocationOfExecutablesDirectory = Path.Combine(projectDir.FullName, "Executables");
+            loadMetadataToPopulate.LocationOfCacheDirectory = Path.Combine(projectDir.FullName, "Data", "Cache");
+        }
 
         return new LoadDirectory(projectDir.FullName);
+    }
+
+    public void PopulateLoadMetadata(ILoadMetadata loadMetadata)
+    {
+        loadMetadata.LocationOfForLoadingDirectory = ForLoading.FullName;
+        loadMetadata.LocationOfForArchivingDirectory = ForArchiving.FullName;
+        loadMetadata.LocationOfExecutablesDirectory = ExecutablesPath.FullName;
+        loadMetadata.LocationOfCacheDirectory = Cache.FullName;
+    }
+
+    public bool AllSubdirectoriesExist()
+    {
+        return Directory.Exists(ForLoading.FullName) && Directory.Exists(ForArchiving.FullName) && Directory.Exists(Cache.FullName) && Directory.Exists(ExecutablesPath.FullName);
     }
 }

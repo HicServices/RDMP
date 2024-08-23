@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories.Construction;
+using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
@@ -14,6 +15,8 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
 {
     private readonly IMightBeDeprecated[] _o;
     private readonly bool _desiredState;
+    private readonly IBasicActivateItems _activeItems;
+
 
     [UseWithObjectConstructor]
     public ExecuteCommandDeprecate(IBasicActivateItems itemActivator,
@@ -24,6 +27,7 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
     {
         _o = o;
         _desiredState = desiredState;
+        _activeItems = itemActivator;
     }
 
     public override string GetCommandName() => !string.IsNullOrEmpty(OverrideCommandName) ? OverrideCommandName :
@@ -45,7 +49,17 @@ public class ExecuteCommandDeprecate : BasicCommandExecution
         {
             o.IsDeprecated = _desiredState;
             o.SaveToDatabase();
+            if (!_desiredState && o.GetType() == typeof(Catalogue))//false is not-depricated
+            {
+                var c = (Catalogue) o;
+                var replacedBy = _activeItems.RepositoryLocator.CatalogueRepository.GetExtendedProperties(ExtendedProperty.ReplacedBy);
+                var replacement = replacedBy.Where(rb => rb.ReferencedObjectID == c.ID).FirstOrDefault();
+                if(replacedBy != null)
+                    replacement.DeleteInDatabase();
+            }
         }
+
+       
 
         if (!BasicActivator.IsInteractive || _o.Length != 1 || _o[0] is not Catalogue || !_desiredState ||
             !BasicActivator.YesNo("Do you have a replacement Catalogue you want to link?", "Replacement")) return;

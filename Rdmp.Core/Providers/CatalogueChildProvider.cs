@@ -54,6 +54,8 @@ public class CatalogueChildProvider : ICoreChildProvider
 {
     //Load System
     public LoadMetadata[] AllLoadMetadatas { get; set; }
+
+    private LoadMetadataCatalogueLinkage[] AllLoadMetadataLinkage { get; set; }
     public ProcessTask[] AllProcessTasks { get; set; }
     public ProcessTaskArgument[] AllProcessTasksArguments { get; set; }
 
@@ -142,6 +144,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
+    public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
     public AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
     public ConnectionStringKeyword[] AllConnectionStringKeywords { get; set; }
@@ -247,6 +250,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
 
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
+        AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
         AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
         AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
@@ -390,12 +394,14 @@ public class CatalogueChildProvider : ICoreChildProvider
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
         AddChildren(LoadMetadataRootFolder, new DescendancyList(LoadMetadataRootFolder));
 
-
         CohortIdentificationConfigurationRootFolder =
             FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations);
         AddChildren(CohortIdentificationConfigurationRootFolder,
             new DescendancyList(CohortIdentificationConfigurationRootFolder));
 
+        CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations = FolderHelper.BuildFolderTree(AllCohortIdentificationConfigurations.Where(cic => cic.Version is null).ToArray());
+        AddChildren(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations,
+           new DescendancyList(CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations));
         var templateAggregateConfigurationIds =
             new HashSet<int>(
                 repository.GetExtendedProperties(ExtendedProperty.IsTemplate)
@@ -413,18 +419,14 @@ public class CatalogueChildProvider : ICoreChildProvider
         dec.SetBetterRouteExists();
         AddToDictionaries(new HashSet<object>(TemplateAggregateConfigurations), dec);
 
-
         //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
         //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
         var joinableDictionaryByAggregateConfigurationId =
             AllJoinables.ToDictionaryEx(j => j.AggregateConfiguration_ID, v => v);
 
-        foreach (var ac in AllAggregateConfigurations)
-            ac.InjectKnown(
-                joinableDictionaryByAggregateConfigurationId.TryGetValue(ac.ID,
-                    out var joinable) //if there's a joinable
-                    ? joinable //inject that we know the joinable (and what it is)
-                    : null); //otherwise inject that it is not a joinable (suppresses database checking later)
+        foreach (var ac in AllAggregateConfigurations) //if there's a joinable
+            ac.InjectKnown( //inject that we know the joinable (and what it is)
+                joinableDictionaryByAggregateConfigurationId.GetValueOrDefault(ac.ID)); //otherwise inject that it is not a joinable (suppresses database checking later)
 
         ReportProgress("After AggregateConfiguration injection");
 
@@ -456,10 +458,10 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         foreach (var e in AllExports)
         {
-            if (!searchables.ContainsKey(e.ReferencedObjectID))
+            if (!searchables.TryGetValue(e.ReferencedObjectID, out var searchable))
                 continue;
 
-            var known = searchables[e.ReferencedObjectID]
+            var known = searchable
                 .FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
 
             if (known != null)
@@ -824,7 +826,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         //add loads in folder
         foreach (var lmd in folder.ChildObjects) AddChildren(lmd, descendancy.Add(lmd));
-
         // Children are the folders + objects
         AddToDictionaries(new HashSet<object>(
                 folder.ChildFolders.Cast<object>()
@@ -853,6 +854,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
+
 
         //add cics in folder
         foreach (var cic in folder.ChildObjects) AddChildren(cic, descendancy.Add(cic));
@@ -987,19 +989,13 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode,
         DescendancyList descendancy)
     {
-        var chilObjects = new HashSet<object>();
-
-        var usedCatalogues = AllCatalogues
-            .Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
-
-
-        foreach (var catalogue in usedCatalogues)
-            chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,
-                catalogue));
-
+        var loadMetadataId = allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID;
+        var linkedCatalogueIDs = AllLoadMetadataLinkage.Where(link => link.LoadMetadataID == loadMetadataId).Select(static link => link.CatalogueID);
+        var usedCatalogues = linkedCatalogueIDs.Select(catalogueId => AllCatalogues.FirstOrDefault(c => c.ID == catalogueId)).Where(static foundCatalogue => foundCatalogue is not null).ToList();
         allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
+        var childObjects = usedCatalogues.Select(foundCatalogue => new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata, foundCatalogue)).Cast<object>().ToHashSet();
 
-        AddToDictionaries(chilObjects, descendancy);
+        AddToDictionaries(childObjects, descendancy);
     }
 
     #endregion
@@ -1519,7 +1515,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         lock (WriteLock)
         {
             //if we have a record of any children in the child dictionary for the parent model object
-            if (_childDictionary.TryGetValue(model,out var cached))
+            if (_childDictionary.TryGetValue(model, out var cached))
                 return cached.OrderBy(static o => o.ToString()).ToArray();
 
             return model switch
@@ -1556,7 +1552,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         lock (WriteLock)
         {
-            return _descendancyDictionary.TryGetValue(model, out var result) ? result : null;
+            return _descendancyDictionary.GetValueOrDefault(model);
         }
     }
 
@@ -1628,13 +1624,13 @@ public class CatalogueChildProvider : ICoreChildProvider
                             //otherwise ask plugin what its children are
                             var pluginChildren = plugin.GetChildren(o);
 
-                        //if the plugin takes too long to respond we need to stop
-                        if (sw.ElapsedMilliseconds > 1000)
-                        {
-                            _blockedPlugins.Add(plugin);
-                            throw new Exception(
-                                $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
-                        }
+                            //if the plugin takes too long to respond we need to stop
+                            if (sw.ElapsedMilliseconds > 1000)
+                            {
+                                _blockedPlugins.Add(plugin);
+                                throw new Exception(
+                                    $"Plugin '{plugin}' was forbidlisted for taking too long to respond to GetChildren(o) where o was a '{o.GetType().Name}' ('{o}')");
+                            }
 
                             //it has children
                             if (pluginChildren != null && pluginChildren.Any())
@@ -1659,8 +1655,8 @@ public class CatalogueChildProvider : ICoreChildProvider
                                             (o1, set) => set); //it does now
 
 
-                                //add us to the parent objects child collection
-                                _childDictionary[o].Add(pluginChild);
+                                    //add us to the parent objects child collection
+                                    _childDictionary[o].Add(pluginChild);
 
                                     //add to the child collection of the parent object kvp.Key
                                     _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,

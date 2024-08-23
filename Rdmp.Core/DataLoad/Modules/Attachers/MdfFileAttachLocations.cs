@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using MathNet.Numerics.Statistics;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers;

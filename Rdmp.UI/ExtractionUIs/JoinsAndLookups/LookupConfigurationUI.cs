@@ -7,26 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
-using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Icons.IconProvision;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.MainFormUITabs.SubComponents;
-using Rdmp.UI.Menus;
-using Rdmp.UI.Refreshing;
-using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using DragDropEffects = System.Windows.Forms.DragDropEffects;
-using Point = System.Drawing.Point;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups;
@@ -62,452 +48,314 @@ public partial class LookupConfigurationUI : LookupConfiguration_Design
 {
     private Catalogue _catalogue;
     private ToolTip toolTip = new();
+    private string _errorMessage = null;
+    private List<ExtractionInformation> _allExtractionInformationFromCatalogue = new();
 
     //constructor
     public LookupConfigurationUI()
     {
         InitializeComponent();
-        olvLookupColumns.RowHeight = 19;
-        olvExtractionInformations.RowHeight = 19;
-        olvSelectedDescriptionColumns.RowHeight = 19;
-
-        olvLookupColumns.IsSimpleDragSource = true;
-        olvExtractionInformations.IsSimpleDragSource = true;
-
-        pk1.KeyType = JoinKeyType.PrimaryKey;
-        pk1.SelectedColumnChanged += pk1_SelectedColumnChanged;
-
-        pk2.KeyType = JoinKeyType.PrimaryKey;
-        pk2.SelectedColumnChanged += UpdateValidityAssesment;
-
-        pk3.KeyType = JoinKeyType.PrimaryKey;
-        pk3.SelectedColumnChanged += UpdateValidityAssesment;
-
-        fk1.KeyType = JoinKeyType.ForeignKey;
-        fk1.SelectedColumnChanged += fk1_SelectedColumnChanged;
-
-        fk2.KeyType = JoinKeyType.ForeignKey;
-        fk2.SelectedColumnChanged += UpdateValidityAssesment;
-
-        fk3.KeyType = JoinKeyType.ForeignKey;
-        fk3.SelectedColumnChanged += UpdateValidityAssesment;
-
-        AssociatedCollection = RDMPCollection.Tables;
-    }
-
-    private void UpdateValidityAssesment()
-    {
-        UpdateValidityAssesment(false);
-    }
-
-    private void fk1_SelectedColumnChanged()
-    {
-        SetStage(
-            pk1.SelectedColumn == null ? LookupCreationStage.DragAForeignKey : LookupCreationStage.DragADescription);
-        UpdateValidityAssesment();
-    }
-
-    private void pk1_SelectedColumnChanged()
-    {
-        SetStage(pk1.SelectedColumn == null
-            ? LookupCreationStage.DragAPrimaryKey
-            : LookupCreationStage.DragAForeignKey);
-        UpdateValidityAssesment();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
-
-        cbxLookup.SetItemActivator(activator);
-        olvLookupNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-        olvExtractionInformationsNameColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-        olvDescriptionsColumn.ImageGetter = o => activator.CoreIconProvider.GetImage(o).ImageToBitmap();
-
-        //add the currently configured extraction informations in the order they appear in the dataset
-        var allExtractionInformationFromCatalogue =
-            new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
-        allExtractionInformationFromCatalogue.Sort();
-
-        olvExtractionInformations.ClearObjects();
-        olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
-
-        btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import)
-            .ImageToBitmap();
-        toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
-
-        btnPrimaryKeyCompositeHelp.Image = FamFamFamIcons.help.ImageToBitmap();
-
-        pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue).ImageToBitmap();
-        tbCatalogue.Text = databaseObject.ToString();
-
-        cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos);
-
-        UpdateValidityAssesment();
-    }
-
-    public void SetLookupTableInfo(TableInfo t, bool setComboBox = true)
-    {
-        if (t is { IsTableValuedFunction: true })
+        lblTitle.Text = $"Create Lookup For {_catalogue.Name}";
+        lblTitle.Visible = true;
+        var tableInfo = activator.CoreChildProvider.AllTableInfos;
+        if (tableInfo.Length == 0)
         {
-            WideMessageBox.Show("Lookup table not valid",
-                $"Table '{t}' is a TableValuedFunction, you cannot use it as a lookup table");
+            HandleError("No Table Infos Available");
             return;
         }
-
-        if (setComboBox)
-            cbxLookup.SelectedItem = t;
-
-        olvLookupColumns.ClearObjects();
-
-        if (t != null)
+        cbSelectLookupTable.Enabled = true;
+        foreach (var tb in tableInfo)
         {
-            olvLookupColumns.AddObjects(t.ColumnInfos);
+            cbSelectLookupTable.Items.Add(tb);
+        }
+        _allExtractionInformationFromCatalogue =
+           new List<ExtractionInformation>(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+        _allExtractionInformationFromCatalogue.Sort();
+        AddRelationOption();
+        AddDescriptionOption();
+    }
 
-            SetStage(LookupCreationStage.DragAPrimaryKey);
+    private List<ComboBox> PKRelations = new();
+    private List<ComboBox> FKRelations = new();
+    private List<Label> Labels = new();
 
-            pk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
-            pk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
-            pk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
+    private void ClearDescriptions()
+    {
+        foreach (var desc in Descriptions)
+        {
+            gbDescription.Controls.Remove(desc);
+        }
+        Descriptions = new List<ComboBox>();
+    }
 
-            fk1.IsValidGetter = c => c.TableInfo_ID != t.ID;
-            fk2.IsValidGetter = c => c.TableInfo_ID != t.ID;
-            fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
+    private void ClearRelations()
+    {
+        foreach (var pk in PKRelations)
+        {
+            gbAddRelation.Controls.Remove(pk);
+        }
+        foreach (var fk in FKRelations)
+        {
+            gbAddRelation.Controls.Remove(fk);
+        }
+        foreach (var l in Labels)
+        {
+            gbAddRelation.Controls.Remove(l);
+        }
+        PKRelations = new();
+        FKRelations = new();
+        Labels = new();
+    }
+
+    private void RemoveSingleRelation(object sender, EventArgs e)
+    {
+        if (sender.GetType() == typeof(Button))
+        {
+            var btn = (Button)sender;
+            var index = btn.ImageIndex;
+            gbAddRelation.Controls.Remove(PKRelations[index]);
+            gbAddRelation.Controls.Remove(FKRelations[index]);
+            gbAddRelation.Controls.Remove(Labels[index]);
+            PKRelations.RemoveAt(index);
+            FKRelations.RemoveAt(index);
+            Labels.RemoveAt(index);
+        }
+    }
+
+    private void AddRelationOption()
+    {
+        if (cbSelectLookupTable.SelectedItem == null) return;
+        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
+        if (PKRelations.Count == selectedLookup.ColumnInfos.Length)
+        {
+            //no possible entries
+            btnAddAnotherRelation.Enabled = false;
+            return;
+        }
+        var pk = new ComboBox();
+        foreach (var item in selectedLookup.ColumnInfos)
+        {
+            pk.Items.Add(item);
+        }
+        pk.Height = 20;
+        pk.Top = 50 + (PKRelations.Count * 25);
+        pk.Width = 400;
+        pk.Text = "(Primary Key)";
+        var fk = new ComboBox();
+        foreach (var item in _catalogue.CatalogueItems)
+        {
+            fk.Items.Add(item.ColumnInfo);
+        }
+        fk.Height = 20;
+        fk.Top = 50 + (FKRelations.Count * 25);
+        fk.Left = 440;
+        fk.Width = 400;
+        fk.Text = "(Foreign Key)";
+        var label = new Label();
+        label.Text = "=>";
+        label.Width = 20;
+        label.Left = 410;
+        label.Top = 50 + (FKRelations.Count * 25);
+        PKRelations.Add(pk);
+        Labels.Add(label);
+        FKRelations.Add(fk);
+        gbAddRelation.Controls.Add(pk);
+        gbAddRelation.Controls.Add(label);
+        gbAddRelation.Controls.Add(fk);
+        gbDescription.Top = gbDescription.Top + 25;
+        gbSubmit.Top = gbSubmit.Top + 25;
+        if (PKRelations.Count > _allExtractionInformationFromCatalogue.Count)
+        {
+            //no possible entries
+            btnAddAnotherRelation.Enabled = true;
         }
         else
         {
-            SetStage(LookupCreationStage.ChooseLookupTable);
+            btnAddAnotherRelation.Enabled = true;
         }
     }
 
-    private void btnImportNewTableInfo_Click(object sender, EventArgs e)
+
+    public void SetLookupTableInfo(TableInfo tableInfo) { }
+
+    private List<ComboBox> Descriptions = new();
+
+    private void AddDescriptionOption()
     {
-        var importDialog = new ImportSQLTableUI(Activator, false);
-
-        if (importDialog.ShowDialog() == DialogResult.OK)
-            if (importDialog.TableInfoCreatedIfAny != null)
-                cbxLookup.SelectedItem = importDialog.TableInfoCreatedIfAny;
-    }
-
-    private void SetStage(LookupCreationStage newStage)
-    {
-        _currentStage = newStage;
-        Invalidate(true);
-    }
-
-    private enum LookupCreationStage
-    {
-        ChooseLookupTable,
-        DragAPrimaryKey,
-        DragADescription,
-        DragAForeignKey
-    }
-
-    private LookupCreationStage _currentStage = LookupCreationStage.ChooseLookupTable;
-
-    private void LookupConfiguration_Paint(object sender, PaintEventArgs e)
-    {
-        var drawTaskListAt = new Point(580, 10);
-
-
-        var lines = new[]
+        var selectedLookup = (TableInfo)cbSelectLookupTable.SelectedItem;
+        if (selectedLookup == null) return;
+        var cb = new ComboBox();
+        foreach (var item in selectedLookup.ColumnInfos)
         {
-            "Defining a lookup relationship:",
-            "  1. Choose Lookup Table",
-            "  2. Choose the Code column (e.g. T/F)",
-            "  3. Choose the dataset column containing a matching code (T/F)",
-            "  4. Choose the Description column (e.g. Tayside,Fife)"
-        };
-
-
-        var lineHeight = e.Graphics.MeasureString(lines[0], Font).Height;
-
-        for (var i = 0; i < lines.Length; i++)
-            e.Graphics.DrawString(lines[i], Font, Brushes.Black,
-                new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight * i));
-
-        var bulletLineIndex = _currentStage switch
-        {
-            LookupCreationStage.ChooseLookupTable => 1,
-            LookupCreationStage.DragAPrimaryKey => 2,
-            LookupCreationStage.DragAForeignKey => 3,
-            LookupCreationStage.DragADescription => 4,
-            _ => throw new InvalidOperationException()
-        };
-
-        DrawArrows(e.Graphics);
-
-        var triangleBasePoints = new[]
-        {
-            //basically (where 1 is the line height)
-            //0,0
-            //.5.5
-            //0,1
-            //offset by the drawing start location + the appropriate line number
-
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + bulletLineIndex * lineHeight),
-            new PointF(drawTaskListAt.X + lineHeight / 2,
-                drawTaskListAt.Y + bulletLineIndex * lineHeight + lineHeight / 2),
-            new PointF(drawTaskListAt.X, drawTaskListAt.Y + lineHeight + bulletLineIndex * lineHeight)
-        };
-
-        e.Graphics.FillPolygon(Brushes.Black, triangleBasePoints);
-    }
-
-    private void DrawArrows(Graphics graphics)
-    {
-        var arrowPen = new Pen(Color.DarkGray, 2);
-
-        var capPath = new GraphicsPath();
-
-        // Create the outline for our custom end cap.
-        capPath.AddLine(new Point(0, 0), new Point(2, -2));
-        capPath.AddLine(new Point(2, -2), new Point(0, 0));
-        capPath.AddLine(new Point(0, 0), new Point(-2, -2));
-        capPath.AddLine(new Point(-2, -2), new Point(0, 0));
-
-        arrowPen.CustomEndCap = new CustomLineCap(null, capPath);
-
-
-        switch (_currentStage)
-        {
-            case LookupCreationStage.ChooseLookupTable:
-                break;
-            case LookupCreationStage.DragAPrimaryKey:
-
-                DrawCurveWithLabel(
-                    new PointF(groupBox1.Right + 10, groupBox1.Top + groupBox1.Height / 2f),
-                    new PointF(pk1.Left - 10, pk1.Top - 2),
-                    "2. Drag Primary Key Column", graphics, arrowPen);
-                break;
-            case LookupCreationStage.DragAForeignKey:
-
-                DrawCurveWithLabel(
-                    new PointF(olvExtractionInformations.Right + 10,
-                        olvExtractionInformations.Bottom - olvExtractionInformations.Height / 10f),
-                    new PointF(olvSelectedDescriptionColumns.Right + 100, olvSelectedDescriptionColumns.Bottom + 200),
-                    new PointF(fk1.Right + 500, fk1.Top + 100),
-                    new PointF(fk1.Right + 15, fk1.Bottom - 10),
-                    "3. Drag Matching Foreign Key Column", graphics, arrowPen);
-                break;
-            case LookupCreationStage.DragADescription:
-                DrawCurveWithLabel(
-                    new PointF(groupBox1.Right + 10, groupBox1.Top + groupBox1.Height / 2f),
-                    new PointF(olvSelectedDescriptionColumns.Left - 10, olvSelectedDescriptionColumns.Top - 2),
-                    "4. Drag a Description Column", graphics, arrowPen);
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            cb.Items.Add(item);
         }
-    }
-
-    private void DrawCurveWithLabel(PointF start, PointF end, string label, Graphics g, Pen p)
-    {
-        var w = end.X - start.X;
-        var h = end.Y - start.Y;
-
-        DrawCurveWithLabel(start, start with { X = start.X + w }, start with { Y = start.Y + h }, end, label, g, p);
-    }
-
-    private bool debugPoints = false;
-
-    private void DrawCurveWithLabel(PointF start, PointF mid1, PointF mid2, PointF end, string label, Graphics g, Pen p)
-    {
-        g.DrawBezier(p,
-            start,
-            mid1,
-            mid2,
-            end);
-
-        if (debugPoints)
+        cb.Width = 400;
+        cb.Top = 50 + (Descriptions.Count * 25);
+        Descriptions.Add(cb);
+        gbDescription.Controls.Add(cb);
+        gbSubmit.Top = gbSubmit.Top + 25;
+        if (Descriptions.Count == selectedLookup.ColumnInfos.Count())
         {
-            g.FillEllipse(Brushes.Red, start.X - 2, start.Y - 2, 5, 5);
-            g.FillEllipse(Brushes.Red, mid1.X - 2, mid1.Y - 2, 5, 5);
-            g.FillEllipse(Brushes.Red, mid2.X - 2, mid2.Y - 2, 5, 5);
-            g.FillEllipse(Brushes.Red, end.X - 2, end.Y - 2, 5, 5);
+            btnAddDescription.Enabled = false;
         }
-
-        g.DrawString(label, Font, Brushes.Black, new PointF(start.X, start.Y));
-    }
-
-
-    private void btnPrimaryKeyCompositeHelp_Click(object sender, EventArgs e)
-    {
-        WideMessageBox.Show("Lookup help",
-            @"Usually you only need one primary key/foreign key relationship e.g. M=Male, F=Female in which z_GenderLookup..Sex is the primary key and Demography..PatientGender is the foreign key.  However sometimes you need additional lookup joins.
-
-For example:
-if the Drug Code 'TIB' is reused in Tayside and Fife healthboard with different meanings then the primary key/foreign key would of the Lookup table would have to be both the 'Code' (TIB) and the 'Prescribing Healthboard' (T or F).
-
-Only define secondary columns if you really need them! if any of the key fields do not match between the Lookup table and the Dataset table then no lookup description will be recorded",
-            null, true, null, WideMessageBoxTheme.Help);
-    }
-
-    private void olvLookupColumns_CellRightClick(object sender, CellRightClickEventArgs e)
-    {
-        if (e.Model is not ColumnInfo c)
-            return;
-
-        e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(Activator), c);
-    }
-
-    private void olvSelectedDescriptionColumns_KeyUp(object sender, KeyEventArgs e)
-    {
-        if (e.KeyCode == Keys.Delete)
+        else
         {
-            olvSelectedDescriptionColumns.RemoveObject(olvSelectedDescriptionColumns.SelectedObject);
-            UpdateValidityAssesment();
-        }
-    }
-
-    private void olvSelectedDescriptionColumns_ModelDropped(object sender, ModelDropEventArgs e)
-    {
-        olvSelectedDescriptionColumns.AddObject(e.SourceModels[0]);
-
-        UpdateValidityAssesment();
-    }
-
-    private void olvSelectedDescriptionColumns_ModelCanDrop(object sender, ModelDropEventArgs e)
-    {
-        if (e.SourceModels.Count == 1)
-            if (e.SourceModels[0] is ColumnInfo)
-            {
-                var c = e.SourceModels[0] as ColumnInfo;
-
-                //it's already in it
-                if (olvSelectedDescriptionColumns.IndexOf(c) != -1)
-                {
-                    e.InfoMessage = "ColumnInfo is already selected as a Description";
-                    return;
-                }
-
-                e.Effect = DragDropEffects.Copy;
-            }
-    }
-
-    private void btnCreateLookup_Click(object sender, EventArgs e)
-    {
-        UpdateValidityAssesment(true);
-    }
-
-    private void UpdateValidityAssesment(bool actuallyDoIt)
-    {
-        btnCreateLookup.Enabled = false;
-        ragSmiley1.Reset();
-
-        try
-        {
-            if (pk1.SelectedColumn == null)
-                throw new Exception("No Primary key column selected");
-
-            if (fk1.SelectedColumn == null)
-                throw new Exception("No Foreign key column selected");
-
-            var allExtractionInformations = olvExtractionInformations.Objects.Cast<ExtractionInformation>().ToArray();
-            var foreignKeyExtractionInformation =
-                allExtractionInformations.SingleOrDefault(e =>
-                    e.ColumnInfo != null && e.ColumnInfo.Equals(fk1.SelectedColumn)) ??
-                throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
-            if (pk2.SelectedColumn == null != (fk2.SelectedColumn == null))
-                throw new Exception("If you want to have secondary joins you must have them in pairs");
-
-            if (pk3.SelectedColumn == null != (fk3.SelectedColumn == null))
-                throw new Exception("If you want to have secondary joins you must have them in pairs");
-
-            var p1 = pk1.SelectedColumn;
-            var f1 = fk1.SelectedColumn;
-
-            var p2 = pk2.SelectedColumn;
-            var f2 = fk2.SelectedColumn;
-
-            var p3 = pk3.SelectedColumn;
-            var f3 = fk3.SelectedColumn;
-
-            var uniqueIDs = new[] { p1, p2, p3, f1, f2, f3 }.Where(o => o != null).Select(c => c.ID).ToArray();
-
-            if (uniqueIDs.Distinct().Count() != uniqueIDs.Length)
-                throw new Exception("Columns can only appear once in any given key box");
-
-            if (new[] { p1, p2, p3 }.Where(o => o != null).Select(c => c.TableInfo_ID).Distinct().Count() != 1)
-                throw new Exception("All primary key columns must come from the same Lookup table");
-
-            var descs = olvSelectedDescriptionColumns.Objects.Cast<ColumnInfo>().ToArray();
-
-            if (!descs.Any())
-                throw new Exception("You must have at least one Description column from the Lookup table");
-
-            if (descs.Any(d => d.TableInfo_ID != p1.TableInfo_ID))
-                throw new Exception("All Description columns must come from the Lookup table");
-
-            if (actuallyDoIt)
-            {
-                var alsoCreateExtractionInformation =
-                    Activator.YesNo(
-                        $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
-                        "Create Extractable Column?");
-
-                var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>> { Tuple.Create(f1,p1) };
-
-                if (p2 != null)
-                    keyPairs.Add(Tuple.Create(f2, p2));
-
-                if (p3 != null)
-                    keyPairs.Add(Tuple.Create(f3, p3));
-
-                var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,
-                    foreignKeyExtractionInformation, descs,
-                    keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
-
-                cmd.Execute();
-
-                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                SetDatabaseObject(Activator, _catalogue);
-
-                MessageBox.Show("Lookup created successfully, fields will now be cleared");
-                pk1.Clear();
-                pk2.Clear();
-                pk3.Clear();
-
-                fk1.Clear();
-                fk2.Clear();
-                fk3.Clear();
-
-                olvSelectedDescriptionColumns.ClearObjects();
-                SetStage(LookupCreationStage.DragAPrimaryKey);
-            }
-
-            btnCreateLookup.Enabled = true;
-        }
-        catch (Exception e)
-        {
-            if (actuallyDoIt)
-                ExceptionViewer.Show(e);
-
-            ragSmiley1.Fatal(e);
+            btnAddDescription.Enabled = true;
         }
     }
 
     public override string GetTabName() => $"Add Lookup ({base.GetTabName()})";
 
-    private void tbFilter_TextChanged(object sender, EventArgs e)
+    private void HandleError(string msg)
     {
-        olvExtractionInformations.UseFiltering = true;
-        olvExtractionInformations.ModelFilter = new TextMatchFilter(olvExtractionInformations, tbFilter.Text);
+        _errorMessage = msg;
+        lblErrorText.Text = _errorMessage;
+        lblErrorText.Visible = true;
     }
 
-    private void olv_ItemActivate(object sender, EventArgs e)
+    private void label2_Click(object sender, EventArgs e)
     {
-        var olv = (ObjectListView)sender;
 
-        if (olv.SelectedObject is IMapsDirectlyToDatabaseTable o)
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o));
     }
 
-    private void cbxLookup_SelectedItemChanged(object sender, EventArgs e)
+    private void cbSelectLookupTable_SelectedIndexchanged(object sender, EventArgs e)
     {
-        SetLookupTableInfo((TableInfo)cbxLookup.SelectedItem, false);
+        lblErrorText.Text = null;
+        lblErrorText.Visible = false;
+        ClearRelations();
+        ClearDescriptions();
+        AddRelationOption();
+        AddDescriptionOption();
+        btnCreateLookup.Enabled = true;
+    }
+
+    private void btnAddAnotherRelation_Click(object sender, EventArgs e)
+    {
+        AddRelationOption();
+    }
+
+    private void btnAddDescription_Click(object sender, EventArgs e)
+    {
+        AddDescriptionOption();
+
+    }
+
+    private void gbAddRelation_Enter(object sender, EventArgs e)
+    {
+
+    }
+
+    private bool ValidateUserInput()
+    {
+        //has lookup
+        if (cbSelectLookupTable.SelectedItem == null)
+        {
+            HandleError("No Lookup table selected");
+            return false;
+        }
+        if (PKRelations.Where(d => d.SelectedItem != null).Count() == 0 || FKRelations.Where(d => d.SelectedItem != null).Count() == 0)
+        {
+            HandleError("At least one PK FK mapping must be set");
+            return false;
+        }
+        if (PKRelations.Where(d => d.SelectedItem != null).Count() != FKRelations.Where(d => d.SelectedItem != null).Count())
+        {
+            HandleError("Must have a 1-to-1 mapping of PK and FK mappings");
+            return false;
+        }
+        if (Descriptions.Where(d => d.SelectedItem != null).Count() == 0)
+        {
+            HandleError("At least one Description column must be set");
+            return false;
+        }
+        var descColumnInfos = Descriptions.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        var pkColumnInfos = PKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        var fkColumnInfos = FKRelations.Where(d => d.SelectedItem != null).Select(d => ((ColumnInfo)d.SelectedItem).ID);
+        if (pkColumnInfos.Intersect(descColumnInfos).Any() || fkColumnInfos.Intersect(descColumnInfos).Any())
+        {
+            HandleError("A Description Column cannot be used in the PK FK mapping");
+            return false;
+        }
+        return true;
+    }
+
+    private void Clear()
+    {
+        ClearRelations();
+        btnAddAnotherRelation.Enabled = false;
+        ClearDescriptions();
+        btnAddDescription.Enabled = false;
+        cbSelectLookupTable.SelectedItem = null;
+        tbCollation.Text = null;
+        btnCreateLookup.Enabled = false;
+    }
+
+    private void btnCreateLookup_Click(object sender, EventArgs e)
+    {
+        if (ValidateUserInput())
+        {
+            var alsoCreateExtractionInformation =
+                  Activator.YesNo(
+                      $"Also create a virtual extractable column(s) in '{_catalogue}' called '<Column>_Desc'",
+                      "Create Extractable Column?");
+            var keyPairs = FKRelations.Where(d => d.SelectedItem != null).Zip(PKRelations.Where(d => d.SelectedItem != null), (x, y) => new Tuple<ColumnInfo, ColumnInfo>((ColumnInfo)x.SelectedItem, (ColumnInfo)y.SelectedItem)).ToList();
+            var descs = Descriptions.Select(d => (ColumnInfo)d.SelectedItem).ToArray();
+            var foreignKeyExtractionInformation =
+               _allExtractionInformationFromCatalogue.SingleOrDefault(e =>
+                   e.ColumnInfo != null && e.ColumnInfo.Equals((ColumnInfo)FKRelations[0].SelectedItem)) ??
+               throw new Exception("Foreign key column(s) must come from the Catalogue ExtractionInformation columns");
+            var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,
+                   foreignKeyExtractionInformation, descs,
+                   keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
+
+            cmd.Execute();
+            MessageBox.Show($"Successfully created lookup for {_catalogue.Name}");
+            Clear();
+        }
+    }
+
+    private void tbCollation_TextChanged(object sender, EventArgs e)
+    {
+
+    }
+
+    private void pictureBox1_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Selecting a Lookup Table", "Select the Table you wish to use to create a lookup for.");
+    }
+
+    private void pictureBox2_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Lookup Relations Help",
+            @"Lookup relations are between two tables.
+Select one column from the current Catalogue table and one from the selected lookup table.
+You typically only need one relation per lookup, but for more complicated cases you can add as many as required.
+            ");
+    }
+
+    private void pictureBox3_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Description Help", "Select a column that provides a description of what the lookup is doing.");
+    }
+
+    private void pictureBox5_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Creating A Lookup",
+            @"Creating a lookup will generate a new lookup table linking this Catalogue with the selected table above.
+It will check that all the details you have entered are correct before proceeding.
+You will be asked if you wish to add a description field. We recommend selecting 'yes'.
+            ");
+    }
+
+    private void pictureBox4_Click(object sender, EventArgs e)
+    {
+        WideMessageBox.Show("Collation Help", "This is an optional step where you can set the collation to use when linking the columns");
     }
 }
 

@@ -108,8 +108,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         }
         StringBuilder sb = new();
 
-        var columnNames = _dataTable.Columns.Cast<DataColumn>().
-                                            Select(static column => column.ColumnName);
+        var columnNames = _dataTable.Columns.Cast<DataColumn>().Select(static column => column.ColumnName).ToArray();
         sb.AppendLine(string.Join(",", columnNames));
         _dataTable.Columns.Add(HoldoutShuffle);
         Random rnd = new();
@@ -155,7 +154,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         _dataTable = _dataTable.DefaultView.ToTable();
         _dataTable.Columns.Remove(HoldoutShuffle);
         var rowCount = holdoutRequest.Count;
-        var rows = _dataTable.Rows.Cast<System.Data.DataRow>().Take(rowCount);
+        var rows = _dataTable.Rows.Cast<DataRow>().Take(rowCount);
         if (holdoutRequest.IsPercent)
         {
             if (rowCount > 100)
@@ -167,7 +166,7 @@ public class ExecuteCommandCreateHoldoutLookup : BasicCommandExecution
         }
 
         var dataRows = rows as DataRow[] ?? rows.ToArray();
-        if (!dataRows.Any())
+        if (dataRows.Length == 0)
         {
             Show("Holdout would be empty with current configuration. Will not create holdout.");
             return;

@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -86,7 +86,17 @@ public class FTPDownloader : IPluginDataProvider
         var username = FTPServer.Username ?? "anonymous";
         var password = string.IsNullOrWhiteSpace(FTPServer.Password) ? "guest" : FTPServer.GetDecryptedPassword();
         var c = new FtpClient(host, username, password);
+        if (TimeoutInSeconds > 0)
+        {
+            c.Config.ConnectTimeout = TimeoutInSeconds * 1000;
+            c.Config.ReadTimeout = TimeoutInSeconds * 1000;
+            c.Config.DataConnectionConnectTimeout = TimeoutInSeconds * 1000;
+            c.Config.DataConnectionReadTimeout = TimeoutInSeconds * 1000;
+        }
+        // Enable periodic NOOP keepalive operations to keep connection active until we're done
+        c.Config.Noop = true;
         c.AutoConnect();
+
         return c;
     }
 
@@ -95,7 +105,7 @@ public class FTPDownloader : IPluginDataProvider
         var files = GetFileList().ToArray();
 
         listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
-            $"Identified the following files on the FTP server:{string.Join(',',files)}"));
+            $"Identified the following files on the FTP server:{string.Join(',', files)}"));
 
         var forLoadingContainedCachedFiles = false;
 
@@ -120,7 +130,7 @@ public class FTPDownloader : IPluginDataProvider
         }
 
         // it was a success - even if no files were actually retrieved... hey that's what the user said, otherwise he would have set SendLoadNotRequiredIfFileNotFound
-        if (forLoadingContainedCachedFiles || _filesRetrieved.Any() || !SendLoadNotRequiredIfFileNotFound)
+        if (forLoadingContainedCachedFiles || _filesRetrieved.Count != 0 || !SendLoadNotRequiredIfFileNotFound)
             return ExitCodeType.Success;
 
         // if no files were downloaded (and there were none skipped because they were in forLoading) and in that eventuality we have our flag set to return LoadNotRequired then do so
@@ -140,7 +150,7 @@ public class FTPDownloader : IPluginDataProvider
 
     protected SkipReason GetSkipActionForFile(string file, ILoadDirectory destination)
     {
-        if (file.StartsWith(".",StringComparison.Ordinal))
+        if (file.StartsWith(".", StringComparison.Ordinal))
             return SkipReason.IsImaginaryFile;
 
         //if there is a regex pattern
@@ -176,11 +186,14 @@ public class FTPDownloader : IPluginDataProvider
     {
         if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
 
+        // Force a reconnection attempt if we got cut off
+        if (!_connection.Value.IsStillConnected())
+            _connection.Value.Connect(true);
         foreach (var file in _filesRetrieved) _connection.Value.DeleteFile(file);
     }
 
 
-    public void Check(ICheckNotifier notifier)
+    public virtual void Check(ICheckNotifier notifier)
     {
         try
         {

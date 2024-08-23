@@ -7,8 +7,8 @@
 using System;
 using System.Linq;
 using System.Threading;
-using BadMedicine;
-using BadMedicine.Datasets;
+using SynthEHR;
+using SynthEHR.Datasets;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
@@ -818,7 +818,7 @@ internal class QueryCachingCrossServerTests : TestsRequiringA
     {
         Assert.That(compiler.Tasks, Is.Not.Empty);
 
-        TestContext.WriteLine($"| Task | Type | State | Error | RowCount | CacheUse |");
+        TestContext.WriteLine("| Task | Type | State | Error | RowCount | CacheUse |");
 
 
         var i = 0;

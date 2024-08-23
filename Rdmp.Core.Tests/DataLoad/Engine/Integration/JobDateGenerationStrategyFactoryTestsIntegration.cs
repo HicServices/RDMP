@@ -126,8 +126,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+                true, _lmd);
         _lmd.SaveToDatabase();
         try
         {
@@ -153,8 +152,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+                true, _lmd);
         _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);
@@ -191,8 +189,7 @@ public class JobDateGenerationStrategyFactoryTestsIntegration : DatabaseTests
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-        _lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+                true, _lmd);
         _lmd.SaveToDatabase();
 
         var pipeAssembler = new TestDataPipelineAssembler("CacheProvider_Normal", CatalogueRepository);

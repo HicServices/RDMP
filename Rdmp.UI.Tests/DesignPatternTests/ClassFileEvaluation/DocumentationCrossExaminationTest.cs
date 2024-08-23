@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using NUnit.Framework;
 
 namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 
@@ -159,6 +159,7 @@ internal class DocumentationCrossExaminationTest
         "ProposedFixes",
         "PropertyX",
         "FamilyMembers",
+        "LookupConfiguration",
 
         //CreatingANewCollectionTreeNode.md
         "FolderOfX",
@@ -278,7 +279,10 @@ internal class DocumentationCrossExaminationTest
         "BuildInParallel",
 
         //Quickstart.md
-        "ResearchDataManagmentPlatform"
+        "ResearchDataManagmentPlatform",
+
+        // CSVHandling
+        "TypeTranslation"
     };
 
     #endregion
@@ -351,8 +355,8 @@ internal class DocumentationCrossExaminationTest
             var fileContents = File.ReadAllText(mdFile);
 
             foreach (Match m in MatchMdReferences.Matches(fileContents))
-            foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
-                fileCommentTokens[mdFile].Add(word.Value);
+                foreach (Match word in Regex.Matches(m.Groups[1].Value, @"([A-Z]\w+){2,}"))
+                    fileCommentTokens[mdFile].Add(word.Value);
 
             EnsureMaximumGlossaryUse(mdFile, problems);
 
@@ -511,6 +515,7 @@ internal class DocumentationCrossExaminationTest
                             relPath = $"./{relPath}";
 
                         var suggestedLine = $"[{match.Value}]: {relPath}#{match.Value}";
+                        var markdownLink = $"[{match.Value}]({relPath}#{match.Value})";
 
                         //if it has spaces on either side
                         if (line[Math.Max(0, match.Index - 1)] == ' ' && line[
@@ -524,7 +529,7 @@ internal class DocumentationCrossExaminationTest
                         allLinesRevised[lineNumber - 1] = line.Replace($"`{match.Value}`", $"[{match.Value}]");
 
                         //if it is a novel occurrence
-                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine))
+                        if (!allLines.Contains(suggestedLine) && !suggestedLinks.ContainsValue(suggestedLine) && !allLines.Contains(markdownLink) && !suggestedLinks.ContainsValue(markdownLink))
                         {
                             suggestedLinks.Add(match.Value, suggestedLine);
                             problems.Add(

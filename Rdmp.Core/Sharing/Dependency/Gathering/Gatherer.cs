@@ -71,7 +71,6 @@ public class Gatherer
     {
         //Share the LoadMetadata
         var root = new GatheredObject(loadMetadata);
-
         //and the catalogues behind the load
         foreach (var cata in loadMetadata.GetAllCatalogues())
             root.Children.Add(GatherDependencies(cata));
@@ -87,6 +86,13 @@ public class Gatherer
                 var ga = new GatheredObject(a);
                 gpt.Children.Add(ga);
             }
+        }
+
+        var linkage = loadMetadata.CatalogueRepository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", loadMetadata.ID);
+        foreach (var link in linkage)
+        {
+            var glcl = new GatheredObject(link);
+            root.Children.Add(glcl);
         }
 
         return root;

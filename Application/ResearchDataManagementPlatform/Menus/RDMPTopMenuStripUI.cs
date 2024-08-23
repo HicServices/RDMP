@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -74,6 +74,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
     private SaveMenuItem _saveToolStripMenuItem;
     private AtomicCommandUIFactory _atomicCommandUIFactory;
+    private ConnectionStringsYamlFile _connectionStringsFileInUse;
 
     public RDMPTopMenuStripUI()
     {
@@ -87,10 +88,10 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // somehow app was launched without populating the load args
         if (args == null) return;
 
-        var origYamlFile = args.ConnectionStringsFileLoaded;
+        _connectionStringsFileInUse = args.ConnectionStringsFileLoaded;
 
         //default settings were used if no yaml file was specified or the file specified did not exist
-        var defaultsUsed = origYamlFile == null;
+        var defaultsUsed = _connectionStringsFileInUse == null;
 
         // if defaults were not used then it is valid to switch to them
         switchToDefaultSettings.Enabled = !defaultsUsed;
@@ -100,11 +101,11 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
 
         // load the yaml files in the RDMP binary directory
         var exeDir = UsefulStuff.GetExecutableDirectory();
-        AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, exeDir);
+        AddMenuItemsForSwitchingToInstancesInYamlFilesOf(_connectionStringsFileInUse, exeDir);
 
         // also add yaml files from wherever they got their original yaml file
-        if (origYamlFile?.FileLoaded != null && !exeDir.FullName.Equals(origYamlFile.FileLoaded.Directory?.FullName))
-            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(origYamlFile, origYamlFile.FileLoaded.Directory);
+        if (_connectionStringsFileInUse?.FileLoaded != null && !exeDir.FullName.Equals(_connectionStringsFileInUse.FileLoaded.Directory?.FullName))
+            AddMenuItemsForSwitchingToInstancesInYamlFilesOf(_connectionStringsFileInUse, _connectionStringsFileInUse.FileLoaded.Directory);
     }
 
     private void AddMenuItemsForSwitchingToInstancesInYamlFilesOf(ConnectionStringsYamlFile origYamlFile,
@@ -160,6 +161,16 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
     {
         new ExecuteCommandConfigureDefaultServers(Activator).Execute();
+    }
+
+    private void launchDefaultInstance(object sender, EventArgs e)
+    {
+        if (_connectionStringsFileInUse != null)
+        {
+            var exeName = Path.Combine(UsefulStuff.GetExecutableDirectory().FullName,
+            Process.GetCurrentProcess().ProcessName);
+            Process.Start(exeName);
+        }
     }
 
     private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
@@ -291,7 +302,7 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         // Location menu
         instancesToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(
             new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)
-                { OverrideCommandName = "Change Default Instance" }));
+            { OverrideCommandName = "Change Default Instance" }));
 
         Activator.Theme.ApplyTo(menuStrip1);
 
@@ -407,6 +418,12 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
         settings.Show();
     }
 
+    private void instanceSettingsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var settings = new InstanceSettings(Activator);
+        settings.Show();
+    }
+
     private void licenseToolStripMenuItem_Click(object sender, EventArgs e)
     {
         var l = new LicenseUI();
@@ -425,6 +442,19 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
             WindowTitle = "Open"
         }, o => Activator.WindowArranger.SetupEditAnything(this, o));
     }
+
+    private void newFindToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var focusItem = _windowManager.GetAllWindows<RDMPUserControl>().Where(c => c.ContainsFocus).FirstOrDefault();
+        var nf = new NewfindUI(Activator, false,focusItem);
+        nf.ShowDialog();
+    }
+    private void newReplaceToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var nf = new NewfindUI(Activator, true);
+        nf.ShowDialog();
+    }
+
 
     private void findToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -456,6 +486,8 @@ public partial class RDMPTopMenuStripUI : RDMPUserControl
     {
         _windowManager.Navigation.Forward(true);
     }
+
+
 
     private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
     {

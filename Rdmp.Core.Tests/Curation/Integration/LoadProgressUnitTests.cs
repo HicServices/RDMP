@@ -14,6 +14,7 @@ using System.IO;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using Tests.Common;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Tests.Curation.Integration;
 
@@ -64,12 +65,10 @@ public class LoadProgressUnitTests : UnitTests
         var stratFactory =
             new JobDateGenerationStrategyFactory(new AnyAvailableLoadProgressSelectionStrategy(lp.LoadMetadata));
         var strat = stratFactory.Create(lp, ThrowImmediatelyDataLoadEventListener.Quiet);
+        var lmd = lp.LoadMetadata;
 
         var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
-            "LoadProgress_JobFactory_NoDates", true);
-
-        var lmd = lp.LoadMetadata;
-        lmd.LocationOfFlatFiles = dir.RootPath.FullName;
+            "LoadProgress_JobFactory_NoDates", true, (LoadMetadata)lmd);
 
         foreach (var cata in lmd.GetAllCatalogues())
         {

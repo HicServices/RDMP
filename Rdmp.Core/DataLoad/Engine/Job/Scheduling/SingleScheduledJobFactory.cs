@@ -38,8 +38,11 @@ public class SingleScheduledJobFactory : ScheduledJobFactory
     protected override ScheduledDataLoadJob CreateImpl(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
         IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
     {
-        var LoadDirectory = new LoadDirectory(LoadMetadata.LocationOfFlatFiles);
-        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, LoadDirectory,
+        LoadDirectory loadDirectory;
+
+        loadDirectory = new LoadDirectory(LoadMetadata.LocationOfForLoadingDirectory, LoadMetadata.LocationOfForArchivingDirectory, LoadMetadata.LocationOfExecutablesDirectory, LoadMetadata.LocationOfCacheDirectory);
+
+        return new ScheduledDataLoadJob(repositoryLocator, JobDescription, LogManager, LoadMetadata, loadDirectory,
             listener, configuration)
         {
             LoadProgress = _loadProgress,

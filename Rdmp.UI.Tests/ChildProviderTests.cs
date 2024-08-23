@@ -60,7 +60,7 @@ internal class ChildProviderTests : UITests
         string[] skip =
         {
             "AllAggregateContainers", "_dataExportFilterManager", "dataExportRepository", "WriteLock",
-            "_oProjectNumberToCohortsDictionary", "_errorsCheckNotifier", "ProgressStopwatch"
+            "_oProjectNumberToCohortsDictionary", "_errorsCheckNotifier", "ProgressStopwatch","CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations"
         };
 
         // We have 2 providers and want to suck all the data out of one into the other

@@ -11,7 +11,6 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Injection;
@@ -40,11 +39,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
     /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
     /// </summary>
     ICatalogueRepository CatalogueRepository { get; }
-
-    /// <summary>
-    /// The load configuration (if any) which is used to load data into the Catalogue tables.  A single <see cref="LoadMetadata"/> can load multiple Catalogues.
-    /// </summary>
-    int? LoadMetadata_ID { get; set; }
 
     /// <summary>
     /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue.
@@ -119,9 +113,6 @@ public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper, INamed, I
 
     /// <inheritdoc cref="PivotCategory_ExtractionInformation_ID"/>
     ExtractionInformation PivotCategory_ExtractionInformation { get; }
-
-    /// <inheritdoc cref="LoadMetadata_ID"/>
-    LoadMetadata LoadMetadata { get; }
 
     /// <inheritdoc cref="CatalogueItem"/>
     CatalogueItem[] CatalogueItems { get; }

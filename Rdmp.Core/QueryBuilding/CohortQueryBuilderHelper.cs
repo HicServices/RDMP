@@ -77,9 +77,12 @@ public class CohortQueryBuilderHelper
 
             //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select
             if (!isJoinAggregate)
-                builder.AddColumn(extractionIdentifier, false);
+                builder.AddColumn(extractionIdentifier, false, !extractionIdentifier.GroupBy);
             else
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), false);
+                foreach (var agg in aggregate.AggregateDimensions)
+                {
+                    builder.AddColumn(agg, false, !agg.GroupBy);
+                }
         }
         else
         {
@@ -91,10 +94,14 @@ public class CohortQueryBuilderHelper
 
             //add the extraction information and do group by it
             if (!isJoinAggregate)
-                builder.AddColumn(extractionIdentifier, true);
+                builder.AddColumn(extractionIdentifier, true, !extractionIdentifier.GroupBy);
             else
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(),
-                    true); //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
+            {
+                foreach (var agg in aggregate.AggregateDimensions)
+                {
+                    builder.AddColumn(agg, true, !agg.GroupBy);
+                }
+            } //it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columns
 
             builder.DoNotWriteOutOrderBy = true;
         }

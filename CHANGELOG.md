@@ -1,13 +1,118 @@
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.1.4] - Unreleased
+## [8.2.4] - Unreleased
+
+- Add New Find & Replace, currently available via User Settings
+- Add instance setting to prompt for cohort versioning when comitting
+- Improve Cohort Versioning Interface
+- Add AWS S3 Bucket Release component for flat files
+
+## [8.2.3] - 2024-08-05
+
+- Fix issue with SFTP downloader timeouts
+
+## [8.2.2] - 2024-08-01
+ 
+- Add DQE PostLoad runner
+- Misc improvements to the DQE
+- Fix Project Creation UI issue
+- Fix issue with whitespace confusing encryption key paths
+- Add Refresh button to UI panels
+- Add "View Parent Tree" functionality
+- Add ability to add description to new cohort versions
+- Add functionality to revert to historical cohort version
+- Fix issue with YAML mode object load ordering
+
+## [8.2.1] - 2024-07-18
+
+- Add Release status options to the ticketing system
+- Improve Interface for Lookup table generation
+- Improve read/write access to plugin files for linux systems
+- Add directory validity checking to data loads
+- Open plugin files read-only to avoid permissions errors on Linux
+- Improve PK mapping for ExtractionIdentifiers when extracting data
+- Fix issue with default instance button not launching instance
+
+## [8.2.0] - 2024-07-09
 
 ## Changed
 
+- Add Key-Value store for instance settings
+- Allow for Re-extractions of projects to a database, see [ExecuteFullExtractionToDatabaseMSSql](Documentation\DataExtractions\ExecuteFullExtractionToDatabaseMSSql.md)
+- Add ability to use .rdmp plugin files
+- Add the ability to store versions of cohort configurations, see [Cohort Versioning](Documentation\Cohorts\CohortVersioning.md)
+- Add ability to restrict GROUPBY clause in cohort aggregate builder
+- When cloning an ExtractionConfiguration with a deprecated catalogue, the GUI will ask if you want to replace the deprecated catalogue with the known replacement
+- Add ability to customise LoadMetdata Folder Location. See [LoadMetadata](Documentation\DataLoadEngine\LoadMetadata.md)
+- Add ability to point a catalogue to a new data source [Documentation](./Documentation/Catalogues/UpdateCatalogueDataLocation.md)
+- Allow DQE graphs to be scrollable and scalable
+- Allow for partial refreshes of time-based DQE charts
+- Fix issue when creating PostgreSQL Logging Server
+
+## [8.1.7] - 2024-06-17
+
+## Changed
+
+- Add ability to update an extraction's cohort from the command line using `SetExtractionConfigurationCohort ExtractionConfiguration:{id} ExtractableCohort:{id}`
+- Fix issue with non-default named PostgreSQL Table Info not being checkable
+- Improve default timeouts on database lookups
+- Implement keepalive and liveness checks for FTP, SFTP fetches before deletion attempt
+
+## [8.1.6] - 2024-05-27
+
+## Changed
+
+- Improve error messages for Multi-ExtractionIdentifier extractions
+- Add prompt to rename container when adding a cohort filter
+- Allow for column selection when using the RemoteTableAttacher
+- Fix to remove stack trace button from non error popups
+- Add ability to set Extraction Category as "Not Extractable"
+- Replace BadMedicine v1.2.1 with SynthEHR v2.0.0
+- Fix issue with RDMP being slow to load when having numerous Load Metadatas
+- Fix issue creating logging databases on PostgreSQL servers
+
+## [8.1.5] - 2024-04-03
+
+## Changed
+
+- Migrate from .net7 to .net8
+- Add timeout override to remote table selectors
+- Extractions now remember the last used pipeline
+- Allow for custom .bak file physical locations during data loads
+- Add ability to have multiple data loads for a single catalogue
+- Allow for Project Specific Catalogues to have multiple extraction identifiers
+- Fix issue with notification popups being inaccessable when RDMP is minimised
+- Allow for Catalogues with Non-Core extraction categories to be made Project specific
+- Bump coverlet.collector from 6.0.0 to 6.0.1
+- Bump svenstaro/upload-release-action from 2.7.0 to 2.9.0 
+- Bump Autoupdater.NET.Official from 1.8.4 to 1.8.5 
+- Bump CsvHelper from 30.0.1 to 31.0.0
+- Bump SSH.NET from 2023.0.1 to 2024.0.0 
+- Bump SixLabors.ImageSharp.Drawing from 2.1.0 to 2.1.1 
+- Bump MongoDB.Driver from 2.23.1 to 2.24.0
+- Bump NUnit from 4.0.1 to 4.1.0 
+- Bump FluentFTP from 49.0.1 to 49.0.2 
+- Bump YamlDotNet from 15.1.1 to 15.1.2
+- Bump SixLabors.ImageSharp from 3.1.2 to 3.1.3
+- Bump SixLabors.ImageSharp.Drawing from 2.1.1 to 2.1.2
+- Bump HIC.BadMedicine from 1.1.2 to 1.2.0 
+- Bump coverlet.collector from 6.0.1 to 6.0.2 
+- Bump HIC.FansiSql from 3.2.1 to 3.2.2
+- Bump NUnit.Analyzers from 4.0.1 to 4.1.0 
+- Bump Terminal.Gui from 1.15.1 to 1.16.0 
+- Bump HIC.BadMedicine from 1.2.0 to 1.2.1 
+- Bump NPOI from 2.6.2 to 2.7.0 
+
+## [8.1.4] - 2024-02-19
+
+## Changed
+
+- Add ability to use Extraction Category with Project Specific Catalogues
 - Allow arbitrary MDF files from foreign file systems to work with the MDF Attacher, see [MDFAttacher](Documentation\DataLoadEngine\MDFAttacher.md)
 - Update Excel Attacher to read data from arbitrary start points within sheets
 - Add Time based filtering of remote table and database attachers

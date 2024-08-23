@@ -64,6 +64,7 @@ public class AtomicCommandFactory : CommandFactoryBase
     public const string Advanced = "Advanced";
     public const string View = "View";
     public const string Deprecation = "Deprecation";
+    public const string ViewParentTree = "View Parent Tree";
 
     public AtomicCommandFactory(IBasicActivateItems activator)
     {
@@ -126,7 +127,6 @@ public class AtomicCommandFactory : CommandFactoryBase
                 SuggestedCategory = Add,
                 OverrideCommandName = "New Supporting Document"
             };
-
             if (!isApiCall)
             {
                 yield return new ExecuteCommandChangeExtractability(_activator, c)
@@ -236,7 +236,6 @@ public class AtomicCommandFactory : CommandFactoryBase
             yield return new ExecuteCommandChangeExtractionCategory(_activator, new[] { ci.ExtractionInformation });
             yield return new ExecuteCommandImportCatalogueItemDescription(_activator, ci)
             { SuggestedShortcut = "I", Ctrl = true };
-
             var ciExtractionInfo = ci.ExtractionInformation;
             if (ciExtractionInfo != null)
             {
@@ -552,8 +551,6 @@ public class AtomicCommandFactory : CommandFactoryBase
 
         if (Is(o, out LoadDirectoryNode ldn))
         {
-            yield return new ExecuteCommandSet(_activator, ldn.LoadMetadata,
-                typeof(LoadMetadata).GetProperty(nameof(LoadMetadata.LocationOfFlatFiles)));
             yield return new ExecuteCommandCreateNewDataLoadDirectory(_activator, ldn.LoadMetadata, null);
         }
 

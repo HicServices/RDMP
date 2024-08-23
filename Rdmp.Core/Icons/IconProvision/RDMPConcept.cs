@@ -203,5 +203,8 @@ public enum RDMPConcept
     Commit,
     Memento,
     TableInfoDatabaseNode,
-    Dataset
+    Dataset,
+    LoadMetadataCatalogueLinkage,
+    Setting,
+    TicketingSystemReleaseStatus
 }

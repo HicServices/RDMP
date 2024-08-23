@@ -58,7 +58,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
             if (int.TryParse(tbTimeout.Text.ToString(), out var t)) Common.Timeout = t;
         };
 
-        btnRun.Clicked += () => { Common.StartAll(() => { }, RunnerOnPhaseChanged); };
+        btnRun.Clicked += () => { Common.StartAll(() => { }, RunnerOnPhaseChanged, Common.Timeout); };
         btnClose.Clicked += () =>
         {
             if (!Common.ConsultAboutClosing())

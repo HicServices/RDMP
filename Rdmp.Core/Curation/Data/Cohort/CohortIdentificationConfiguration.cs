@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -39,6 +39,18 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <seealso cref="AggregateConfiguration.IsCohortIdentificationAggregate"/>.
     /// </summary>
     public const string CICPrefix = "cic_";
+
+
+    private int? _version;
+
+    public int? Version
+    {
+        get => _version;
+        set => _version = value;
+    }
+
+
+
 
     #region Database Properties
 
@@ -179,6 +191,12 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
     #endregion
 
+
+    public List<CohortIdentificationConfiguration> GetVersions()
+    {
+        return CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ClonedFrom_ID", ID).Where(cic => cic.Version != null).ToList();
+    }
+
     public CohortIdentificationConfiguration()
     {
     }
@@ -214,7 +232,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
         FrozenBy = r["FrozenBy"] as string;
         FrozenDate = ObjectToNullableDateTime(r["FrozenDate"]);
         ClonedFrom_ID = ObjectToNullableInt(r["ClonedFrom_ID"]);
-
+        Version = ObjectToNullableInt(r["Version"]);
         Folder = r["Folder"] as string ?? FolderHelper.Root;
     }
 
@@ -330,6 +348,19 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
     /// <returns></returns>
     public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
     {
+        var clone = new CohortIdentificationConfiguration((ICatalogueRepository)Repository, $"{Name} (Clone)");
+        return CloneIntoExistingConfiguration(notifier, clone);
+    }
+
+    /// <summary>
+    /// Clones the CohortIdentificationConfiguration into an existing CohortIdentificationConfiguration
+    /// </summary>
+    /// <param name="notifier"></param>
+    /// <param name="cloneTarget"></param>
+    /// <param name="IncludeClonedFrom"></param>
+    /// <returns></returns>
+    public CohortIdentificationConfiguration CloneIntoExistingConfiguration(ICheckNotifier notifier, CohortIdentificationConfiguration cloneTarget, bool IncludeClonedFrom = true)
+    {
         //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
         var cataRepo = (ICatalogueRepository)Repository;
         //start a new super transaction
@@ -340,10 +371,8 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction started on Catalogue Repository",
                     CheckResult.Success));
 
-                var clone = new CohortIdentificationConfiguration(cataRepo, $"{Name} (Clone)");
-
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Created clone configuration '{clone.Name}' with ID {clone.ID} called {clone}",
+                    $"Created clone configuration '{cloneTarget.Name}' with ID {cloneTarget.ID} called {cloneTarget}",
                     CheckResult.Success));
 
                 //clone the global parameters
@@ -351,7 +380,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs($"Cloning global parameter {p.ParameterName}",
                         CheckResult.Success));
-                    var cloneP = new AnyTableSqlParameter(cataRepo, clone, p.ParameterSQL)
+                    var cloneP = new AnyTableSqlParameter(cataRepo, cloneTarget, p.ParameterSQL)
                     {
                         Comment = p.Comment,
                         Value = p.Value
@@ -361,13 +390,14 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
 
                 //key is the original, value is the clone
                 var parentToCloneJoinablesDictionary = GetAllJoinables().ToDictionary(joinable => joinable,
-                    joinable => new JoinableCohortAggregateConfiguration(cataRepo, clone,
+                    joinable => new JoinableCohortAggregateConfiguration(cataRepo, cloneTarget,
                         joinable.AggregateConfiguration.CreateClone()));
 
-                clone.ClonedFrom_ID = ID;
-                clone.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
-                    .CloneEntireTreeRecursively(notifier, this, clone, parentToCloneJoinablesDictionary).ID;
-                clone.SaveToDatabase();
+                if (IncludeClonedFrom)
+                    cloneTarget.ClonedFrom_ID = ID;
+                cloneTarget.RootCohortAggregateContainer_ID = RootCohortAggregateContainer
+                    .CloneEntireTreeRecursively(notifier, this, cloneTarget, parentToCloneJoinablesDictionary).ID;
+                cloneTarget.SaveToDatabase();
 
                 notifier.OnCheckPerformed(
                     new CheckEventArgs("Clone creation successful, about to commit Super Transaction",
@@ -376,7 +406,7 @@ public class CohortIdentificationConfiguration : DatabaseEntity, ICollectSqlPara
                 notifier.OnCheckPerformed(new CheckEventArgs("Super Transaction committed successfully",
                     CheckResult.Success));
 
-                return clone;
+                return cloneTarget;
             }
             catch (Exception e)
             {

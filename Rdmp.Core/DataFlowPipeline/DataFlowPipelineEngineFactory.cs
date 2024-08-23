@@ -32,7 +32,6 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
 {
     private readonly IDataFlowPipelineContext _context;
     private IPipelineUseCase _useCase;
-    private Type _flowType;
 
     private Type _engineType;
 
@@ -44,8 +43,8 @@ public class DataFlowPipelineEngineFactory : IDataFlowPipelineEngineFactory
     {
         _context = useCase.GetContext();
         _useCase = useCase;
-        _flowType = _context.GetFlowType();
-        _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(_flowType);
+        var flowType = _context.GetFlowType();
+        _engineType = typeof(DataFlowPipelineEngine<>).MakeGenericType(flowType);
     }
 
     /// <inheritdoc/>

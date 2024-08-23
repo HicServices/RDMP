@@ -1,5 +1,3 @@
-
-
 # Packages Used By RDMP
 
 ### Risk Assessment common to all:
@@ -9,25 +7,22 @@
 
 | Package | Source Code | License | Purpose | Additional Risk Assessment |
 | ------- | ------------| ------- | ------- | -------------------------- |
-| Equ | [GitHub](https://github.com/thedmi/Equ) | [MIT](https://opensource.org/licenses/MIT) | Simplifies object equality implementation | |
 | FluentFTP | [Github](https://github.com/robinrodricks/FluentFTP/) | [MIT](https://opensource.org/licenses/MIT) | FTP(S) client | |
 | MongoDB.Driver | [GitHub](https://github.com/mongodb/mongo-csharp-driver) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0) | Database driver for MongoDB | |
 | Microsoft.SourceLink.GitHub | [GitHub](https://github.com/dotnet/sourcelink) | [MIT](https://opensource.org/licenses/MIT) | Enable source linkage from nupkg | Official MS project |
-| Microsoft.XmlSerializer.Generator | [Microsoft](https://learn.microsoft.com/en-us/dotnet/core/additional-tools/xml-serializer-generator) | [MIT](https://opensource.org/licenses/MIT) | XML handling improvements |
 | ObjectListView.Repack.NET6Plus | [GitHub](https://github.com/nasisakk/ObjectListViewRepack) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | |
 | Scintilla.NET | [GitHub](https://github.com/VPKSoft/Scintilla.NET) | [MIT](https://opensource.org/licenses/MIT) | |
 | VPKSoft.ScintillaLexers.NET | [GitHub](https://github.com/VPKSoft/ScintillaLexers) | [MIT](https://opensource.org/licenses/MIT) | |
 | WeCantSpell.Hunspell | [GitHub](https://github.com/aarondandy/WeCantSpell.Hunspell/) | [GPL-2 and others](https://github.com/aarondandy/WeCantSpell.Hunspell/blob/main/license.txt) | |
 | [DockPanelSuite.ThemeVS2015](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer.|
-| [FAM FAM FAM Icons](https://web.archive.org/web/20070824000227/http://www.famfamfam.com/lab/icons/silk/) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
+| [FAM FAM FAM Icons](https://github.com/markjames/famfamfam-silk-icons) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
-| CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
 | ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | LibArchive.Net | [GitHub](https://github.com/jas88/libarchive.net) | [BSD](https://opensource.org/license/bsd-2-clause/) | Access archive formats without the LZMA bugs of SharpCompress | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
 | HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | [DBMS] abstraction layer |
-| HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
+| HIC.SynthEHR | [GitHub](https://github.com/HicServices/SynthEHR) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
@@ -42,5 +37,8 @@
 | Autoupdater.NET.Official | [GitHub](https://github.com/ravibpatel/AutoUpdater.NET) | MIT | Manages updating of the RDMP windows client directly from the RDMP GitHub Releases|
 | ConsoleControl | [GitHub](https://github.com/dwmkerr/consolecontrol)  | MIT | Runs RDMP cli subprocesses|
 | Terminal.Gui                            | [GitHub](https://github.com/gui-cs/Terminal.Gui)                           | [MIT](https://opensource.org/licenses/MIT)                                                     | Console user-interface|
-
+| AWSSDK.S3 | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
+| AWSSDK.SecurityToken | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
+| AWSSDK.SSO | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
+| AWSSDK.SSOOIDC | [GitHub](https://github.com/aws/aws-sdk-net) | [Apache 2.0](https://opensource.org/licenses/Apache-2.0)  | |
 [DBMS]: ./Glossary.md#DBMS

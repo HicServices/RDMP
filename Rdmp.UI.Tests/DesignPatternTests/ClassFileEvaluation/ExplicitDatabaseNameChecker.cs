@@ -28,7 +28,8 @@ public class ExplicitDatabaseNameChecker
             "ChoosePlatformDatabasesUI.Designer.cs", //allowed because it is a suggestion to user about what prefix to use
             "PluginPackagerProgramOptions.cs", //allwed because it's a suggestion to the user about command line arguments
             "DocumentationCrossExaminationTest.cs", //allowed because its basically a list of comments that are allowed despite not appearing in the codebase
-            "ResearchDataManagementPlatformOptions.cs" //allowed because it's an Example
+            "ResearchDataManagementPlatformOptions.cs", //allowed because it's an Example
+            "AWSS3BucketReleaseDestination.cs" //allowed as it uses it as a temp file identifier
         };
 
 

@@ -68,7 +68,7 @@ public partial class WideMessageBox : Form
 
         //can only write to clipboard in STA threads
         btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
-        btnViewStackTrace.Visible = true;
+        btnViewStackTrace.Visible = args.Theme == WideMessageBoxTheme.Exception;
 
         //try to resize form to fit bounds
         Size = GetPreferredSizeOfTextControl(richTextBox1);
@@ -197,12 +197,13 @@ public partial class WideMessageBox : Form
     {
         var wmb = new WideMessageBox(new WideMessageBoxArgs(title, message, environmentDotStackTrace, keywordNotToAdd,
             theme));
-
+        wmb.TopMost = true;
         if (isModalDialog)
             wmb.ShowDialog();
         else
             wmb.Show();
         wmb.Focus();
+        wmb.BringToFront();
     }
 
     public static void Show(string title, string message, WideMessageBoxTheme theme)

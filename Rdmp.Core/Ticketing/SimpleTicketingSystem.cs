@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using Rdmp.Core.Curation;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
@@ -30,7 +32,6 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     public void Check(ICheckNotifier notifier)
     {
         // all ticket names are valid
-        return;
     }
 
     public bool IsValidTicketName(string ticketName) =>
@@ -46,7 +47,7 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     }
 
     public TicketingReleaseabilityEvaluation GetDataReleaseabilityOfTicket(string masterTicket, string requestTicket,
-        string releaseTicket, out string reason, out Exception exception)
+        string releaseTicket, List<TicketingSystemReleaseStatus> acceptedStatuses, out string reason, out Exception exception)
     {
         reason = null;
         exception = null;
@@ -56,4 +57,9 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
 
     public string GetProjectFolderName(string masterTicket) =>
         UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
+
+    public List<string> GetAvailableStatuses()
+    {
+        return new List<string>();
+    }
 }

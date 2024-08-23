@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -67,8 +67,10 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         ////////////////// UI Commands for the CatalogueItems submenu of the Catalogue context menu ///////////////////
         Add(new ExecuteCommandBulkProcessCatalogueItems(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.049f });
-        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, () => Clipboard.GetText())
-        { SuggestedCategory = CatalogueItems, Weight = -99.047f });
+        Add(new ExecuteCommandUpdateCatalogueDataLocationUI(_activator, catalogue)
+        { SuggestedCategory = CatalogueItems, Weight = -99.049f, OverrideCommandName = "Update Catalogue Data Location" });
+        Add(new ExecuteCommandPasteClipboardAsNewCatalogueItems(_activator, catalogue, Clipboard.GetText)
+        { SuggestedCategory = CatalogueItems, Weight = -99.047f }); 
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)
@@ -79,18 +81,21 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandImportCatalogueItemDescriptions(_activator, catalogue, null /*pick at runtime*/)
         { SuggestedCategory = CatalogueItems, Weight = -99.043f });
 
-        if (catalogue.LoadMetadata_ID != null)
+        if (!catalogue.LoadMetadatas().Any())
         {
-            if (catalogue.LoadMetadata.LocationOfFlatFiles == null) return;
-            try
+            foreach (var lmd in catalogue.LoadMetadatas())
             {
-                var dirReal = new DirectoryInfo(catalogue.LoadMetadata.LocationOfFlatFiles);
-                Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
-                { OverrideCommandName = "Open Load Directory" });
-            }
-            catch (Exception)
-            {
-                // if the directory name is bad or corrupt
+                if (lmd.GetRootDirectory() == null) return;
+                try
+                {
+                    var dirReal = lmd.GetRootDirectory();
+                    Add(new ExecuteCommandOpenInExplorer(_activator, dirReal)
+                    { OverrideCommandName = "Open Load Directory" });
+                }
+                catch (Exception)
+                {
+                    // if the directory name is bad or corrupt
+                }
             }
         }
     }

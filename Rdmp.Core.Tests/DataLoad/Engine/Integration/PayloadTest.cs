@@ -37,20 +37,17 @@ public class PayloadTest : DatabaseTests
         b.SetupTestData();
         b.ImportAsCatalogue();
 
-        var lmd = new LoadMetadata(CatalogueRepository, "Loading")
-        {
-            LocationOfFlatFiles = LoadDirectory
-                .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true)
-                .RootPath.FullName
-        };
+        var lmd = new LoadMetadata(CatalogueRepository, "Loading");
+        var filePath = LoadDirectory
+                .CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme", true,lmd)
+                .RootPath.FullName;
         lmd.SaveToDatabase();
 
         MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));
 
-        b.catalogue.LoadMetadata_ID = lmd.ID;
         b.catalogue.LoggingDataTask = "TestPayloadInjection";
         b.catalogue.SaveToDatabase();
-
+        lmd.LinkToCatalogue(b.catalogue);
         var lm = new LogManager(CatalogueRepository.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 

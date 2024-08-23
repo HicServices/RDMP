@@ -55,13 +55,11 @@ public class CustomDateCachingTests : DatabaseTests
         pipeline.Destination.Returns(destinationComponent);
         pipeline.Repository.Returns(CatalogueRepository);
         pipeline.PipelineComponents.Returns(Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
+        var lmd = Substitute.For<ILoadMetadata>();
 
         var projDir =
             LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "delme",
-                true);
-
-        var lmd = Substitute.For<ILoadMetadata>();
-        lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
+                true, lmd);
 
         var loadProgress = Substitute.For<ILoadProgress>();
         loadProgress.OriginDate.Returns(new DateTime(2001, 01, 01));
