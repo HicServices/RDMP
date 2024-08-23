@@ -17,6 +17,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.ReusableLibraryCode.Settings;
 using Terminal.Gui;
 using Terminal.Gui.Trees;
@@ -27,7 +28,7 @@ internal class ConsoleMainWindow
 {
     private Window _win;
     private TreeView<object> _treeView;
-    private IBasicActivateItems _activator;
+    private readonly IBasicActivateItems _activator;
 
     /// <summary>
     /// The last <see cref="IBasicActivateItems"/> passed to this UI.
@@ -165,11 +166,11 @@ internal class ConsoleMainWindow
 
         var statusBar = new StatusBar(new StatusItem[]
         {
-            new(Key.Q | Key.CtrlMask, "~^Q~ Quit", () => Quit()),
-            new(Key.R | Key.CtrlMask, "~^R~ Run", () => Run()),
-            new(Key.F | Key.CtrlMask, "~^F~ Find", () => Find()),
-            new(Key.N | Key.CtrlMask, "~^N~ New", () => New()),
-            new(Key.F5, "~F5~ Refresh", () => Publish())
+            new(Key.Q | Key.CtrlMask, "~^Q~ Quit", Quit),
+            new(Key.R | Key.CtrlMask, "~^R~ Run", Run),
+            new(Key.F | Key.CtrlMask, "~^F~ Find", Find),
+            new(Key.N | Key.CtrlMask, "~^N~ New", New),
+            new(Key.F5, "~F5~ Refresh", Publish)
         });
 
         top.Add(statusBar);
@@ -251,21 +252,18 @@ internal class ConsoleMainWindow
 
     private string AspectGetter(object model)
     {
-        if (model is IContainer container) return $"{container} ({container.Operation})";
-
-        if (model is CohortAggregateContainer setContainer) return $"{setContainer} ({setContainer.Operation})";
-
-        if (model is ExtractionInformation ei) return $"{ei} ({ei.ExtractionCategory})";
-
-        if (model is CatalogueItemsNode cin) return $"{cin} ({cin.CatalogueItems.Length})";
-
-        if (model is TableInfoServerNode server) return $"{server.ServerName} ({server.DatabaseType})";
-
-        if (model is IDisableable d) return d.IsDisabled ? $"{d} (Disabled)" : d.ToString();
-
-        return model is IArgument arg
-            ? $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})"
-            : model?.ToString() ?? "Null Object";
+        return model switch
+        {
+            IContainer container => $"{container} ({container.Operation})",
+            CohortAggregateContainer setContainer => $"{setContainer} ({setContainer.Operation})",
+            ExtractionInformation ei => $"{ei} ({ei.ExtractionCategory})",
+            CatalogueItemsNode cin => $"{cin} ({cin.CatalogueItems.Length})",
+            TableInfoServerNode server => $"{server.ServerName} ({server.DatabaseType})",
+            IDisableable d => d.IsDisabled ? $"{d} (Disabled)" : d.ToString(),
+            _ => model is IArgument arg
+                ? $"{arg} ({(string.IsNullOrWhiteSpace(arg.Value) ? "Null" : arg.Value)})"
+                : model?.ToString() ?? "Null Object"
+        };
     }
 
     private void Publish()
@@ -336,7 +334,7 @@ internal class ConsoleMainWindow
         _treeView.SetNeedsDisplay();
     }
 
-    private void _treeView_SelectionChanged(object sender, SelectionChangedEventArgs<object> e)
+    private void _treeView_SelectionChanged(object sender, [NotNull] SelectionChangedEventArgs<object> e)
     {
         if (e.NewValue != null)
             _treeView.RefreshObject(e.NewValue);
@@ -345,13 +343,9 @@ internal class ConsoleMainWindow
     private void Menu()
     {
         var factory = new ConsoleGuiContextMenuFactory(_activator);
-        var menu = factory.Create(_treeView.GetAllSelectedObjects().ToArray(), _treeView.SelectedObject);
-
-        if (menu == null)
-            return;
-
-        menu.Position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds < 1 ? _lastMousePos : new Point(10, 5);
-        menu.Show();
+        var position = DateTime.Now.Subtract(_lastMouseMove).TotalSeconds < 1 ? _lastMousePos : new Point(10, 5);
+        var menu = factory.Create(position.X,position.Y,_treeView.GetAllSelectedObjects().ToArray(), _treeView.SelectedObject);
+        menu?.Show();
     }
 
 
