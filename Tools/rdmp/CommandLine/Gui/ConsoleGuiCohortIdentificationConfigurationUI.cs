@@ -140,6 +140,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
         var o = RowObjects[obj.Row];
         if (o == null)
             return;
+
         var col = tableview1.Table.Columns[obj.Col];
 
         switch (col.ColumnName)
@@ -152,7 +153,7 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
                     return;
 
                 var factory = new ConsoleGuiContextMenuFactory(_activator);
-                var menu = factory.Create(p.Value.X,p.Value.Y,Array.Empty<object>(), o);
+                var menu = factory.Create(p.Value.X, p.Value.Y, Array.Empty<object>(), o);
                 if (menu != null)
                 {
                     menu.Position = p.Value;
@@ -167,11 +168,10 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
             {
                 var key = Common.GetKey(o);
                 if (key?.CrashMessage != null) _activator.ShowException("Task Crashed", key.CrashMessage);
-
                 break;
             }
             case "Execute":
-                Common.ExecuteOrCancel(o);
+                Common.ExecuteOrCancel(o, int.MaxValue);
                 break;
         }
     }
