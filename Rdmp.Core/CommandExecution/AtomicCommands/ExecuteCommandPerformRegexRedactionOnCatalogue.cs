@@ -32,16 +32,17 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private List<CatalogueItem> _cataloguePKs;
     private readonly DataTable redactionsToSaveTable = new();
     private readonly DataTable pksToSave = new();
-
+    private readonly int? _readLimit;
     private DataTable redactionUpates = new();
 
-    public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns)
+    public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns, int? readLimit=null)
     {
         _activator = activator;
         _catalogue = catalogue;
         _redactionConfiguration = redactionConfiguration;
         _columns = columns;
         _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
+        _readLimit = readLimit;
         redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
         redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
         redactionsToSaveTable.Columns.Add("startingIndex");
@@ -123,41 +124,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         redactionUpates.ImportRow(match);
     }
 
-    //private void DoInsertForRedactionKey(IEnumerable<DataRow> pks, DataTable ids)
-    //{
-    //    var pkValues = string.Join(
-    //       @",
-    //        ", pks.Select(r => $"({r[0]},{r[1]},'{r[2]}')"));
-    //    var pksql = $@"
-    //          INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
-    //          VALUES
-    //          {pkValues}
-    //        ";
-    //    (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(pksql, null);
-    //}
-
-
-    //private void DoInsertForRedactions(IEnumerable<DataRow> rows, DataTable dt)
-    //{
-    //    var insertValue = string.Join(
-    //           @",
-    //        ", rows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-    //    var sql = @$"
-    //        DECLARE @output TABLE (id int)
-    //        INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.ID INTO @output
-    //        VALUES
-    //        {insertValue};
-    //        SELECT * from @output
-    //    ";
-    //    var conn = (_activator.RepositoryLocator.CatalogueRepository as TableRepository).GetConnection();
-    //    using (var cmd = _server.GetCommand(sql, conn.Connection))
-    //    {
-    //        using var da = _server.GetDataAdapter(cmd);
-    //        da.Fill(dt);
-    //    }
-    //    conn.Connection.Close();
-    //}
-
     private void DoInsert(IEnumerable<DataRow> redactionRows, IEnumerable<DataRow> pkRows, int offset)
     {
         string redactionString = string.Join(
@@ -194,28 +160,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         {
             Console.WriteLine(ex.Message);
         }
-        //DECLARE @output TABLE(id int, inc int IDENTITY(1, 1))
-        //    INSERT INTO Test_Catalogue.dbo.RegexRedaction(RedactionConfiguration_ID, ColumnInfo_ID, startingIndex, ReplacementValue, RedactedValue) OUTPUT inserted.id INTO @output
-        //    VALUES
-        //    (253, 854, 4, '<GG>', 'TEST');
-        //DECLARE @redactionKeys TABLE(id int IDENTITY(1, 1), RegexRedaction_ID int, ColumnInfo_ID int, Value varchar(max));
-        //INSERT INTO @redactionKeys(RegexRedaction_ID, ColumnInfo_ID, Value)
-        //    VALUES
-        //    (0, 854, '12/03/1901 00:00:00'),
-        //    (0, 855, '1')
-
-        //    UPDATE t1
-
-        //    SET t1.RegexRedaction_ID = t2.id
-
-        //    FROM @redactionKeys as t1
-
-        //    INNER JOIN @output AS t2
-        //    ON t1.RegexRedaction_ID = t2.inc - 1
-
-        //    WHERE t1.RegexRedaction_ID = t2.inc - 1;
-        //INSERT INTO Test_Catalogue.dbo.RegexRedactionKey
-        //select RegexRedaction_ID,ColumnInfo_ID,Value FROM @redactionKeys
     }
 
 
@@ -241,37 +185,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         {
             DoInsert(redactionsToSaveTable.AsEnumerable(), pksToSave.AsEnumerable(),0);
         }
-
-        //DataTable dt = new();
-        //if (redactionsToSaveTable.Rows.Count > 1000)
-        //{
-        //    var read = 0;
-        //    while (read < redactionsToSaveTable.Rows.Count)
-        //    {
-        //        var rows = redactionsToSaveTable.AsEnumerable().Skip(read).Take(1000);
-        //        var pkRows = pksToSave.AsEnumerable().Where(r => int.Parse(r[0].ToString()) >= read && int.Parse(r[0].ToString()) < (read + 1000));
-        //        DoInsertForRedactions(rows, dt);
-        //        read += 1000;
-        //    }
-        //}
-        //else
-        //{
-        //    DoInsertForRedactions(redactionsToSaveTable.AsEnumerable(), dt);
-        //}
-        //replace pk column[0] with valur at row indxo of dt
-        //if (pksToSave.Rows.Count > 1000)
-        //{
-        //    var read = 0;
-        //    while (read < pksToSave.Rows.Count)
-        //    {
-        //        DoInsertForRedactionKey(pksToSave.AsEnumerable().Skip(read).Take(1000), dt);
-        //        read += 1000;
-        //    }
-        //}
-        //else
-        //{
-        //    DoInsertForRedactionKey(pksToSave.AsEnumerable(), dt);
-        //}
 
     }
 
@@ -300,6 +213,10 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
                 }
                 qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%'", QueryComponent.WHERE);
+                if(_readLimit is not null)
+                {
+                    qb.TopX = (int)_readLimit;
+                }
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
