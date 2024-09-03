@@ -187,6 +187,9 @@
 		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>

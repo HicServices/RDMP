@@ -11,15 +11,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
 public class ExecuteCommandRegexRedaction: BasicUICommandExecution, IAtomicCommand
 {
     private readonly Catalogue _catalogue;
+    private readonly IActivateItems _activator;
 
     public ExecuteCommandRegexRedaction(IActivateItems activator, Catalogue catalogue) : base(activator)
     {
+        _activator = activator;
         _catalogue = catalogue;
     }
 
@@ -29,6 +32,6 @@ public class ExecuteCommandRegexRedaction: BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        //Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
+        Activator.Activate<RedactCatalogueUI, Catalogue>(_catalogue);
     }
 }

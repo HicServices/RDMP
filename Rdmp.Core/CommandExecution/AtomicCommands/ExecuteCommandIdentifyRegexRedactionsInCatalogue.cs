@@ -1,4 +1,7 @@
-﻿using Rdmp.Core.Curation.Data;
+﻿using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver.Core.Servers;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -19,40 +22,45 @@ public class ExecuteCommandIdentifyRegexRedactionsInCatalogue : BasicCommandExec
     private readonly ICatalogue _catalogue;
     private readonly RegexRedactionConfiguration _redactionConfiguration;
     private readonly List<ColumnInfo> _columns;
+    private readonly int? _readLimit;
+    public DataTable results;
 
-    //public ExecuteCommandIdentifyRegexRedactionsInCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns=null)
-    //{
-    //    _activator = activator;
-    //    _catalogue = catalogue;
-    //    _redactionConfiguration = redactionConfiguration;
-    //    _columns = columns;
-    //}
-
-
-    public ExecuteCommandIdentifyRegexRedactionsInCatalogue(IBasicActivateItems activator)
+    public ExecuteCommandIdentifyRegexRedactionsInCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns = null, int? readLimit = null)
     {
         _activator = activator;
-        _catalogue = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<Catalogue>("Name", "Biochemistry").First();
-        _redactionConfiguration = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().First();
-        _columns = _catalogue.CatalogueItems.Select(ci => ci.ColumnInfo).ToList();
-
+        _catalogue = catalogue;
+        _redactionConfiguration = redactionConfiguration;
+        _columns = columns;
+        _readLimit = readLimit;
     }
 
     public override void Execute()
     {
         base.Execute();
         var memoryRepo = new MemoryCatalogueRepository();
-        foreach (var catalogueItem in _catalogue.CatalogueItems.Where(ci => !ci.ColumnInfo.IsPrimaryKey && _columns.Contains(ci.ColumnInfo)))
+        foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
-            var columnName = catalogueItem.ColumnInfo.Name;
-            var table = catalogueItem.ColumnInfo.TableInfo.Name;
             var server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-            var pkColumns = _catalogue.CatalogueItems.Select(x => x.ColumnInfo).Where(x => x.IsPrimaryKey);
-            if (pkColumns.Where(pkc => pkc.Name.Contains(table)).Any())
+            var columnName = columnInfo.Name;
+            var table = columnInfo.TableInfo.Name;
+            var _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
+            DiscoveredColumn[] discoveredColumns = _discoveredTable.DiscoverColumns();
+            var _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
+            if (_discoveredPKColumns.Length != 0)
             {
+                var _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
                 var qb = new QueryBuilder(null, null, null);
-                qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, catalogueItem.ColumnInfo));
-                qb.AddColumnRange(pkColumns.Select(pk => new ColumnInfoToIColumn(memoryRepo, pk)).ToArray());
+                qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
+                foreach (var pk in _discoveredPKColumns)
+                {
+                    var cataloguePk = _cataloguePKs.FirstOrDefault(c => c.ColumnInfo.GetRuntimeName() == pk.GetRuntimeName());
+                    qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
+                }
+                qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%'", QueryComponent.WHERE);
+                if (_readLimit is not null)
+                {
+                    qb.TopX = (int)_readLimit;
+                }
                 var sql = qb.SQL;
                 var dt = new DataTable();
                 dt.BeginLoadData();
@@ -61,11 +69,12 @@ public class ExecuteCommandIdentifyRegexRedactionsInCatalogue : BasicCommandExec
                     using var da = server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
-                DataTable _regexMatches = new();
-                _regexMatches.BeginLoadData();
-                _regexMatches = dt.AsEnumerable().Where(row => Regex.IsMatch(row[catalogueItem.ColumnInfo.GetRuntimeName()].ToString(), _redactionConfiguration.RegexPattern)).CopyToDataTable();
-                _regexMatches.EndLoadData();
-                dt.EndLoadData();
+                dt.Columns.Add("Proposed Redaction");
+                foreach(DataRow row in dt.Rows)
+                {
+                    row["Proposed Redaction"] = "TODO";
+                }
+                results = dt;
             }
             else
             {

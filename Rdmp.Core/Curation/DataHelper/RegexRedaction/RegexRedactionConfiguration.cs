@@ -11,6 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.Core.Repositories;
 using System.Collections.Generic;
 using System.Data.Common;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 

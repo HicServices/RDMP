@@ -131,7 +131,7 @@ namespace Rdmp.Core.Tests.CommandExecution
             }
             Assert.That(dt.Rows.Count, Is.EqualTo(2));
             Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>1234"));
-            Assert.That(dt.Rows[1].ItemArray[0], Is.EqualTo("1234<GG>1234"));
+            Assert.That(dt.Rows[1].ItemArray[0], Is.EqualTo("1234TEST1234"));
         }
 
 

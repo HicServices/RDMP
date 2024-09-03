@@ -53,141 +53,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         pksToSave.Columns.Add("Value");
     }
 
-
-    private string GetRedactionValue(string value, ColumnInfo column, DataRow m)
-    {
-        
-        Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
-        var matches = Regex.Matches(value, _redactionConfiguration.RegexPattern);
-        var offset = 0;
-        foreach (var match in matches)
-        {
-            var foundMatch = match.ToString();
-            var startingIndex = value.IndexOf(foundMatch);
-            string replacementValue = _redactionConfiguration.RedactionString;
-
-            var lengthDiff = (float)foundMatch.Length - replacementValue.Length;
-            if (lengthDiff < 1)
-            {
-                throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
-            }
-            if (lengthDiff > 0)
-            {
-                var start = (int)Math.Floor(lengthDiff / 2);
-                var end = (int)Math.Ceiling(lengthDiff / 2);
-                replacementValue = replacementValue.PadLeft(start + replacementValue.Length, '<');
-                replacementValue = replacementValue.PadRight(end + replacementValue.Length, '>');
-            }
-            value = value[..startingIndex] + replacementValue + value[(startingIndex + foundMatch.Length)..];
-            redactionsToSaveTable.Rows.Add([_redactionConfiguration.ID, column.ID, startingIndex, replacementValue, foundMatch]);
-            foreach (var pk in pkLookup)
-            {
-                pksToSave.Rows.Add([redactionUpates.Rows.Count + offset, pk.Key.ID, pk.Value]);
-            }
-            offset++;
-        }
-
-        return value;
-    }
-
-    private void DoJoinUpdate(ColumnInfo column)
-    {
-        var redactionTable = _discoveredTable.Database.CreateTable("TEMP_RedactionUpdates", redactionUpates);
-        var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
-
-        var sqlLines = new List<CustomLine>
-        {
-            new CustomLine($"t1.{column.GetRuntimeName()} = t2.{column.GetRuntimeName()}", QueryComponent.SET)
-        };
-        foreach (var pk in _discoveredPKColumns)
-        {
-            sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}", QueryComponent.WHERE));
-            sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
-
-        }
-        var sql = updateHelper.BuildUpdate(_discoveredTable, redactionTable, sqlLines);
-        var conn = _server.GetConnection();
-        conn.Open();
-        using (var cmd = _server.GetCommand(sql, conn))
-        {
-            cmd.ExecuteNonQuery();
-        }
-        conn.Close();
-        redactionTable.Drop();
-    }
-
-    private void Redact(ColumnInfo column, DataRow match)
-    {
-
-        var redactedValue = GetRedactionValue(match[0].ToString(), column, match);
-        match[0] = redactedValue;
-        redactionUpates.ImportRow(match);
-    }
-
-    private void DoInsert(IEnumerable<DataRow> redactionRows, IEnumerable<DataRow> pkRows, int offset)
-    {
-        string redactionString = string.Join(
-               @",
-            ", redactionRows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-        string keysString = string.Join(
-           @",
-            ", pkRows.Select(r => $"({r[0]},{r[1]},'{r[2]}')"));
-
-        var sql = $@"
-        DECLARE @output TABLE (id int, inc int IDENTITY(1,1))
-        INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id INTO @output
-        VALUES
-           {redactionString};
-        DECLARE @redactionKeys TABLE (id int IDENTITY(1,1),RegexRedaction_ID int,ColumnInfo_ID int , Value varchar(max));
-		INSERT INTO @redactionKeys(RegexRedaction_ID,ColumnInfo_ID,Value)
-        VALUES
-           {keysString};
-		UPDATE t1
-		SET t1.RegexRedaction_ID = t2.id
-		FROM @redactionKeys as t1
-		INNER JOIN @output AS t2
-		ON  (t1.RegexRedaction_ID -{offset} +1) = t2.inc
-		WHERE (t1.RegexRedaction_ID -{offset} +1) = t2.inc;
-			INSERT INTO RegexRedactionKey
-			select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @redactionKeys;
-			select * from RegexRedactionKey
-        ";
-        try
-        {
-            (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(sql, null);
-        }
-        catch (SqlException ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-    }
-
-
-    private void SaveRedactions()
-    {
-        var max = 1000;
-        //there will be an equal or greater number of PKs, so use that and take as many redactions as we can
-        if(pksToSave.Rows.Count > max)
-        {
-            var read = 0;
-            var minColIndex = 0;
-            while(read < pksToSave.Rows.Count)
-            {
-                var pkRows = pksToSave.AsEnumerable().Skip(read).Take(max);
-                var colIndex = int.Parse(pkRows.Last()[0].ToString());
-                var redactionRows = redactionsToSaveTable.AsEnumerable().Skip(minColIndex).Take(colIndex - minColIndex+1);
-                DoInsert(redactionRows.AsEnumerable(), pkRows.AsEnumerable(), minColIndex);
-                minColIndex = colIndex;
-                read += max;
-            }
-        }
-        else
-        {
-            DoInsert(redactionsToSaveTable.AsEnumerable(), pksToSave.AsEnumerable(),0);
-        }
-
-    }
-
     public override void Execute()
     {
         base.Execute();
@@ -235,19 +100,19 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
                 {
-                    Redact(columnInfo, row);
+                    RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                 }
                 redactionUpates.EndLoadData();
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();
-                SaveRedactions();
+                RegexRedactionHelper.SaveRedactions(_activator,pksToSave,redactionsToSaveTable);
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();
                 if (dt.Rows.Count > 0)
                 {
-                    DoJoinUpdate(columnInfo);
+                    RegexRedactionHelper.DoJoinUpdate(columnInfo,_discoveredTable,_server,redactionUpates,_discoveredPKColumns);
                 }
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
