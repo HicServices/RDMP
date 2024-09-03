@@ -48,7 +48,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         redactionsToSaveTable.Columns.Add("startingIndex");
         redactionsToSaveTable.Columns.Add("ReplacementValue");
         redactionsToSaveTable.Columns.Add("RedactedValue");
-        pksToSave.Columns.Add("redactionsToSaveTable_Index");
+        pksToSave.Columns.Add("RegexRedaction_ID");
         pksToSave.Columns.Add("ColumnInfo_ID");
         pksToSave.Columns.Add("Value");
     }
@@ -106,7 +106,16 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();
-                RegexRedactionHelper.SaveRedactions(_activator,pksToSave,redactionsToSaveTable);
+                pksToSave.Columns.Add("ID", typeof(int));
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    pksToSave.Rows[i]["ID"] = i + 1;
+                }
+                var t1 = _discoveredTable.Database.CreateTable("pksToSave_Temp", pksToSave);
+                var t2 = _discoveredTable.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
+                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository,t1,t2);
+                t1.Drop();
+                t2.Drop();
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();

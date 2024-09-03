@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
@@ -74,61 +76,23 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             redactionUpates.ImportRow(match);
         }
 
-        public static void SaveRedactions(IBasicActivateItems _activator, DataTable pksToSave, DataTable redactionsToSaveTable)
+        public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable)
         {
-            var max = 1000;
-            //there will be an equal or greater number of PKs, so use that and take as many redactions as we can
-            if (pksToSave.Rows.Count > max)
-            {
-                var read = 0;
-                var minColIndex = 0;
-                while (read < pksToSave.Rows.Count)
-                {
-                    var pkRows = pksToSave.AsEnumerable().Skip(read).Take(max);
-                    var colIndex = int.Parse(pkRows.Last()[0].ToString());
-                    var redactionRows = redactionsToSaveTable.AsEnumerable().Skip(minColIndex).Take(colIndex - minColIndex + 1);
-                    DoInsert(_activator, redactionRows.AsEnumerable(), pkRows.AsEnumerable(), minColIndex);
-                    minColIndex = colIndex;
-                    read += max;
-                }
-            }
-            else
-            {
-                DoInsert(_activator, redactionsToSaveTable.AsEnumerable(), pksToSave.AsEnumerable(), 0);
-            }
-        }
-
-        public static void DoInsert(IBasicActivateItems _activator, IEnumerable<DataRow> redactionRows, IEnumerable<DataRow> pkRows, int offset)
-        {
-            string redactionString = string.Join(
-                   @",
-            ", redactionRows.Select(r => $"({r[0]},{r[1]},{r[2]},'{r[3]}','{r[4]}')"));
-            string keysString = string.Join(
-               @",
-            ", pkRows.Select(r => $"({r[0]},{r[1]},'{r[2]}')"));
-
             var sql = $@"
-        DECLARE @output TABLE (id int, inc int IDENTITY(1,1))
-        INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id INTO @output
-        VALUES
-           {redactionString};
-        DECLARE @redactionKeys TABLE (id int IDENTITY(1,1),RegexRedaction_ID int,ColumnInfo_ID int , Value varchar(max));
-		INSERT INTO @redactionKeys(RegexRedaction_ID,ColumnInfo_ID,Value)
-        VALUES
-           {keysString};
-		UPDATE t1
-		SET t1.RegexRedaction_ID = t2.id
-		FROM @redactionKeys as t1
-		INNER JOIN @output AS t2
-		ON  (t1.RegexRedaction_ID -{offset} +1) = t2.inc
-		WHERE (t1.RegexRedaction_ID -{offset} +1) = t2.inc;
-			INSERT INTO RegexRedactionKey
-			select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @redactionKeys;
-			select * from RegexRedactionKey
-        ";
+                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
+                SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
+                UPDATE t1
+		        SET t1.RegexRedaction_ID = t2.id
+		        FROM {pksToSave.GetFullyQualifiedName()} as t1
+		        INNER JOIN {redactionsToSaveTable.GetFullyQualifiedName()} AS t2
+		        ON  (t1.RegexRedaction_ID +1) = t2.ID
+		        WHERE (t1.RegexRedaction_ID +1) = t2.ID;
+			    INSERT INTO RegexRedactionKey
+			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM {pksToSave.GetFullyQualifiedName()};
+            ";
             try
             {
-                (_activator.RepositoryLocator.CatalogueRepository as TableRepository).Insert(sql, null);
+                (catalogueRepo as TableRepository).Insert(sql, null);
             }
             catch (SqlException ex)
             {

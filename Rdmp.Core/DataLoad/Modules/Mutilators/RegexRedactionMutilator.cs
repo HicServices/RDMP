@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.CommandExecution;
+using System.Diagnostics;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
@@ -41,54 +42,6 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     public RegexRedactionMutilator() : base([LoadStage.AdjustRaw, LoadStage.AdjustStaging]) { }
 
-    private void Redact(IDataLoadJob job, DiscoveredTable table, DataRow row, DiscoveredColumn[] columns, int index)
-    {
-        var currentValue = row[index].ToString();
-        var matches = Regex.Matches(currentValue, redactionConfiguration.RegexPattern);
-        var catalogues = job.LoadMetadata.GetAllCatalogues();
-        foreach (var match in matches)
-        {
-            var foundMatch = match.ToString();
-            var startingIndex = currentValue.IndexOf(foundMatch);
-            string replacementValue = redactionConfiguration.RedactionString;
-            var lengthDiff = (float)foundMatch.Length - replacementValue.Length;
-            if (lengthDiff < 1)
-            {
-                throw new Exception($"Redaction string '{redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
-            }
-            if (lengthDiff > 0)
-            {
-                var start = (int)Math.Floor(lengthDiff / 2);
-                var end = (int)Math.Ceiling(lengthDiff / 2);
-                replacementValue = replacementValue.PadLeft(start + replacementValue.Length, '<');
-                replacementValue = replacementValue.PadRight(end + replacementValue.Length, '>');
-            }
-            currentValue = currentValue[..startingIndex] + replacementValue + currentValue[(startingIndex + foundMatch.Length)..];
-        }
-        var sqlLines = new List<CustomLine>
-        {
-            new CustomLine($"t1.{columns[index].GetRuntimeName()} = '{currentValue}'", QueryComponent.SET)
-        };
-        foreach (var pk in _discoveredPKColumns)
-        {
-            var matchValue = RegexRedactionHelper.ConvertPotentialDateTimeObject(row[pk.GetRuntimeName()].ToString(), pk.DataType.SQLType);
-
-            sqlLines.Add(new CustomLine($"t1.{pk.GetRuntimeName()} = {matchValue}", QueryComponent.WHERE));
-            sqlLines.Add(new CustomLine(string.Format("t1.{0} = t2.{0}", pk.GetRuntimeName()), QueryComponent.JoinInfoJoin));
-
-        }
-        var _server = table.Database.Server;
-        var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
-        var sql = updateHelper.BuildUpdate(table, table, sqlLines);
-        var conn = _server.GetConnection();
-        using (var cmd = _server.GetCommand(sql, conn))
-        {
-            cmd.ExecuteNonQuery();
-        }
-
-
-    }
-
     private bool ColumnMatches(DiscoveredColumn column)
     {
         if (OnlyColumns.Length > 0)
@@ -105,6 +58,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     protected override void MutilateTable(IDataLoadJob job, ITableInfo tableInfo, DiscoveredTable table)
     {
+        var timer = Stopwatch.StartNew();
         DataTable redactionsToSaveTable = new();
         DataTable pksToSave = new();
         redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
@@ -112,7 +66,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         redactionsToSaveTable.Columns.Add("startingIndex");
         redactionsToSaveTable.Columns.Add("ReplacementValue");
         redactionsToSaveTable.Columns.Add("RedactedValue");
-        pksToSave.Columns.Add("redactionsToSaveTable_Index");
+        pksToSave.Columns.Add("RegexRedaction_ID");
         pksToSave.Columns.Add("ColumnInfo_ID");
         pksToSave.Columns.Add("Value");
 
@@ -120,9 +74,11 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         
         var relatedCatalogues = tableInfo.GetAllRelatedCatalogues();
         var cataloguePks = relatedCatalogues.SelectMany(c => c.CatalogueItems).Where(ci => ci.ColumnInfo.IsPrimaryKey).ToList();
-        _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk=>cpk.Name).Contains(c.GetRuntimeName())).ToArray(); //will have to figure out the pks
-        //TODO should error/fail if there are no promary keys
-        //do we tidy up if it is a replacement?
+        _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk=>cpk.Name).Contains(c.GetRuntimeName())).ToArray();
+        if(_discoveredPKColumns.Length == 0)
+        {
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"No Primary Keys found. Redaction cannot be perfomed without a promary key."));
+        }
         var pkColumnInfos = cataloguePks.Select(c => c.ColumnInfo);
         var memoryRepo = new MemoryCatalogueRepository();
         foreach (var column in columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
@@ -151,27 +107,30 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 {
                     RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                 }
-                RegexRedactionHelper.SaveRedactions(new ThrowImmediatelyActivator(job.RepositoryLocator), pksToSave, redactionsToSaveTable);
-                RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions generated redactions in {timer.ElapsedMilliseconds}ms and found {dt.Rows.Count} redactions."));
 
+                pksToSave.Columns.Add("ID", typeof(int));
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    pksToSave.Rows[i]["ID"] = i + 1;
+                }
+                redactionsToSaveTable.Columns.Add("ID", typeof(int));
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    redactionsToSaveTable.Rows[i]["ID"] = i + 1;
+                }
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
+                var t1 = table.Database.CreateTable("pksToSave_Temp", pksToSave);
+                var t2 = table.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
+                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2);
+                t1.Drop();
+                t2.Drop();
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));
+                var b = timer.ElapsedMilliseconds;
+                RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns);
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions tool {timer.ElapsedMilliseconds}ms and found {dt.Rows.Count} redactions."));
             }
         }
-        //if (!columns.Any(c => c.IsPrimaryKey))
-        //{
-        //    throw new Exception($"Table '{tableInfo}' has no IsPrimaryKey columns");
-        //}
-        //_discoveredPKColumns = columns.Where(c => c.IsPrimaryKey).ToArray();
-        //var dt = table.GetDataTable();
-        //var columnNames = dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName).ToList();
-        //foreach (DataRow row in dt.AsEnumerable())
-        //{
-        //    foreach (var column in columns.Select((value, index) => new { value, index }).Where(c => !c.value.IsPrimaryKey))
-        //    {
-        //        if (Regex.IsMatch(row[column.index].ToString(), redactionConfiguration.RegexPattern))
-        //        {
-        //            Redact(job, table, row, columns, column.index);
-        //        }
-        //    }
-        //}
     }
 }

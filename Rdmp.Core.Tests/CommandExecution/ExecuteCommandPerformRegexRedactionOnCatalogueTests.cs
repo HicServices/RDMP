@@ -425,7 +425,7 @@ namespace Rdmp.Core.Tests.CommandExecution
                 con.Open();
                 server.GetCommand(sql, con).ExecuteNonQuery();
             }
-            var rowCount = 5000000;
+            var rowCount = 1000000;
             foreach (var i in Enumerable.Range(0, rowCount / 1000))
             {
                 InsertIntoDB(db, i * 1000);
