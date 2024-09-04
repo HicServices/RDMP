@@ -27,7 +27,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.SimpleDialogs;
 
 /// <summary>
-/// Lets you change the settings for a RedactCatalogue which is a set of web credentials / url to reach another RDMP instance across the network/internet via a web service.
+/// Lets you check for and redact entries in a catalogue
 /// </summary>
 public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 {

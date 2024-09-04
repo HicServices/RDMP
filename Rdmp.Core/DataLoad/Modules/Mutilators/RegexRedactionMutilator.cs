@@ -23,7 +23,9 @@ using System.Diagnostics;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
-
+/// <summary>
+/// Redacts an incoming data table 
+/// </summary>
 public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 {
     [DemandsInitialization("the regex redaction configuration to use")]
