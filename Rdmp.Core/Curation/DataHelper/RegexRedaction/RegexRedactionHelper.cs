@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using MongoDB.Driver;
 using Rdmp.Core.Repositories;
+using NPOI.SS.Formula.Functions;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
@@ -81,20 +82,22 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             //TODO tghe update isnt working...
             //THE IDS are bungled - redactionsToSaveTable don't have the correct values
             var sql = $@"
-                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
+                DECLARE @output TABLE (id int, inc int IDENTITY(1,1))
+                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id INTO @output
                 SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
-                UPDATE t1
-		        SET t1.RegexRedaction_ID = t2.ID
-		        FROM {pksToSave.GetFullyQualifiedName()} as t1
-		        INNER JOIN {redactionsToSaveTable.GetFullyQualifiedName()} AS t2
-		        ON  (t1.RegexRedaction_ID +1) = t2.ID
-		        WHERE (t1.RegexRedaction_ID +1) = t2.ID;
-			    INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
+
+                update t2
+				set t2.RegexRedaction_ID = t1.id
+				from @output as t1
+				inner join{pksToSave.GetFullyQualifiedName()} as t2
+				on t1.inc = t2.RegexRedaction_ID+1;
+
+                INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
 			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM {pksToSave.GetFullyQualifiedName()};
             ";
             try
             {
-                (catalogueRepo as TableRepository).Insert(sql, null,timeout);
+                (catalogueRepo as TableRepository).Insert(sql, null, timeout);
             }
             catch (SqlException ex)
             {
