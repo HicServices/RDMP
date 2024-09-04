@@ -20,6 +20,7 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.CommandExecution;
 using System.Diagnostics;
+using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 
@@ -117,18 +118,19 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 redactionsToSaveTable.Columns.Add("ID", typeof(int));
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
-                    redactionsToSaveTable.Rows[i]["ID"] = i + 1;
+                    redactionsToSaveTable.Rows[i]["ID"] = i + 1 ;
                 }
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
                 var t1 = table.Database.CreateTable("pksToSave_Temp", pksToSave);
                 var t2 = table.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
-                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2);
+                var _server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
+                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, _server, Timeout*1000);
                 t1.Drop();
                 t2.Drop();
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));
                 var b = timer.ElapsedMilliseconds;
-                RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns);
+                RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns, Timeout * 1000);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions tool {timer.ElapsedMilliseconds}ms and found {dt.Rows.Count} redactions."));
             }
         }

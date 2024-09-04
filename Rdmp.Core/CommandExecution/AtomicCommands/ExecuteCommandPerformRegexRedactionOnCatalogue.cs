@@ -113,7 +113,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 }
                 var t1 = _discoveredTable.Database.CreateTable("pksToSave_Temp", pksToSave);
                 var t2 = _discoveredTable.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
-                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository,t1,t2);
+                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository,t1,t2,_server);
                 t1.Drop();
                 t2.Drop();
                 timer.Stop();

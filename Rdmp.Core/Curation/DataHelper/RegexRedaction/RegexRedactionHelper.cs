@@ -32,7 +32,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             return matchValue;
         }
 
-        public static string GetRedactionValue(string value, ColumnInfo column, DataRow m, List<CatalogueItem> _cataloguePKs,RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
+        public static string GetRedactionValue(string value, ColumnInfo column, DataRow m, List<CatalogueItem> _cataloguePKs, RegexRedactionConfiguration _redactionConfiguration, DataTable redactionsToSaveTable, DataTable pksToSave, DataTable redactionUpates)
         {
 
             Dictionary<ColumnInfo, string> pkLookup = Enumerable.Range(0, _cataloguePKs.Count).ToDictionary(i => _cataloguePKs[i].ColumnInfo, i => m[i + 1].ToString());
@@ -76,23 +76,25 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             redactionUpates.ImportRow(match);
         }
 
-        public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable)
+        public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable, DiscoveredServer _server, int timeout = 30000)
         {
+            //TODO tghe update isnt working...
+            //THE IDS are bungled - redactionsToSaveTable don't have the correct values
             var sql = $@"
                 INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue)
                 SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
                 UPDATE t1
-		        SET t1.RegexRedaction_ID = t2.id
+		        SET t1.RegexRedaction_ID = t2.ID
 		        FROM {pksToSave.GetFullyQualifiedName()} as t1
 		        INNER JOIN {redactionsToSaveTable.GetFullyQualifiedName()} AS t2
 		        ON  (t1.RegexRedaction_ID +1) = t2.ID
 		        WHERE (t1.RegexRedaction_ID +1) = t2.ID;
-			    INSERT INTO RegexRedactionKey
+			    INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
 			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM {pksToSave.GetFullyQualifiedName()};
             ";
             try
             {
-                (catalogueRepo as TableRepository).Insert(sql, null);
+                (catalogueRepo as TableRepository).Insert(sql, null,timeout);
             }
             catch (SqlException ex)
             {
@@ -100,7 +102,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             }
         }
 
-        public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns)
+        public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)
         {
             var redactionTable = _discoveredTable.Database.CreateTable("TEMP_RedactionUpdates", redactionUpates);
             var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
@@ -120,6 +122,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             conn.Open();
             using (var cmd = _server.GetCommand(sql, conn))
             {
+                cmd.CommandTimeout = timeout;
                 cmd.ExecuteNonQuery();
             }
             conn.Close();
