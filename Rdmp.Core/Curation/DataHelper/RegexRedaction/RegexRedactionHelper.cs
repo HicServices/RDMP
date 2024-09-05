@@ -15,11 +15,51 @@ using System.Threading.Tasks;
 using MongoDB.Driver;
 using Rdmp.Core.Repositories;
 using NPOI.SS.Formula.Functions;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
     public static class RegexRedactionHelper
     {
+
+        //public static QueryBuilder SQLLikeQuery(ColumnInfo columnInfo, CatalogueItem[] pkCatalogueItems, RegexRedactionConfiguration regexConfiguration,int? readLimit)
+        //{
+        //    var memoryRepo = new MemoryCatalogueRepository();
+        //    var qb = new QueryBuilder(null, null, null);
+        //    qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
+        //    foreach(var pk in pkCatalogueItems)
+        //    {
+        //        qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, pk.ColumnInfo));
+        //    }
+        //    qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{regexConfiguration.RegexPattern}%'", QueryComponent.WHERE);
+        //    if (readLimit is not null)
+        //    {
+        //        qb.TopX = (int)readLimit;
+        //    }
+
+        //    return qb;
+        //}
+
+        public static DataTable GenerateRedactionsDataTable()
+        {
+            DataTable redactionsToSaveTable = new DataTable();
+            redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
+            redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
+            redactionsToSaveTable.Columns.Add("startingIndex");
+            redactionsToSaveTable.Columns.Add("ReplacementValue");
+            redactionsToSaveTable.Columns.Add("RedactedValue");
+            return redactionsToSaveTable;
+        }
+
+        public static DataTable GeneratePKDataTable()
+        {
+            DataTable pkDataTable = new DataTable();
+            pkDataTable.Columns.Add("RegexRedaction_ID");
+            pkDataTable.Columns.Add("ColumnInfo_ID");
+            pkDataTable.Columns.Add("Value");
+            pkDataTable.Columns.Add("ID", typeof(int));
+            return pkDataTable;
+        }
 
         public static string ConvertPotentialDateTimeObject(string value, string currentColumnType)
         {
@@ -79,30 +119,29 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 
         public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable, DiscoveredServer _server, int timeout = 30000)
         {
-            //TODO tghe update isnt working...
-            //THE IDS are bungled - redactionsToSaveTable don't have the correct values
-            var sql = $@"
-                DECLARE @output TABLE (id int, inc int IDENTITY(1,1))
-                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id INTO @output
-                SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
+            //the update isn't working? and do we need the +1?
 
-                update t2
-				set t2.RegexRedaction_ID = t1.id
-				from @output as t1
-				inner join{pksToSave.GetFullyQualifiedName()} as t2
-				on t1.inc = t2.RegexRedaction_ID+1;
+            var sql = $@"
+                DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
+                INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id as id1 INTO @output
+                SELECT RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue FROM {redactionsToSaveTable.GetFullyQualifiedName()};
+				
+				DECLARE @IDMATCHER TABLE (RegexRedaction_ID int,ColumnInfo_ID int ,Value varchar(max),ID int , id1 int , inc int)
+				insert into @IDMATCHER(RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc)
+				select RegexRedaction_ID, ColumnInfo_ID,Value,ID,id1,inc
+				FROM {pksToSave.GetFullyQualifiedName()} as t1
+				JOIN @output as t2 ON t1.RegexRedaction_ID+1 = t2.inc
+				where t1.RegexRedaction_ID+1 = t2.inc;
+
+				update @IDMATCHER
+				set RegexRedaction_ID = id1
+				where RegexRedaction_ID+1 = inc;
 
                 INSERT INTO RegexRedactionKey(RegexRedaction_ID,ColumnInfo_ID,Value)
-			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM {pksToSave.GetFullyQualifiedName()};
+			    select RegexRedaction_ID,ColumnInfo_ID,Value  FROM @IDMATCHER;
             ";
-            try
-            {
+           
                 (catalogueRepo as TableRepository).Insert(sql, null, timeout);
-            }
-            catch (SqlException ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
         }
 
         public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)

@@ -1,25 +1,13 @@
 ﻿using FAnsi.Discovery;
-using FAnsi.Discovery.QuerySyntax.Update;
-using FAnsi.Discovery.QuerySyntax;
-using MongoDB.Driver.Core.Servers;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.DataLoad.Engine.Job;
-using Rdmp.Core.DataLoad.Engine.Mutilators;
-using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Rdmp.Core.QueryBuilding;
-using Rdmp.Core.Repositories;
-using Rdmp.Core.CommandExecution;
-using System.Diagnostics;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators;
@@ -47,7 +35,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     private bool ColumnMatches(DiscoveredColumn column)
     {
-        if (OnlyColumns.Length > 0)
+        if (OnlyColumns is not null && OnlyColumns.Length > 0)
         {
             return OnlyColumns.Select(c => c.GetRuntimeName()).Contains(column.GetRuntimeName());
         }
@@ -61,17 +49,8 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     protected override void MutilateTable(IDataLoadJob job, ITableInfo tableInfo, DiscoveredTable table)
     {
-        var timer = Stopwatch.StartNew();
-        DataTable redactionsToSaveTable = new();
-        DataTable pksToSave = new();
-        redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
-        redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
-        redactionsToSaveTable.Columns.Add("startingIndex");
-        redactionsToSaveTable.Columns.Add("ReplacementValue");
-        redactionsToSaveTable.Columns.Add("RedactedValue");
-        pksToSave.Columns.Add("RegexRedaction_ID");
-        pksToSave.Columns.Add("ColumnInfo_ID");
-        pksToSave.Columns.Add("Value");
+        DataTable redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
+        DataTable pksToSave = RegexRedactionHelper.GeneratePKDataTable();
 
         var columns = table.DiscoverColumns();
         
@@ -80,10 +59,11 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk=>cpk.Name).Contains(c.GetRuntimeName())).ToArray();
         if(_discoveredPKColumns.Length == 0)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"No Primary Keys found. Redaction cannot be perfomed without a promary key."));
+            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"No Primary Keys found. Redaction cannot be perfomed without a primary key."));
+            //Don't want to fail the data load, but just let the user know
+            return;
         }
         var pkColumnInfos = cataloguePks.Select(c => c.ColumnInfo);
-        var memoryRepo = new MemoryCatalogueRepository();
         foreach (var column in columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
         {
             if (ColumnMatches(column))
@@ -100,27 +80,27 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 conn.Open();
                 using (var cmd = table.Database.Server.GetCommand(sql, conn))
                 {
+                    cmd.CommandTimeout = Timeout * 1000;
                     using var da = table.Database.Server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
                 dt.EndLoadData();
                 var redactionUpates = dt.Clone();
-                var columnInfo = relatedCatalogues.SelectMany(c => c.CatalogueItems).ToArray().Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == column.GetRuntimeName()).First();
+                var columnInfo = relatedCatalogues.SelectMany(c => c.CatalogueItems).ToArray().Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == column.GetRuntimeName()).FirstOrDefault();
+                if(columnInfo is null)
+                {
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Unable to find the related column info"));
+                    return;
+                }
                 foreach (DataRow row in dt.Rows)
                 {
                     RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                 }
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions generated redactions in {timer.ElapsedMilliseconds}ms and found {dt.Rows.Count} redactions."));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redaction mutilator found {dt.Rows.Count} redactions."));
 
-                pksToSave.Columns.Add("ID", typeof(int));
                 for (int i = 0; i < dt.Rows.Count; i++)
                 {
                     pksToSave.Rows[i]["ID"] = i + 1;
-                }
-                redactionsToSaveTable.Columns.Add("ID", typeof(int));
-                for (int i = 0; i < dt.Rows.Count; i++)
-                {
-                    redactionsToSaveTable.Rows[i]["ID"] = i + 1 ;
                 }
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
                 var t1 = table.Database.CreateTable("pksToSave_Temp", pksToSave);
@@ -131,9 +111,8 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 t1.Drop();
                 t2.Drop();
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));
-                var b = timer.ElapsedMilliseconds;
                 RegexRedactionHelper.DoJoinUpdate(columnInfo, table, table.Database.Server, redactionUpates, _discoveredPKColumns, Timeout * 1000);
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions tool {timer.ElapsedMilliseconds}ms and found {dt.Rows.Count} redactions."));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redactions tool found {dt.Rows.Count} redactions."));
             }
         }
     }

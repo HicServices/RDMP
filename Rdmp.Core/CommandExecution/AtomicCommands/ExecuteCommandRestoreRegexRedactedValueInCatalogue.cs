@@ -78,6 +78,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 }
                 var updateSql = updateHelper.BuildUpdate(discoveredTable, discoveredTable, sqlLines);
                 var conn = server.GetConnection();
+                //TODO this is borked
                 using (var cmd = server.GetCommand(updateSql, conn))
                 {
                     conn.Open();

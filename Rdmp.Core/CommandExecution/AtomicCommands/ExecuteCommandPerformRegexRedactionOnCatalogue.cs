@@ -30,12 +30,12 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DiscoveredColumn[] _discoveredPKColumns;
     private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
-    private readonly DataTable redactionsToSaveTable = new();
-    private readonly DataTable pksToSave = new();
+    private readonly DataTable redactionsToSaveTable;
+    private readonly DataTable pksToSave;
     private readonly int? _readLimit;
     private DataTable redactionUpates = new();
 
-    public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns, int? readLimit=null)
+    public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns, int? readLimit = null)
     {
         _activator = activator;
         _catalogue = catalogue;
@@ -43,14 +43,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _columns = columns;
         _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
         _readLimit = readLimit;
-        redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
-        redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
-        redactionsToSaveTable.Columns.Add("startingIndex");
-        redactionsToSaveTable.Columns.Add("ReplacementValue");
-        redactionsToSaveTable.Columns.Add("RedactedValue");
-        pksToSave.Columns.Add("RegexRedaction_ID");
-        pksToSave.Columns.Add("ColumnInfo_ID");
-        pksToSave.Columns.Add("Value");
+        redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
+        pksToSave = RegexRedactionHelper.GeneratePKDataTable();
     }
 
     public override void Execute()
@@ -78,7 +72,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, cataloguePk.ColumnInfo));
                 }
                 qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{_redactionConfiguration.RegexPattern}%'", QueryComponent.WHERE);
-                if(_readLimit is not null)
+                if (_readLimit is not null)
                 {
                     qb.TopX = (int)_readLimit;
                 }
@@ -106,14 +100,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
                 timer.Start();
-                pksToSave.Columns.Add("ID", typeof(int));
-                for (int i = 0; i < dt.Rows.Count; i++)
+                for (int i = 0; i < pksToSave.Rows.Count; i++)
                 {
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
                 var t1 = _discoveredTable.Database.CreateTable("pksToSave_Temp", pksToSave);
                 var t2 = _discoveredTable.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
-                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository,t1,t2,_server);
+                RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository, t1, t2, _server);
                 t1.Drop();
                 t2.Drop();
                 timer.Stop();
@@ -121,7 +114,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 timer.Start();
                 if (dt.Rows.Count > 0)
                 {
-                    RegexRedactionHelper.DoJoinUpdate(columnInfo,_discoveredTable,_server,redactionUpates,_discoveredPKColumns);
+                    RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpates, _discoveredPKColumns);
                 }
                 timer.Stop();
                 Console.WriteLine(timer.ElapsedMilliseconds);
