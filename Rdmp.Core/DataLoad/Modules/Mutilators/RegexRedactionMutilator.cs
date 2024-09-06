@@ -30,7 +30,6 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     private DiscoveredColumn[] _discoveredPKColumns;
 
-
     public RegexRedactionMutilator() : base([LoadStage.AdjustRaw, LoadStage.AdjustStaging]) { }
 
     private bool ColumnMatches(DiscoveredColumn column)
@@ -53,13 +52,13 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         DataTable pksToSave = RegexRedactionHelper.GeneratePKDataTable();
 
         var columns = table.DiscoverColumns();
-        
+
         var relatedCatalogues = tableInfo.GetAllRelatedCatalogues();
         var cataloguePks = relatedCatalogues.SelectMany(c => c.CatalogueItems).Where(ci => ci.ColumnInfo.IsPrimaryKey).ToList();
-        _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk=>cpk.Name).Contains(c.GetRuntimeName())).ToArray();
-        if(_discoveredPKColumns.Length == 0)
+        _discoveredPKColumns = columns.Where(c => cataloguePks.Select(cpk => cpk.Name).Contains(c.GetRuntimeName())).ToArray();
+        if (_discoveredPKColumns.Length == 0)
         {
-            job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"No Primary Keys found. Redaction cannot be perfomed without a primary key."));
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "No Primary Keys found. Redaction cannot be perfomed without a primary key."));
             //Don't want to fail the data load, but just let the user know
             return;
         }
@@ -87,18 +86,26 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 dt.EndLoadData();
                 var redactionUpates = dt.Clone();
                 var columnInfo = relatedCatalogues.SelectMany(c => c.CatalogueItems).ToArray().Select(ci => ci.ColumnInfo).Where(ci => ci.GetRuntimeName() == column.GetRuntimeName()).FirstOrDefault();
-                if(columnInfo is null)
+                if (columnInfo is null)
                 {
                     job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Unable to find the related column info"));
                     return;
                 }
                 foreach (DataRow row in dt.Rows)
                 {
-                    RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
+                    try
+                    {
+                        RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
+                    }
+                    catch (Exception e)
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"{e.Message}"));
+
+                    }
                 }
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Regex Redaction mutilator found {dt.Rows.Count} redactions."));
-
-                for (int i = 0; i < dt.Rows.Count; i++)
+                if (redactionsToSaveTable.Rows.Count == 0) return;
+                for (int i = 0; i < pksToSave.Rows.Count; i++)
                 {
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
@@ -107,7 +114,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 var t2 = table.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
                 var _server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
-                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, _server, Timeout*1000);
+                RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, _server, Timeout * 1000);
                 t1.Drop();
                 t2.Drop();
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Performing join update"));

@@ -18,7 +18,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 /// <summary>
 /// Stores the configuration used to perform regex redactions
 /// </summary>
-public class RegexRedactionConfiguration: DatabaseEntity, IRegexRedactionConfiguration
+public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfiguration
 {
 
 
@@ -27,8 +27,16 @@ public class RegexRedactionConfiguration: DatabaseEntity, IRegexRedactionConfigu
     private string _name;
     private string _description;
 
+
+
+    public override string ToString()
+    {
+        return _name;
+    }
+
     [Unique]
     [NotNull]
+    [UsefulProperty]
     public string Name
     {
         get => _name;
@@ -58,7 +66,7 @@ public class RegexRedactionConfiguration: DatabaseEntity, IRegexRedactionConfigu
 
     public RegexRedactionConfiguration() { }
 
-    public RegexRedactionConfiguration(ICatalogueRepository repository,string name, Regex regexPattern, string redactionString,string description=null)
+    public RegexRedactionConfiguration(ICatalogueRepository repository, string name, Regex regexPattern, string redactionString, string description = null)
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -69,11 +77,11 @@ public class RegexRedactionConfiguration: DatabaseEntity, IRegexRedactionConfigu
         });
     }
 
-    internal RegexRedactionConfiguration(ICatalogueRepository repository, DbDataReader r): base(repository,r)
+    internal RegexRedactionConfiguration(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
     {
         Name = r["Name"].ToString();
         Description = r["Description"].ToString();
-        RedactionString= r["RedactionString"].ToString();
+        RedactionString = r["RedactionString"].ToString();
         RegexPattern = r["RegexPattern"].ToString();
     }
 
