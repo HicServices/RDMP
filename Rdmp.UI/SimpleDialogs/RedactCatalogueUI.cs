@@ -54,7 +54,11 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         checkedListBox1.Items.AddRange(nonPKColumns);
     }
 
-
+    private void btnNewRegex_Click(object sender, EventArgs e)
+    {
+        var form =  new RegexRedactionConfigurationCreationUI(_activator);
+        form.ShowDialog();
+    }
     private void btnIdentify_Click(object sender, EventArgs e)
     {
         int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
@@ -66,7 +70,11 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         var config = comboBox1.SelectedItem as RegexRedactionConfiguration;
         var cmd = new ExecuteCommandIdentifyRegexRedactionsInCatalogue(_activator, _catalogue, config, columns, max);
         cmd.Execute();
-        var x = cmd.results;
+        if(cmd.results is null)
+        {
+            //Do Something!
+            return;
+        }
         foreach(DataRow row in cmd.results.Rows)
         {
             object o = new

@@ -32,6 +32,10 @@ partial class RedactCatalogueUI
     private void InitializeComponent()
     {
         panel1 = new System.Windows.Forms.Panel();
+        folv = new FastObjectListView();
+        folvFoundValue = new OLVColumn();
+        folvReplacmentValue = new OLVColumn();
+        folvRedactButton = new OLVColumn();
         label4 = new System.Windows.Forms.Label();
         tbMaxCount = new System.Windows.Forms.TextBox();
         btnRedact = new System.Windows.Forms.Button();
@@ -42,16 +46,14 @@ partial class RedactCatalogueUI
         label2 = new System.Windows.Forms.Label();
         tbCatalogueName = new System.Windows.Forms.TextBox();
         label1 = new System.Windows.Forms.Label();
-        folv = new BrightIdeasSoftware.FastObjectListView();
-        folvFoundValue = new OLVColumn();
-        folvReplacmentValue = new OLVColumn();
-        folvRedactButton = new OLVColumn();
+        btnNewRegex = new System.Windows.Forms.Button();
         panel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)folv).BeginInit();
         SuspendLayout();
         // 
         // panel1
         // 
+        panel1.Controls.Add(btnNewRegex);
         panel1.Controls.Add(folv);
         panel1.Controls.Add(label4);
         panel1.Controls.Add(tbMaxCount);
@@ -69,6 +71,43 @@ partial class RedactCatalogueUI
         panel1.Name = "panel1";
         panel1.Size = new System.Drawing.Size(628, 220);
         panel1.TabIndex = 18;
+        // 
+        // folv
+        // 
+        folv.AllColumns.Add(folvFoundValue);
+        folv.AllColumns.Add(folvReplacmentValue);
+        folv.AllColumns.Add(folvRedactButton);
+        folv.Location = new System.Drawing.Point(13, 201);
+        folv.Name = "folv";
+        folv.ShowGroups = false;
+        folv.Size = new System.Drawing.Size(612, 287);
+        folv.TabIndex = 10;
+        folv.View = System.Windows.Forms.View.Details;
+        folv.VirtualMode = true;
+        // 
+        // folvFoundValue
+        // 
+        folvFoundValue.AspectName = "FoundValue";
+        folvFoundValue.FillsFreeSpace = true;
+        folvFoundValue.MinimumWidth = 100;
+        folvFoundValue.Text = "FoundValue";
+        folvFoundValue.Width = 100;
+        // 
+        // folvReplacmentValue
+        // 
+        folvReplacmentValue.AspectName = "RedactionValue";
+        folvReplacmentValue.FillsFreeSpace = true;
+        folvReplacmentValue.MinimumWidth = 100;
+        folvReplacmentValue.Text = "Redaction Value";
+        folvReplacmentValue.Width = 100;
+        // 
+        // folvRedactButton
+        // 
+        folvRedactButton.AspectName = "";
+        folvRedactButton.FillsFreeSpace = true;
+        folvRedactButton.MinimumWidth = 100;
+        folvRedactButton.Text = "Redact";
+        folvRedactButton.Width = 100;
         // 
         // label4
         // 
@@ -157,42 +196,15 @@ partial class RedactCatalogueUI
         label1.TabIndex = 0;
         label1.Text = "Catalogue:";
         // 
-        // folv
+        // btnNewRegex
         // 
-        folv.Location = new System.Drawing.Point(13, 201);
-        folv.Name = "folv";
-        folv.ShowGroups = false;
-        folv.Size = new System.Drawing.Size(612, 287);
-        folv.TabIndex = 10;
-        folv.View = System.Windows.Forms.View.Details;
-        folv.VirtualMode = true;
-        folv.AllColumns.Add(folvFoundValue);
-        folv.AllColumns.Add(folvReplacmentValue);
-        folv.AllColumns.Add(folvRedactButton);
-        // 
-        // folvFoundValue
-        // 
-        folvFoundValue.AspectName = "FoundValue";
-        folvFoundValue.FillsFreeSpace = true;
-        folvFoundValue.MinimumWidth = 100;
-        folvFoundValue.Text = "FoundValue";
-        folvFoundValue.Width = 100;
-        // 
-        // folvReplacmentValue
-        // 
-        folvReplacmentValue.AspectName = "RedactionValue";
-        folvReplacmentValue.FillsFreeSpace = true;
-        folvReplacmentValue.MinimumWidth = 100;
-        folvReplacmentValue.Text = "Redaction Value";
-        folvReplacmentValue.Width = 100;
-        // 
-        // folvRedactButton
-        // 
-        folvRedactButton.AspectName = "";
-        folvRedactButton.FillsFreeSpace = true;
-        folvRedactButton.MinimumWidth = 100;
-        folvRedactButton.Text = "Redact";
-        folvRedactButton.Width = 100;
+        btnNewRegex.Location = new System.Drawing.Point(388, 43);
+        btnNewRegex.Name = "btnNewRegex";
+        btnNewRegex.Size = new System.Drawing.Size(154, 23);
+        btnNewRegex.TabIndex = 11;
+        btnNewRegex.Text = "New Regex Configuration";
+        btnNewRegex.UseVisualStyleBackColor = true;
+        btnNewRegex.Click += btnNewRegex_Click;
         // 
         // RedactCatalogueUI
         // 
@@ -224,4 +236,5 @@ partial class RedactCatalogueUI
     private OLVColumn folvFoundValue;
     private OLVColumn folvReplacmentValue;
     private OLVColumn folvRedactButton;
+    private System.Windows.Forms.Button btnNewRegex;
 }

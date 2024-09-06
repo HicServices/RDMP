@@ -26,12 +26,13 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
     private string _redactionString;
     private string _name;
     private string _description;
+    private string _folder;
 
 
 
     public override string ToString()
     {
-        return _name;
+        return $"{_name}({_regexPattern})";
     }
 
     [Unique]
@@ -62,7 +63,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
         get => _redactionString;
         set => SetField(ref _redactionString, value);
     }
-
+    public string Folder { get => _folder; set => SetField(ref _folder, value); }
 
     public RegexRedactionConfiguration() { }
 

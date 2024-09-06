@@ -16,7 +16,7 @@ namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="IDataset"/>
 
-public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
+public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder 
 {
     private string _name;
     private string _digitalObjectIdentifier;

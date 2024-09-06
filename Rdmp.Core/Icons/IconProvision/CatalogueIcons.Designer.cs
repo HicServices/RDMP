@@ -26,240 +26,287 @@ namespace Rdmp.Core.Icons.IconProvision
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class CatalogueIcons {
-        
+    public class CatalogueIcons
+    {
+
         private static global::System.Resources.ResourceManager resourceMan;
-        
+
         private static global::System.Globalization.CultureInfo resourceCulture;
-        
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal CatalogueIcons() {
+        internal CatalogueIcons()
+        {
         }
-        
+
         /// <summary>
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Resources.ResourceManager ResourceManager {
-            get {
-                if (object.ReferenceEquals(resourceMan, null)) {
+        public static global::System.Resources.ResourceManager ResourceManager
+        {
+            get
+            {
+                if (object.ReferenceEquals(resourceMan, null))
+                {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.Core.Icons.IconProvision.CatalogueIcons", typeof(CatalogueIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
             }
         }
-        
+
         /// <summary>
         ///   Overrides the current thread's CurrentUICulture property for all
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        public static global::System.Globalization.CultureInfo Culture {
-            get {
+        public static global::System.Globalization.CultureInfo Culture
+        {
+            get
+            {
                 return resourceCulture;
             }
-            set {
+            set
+            {
                 resourceCulture = value;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregateContinuousDateAxis {
-            get {
+        public static Byte[] AggregateContinuousDateAxis
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AggregateContinuousDateAxis", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregateDimension {
-            get {
+        public static Byte[] AggregateDimension
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AggregateDimension", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregateGraph {
-            get {
+        public static Byte[] AggregateGraph
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AggregateGraph", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregatesNode {
-            get {
+        public static Byte[] AggregatesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AggregatesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AggregateTopX {
-            get {
+        public static Byte[] AggregateTopX
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AggregateTopX", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllANOTablesNode {
-            get {
+        public static Byte[] AllANOTablesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllANOTablesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllAutomationServerSlotsNode {
-            get {
+        public static Byte[] AllAutomationServerSlotsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllAutomationServerSlotsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllCataloguesUsedByLoadMetadataNode {
-            get {
+        public static Byte[] AllCataloguesUsedByLoadMetadataNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllCataloguesUsedByLoadMetadataNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllCohortsNode {
-            get {
+        public static Byte[] AllCohortsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllCohortsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllConnectionStringKeywordsNode {
-            get {
+        public static Byte[] AllConnectionStringKeywordsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllConnectionStringKeywordsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllDashboardsNode {
-            get {
+        public static Byte[] AllDashboardsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllDashboardsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllDataAccessCredentialsNode {
-            get {
+        public static Byte[] AllDataAccessCredentialsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllDataAccessCredentialsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllExternalServersNode {
-            get {
+        public static Byte[] AllExternalServersNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllFreeCohortIdentificationConfigurationsNode {
-            get {
+        public static Byte[] AllFreeCohortIdentificationConfigurationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllFreeCohortIdentificationConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllGovernanceNode {
-            get {
+        public static Byte[] AllGovernanceNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllGovernanceNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllObjectImportsNode {
-            get {
+        public static Byte[] AllObjectImportsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllObjectImportsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllObjectSharingNode {
-            get {
+        public static Byte[] AllObjectSharingNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllObjectSharingNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllOrphanAggregateConfigurationsNode {
-            get {
+        public static Byte[] AllOrphanAggregateConfigurationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllOrphanAggregateConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllPermissionWindowsNode {
-            get {
+        public static Byte[] AllPermissionWindowsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllPermissionWindowsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
         public static Byte[] AllTemplateAggregateConfigurationsNode
         {
-            get {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllTemplateAggregateConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
@@ -267,208 +314,269 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllPipelinesNode {
-            get {
+        public static Byte[] AllPipelinesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllPluginsNode {
-            get {
+        public static Byte[] AllRegexRedactionConfigurationsNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("AllRegexRedactionConfigurationsNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+        public static Byte[] AllDatasetsNode
+        {
+            get
+            {
+                object obj = ResourceManager.GetObject("AllDatasetsNode", resourceCulture);
+                return ((Byte[])(obj));
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized resource of type Image.
+        /// </summary>
+        public static Byte[] AllPluginsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllPluginsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllProcessTasksUsedByLoadMetadataNode {
-            get {
+        public static Byte[] AllProcessTasksUsedByLoadMetadataNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllProcessTasksUsedByLoadMetadataNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllProjectCohortIdentificationConfigurationsNode {
-            get {
+        public static Byte[] AllProjectCohortIdentificationConfigurationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllProjectCohortIdentificationConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllRDMPRemotesNode {
-            get {
+        public static Byte[] AllRDMPRemotesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllRDMPRemotesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllServersNode {
-            get {
+        public static Byte[] AllServersNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllServersNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AllStandardRegexesNode {
-            get {
+        public static Byte[] AllStandardRegexesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AllStandardRegexesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ANOColumnInfo {
-            get {
+        public static Byte[] ANOColumnInfo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ANOColumnInfo", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ANOTable {
-            get {
+        public static Byte[] ANOTable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ANOTable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AutomateablePipeline {
-            get {
+        public static Byte[] AutomateablePipeline
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AutomateablePipeline", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AutomationServiceException {
-            get {
+        public static Byte[] AutomationServiceException
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AutomationServiceException", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] AutomationServiceSlot {
-            get {
+        public static Byte[] AutomationServiceSlot
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("AutomationServiceSlot", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Backup {
-            get {
+        public static Byte[] Backup
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Backup", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] BigCohort {
-            get {
+        public static Byte[] BigCohort
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("BigCohort", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] BigGraph {
-            get {
+        public static Byte[] BigGraph
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("BigGraph", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] BigPatientIndexTable {
-            get {
+        public static Byte[] BigPatientIndexTable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("BigPatientIndexTable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CacheFetchFailure {
-            get {
+        public static Byte[] CacheFetchFailure
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CacheFetchFailure", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CacheProgress {
-            get {
+        public static Byte[] CacheProgress
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CacheProgress", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Catalogue {
-            get {
+        public static Byte[] Catalogue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Catalogue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CatalogueFolder {
-            get {
+        public static Byte[] CatalogueFolder
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CatalogueFolder", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CatalogueItem {
-            get {
+        public static Byte[] CatalogueItem
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CatalogueItem", resourceCulture);
                 return ((Byte[])(obj));
             }
@@ -489,768 +597,922 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CatalogueItemIssue {
-            get {
+        public static Byte[] CatalogueItemIssue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CatalogueItemIssue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CatalogueItemsNode {
-            get {
+        public static Byte[] CatalogueItemsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CatalogueItemsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CatalogueLookupsNode {
-            get {
+        public static Byte[] CatalogueLookupsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CatalogueLookupsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Clipboard {
-            get {
+        public static Byte[] Clipboard
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Clipboard", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CloneExtractionConfiguration {
-            get {
+        public static Byte[] CloneExtractionConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CloneExtractionConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CohortAggregate {
-            get {
+        public static Byte[] CohortAggregate
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CohortAggregate", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CohortAggregateContainer {
-            get {
+        public static Byte[] CohortAggregateContainer
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CohortAggregateContainer", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CohortCustomColumn {
-            get {
+        public static Byte[] CohortCustomColumn
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CohortCustomColumn", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CohortIdentificationConfiguration {
-            get {
+        public static Byte[] CohortIdentificationConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CohortIdentificationConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] collapseAllNodes {
-            get {
+        public static Byte[] collapseAllNodes
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("collapseAllNodes", resourceCulture);
                 return (Byte[])obj;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CollisionResolution {
-            get {
+        public static Byte[] CollisionResolution
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CollisionResolution", resourceCulture);
                 return (Byte[])obj;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ColumnInfo {
-            get {
+        public static Byte[] ColumnInfo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ColumnInfo", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ConnectionStringKeyword {
-            get {
+        public static Byte[] ConnectionStringKeyword
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ConnectionStringKeyword", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] CumulativeExtractionResults {
-            get {
+        public static Byte[] CumulativeExtractionResults
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("CumulativeExtractionResults", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DashboardControl {
-            get {
+        public static Byte[] DashboardControl
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DashboardControl", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DashboardLayout {
-            get {
+        public static Byte[] DashboardLayout
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DashboardLayout", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DataAccessCredentials {
-            get {
+        public static Byte[] DataAccessCredentials
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DataAccessCredentials", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Database {
-            get {
+        public static Byte[] Database
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DatabaseRefresh {
-            get {
+        public static Byte[] DatabaseRefresh
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DatabaseRefresh", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DecryptionPrivateKeyNode {
-            get {
+        public static Byte[] DecryptionPrivateKeyNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DecryptionPrivateKeyNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Diff {
-            get {
+        public static Byte[] Diff
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Diff", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DocumentationNode {
-            get {
+        public static Byte[] DocumentationNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DocumentationNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DQE {
-            get {
+        public static Byte[] DQE
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DQE", resourceCulture);
                 return (Byte[])obj;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DQEGraphAnnotation {
-            get {
+        public static Byte[] DQEGraphAnnotation
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DQEGraphAnnotation", resourceCulture);
                 return (Byte[])obj;
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] DropHere {
-            get {
+        public static Byte[] DropHere
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("DropHere", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] EmptyProject {
-            get {
+        public static Byte[] EmptyProject
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("EmptyProject", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Evaluation {
-            get {
+        public static Byte[] Evaluation
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Evaluation", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] EXCEPT {
-            get {
+        public static Byte[] EXCEPT
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("EXCEPT", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] EXCEPTCohortAggregate {
-            get {
+        public static Byte[] EXCEPTCohortAggregate
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("EXCEPTCohortAggregate", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Exe {
-            get {
+        public static Byte[] Exe
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Exe", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExecuteArrow {
-            get {
+        public static Byte[] ExecuteArrow
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExecuteArrow", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExecuteArrowWithTickOverlay {
-            get {
+        public static Byte[] ExecuteArrowWithTickOverlay
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExecuteArrowWithTickOverlay", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExpandAllNodes {
-            get {
+        public static Byte[] ExpandAllNodes
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExpandAllNodes", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        public static Byte[] ExtendedProperty {
-            get {
+        public static Byte[] ExtendedProperty
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtendedProperty", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalCohortTable {
-            get {
+        public static Byte[] ExternalCohortTable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalCohortTable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer {
-            get {
+        public static Byte[] ExternalDatabaseServer
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer_ANO {
-            get {
+        public static Byte[] ExternalDatabaseServer_ANO
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_ANO", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer_Cache {
-            get {
+        public static Byte[] ExternalDatabaseServer_Cache
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Cache", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer_DQE {
-            get {
+        public static Byte[] ExternalDatabaseServer_DQE
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_DQE", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer_IdentifierDump {
-            get {
+        public static Byte[] ExternalDatabaseServer_IdentifierDump
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_IdentifierDump", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExternalDatabaseServer_Logging {
-            get {
+        public static Byte[] ExternalDatabaseServer_Logging
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExternalDatabaseServer_Logging", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableCohort {
-            get {
+        public static Byte[] ExtractableCohort
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableCohort", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableColumn {
-            get {
+        public static Byte[] ExtractableColumn
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableColumn", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableDataSet {
-            get {
+        public static Byte[] ExtractableDataSet
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableDataSet", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableDataSetDisabled {
-            get {
+        public static Byte[] ExtractableDataSetDisabled
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableDataSetDisabled", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableDataSetPackage {
-            get {
+        public static Byte[] ExtractableDataSetPackage
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableDataSetPackage", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractableDataSetsNode {
-            get {
+        public static Byte[] ExtractableDataSetsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractableDataSetsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionConfiguration {
-            get {
+        public static Byte[] ExtractionConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionConfigurationsNode {
-            get {
+        public static Byte[] ExtractionConfigurationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionDirectoryNode {
-            get {
+        public static Byte[] ExtractionDirectoryNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionDirectoryNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionFilterParameterSet {
-            get {
+        public static Byte[] ExtractionFilterParameterSet
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionFilterParameterSet", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionInformation {
-            get {
+        public static Byte[] ExtractionInformation
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionInformation", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionInformation_ProjectSpecific {
-            get {
+        public static Byte[] ExtractionInformation_ProjectSpecific
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionInformation_ProjectSpecific", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionInformation_SpecialApproval {
-            get {
+        public static Byte[] ExtractionInformation_SpecialApproval
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionInformation_SpecialApproval", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ExtractionInformation_Supplemental {
-            get {
+        public static Byte[] ExtractionInformation_Supplemental
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ExtractionInformation_Supplemental", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Failed {
-            get {
+        public static Byte[] Failed
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Failed", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Favourite {
-            get {
+        public static Byte[] Favourite
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Favourite", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] File {
-            get {
+        public static Byte[] File
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("File", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] FileMissing {
-            get {
+        public static Byte[] FileMissing
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("FileMissing", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Filter {
-            get {
+        public static Byte[] Filter
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Filter", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] FilterContainer {
-            get {
+        public static Byte[] FilterContainer
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("FilterContainer", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] FrozenCohortIdentificationConfiguration {
-            get {
+        public static Byte[] FrozenCohortIdentificationConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("FrozenCohortIdentificationConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] FrozenExtractionConfiguration {
-            get {
+        public static Byte[] FrozenExtractionConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] FrozenExtractionConfigurationsNode {
-            get {
+        public static Byte[] FrozenExtractionConfigurationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("FrozenExtractionConfigurationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] GetFilesStage {
-            get {
+        public static Byte[] GetFilesStage
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("GetFilesStage", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] GovernanceDocument {
-            get {
+        public static Byte[] GovernanceDocument
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("GovernanceDocument", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] GovernancePeriod {
-            get {
+        public static Byte[] GovernancePeriod
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("GovernancePeriod", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Graph {
-            get {
+        public static Byte[] Graph
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Graph", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] GreenIssue {
-            get {
+        public static Byte[] GreenIssue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("GreenIssue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Help {
-            get {
+        public static Byte[] Help
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Help", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ImportFile {
-            get {
+        public static Byte[] ImportFile
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ImportFile", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] INTERSECT {
-            get {
+        public static Byte[] INTERSECT
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("INTERSECT", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] INTERSECTCohortAggregate {
-            get {
+        public static Byte[] INTERSECTCohortAggregate
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("INTERSECTCohortAggregate", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] JoinableCollectionNode {
-            get {
+        public static Byte[] JoinableCollectionNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("JoinableCollectionNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] JoinInfo {
-            get {
+        public static Byte[] JoinInfo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("JoinInfo", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Kill {
-            get {
+        public static Byte[] Kill
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Kill", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadBubble {
-            get {
+        public static Byte[] LoadBubble
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadBubble", resourceCulture);
                 return ((Byte[])(obj));
             }
@@ -1296,838 +1558,1006 @@ namespace Rdmp.Core.Icons.IconProvision
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadBubbleMounting {
-            get {
+        public static Byte[] LoadBubbleMounting
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadBubbleMounting", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadDirectoryNode {
-            get {
+        public static Byte[] LoadDirectoryNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadFinalDatabase {
-            get {
+        public static Byte[] LoadFinalDatabase
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadFinalDatabase", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadMetadata {
-            get {
+        public static Byte[] LoadMetadata
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadMetadata", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadMetadataScheduleNode {
-            get {
+        public static Byte[] LoadMetadataScheduleNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadMetadataScheduleNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadModuleAssembly {
-            get {
+        public static Byte[] LoadModuleAssembly
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadModuleAssembly", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadPeriodically {
-            get {
+        public static Byte[] LoadPeriodically
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadPeriodically", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LoadProgress {
-            get {
+        public static Byte[] LoadProgress
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LoadProgress", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Logging {
-            get {
+        public static Byte[] Logging
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Logging", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Lookup {
-            get {
+        public static Byte[] Lookup
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Lookup", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] LookupCompositeJoinInfo {
-            get {
+        public static Byte[] LookupCompositeJoinInfo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("LookupCompositeJoinInfo", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Main {
-            get {
+        public static Byte[] Main
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Main", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] MakeProjectSpecificCatalogueNormalAgain {
-            get {
+        public static Byte[] MakeProjectSpecificCatalogueNormalAgain
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("MakeProjectSpecificCatalogueNormalAgain", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Menu {
-            get {
+        public static Byte[] Menu
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Menu", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] NoIconAvailable {
-            get {
+        public static Byte[] NoIconAvailable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("NoIconAvailable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ObjectExport {
-            get {
+        public static Byte[] ObjectExport
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ObjectExport", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ObjectImport {
-            get {
+        public static Byte[] ObjectImport
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ObjectImport", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] OrangeIssue {
-            get {
+        public static Byte[] OrangeIssue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("OrangeIssue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] OtherPipelinesNode {
-            get {
+        public static Byte[] OtherPipelinesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("OtherPipelinesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ParametersNode {
-            get {
+        public static Byte[] ParametersNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ParametersNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PatientIndexTable {
-            get {
+        public static Byte[] PatientIndexTable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PatientIndexTable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PermissionWindow {
-            get {
+        public static Byte[] PermissionWindow
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PermissionWindow", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Pipeline {
-            get {
+        public static Byte[] Pipeline
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Pipeline", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PipelineComponent {
-            get {
+        public static Byte[] PipelineComponent
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PipelineComponent", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PipelineComponentArgument {
-            get {
+        public static Byte[] PipelineComponentArgument
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PipelineComponentArgument", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PipelineComponentDestination {
-            get {
+        public static Byte[] PipelineComponentDestination
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PipelineComponentDestination", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PipelineComponentSource {
-            get {
+        public static Byte[] PipelineComponentSource
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PipelineComponentSource", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PivotField {
-            get {
+        public static Byte[] PivotField
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PivotField", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Plugin {
-            get {
+        public static Byte[] Plugin
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Plugin", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PreLoadDiscardedColumn {
-            get {
+        public static Byte[] PreLoadDiscardedColumn
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumn", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] PreLoadDiscardedColumnsNode {
-            get {
+        public static Byte[] PreLoadDiscardedColumnsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("PreLoadDiscardedColumnsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProcessTask {
-            get {
+        public static Byte[] ProcessTask
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProcessTask", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProcessTaskArgument {
-            get {
+        public static Byte[] ProcessTaskArgument
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProcessTaskArgument", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Project {
-            get {
+        public static Byte[] Project
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCatalogue {
-            get {
+        public static Byte[] ProjectCatalogue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectCatalogue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCataloguesNode {
-            get {
+        public static Byte[] ProjectCataloguesNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectCataloguesNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCohortIdentificationConfigurationAssociation {
-            get {
+        public static Byte[] ProjectCohortIdentificationConfigurationAssociation
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociation", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCohortIdentificationConfigurationAssociationsNode {
-            get {
+        public static Byte[] ProjectCohortIdentificationConfigurationAssociationsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociationsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectCohortsNode {
-            get {
+        public static Byte[] ProjectCohortsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectCohortsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectSavedCohortsNode {
-            get {
+        public static Byte[] ProjectSavedCohortsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectSavedCohortsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ProjectsNode {
-            get {
+        public static Byte[] ProjectsNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ProjectsNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] RedIssue {
-            get {
+        public static Byte[] RedIssue
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("RedIssue", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Release {
-            get {
+        public static Byte[] Release
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Release", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ReleaseLog {
-            get {
+        public static Byte[] ReleaseLog
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ReleaseLog", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] RemoteRDMP {
-            get {
+        public static Byte[] RemoteRDMP
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] ReOrder {
-            get {
+        public static Byte[] ReOrder
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("ReOrder", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] RowCounts_Ignore {
-            get {
+        public static Byte[] RowCounts_Ignore
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("RowCounts_Ignore", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] RowCounts_Respect {
-            get {
+        public static Byte[] RowCounts_Respect
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("RowCounts_Respect", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SelectedDataSetsForcedJoin {
-            get {
+        public static Byte[] SelectedDataSetsForcedJoin
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SelectedDataSetsForcedJoin", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Spanner {
-            get {
+        public static Byte[] Spanner
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Spanner", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SpontaneouslyInventedColumn {
-            get {
+        public static Byte[] SpontaneouslyInventedColumn
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SpontaneouslyInventedColumn", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SQL {
-            get {
+        public static Byte[] SQL
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SQL", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SqlThenVSNow {
-            get {
+        public static Byte[] SqlThenVSNow
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SqlThenVSNow", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] StandardPipelineUseCaseNode {
-            get {
+        public static Byte[] StandardPipelineUseCaseNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("StandardPipelineUseCaseNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] StandardRegex {
-            get {
+        public static Byte[] StandardRegex
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("StandardRegex", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] StarHollow {
-            get {
+        public static Byte[] StarHollow
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("StarHollow", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupplementalExtractionResults {
-            get {
+        public static Byte[] SupplementalExtractionResults
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupplementalExtractionResults", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingDocument {
-            get {
+        public static Byte[] SupportingDocument
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingDocument", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingDocumentExtractable {
-            get {
+        public static Byte[] SupportingDocumentExtractable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingDocumentExtractableGlobal {
-            get {
+        public static Byte[] SupportingDocumentExtractableGlobal
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingDocumentExtractableGlobal", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingDocumentGlobal {
-            get {
+        public static Byte[] SupportingDocumentGlobal
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingDocumentGlobal", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingSqlExtractable {
-            get {
+        public static Byte[] SupportingSqlExtractable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingSqlExtractableGlobal {
-            get {
+        public static Byte[] SupportingSqlExtractableGlobal
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingSqlExtractableGlobal", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingSqlGlobal {
-            get {
+        public static Byte[] SupportingSqlGlobal
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingSqlGlobal", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] SupportingSQLTable {
-            get {
+        public static Byte[] SupportingSQLTable
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("SupportingSQLTable", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Sync {
-            get {
+        public static Byte[] Sync
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Sync", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TableInfo {
-            get {
+        public static Byte[] TableInfo
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TableInfo", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TableInfoServerNode {
-            get {
+        public static Byte[] TableInfoServerNode
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TableInfoServerNode", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TableInfoTableValuedFunction {
-            get {
+        public static Byte[] TableInfoTableValuedFunction
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TableInfoTableValuedFunction", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Tick {
-            get {
+        public static Byte[] Tick
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Tick", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TicketingSystemConfiguration {
-            get {
+        public static Byte[] TicketingSystemConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TicketingSystemConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TimeCoverageField {
-            get {
+        public static Byte[] TimeCoverageField
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TimeCoverageField", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TinyGreen {
-            get {
+        public static Byte[] TinyGreen
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TinyGreen", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TinyRed {
-            get {
+        public static Byte[] TinyRed
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TinyRed", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] TinyYellow {
-            get {
+        public static Byte[] TinyYellow
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("TinyYellow", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] UnfreezeExtractionConfiguration {
-            get {
+        public static Byte[] UnfreezeExtractionConfiguration
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("UnfreezeExtractionConfiguration", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] UNION {
-            get {
+        public static Byte[] UNION
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("UNION", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] UNIONCohortAggregate {
-            get {
+        public static Byte[] UNIONCohortAggregate
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("UNIONCohortAggregate", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Waiting {
-            get {
+        public static Byte[] Waiting
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Waiting", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] WaitingForDatabase {
-            get {
+        public static Byte[] WaitingForDatabase
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("WaitingForDatabase", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Warning {
-            get {
+        public static Byte[] Warning
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] WhatIsACohort {
-            get {
+        public static Byte[] WhatIsACohort
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] WindowLayout {
-            get {
+        public static Byte[] WindowLayout
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("WindowLayout", resourceCulture);
                 return ((Byte[])(obj));
             }
         }
-        
+
         /// <summary>
         ///   Looks up a localized resource of type Image.
         /// </summary>
-        public static Byte[] Writing {
-            get {
+        public static Byte[] Writing
+        {
+            get
+            {
                 object obj = ResourceManager.GetObject("Writing", resourceCulture);
                 return ((Byte[])(obj));
             }

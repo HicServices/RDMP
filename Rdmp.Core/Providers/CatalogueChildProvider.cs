@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,6 +22,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -66,6 +68,8 @@ public class CatalogueChildProvider : ICoreChildProvider
     //Catalogue side of things
     public Catalogue[] AllCatalogues { get; set; }
     public Curation.Data.Dataset[] AllDatasets { get; set; }
+
+    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
     public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
     public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -91,6 +95,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get; private set; }
 
     public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
+
+    public AllDatasetsNode AllDatasetsNode { get; private set; }
+    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; private set; }
+
     public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
     public AllDashboardsNode AllDashboardsNode { get; set; }
@@ -248,7 +256,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
-
+        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
         AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
@@ -377,6 +385,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         //All the things for TableInfoCollectionUI
         BuildServerNodes();
 
+        BuildDatasetNodes();
+        BuildAllRegexRedactionConfigurationsNode();
         ReportProgress("BuildServerNodes");
 
         //add a new CatalogueItemNodes
@@ -747,6 +757,30 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
+
+    private void BuildAllRegexRedactionConfigurationsNode()
+    {
+        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
+        var descendancy = new DescendancyList(AllRegexRedactionConfigurationsNode);
+        //foreach (var regex in AllRegexRedactionConfigurations)
+        //{
+        //    AddChildren(regex, descendancy.Add(regex));
+        //}
+        AddChildren(AllRegexRedactionConfigurationsNode);
+    }
+
+
+    private void BuildDatasetNodes()
+    {
+        AllDatasetsNode = new AllDatasetsNode();
+        var descendancy = new DescendancyList(AllDatasetsNode);
+        foreach (var dataset in AllDatasets)
+        {
+            AddChildren(dataset, descendancy.Add(dataset));
+        }
+
+    }
+
     private void BuildServerNodes()
     {
         //add a root node for all the servers to be children of
@@ -800,6 +834,12 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllANOTablesNode anoTablesNode)
     {
         AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
+    }
+
+    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    {
+        AddToDictionaries(new HashSet<object>(AllRegexRedactionConfigurations), new DescendancyList(allRegexRedactionConfigurationsNode));
+
     }
 
     private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
@@ -864,6 +904,12 @@ public class CatalogueChildProvider : ICoreChildProvider
                 folder.ChildFolders.Cast<object>()
                     .Union(folder.ChildObjects)), descendancy
         );
+    }
+
+    private void AddChildren(RegexRedactionConfiguration regex, DescendancyList descendancy)
+    {
+        var childObjects = new List<object>();
+        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
     private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)

@@ -622,6 +622,12 @@
   <data name="AllPipelinesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\AllPipelinesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+	<data name="AllDatasetsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\AllPipelinesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
+	<data name="AllRegexRedactionConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+		<value>..\AllPipelinesNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</data>
   <data name="StandardPipelineUseCaseNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\StandardPipelineUseCaseNode.png;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>

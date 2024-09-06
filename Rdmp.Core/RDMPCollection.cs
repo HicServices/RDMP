@@ -17,8 +17,9 @@ public enum RDMPCollection
     DataExport,
     SavedCohorts,
     Favourites,
+    Datasets,
 
     Cohort,
     DataLoad,
-    Datasets
+    Configurations
 }
