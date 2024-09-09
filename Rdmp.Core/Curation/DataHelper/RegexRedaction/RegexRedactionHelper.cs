@@ -86,7 +86,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
                 string replacementValue = _redactionConfiguration.RedactionString;
 
                 var lengthDiff = (float)foundMatch.Length - replacementValue.Length;
-                if (lengthDiff < 1)
+                if (lengthDiff < 0)
                 {
                     throw new Exception($"Redaction string '{_redactionConfiguration.RedactionString}' is longer than found match '{foundMatch}'.");
                 }

@@ -69,10 +69,12 @@ public class ExecuteCommandIdentifyRegexRedactionsInCatalogue : BasicCommandExec
                     using var da = server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
-                dt.Columns.Add("Proposed Redaction");
-                foreach(DataRow row in dt.Rows)
+                dt.Columns.Add("RedactionValue");
+                dt.Columns.Add("WhereSQL");
+                foreach (DataRow row in dt.Rows)
                 {
-                    row["Proposed Redaction"] = "TODO";
+                    row["RedactionValue"] = "TODO";
+                    //row["WhereSQL"] = string.Join(" AND ", row.ItemArray.Skip(1).SkipLast(1).ToArray().Select((ri, index) => $"{_cataloguePKs[index].ColumnInfo.GetFullyQualifiedName()}={ri}"));
                 }
                 results = dt;
             }

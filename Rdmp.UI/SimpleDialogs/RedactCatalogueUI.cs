@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using NPOI.SS.Formula.Functions;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -18,9 +20,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
@@ -36,7 +42,26 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public RedactCatalogueUI()
     {
         InitializeComponent();
+        this.comboBox1.Items.Clear();
         AssociatedCollection = RDMPCollection.Tables;
+        this.folv.ButtonClick += Redact;
+        this.btnNewRegex.Click += HandleNewRegex;
+    }
+
+    public void HandleNewRegex(object sender, EventArgs e)
+    {
+        //_activator
+        var ui = new CreateNewRegexRedactionConfigurationUI(_activator);
+        var res = ui.ShowDialog();
+        var cmd = new ExecuteCommandRefreshObject(_activator, _catalogue);
+        cmd.Execute();
+
+    }
+
+    public void Redact(object sender, CellClickEventArgs e)
+    {
+        Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
+       //todo want to run a "redact single" with the PKS
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -47,6 +72,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         _activator = activator;
         _catalogue = databaseObject;
         var regexConfigurations = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedactionConfiguration>().ToArray();
+        this.comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";
 
@@ -79,8 +105,10 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         {
             object o = new
             {
-                FoundValue = row.ItemArray[0],
-                RedactionValue = row.ItemArray[1]
+                FoundValue = row[0],
+                RedactionValue = row["RedactionValue"],
+                Redact = "Redact",
+                PKs = row.ItemArray.Skip(1).SkipLast(1).ToArray()
             };
             folv.AddObject(o);
         }
@@ -96,7 +124,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
             {
                 columns.Add(((CatalogueItem)item).ColumnInfo);
             }
-            var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, (RegexRedactionConfiguration)comboBox1.SelectedValue, columns, max);
+            var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, (RegexRedactionConfiguration)comboBox1.SelectedItem, columns, max);
             cmd.Execute();
             //TODO some sort up update to let the user know how many we updated?
         }

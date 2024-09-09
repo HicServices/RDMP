@@ -71,19 +71,7 @@ partial class RedactCatalogueUI
         panel1.Name = "panel1";
         panel1.Size = new System.Drawing.Size(628, 220);
         panel1.TabIndex = 18;
-        // 
-        // folv
-        // 
-        folv.AllColumns.Add(folvFoundValue);
-        folv.AllColumns.Add(folvReplacmentValue);
-        folv.AllColumns.Add(folvRedactButton);
-        folv.Location = new System.Drawing.Point(13, 201);
-        folv.Name = "folv";
-        folv.ShowGroups = false;
-        folv.Size = new System.Drawing.Size(612, 287);
-        folv.TabIndex = 10;
-        folv.View = System.Windows.Forms.View.Details;
-        folv.VirtualMode = true;
+        
         // 
         // folvFoundValue
         // 
@@ -103,11 +91,29 @@ partial class RedactCatalogueUI
         // 
         // folvRedactButton
         // 
-        folvRedactButton.AspectName = "";
+        folvRedactButton.AspectName = "Redact";
         folvRedactButton.FillsFreeSpace = true;
         folvRedactButton.MinimumWidth = 100;
         folvRedactButton.Text = "Redact";
         folvRedactButton.Width = 100;
+        folvRedactButton.IsButton = true;
+        folvRedactButton.ButtonSizing = OLVColumn.ButtonSizingMode.TextBounds;
+        // 
+        // folv
+        // 
+        folv.Columns.Add(folvFoundValue);
+        folv.Columns.Add(folvReplacmentValue);
+        folv.Columns.Add(folvRedactButton);
+        folv.AllColumns.Add(folvFoundValue);
+        folv.AllColumns.Add(folvReplacmentValue);
+        folv.AllColumns.Add(folvRedactButton);
+        folv.Location = new System.Drawing.Point(13, 201);
+        folv.Name = "folv";
+        folv.ShowGroups = false;
+        folv.Size = new System.Drawing.Size(612, 287);
+        folv.TabIndex = 10;
+        //folv.View = System.Windows.Forms.View.Details;
+        //folv.VirtualMode = true;
         // 
         // label4
         // 
@@ -204,7 +210,6 @@ partial class RedactCatalogueUI
         btnNewRegex.TabIndex = 11;
         btnNewRegex.Text = "New Regex Configuration";
         btnNewRegex.UseVisualStyleBackColor = true;
-        btnNewRegex.Click += btnNewRegex_Click;
         // 
         // RedactCatalogueUI
         // 
