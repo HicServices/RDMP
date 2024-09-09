@@ -1,5 +1,8 @@
-﻿using Rdmp.Core.CommandExecution.AtomicCommands;
+﻿using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs.Datasets;
+using Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.Collections.Generic;
@@ -9,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddNewRegexRedactionConfigurationUI : ExecuteCommandCreateRegexRedactionConfiguration
+    public class ExecuteCommandAddNewRegexRedactionConfigurationUI : BasicCommandExecution
     {
         private readonly IActivateItems _activator;
 
@@ -18,10 +21,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _activator = activator;
         }
 
-        //public override void Execute()
-        //{
-        //    //var ui = new 
-        //}
+        public override void Execute()
+        {
+            var ui = new CreateNewRegexRedactionConfigurationUI(_activator);
+            ui.Show();
+        }
     }
 
 }

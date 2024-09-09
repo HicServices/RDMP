@@ -32,7 +32,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
 
     public override string ToString()
     {
-        return $"{_name}({_regexPattern})";
+        return $"{_name}";
     }
 
     [Unique]
@@ -67,14 +67,15 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
 
     public RegexRedactionConfiguration() { }
 
-    public RegexRedactionConfiguration(ICatalogueRepository repository, string name, Regex regexPattern, string redactionString, string description = null)
+    public RegexRedactionConfiguration(ICatalogueRepository repository, string name, Regex regexPattern, string redactionString, string description = null,string folder="\\")
     {
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
             { "Name", name },
             { "RegexPattern", regexPattern.ToString() },
             {"RedactionString", redactionString },
-            {"Description",description }
+            {"Description",description },
+            {"Folder",folder }
         });
     }
 
@@ -84,6 +85,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
         Description = r["Description"].ToString();
         RedactionString = r["RedactionString"].ToString();
         RegexPattern = r["RegexPattern"].ToString();
+        Folder = r["Folder"].ToString();
     }
 
 

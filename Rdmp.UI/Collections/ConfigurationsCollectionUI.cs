@@ -37,9 +37,9 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
                 OverrideCommandName="Add New Dataset"
             },
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
-            //{
-            //    //OverrideCommandName="Add New Regex Redaction Configuration"
-            //}
+            {
+                OverrideCommandName="Add New Regex Redaction Configuration"
+            }
         };
     }
 

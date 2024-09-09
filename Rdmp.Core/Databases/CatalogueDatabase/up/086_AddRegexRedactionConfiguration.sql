@@ -10,6 +10,7 @@ CREATE TABLE [dbo].RegexRedactionConfiguration(
 	Description [nvarchar](250),
 	RegexPattern [nvarchar](250) NOT NULL,
 	RedactionString [nvarchar](250) NOT NULL,
+	Folder [nvarchar](max) NOT NULL DEFAULT '\'
 CONSTRAINT [PK_RegexRedactionConfiguration] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

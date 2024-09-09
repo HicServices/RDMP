@@ -210,5 +210,6 @@ public enum RDMPConcept
     TicketingSystemReleaseStatus,
     RegexRedaction,
     RegexRedactionConfiguration,
-    RegexRedactionKey
+    RegexRedactionKey,
+    AllRegexRedactionConfigurationsNode
 }

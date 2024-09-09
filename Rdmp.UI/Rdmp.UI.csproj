@@ -242,6 +242,7 @@
 		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
 			<DependentUpon>WideMessageBox.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SubComponents\RegexRedactionConfigurationUI.cs" />
 		<Compile Update="SuggestComboBox.cs">
 			<SubType>Component</SubType>
 		</Compile>
