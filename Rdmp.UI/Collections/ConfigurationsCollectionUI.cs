@@ -29,12 +29,27 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         InitializeComponent();
     }
 
+    private IAtomicCommand[] GetWhitespaceRightClickMenu()
+    {
+        return new IAtomicCommand[]
+        {
+            new ExecuteCommandCreateNewDatasetUI(_activator){
+                OverrideCommandName="Add New Dataset"
+            },
+            new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
+            //{
+            //    //OverrideCommandName="Add New Regex Redaction Configuration"
+            //}
+        };
+    }
+
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
         _activator = activator;
         CommonTreeFunctionality.SetUp(RDMPCollection.Configurations, tlvConfigurations, activator, olvName, olvName,
             new RDMPCollectionCommonFunctionalitySettings());
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);

@@ -778,6 +778,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         {
             AddChildren(dataset, descendancy.Add(dataset));
         }
+        AddChildren(AllDatasetsNode);
 
     }
 
@@ -839,6 +840,12 @@ public class CatalogueChildProvider : ICoreChildProvider
     private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
     {
         AddToDictionaries(new HashSet<object>(AllRegexRedactionConfigurations), new DescendancyList(allRegexRedactionConfigurationsNode));
+
+    }
+
+    private void AddChildren(AllDatasetsNode allDatasetsNode)
+    {
+        AddToDictionaries(new HashSet<object>(AllDatasets), new DescendancyList(allDatasetsNode));
 
     }
 
@@ -908,13 +915,17 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     private void AddChildren(RegexRedactionConfiguration regex, DescendancyList descendancy)
     {
-        var childObjects = new List<object>();
+        var childObjects = new List<object>() { regex};
         AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 
-    private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
+    private void AddChildren(Curation.Data.Dataset dataset, DescendancyList descendancy)
     {
-        var childObjects = new List<object>();
+        var childObjects = new List<object>
+        {
+            dataset
+        };
+
         AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 

@@ -23,7 +23,7 @@ public class ExecuteCommandAddNewRegexRedactionConfiguration : BasicCommandExecu
     private IBasicActivateItems _activator;
 
 
-    public ExecuteCommandAddNewRegexRedactionConfiguration(IBasicActivateItems activator, [DemandsInitialization("Name")]string name, [DemandsInitialization("pattern")] string redactionPattern, [DemandsInitialization("redaction")] string redactionString, string description=null) : base(activator)
+    public ExecuteCommandAddNewRegexRedactionConfiguration(IBasicActivateItems activator, [DemandsInitialization("Name")] string name, [DemandsInitialization("pattern")] string redactionPattern, [DemandsInitialization("redaction")] string redactionString, string description = null) : base(activator)
     {
         _activator = activator;
         _name = name;
@@ -35,7 +35,7 @@ public class ExecuteCommandAddNewRegexRedactionConfiguration : BasicCommandExecu
     public override void Execute()
     {
         base.Execute();
-        var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, _name, new Regex(_redactionPattern), _redactionString,_description);
+        var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, _name, new Regex(_redactionPattern), _redactionString, _description);
         config.SaveToDatabase();
     }
 
