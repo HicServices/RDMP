@@ -800,6 +800,9 @@ public class DataExportChildProvider : CatalogueChildProvider
             _extractionProgressesBySelectedDataSetID = dxOther._extractionProgressesBySelectedDataSetID;
             ProjectRootFolder = dxOther.ProjectRootFolder;
             DatasetRootFolder = dxOther.DatasetRootFolder;
+            AllDatasetsNode = dxOther.AllDatasetsNode;
+            AllRegexRedactionConfigurations = dxOther.AllRegexRedactionConfigurations;
+            AllRegexRedactionConfigurationsNode = dxOther.AllRegexRedactionConfigurationsNode;
         }
     }
 

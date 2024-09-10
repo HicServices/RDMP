@@ -205,10 +205,10 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
-    public AllDatasetsNode AllDatasetsNode { get; private set; }
+    public AllDatasetsNode AllDatasetsNode { get; set; }
 
-    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; private set; }
-    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; private set; }
+    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
+    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
