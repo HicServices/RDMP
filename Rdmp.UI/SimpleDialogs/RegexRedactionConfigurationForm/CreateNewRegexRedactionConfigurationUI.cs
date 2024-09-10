@@ -32,7 +32,6 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
             this.btnCreate.Click += Create;
             this.lblError.Text = "";
             this.lblError.Visible = false;
-            this.tbFolder.Text = "\\";
         }
 
         private void Cancel(object sender, EventArgs e)
@@ -42,7 +41,6 @@ namespace Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm
         private void Create(object sender, EventArgs e)
         {
             var config = new RegexRedactionConfiguration(_activator.RepositoryLocator.CatalogueRepository, tbName.Text, new Regex(tbRegexPattern.Text), tbRedactionString.Text, tbDescription.Text);
-            config.Folder = string.IsNullOrWhiteSpace(tbFolder.Text) ? "\\" : tbFolder.Text;
             config.SaveToDatabase();
             _activator.Publish(config);
             Close();

@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -68,8 +67,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     //Catalogue side of things
     public Catalogue[] AllCatalogues { get; set; }
     public Curation.Data.Dataset[] AllDatasets { get; set; }
-
-    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
     public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
     public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -95,10 +92,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AggregateContinuousDateAxis[] AllAggregateContinuousDateAxis { get; private set; }
 
     public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
-
-    public AllDatasetsNode AllDatasetsNode { get; private set; }
-    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; private set; }
-
     public RemoteRDMP[] AllRemoteRDMPs { get; set; }
 
     public AllDashboardsNode AllDashboardsNode { get; set; }
@@ -151,7 +144,6 @@ public class CatalogueChildProvider : ICoreChildProvider
     public FolderNode<LoadMetadata> LoadMetadataRootFolder { get; set; }
 
     public FolderNode<Curation.Data.Dataset> DatasetRootFolder { get; set; }
-    public FolderNode<RegexRedactionConfiguration> RegexRedactionConfigurationRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolder { get; set; }
     public FolderNode<CohortIdentificationConfiguration> CohortIdentificationConfigurationRootFolderWithoutVersionedConfigurations { get; set; }
 
@@ -213,6 +205,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
 
+    public AllDatasetsNode AllDatasetsNode { get; private set; }
+
+    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; private set; }
+    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; private set; }
+
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
 
@@ -257,7 +254,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllCataloguesDictionary = AllCatalogues.ToDictionaryEx(i => i.ID, o => o);
 
         AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
-        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
+
         AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
         AllLoadMetadataLinkage = GetAllObjects<LoadMetadataCatalogueLinkage>(repository);
         AllProcessTasks = GetAllObjects<ProcessTask>(repository);
@@ -398,9 +395,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
         AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
-        RegexRedactionConfigurationRootFolder = FolderHelper.BuildFolderTree(AllRegexRedactionConfigurations);
-        AddChildren(RegexRedactionConfigurationRootFolder, new DescendancyList(RegexRedactionConfigurationRootFolder));
-
         ReportProgress("Build Catalogue Folder Root");
 
         LoadMetadataRootFolder = FolderHelper.BuildFolderTree(AllLoadMetadatas);
@@ -422,10 +416,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         TemplateAggregateConfigurations = AllAggregateConfigurations
             .Where(ac => templateAggregateConfigurationIds.Contains(ac.ID)).ToArray();
-
-
-        BuildDatasetNodes();
-        BuildAllRegexRedactionConfigurationsNode();
 
         //add the orphans under the orphan folder
         AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),
@@ -459,6 +449,17 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddChildren(AllPluginsNode);
 
         ReportProgress("After Plugins");
+
+        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
+        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
+        AddChildren(AllRegexRedactionConfigurationsNode);
+
+
+        AllDatasets = GetAllObjects<Curation.Data.Dataset>(repository);
+        AllDatasetsNode = new AllDatasetsNode();
+        AddChildren(AllDatasetsNode);
+
+        ReportProgress("After Configurations");
 
         var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
@@ -602,6 +603,20 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>(LoadModuleAssembly.Assemblies);
         var descendancy = new DescendancyList(allPluginsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    {
+        var children = new HashSet<object>(AllRegexRedactionConfigurations);
+        var descendancy = new DescendancyList(allRegexRedactionConfigurationsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllDatasetsNode allDatasetsNode)
+    {
+        var children = new HashSet<object>(AllDatasets);
+        var descendancy = new DescendancyList(allDatasetsNode);
         AddToDictionaries(children, descendancy);
     }
 
@@ -763,28 +778,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-
-    private void BuildAllRegexRedactionConfigurationsNode()
-    {
-        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
-        var descendancy = new DescendancyList(AllRegexRedactionConfigurationsNode);
-        //foreach (var regex in AllRegexRedactionConfigurations)
-        //{
-        //    AddChildren(regex, descendancy.Add(regex));
-        //}
-        //AddChildren(AllRegexRedactionConfigurationsNode);
-        AddChildren(RegexRedactionConfigurationRootFolder, descendancy);
-    }
-
-
-    private void BuildDatasetNodes()
-    {
-        AllDatasetsNode = new AllDatasetsNode();
-        var descendancy = new DescendancyList(AllDatasetsNode);
-        AddChildren(DatasetRootFolder, descendancy);
-
-    }
-
     private void BuildServerNodes()
     {
         //add a root node for all the servers to be children of
@@ -840,31 +833,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(new HashSet<object>(AllANOTables), new DescendancyList(anoTablesNode));
     }
 
-    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
-    {
-        AddToDictionaries(new HashSet<object>(AllRegexRedactionConfigurations), new DescendancyList(allRegexRedactionConfigurationsNode));
-
-    }
-
-    private void AddChildren(AllDatasetsNode allDatasetsNode)
-    {
-        AddToDictionaries(new HashSet<object>(AllDatasets), new DescendancyList(allDatasetsNode));
-
-    }
-
-    private void Addchildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
-    {
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-        foreach (var c in folder.ChildObjects) AddChildren(c, descendancy.Add(c));
-        AddToDictionaries(new HashSet<object>(
-               folder.ChildFolders.Cast<object>()
-                   .Union(folder.ChildObjects)), descendancy
-         );
-
-    }
-
     private void AddChildren(FolderNode<Catalogue> folder, DescendancyList descendancy)
     {
         foreach (var child in folder.ChildFolders)
@@ -896,26 +864,8 @@ public class CatalogueChildProvider : ICoreChildProvider
         );
     }
 
-    private void AddChildren(FolderNode<RegexRedactionConfiguration> folder, DescendancyList descendancy)
-    {
-        if (folder is null) return;
-        foreach (var child in folder.ChildFolders)
-            //add subfolder children
-            AddChildren(child, descendancy.Add(child));
-
-        //add loads in folder
-        foreach (var ds in folder.ChildObjects) AddChildren(ds, descendancy.Add(ds));
-
-        //// Children are the folders + objects
-        AddToDictionaries(new HashSet<object>(
-                folder.ChildFolders.Cast<object>()
-                    .Union(folder.ChildObjects)), descendancy
-        );
-    }
-
     private void AddChildren(FolderNode<Curation.Data.Dataset> folder, DescendancyList descendancy)
     {
-        if (folder is null) return;
         foreach (var child in folder.ChildFolders)
             //add subfolder children
             AddChildren(child, descendancy.Add(child));
@@ -947,19 +897,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         );
     }
 
-    private void AddChildren(RegexRedactionConfiguration regex, DescendancyList descendancy)
+    private void AddChildren(Curation.Data.Dataset lmd, DescendancyList descendancy)
     {
-        var childObjects = new List<object>() { regex };
-        AddToDictionaries(new HashSet<object>(childObjects), descendancy);
-    }
-
-    private void AddChildren(Curation.Data.Dataset dataset, DescendancyList descendancy)
-    {
-        var childObjects = new List<object>
-        {
-            dataset
-        };
-
+        var childObjects = new List<object>();
         AddToDictionaries(new HashSet<object>(childObjects), descendancy);
     }
 

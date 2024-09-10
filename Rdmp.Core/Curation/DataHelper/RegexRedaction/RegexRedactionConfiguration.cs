@@ -26,9 +26,6 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
     private string _redactionString;
     private string _name;
     private string _description;
-    private string _folder;
-
-
 
     public override string ToString()
     {
@@ -63,7 +60,6 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
         get => _redactionString;
         set => SetField(ref _redactionString, value);
     }
-    public string Folder { get => _folder; set => SetField(ref _folder, value); }
 
     public RegexRedactionConfiguration() { }
 
@@ -74,8 +70,7 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
             { "Name", name },
             { "RegexPattern", regexPattern.ToString() },
             {"RedactionString", redactionString },
-            {"Description",description },
-            {"Folder",folder }
+            {"Description",description }
         });
     }
 
@@ -85,7 +80,6 @@ public class RegexRedactionConfiguration : DatabaseEntity, IRegexRedactionConfig
         Description = r["Description"].ToString();
         RedactionString = r["RedactionString"].ToString();
         RegexPattern = r["RegexPattern"].ToString();
-        Folder = r["Folder"].ToString();
     }
 
 

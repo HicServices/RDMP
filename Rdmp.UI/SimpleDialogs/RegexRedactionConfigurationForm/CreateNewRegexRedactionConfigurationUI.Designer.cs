@@ -40,8 +40,6 @@
             btnCancel = new System.Windows.Forms.Button();
             lblError = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
-            tbFolder = new System.Windows.Forms.TextBox();
-            label6 = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // label1
@@ -110,7 +108,7 @@
             // 
             // btnCreate
             // 
-            btnCreate.Location = new System.Drawing.Point(471, 351);
+            btnCreate.Location = new System.Drawing.Point(476, 288);
             btnCreate.Name = "btnCreate";
             btnCreate.Size = new System.Drawing.Size(75, 23);
             btnCreate.TabIndex = 8;
@@ -119,7 +117,7 @@
             // 
             // btnCancel
             // 
-            btnCancel.Location = new System.Drawing.Point(390, 351);
+            btnCancel.Location = new System.Drawing.Point(395, 288);
             btnCancel.Name = "btnCancel";
             btnCancel.Size = new System.Drawing.Size(75, 23);
             btnCancel.TabIndex = 9;
@@ -129,7 +127,7 @@
             // lblError
             // 
             lblError.AutoSize = true;
-            lblError.Location = new System.Drawing.Point(30, 351);
+            lblError.Location = new System.Drawing.Point(35, 288);
             lblError.Name = "lblError";
             lblError.Size = new System.Drawing.Size(39, 15);
             lblError.TabIndex = 10;
@@ -138,35 +136,17 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new System.Drawing.Point(487, 329);
+            label5.Location = new System.Drawing.Point(492, 266);
             label5.Name = "label5";
             label5.Size = new System.Drawing.Size(62, 15);
             label5.TabIndex = 11;
             label5.Text = "* Required";
-            // 
-            // tbFolder
-            // 
-            tbFolder.Location = new System.Drawing.Point(33, 291);
-            tbFolder.Name = "tbFolder";
-            tbFolder.Size = new System.Drawing.Size(516, 23);
-            tbFolder.TabIndex = 13;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(27, 274);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(48, 15);
-            label6.TabIndex = 12;
-            label6.Text = "Folder *";
             // 
             // CreateNewRegexRedactionConfigurationUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
-            Controls.Add(tbFolder);
-            Controls.Add(label6);
             Controls.Add(label5);
             Controls.Add(lblError);
             Controls.Add(btnCancel);
@@ -199,7 +179,5 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label lblError;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox tbFolder;
-        private System.Windows.Forms.Label label6;
     }
 }

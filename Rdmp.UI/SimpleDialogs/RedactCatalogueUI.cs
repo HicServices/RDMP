@@ -46,6 +46,7 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         AssociatedCollection = RDMPCollection.Tables;
         this.folv.ButtonClick += Redact;
         this.btnNewRegex.Click += HandleNewRegex;
+       
     }
 
     public void HandleNewRegex(object sender, EventArgs e)
@@ -55,13 +56,25 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         var res = ui.ShowDialog();
         var cmd = new ExecuteCommandRefreshObject(_activator, _catalogue);
         cmd.Execute();
+    }
 
+    public void RefreshTable()
+    {
+        var columnIds = _catalogue.CatalogueItems.Select(c => c.ColumnInfo_ID).ToList();
+        var objects = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
+        folv.ClearObjects();
+        folv.AddObjects(objects);
     }
 
     public void Redact(object sender, CellClickEventArgs e)
     {
         Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
-       //todo want to run a "redact single" with the PKS
+        var redaction= (e.Model as RegexRedaction);
+        var cmd = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(_activator,redaction);
+        Cursor.Current = Cursors.WaitCursor;
+        cmd.Execute();
+        Cursor.Current = Cursors.Default;
+        RefreshTable();
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -75,48 +88,14 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         this.comboBox1.Items.Clear();
         comboBox1.Items.AddRange(regexConfigurations);
         comboBox1.DisplayMember = "Name";
-
+        RefreshTable();
         var nonPKColumns = databaseObject.CatalogueItems.Where(c => !c.ColumnInfo.IsPrimaryKey).ToArray();
         checkedListBox1.Items.AddRange(nonPKColumns);
     }
 
-    private void btnNewRegex_Click(object sender, EventArgs e)
-    {
-        var form =  new RegexRedactionConfigurationCreationUI(_activator);
-        form.ShowDialog();
-    }
-    private void btnIdentify_Click(object sender, EventArgs e)
-    {
-        int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
-        var columns = new List<ColumnInfo>();
-        foreach (object item in checkedListBox1.CheckedItems)
-        {
-            columns.Add(((CatalogueItem)item).ColumnInfo);
-        }
-        var config = comboBox1.SelectedItem as RegexRedactionConfiguration;
-        var cmd = new ExecuteCommandIdentifyRegexRedactionsInCatalogue(_activator, _catalogue, config, columns, max);
-        cmd.Execute();
-        if(cmd.results is null)
-        {
-            //Do Something!
-            return;
-        }
-        foreach(DataRow row in cmd.results.Rows)
-        {
-            object o = new
-            {
-                FoundValue = row[0],
-                RedactionValue = row["RedactionValue"],
-                Redact = "Redact",
-                PKs = row.ItemArray.Skip(1).SkipLast(1).ToArray()
-            };
-            folv.AddObject(o);
-        }
-    }
-
     private void btnRedact_Click(object sender, EventArgs e)
     {
-        if (_activator.YesNo("Are you sure?", "TODO"))
+        if (_activator.YesNo("Are you sure you want to preform redactions on the selected columns?", "Redact All matches in this catalogue"))
         {
             int? max = string.IsNullOrWhiteSpace(tbMaxCount.Text) ? null : int.Parse(tbMaxCount.Text);
             var columns = new List<ColumnInfo>();
@@ -125,8 +104,11 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
                 columns.Add(((CatalogueItem)item).ColumnInfo);
             }
             var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(_activator, _catalogue, (RegexRedactionConfiguration)comboBox1.SelectedItem, columns, max);
+            Cursor.Current = Cursors.WaitCursor;
             cmd.Execute();
-            //TODO some sort up update to let the user know how many we updated?
+            Cursor.Current = Cursors.Default;
+            _activator.Show($"Performed {cmd.resultCount} Redactions.");
+            RefreshTable();
         }
     }
 

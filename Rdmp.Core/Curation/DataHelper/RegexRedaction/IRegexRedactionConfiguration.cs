@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction;
 /// <summary>
 /// Stores the configuration to run regex redactions on data
 /// </summary>
-public interface IRegexRedactionConfiguration: IMapsDirectlyToDatabaseTable, IHasFolder
+public interface IRegexRedactionConfiguration: IMapsDirectlyToDatabaseTable
 {
     ICatalogueRepository CatalogueRepository { get; }
 

@@ -29,7 +29,6 @@ public partial class RegexRedactionConfigurationUI : RegexRedactionConfiguration
         Bind(tbRegexPattern, "Text", "RegexPattern", static c => c.RegexPattern);
         Bind(tbRedactionString, "Text", "RedactionString", static c => c.RedactionString);
         Bind(tbDescription, "Text", "Description", static c => c.Description);
-        Bind(tbFolder, "Text", "Folder", static c => c.Folder);
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
         GetObjectSaverButton()?.Enable(false);

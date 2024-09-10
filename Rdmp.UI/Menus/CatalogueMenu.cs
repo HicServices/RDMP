@@ -74,7 +74,7 @@ internal class CatalogueMenu : RDMPContextMenuStrip
         Add(new ExecuteCommandReOrderColumns(_activator, catalogue)
         { SuggestedCategory = CatalogueItems, Weight = -99.046f });
         Add(new ExecuteCommandRegexRedaction(_activator, catalogue)
-        { SuggestedCategory = CatalogueItems, Weight = -99.046f, OverrideCommandName="Perform Regex Redaction" });
+        { SuggestedCategory = CatalogueItems, Weight = -99.046f, OverrideCommandName="Regex Redactions" });
         Add(new ExecuteCommandGuessAssociatedColumns(_activator, catalogue, null)
         { SuggestedCategory = CatalogueItems, Weight = -99.045f, PromptForPartialMatching = true });
         Add(new ExecuteCommandChangeExtractionCategory(_activator,

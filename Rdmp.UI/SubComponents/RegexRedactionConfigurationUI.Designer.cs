@@ -38,8 +38,6 @@ partial class RegexRedactionConfigurationUI
         tbDescription = new System.Windows.Forms.TextBox();
         label4 = new System.Windows.Forms.Label();
         label5 = new System.Windows.Forms.Label();
-        tbFolder = new System.Windows.Forms.TextBox();
-        label6 = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
         // label1
@@ -113,33 +111,15 @@ partial class RegexRedactionConfigurationUI
         // label5
         // 
         label5.AutoSize = true;
-        label5.Location = new System.Drawing.Point(338, 333);
+        label5.Location = new System.Drawing.Point(338, 270);
         label5.Name = "label5";
         label5.Size = new System.Drawing.Size(62, 15);
         label5.TabIndex = 9;
         label5.Text = "* Required";
         label5.Click += label5_Click;
         // 
-        // tbFolder
-        // 
-        tbFolder.Location = new System.Drawing.Point(80, 298);
-        tbFolder.Name = "tbFolder";
-        tbFolder.Size = new System.Drawing.Size(320, 23);
-        tbFolder.TabIndex = 11;
-        // 
-        // label6
-        // 
-        label6.AutoSize = true;
-        label6.Location = new System.Drawing.Point(80, 280);
-        label6.Name = "label6";
-        label6.Size = new System.Drawing.Size(51, 15);
-        label6.TabIndex = 10;
-        label6.Text = "Folder * ";
-        // 
         // RegexRedactionConfigurationUI
         // 
-        Controls.Add(tbFolder);
-        Controls.Add(label6);
         Controls.Add(label5);
         Controls.Add(tbDescription);
         Controls.Add(label4);
@@ -167,6 +147,4 @@ partial class RegexRedactionConfigurationUI
     private System.Windows.Forms.TextBox tbDescription;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.Label label5;
-    private System.Windows.Forms.TextBox tbFolder;
-    private System.Windows.Forms.Label label6;
 }

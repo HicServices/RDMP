@@ -34,6 +34,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private readonly DataTable pksToSave;
     private readonly int? _readLimit;
     private DataTable redactionUpates = new();
+    public int resultCount = 0;
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns, int? readLimit = null)
     {
@@ -128,5 +129,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         }
         timer.Stop();
         var x = timer.ElapsedMilliseconds;
+        resultCount = redactionUpates.Rows.Count;
     }
 }
