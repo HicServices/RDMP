@@ -43,7 +43,7 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
             var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
             //except if the cic is the launch point
-            if (_cic != null)
+            if (_cic != null && _cic.Version is null) //ignore this for cic versions
                 valid =
                     valid.Where(v =>
 
@@ -106,7 +106,8 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
                 break;
             case CohortIdentificationConfiguration configuration:
                 _cic = configuration;
-                SetImpossibleIfReadonly(_cic);
+                if(_cic.Version is null)
+                    SetImpossibleIfReadonly(_cic);
                 break;
         }
 

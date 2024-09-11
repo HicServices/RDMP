@@ -6,6 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
@@ -17,7 +18,7 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
     readonly string _name;
     readonly string _description;
 
-    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null,string description=null) : base(activator)
+    public ExecuteCommandCreateVersionOfCohortConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, string name = null, string description = null) : base(activator)
     {
         _cic = cic;
         _activator = activator;
@@ -45,6 +46,14 @@ public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExec
             {
                 createdItem.First().Description = _description;
                 createdItem.First().SaveToDatabase();
+
+                var associations = _activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ProjectCohortIdentificationConfigurationAssociation>("CohortIdentificationConfiguration_ID", _cic.ID);
+                foreach (var association in associations)
+                {
+                    var link = new ProjectCohortIdentificationConfigurationAssociation(_activator.RepositoryLocator.DataExportRepository, (Project)association.Project, createdItem.First());
+                    link.SaveToDatabase();
+                }
+
                 Publish(createdItem.First());
             }
         }
