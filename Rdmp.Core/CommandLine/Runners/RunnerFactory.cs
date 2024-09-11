@@ -25,7 +25,7 @@ public class RunnerFactory
                 DqeOptions dqeOpts => new DqeRunner(dqeOpts),
                 CacheOptions cacheOpts => new CacheRunner(cacheOpts),
                 ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),
-                ReleaseOptions releaseOpts => new ReleaseRunner(releaseOpts),
+                ReleaseOptions releaseOpts => new ReleaseRunner(activator,releaseOpts),
                 CohortCreationOptions cohortOpts => new CohortCreationRunner(cohortOpts),
                 PackOptions packOpts => new PackPluginRunner(packOpts),
                 ExecuteCommandOptions executeOpts => new ExecuteCommandRunner(executeOpts),
