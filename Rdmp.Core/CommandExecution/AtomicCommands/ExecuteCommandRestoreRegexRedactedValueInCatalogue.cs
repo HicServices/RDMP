@@ -1,6 +1,5 @@
 ﻿using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using MongoDB.Driver.Core.Servers;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.QueryBuilding;
@@ -10,8 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {

@@ -1,44 +1,18 @@
 ﻿using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery;
-using Microsoft.Data.SqlClient;
-using MongoDB.Driver.Core.Servers;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using MongoDB.Driver;
 using Rdmp.Core.Repositories;
-using NPOI.SS.Formula.Functions;
-using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
     public static class RegexRedactionHelper
     {
-
-        //public static QueryBuilder SQLLikeQuery(ColumnInfo columnInfo, CatalogueItem[] pkCatalogueItems, RegexRedactionConfiguration regexConfiguration,int? readLimit)
-        //{
-        //    var memoryRepo = new MemoryCatalogueRepository();
-        //    var qb = new QueryBuilder(null, null, null);
-        //    qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, columnInfo));
-        //    foreach(var pk in pkCatalogueItems)
-        //    {
-        //        qb.AddColumn(new ColumnInfoToIColumn(memoryRepo, pk.ColumnInfo));
-        //    }
-        //    qb.AddCustomLine($"{columnInfo.GetRuntimeName()} LIKE '%{regexConfiguration.RegexPattern}%'", QueryComponent.WHERE);
-        //    if (readLimit is not null)
-        //    {
-        //        qb.TopX = (int)readLimit;
-        //    }
-
-        //    return qb;
-        //}
 
         public static DataTable GenerateRedactionsDataTable()
         {

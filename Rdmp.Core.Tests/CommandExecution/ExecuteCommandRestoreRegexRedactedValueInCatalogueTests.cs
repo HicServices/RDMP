@@ -6,15 +6,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.Curation;
 using Rdmp.Core.ReusableLibraryCode.Checks;
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Tests.Common;
-using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
 namespace Rdmp.Core.Tests.CommandExecution;
 

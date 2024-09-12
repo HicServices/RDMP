@@ -2,11 +2,6 @@
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data;
