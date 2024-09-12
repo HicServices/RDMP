@@ -89,9 +89,6 @@ public class SFTPDownloader : FTPDownloader
     {
         if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
 
-        // Reconnect if we got cut off, for example due to idle timers
-        //if (!_connection.Value.IsConnected)
-        //    _connection.Value.Connect();
         _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
 
         foreach (var retrievedFiles in _filesRetrieved)

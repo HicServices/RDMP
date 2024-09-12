@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.2.4] - Unreleased
 
 - Improve Cohort Versioning Interface
+- Re-Instantiate connection to FTP sevrer on FTP Downloader cleanup
 
 ## [8.2.3] - 2024-08-05
 
