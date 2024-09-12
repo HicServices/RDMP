@@ -13,3 +13,7 @@ updates:
   reviewers:
     - jas88
     - jfriel
+  groups:
+    aws-sdk:
+      patterns:
+        - "AWSSDK.*"
