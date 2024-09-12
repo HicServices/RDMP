@@ -1,4 +1,5 @@
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -11,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add instance setting to prompt for cohort versioning when comitting
 - Improve Cohort Versioning Interface
 - Add AWS S3 Bucket Release component for flat files
+- Add UI linkage for projects and cohort builder configurations
 
 ## [8.2.3] - 2024-08-05
 
