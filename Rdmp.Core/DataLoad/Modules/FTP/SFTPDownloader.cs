@@ -27,7 +27,7 @@ public class SFTPDownloader : FTPDownloader
     [DemandsInitialization("The keep-alive interval.  In milliseconds.  Requires KeepAlive to be set to take effect.")]
     public int KeepAliveIntervalMilliseconds { get; set; }
 
-    private Lazy<SftpClient> _connection;
+    private readonly Lazy<SftpClient> _connection;
 
     public SFTPDownloader(Lazy<SftpClient> connection)
     {
