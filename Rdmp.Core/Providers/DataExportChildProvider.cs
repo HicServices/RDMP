@@ -352,13 +352,6 @@ public class DataExportChildProvider : CatalogueChildProvider
         {
             children.Add(x);
         }
-        //var cohortGroups = GetAllCohortProjectUsageNodesFor(associatedCohortConfigurations.Project);
-
-        //foreach (var cohortSourceUsedByProjectNode in cohortGroups)
-        //{
-        //    AddChildren(cohortSourceUsedByProjectNode, descendancy.Add(cohortSourceUsedByProjectNode));
-        //    children.Add(cohortSourceUsedByProjectNode);
-        //}
 
         AddToDictionaries(children, descendancy);
     }
