@@ -206,5 +206,6 @@ public enum RDMPConcept
     Dataset,
     LoadMetadataCatalogueLinkage,
     Setting,
-    TicketingSystemReleaseStatus
+    TicketingSystemReleaseStatus,
+    CommittedCohortIdentificationNode
 }
