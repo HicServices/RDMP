@@ -87,14 +87,14 @@ public class SFTPDownloader : FTPDownloader
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad) return;
+        if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad || !_filesRetrieved.Any()) return;
 
-        _connection = new Lazy<SftpClient>(SetupSftp, LazyThreadSafetyMode.ExecutionAndPublication);
+        var connection = SetupSftp();
 
         foreach (var retrievedFiles in _filesRetrieved)
             try
             {
-                _connection.Value.DeleteFile(retrievedFiles);
+                connection.DeleteFile(retrievedFiles);
                 postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Deleted SFTP file {retrievedFiles} from SFTP server"));
             }
