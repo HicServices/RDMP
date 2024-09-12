@@ -97,6 +97,7 @@ public partial class UserSettingsFileUI : Form
         RegisterCheckbox(cbHideEmptyTableLoadRunAudits, nameof(UserSettings.HideEmptyTableLoadRunAudits));
         RegisterCheckbox(cbScoreZeroForCohortAggregateContainers,
             nameof(UserSettings.ScoreZeroForCohortAggregateContainers));
+        RegisterCheckbox(cbNewFind, nameof(UserSettings.NewFindAndReplace));
         RegisterCheckbox(cbAdvancedFindFilters, nameof(UserSettings.AdvancedFindFilters));
         RegisterCheckbox(cbIncludeZeroSeriesInGraphs, nameof(UserSettings.IncludeZeroSeriesInGraphs));
         RegisterCheckbox(cbSelectiveRefresh, nameof(UserSettings.SelectiveRefresh));

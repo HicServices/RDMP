@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
@@ -32,13 +33,15 @@ namespace Rdmp.Core.CommandLine.Runners;
 public class ReleaseRunner : ManyRunner
 {
     private readonly ReleaseOptions _options;
+    private readonly IBasicActivateItems _activator;
     private Pipeline _pipeline;
     private IProject _project;
     private IExtractionConfiguration[] _configurations;
     private ISelectedDataSets[] _selectedDatasets;
 
-    public ReleaseRunner(ReleaseOptions options) : base(options)
+    public ReleaseRunner(IBasicActivateItems activator, ReleaseOptions options) : base(options)
     {
+        _activator = activator;
         _options = options;
     }
 
@@ -117,9 +120,12 @@ public class ReleaseRunner : ManyRunner
         if (useCase != null)
         {
             var engine = useCase.GetEngine(_pipeline, ThrowImmediatelyDataLoadEventListener.Quiet);
+            if (engine.DestinationObject is IInteractiveCheckable)
+            {
+                ((IInteractiveCheckable)engine.DestinationObject).SetActivator(_activator);
+            }
             toReturn.Add(engine);
         }
-
         return toReturn.ToArray();
     }
 

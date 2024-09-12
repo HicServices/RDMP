@@ -19,6 +19,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
@@ -335,6 +336,22 @@ public class DataExportChildProvider : CatalogueChildProvider
         var savedCohortsNode = new ProjectSavedCohortsNode(projectCohortsNode.Project);
         children.Add(savedCohortsNode);
         AddChildren(savedCohortsNode, descendancy.Add(savedCohortsNode));
+
+        var associatedCohortConfigurations = new CommittedCohortIdentificationNode(projectCohortsNode.Project);
+        children.Add(associatedCohortConfigurations);
+        AddChildren(associatedCohortConfigurations, descendancy.Add(associatedCohortConfigurations));
+
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(CommittedCohortIdentificationNode associatedCohortConfigurations, DescendancyList descendancy)
+    {
+        var children = new HashSet<object>();
+        var associatedCohorts = associatedCohortConfigurations.Project.GetAssociatedCohortIdentificationConfigurations();
+        foreach(var x in associatedCohorts)
+        {
+            children.Add(x);
+        }
 
         AddToDictionaries(children, descendancy);
     }
