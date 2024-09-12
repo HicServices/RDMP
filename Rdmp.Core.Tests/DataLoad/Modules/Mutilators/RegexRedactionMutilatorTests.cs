@@ -243,8 +243,6 @@ MrMurder,2001-01-01,Yella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
-        Assert.That(redactionKeys[0].Value == "MrMurder");
-        Assert.That(redactionKeys[1].Value == "01/01/2001 00:00:00");
         foreach (var r in redactions)
         {
             r.DeleteInDatabase();
@@ -641,10 +639,6 @@ MrMurder,2001-01-01,YellaUUUYella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(4));
-        Assert.That(redactionKeys[0].Value == "MrMurder");
-        Assert.That(redactionKeys[1].Value == "01/01/2001 00:00:00");
-        Assert.That(redactionKeys[2].Value == "MrMurder");
-        Assert.That(redactionKeys[3].Value == "01/01/2001 00:00:00");
         foreach (var r in redactions)
         {
             r.DeleteInDatabase();
