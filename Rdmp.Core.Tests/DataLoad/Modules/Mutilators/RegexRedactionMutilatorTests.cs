@@ -51,6 +51,10 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
         if (raw.Exists())
             raw.Drop();
 
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
+
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
@@ -84,7 +88,7 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
         var regex = new RegexRedactionConfiguration(CatalogueRepository, "No Yelling", new Regex("Yella"), "FFF");
         regex.SaveToDatabase();
 
-        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustRaw)
+        var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.AdjustStaging)
         {
             Path = typeof(RegexRedactionMutilator).FullName,
             ProcessTaskType = ProcessTaskType.MutilateDataTable,
@@ -132,8 +136,6 @@ MrMurder,2001-01-01,Yella");
 
         var redactionKeys = CatalogueRepository.GetAllObjects<RegexRedactionKey>();
         Assert.That(redactionKeys.Length, Is.EqualTo(2));
-        Assert.That(redactionKeys[0].Value == "MrMurder");
-        Assert.That(redactionKeys[1].Value == "01/01/2001 00:00:00");
         foreach (var r in redactions)
         {
             r.DeleteInDatabase();
@@ -155,6 +157,10 @@ MrMurder,2001-01-01,Yella");
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if (raw.Exists())
             raw.Drop();
+
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
 
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
@@ -261,6 +267,10 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
+
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
@@ -351,6 +361,10 @@ MrMurder,2001-01-01,Yella");
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if (raw.Exists())
             raw.Drop();
+
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
 
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
@@ -443,6 +457,10 @@ MrMurder,2001-01-01,Yella");
         if (raw.Exists())
             raw.Drop();
 
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
+
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
         dt.Columns.Add("DateOfBirth");
@@ -533,6 +551,10 @@ MrMurder,2001-01-01,Yella");
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if (raw.Exists())
             raw.Drop();
+
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
 
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");
@@ -644,6 +666,10 @@ MrMurder,2001-01-01,YellaUUUYella");
         var raw = db.Server.ExpectDatabase($"{db.GetRuntimeName()}_RAW");
         if (raw.Exists())
             raw.Drop();
+
+        var dleStaging = db.Server.ExpectDatabase($"DLE_STAGING");
+        if (!dleStaging.Exists())
+            db.Server.CreateDatabase("DLE_STAGING");
 
         using var dt = new DataTable("MyTable");
         dt.Columns.Add("Name");

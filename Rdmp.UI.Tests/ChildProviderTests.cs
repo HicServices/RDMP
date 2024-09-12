@@ -107,7 +107,7 @@ internal class ChildProviderTests : UITests
                 Assert.That(prop.GetValue(cp2), Is.SameAs(prop.GetValue(cp1)),
                     $"Prop {prop} was not the same between child providers - after UpdateTo");
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 badProps.Add(prop.Name);
             }
