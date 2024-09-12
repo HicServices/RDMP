@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add New Find & Replace, currently available via User Settings
 - Add instance setting to prompt for cohort versioning when comitting
 - Improve Cohort Versioning Interface
+- Re-Instantiate connection to FTP server on FTP Downloader cleanup
 - Add AWS S3 Bucket Release component for flat files
 - Add UI linkage for projects and cohort builder configurations
 

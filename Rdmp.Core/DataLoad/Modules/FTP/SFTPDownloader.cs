@@ -87,16 +87,14 @@ public class SFTPDownloader : FTPDownloader
 
     public override void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventListener)
     {
-        if (exitCode != ExitCodeType.Success) return;
+        if (exitCode != ExitCodeType.Success || !DeleteFilesOffFTPServerAfterSuccesfulDataLoad || !_filesRetrieved.Any()) return;
 
-        // Reconnect if we got cut off, for example due to idle timers
-        if (!_connection.Value.IsConnected)
-            _connection.Value.Connect();
+        var connection = SetupSftp();
 
         foreach (var retrievedFiles in _filesRetrieved)
             try
             {
-                _connection.Value.DeleteFile(retrievedFiles);
+                connection.DeleteFile(retrievedFiles);
                 postLoadEventListener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information,
                     $"Deleted SFTP file {retrievedFiles} from SFTP server"));
             }
