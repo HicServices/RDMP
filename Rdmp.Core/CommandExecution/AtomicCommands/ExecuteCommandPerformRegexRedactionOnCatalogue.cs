@@ -25,8 +25,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DiscoveredColumn[] _discoveredPKColumns;
     private DiscoveredTable _discoveredTable;
     private List<CatalogueItem> _cataloguePKs;
-    private readonly DataTable redactionsToSaveTable;
-    private readonly DataTable pksToSave;
+    private DataTable redactionsToSaveTable;
+    private DataTable pksToSave;
     private readonly int? _readLimit;
     private DataTable redactionUpates = new();
     public int resultCount = 0;
@@ -39,8 +39,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _columns = columns;
         _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
         _readLimit = readLimit;
-        redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
-        pksToSave = RegexRedactionHelper.GeneratePKDataTable();
     }
 
     public override void Execute()
@@ -51,7 +49,8 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         var timer = Stopwatch.StartNew();
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
-
+            redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
+            pksToSave = RegexRedactionHelper.GeneratePKDataTable();
             var columnName = columnInfo.Name;
             var table = columnInfo.TableInfo.Name;
             _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
@@ -100,7 +99,17 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 {
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
+                var existing = _discoveredTable.Database.ExpectTable("pksToSave_Temp");
+                if (existing.Exists())
+                {
+                    existing.Drop();
+                }
                 var t1 = _discoveredTable.Database.CreateTable("pksToSave_Temp", pksToSave);
+                existing = _discoveredTable.Database.ExpectTable("redactionsToSaveTable_Temp");
+                if (existing.Exists())
+                {
+                    existing.Drop();
+                }
                 var t2 = _discoveredTable.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
                 RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository, t1, t2, _server);
                 t1.Drop();
@@ -121,9 +130,10 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             {
                 throw new Exception($"Unable to identify any primary keys in table '{table}'. Redactions cannot be performed on tables without primary keys");
             }
+            resultCount += redactionUpates.Rows.Count;
+
         }
         timer.Stop();
         var x = timer.ElapsedMilliseconds;
-        resultCount = redactionUpates.Rows.Count;
     }
 }
