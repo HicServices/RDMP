@@ -1,17 +1,10 @@
 ﻿using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Forms;
 using Rdmp.UI.Refreshing;
-using Rdmp.Core.Dataset;
-using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
-using Microsoft.Data.SqlClient;
-using System.Text.RegularExpressions;
-using System.Drawing;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.UI.SubComponents;
 public partial class RegexRedactionConfigurationUI : RegexRedactionConfigurationUI_Design, IRefreshBusSubscriber

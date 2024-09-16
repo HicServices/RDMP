@@ -2,15 +2,9 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
-using Rdmp.UI.ExtractionUIs;
 using Rdmp.UI.ItemActivation;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
@@ -32,6 +26,6 @@ public class ExecuteCommandRegexRedaction: BasicUICommandExecution, IAtomicComma
     {
         base.Execute();
 
-        Activator.Activate<RedactCatalogueUI, Catalogue>(_catalogue);
+        _activator.Activate<RedactCatalogueUI, Catalogue>(_catalogue);
     }
 }

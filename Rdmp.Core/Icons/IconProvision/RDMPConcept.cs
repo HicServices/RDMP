@@ -204,13 +204,13 @@ public enum RDMPConcept
     Memento,
     TableInfoDatabaseNode,
     Dataset,
-    AllDatasetsNode,
     LoadMetadataCatalogueLinkage,
     Setting,
     TicketingSystemReleaseStatus,
+    CommittedCohortIdentificationNode,
+    AllDatasetsNode,
     RegexRedaction,
     RegexRedactionConfiguration,
     RegexRedactionKey,
-    AllRegexRedactionConfigurationsNode,
-    CommittedCohortIdentificationNode
+    AllRegexRedactionConfigurationsNode
 }

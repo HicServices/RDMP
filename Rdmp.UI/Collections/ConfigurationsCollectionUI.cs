@@ -1,18 +1,10 @@
 ﻿using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Icons.IconProvision;
-using System.Windows.Forms;
-using Rdmp.Core.Curation.DataHelper.RegexRedaction;
-using Rdmp.Core.Providers.Nodes.PipelineNodes;
-using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Providers.Nodes;
 
 namespace Rdmp.UI.Collections;
@@ -20,8 +12,6 @@ namespace Rdmp.UI.Collections;
 public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
 
-    //private Dataset[] _datasets;
-    //private bool _firstTime = true;
     private IActivateItems _activator;
 
     public ConfigurationsCollectionUI()

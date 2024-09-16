@@ -1,4 +1,10 @@
-﻿using FAnsi.Discovery.QuerySyntax;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -13,25 +19,39 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 {
     public static class RegexRedactionHelper
     {
+        public enum Constants {
+            pksToSave_Temp,
+            redactionsToSaveTable_Temp,
+            ID,
+            RedactionConfiguration_ID,
+            ColumnInfo_ID,
+            startingIndex,
+            ReplacementValue,
+            RedactedValue, 
+            RegexRedaction_ID,
+            Value
+
+        };
+
 
         public static DataTable GenerateRedactionsDataTable()
         {
             DataTable redactionsToSaveTable = new DataTable();
-            redactionsToSaveTable.Columns.Add("RedactionConfiguration_ID");
-            redactionsToSaveTable.Columns.Add("ColumnInfo_ID");
-            redactionsToSaveTable.Columns.Add("startingIndex");
-            redactionsToSaveTable.Columns.Add("ReplacementValue");
-            redactionsToSaveTable.Columns.Add("RedactedValue");
+            redactionsToSaveTable.Columns.Add(nameof(Constants.RedactionConfiguration_ID));
+            redactionsToSaveTable.Columns.Add(nameof(Constants.ColumnInfo_ID));
+            redactionsToSaveTable.Columns.Add(nameof(Constants.startingIndex));
+            redactionsToSaveTable.Columns.Add(nameof(Constants.ReplacementValue));
+            redactionsToSaveTable.Columns.Add(nameof(Constants.RedactedValue));
             return redactionsToSaveTable;
         }
 
         public static DataTable GeneratePKDataTable()
         {
             DataTable pkDataTable = new DataTable();
-            pkDataTable.Columns.Add("RegexRedaction_ID");
-            pkDataTable.Columns.Add("ColumnInfo_ID");
-            pkDataTable.Columns.Add("Value");
-            pkDataTable.Columns.Add("ID", typeof(int));
+            pkDataTable.Columns.Add(nameof(Constants.RegexRedaction_ID));
+            pkDataTable.Columns.Add(nameof(Constants.ColumnInfo_ID));
+            pkDataTable.Columns.Add(nameof(Constants.Value));
+            pkDataTable.Columns.Add(nameof(Constants.ID), typeof(int));
             return pkDataTable;
         }
 

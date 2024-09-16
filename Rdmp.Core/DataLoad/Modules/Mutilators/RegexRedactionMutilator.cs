@@ -1,4 +1,10 @@
-﻿using FAnsi.Discovery;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
@@ -110,8 +116,8 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                     pksToSave.Rows[i]["ID"] = i + 1;
                 }
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating Temporary tables"));
-                var t1 = table.Database.CreateTable("pksToSave_Temp", pksToSave);
-                var t2 = table.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
+                var t1 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.pksToSave_Temp), pksToSave);
+                var t2 = table.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Saving Redactions"));
                 var _server = relatedCatalogues.First().GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
                 RegexRedactionHelper.SaveRedactions(job.RepositoryLocator.CatalogueRepository, t1, t2, _server, Timeout * 1000);

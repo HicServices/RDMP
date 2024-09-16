@@ -6,7 +6,6 @@
 
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.ReusableLibraryCode.Annotations;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents;

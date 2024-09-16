@@ -1,15 +1,13 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.DirectoryServices.Protocols;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -18,7 +16,6 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.LocationsMenu;
 using Rdmp.UI.Refreshing;
@@ -39,7 +36,6 @@ namespace Rdmp.UI.Collections;
 public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
 {
     private bool _isFirstTime = true;
-    private IActivateItems _activator;
 
     public TableInfoCollectionUI()
     {
@@ -92,7 +88,6 @@ public partial class TableInfoCollectionUI : RDMPCollectionUI, ILifetimeSubscrib
     public override void SetItemActivator(IActivateItems activator)
     {
         base.SetItemActivator(activator);
-        _activator = activator;
         CommonTreeFunctionality.SetUp(
             RDMPCollection.Tables,
             tlvTableInfos,

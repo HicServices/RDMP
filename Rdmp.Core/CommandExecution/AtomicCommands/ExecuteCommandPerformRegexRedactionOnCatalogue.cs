@@ -1,4 +1,10 @@
-﻿using FAnsi.Discovery;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
@@ -9,7 +15,6 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using static System.Linq.Enumerable;
 
@@ -39,6 +44,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         _columns = columns;
         _server = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false);
         _readLimit = readLimit;
+        if (_server.DatabaseType != FAnsi.DatabaseType.MicrosoftSQLServer)
+        {
+            //This should be implimented for all db types after UAT for the initial purpose
+            SetImpossible("Regex Redaction are currently only supported on MSSQL databases");
+        }
     }
 
     public override void Execute()
@@ -46,7 +56,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         base.Execute();
         var memoryRepo = new MemoryCatalogueRepository();
 
-        var timer = Stopwatch.StartNew();
         foreach (var columnInfo in _columns.Where(c => !c.IsPrimaryKey))
         {
             redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
@@ -82,9 +91,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     da.Fill(dt);
                 }
                 conn.Close();
-                timer.Stop();
-                Console.WriteLine(timer.ElapsedMilliseconds);
-                timer.Start();
                 redactionUpates = dt.Clone();
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
@@ -92,39 +98,30 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                 }
                 redactionUpates.EndLoadData();
-                timer.Stop();
-                Console.WriteLine(timer.ElapsedMilliseconds);
-                timer.Start();
                 for (int i = 0; i < pksToSave.Rows.Count; i++)
                 {
-                    pksToSave.Rows[i]["ID"] = i + 1;
+                    pksToSave.Rows[i][nameof(RegexRedactionHelper.Constants.ID)] = i + 1;
                 }
-                var existing = _discoveredTable.Database.ExpectTable("pksToSave_Temp");
+                var existing = _discoveredTable.Database.ExpectTable(nameof(RegexRedactionHelper.Constants.pksToSave_Temp));
                 if (existing.Exists())
                 {
                     existing.Drop();
                 }
-                var t1 = _discoveredTable.Database.CreateTable("pksToSave_Temp", pksToSave);
-                existing = _discoveredTable.Database.ExpectTable("redactionsToSaveTable_Temp");
+                var t1 = _discoveredTable.Database.CreateTable(nameof(RegexRedactionHelper.Constants.pksToSave_Temp), pksToSave);
+                existing = _discoveredTable.Database.ExpectTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp));
                 if (existing.Exists())
                 {
                     existing.Drop();
                 }
-                var t2 = _discoveredTable.Database.CreateTable("redactionsToSaveTable_Temp", redactionsToSaveTable);
+                var t2 = _discoveredTable.Database.CreateTable(nameof(RegexRedactionHelper.Constants.redactionsToSaveTable_Temp), redactionsToSaveTable);
+
                 RegexRedactionHelper.SaveRedactions(_activator.RepositoryLocator.CatalogueRepository, t1, t2, _server);
                 t1.Drop();
                 t2.Drop();
-                timer.Stop();
-                Console.WriteLine(timer.ElapsedMilliseconds);
-                timer.Start();
                 if (dt.Rows.Count > 0)
                 {
                     RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpates, _discoveredPKColumns);
                 }
-                timer.Stop();
-                Console.WriteLine(timer.ElapsedMilliseconds);
-                timer.Start();
-
             }
             else
             {
@@ -133,7 +130,5 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
             resultCount += redactionUpates.Rows.Count;
 
         }
-        timer.Stop();
-        var x = timer.ElapsedMilliseconds;
     }
 }
