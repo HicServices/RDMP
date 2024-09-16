@@ -88,7 +88,6 @@ public class PopulateRAW : CompositeDataLoadComponent
 
         if (!job.PersistentRaw) cloner.CreateDatabaseForStage(LoadBubble.Raw);
 
-
         job.CreateTablesInStage(cloner, LoadBubble.Raw);
     }
 
