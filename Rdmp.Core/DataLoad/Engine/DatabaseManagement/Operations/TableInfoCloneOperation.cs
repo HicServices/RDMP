@@ -108,7 +108,7 @@ public class TableInfoCloneOperation
 
         var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls,
             false /*False because we want to drop these columns entirely not just flip to int*/, newTable);
-
+        _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, sql));
         _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Creating table with SQL:{sql}"));
 
         using (var con = destDatabaseInfo.Server.GetConnection())
