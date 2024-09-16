@@ -61,7 +61,7 @@ public abstract class MatchingTablesMutilatorWithDataLoadJob : IPluginMutilateDa
             TableRegexPattern = new Regex(TableRegexPattern.ToString(), RegexOptions.IgnoreCase);
 
         foreach (var tableInfo in job.RegularTablesToLoad)
-            if (OnlyTables != null && OnlyTables.Any())
+            if (OnlyTables != null && OnlyTables.Length != 0)
             {
                 if (OnlyTables.Contains(tableInfo))
                     FireMutilate(tableInfo, job);

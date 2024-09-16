@@ -23,7 +23,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 {
     [DemandsInitialization("the regex redaction configuration to use")]
-    public RegexRedactionConfiguration redactionConfiguration { get; set; }
+    public RegexRedactionConfiguration RedactionConfiguration { get; set; }
 
     [DemandsInitialization(
        "All Columns matching this pattern which have a ColumnInfo defined in the load will be affected by this mutilation",
@@ -77,7 +77,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 var sql = @$"
                     SELECT {column.GetRuntimeName()} {pkSeparator} {string.Join(", ", pkColumnInfos.Select(c => c.GetRuntimeName()))}
                     FROM {table.GetRuntimeName()}
-                    WHERE {column.GetRuntimeName()} LIKE '%{redactionConfiguration.RegexPattern}%'
+                    WHERE {column.GetRuntimeName()} LIKE '%{RedactionConfiguration.RegexPattern}%'
                     ";
                 var dt = new DataTable();
                 dt.BeginLoadData();
@@ -101,7 +101,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
                 {
                     try
                     {
-                        RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
+                        RegexRedactionHelper.Redact(columnInfo, row, cataloguePks, RedactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                     }
                     catch (Exception e)
                     {

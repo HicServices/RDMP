@@ -29,8 +29,8 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
             ReplacementValue,
             RedactedValue, 
             RegexRedaction_ID,
-            Value
-
+            Value,
+            TEMP_RedactionUpdates
         };
 
 
@@ -140,7 +140,7 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 
         public static void DoJoinUpdate(ColumnInfo column, DiscoveredTable _discoveredTable, DiscoveredServer _server, DataTable redactionUpates, DiscoveredColumn[] _discoveredPKColumns, int timeout = 30000)
         {
-            var redactionTable = _discoveredTable.Database.CreateTable("TEMP_RedactionUpdates", redactionUpates);
+            var redactionTable = _discoveredTable.Database.CreateTable(nameof(Constants.TEMP_RedactionUpdates), redactionUpates);
             var updateHelper = _server.GetQuerySyntaxHelper().UpdateHelper;
 
             var sqlLines = new List<CustomLine>

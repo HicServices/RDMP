@@ -24,7 +24,7 @@ public class ExecuteCommandAddNewRegexRedactionConfiguration : BasicCommandExecu
     private readonly IBasicActivateItems _activator;
 
 
-    public ExecuteCommandAddNewRegexRedactionConfiguration(IBasicActivateItems activator, [DemandsInitialization("Name")] string name, [DemandsInitialization("pattern")] string redactionPattern, [DemandsInitialization("redaction")] string redactionString, string description = null) : base(activator)
+    public ExecuteCommandAddNewRegexRedactionConfiguration(IBasicActivateItems activator, [DemandsInitialization("Name")] string name, [DemandsInitialization("Redaction Pattern")] string redactionPattern, [DemandsInitialization("Replacement String")] string redactionString, string description = null) : base(activator)
     {
         _activator = activator;
         _name = name;
