@@ -1,5 +1,6 @@
 
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -14,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Re-Instantiate connection to FTP server on FTP Downloader cleanup
 - Add AWS S3 Bucket Release component for flat files
 - Add UI linkage for projects and cohort builder configurations
+- Add ability to chain data loads
 
 ## [8.2.3] - 2024-08-05
 
