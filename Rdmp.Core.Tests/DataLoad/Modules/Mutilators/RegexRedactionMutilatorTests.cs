@@ -85,7 +85,7 @@ internal class RegexRedactionMutilatorTests : DataLoadEngineTestsBase
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", ".*");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -192,7 +192,7 @@ MrMurder,2001-01-01,Yella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", ".*");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -299,7 +299,7 @@ MrMurder,2001-01-01,Yella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", ".*");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -394,7 +394,7 @@ MrMurder,2001-01-01,Yella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", "DateOfBirth");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -489,7 +489,7 @@ MrMurder,2001-01-01,Yella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", "DateOfBirth");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -584,7 +584,7 @@ MrMurder,2001-01-01,Yella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", ".*");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
@@ -695,7 +695,7 @@ MrMurder,2001-01-01,YellaUUUYella");
 
         pt.CreateArgumentsForClassIfNotExists<RegexRedactionMutilator>();
         pt.SetArgumentValue("ColumnRegexPattern", ".*");
-        pt.SetArgumentValue("redactionConfiguration", regex);
+        pt.SetArgumentValue("RedactionConfiguration", regex);
         pt.SetArgumentValue("TableRegexPattern", ".*");
 
         pt.Check(ThrowImmediatelyCheckNotifier.Quiet);
