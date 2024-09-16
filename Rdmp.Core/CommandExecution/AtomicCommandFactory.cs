@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
+using NPOI.POIFS.Storage;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
 using Rdmp.Core.CommandExecution.AtomicCommands.CatalogueCreationCommands;
@@ -506,7 +507,11 @@ public class AtomicCommandFactory : CommandFactoryBase
 
             yield return new ExecuteCommandOverrideRawServer(_activator, lmd);
             yield return new ExecuteCommandCreateNewLoadMetadata(_activator);
-
+            var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
+            yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
+            {
+                OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
+            };
 
             yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
             yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };

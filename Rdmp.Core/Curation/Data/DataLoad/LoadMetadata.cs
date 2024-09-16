@@ -88,7 +88,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public bool AllowReservedPrefix
     {
         get => _allowReservedPrefix;
-        set => _allowReservedPrefix = SetField(ref _allowReservedPrefix, value);
+        set => SetField(ref _allowReservedPrefix, value);
     }
 
     ///  <inheritdoc/>
@@ -260,6 +260,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
+        AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
