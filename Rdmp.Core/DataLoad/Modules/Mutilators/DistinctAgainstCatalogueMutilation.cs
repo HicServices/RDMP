@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.ReusableLibraryCode.Progress;
 using System;
@@ -24,6 +26,8 @@ public class DistinctAgainstCatalogueMutilation : IMutilateDataTables
 {
     private DiscoveredDatabase _db;
 
+    //TODO add a timeout for use in the command
+
     public void Check(ICheckNotifier notifier)
     {
     }
@@ -35,6 +39,108 @@ public class DistinctAgainstCatalogueMutilation : IMutilateDataTables
 
     public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
     {
+    }
+
+    private string MySQLGeneration(DiscoveredTable table, TableInfo matchingTable)
+    {
+        //TODO this needs tested
+        var tableColumnNames = table.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var pks = matchingTable.ColumnInfos.Where(ci => ci.IsPrimaryKey);
+        var nonPks = matchingTable.ColumnInfos.Where(ci => !ci.IsPrimaryKey).Select(c => c.GetRuntimeName()).Where(c => tableColumnNames.Contains(c));
+        var pkMatchClause = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}"));
+        var nonPksNoMatch = String.Join(" OR ", nonPks.Select(pk => $"t1.{pk} != t2.{pk}"));
+        var subqueryPksNull = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} is null"));
+        return $@"
+                DELETE t2 from {table.GetFullyQualifiedName()} t2
+                LEFT JOIN(
+                     SELECT * FROM {table.GetFullyQualifiedName()} as t1
+                     WHERE NOT EXISTS( SELECT *
+                     FROM {matchingTable.GetFullyQualifiedName()} as t2
+                     WHERE {pkMatchClause} )
+                     UNION
+                     SELECT t1.* FROM {table.GetFullyQualifiedName()} as t1
+                     INNER JOIN {matchingTable.GetFullyQualifiedName()} as t2
+                     on {pkMatchClause}
+                     where {nonPksNoMatch}
+                ) t1 on {pkMatchClause}
+                where {subqueryPksNull}
+            ";
+    }
+
+    private string PostgreSQLGeneration(DiscoveredTable table, TableInfo matchingTable)
+    {
+        //TODO this needs tested
+        var tableColumnNames = table.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var pks = matchingTable.ColumnInfos.Where(ci => ci.IsPrimaryKey);
+        var nonPks = matchingTable.ColumnInfos.Where(ci => !ci.IsPrimaryKey).Select(c => c.GetRuntimeName()).Where(c => tableColumnNames.Contains(c));
+        var pkMatchClause = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}"));
+        var nonPksNoMatch = String.Join(" OR ", nonPks.Select(pk => $"t1.{pk} != t2.{pk}"));
+        var subqueryPksNull = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} is null"));
+        return $@"
+                DELETE t2 from {table.GetFullyQualifiedName()} t2
+                LEFT JOIN(
+                     SELECT * FROM {table.GetFullyQualifiedName()} as t1
+                     WHERE NOT EXISTS( SELECT *
+                     FROM {matchingTable.GetFullyQualifiedName()} as t2
+                     WHERE {pkMatchClause} )
+                     UNION
+                     SELECT t1.* FROM {table.GetFullyQualifiedName()} as t1
+                     INNER JOIN {matchingTable.GetFullyQualifiedName()} as t2
+                     on {pkMatchClause}
+                     where {nonPksNoMatch}
+                ) t1 on {pkMatchClause}
+                where {subqueryPksNull}
+            ";
+    }
+    private string OracleSQLGeneration(DiscoveredTable table, TableInfo matchingTable)
+    {
+        //TODO this needs tested
+        var tableColumnNames = table.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var pks = matchingTable.ColumnInfos.Where(ci => ci.IsPrimaryKey);
+        var nonPks = matchingTable.ColumnInfos.Where(ci => !ci.IsPrimaryKey).Select(c => c.GetRuntimeName()).Where(c => tableColumnNames.Contains(c));
+        var pkMatchClause = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}"));
+        var nonPksNoMatch = String.Join(" OR ", nonPks.Select(pk => $"t1.{pk} != t2.{pk}"));
+        var subqueryPksNull = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} is null"));
+        return $@"
+                DELETE t2 from {table.GetFullyQualifiedName()} t2
+                LEFT JOIN(
+                     SELECT * FROM {table.GetFullyQualifiedName()} as t1
+                     WHERE NOT EXISTS( SELECT *
+                     FROM {matchingTable.GetFullyQualifiedName()} as t2
+                     WHERE {pkMatchClause} )
+                     UNION
+                     SELECT t1.* FROM {table.GetFullyQualifiedName()} as t1
+                     INNER JOIN {matchingTable.GetFullyQualifiedName()} as t2
+                     on {pkMatchClause}
+                     where {nonPksNoMatch}
+                ) t1 on {pkMatchClause}
+                where {subqueryPksNull}
+            ";
+    }
+
+    private static string MicrosoftSQLGeneration(DiscoveredTable table, TableInfo matchingTable)
+    {
+        var tableColumnNames = table.DiscoverColumns().Select(c => c.GetRuntimeName());
+        var pks = matchingTable.ColumnInfos.Where(ci => ci.IsPrimaryKey);
+        var nonPks = matchingTable.ColumnInfos.Where(ci => !ci.IsPrimaryKey).Select(c => c.GetRuntimeName()).Where(c => tableColumnNames.Contains(c));
+        var pkMatchClause = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}"));
+        var nonPksNoMatch = String.Join(" OR ", nonPks.Select(pk => $"t1.{pk} != t2.{pk}"));
+        var subqueryPksNull = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} is null"));
+        return  $@"
+                DELETE t2 from {table.GetFullyQualifiedName()} t2
+                LEFT JOIN(
+                     SELECT * FROM {table.GetFullyQualifiedName()} as t1
+                     WHERE NOT EXISTS( SELECT *
+                     FROM {matchingTable.GetFullyQualifiedName()} as t2
+                     WHERE {pkMatchClause} )
+                     UNION
+                     SELECT t1.* FROM {table.GetFullyQualifiedName()} as t1
+                     INNER JOIN {matchingTable.GetFullyQualifiedName()} as t2
+                     on {pkMatchClause}
+                     where {nonPksNoMatch}
+                ) t1 on {pkMatchClause}
+                where {subqueryPksNull}
+            ";
     }
 
     //what happens if the catalogue table is on a different server?
@@ -57,31 +163,29 @@ public class DistinctAgainstCatalogueMutilation : IMutilateDataTables
             }
             var matchingTable = matchingTables.First();
 
-            var tableColumnNames = table.DiscoverColumns().Select(c => c.GetRuntimeName());
+            var sql = "";
+            switch (_db.Server.DatabaseType)
+            {
+                case FAnsi.DatabaseType.MicrosoftSQLServer:
+                    sql = MicrosoftSQLGeneration(table, matchingTable);
+                    break;
+                case FAnsi.DatabaseType.MySql:
+                    sql = MySQLGeneration(table, matchingTable);
+                    break;
+                case FAnsi.DatabaseType.PostgreSql:
+                    sql = PostgreSQLGeneration(table, matchingTable);
+                    break;
+                case FAnsi.DatabaseType.Oracle:
+                    sql = OracleSQLGeneration(table, matchingTable);
+                    break;
+                default:
+                    throw new Exception("Unknown Database Type");
+            }
+           
 
-            var pks = matchingTable.ColumnInfos.Where(ci => ci.IsPrimaryKey);
-            var nonPks = matchingTable.ColumnInfos.Where(ci => !ci.IsPrimaryKey).Select(c => c.GetRuntimeName()).Where(c => tableColumnNames.Contains(c));
-            var pkMatchClause = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} = t2.{pk.GetRuntimeName()}"));
-            var nonPksNoMatch = String.Join(" OR ", nonPks.Select(pk => $"t1.{pk} != t2.{pk}"));
-            var subqueryPksNull = String.Join(" AND ", pks.Select(pk => $"t1.{pk.GetRuntimeName()} is null"));
-            var newAndUpdateSql = $@"
-                DELETE t2 from {table.GetFullyQualifiedName()} t2
-                LEFT JOIN(
-                     SELECT * FROM {table.GetFullyQualifiedName()} as t1
-                     WHERE NOT EXISTS( SELECT *
-                     FROM {matchingTable.GetFullyQualifiedName()} as t2
-                     WHERE {pkMatchClause} )
-                     UNION
-                     SELECT t1.* FROM {table.GetFullyQualifiedName()} as t1
-                     INNER JOIN {matchingTable.GetFullyQualifiedName()} as t2
-                     on {pkMatchClause}
-                     where {nonPksNoMatch}
-                ) t1 on {pkMatchClause}
-                where {subqueryPksNull}
-            ";
             var conn = _db.Server.GetConnection();
             conn.Open();
-            using var cmd = _db.Server.GetCommand(newAndUpdateSql, conn);
+            using var cmd = _db.Server.GetCommand(sql, conn);
             cmd.ExecuteNonQuery();
             conn.Close();
         }
