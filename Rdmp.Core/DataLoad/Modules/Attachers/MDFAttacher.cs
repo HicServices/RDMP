@@ -72,9 +72,9 @@ There are a number of variables for use within this override path:
     private MdfFileAttachLocations _locations;
 
 
-    private string ReplacedateVariables(string str)
+    private static string ReplacedateVariables(string str)
     {
-        return str.Replace("%d", DateTime.Now.Day.ToString().PadLeft(2)).Replace("%m", DateTime.Now.Month.ToString().PadLeft(2)).Replace("%y", DateTime.Now.Year.ToString());
+        return str.Replace("%d", DateTime.Now.ToString("dd")).Replace("%m", DateTime.Now.ToString("MM")).Replace("%y", DateTime.Now.ToString("yy"));
     }
 
     private void GetFileNames()
