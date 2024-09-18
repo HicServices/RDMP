@@ -23,7 +23,7 @@ public class ProcessTaskChecks : ICheckable
 {
     private readonly ILoadMetadata _loadMetadata;
     private LoadArgsDictionary dictionary;
-    private IBasicActivateItems _activator;
+    private readonly IBasicActivateItems _activator;
 
     public ProcessTaskChecks(ILoadMetadata loadMetadata, IBasicActivateItems activator)
     {

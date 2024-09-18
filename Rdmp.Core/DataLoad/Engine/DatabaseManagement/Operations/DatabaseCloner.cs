@@ -130,8 +130,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
         //it's Abort,Success or LoadNotRequired
         foreach (var cloneOperation in _tablesCreated) cloneOperation.Undo();
 
-        foreach (var dbInfo in _databasesCreated)
-            if (dbInfo.Exists())
+        foreach (var dbInfo in _databasesCreated.Where(dbInfo => dbInfo.Exists()))
                 dbInfo.Drop();
     }
 }

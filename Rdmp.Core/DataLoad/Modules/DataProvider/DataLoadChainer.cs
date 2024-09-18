@@ -81,7 +81,7 @@ public class DataLoadChainer : IDataProvider, IInteractiveCheckable
         _runner = new DleRunner(_activator, dleOptions);
         _checker = notifier;
         _listener = new FromCheckNotifierToDataLoadEventListener(notifier);
-        var exitCode = _runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
+        _runner.Run(finder, _listener, notifier, new GracefulCancellationToken());
     }
 
     public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
