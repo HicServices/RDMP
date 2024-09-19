@@ -52,7 +52,7 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
 There are a number of variables for use within this override path:
 %d : the current date in the month e.g. 04
 %m : the current month  e.g. 12
-%y : the current year e.e. 24
+%y : the current year e.g. 24
 ")]
     public string OverrideAttachMdfPath { get; set; }
 
@@ -61,7 +61,7 @@ There are a number of variables for use within this override path:
 There are a number of variables for use within this override path:
 %d : the current date in the month e.g. 04
 %m : the current month  e.g. 12
-%y : the current year e.e. 2024
+%y : the current year e.g. 24
 ")]
     public string OverrideAttachLdfPath { get; set; }
 
