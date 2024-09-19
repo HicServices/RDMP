@@ -57,8 +57,6 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         base.SetItemActivator(activator);
 
-        // wait till we have an activator before registering this callback otherwise we will get null reference
-        olvCreatedFrom.AspectGetter = CreatedFromAspectGetter;
     }
 
     private object CreatedFromAspectGetter(object rowObject)

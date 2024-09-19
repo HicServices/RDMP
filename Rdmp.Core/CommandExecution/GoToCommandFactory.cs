@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MathNet.Numerics.LinearAlgebra.Factorization;
+using Org.BouncyCastle.Asn1.X509.Qualified;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -413,6 +415,22 @@ public class GoToCommandFactory : CommandFactoryBase
                 OverrideCommandName = "Project(s)",
                 OverrideIcon = GetImage(RDMPConcept.Project)
             };
+
+            var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(cohort, _activator.RepositoryLocator);
+            if (obj is not null)
+            {
+                if(obj is CohortIdentificationConfiguration configuration)
+                {
+                    yield return new ExecuteCommandShow(_activator, () =>
+                    {
+                        return [configuration];
+                    })
+                    {
+                        OverrideCommandName = "Cohort Identification Configuration(s)",
+                        OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
+                    };
+                }
+            }
         }
 
         //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
