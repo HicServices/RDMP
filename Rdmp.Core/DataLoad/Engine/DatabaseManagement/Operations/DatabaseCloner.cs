@@ -46,7 +46,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
     }
 
     public void CreateTablesInDatabaseFromCatalogueInfo(IDataLoadEventListener listener, TableInfo tableInfo,
-        LoadBubble copyToStage)
+        LoadBubble copyToStage, bool allowReservedPrefixColumns)
     {
         if (copyToStage == LoadBubble.Live)
             throw new Exception("Please don't try to create tables in the live database");
@@ -55,9 +55,7 @@ public class DatabaseCloner : IDisposeAfterDataLoad
 
         var cloneOperation = new TableInfoCloneOperation(_hicDatabaseConfiguration, tableInfo, copyToStage, listener)
         {
-            DropHICColumns =
-                copyToStage ==
-                LoadBubble.Raw, //don't drop columns like hic_sourceID, these are optional for population (and don't get Diff'ed) but should still be there
+            DropHICColumns = !allowReservedPrefixColumns,
             AllowNulls = copyToStage == LoadBubble.Raw
         };
 

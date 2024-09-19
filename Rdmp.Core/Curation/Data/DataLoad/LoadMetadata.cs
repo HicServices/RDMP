@@ -60,7 +60,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private bool _ignoreTrigger;
     private string _folder;
     private DateTime? _lastLoadTime;
-
+    private bool _allowReservedPrefix;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -81,6 +81,14 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
             }
         }
         return null;
+    }
+
+
+    ///  <inheritdoc/>
+    public bool AllowReservedPrefix
+    {
+        get => _allowReservedPrefix;
+        set => SetField(ref _allowReservedPrefix, value);
     }
 
     ///  <inheritdoc/>
@@ -252,6 +260,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         IgnoreTrigger = ObjectToNullableBool(r["IgnoreTrigger"]) ?? false;
         Folder = r["Folder"] as string ?? FolderHelper.Root;
         LastLoadTime = string.IsNullOrWhiteSpace(r["LastLoadTime"].ToString()) ? null : DateTime.Parse(r["LastLoadTime"].ToString());
+        AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
     }
 
     internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
