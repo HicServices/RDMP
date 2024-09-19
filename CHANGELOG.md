@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Re-Instantiate connection to FTP server on FTP Downloader cleanup
 - Add AWS S3 Bucket Release component for flat files
 - Add UI linkage for projects and cohort builder configurations
+- Allow for date variables to be used in MDF attacher overwrites
 
 ## [8.2.3] - 2024-08-05
 
