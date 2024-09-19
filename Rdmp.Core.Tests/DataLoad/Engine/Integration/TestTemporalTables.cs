@@ -92,7 +92,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker =
-            new CheckEntireDataLoadProcess(new ThrowImmediatelyActivator(RepositoryLocator),lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+            new CheckEntireDataLoadProcess(null,lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         if (ignoreWithGlobalPattern)
