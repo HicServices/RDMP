@@ -151,11 +151,12 @@ public class DataLoadJob : IDataLoadJob
 
     public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
     {
+        bool allowReservedPrefixColumns = stage == LoadBubble.Raw ? LoadMetadata.AllowReservedPrefix : true;
         foreach (TableInfo regularTableInfo in RegularTablesToLoad)
-            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, regularTableInfo, stage);
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, regularTableInfo, stage, allowReservedPrefixColumns);
 
         foreach (TableInfo lookupTableInfo in LookupTablesToLoad)
-            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage);
+            cloner.CreateTablesInDatabaseFromCatalogueInfo(_listener, lookupTableInfo, stage, allowReservedPrefixColumns);
 
         PushForDisposal(cloner);
     }
