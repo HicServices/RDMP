@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Re-Instantiate connection to FTP server on FTP Downloader cleanup
 - Add AWS S3 Bucket Release component for flat files
 - Add UI linkage for projects and cohort builder configurations
+- Add goto for Cohort Identification Configuration from External Cohort
 
 ## [8.2.3] - 2024-08-05
 
