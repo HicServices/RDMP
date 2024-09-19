@@ -415,20 +415,18 @@ public class GoToCommandFactory : CommandFactoryBase
             };
 
             var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(cohort, _activator.RepositoryLocator);
-            if (obj is not null)
+            if (obj is not null && obj is CohortIdentificationConfiguration configuration)
             {
-                if(obj is CohortIdentificationConfiguration configuration)
+                yield return new ExecuteCommandShow(_activator, () =>
                 {
-                    yield return new ExecuteCommandShow(_activator, () =>
-                    {
-                        return [configuration];
-                    })
-                    {
-                        OverrideCommandName = "Cohort Identification Configuration(s)",
-                        OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
-                    };
-                }
+                    return [configuration];
+                })
+                {
+                    OverrideCommandName = "Cohort Identification Configuration(s)",
+                    OverrideIcon = GetImage(RDMPConcept.CohortIdentificationConfiguration)
+                };
             }
+
         }
 
         //if it is a masquerader and masquerading as a DatabaseEntity then add a goto the object
