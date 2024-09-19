@@ -6,7 +6,7 @@ The Data Load Chainer is a "Data Provider" and should be added to the "Post Load
 Within the configuration, you can select which data load you want it to run and if it should automatically accept any changes the chained data load wishes to make.
 
 ## How does it work?
-Whe nrunning checks on the main Data Load, checks are also run an all chained Data Loads.
+When running checks on the main Data Load, checks are also run an all chained Data Loads.
 You main Data Load will run as normal. Once the Data Chainer is activated, it will run as a new Data Load, with a new Data Load ID.
 
 ### Why would I need to automatically accept checks?
