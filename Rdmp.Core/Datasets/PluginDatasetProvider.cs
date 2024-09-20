@@ -1,0 +1,32 @@
+﻿using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Rdmp.Core.Datasets;
+
+public abstract class PluginDatasetProvider : IDatasetProvider
+{
+    protected DatasetProviderConfiguration Configuration { get; }
+    protected ICatalogueRepository Repository { get; }
+
+    protected PluginDatasetProvider(ICatalogueRepository repository, DatasetProviderConfiguration configuration)
+    {
+        Configuration = configuration;
+        Repository = repository;
+    }
+
+    public abstract Curation.Data.Datasets.Dataset FetchDatasetByID(int id);
+
+    public abstract List<Curation.Data.Datasets.Dataset> FetchDatasets();
+
+    public abstract void AddExistingDataset(string name, string url);
+
+    public abstract Curation.Data.Datasets.Dataset Create();
+
+    public abstract Curation.Data.Datasets.Dataset Update();
+
+}
