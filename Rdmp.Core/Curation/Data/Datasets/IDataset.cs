@@ -7,19 +7,37 @@
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.Curation.Data;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <summary>
 /// The core of datasets within RDMP.
 /// Simple objects to link up catalogue data to DOI and datasets
 /// </summary>
-public interface IDataset: IMapsDirectlyToDatabaseTable
+public interface IDataset : IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// Returns where the object exists (e.g. database) as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
     /// </summary>
     ICatalogueRepository CatalogueRepository { get; }
 
+    /// <summary>
+    /// The Name of the Dataset
+    /// </summary>
     string Name { get; }
+
+    /// <summary>
+    /// The (optional) DOI of the dataset
+    /// </summary>
     string DigitalObjectIdentifier { get; }
+
+    /// <summary>
+    /// The Source of the Dataset e.g. Pure, HDR
+    /// </summary>
+    string Type { get; }
+
+    /// <summary>
+    /// The URL to access the dataset
+    /// </summary>
+    string Url { get; }
+
 }

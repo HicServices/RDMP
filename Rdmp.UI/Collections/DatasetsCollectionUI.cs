@@ -7,9 +7,9 @@ using Rdmp.UI.Refreshing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data.Datasets;
 
 namespace Rdmp.UI.Collections;
 

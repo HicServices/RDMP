@@ -12,7 +12,7 @@ using System.Data.Common;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Rdmp.Core.Curation.Data;
+namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <inheritdoc cref="IDataset"/>
 
@@ -22,6 +22,8 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
     private string _digitalObjectIdentifier;
     private string _source;
     private string _folder = FolderHelper.Root;
+    private string _type = null;
+    private string _url = null;
 
     /// <inheritdoc/>
     [DoNotImportDescriptions]
@@ -53,6 +55,17 @@ public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
         set => SetField(ref _source, value);
     }
 
+    public string Type
+    {
+        get => _type;
+        set => SetField(ref _type, value);
+    }
+
+    public string Url
+    {
+        get => _url;
+        set => SetField(ref _url, value);
+    }
     public override string ToString() => Name;
 
 
