@@ -41,7 +41,7 @@ jobs:
           curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
           curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
           apt-get update -y
-          apt-get install mssql-tools unixodbc-dev -y
+          ACCEPT_EULA=y apt-get install mssql-tools unixodbc-dev -y
           curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
           # curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
           # curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
