@@ -287,7 +287,7 @@ public partial class ExampleDatasetsCreation
                     Pipeline = releasePipeline.ID.ToString()
                 };
 
-                var runnerRelease = new ReleaseRunner(optsRelease);
+                var runnerRelease = new ReleaseRunner(_activator,optsRelease);
                 runnerRelease.Run(_repos, ThrowImmediatelyDataLoadEventListener.Quiet, notifier,
                     new GracefulCancellationToken());
             }

@@ -46,7 +46,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
 
         olvViewLog.AspectGetter = ViewLogAspectGetter;
         olvID.AspectGetter = IDAspectGetter;
-
+        olvCreatedFrom.AspectGetter = CreatedFromAspectGetter;
         lbCohortDatabaseTable.ButtonClick += lbCohortDatabaseTable_ButtonClick;
         lbCohortDatabaseTable.RowHeight = 19;
 
@@ -57,13 +57,11 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
     {
         base.SetItemActivator(activator);
 
-        // wait till we have an activator before registering this callback otherwise we will get null reference
-        olvCreatedFrom.AspectGetter = CreatedFromAspectGetter;
     }
 
     private object CreatedFromAspectGetter(object rowObject)
     {
-        if (rowObject is ExtractableCohortDescription ecd)
+        if (rowObject is ExtractableCohortDescription ecd && Activator is not null)
         {
             var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
             return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;

@@ -106,7 +106,6 @@ public sealed class ExecuteCommandAssociateCohortIdentificationConfigurationWith
                 break;
             case CohortIdentificationConfiguration configuration:
                 _cic = configuration;
-                SetImpossibleIfReadonly(_cic);
                 break;
         }
 

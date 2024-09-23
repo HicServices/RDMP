@@ -1,4 +1,4 @@
-﻿// Copyright (c) The University of Dundee 2018-2019
+﻿// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -8,6 +8,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -91,7 +92,7 @@ INSERT INTO Employee(EmployeeID,Name,Position,Department,Address,AnnualSalary) V
 
         //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
         var checker =
-            new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
+            new CheckEntireDataLoadProcess(null,lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags());
         checker.Check(new AcceptAllCheckNotifier());
 
         if (ignoreWithGlobalPattern)

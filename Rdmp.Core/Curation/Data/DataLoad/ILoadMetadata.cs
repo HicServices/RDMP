@@ -57,6 +57,11 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     ExternalDatabaseServer OverrideRAWServer { get; }
 
     /// <summary>
+    /// Optional - Allows for columns with the reserved prefix 'hic_' to be imported when doing a data load
+    /// </summary>
+    bool AllowReservedPrefix { get; }
+
+    /// <summary>
     /// List of all the user configured steps in a data load.  For example you could have 2 ProcessTasks, one that downloads files from an FTP server and one that loads RAW.
     /// </summary>
     IOrderedEnumerable<IProcessTask> ProcessTasks { get; }
