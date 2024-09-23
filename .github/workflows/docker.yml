@@ -38,15 +38,17 @@ jobs:
           set -e
           apt-get update -qq
           apt-get install -qqy curl gnupg2 python3 ca-certificates libgdiplus libicu66 --no-install-recommends
-          apt install apt-utils
-          echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
-          curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
-          curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
-          echo  >> /etc/apt/sources.list
-          curl -sL https://packages.microsoft.com/config/ubuntu/20.04/prod.list >> /etc/apt/sources.list
-          echo  >> /etc/apt/sources.list
-          apt-get update -qq
-          ACCEPT_EULA=y apt-get install -qqy mssql-tools mssql-server --no-install-recommends
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+          sudo apt-get update
+          sudo apt-get install mssql-tools18 unixodbc-dev
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          # curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
+          # curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
+          # echo  >> /etc/apt/sources.list
+          # curl -sL https://packages.microsoft.com/config/ubuntu/20.04/prod.list >> /etc/apt/sources.list
+          # echo  >> /etc/apt/sources.list
+          # apt-get update -qq
+          # ACCEPT_EULA=y apt-get install -qqy mssql-tools mssql-server --no-install-recommends
           curl -sL https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py > /usr/bin/systemctl
           chmod +x /usr/bin/systemctl 
           MSSQL_PID=Express ACCEPT_EULA=Y MSSQL_SA_PASSWORD='YourStrong#Passw0rd' /opt/mssql/bin/mssql-conf -n setup
