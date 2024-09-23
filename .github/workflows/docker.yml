@@ -39,9 +39,7 @@ jobs:
           apt-get update -qq
           apt-get install -qqy curl gnupg2 python3 ca-certificates libgdiplus libicu66 --no-install-recommends -y
           curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
-          apt-get install software-properties-common -y
-          apt-get update -y
-          add-apt-repository "$(wget -qO- https://packages.microsoft.com/config/ubuntu/16.04/mssql-server-preview.list)"
+          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
           apt-get update -y
           apt-get install mssql-tools unixodbc-dev -y
           curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
