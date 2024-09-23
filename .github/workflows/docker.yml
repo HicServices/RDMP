@@ -1,8 +1,6 @@
 name: Build RDMP Docker Image
 on:
-  push:
-    tags:
-      - '*'
+  push
 
 jobs:
   build:
@@ -47,6 +45,7 @@ jobs:
           echo  >> /etc/apt/sources.list
           apt-get update -qq
           ACCEPT_EULA=y apt-get install -qqy mssql-tools mssql-server --no-install-recommends
+          sudo /opt/mssql/bin/mssql-conf setup
           curl -sL https://raw.githubusercontent.com/gdraheim/docker-systemctl-replacement/master/files/docker/systemctl3.py > /usr/bin/systemctl
           chmod +x /usr/bin/systemctl 
           MSSQL_PID=Express ACCEPT_EULA=Y MSSQL_SA_PASSWORD='YourStrong#Passw0rd' /opt/mssql/bin/mssql-conf -n setup
