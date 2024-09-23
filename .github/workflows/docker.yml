@@ -39,7 +39,7 @@ jobs:
           apt-get update -qq
           apt-get install -qqy curl gnupg2 python3 ca-certificates libgdiplus libicu66 --no-install-recommends -y
           echo "RDMP:A"
-          curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list | tee /etc/apt/sources.list.d/msprod.list
+          curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
           echo "RDMP:B"
           curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
           echo "RDMP:C"
