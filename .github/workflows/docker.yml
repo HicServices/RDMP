@@ -38,10 +38,10 @@ jobs:
           set -e
           apt-get update -qq
           apt-get install -qqy curl gnupg2 python3 ca-certificates libgdiplus libicu66 --no-install-recommends
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
-          sudo apt-get update
-          sudo apt-get install mssql-tools18 unixodbc-dev
-          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          curl https://packages.microsoft.com/keys/microsoft.asc | tee /etc/apt/trusted.gpg.d/microsoft.asc
+          apt-get update
+          apt-get install mssql-tools18 unixodbc-dev
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | tee /etc/apt/sources.list.d/mssql-release.list
           # curl -sL https://packages.microsoft.com/keys/microsoft.asc | APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1 apt-key add -
           # curl -sL https://packages.microsoft.com/config/ubuntu/20.04/mssql-server-preview.list >> /etc/apt/sources.list
           # echo  >> /etc/apt/sources.list
