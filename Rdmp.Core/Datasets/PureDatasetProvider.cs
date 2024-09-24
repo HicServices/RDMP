@@ -14,7 +14,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
-
+using System.Net;
 namespace Rdmp.Core.Datasets
 {
     public class PureDatasetProvider : PluginDatasetProvider
@@ -35,7 +35,7 @@ namespace Rdmp.Core.Datasets
         {
             var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            return response.StatusCode == System.Net.HttpStatusCode.OK;
+            return response.StatusCode == HttpStatusCode.OK;
         }
 
         public override void AddExistingDataset(string name, string url)
@@ -66,7 +66,7 @@ namespace Rdmp.Core.Datasets
         {
             var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception("Error");
             }
@@ -79,6 +79,7 @@ namespace Rdmp.Core.Datasets
         public override Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
         {
             var dataset = Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
+            FetchPureDataset(dataset);
             //if (dataset is null)
             //{
             //    throw new Exception("Unable to find local dataset with ID");
