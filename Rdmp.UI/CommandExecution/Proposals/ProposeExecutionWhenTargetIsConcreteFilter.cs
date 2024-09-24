@@ -25,7 +25,16 @@ internal class ProposeExecutionWhenTargetIsConcreteFilter : RDMPCommandExecution
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target,
-        InsertOption insertOption = InsertOption.Default) =>
+        InsertOption insertOption = InsertOption.Default)
+    {
+        //DO reorder here, see ProposeExecutionWhenTargetIsAggregateConfiguration for example
+
+        return cmd switch
+        {
+            _ => null
+        };
+        //return null;
+    }
         //currently nothing can be dropped onto a filter
-        null;
+        //null;
 }
