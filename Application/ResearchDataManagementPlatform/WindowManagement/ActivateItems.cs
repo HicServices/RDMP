@@ -375,7 +375,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         var floatable = WindowFactory.Create(this, RefreshBus, uiInstance, tabImage, databaseObject);
 
         int? insertIndex = null;
-        var panel = _mainDockPanel.Panes.Where(p => p.IsActiveDocumentPane).FirstOrDefault();
+        var panel = _mainDockPanel.Panes.Where(p => p.IsActiveDocumentPane).SingleOrDefault();
         if (panel is not null)
         {
             var contents = panel.Contents;
@@ -383,8 +383,6 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
         }
 
         floatable.Show(_mainDockPanel, DockState.Document);
-        var activeDocument = _mainDockPanel.ActiveDocument;
-
 
         uiInstance.SetDatabaseObject(this, databaseObject);
 
