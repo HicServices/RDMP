@@ -128,6 +128,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\083_AddGroupBy.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
 		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
 		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -253,6 +254,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\078_AddLastLoadTimeToLoadMetadata.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\082_AddCohortVersioning.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\083_AddGroupBy.sql" />

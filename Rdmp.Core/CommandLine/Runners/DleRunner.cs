@@ -8,6 +8,7 @@ using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -34,8 +35,10 @@ namespace Rdmp.Core.CommandLine.Runners;
 public class DleRunner : Runner
 {
     private readonly DleOptions _options;
-    public DleRunner(DleOptions options)
+    private readonly IBasicActivateItems _activator;
+    public DleRunner(IBasicActivateItems activator, DleOptions options)
     {
+        _activator = activator;
         _options = options;
     }
     public override int Run(IRDMPPlatformRepositoryServiceLocator locator, IDataLoadEventListener listener,
@@ -61,7 +64,7 @@ public class DleRunner : Runner
             DoMigrateFromStagingToLive = !_options.StopAfterSTAGING
         };
 
-        var checkable = new CheckEntireDataLoadProcess(loadMetadata, databaseConfiguration, flags);
+        var checkable = new CheckEntireDataLoadProcess(_activator,loadMetadata, databaseConfiguration, flags);
 
         switch (_options.Command)
         {

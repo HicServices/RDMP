@@ -72,7 +72,7 @@ public class DataLoadProcess : IDataLoadProcess, IDataLoadOperation
             return ExitCodeType.OperationNotRequired;
 
         job.Payload = payload;
-        job.PersistentRaw = Rdmp.Core.Curation.Data.DataLoad.LoadMetadata.UsesPersistentRaw(LoadMetadata);
+        job.PersistentRaw = Curation.Data.DataLoad.LoadMetadata.UsesPersistentRaw(LoadMetadata);
 
         return LoadExecution.Run(job, loadCancellationToken);
     }
