@@ -26,6 +26,10 @@ ADD [Provider] [int] NULL;
 ALTER TABLE [dbo].[Dataset]
 ADD [Url] [varchar](500) NULL;
 ALTER TABLE [dbo].[Dataset]
-ADD FOREIGN KEY (Provider) REFERENCES DatasetProviderConfiguration(ID);
+ADD [Type] [varchar](500) NULL;
+ALTER TABLE [dbo].[Dataset]
+ADD [Provider_ID] [int] NULL;
+ALTER TABLE [dbo].[Dataset]
+ADD FOREIGN KEY (Provider_ID) REFERENCES DatasetProviderConfiguration(ID);
 END
 GO

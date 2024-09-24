@@ -1,4 +1,5 @@
-﻿using Rdmp.Core.Curation.Data.Datasets;
+﻿using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 {
     protected DatasetProviderConfiguration Configuration { get; }
     protected ICatalogueRepository Repository { get; }
+    protected IBasicActivateItems Activator { get; }
 
-    protected PluginDatasetProvider(ICatalogueRepository repository, DatasetProviderConfiguration configuration)
+    protected PluginDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration)
     {
         Configuration = configuration;
-        Repository = repository;
+        Activator = activator;
+        Repository = activator.RepositoryLocator.CatalogueRepository;
     }
 
     public abstract Curation.Data.Datasets.Dataset FetchDatasetByID(int id);

@@ -1,10 +1,14 @@
 ﻿using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
+using Newtonsoft.Json;
 using NPOI.SS.Formula.Functions;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -17,13 +21,12 @@ namespace Rdmp.Core.Datasets
     {
         private HttpClient _client;
 
-        public PureDatasetProvider(ICatalogueRepository repository,DatasetProviderConfiguration configuration) : base(repository, configuration)
+        public PureDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
         {
             _client = new HttpClient();
-            var credentials = repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
+            var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
             var apiKey = credentials.GetDecryptedPassword();
             _client.DefaultRequestHeaders.Add("api-key", apiKey);
-            //FetchDatasets();
         }
 
         private string UrltoUUID(string url) => url.Split("/").Last();
@@ -42,9 +45,11 @@ namespace Rdmp.Core.Datasets
                 var dataset = new Curation.Data.Datasets.Dataset(Repository, name)
                 {
                     Url = url,
-                    Type = this.ToString()
+                    Type = this.ToString(),
+                    Provider_ID = Configuration.ID
                 };
                 dataset.SaveToDatabase();
+                Activator.Publish(dataset);
             }
             else
             {
@@ -57,9 +62,50 @@ namespace Rdmp.Core.Datasets
             throw new NotImplementedException();
         }
 
+        private PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
+        {
+            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
+            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                throw new Exception("Error");
+            }
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+            return pd;
+        }
+
+
         public override Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
         {
-            return null;
+            var dataset = Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
+            //if (dataset is null)
+            //{
+            //    throw new Exception("Unable to find local dataset with ID");
+            //}
+            //if (dataset.Type != this.ToString())
+            //{
+            //    var x = this.ToString();
+            //    throw new Exception("Dataset is of the wrong type");
+            //}
+            //if (dataset.Provider_ID is null)
+            //{
+            //    throw new Exception("No provider specified");
+            //}
+            //var provider = Repository.GetAllObjectsWhere<DatasetProviderConfiguration>("ID", dataset.Provider_ID).FirstOrDefault();
+            //if (provider is null)
+            //{
+            //    throw new Exception("Unable to locate provider");
+            //}
+            //var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
+            //var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
+            //{
+            //    throw new Exception("Error");
+            //}
+            //var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            //PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+            return dataset;
         }
 
         public override List<Curation.Data.Datasets.Dataset> FetchDatasets()

@@ -11,6 +11,8 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Datasets;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI;
@@ -44,6 +46,12 @@ public partial class HomeBoxUI : UserControl
         if (!_doneSetup)
         {
             _activator = activator;
+            //TESTING
+            //var x = new DatasetProviderConfiguration(repository, "pure", "TODO", "https://dundee-staging.elsevierpure.com/ws/api",AllDataAccessCredentials.First().ID, "ea4354b7-2253-4ca6-add0-e78220794087");
+            //x.SaveToDatabase();
+            var y = new PureDatasetProvider(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
+            y.FetchDatasetByID(10);
+            //y.AddExistingDataset("Test", "https://dundee-staging.elsevierpure.com/en/datasets/8ae76754-3fcb-467b-b269-675869470719");
             lblTitle.Text = title;
 
             btnNew.Image = FamFamFamIcons.add.ImageToBitmap();

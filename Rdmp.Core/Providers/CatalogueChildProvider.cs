@@ -271,12 +271,6 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllDataAccessCredentialsNode = new AllDataAccessCredentialsNode();
         AddChildren(AllDataAccessCredentialsNode);
 
-
-        //TESTING
-        var x = new DatasetProviderConfiguration(repository, "pure", "TODO", "https://dundee-staging.elsevierpure.com/ws/api",AllDataAccessCredentials.First().ID, "ea4354b7-2253-4ca6-add0-e78220794087");
-        x.SaveToDatabase();
-        var y  = new PureDatasetProvider(repository,repository.GetAllObjects<DatasetProviderConfiguration>().First());
-        y.AddExistingDataset("Test", "https://dundee-staging.elsevierpure.com/en/datasets/8ae76754-3fcb-467b-b269-675869470719");
         AllConnectionStringKeywordsNode = new AllConnectionStringKeywordsNode();
         AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
         AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords),

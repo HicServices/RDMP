@@ -28,7 +28,7 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
             {"Type",type},
             {"URL",url},
             {"DataAccessCredentials_ID",dataAccessCredentialsID },
-            {"Oranisation_ID", organisationId }
+            {"Organisation_ID", organisationId }
         });
     }
 
