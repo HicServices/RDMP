@@ -373,8 +373,25 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
 
         var uiInstance = new T();
         var floatable = WindowFactory.Create(this, RefreshBus, uiInstance, tabImage, databaseObject);
+
+        int? insertIndex = null;
+        var panel = _mainDockPanel.Panes.Where(p => p.IsActiveDocumentPane).FirstOrDefault();
+        if (panel is not null)
+        {
+            var contents = panel.Contents;
+            insertIndex = contents.IndexOf(panel.ActiveContent)+1;
+        }
+
         floatable.Show(_mainDockPanel, DockState.Document);
+        var activeDocument = _mainDockPanel.ActiveDocument;
+
+
         uiInstance.SetDatabaseObject(this, databaseObject);
+
+        if (insertIndex is not null)
+        {
+            _mainDockPanel.ActivePane.SetContentIndex(floatable, (int)insertIndex);
+        }
 
         SetTabText(floatable, uiInstance);
 
@@ -436,32 +453,32 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             case IObjectCollectionControl uiCollection:
                 return Activate(uiCollection, instruction.ObjectCollection);
             case IRDMPSingleDatabaseObjectControl uiInstance:
-            {
-                var databaseObject = instruction.DatabaseObject;
-
-                //the database object is gone? deleted maybe
-                if (databaseObject == null)
-                    return null;
-
-                DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
-                    CoreIconProvider.GetImage(databaseObject), databaseObject);
-
-                floatable.Show(_mainDockPanel, DockState.Document);
-                try
                 {
-                    uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
-                    SetTabText(floatable, uiInstance);
-                }
-                catch (Exception e)
-                {
-                    floatable.Close();
-                    throw new Exception(
-                        $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
-                        e);
-                }
+                    var databaseObject = instruction.DatabaseObject;
 
-                return floatable;
-            }
+                    //the database object is gone? deleted maybe
+                    if (databaseObject == null)
+                        return null;
+
+                    DockContent floatable = WindowFactory.Create(this, RefreshBus, uiInstance,
+                        CoreIconProvider.GetImage(databaseObject), databaseObject);
+
+                    floatable.Show(_mainDockPanel, DockState.Document);
+                    try
+                    {
+                        uiInstance.SetDatabaseObject(this, (DatabaseEntity)databaseObject);
+                        SetTabText(floatable, uiInstance);
+                    }
+                    catch (Exception e)
+                    {
+                        floatable.Close();
+                        throw new Exception(
+                            $"SetDatabaseObject failed on Control of Type '{instruction.UIControlType.Name}', control closed, see inner Exception for details",
+                            e);
+                    }
+
+                    return floatable;
+                }
             default:
                 return (DockContent)activator.ShowWindow(c, true);
         }
@@ -833,7 +850,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public override IPipelineRunner GetPipelineRunner(DialogArgs args, IPipelineUseCase useCase, IPipeline pipeline)
     {
 
-        if(useCase is not null && pipeline is not null)
+        if (useCase is not null && pipeline is not null)
         {
             return new PipelineRunner(useCase, pipeline);
         }
@@ -868,7 +885,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
             return _mainDockPanel.Invoke(() =>
                 GetCohortHoldoutLookupRequest(externalCohortTable, project, cic));
 
-        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable,  cic);
+        var ui = new Rdmp.UI.CohortUI.CreateHoldoutLookup.CreateHoldoutLookupUI(this, externalCohortTable, cic);
 
         if (!string.IsNullOrWhiteSpace(cic.Description))
             ui.CohortDescription = $"{cic.Description} ({Environment.UserName} - {DateTime.Now})";
@@ -878,7 +895,7 @@ public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubs
     public override ICatalogue CreateAndConfigureCatalogue(ITableInfo tableInfo,
         ColumnInfo[] extractionIdentifierColumns, string initialDescription, IProject projectSpecific, string folder)
     {
-        if(extractionIdentifierColumns is not null)
+        if (extractionIdentifierColumns is not null)
         {
             return base.CreateAndConfigureCatalogue(tableInfo, extractionIdentifierColumns, initialDescription, projectSpecific, folder);
         }
