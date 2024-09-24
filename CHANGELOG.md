@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.3.1] - Unreleased
 
 - Improve Performance of regenerating problems with child providers
+- Update UI Tab opening Logic
 
 ## [8.3.0] - 2024-09-23
 
