@@ -141,6 +141,7 @@ public class DeployedExtractionFilter : ConcreteFilter
             FilterContainer_ID = null;
 
         ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
+        Order = int.Parse(r["Order"].ToString());
     }
 
     /// <summary>
