@@ -36,6 +36,7 @@ public class DeployedExtractionFilter : ConcreteFilter
 
     private int? _clonedFromExtractionFilterID;
     private int? _filterContainerID;
+    private int _order;
 
     /// <inheritdoc/>
     public override int? ClonedFromExtractionFilter_ID
@@ -69,7 +70,7 @@ public class DeployedExtractionFilter : ConcreteFilter
         ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value)
         : null;
 
-    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override int Order { get => _order; set => SetField(ref _order, value); }
 
     #endregion
 

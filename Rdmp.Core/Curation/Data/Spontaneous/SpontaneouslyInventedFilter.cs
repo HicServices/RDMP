@@ -22,6 +22,7 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
 {
     private readonly MemoryCatalogueRepository _repo;
     private readonly ISqlParameter[] _filterParametersIfAny;
+    private int _order =0;
 
     /// <summary>
     /// Creates a new temporary (unsaveable) filter in the given memory <paramref name="repo"/>
@@ -68,7 +69,7 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
         ? _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value)
         : null;
 
-    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override int Order { get => _order; set => SetField(ref _order, value); }
 
     public override ColumnInfo GetColumnInfoIfExists() => null;
 

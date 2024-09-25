@@ -40,6 +40,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
 
     private int _extractionInformationID;
     private Lazy<ExtractionFilterParameterSet[]> _knownExtractionFilterParameterSets;
+    private int _order;
 
     /// <summary>
     /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
@@ -133,6 +134,8 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         Description = r["Description"] as string;
         Name = r["Name"] as string;
         IsMandatory = (bool)r["IsMandatory"];
+        Order = int.Parse(r["Order"].ToString());
+
 
         ClearAllInjections();
     }
@@ -154,7 +157,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         set => throw new NotSupportedException(
             "ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
-    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public override int Order { get => _order; set => SetField(ref _order,value); }
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
