@@ -154,6 +154,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         set => throw new NotSupportedException(
             "ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
+    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()

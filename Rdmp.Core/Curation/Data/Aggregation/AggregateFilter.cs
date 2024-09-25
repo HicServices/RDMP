@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using NPOI.OpenXmlFormats.Dml.Chart;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -35,6 +36,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
     private int? _clonedFromExtractionFilterID;
     private int? _associatedColumnInfoID;
     private bool _isDisabled;
+    private int _order;
 
     /// <inheritdoc/>
     public override int? ClonedFromExtractionFilter_ID
@@ -90,6 +92,8 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         ? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value)
         : null;
 
+    public override int Order { get => _order; set => SetField(ref _order, value); }
+
     #endregion
 
     public AggregateFilter()
@@ -121,6 +125,7 @@ public class AggregateFilter : ConcreteFilter, IDisableable
         Name = r["Name"] as string;
         IsMandatory = (bool)r["IsMandatory"];
         ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
+        Order = int.Parse(r["Order"].ToString());
 
         var associatedColumnInfo_ID = r["AssociatedColumnInfo_ID"];
         if (associatedColumnInfo_ID != DBNull.Value)

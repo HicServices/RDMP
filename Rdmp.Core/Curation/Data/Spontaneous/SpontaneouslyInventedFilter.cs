@@ -68,6 +68,8 @@ public class SpontaneouslyInventedFilter : ConcreteFilter
         ? _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value)
         : null;
 
+    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     public override ColumnInfo GetColumnInfoIfExists() => null;
 
     public override IFilterFactory GetFilterFactory() => null;

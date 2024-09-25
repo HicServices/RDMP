@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <para>ConcreteFilter is used to provide UI editing of an IFilter without having to add persistence / DatabaseEntity logic to IFilter (which would break
 /// SpontaneouslyInventedFilters)</para>
 /// </summary>
-public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable
+public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable, IOrderable
 {
     /// <inheritdoc/>
     protected ConcreteFilter(IRepository repository, DbDataReader r) : base(repository, r)
@@ -100,6 +100,7 @@ public abstract class ConcreteFilter : DatabaseEntity, IFilter, ICheckable
     /// <inheritdoc cref="FilterContainer_ID"/>
     [NoMappingToDatabase]
     public abstract IContainer FilterContainer { get; }
+    public abstract int Order { get; set; }
 
     #endregion
 

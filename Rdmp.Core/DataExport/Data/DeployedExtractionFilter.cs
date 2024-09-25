@@ -69,6 +69,8 @@ public class DeployedExtractionFilter : ConcreteFilter
         ? Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value)
         : null;
 
+    public override int Order { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
     #endregion
 
     /// <inheritdoc/>
