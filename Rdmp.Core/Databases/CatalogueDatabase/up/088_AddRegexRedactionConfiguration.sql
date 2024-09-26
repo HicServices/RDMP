@@ -1,4 +1,4 @@
-﻿--Version: 8.2.4
+﻿--Version: 8.4.0
 --Description: Add configuration for regex redaction
 
 
