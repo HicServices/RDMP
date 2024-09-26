@@ -58,30 +58,20 @@ namespace Rdmp.Core.Datasets
             }
         }
 
-        public override Curation.Data.Datasets.Dataset Create()
+        public Curation.Data.Datasets.Dataset Create(string title, string publisherUid, List<PurePerson> people, Visibility visibility, PureDate publicationDate)
         {
             //this works but i'm not sure it's linking up with the person correctly
 
             var pureDataset = new PureDataset();
-            pureDataset.Title = new ENGBWrapper("Test from API create");
+            pureDataset.Title = new ENGBWrapper(title);
             pureDataset.ManagingOrganization = new System(Configuration.Organisation_ID, "Organization");
             pureDataset.Type = new URITerm("/dk/atira/pure/dataset/datasettypes/dataset/dataset", new ENGBWrapper("Dataset"));
-            pureDataset.Publisher = new System("6c6a0126-6ad7-45dc-8a94-7619a384f92e", "Publisher");
+            pureDataset.Publisher = new System(publisherUid, "Publisher");
 
-            var person = new PurePerson();
-            person.TypeDiscriminator = "InternalDataSetPersonAssociation";
-            person.PureID = 135523720;
-            var name = new Name();
-            name.FirstName = "James";
-            name.LastName = "Friel";
-            person.Name = name;
-            person.Role = new URITerm("/dk/atira/pure/dataset/roles/dataset/creator", new ENGBWrapper("Creator"));
-            person.Organizations = new List<System>() { new System(Configuration.Organisation_ID, "Organization") };
-
-            pureDataset.Persons = [person];
-            pureDataset.Visibility = new Visibility("FREE", new ENGBWrapper("Public - No restriction"));
+            pureDataset.Persons = people;
+            pureDataset.Visibility = visibility;
             pureDataset.Organizations = [new System(Configuration.Organisation_ID, "Organization")];
-            pureDataset.PublicationAvailableDate = new PureDate(2024, null, null);
+            pureDataset.PublicationAvailableDate = publicationDate;
 
             var serializeOptions = new JsonSerializerOptions
             {
@@ -108,6 +98,25 @@ namespace Rdmp.Core.Datasets
             return dataset;
         }
 
+        public void Update(string uuid, PureDataset datasetUpdates)
+        {
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+
+            var jsonString = JsonSerializer.Serialize(datasetUpdates, serializeOptions);
+            var uri = $"{Configuration.Url}/data-sets/{uuid}";
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                throw new Exception("Error");
+            }
+        }
+
         public PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
         {
             var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
@@ -125,60 +134,20 @@ namespace Rdmp.Core.Datasets
         public override Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
         {
             var dataset = Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
-            FetchPureDataset(dataset);
-            //if (dataset is null)
-            //{
-            //    throw new Exception("Unable to find local dataset with ID");
-            //}
-            //if (dataset.Type != this.ToString())
-            //{
-            //    var x = this.ToString();
-            //    throw new Exception("Dataset is of the wrong type");
-            //}
-            //if (dataset.Provider_ID is null)
-            //{
-            //    throw new Exception("No provider specified");
-            //}
-            //var provider = Repository.GetAllObjectsWhere<DatasetProviderConfiguration>("ID", dataset.Provider_ID).FirstOrDefault();
-            //if (provider is null)
-            //{
-            //    throw new Exception("Unable to locate provider");
-            //}
-            //var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
-            //var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            //if (response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-            //    throw new Exception("Error");
-            //}
-            //var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            //PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
             return dataset;
         }
 
         public override List<Curation.Data.Datasets.Dataset> FetchDatasets()
         {
-            ////TODO will have to think about paginations
-            //var uri = $"{Configuration.Url}/data-sets";
-            //var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            //if(response.StatusCode != System.Net.HttpStatusCode.OK)
-            //{
-            //    throw new Exception("Error");
-            //}
-            //var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            //var jsonObjects = JsonObject.Parse(detailsString);
-            //foreach(var item in jsonObjects.AsObject()) {
-
-            //    if (item.Key == "items")
-            //    {
-            //        Console.WriteLine(item.ToString());
-            //        //the values here are the datasets
-            //    }
-            //}
-            return new List<Curation.Data.Datasets.Dataset>();
-
+            return Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("Provider_ID", Configuration.ID).ToList();
         }
 
         public override Curation.Data.Datasets.Dataset Update()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override Curation.Data.Datasets.Dataset Create()
         {
             throw new NotImplementedException();
         }

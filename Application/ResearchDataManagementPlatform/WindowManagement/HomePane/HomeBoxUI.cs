@@ -45,8 +45,6 @@ public partial class HomeBoxUI : UserControl
 
         if (!_doneSetup)
         {
-            var x = new PureDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
-            x.Create();
             _activator = activator;
             lblTitle.Text = title;
 

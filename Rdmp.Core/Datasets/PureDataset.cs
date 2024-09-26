@@ -89,6 +89,15 @@ public class Workflow
 public class Geolocation
 {
     public ENGBWrapper? GeographicalCoverage { get; set; }
+    public string? Point { get; set; }
+
+    public string? Polygon { get; set; }
+}
+
+public class TemporalcoveragePeriod
+{
+    public PureDate? StartDate { get; set; }
+    public PureDate? EndDate { get; set; }
 }
 
 public class PureDataset : PluginDataset
@@ -158,8 +167,12 @@ public class PureDataset : PluginDataset
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? SystemName { get; set; }
-#nullable disable
 
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+
+    public TemporalcoveragePeriod? TemporalcoveragePeriod { get; set; }
+
+#nullable disable
 
     public PureDataset() { }
 

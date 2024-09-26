@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
@@ -41,10 +42,10 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
         Organisation_ID = r["Organisation_ID"].ToString();
     }
 
-    public string Type
+
+    public override string ToString()
     {
-        get => _type;
-        set => SetField(ref _type, value);
+        return _name;
     }
 
     public string Name
@@ -53,6 +54,14 @@ public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConf
         set => SetField(ref _name, value);
     }
 
+
+    public string Type
+    {
+        get => _type;
+        set => SetField(ref _type, value);
+    }
+
+   
     public string Url
     {
         get => _url;

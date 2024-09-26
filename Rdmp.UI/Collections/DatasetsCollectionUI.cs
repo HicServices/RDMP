@@ -34,7 +34,9 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
             a => new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewDatasetUI(Activator)
-                    { OverrideCommandName = "Add New Dataset", Weight = -50.9f }
+                    { OverrideCommandName = "Add New Dataset", Weight = -50.9f },
+                 new ExecuteCommandCreateNewPureDatasetUI(Activator)
+                    { OverrideCommandName = "Add New Pure Dataset", Weight = -50.9f }
             };
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvDatasets.AddObject(activator.CoreChildProvider.DatasetRootFolder);
