@@ -1,110 +1,164 @@
 ﻿using Amazon.Auth.AccessControlPolicy.ActionIdentifiers;
 using SynthEHR;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Rdmp.Core.Datasets;
+#nullable enable
 
 public class ENGBWrapper
 {
-    public string en_GB { get; set; }
+    public ENGBWrapper(string? text) { en_GB = text; }
+    public string? en_GB { get; set; }
 }
 
 public class URITerm
 {
-    public string URI { get; set; }
+    public URITerm(string? uri, ENGBWrapper enGBWrapper)
+    {
+        URI = uri;
+        term = enGBWrapper;
+    }
+    public string? URI { get; set; }
     public ENGBWrapper term { get; set; }
 }
 public class PureDescription
 {
-    public string PureID { get; set; }
-    public ENGBWrapper Value { get; set; }
+    public int? PureID { get; set; }
+    public ENGBWrapper? Value { get; set; }
 }
 
 public class System
 {
-    public string SystemName { get; set; }
-    public string UUID { get; set; }
+    public System(string? uuid, string? systemName)
+    {
+        UUID = uuid;
+        SystemName = systemName;
+    }
+    public string? SystemName { get; set; }
+    public string? UUID { get; set; }
 }
 
 public class Name()
 {
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
 }
 
 public class PurePerson
 {
-    public string TypeDiscriminator { get; set; }
-    public string PureID { get; set; }
+    public string? TypeDiscriminator { get; set; }
+    public int? PureID { get; set; }
 
-    public Name Name { get; set; }
-    public URITerm Role { get; set; }
+    public Name? Name { get; set; }
+    public URITerm? Role { get; set; }
 
-    public List<System> Organizations { get; set; }
+    public List<System>? Organizations { get; set; }
 }
 
 public class PureDate
 {
+    public PureDate(int year, int? month = null, int? day = null)
+    {
+        Year = year;
+        if (month != null) Month = month;
+        if (day != null) Day = day;
+    }
     public int Year { get; set; }
-    public int Month { get; set; }
-    public int Day { get; set; }
+    public int? Month { get; set; }
+    public int? Day { get; set; }
 }
 
-public class Visability
+public class Visibility
 {
-    public string Key { get; set; }
+    public Visibility(string? key, ENGBWrapper description)
+    {
+        Key = key;
+        Description = description;
+    }
+    public string? Key { get; set; }
     public ENGBWrapper Description { get; set; }
 }
 
 public class Workflow
 {
-    public string Step { get; set; }
-    public ENGBWrapper Description { get; set; }
+    public string? Step { get; set; }
+    public ENGBWrapper? Description { get; set; }
 }
 
 public class Geolocation
 {
-    public ENGBWrapper GeographicalCoverage { get; set; }
+    public ENGBWrapper? GeographicalCoverage { get; set; }
 }
 
 public class PureDataset : PluginDataset
 {
-    public int PureID { get; set; }
-    public string UUID { get; set; }
-    public string CreatedDate { get; set; }
-    public string CreatedBy { get; set; }
-    public string ModifiedDate { get; set; }
-    public string ModifiedBy { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public int? PureID { get; set; }
 
-    public string PortalURL { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? UUID { get; set; }
 
-    public string Version { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? CreatedDate { get; set; }
 
-    public ENGBWrapper Title { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
-    public List<PureDescription> Descriptions { get; set; }
-    public System ManagingOrganisation { get; set; }
+    public string? CreatedBy { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
-    public new URITerm Type { get; set; }
+    public string? ModifiedDate { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
-    public System Publisher { get; set; }
+    public string? ModifiedBy { get; set; }
 
-    public Geolocation Geolocation { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? PortalURL { get; set; }
 
-    public List<PurePerson> Persons { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Version { get; set; }
 
-    public List<System> Organizations { get; set; }
-    public PureDate PublicationAvailableDate { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ENGBWrapper? Title { get; set; }
 
-    public bool OpenAireCompliant { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<PureDescription>? Descriptions { get; set; }
 
-    public Visability Visability { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public System? ManagingOrganization { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public new URITerm? Type { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public System? Publisher { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Geolocation? Geolocation { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<PurePerson>? Persons { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public List<System>? Organizations { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public PureDate? PublicationAvailableDate { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public bool? OpenAireCompliant { get; set; }
+
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Visibility? Visibility { get; set; }
 
     //TODO custom defined fields
 
-    public Workflow Workflow { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public Workflow? Workflow { get; set; }
 
-    public string SystemName { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? SystemName { get; set; }
+#nullable disable
 
 
     public PureDataset() { }

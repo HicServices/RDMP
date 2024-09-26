@@ -41,11 +41,12 @@ public partial class HomeBoxUI : UserControl
         params IAtomicCommand[] newCommands)
     {
         _openType = openType;
-        var x = new PureDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
-        x.AddExistingDataset("Real", "https://dundee-staging.elsevierpure.com/en/datasets/2e44c728-6076-49de-8cdb-5c35c1b586a6");
+
 
         if (!_doneSetup)
         {
+            var x = new PureDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
+            x.Create();
             _activator = activator;
             lblTitle.Text = title;
 
@@ -62,9 +63,9 @@ public partial class HomeBoxUI : UserControl
             btnOpen.Click += (s, e) =>
             {
                 if (activator.SelectObject(new DialogArgs
-                {
-                    WindowTitle = "Open"
-                }, activator.GetAll(openType).ToArray(), out var selected))
+                    {
+                        WindowTitle = "Open"
+                    }, activator.GetAll(openType).ToArray(), out var selected))
                     Open(selected);
             };
 

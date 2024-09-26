@@ -11,10 +11,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json.Nodes;
 using System.Threading.Tasks;
+using System.Text.Json;
 using System.Net;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+using System.Text;
 namespace Rdmp.Core.Datasets
 {
     public class PureDatasetProvider : PluginDatasetProvider
@@ -59,7 +60,52 @@ namespace Rdmp.Core.Datasets
 
         public override Curation.Data.Datasets.Dataset Create()
         {
-            throw new NotImplementedException();
+            //this works but i'm not sure it's linking up with the person correctly
+
+            var pureDataset = new PureDataset();
+            pureDataset.Title = new ENGBWrapper("Test from API create");
+            pureDataset.ManagingOrganization = new System(Configuration.Organisation_ID, "Organization");
+            pureDataset.Type = new URITerm("/dk/atira/pure/dataset/datasettypes/dataset/dataset", new ENGBWrapper("Dataset"));
+            pureDataset.Publisher = new System("6c6a0126-6ad7-45dc-8a94-7619a384f92e", "Publisher");
+
+            var person = new PurePerson();
+            person.TypeDiscriminator = "InternalDataSetPersonAssociation";
+            person.PureID = 135523720;
+            var name = new Name();
+            name.FirstName = "James";
+            name.LastName = "Friel";
+            person.Name = name;
+            person.Role = new URITerm("/dk/atira/pure/dataset/roles/dataset/creator", new ENGBWrapper("Creator"));
+            person.Organizations = new List<System>() { new System(Configuration.Organisation_ID, "Organization") };
+
+            pureDataset.Persons = [person];
+            pureDataset.Visibility = new Visibility("FREE", new ENGBWrapper("Public - No restriction"));
+            pureDataset.Organizations = [new System(Configuration.Organisation_ID, "Organization")];
+            pureDataset.PublicationAvailableDate = new PureDate(2024, null, null);
+
+            var serializeOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                WriteIndented = true
+            };
+
+            var jsonString = JsonSerializer.Serialize(pureDataset, serializeOptions);
+
+            var uri = $"{Configuration.Url}/data-sets";
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
+            if (response.StatusCode != HttpStatusCode.Created)
+            {
+                throw new Exception("Error");
+            }
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+            var dataset = new Curation.Data.Datasets.Dataset(Repository, pureDataset.Title.en_GB);
+            dataset.Provider_ID = Configuration.ID;
+            dataset.Url = pd.PortalURL;
+            dataset.SaveToDatabase();
+            return dataset;
         }
 
         public PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
