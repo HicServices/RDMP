@@ -41,7 +41,8 @@ public partial class HomeBoxUI : UserControl
         params IAtomicCommand[] newCommands)
     {
         _openType = openType;
-
+        var x = new PureDatasetProvider(activator, activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
+        x.AddExistingDataset("Real", "https://dundee-staging.elsevierpure.com/en/datasets/2e44c728-6076-49de-8cdb-5c35c1b586a6");
 
         if (!_doneSetup)
         {
