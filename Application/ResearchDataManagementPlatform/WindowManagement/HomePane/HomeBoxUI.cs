@@ -46,12 +46,6 @@ public partial class HomeBoxUI : UserControl
         if (!_doneSetup)
         {
             _activator = activator;
-            //TESTING
-            //var x = new DatasetProviderConfiguration(repository, "pure", "TODO", "https://dundee-staging.elsevierpure.com/ws/api",AllDataAccessCredentials.First().ID, "ea4354b7-2253-4ca6-add0-e78220794087");
-            //x.SaveToDatabase();
-            var y = new PureDatasetProvider(_activator, _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DatasetProviderConfiguration>().First());
-            y.FetchDatasetByID(10);
-            //y.AddExistingDataset("Test", "https://dundee-staging.elsevierpure.com/en/datasets/8ae76754-3fcb-467b-b269-675869470719");
             lblTitle.Text = title;
 
             btnNew.Image = FamFamFamIcons.add.ImageToBitmap();
@@ -67,9 +61,9 @@ public partial class HomeBoxUI : UserControl
             btnOpen.Click += (s, e) =>
             {
                 if (activator.SelectObject(new DialogArgs
-                    {
-                        WindowTitle = "Open"
-                    }, activator.GetAll(openType).ToArray(), out var selected))
+                {
+                    WindowTitle = "Open"
+                }, activator.GetAll(openType).ToArray(), out var selected))
                     Open(selected);
             };
 

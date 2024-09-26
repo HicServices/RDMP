@@ -29,7 +29,7 @@ namespace Rdmp.Core.Datasets
             _client.DefaultRequestHeaders.Add("api-key", apiKey);
         }
 
-        private string UrltoUUID(string url) => url.Split("/").Last();
+        public static string UrltoUUID(string url) => url.Split("/").Last();
 
         private bool CheckDatasetExistsAtURL(string url)
         {
@@ -62,7 +62,7 @@ namespace Rdmp.Core.Datasets
             throw new NotImplementedException();
         }
 
-        private PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
+        public PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
         {
             var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;

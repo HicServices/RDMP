@@ -49,6 +49,7 @@
             lblTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             lblTitle.ForeColor = System.Drawing.SystemColors.Desktop;
             lblTitle.Location = new System.Drawing.Point(0, 0);
+            lblTitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             lblTitle.Name = "lblTitle";
             lblTitle.Size = new System.Drawing.Size(71, 33);
             lblTitle.TabIndex = 1;
@@ -59,7 +60,7 @@
             toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnNew, btnNewDropdown, toolStripSeparator1, btnOpen });
             toolStrip1.Location = new System.Drawing.Point(0, 33);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new System.Drawing.Size(480, 25);
+            toolStrip1.Size = new System.Drawing.Size(560, 25);
             toolStrip1.TabIndex = 2;
             toolStrip1.Text = "toolStrip1";
             // 
@@ -100,15 +101,14 @@
             olvRecent.AllColumns.Add(olvName);
             olvRecent.CellEditUseWholeCell = false;
             olvRecent.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName });
-            olvRecent.Cursor = System.Windows.Forms.Cursors.Default;
             olvRecent.Dock = System.Windows.Forms.DockStyle.Fill;
             olvRecent.FullRowSelect = true;
-            olvRecent.HideSelection = false;
             olvRecent.Location = new System.Drawing.Point(0, 58);
+            olvRecent.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             olvRecent.Name = "olvRecent";
             olvRecent.RowHeight = 19;
             olvRecent.ShowGroups = false;
-            olvRecent.Size = new System.Drawing.Size(480, 441);
+            olvRecent.Size = new System.Drawing.Size(560, 518);
             olvRecent.TabIndex = 3;
             olvRecent.UseCompatibleStateImageBehavior = false;
             olvRecent.View = System.Windows.Forms.View.Details;
@@ -122,13 +122,14 @@
             // 
             // HomeBoxUI
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             Controls.Add(olvRecent);
             Controls.Add(toolStrip1);
             Controls.Add(lblTitle);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             Name = "HomeBoxUI";
-            Size = new System.Drawing.Size(480, 499);
+            Size = new System.Drawing.Size(560, 576);
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)olvRecent).EndInit();
