@@ -141,6 +141,7 @@ CREATE TABLE [dbo].[AggregateFilter](
 	[AssociatedColumnInfo_ID] [int] NULL,
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
+	[Order] [int] NOT NULL DEFAULT 0
  CONSTRAINT [PK_AggregateFilter] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -464,6 +465,7 @@ CREATE TABLE [dbo].[ExtractionFilter](
 	[Name] [varchar](100) NOT NULL,
 	[IsMandatory] [bit] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
+	[Order] [int] NOT NULL DEFAULT 0
  CONSTRAINT [PK_ExtractionFilter] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
@@ -598,6 +600,7 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[CacheFilenameDateFormat] [varchar](20) NOT NULL,
 	[CacheArchiveType] [int] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
+	[AllowReservedPrefix] [bit] NOT NULL default 0,
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

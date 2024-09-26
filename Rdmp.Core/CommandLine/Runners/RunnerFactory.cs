@@ -21,7 +21,7 @@ public class RunnerFactory
             ? throw new Exception($"No command has been set on '{command.GetType().Name}'")
             : command switch
             {
-                DleOptions dleOpts => new DleRunner(dleOpts),
+                DleOptions dleOpts => new DleRunner(activator,dleOpts),
                 DqeOptions dqeOpts => new DqeRunner(dqeOpts),
                 CacheOptions cacheOpts => new CacheRunner(cacheOpts),
                 ExtractionOptions extractionOpts => new ExtractionRunner(activator, extractionOpts),

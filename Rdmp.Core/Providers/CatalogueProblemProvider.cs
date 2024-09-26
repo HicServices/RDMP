@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -43,18 +44,13 @@ public class CatalogueProblemProvider : ProblemProvider
         _childProvider = childProvider;
 
         //Take all the catalogue items which DON'T have an associated ColumnInfo (should hopefully be quite rare)
-        var orphans = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null);
-
-        //now identify those which have an ExtractionInformation (that's a problem! they are extractable but orphaned)
-        _orphanCatalogueItems = new HashSet<int>(
-            orphans.Where(o => _childProvider.AllExtractionInformations.Any(ei => ei.CatalogueItem_ID == o.ID))
-
-                //store just the ID for performance
-                .Select(i => i.ID));
-
+        var catalogueIDs = _childProvider.AllCatalogueItems.Where(ci => ci.ColumnInfo_ID == null).Select(i => i.ID).ToList();
+        var extractionInfoIDs = _childProvider.AllExtractionInformations.Select(ei => ei.CatalogueItem_ID).ToList();
+        var orphans = catalogueIDs.Intersect(extractionInfoIDs);
+        _orphanCatalogueItems = orphans.ToHashSet<int>();
         _usedJoinables = new HashSet<int>(
-            childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
-                ju => ju.JoinableCohortAggregateConfiguration_ID));
+       childProvider.AllJoinableCohortAggregateConfigurationUse.Select(
+           ju => ju.JoinableCohortAggregateConfiguration_ID));
 
         _joinsWithMismatchedCollations = childProvider.AllJoinInfos.Where(j =>
             !string.IsNullOrWhiteSpace(j.PrimaryKey.Collation) &&
