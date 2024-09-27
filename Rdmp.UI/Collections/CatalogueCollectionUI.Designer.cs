@@ -12,7 +12,7 @@ namespace Rdmp.UI.Collections
         /// </summary>
         private IContainer components = null;
 
-        
+
 
         #region Component Designer generated code
 
@@ -22,115 +22,121 @@ namespace Rdmp.UI.Collections
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CatalogueCollectionUI));
-            this.tlvCatalogues = new BrightIdeasSoftware.TreeListView();
-            this.olvColumn1 = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvFilters = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.imageList_RightClickIcons = new System.Windows.Forms.ImageList(this.components);
-            this.gbColdStorage = new System.Windows.Forms.GroupBox();
-            this.catalogueCollectionFilterUI1 = new Rdmp.UI.Collections.CatalogueCollectionFilterUI();
-            this.panel2 = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).BeginInit();
-            this.gbColdStorage.SuspendLayout();
-            this.panel2.SuspendLayout();
-            this.SuspendLayout();
+            components = new Container();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(CatalogueCollectionUI));
+            tlvCatalogues = new TreeListView();
+            olvColumn1 = new OLVColumn();
+            olvFilters = new OLVColumn();
+            olvOrder = new OLVColumn();
+            imageList_RightClickIcons = new ImageList(components);
+            gbColdStorage = new GroupBox();
+            catalogueCollectionFilterUI1 = new CatalogueCollectionFilterUI();
+            panel2 = new Panel();
+            tbFilter = new TextBox();
+            ((ISupportInitialize)tlvCatalogues).BeginInit();
+            gbColdStorage.SuspendLayout();
+            panel2.SuspendLayout();
+            SuspendLayout();
             // 
             // tlvCatalogues
             // 
-            this.tlvCatalogues.AllColumns.Add(this.olvColumn1);
-            this.tlvCatalogues.AllColumns.Add(this.olvFilters);
-            this.tlvCatalogues.AllColumns.Add(this.olvOrder);
-            this.tlvCatalogues.CellEditUseWholeCell = false;
-            this.tlvCatalogues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvColumn1});
-            this.tlvCatalogues.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvCatalogues.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvCatalogues.HideSelection = false;
-            this.tlvCatalogues.Location = new System.Drawing.Point(0, 0);
-            this.tlvCatalogues.Name = "tlvCatalogues";
-            this.tlvCatalogues.ShowGroups = false;
-            this.tlvCatalogues.Size = new System.Drawing.Size(500, 414);
-            this.tlvCatalogues.TabIndex = 0;
-            this.tlvCatalogues.Text = "label1";
-            this.tlvCatalogues.UseCompatibleStateImageBehavior = false;
-            this.tlvCatalogues.UseFiltering = true;
-            this.tlvCatalogues.View = System.Windows.Forms.View.Details;
-            this.tlvCatalogues.VirtualMode = true;
+            tlvCatalogues.AllColumns.Add(olvColumn1);
+            tlvCatalogues.AllColumns.Add(olvFilters);
+            tlvCatalogues.AllColumns.Add(olvOrder);
+            tlvCatalogues.CellEditUseWholeCell = false;
+            tlvCatalogues.Columns.AddRange(new ColumnHeader[] { olvColumn1 });
+            tlvCatalogues.Dock = DockStyle.Fill;
+            tlvCatalogues.Location = new System.Drawing.Point(0, 0);
+            tlvCatalogues.Name = "tlvCatalogues";
+            tlvCatalogues.ShowGroups = false;
+            tlvCatalogues.Size = new System.Drawing.Size(500, 414);
+            tlvCatalogues.TabIndex = 0;
+            tlvCatalogues.Text = "label1";
+            tlvCatalogues.UseCompatibleStateImageBehavior = false;
+            tlvCatalogues.UseFiltering = true;
+            tlvCatalogues.View = View.Details;
+            tlvCatalogues.VirtualMode = true;
             // 
             // olvColumn1
             // 
-            this.olvColumn1.AspectName = "ToString";
-            this.olvColumn1.FillsFreeSpace = false;
-            this.olvColumn1.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.olvColumn1.MinimumWidth = 100;
-            this.olvColumn1.Text = "Catalogues";
-            this.olvColumn1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.olvColumn1.Width = 100;
+            olvColumn1.AspectName = "ToString";
+            olvColumn1.HeaderTextAlign = HorizontalAlignment.Center;
+            olvColumn1.MinimumWidth = 100;
+            olvColumn1.Text = "Catalogues";
+            olvColumn1.TextAlign = HorizontalAlignment.Center;
+            olvColumn1.Width = 100;
             // 
             // olvFilters
             // 
-            this.olvFilters.DisplayIndex = 1;
-            this.olvFilters.IsVisible = false;
-            this.olvFilters.Text = "Filters";
-            this.olvFilters.IsEditable = false;
+            olvFilters.DisplayIndex = 1;
+            olvFilters.IsEditable = false;
+            olvFilters.IsVisible = false;
+            olvFilters.Text = "Filters";
             // 
             // olvOrder
             // 
-            this.olvOrder.IsEditable = false;
-            this.olvOrder.IsVisible = false;
-            this.olvOrder.Text = "Order";
+            olvOrder.IsEditable = false;
+            olvOrder.IsVisible = false;
+            olvOrder.Text = "Order";
             // 
             // imageList_RightClickIcons
             // 
-            this.imageList_RightClickIcons.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList_RightClickIcons.ImageStream")));
-            this.imageList_RightClickIcons.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList_RightClickIcons.Images.SetKeyName(0, "DLE");
-            this.imageList_RightClickIcons.Images.SetKeyName(1, "DEM");
-            this.imageList_RightClickIcons.Images.SetKeyName(2, "DQE");
-            this.imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
-            this.imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
+            imageList_RightClickIcons.ColorDepth = ColorDepth.Depth8Bit;
+            imageList_RightClickIcons.ImageStream = (ImageListStreamer)resources.GetObject("imageList_RightClickIcons.ImageStream");
+            imageList_RightClickIcons.TransparentColor = System.Drawing.Color.Transparent;
+            imageList_RightClickIcons.Images.SetKeyName(0, "DLE");
+            imageList_RightClickIcons.Images.SetKeyName(1, "DEM");
+            imageList_RightClickIcons.Images.SetKeyName(2, "DQE");
+            imageList_RightClickIcons.Images.SetKeyName(3, "LOG");
+            imageList_RightClickIcons.Images.SetKeyName(4, "aggregates.png");
             // 
             // gbColdStorage
             // 
-            this.gbColdStorage.Controls.Add(this.catalogueCollectionFilterUI1);
-            this.gbColdStorage.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.gbColdStorage.Location = new System.Drawing.Point(0, 414);
-            this.gbColdStorage.Name = "gbColdStorage";
-            this.gbColdStorage.Size = new System.Drawing.Size(500, 65);
-            this.gbColdStorage.TabIndex = 1;
-            this.gbColdStorage.TabStop = false;
-            this.gbColdStorage.Text = "Show";
+            gbColdStorage.Controls.Add(tbFilter);
+            gbColdStorage.Controls.Add(catalogueCollectionFilterUI1);
+            gbColdStorage.Dock = DockStyle.Bottom;
+            gbColdStorage.Location = new System.Drawing.Point(0, 414);
+            gbColdStorage.Name = "gbColdStorage";
+            gbColdStorage.Size = new System.Drawing.Size(500, 65);
+            gbColdStorage.TabIndex = 1;
+            gbColdStorage.TabStop = false;
+            gbColdStorage.Text = "Show";
             // 
             // catalogueCollectionFilterUI1
             // 
-            this.catalogueCollectionFilterUI1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 16);
-            this.catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
-            this.catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 46);
-            this.catalogueCollectionFilterUI1.TabIndex = 0;
+            catalogueCollectionFilterUI1.Dock = DockStyle.Fill;
+            catalogueCollectionFilterUI1.Location = new System.Drawing.Point(3, 19);
+            catalogueCollectionFilterUI1.Name = "catalogueCollectionFilterUI1";
+            catalogueCollectionFilterUI1.Size = new System.Drawing.Size(494, 43);
+            catalogueCollectionFilterUI1.TabIndex = 0;
             // 
             // panel2
             // 
-            this.panel2.Controls.Add(this.tlvCatalogues);
-            this.panel2.Controls.Add(this.gbColdStorage);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 0);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(500, 479);
-            this.panel2.TabIndex = 2;
+            panel2.Controls.Add(tlvCatalogues);
+            panel2.Controls.Add(gbColdStorage);
+            panel2.Dock = DockStyle.Fill;
+            panel2.Location = new System.Drawing.Point(0, 0);
+            panel2.Name = "panel2";
+            panel2.Size = new System.Drawing.Size(500, 479);
+            panel2.TabIndex = 2;
+            // 
+            // tbFilter
+            // 
+            tbFilter.Location = new System.Drawing.Point(0, 39);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(500, 23);
+            tbFilter.TabIndex = 2;
             // 
             // CatalogueCollectionUI
             // 
-            this.Controls.Add(this.panel2);
-            this.Name = "CatalogueCollectionUI";
-            this.Size = new System.Drawing.Size(500, 479);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCatalogues)).EndInit();
-            this.gbColdStorage.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
-            this.ResumeLayout(false);
-
+            Controls.Add(panel2);
+            Name = "CatalogueCollectionUI";
+            Size = new System.Drawing.Size(500, 479);
+            ((ISupportInitialize)tlvCatalogues).EndInit();
+            gbColdStorage.ResumeLayout(false);
+            gbColdStorage.PerformLayout();
+            panel2.ResumeLayout(false);
+            ResumeLayout(false);
         }
 
         #endregion
@@ -143,5 +149,6 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvOrder;
         private CatalogueCollectionFilterUI catalogueCollectionFilterUI1;
         private Panel panel2;
+        private TextBox tbFilter;
     }
 }

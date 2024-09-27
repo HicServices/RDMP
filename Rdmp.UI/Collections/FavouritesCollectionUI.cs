@@ -36,7 +36,7 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(RDMPCollection.Favourites, tlvFavourites, Activator, olvName, olvName,
-            new RDMPCollectionCommonFunctionalitySettings());
+            new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
         CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
             a => new IAtomicCommand[]
@@ -131,4 +131,9 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     public static bool IsRootObject(IActivateItems activator, object root) =>
         //never favourite
         false;
+
+    private void tbFilter_TextChanged(object sender, EventArgs e)
+    {
+
+    }
 }

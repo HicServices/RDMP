@@ -28,53 +28,65 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvFavourites = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvFavourites)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvFavourites = new BrightIdeasSoftware.TreeListView();
+            olvName = new BrightIdeasSoftware.OLVColumn();
+            tbFilter = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvFavourites).BeginInit();
+            SuspendLayout();
             // 
             // tlvFavourites
             // 
-            this.tlvFavourites.AllColumns.Add(this.olvName);
-            this.tlvFavourites.CellEditUseWholeCell = false;
-            this.tlvFavourites.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
-            this.tlvFavourites.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvFavourites.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvFavourites.FullRowSelect = true;
-            this.tlvFavourites.HideSelection = false;
-            this.tlvFavourites.Location = new System.Drawing.Point(0, 0);
-            this.tlvFavourites.Name = "tlvFavourites";
-            this.tlvFavourites.ShowGroups = false;
-            this.tlvFavourites.Size = new System.Drawing.Size(322, 557);
-            this.tlvFavourites.TabIndex = 2;
-            this.tlvFavourites.UseCompatibleStateImageBehavior = false;
-            this.tlvFavourites.View = System.Windows.Forms.View.Details;
-            this.tlvFavourites.VirtualMode = true;
+            tlvFavourites.AllColumns.Add(olvName);
+            tlvFavourites.CellEditUseWholeCell = false;
+            tlvFavourites.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName });
+            tlvFavourites.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvFavourites.FullRowSelect = true;
+            tlvFavourites.Location = new System.Drawing.Point(0, 0);
+            tlvFavourites.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlvFavourites.Name = "tlvFavourites";
+            tlvFavourites.ShowGroups = false;
+            tlvFavourites.Size = new System.Drawing.Size(376, 643);
+            tlvFavourites.TabIndex = 2;
+            tlvFavourites.UseCompatibleStateImageBehavior = false;
+            tlvFavourites.View = System.Windows.Forms.View.Details;
+            tlvFavourites.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Favourites";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.CellEditUseWholeCell = true;
+            olvName.MinimumWidth = 100;
+            olvName.Text = "Favourites";
+            olvName.Width = 100;
+            // 
+            // tbFilter
+            // 
+            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 620);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(376, 23);
+            tbFilter.TabIndex = 3;
+            tbFilter.TextChanged += tbFilter_TextChanged;
             // 
             // FavouritesCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvFavourites);
-            this.Name = "FavouritesCollectionUI";
-            this.Size = new System.Drawing.Size(322, 557);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvFavourites)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvFavourites);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "FavouritesCollectionUI";
+            Size = new System.Drawing.Size(376, 643);
+            ((System.ComponentModel.ISupportInitialize)tlvFavourites).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private BrightIdeasSoftware.TreeListView tlvFavourites;
         private BrightIdeasSoftware.OLVColumn olvName;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }

@@ -44,7 +44,7 @@ public partial class SavedCohortsCollectionUI : RDMPCollectionUI, ILifetimeSubsc
     {
         base.SetItemActivator(activator);
 
-        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName);
+        CommonTreeFunctionality.SetUp(RDMPCollection.SavedCohorts, tlvSavedCohorts, Activator, olvName, olvName, tbFilter);
 
         tlvSavedCohorts.AddObject(((DataExportChildProvider)Activator.CoreChildProvider).RootCohortsNode);
 

@@ -207,6 +207,9 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         if(Filter is not null)
         {
             Filter.TextChanged += HandleFilter;
+            Filter.Text = FilterText;
+            Filter.GotFocus += RemoveText;
+            Filter.LostFocus += AddText;
         }
       
 
@@ -302,10 +305,25 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
                 c.Sortable = false;
     }
 
+
+    private readonly string FilterText = "Filter...";
+    public void RemoveText(object sender, EventArgs e)
+    {
+        if (Filter.Text == FilterText)
+        {
+            Filter.Text = "";
+        }
+    }
+
+    public void AddText(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(Filter.Text))
+            Filter.Text = FilterText;
+    }
     private void HandleFilter(object sender, EventArgs e)
     {
         var text = Filter.Text;
-        if(text == "Filter...")
+        if(text == FilterText)
         {
             Tree.ModelFilter = TextMatchFilter.Contains(Tree, "");
             Tree.UseFiltering = true;

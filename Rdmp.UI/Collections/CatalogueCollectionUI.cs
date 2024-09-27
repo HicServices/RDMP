@@ -159,7 +159,8 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
-            _refresh.Click += delegate (object sender, EventArgs e) {
+            _refresh.Click += delegate (object sender, EventArgs e)
+            {
                 var catalogue = Activator.CoreChildProvider.AllCatalogues.First();
                 if (catalogue is not null)
                 {
@@ -225,7 +226,8 @@ public partial class CatalogueCollectionUI : RDMPCollectionUI
             Activator,
             olvColumn1, //the icon column
                         //we have our own custom filter logic so no need to pass tbFilter
-            olvColumn1 //also the renameable column
+            olvColumn1, //also the renameable column
+            tbFilter
         );
 
         CommonTreeFunctionality.MaintainRootObjects = new[]
