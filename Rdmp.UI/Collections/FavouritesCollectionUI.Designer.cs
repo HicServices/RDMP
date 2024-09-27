@@ -67,7 +67,6 @@
             tbFilter.Name = "tbFilter";
             tbFilter.Size = new System.Drawing.Size(376, 23);
             tbFilter.TabIndex = 3;
-            tbFilter.TextChanged += tbFilter_TextChanged;
             // 
             // FavouritesCollectionUI
             // 

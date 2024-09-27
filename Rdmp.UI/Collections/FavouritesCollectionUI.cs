@@ -131,9 +131,4 @@ public partial class FavouritesCollectionUI : RDMPCollectionUI, ILifetimeSubscri
     public static bool IsRootObject(IActivateItems activator, object root) =>
         //never favourite
         false;
-
-    private void tbFilter_TextChanged(object sender, EventArgs e)
-    {
-
-    }
 }
