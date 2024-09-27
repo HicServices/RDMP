@@ -22,6 +22,9 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
     public DatasetsCollectionUI()
     {
         InitializeComponent();
+        tbFilter.Text = Filter;
+        tbFilter.GotFocus += RemoveText;
+        tbFilter.LostFocus += AddText;
     }
 
     public override void SetItemActivator(IActivateItems activator)
@@ -29,7 +32,7 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(RDMPCollection.Datasets, tlvDatasets, Activator, olvName, olvName,
-            new RDMPCollectionCommonFunctionalitySettings());
+            new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
             a => new IAtomicCommand[]
             {
@@ -63,6 +66,21 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
             CommonFunctionality.Add(_refresh);
         }
     }
+    private readonly string Filter = "Filter...";
+    public void RemoveText(object sender, EventArgs e)
+    {
+        if (tbFilter.Text == Filter)
+        {
+            tbFilter.Text = "";
+        }
+    }
+
+    public void AddText(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(tbFilter.Text))
+            tbFilter.Text = Filter;
+    }
+
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {
