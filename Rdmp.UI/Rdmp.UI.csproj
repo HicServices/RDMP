@@ -133,6 +133,9 @@
 		<Compile Update="SimpleControls\DatabaseTypeUI.Designer.cs">
 			<DependentUpon>DatabaseTypeUI.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleDialogs\Datasets\ImportExistingPureDatasetUI.cs">
+		  <SubType>Form</SubType>
+		</Compile>
 		<Compile Update="SimpleDialogs\DataTableViewerUI.cs">
 			<SubType>UserControl</SubType>
 		</Compile>

@@ -32,7 +32,7 @@ namespace Rdmp.Core.Datasets
 
         public static string UrltoUUID(string url) => url.Split("/").Last();
 
-        private bool CheckDatasetExistsAtURL(string url)
+        public bool CheckDatasetExistsAtURL(string url)
         {
             var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
@@ -47,13 +47,14 @@ namespace Rdmp.Core.Datasets
             {
                 var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
                 PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
-                var dataset = new Curation.Data.Datasets.Dataset(Repository, name)
+                var datasetName = string.IsNullOrWhiteSpace(name) ? pd.Title.en_GB : name;
+                var dataset = new Curation.Data.Datasets.Dataset(Repository, datasetName)
                 {
                     Url = url,
                     Type = this.ToString(),
                     Provider_ID = Configuration.ID,
                     DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
-                    Folder= Configuration.Name,
+                    Folder = $"\\{Configuration.Name}",
                 };
                 dataset.SaveToDatabase();
                 Activator.Publish(dataset);

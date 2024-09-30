@@ -37,8 +37,8 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
                     { OverrideCommandName = "Add New Dataset", Weight = -50.9f },
                  new ExecuteCommandCreateNewPureDatasetUI(Activator)
                     { OverrideCommandName = "Create New Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f },
-                   //new ExecuteCommandCreateNewPureDatasetUI(Activator)
-                   // { OverrideCommandName = "Import Existing Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f }
+                   new ExecuteCommandImportExistingPureDatasetUI(Activator)
+                    { OverrideCommandName = "Import Existing Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f }
             };
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvDatasets.AddObject(activator.CoreChildProvider.DatasetRootFolder);
@@ -56,7 +56,8 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
                 Alignment = ToolStripItemAlignment.Right,
                 ToolTipText = "Refresh Object"
             };
-            _refresh.Click += delegate (object sender, EventArgs e) {
+            _refresh.Click += delegate (object sender, EventArgs e)
+            {
                 var dataset = Activator.CoreChildProvider.AllDatasets.First();
                 if (dataset is not null)
                 {
