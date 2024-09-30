@@ -118,7 +118,6 @@ Some variables are available:
             {
                 datasetUpdate.Descriptions = GetDescriptions();
             }
-            //dont think the temportal stuff is updating correctly...
             if (UpdateTimePeriods)
             {
                 datasetUpdate.TemporalCoveragePeriod = GetTemporalCoveragePeriod();
