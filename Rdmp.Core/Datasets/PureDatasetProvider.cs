@@ -113,12 +113,19 @@ namespace Rdmp.Core.Datasets
                 WriteIndented = true
             };
 
-            var jsonString = JsonSerializer.Serialize(datasetUpdates, serializeOptions);
+            var options = new JsonWriterOptions
+            {
+                Indented = true
+            };
+
+            using var stream = new MemoryStream();
+            JsonSerializer.Serialize<PureDataset>(stream, (PureDataset)datasetUpdates, serializeOptions);
+            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
             var uri = $"{Configuration.Url}/data-sets/{uuid}";
             var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
             var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
-            if (response.StatusCode != HttpStatusCode.Created)
+            if (response.StatusCode != HttpStatusCode.OK)
             {
                 throw new Exception("Error");
             }

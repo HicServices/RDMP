@@ -1,5 +1,6 @@
 ﻿using Amazon.Auth.AccessControlPolicy.ActionIdentifiers;
 using SynthEHR;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -24,8 +25,10 @@ public class URITerm
 }
 public class PureDescription
 {
-    public int? PureID { get; set; }
+    public int? PureId { get; set; }
     public ENGBWrapper? Value { get; set; }
+
+    public URITerm Term { get => new URITerm("/dk/atira/pure/dataset/descriptions/datasetdescription", new ENGBWrapper("Description")); }
 }
 
 public class System
@@ -48,7 +51,7 @@ public class Name()
 public class PurePerson
 {
     public string? TypeDiscriminator { get; set; }
-    public int? PureID { get; set; }
+    public int? PureId { get; set; }
 
     public Name? Name { get; set; }
     public URITerm? Role { get; set; }
@@ -58,6 +61,30 @@ public class PurePerson
 
 public class PureDate
 {
+    public PureDate(DateTime dateTime)
+    {
+        Year = dateTime.Year;
+        Month = dateTime.Month;
+        Day = dateTime.Day;
+    }
+
+    public PureDate() { }
+
+    public bool IsBefore(PureDate date)
+    {
+        if (Year < date.Year) return true;
+        if (Year == date.Year)
+        {
+            if (Month < date.Month) return true;
+            if (Month == date.Month)
+            {
+                return Day < date.Day;
+            }
+        }
+
+        return false;
+    }
+
     public PureDate(int year, int? month = null, int? day = null)
     {
         Year = year;
@@ -94,7 +121,7 @@ public class Geolocation
     public string? Polygon { get; set; }
 }
 
-public class TemporalcoveragePeriod
+public class TemporalCoveragePeriod
 {
     public PureDate? StartDate { get; set; }
     public PureDate? EndDate { get; set; }
@@ -103,7 +130,7 @@ public class TemporalcoveragePeriod
 public class PureDataset : PluginDataset
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public int? PureID { get; set; }
+    public int? PureId { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? UUID { get; set; }
@@ -170,7 +197,7 @@ public class PureDataset : PluginDataset
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 
-    public TemporalcoveragePeriod? TemporalcoveragePeriod { get; set; }
+    public TemporalCoveragePeriod? TemporalCoveragePeriod { get; set; }
 
 #nullable disable
 
