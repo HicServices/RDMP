@@ -28,64 +28,72 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvSavedCohorts = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvSavedCohorts)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvSavedCohorts = new BrightIdeasSoftware.TreeListView();
+            olvName = new BrightIdeasSoftware.OLVColumn();
+            olvProjectNumber = new BrightIdeasSoftware.OLVColumn();
+            olvVersion = new BrightIdeasSoftware.OLVColumn();
+            tbFilter = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvSavedCohorts).BeginInit();
+            SuspendLayout();
             // 
             // tlvSavedCohorts
             // 
-            this.tlvSavedCohorts.AllColumns.Add(this.olvName);
-            this.tlvSavedCohorts.AllColumns.Add(this.olvProjectNumber);
-            this.tlvSavedCohorts.AllColumns.Add(this.olvVersion);
-            this.tlvSavedCohorts.CellEditUseWholeCell = false;
-            this.tlvSavedCohorts.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName,
-            this.olvProjectNumber,
-            this.olvVersion});
-            this.tlvSavedCohorts.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvSavedCohorts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvSavedCohorts.FullRowSelect = true;
-            this.tlvSavedCohorts.HideSelection = false;
-            this.tlvSavedCohorts.Location = new System.Drawing.Point(0, 0);
-            this.tlvSavedCohorts.Name = "tlvSavedCohorts";
-            this.tlvSavedCohorts.ShowGroups = false;
-            this.tlvSavedCohorts.Size = new System.Drawing.Size(396, 647);
-            this.tlvSavedCohorts.TabIndex = 1;
-            this.tlvSavedCohorts.UseCompatibleStateImageBehavior = false;
-            this.tlvSavedCohorts.View = System.Windows.Forms.View.Details;
-            this.tlvSavedCohorts.VirtualMode = true;
+            tlvSavedCohorts.AllColumns.Add(olvName);
+            tlvSavedCohorts.AllColumns.Add(olvProjectNumber);
+            tlvSavedCohorts.AllColumns.Add(olvVersion);
+            tlvSavedCohorts.CellEditUseWholeCell = false;
+            tlvSavedCohorts.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvProjectNumber, olvVersion });
+            tlvSavedCohorts.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvSavedCohorts.FullRowSelect = true;
+            tlvSavedCohorts.Location = new System.Drawing.Point(0, 0);
+            tlvSavedCohorts.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlvSavedCohorts.Name = "tlvSavedCohorts";
+            tlvSavedCohorts.ShowGroups = false;
+            tlvSavedCohorts.Size = new System.Drawing.Size(462, 747);
+            tlvSavedCohorts.TabIndex = 1;
+            tlvSavedCohorts.UseCompatibleStateImageBehavior = false;
+            tlvSavedCohorts.View = System.Windows.Forms.View.Details;
+            tlvSavedCohorts.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Saved Cohorts";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.CellEditUseWholeCell = true;
+            olvName.MinimumWidth = 100;
+            olvName.Text = "Saved Cohorts";
+            olvName.Width = 100;
             // 
             // olvProjectNumber
             // 
-            this.olvProjectNumber.AspectName = "";
-            this.olvProjectNumber.Text = "Project Number";
+            olvProjectNumber.AspectName = "";
+            olvProjectNumber.Text = "Project Number";
             // 
             // olvVersion
             // 
-            this.olvVersion.AspectName = "";
-            this.olvVersion.Text = "Version";
+            olvVersion.AspectName = "";
+            olvVersion.Text = "Version";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 724);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(462, 23);
+            tbFilter.TabIndex = 2;
             // 
             // SavedCohortsCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvSavedCohorts);
-            this.Name = "SavedCohortsCollectionUI";
-            this.Size = new System.Drawing.Size(396, 647);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvSavedCohorts)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvSavedCohorts);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "SavedCohortsCollectionUI";
+            Size = new System.Drawing.Size(462, 747);
+            ((System.ComponentModel.ISupportInitialize)tlvSavedCohorts).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -94,5 +102,6 @@
         private BrightIdeasSoftware.OLVColumn olvName;
         private BrightIdeasSoftware.OLVColumn olvProjectNumber;
         private BrightIdeasSoftware.OLVColumn olvVersion;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }
