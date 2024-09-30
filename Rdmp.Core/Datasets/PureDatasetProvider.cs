@@ -41,13 +41,19 @@ namespace Rdmp.Core.Datasets
 
         public override void AddExistingDataset(string name, string url)
         {
-            if (CheckDatasetExistsAtURL(url))
+            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
+            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+            if (response.StatusCode == HttpStatusCode.OK)
             {
+                var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+                PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
                 var dataset = new Curation.Data.Datasets.Dataset(Repository, name)
                 {
                     Url = url,
                     Type = this.ToString(),
-                    Provider_ID = Configuration.ID
+                    Provider_ID = Configuration.ID,
+                    DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
+                    Folder= Configuration.Name,
                 };
                 dataset.SaveToDatabase();
                 Activator.Publish(dataset);
@@ -98,7 +104,7 @@ namespace Rdmp.Core.Datasets
             return dataset;
         }
 
-        public void Update(string uuid, PureDataset datasetUpdates)
+        public override void Update(string uuid, PluginDataset datasetUpdates)
         {
             var serializeOptions = new JsonSerializerOptions
             {
@@ -140,11 +146,6 @@ namespace Rdmp.Core.Datasets
         public override List<Curation.Data.Datasets.Dataset> FetchDatasets()
         {
             return Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("Provider_ID", Configuration.ID).ToList();
-        }
-
-        public override Curation.Data.Datasets.Dataset Update()
-        {
-            throw new NotImplementedException();
         }
 
         public override Curation.Data.Datasets.Dataset Create()

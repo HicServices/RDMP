@@ -30,6 +30,6 @@ public abstract class PluginDatasetProvider : IDatasetProvider
 
     public abstract Curation.Data.Datasets.Dataset Create();
 
-    public abstract Curation.Data.Datasets.Dataset Update();
+    public abstract void Update(string uuid, PluginDataset datasetUpdates);
 
 }

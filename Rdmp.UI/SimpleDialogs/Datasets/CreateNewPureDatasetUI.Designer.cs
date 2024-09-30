@@ -39,6 +39,11 @@
             label5 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
             label7 = new System.Windows.Forms.Label();
+            cbVisibility = new System.Windows.Forms.ComboBox();
+            tbDateMadeAvailable = new System.Windows.Forms.TextBox();
+            lbPeople = new System.Windows.Forms.ListBox();
+            btnCreate = new System.Windows.Forms.Button();
+            btnCancel = new System.Windows.Forms.Button();
             SuspendLayout();
             // 
             // label1
@@ -49,7 +54,6 @@
             label1.Size = new System.Drawing.Size(96, 15);
             label1.TabIndex = 0;
             label1.Text = "Dataset Provider:";
-            label1.Click += label1_Click;
             // 
             // cbDatasetProvider
             // 
@@ -58,6 +62,7 @@
             cbDatasetProvider.Name = "cbDatasetProvider";
             cbDatasetProvider.Size = new System.Drawing.Size(252, 23);
             cbDatasetProvider.TabIndex = 1;
+            cbDatasetProvider.SelectedIndexChanged += cbDatasetProvider_SelectedIndexChanged;
             // 
             // tbName
             // 
@@ -83,7 +88,6 @@
             label3.Size = new System.Drawing.Size(70, 15);
             label3.TabIndex = 5;
             label3.Text = "Description:";
-            label3.Click += this.label3_Click;
             // 
             // tbDescription
             // 
@@ -91,10 +95,10 @@
             tbDescription.Name = "tbDescription";
             tbDescription.Size = new System.Drawing.Size(250, 23);
             tbDescription.TabIndex = 4;
-            tbDescription.TextChanged += textBox2_TextChanged;
             // 
             // cbPublisher
             // 
+            cbPublisher.Enabled = false;
             cbPublisher.FormattingEnabled = true;
             cbPublisher.Location = new System.Drawing.Point(114, 147);
             cbPublisher.Name = "cbPublisher";
@@ -137,11 +141,61 @@
             label7.TabIndex = 10;
             label7.Text = "Date made available:";
             // 
+            // cbVisibility
+            // 
+            cbVisibility.FormattingEnabled = true;
+            cbVisibility.Location = new System.Drawing.Point(114, 226);
+            cbVisibility.Name = "cbVisibility";
+            cbVisibility.Size = new System.Drawing.Size(252, 23);
+            cbVisibility.TabIndex = 11;
+            // 
+            // tbDateMadeAvailable
+            // 
+            tbDateMadeAvailable.Location = new System.Drawing.Point(116, 261);
+            tbDateMadeAvailable.Name = "tbDateMadeAvailable";
+            tbDateMadeAvailable.Size = new System.Drawing.Size(250, 23);
+            tbDateMadeAvailable.TabIndex = 12;
+            // 
+            // lbPeople
+            // 
+            lbPeople.Enabled = false;
+            lbPeople.FormattingEnabled = true;
+            lbPeople.ItemHeight = 15;
+            lbPeople.Location = new System.Drawing.Point(116, 190);
+            lbPeople.Name = "lbPeople";
+            lbPeople.Size = new System.Drawing.Size(250, 34);
+            lbPeople.TabIndex = 13;
+            // 
+            // btnCreate
+            // 
+            btnCreate.Location = new System.Drawing.Point(708, 406);
+            btnCreate.Name = "btnCreate";
+            btnCreate.Size = new System.Drawing.Size(75, 23);
+            btnCreate.TabIndex = 14;
+            btnCreate.Text = "Create";
+            btnCreate.UseVisualStyleBackColor = true;
+            btnCreate.Click += btnCreate_Click;
+            // 
+            // btnCancel
+            // 
+            btnCancel.Location = new System.Drawing.Point(627, 406);
+            btnCancel.Name = "btnCancel";
+            btnCancel.Size = new System.Drawing.Size(75, 23);
+            btnCancel.TabIndex = 15;
+            btnCancel.Text = "Cancel";
+            btnCancel.UseVisualStyleBackColor = true;
+            btnCancel.Click += btnCancel_Click;
+            // 
             // CreateNewPureDatasetUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(800, 450);
+            Controls.Add(btnCancel);
+            Controls.Add(btnCreate);
+            Controls.Add(lbPeople);
+            Controls.Add(tbDateMadeAvailable);
+            Controls.Add(cbVisibility);
             Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
@@ -173,5 +227,10 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ComboBox cbVisibility;
+        private System.Windows.Forms.TextBox tbDateMadeAvailable;
+        private System.Windows.Forms.ListBox lbPeople;
+        private System.Windows.Forms.Button btnCreate;
+        private System.Windows.Forms.Button btnCancel;
     }
 }
