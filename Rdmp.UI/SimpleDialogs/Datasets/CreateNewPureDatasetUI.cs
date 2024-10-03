@@ -26,6 +26,7 @@ public partial class CreateNewPureDatasetUI : RDMPForm
 
     private DatasetProviderConfiguration _providerConfiguration;
     private PureDatasetProvider _datasetProvider;
+    private List<PureDataset.System> _publishers;
 
     public CreateNewPureDatasetUI(IActivateItems activator, ExecuteCommandCreateNewPureDatasetUI command) : base(activator)
     {
@@ -74,8 +75,9 @@ public partial class CreateNewPureDatasetUI : RDMPForm
             //fetch people
             //add people
             lbPeople.Enabled = true;
-            //fetch publishers
-            //add publishers
+
+            _publishers = _datasetProvider.FetchPublishers();
+            cbPublisher.Items.Add(_publishers);
             cbPublisher.Enabled = true;
 
         }

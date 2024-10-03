@@ -16,6 +16,7 @@ using System.Text.Json;
 using System.Net;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Text;
+using System.Data;
 namespace Rdmp.Core.Datasets
 {
     public class PureDatasetProvider : PluginDatasetProvider
@@ -154,6 +155,21 @@ namespace Rdmp.Core.Datasets
         public override List<Curation.Data.Datasets.Dataset> FetchDatasets()
         {
             return Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("Provider_ID", Configuration.ID).ToList();
+        }
+
+
+        public List<System> FetchPublishers()
+        {
+            var uri = $"{Configuration.Url}/publishers";
+            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                throw new Exception("Error");
+            }
+            var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+            List<System> publishers = JsonConvert.DeserializeObject<List<System>>(detailsString);
+            return publishers;
+
         }
 
         public override Curation.Data.Datasets.Dataset Create()
