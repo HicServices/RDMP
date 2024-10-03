@@ -103,7 +103,7 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         sbInsert.AppendLine(
             $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
 
-        if (columnsToMigrate.PrimaryKeys.Any())//should have some on/off switch
+        if (job.LoadMetadata.OrderInsertsByPrimaryKey && columnsToMigrate.PrimaryKeys.Any())
         {
             var orderSQL = $@"
 SELECT KU.ORDINAL_POSITION AS ORDINAL_POSITION
