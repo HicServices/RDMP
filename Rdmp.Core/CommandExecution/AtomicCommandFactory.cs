@@ -511,6 +511,10 @@ public class AtomicCommandFactory : CommandFactoryBase
             {
                 OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
             };
+            yield return new ExecuteCommandToggleInsertOrderingPrefixForLoadMetadata(lmd)
+            {
+                OverrideCommandName = $"{(lmd.OrderInsertsByPrimaryKey ? "Don't":"")} Sort Index Items by PK before Insert"
+            };
 
             yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };
             yield return new ExecuteCommandSetIgnoredColumns(_activator, lmd) { SuggestedCategory = Advanced };

@@ -599,6 +599,7 @@ CREATE TABLE [dbo].[LoadMetadata](
 	[CacheArchiveType] [int] NOT NULL,
 	[SoftwareVersion] [nvarchar](50) NOT NULL,
 	[AllowReservedPrefix] [bit] NOT NULL default 0,
+	[OrderInsertsByPrimaryKey] [bit] NOT NULL default 0,
  CONSTRAINT [PK_LoadMetadata] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC

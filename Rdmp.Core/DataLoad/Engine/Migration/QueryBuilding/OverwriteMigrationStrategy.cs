@@ -105,7 +105,6 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
 
         if (columnsToMigrate.PrimaryKeys.Any())//should have some on/off switch
         {
-            //add order by pk values
             var orderSQL = $@"
 SELECT KU.ORDINAL_POSITION AS ORDINAL_POSITION
     , COLUMN_NAME, TC.CONSTRAINT_NAME as name, is_descending_key
