@@ -87,6 +87,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 conn.Open();
                 using (var cmd = _server.GetCommand(sql, conn))
                 {
+                    cmd.CommandTimeout = 60000;
                     using var da = _server.GetDataAdapter(cmd);
                     da.Fill(dt);
                 }
