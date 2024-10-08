@@ -23,6 +23,6 @@ public class ExecuteCommandCreateNewDatasetUI : ExecuteCommandCreateDataset
     public override void Execute()
     {
         var ui = new CreateNewDatasetUI(_activator, this);
-        ui.ShowDialog();
+        ui.Show();
     }
 }

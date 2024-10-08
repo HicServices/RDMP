@@ -34,8 +34,6 @@ partial class DatasetConfigurationUI
         tbSource = new System.Windows.Forms.TextBox();
         label2 = new System.Windows.Forms.Label();
         label3 = new System.Windows.Forms.Label();
-        label4 = new System.Windows.Forms.Label();
-        tbFolder = new System.Windows.Forms.TextBox();
         lblDatasetUsage = new System.Windows.Forms.Label();
         SuspendLayout();
         // 
@@ -88,23 +86,6 @@ partial class DatasetConfigurationUI
         label3.TabIndex = 5;
         label3.Text = "Dataset Source";
         // 
-        // label4
-        // 
-        label4.AutoSize = true;
-        label4.Location = new System.Drawing.Point(28, 282);
-        label4.Name = "label4";
-        label4.Size = new System.Drawing.Size(82, 15);
-        label4.TabIndex = 6;
-        label4.Text = "Dataset Folder";
-        label4.Click += label4_Click;
-        // 
-        // tbFolder
-        // 
-        tbFolder.Location = new System.Drawing.Point(24, 314);
-        tbFolder.Name = "tbFolder";
-        tbFolder.Size = new System.Drawing.Size(273, 23);
-        tbFolder.TabIndex = 7;
-        // 
         // lblDatasetUsage
         // 
         lblDatasetUsage.AutoSize = true;
@@ -114,20 +95,18 @@ partial class DatasetConfigurationUI
         lblDatasetUsage.TabIndex = 8;
         lblDatasetUsage.Text = "label5";
         // 
-        // DatsetConfigurationUI
+        // DatasetConfigurationUI
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
         AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         Controls.Add(lblDatasetUsage);
-        Controls.Add(tbFolder);
-        Controls.Add(label4);
         Controls.Add(label3);
         Controls.Add(label2);
         Controls.Add(tbSource);
         Controls.Add(tbDOI);
         Controls.Add(tbName);
         Controls.Add(label1);
-        Name = "DatsetConfigurationUI";
+        Name = "DatasetConfigurationUI";
         Size = new System.Drawing.Size(800, 450);
         ResumeLayout(false);
         PerformLayout();
@@ -141,7 +120,5 @@ partial class DatasetConfigurationUI
     private System.Windows.Forms.TextBox tbSource;
     private System.Windows.Forms.Label label2;
     private System.Windows.Forms.Label label3;
-    private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.TextBox tbFolder;
     private System.Windows.Forms.Label lblDatasetUsage;
 }

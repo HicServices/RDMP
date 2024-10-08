@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.Collections
 {
-    partial class DatasetsCollectionUI
+    partial class ConfigurationsCollectionUI
     {
         /// <summary>
         /// Required designer variable.
@@ -30,52 +30,50 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
+            this.tlvConfigurations = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).BeginInit();
             this.SuspendLayout();
             // 
             // tlvFavourites
             // 
-            this.tlvDatasets.AllColumns.Add(this.olvName);
-            this.tlvDatasets.CellEditUseWholeCell = false;
-            this.tlvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.tlvConfigurations.AllColumns.Add(this.olvName);
+            this.tlvConfigurations.CellEditUseWholeCell = false;
+            this.tlvConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName});
-            this.tlvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvDatasets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvDatasets.FullRowSelect = true;
-            this.tlvDatasets.HideSelection = false;
-            this.tlvDatasets.Location = new System.Drawing.Point(0, 0);
-            this.tlvDatasets.Name = "tlvFavourites";
-            this.tlvDatasets.ShowGroups = false;
-            this.tlvDatasets.Size = new System.Drawing.Size(322, 557);
-            this.tlvDatasets.TabIndex = 2;
-            this.tlvDatasets.UseCompatibleStateImageBehavior = false;
-            this.tlvDatasets.View = System.Windows.Forms.View.Details;
-            this.tlvDatasets.VirtualMode = true;
+            this.tlvConfigurations.Cursor = System.Windows.Forms.Cursors.Default;
+            this.tlvConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tlvConfigurations.FullRowSelect = true;
+            this.tlvConfigurations.HideSelection = false;
+            this.tlvConfigurations.Location = new System.Drawing.Point(0, 0);
+            this.tlvConfigurations.ShowGroups = false;
+            this.tlvConfigurations.Size = new System.Drawing.Size(322, 557);
+            this.tlvConfigurations.TabIndex = 2;
+            this.tlvConfigurations.UseCompatibleStateImageBehavior = false;
+            this.tlvConfigurations.View = System.Windows.Forms.View.Details;
+            this.tlvConfigurations.VirtualMode = true;
             // 
             // olvName
             // 
             this.olvName.AspectName = "ToString";
-            this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Datasets";
+            this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;
             // 
             // FavouritesCollectionUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvDatasets);
-            this.Name = "DatasetsCollectionUI";
+            this.Controls.Add(this.tlvConfigurations);
+            this.Name = "ConfigurationsCollectionUI";
             this.Size = new System.Drawing.Size(322, 557);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).EndInit();
             this.ResumeLayout(false);
-            this.Text = "DatasetsCollectionUI";
+            this.Text = "ConfigurationsCollection";
         }
 
         #endregion
 
-        private BrightIdeasSoftware.TreeListView tlvDatasets;
+        private BrightIdeasSoftware.TreeListView tlvConfigurations;
         private BrightIdeasSoftware.OLVColumn olvName;
     }
 }

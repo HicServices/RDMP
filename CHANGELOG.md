@@ -1,5 +1,4 @@
 
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -9,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.0] - Unreleased
 
 - Add Ordering to Filters
+- [MSSQL ONLY] Add ability to perform Regex redactions on data loads and existing catalogues
 
 ## [8.3.1] - Unreleased
 

@@ -37,7 +37,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnCohorts = new System.Windows.Forms.ToolStripButton();
             btnDataExport = new System.Windows.Forms.ToolStripButton();
             btnTables = new System.Windows.Forms.ToolStripButton();
-            btnDataSets = new System.Windows.Forms.ToolStripButton();
+            btnConfiguration = new System.Windows.Forms.ToolStripButton();
             toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -105,14 +105,14 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnTables.Text = "Tables (Advanced)";
             btnTables.Click += ToolboxButtonClicked;
             // 
-            // btnDataSets
+            // btnConfiguration
             // 
-            btnDataSets.Image = (System.Drawing.Image)resources.GetObject("btnDataSets.Image");
-            btnDataSets.ImageTransparentColor = System.Drawing.Color.Magenta;
-            btnDataSets.Name = "btnDataSets";
-            btnDataSets.Size = new System.Drawing.Size(71, 22);
-            btnDataSets.Text = "Datasets";
-            btnDataSets.Click += ToolboxButtonClicked;
+            btnConfiguration.Image = (System.Drawing.Image)resources.GetObject("btnConfiguration.Image");
+            btnConfiguration.ImageTransparentColor = System.Drawing.Color.Magenta;
+            btnConfiguration.Name = "btnConfiguration";
+            btnConfiguration.Size = new System.Drawing.Size(71, 22);
+            btnConfiguration.Text = "Configuration";
+            btnConfiguration.Click += ToolboxButtonClicked;
             // 
             // toolStripSeparator2
             // 
@@ -126,7 +126,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnFavourites, btnCatalogues, btnCohorts, btnSavedCohorts, btnDataExport, toolStripSeparator, btnTables, btnLoads, btnDataSets, toolStripSeparator2, toolStripLabel2, cbxLayouts, btnSaveWindowLayout, btnDeleteLayout, toolStripSeparator4, cbCommits, toolStripSeparator3 });
+            toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { btnBack, btnForward, btnHome, toolStripSeparator1, btnFavourites, btnCatalogues, btnCohorts, btnSavedCohorts, btnDataExport, toolStripSeparator, btnTables, btnLoads, btnConfiguration, toolStripSeparator2, toolStripLabel2, cbxLayouts, btnSaveWindowLayout, btnDeleteLayout, toolStripSeparator4, cbCommits, toolStripSeparator3 });
             toolStrip1.Location = new System.Drawing.Point(0, 0);
             toolStrip1.Name = "toolStrip1";
             toolStrip1.Size = new System.Drawing.Size(1539, 25);
@@ -259,7 +259,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnCohorts;
         private System.Windows.Forms.ToolStripButton btnDataExport;
         private System.Windows.Forms.ToolStripButton btnTables;
-        private System.Windows.Forms.ToolStripButton btnDataSets;
+        private System.Windows.Forms.ToolStripButton btnConfiguration;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;

@@ -23,6 +23,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
+using static Terminal.Gui.MainLoop;
 
 namespace Rdmp.Core.MapsDirectlyToDatabaseTable;
 
@@ -810,8 +811,15 @@ public abstract class TableRepository : ITableRepository
 
     public int Insert(string sql, Dictionary<string, object> parameters)
     {
+        return Insert(sql, parameters, 30000);
+    }
+
+
+    public int Insert(string sql, Dictionary<string, object> parameters,int timeout)
+    {
         using var opener = GetConnection();
         using var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction);
+        cmd.CommandTimeout = timeout;
         return cmd.ExecuteNonQuery();
     }
 
