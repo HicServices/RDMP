@@ -514,7 +514,7 @@ public class AtomicCommandFactory : CommandFactoryBase
             };
             yield return new ExecuteCommandToggleInsertOrderingPrefixForLoadMetadata(lmd)
             {
-                OverrideCommandName = $"{(lmd.OrderInsertsByPrimaryKey ? "Don't" : "")} Sort Index Items by PK before Insert",
+                OverrideCommandName = $"{(lmd.OrderInsertsByPrimaryKey ? "Don't" : "")} Optimise Inserts for Sequential Keys",
                 SuggestedCategory = "Advanced"
             };
 

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.0] - Unreleased
 
 - Add Ordering to Filters
-- Add abaility to order inserts during Data Load
+- Add ability to optimise inserts for sequential keys during Data Load
 
 ## [8.3.1] - Unreleased
 
