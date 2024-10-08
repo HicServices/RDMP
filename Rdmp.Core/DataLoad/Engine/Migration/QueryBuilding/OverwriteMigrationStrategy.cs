@@ -20,9 +20,11 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 
 /// <summary>
-/// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and
-/// UPDATE (based on primary key).  Both tables must be on the same server.  A MERGE sql statement will be created using LiveMigrationQueryHelper and executed
-/// within a transaction.
+///     Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old)
+///     operation achieved (in SQL) with MERGE and
+///     UPDATE (based on primary key).  Both tables must be on the same server.  A MERGE sql statement will be created
+///     using LiveMigrationQueryHelper and executed
+///     within a transaction.
 /// </summary>
 public class OverwriteMigrationStrategy : DatabaseMigrationStrategy
 {
@@ -97,8 +99,12 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
                             columnsToMigrate.DestinationTable.GetFullyQualifiedName()))));
 
         sbInsert.AppendLine("WHERE");
-        sbInsert.AppendLine(
-            $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
+        sbInsert.AppendLine(string.Join(" AND ",
+            columnsToMigrate.PrimaryKeys.Select(pk =>
+                $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(pk.GetRuntimeName())} IS NULL")));
+
+        //sbInsert.AppendLine(
+        //    $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
 
         //right at the end of the SELECT
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
@@ -196,7 +202,10 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         }
     }
 
-    private static string GetORLine(DiscoveredColumn c, IQuerySyntaxHelper syntax) => string.Format(
-        "(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))",
-        syntax.EnsureWrapped(c.GetRuntimeName()));
+    private static string GetORLine(DiscoveredColumn c, IQuerySyntaxHelper syntax)
+    {
+        return string.Format(
+            "(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))",
+            syntax.EnsureWrapped(c.GetRuntimeName()));
+    }
 }
