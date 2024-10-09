@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
@@ -78,15 +79,24 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         CommonFunctionality.ToolStripAddedToHost += CommonFunctionality_ToolStripAddedToHost;
     }
 
+    public void resetSW(Stopwatch sw, string s)
+    {
+        sw.Stop();
+        Debug.WriteLine($"ElapsedMilliseconds: {sw.ElapsedMilliseconds}. {s}");
+        sw.Restart();
+    }
+
     public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
     {
+        var sw = Stopwatch.StartNew();
         SetItemActivator(activator);
         _activator = activator;
+        resetSW(sw, "A");
         Activator.RefreshBus.EstablishSelfDestructProtocol(this, activator, databaseObject);
         DatabaseObject = databaseObject;
-
+        resetSW(sw, "B");
         CommonFunctionality.ClearToolStrip();
-
+        resetSW(sw, "C");
         if (_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
         {
             _colorIndicator = new Control
@@ -99,7 +109,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             };
             Controls.Add(_colorIndicator);
         }
-
+        resetSW(sw, "D");
         _readonlyIndicator ??= new Label
         {
             Dock = DockStyle.Top,
@@ -111,7 +121,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             Font = new Font("Microsoft Sans Serif", 8.25F, FontStyle.Bold, GraphicsUnit.Point, (byte)0),
             ForeColor = Color.Moccasin
         };
-
+        resetSW(sw, "E");
         if (databaseObject is IMightBeReadOnly ro)
         {
             if (ro.ShouldBeReadOnly(out var reason))
@@ -127,11 +137,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 ReadOnly = false;
             }
         }
-
+        resetSW(sw, "F");
         _binder ??= new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
-
+        resetSW(sw, "G");
         if (this is ISaveableUI)
         {
             if (UseCommitSystem && CurrentCommit == null && Activator.UseCommits())
@@ -149,7 +159,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
-
+        resetSW(sw, "H");
         var gotoThread = new Thread(new ThreadStart(delegate { GenerateGoTo(activator, databaseObject); }));
         gotoThread.Start();
         //var gotoFactory = new GoToCommandFactory(activator);
@@ -158,7 +168,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         //    cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
         //    CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         //}
-
+        resetSW(sw, "I");
         //add refresh
         _refresh = new ToolStripMenuItem
         {
@@ -169,9 +179,10 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         };
         _refresh.Click += Refresh;
         CommonFunctionality.Add(_refresh);
-
+        resetSW(sw, "J");
         var viewParentTreeCmd = new ExecuteCommandViewParentTree(activator, databaseObject);
         CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
+        resetSW(sw, "K");
     }
 
     private void UpdateGoTo(ExecuteCommandShow cmd)
