@@ -150,7 +150,8 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
 
-        //var gotoThread = new Thread(new ThreadStart)
+        var gotoThread = new Thread(new ThreadStart(delegate { GenerateGoTo(activator, databaseObject); }));
+        gotoThread.Start();
         //var gotoFactory = new GoToCommandFactory(activator);
         //foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
         //{
@@ -176,7 +177,15 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     private void UpdateGoTo(ExecuteCommandShow cmd)
     {
         cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
-        CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+        if (CommonFunctionality.ToolStrip.InvokeRequired)
+        {
+            Action add = delegate { CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo); };
+            CommonFunctionality.ToolStrip.Invoke(add);
+        }
+        else
+        {
+            CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+        }
     }
 
     private void GenerateGoTo(IBasicActivateItems activator, T databaseObject)
