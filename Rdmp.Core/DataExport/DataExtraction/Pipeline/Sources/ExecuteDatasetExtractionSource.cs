@@ -581,10 +581,19 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
     public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
     {
-        if (value is ExtractDatasetCommand datasetCommand)
-            Initialize(datasetCommand);
-        if (value is ExtractGlobalsCommand command)
-            Initialize(command);
+        try
+        {
+            ////throw new Exception("test");
+            if (value is ExtractDatasetCommand datasetCommand)
+                Initialize(datasetCommand);
+            if (value is ExtractGlobalsCommand command)
+                Initialize(command);
+        }
+        catch(Exception e)
+        {
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message));
+            //throw e;
+        }
     }
 
     public virtual void Check(ICheckNotifier notifier)
