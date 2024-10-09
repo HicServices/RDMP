@@ -7,6 +7,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
@@ -149,13 +150,13 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
 
-
-        var gotoFactory = new GoToCommandFactory(activator);
-        foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
-        {
-            cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
-            CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
-        }
+        //var gotoThread = new Thread(new ThreadStart)
+        //var gotoFactory = new GoToCommandFactory(activator);
+        //foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
+        //{
+        //    cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+        //    CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+        //}
 
         //add refresh
         _refresh = new ToolStripMenuItem
@@ -171,6 +172,22 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         var viewParentTreeCmd = new ExecuteCommandViewParentTree(activator, databaseObject);
         CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
     }
+
+    private void UpdateGoTo(ExecuteCommandShow cmd)
+    {
+        cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+        CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+    }
+
+    private void GenerateGoTo(IBasicActivateItems activator, T databaseObject)
+    {
+        var gotoFactory = new GoToCommandFactory(activator);
+        foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
+        {
+            UpdateGoTo(cmd);
+        }
+    }
+
 
     private void Refresh(object sender, EventArgs e)
     {
