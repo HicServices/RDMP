@@ -212,20 +212,70 @@ public class Validator
     {
         lock (_oLockExtraTypes)
         {
-            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(
-                //type is
-                type =>
-                    type != null &&
-                    //of the correct Type
-                    (typeof(IConstraint).IsAssignableFrom(type) ||
-                     typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
-                    &&
-                    !type.IsAbstract
-                    &&
-                    !type.IsInterface
-                    &&
-                    type.IsClass
-            ).ToList();
+            //var x = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a =>
+            //{
+            //    try
+            //    {
+            //        return a.GetTypes();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine(ex.Message.ToString());
+            //        System.Diagnostics.Debug.WriteLine(ex.Message);
+            //        return null;
+            //    }
+            //}).Where(
+            //        //type is
+            //        type =>
+            //            type != null &&
+            //            //of the correct Type
+            //            (typeof(IConstraint).IsAssignableFrom(type) ||
+            //             typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+            //            &&
+            //            !type.IsAbstract
+            //            &&
+            //            !type.IsInterface
+            //            &&
+            //            type.IsClass
+            //    ).ToList();
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a =>
+            {
+                try
+                {
+                    return a.GetTypes();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
+            }).Where(
+                    //type is
+                    type =>
+                        type != null &&
+                        //of the correct Type
+                        (typeof(IConstraint).IsAssignableFrom(type) ||
+                         typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                        &&
+                        !type.IsAbstract
+                        &&
+                        !type.IsInterface
+                        &&
+                        type.IsClass
+                ).ToList();
+            //return AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).Where(
+            //    //type is
+            //    type =>
+            //        type != null &&
+            //        //of the correct Type
+            //        (typeof(IConstraint).IsAssignableFrom(type) ||
+            //         typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+            //        &&
+            //        !type.IsAbstract
+            //        &&
+            //        !type.IsInterface
+            //        &&
+            //        type.IsClass
+            //).ToList();
         }
     }
 
