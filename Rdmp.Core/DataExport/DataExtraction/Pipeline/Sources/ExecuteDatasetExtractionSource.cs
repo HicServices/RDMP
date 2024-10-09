@@ -583,7 +583,6 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
     {
         try
         {
-            ////throw new Exception("test");
             if (value is ExtractDatasetCommand datasetCommand)
                 Initialize(datasetCommand);
             if (value is ExtractGlobalsCommand command)
@@ -591,7 +590,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
         }
         catch(Exception e)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, e.Message));
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, $"{e.Message}...{e.StackTrace}"));
             //throw e;
         }
     }
