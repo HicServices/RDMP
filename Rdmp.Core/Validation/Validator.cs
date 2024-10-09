@@ -244,8 +244,10 @@ public class Validator
                 {
                     return a.GetTypes();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(a.FullName);
                     return null;
                 }
             }).Where(
