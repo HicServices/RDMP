@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improve Performance of regenerating problems with child providers
 - Update UI Tab opening Logic
 - Add Filter to Left-Hand Tree View
+- Update Migration strategy to account for all Primary Keys when moving from staging -> live
 
 ## [8.3.0] - 2024-09-23
 
