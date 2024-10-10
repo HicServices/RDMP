@@ -139,7 +139,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         }
         resetSW(sw, "F");
         _binder ??= new BinderWithErrorProviderFactory(activator);
-
+        //SetBindings(_binder, databaseObject);
         var bindingThread = new Thread(new ThreadStart(delegate { ThreadedSetBindings(databaseObject); }));
         bindingThread.Start();
 
@@ -158,8 +158,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
                 ObjectSaverButton1.BeforeSave -= BeforeSave_PromptRenameOfExtractionFilterContainer;
                 ObjectSaverButton1.BeforeSave += BeforeSave_PromptRenameOfExtractionFilterContainer;
             }
-
-            ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+            var saverThread = new Thread(new ThreadStart(delegate { SaverButtonSetup(activator, databaseObject); }));
+            saverThread.Start();
+            //ObjectSaverButton1.SetupFor(this, databaseObject, activator);
         }
         resetSW(sw, "H");
         var gotoThread = new Thread(new ThreadStart(delegate { GenerateGoTo(activator, databaseObject); }));
@@ -181,9 +182,31 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         resetSW(sw, "K");
     }
 
+    private void SaverButtonSetup(IActivateItems activator, T databaseObject)
+    {
+        if (this.InvokeRequired)
+        {
+            Action setup = delegate { ObjectSaverButton1.SetupFor(this, databaseObject, activator); };
+            this.Invoke(setup);
+        }
+        else
+        {
+            ObjectSaverButton1.SetupFor(this, databaseObject, activator);
+        }
+    }
+
     private void ThreadedSetBindings(T databaseObject)
     {
+        //if (this)
+        //{
+
+        //    Action setBindings = delegate { SetBindings(_binder, databaseObject); };
+        //    this.Invoke(setBindings);
+        //}
+        //else
+        //{
         SetBindings(_binder, databaseObject);
+        //}
     }
 
 
@@ -302,7 +325,19 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         if (c is ComboBox { DropDownStyle: ComboBoxStyle.DropDownList } box && propertyName.Equals("SelectedItem"))
             box.SelectionChangeCommitted += (s, e) => box.DataBindings["SelectedItem"].WriteValue();
 
-        _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
+        if (c.InvokeRequired)
+        {
+            Action bind = delegate
+            {
+                _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
+            };
+            c.Invoke(bind);
+        }
+        else
+        {
+
+            _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
+        }
     }
 
 
