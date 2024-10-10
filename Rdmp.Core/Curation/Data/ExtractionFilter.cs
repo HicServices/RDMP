@@ -1,4 +1,4 @@
-// Copyright (c) The University of Dundee 2018-2019
+// Copyright (c) The University of Dundee 2018-2024
 // This file is part of the Research Data Management Platform (RDMP).
 // RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
@@ -40,6 +40,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
 
     private int _extractionInformationID;
     private Lazy<ExtractionFilterParameterSet[]> _knownExtractionFilterParameterSets;
+    private int _order;
 
     /// <summary>
     /// The column in the <see cref="Catalogue"/> which is best/most associated with this filter.  A filter can query any column in any of the table(s) under
@@ -133,6 +134,8 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         Description = r["Description"] as string;
         Name = r["Name"] as string;
         IsMandatory = (bool)r["IsMandatory"];
+        Order = int.Parse(r["Order"].ToString());
+
 
         ClearAllInjections();
     }
@@ -154,6 +157,7 @@ public class ExtractionFilter : ConcreteFilter, IHasDependencies, IInjectKnown<E
         set => throw new NotSupportedException(
             "ClonedFromExtractionFilter_ID is only supported on lower level filters e.g. DeployedExtractionFilter and AggregateFilter");
     }
+    public override int Order { get => _order; set => SetField(ref _order,value); }
 
     /// <inheritdoc/>
     public IHasDependencies[] GetObjectsThisDependsOn()
