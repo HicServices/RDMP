@@ -140,8 +140,9 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         resetSW(sw, "F");
         _binder ??= new BinderWithErrorProviderFactory(activator);
 
-        SetBindings(_binder, databaseObject);
-        
+        var bindingThread = new Thread(new ThreadStart(delegate { ThreadedSetBindings(databaseObject); }));
+        bindingThread.Start();
+
         resetSW(sw, "G");
         if (this is ISaveableUI)
         {
@@ -178,6 +179,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         var viewParentTreeCmd = new ExecuteCommandViewParentTree(activator, databaseObject);
         CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
         resetSW(sw, "K");
+    }
+
+    private void ThreadedSetBindings(T databaseObject)
+    {
+        SetBindings(_binder, databaseObject);
     }
 
 
