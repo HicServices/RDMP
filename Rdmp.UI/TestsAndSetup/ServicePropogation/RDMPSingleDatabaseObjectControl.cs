@@ -204,14 +204,15 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     private void UpdateGoTo(ExecuteCommandShow cmd)
     {
         cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
+        Action add = delegate { CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo); };
         if (CommonFunctionality.ToolStrip.InvokeRequired)
         {
-            Action add = delegate { CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo); };
             CommonFunctionality.ToolStrip.Invoke(add);
         }
         else
         {
-            CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+            this.BeginInvoke(add);
+            //CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
         }
     }
 
