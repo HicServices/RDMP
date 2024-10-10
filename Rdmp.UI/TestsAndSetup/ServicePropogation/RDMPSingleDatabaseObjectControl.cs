@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
@@ -205,15 +206,16 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
         Action add = delegate { CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo); };
-        if (CommonFunctionality.ToolStrip.InvokeRequired)
-        {
-            CommonFunctionality.ToolStrip.Invoke(add);
-        }
-        else
-        {
-            this.BeginInvoke(add);
-            //CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
-        }
+        this.BeginInvoke(add);
+        //if (CommonFunctionality.ToolStrip.InvokeRequired)
+        //{
+        //    CommonFunctionality.ToolStrip.Invoke(add);
+        //}
+        //else
+        //{
+        //    this.BeginInvoke(add);
+        //    //CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
+        //}
     }
 
     private void GenerateGoTo(IBasicActivateItems activator, T databaseObject)
