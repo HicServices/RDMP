@@ -141,6 +141,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         _binder ??= new BinderWithErrorProviderFactory(activator);
 
         SetBindings(_binder, databaseObject);
+        
         resetSW(sw, "G");
         if (this is ISaveableUI)
         {
@@ -162,12 +163,6 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         resetSW(sw, "H");
         var gotoThread = new Thread(new ThreadStart(delegate { GenerateGoTo(activator, databaseObject); }));
         gotoThread.Start();
-        //var gotoFactory = new GoToCommandFactory(activator);
-        //foreach (var cmd in gotoFactory.GetCommands(databaseObject).OfType<ExecuteCommandShow>())
-        //{
-        //    cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
-        //    CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo);
-        //}
         resetSW(sw, "I");
         //add refresh
         _refresh = new ToolStripMenuItem
@@ -184,6 +179,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         CommonFunctionality.AddToMenu(viewParentTreeCmd, AtomicCommandFactory.ViewParentTree, SixLabors.ImageSharp.Image.Load<Rgba32>(CatalogueIcons.CatalogueFolder));
         resetSW(sw, "K");
     }
+
 
     private void UpdateGoTo(ExecuteCommandShow cmd)
     {
