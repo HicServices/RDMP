@@ -103,9 +103,6 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
             columnsToMigrate.PrimaryKeys.Select(pk =>
                 $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(pk.GetRuntimeName())} IS NULL")));
 
-        //sbInsert.AppendLine(
-        //    $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
-
         //right at the end of the SELECT
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)
             sbInsert.Append(" FOR UPDATE");

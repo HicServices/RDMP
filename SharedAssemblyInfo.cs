@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("8.3.0")]
 [assembly: AssemblyFileVersion("8.3.0")]
-[assembly: AssemblyInformationalVersion("8.3.1-guneet-pk-migrate")]
+[assembly: AssemblyInformationalVersion("8.3.1")]
