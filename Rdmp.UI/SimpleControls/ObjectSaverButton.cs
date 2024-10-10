@@ -102,15 +102,17 @@ public class ObjectSaverButton
 
     public void Enable(bool b)
     {
-        var c = (Control)_parent;
-        if (c.InvokeRequired)
+        if (_parent is not null)
         {
-            c.Invoke(new MethodInvoker(() => Enable(b)));
-            return;
+            var c = (Control)_parent;
+            if (c.InvokeRequired)
+            {
+                c.Invoke(new MethodInvoker(() => Enable(b)));
+                return;
+            }
+
+            _parent.SetUnSavedChanges(b);
         }
-
-        _parent.SetUnSavedChanges(b);
-
         _btnSave.Enabled = b;
         _btnUndoRedo.Enabled = b;
 
