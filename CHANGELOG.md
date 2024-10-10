@@ -1,5 +1,3 @@
-
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -13,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.3.1] - Unreleased
 
 - Improve Performance of regenerating problems with child providers
+- Update UI Tab opening Logic
+- Add Filter to Left-Hand Tree View
 
 ## [8.3.0] - 2024-09-23
 

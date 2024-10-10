@@ -50,6 +50,8 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     private IActivateItems _activator;
     public TreeListView Tree;
 
+    private TextBox Filter;
+
     public ICoreIconProvider CoreIconProvider { get; private set; }
     public ICoreChildProvider CoreChildProvider { get; set; }
     public RenameProvider RenameProvider { get; private set; }
@@ -164,11 +166,12 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
     /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
+    /// <param name="filter">Optional TextBox Filter</param>
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn)
+        OLVColumn renameableColumn,TextBox filter = null)
     {
         SetUp(collection, tree, activator, iconColumn, renameableColumn,
-            new RDMPCollectionCommonFunctionalitySettings());
+            new RDMPCollectionCommonFunctionalitySettings(),filter);
     }
 
     /// <summary>
@@ -180,8 +183,10 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
     /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
     /// <param name="renameableColumn">Nullable field for specifying which column supports renaming on F2</param>
     /// <param name="settings">Customise which common behaviours are turned on</param>
+    /// <param name="filter">Optional TextBox Filter</param>
+
     public void SetUp(RDMPCollection collection, TreeListView tree, IActivateItems activator, OLVColumn iconColumn,
-        OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings)
+        OLVColumn renameableColumn, RDMPCollectionCommonFunctionalitySettings settings, TextBox filter = null)
     {
         Settings = settings;
         Collection = collection;
@@ -190,7 +195,7 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         _activator.RefreshBus.Subscribe(this);
 
         RepositoryLocator = _activator.RepositoryLocator;
-
+        Filter = filter;
         Tree = tree;
         Tree.FullRowSelect = true;
         Tree.HideSelection = false;
@@ -198,6 +203,15 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
 
         Tree.CellToolTip.InitialDelay = UserSettings.TooltipAppearDelay;
         Tree.CellToolTipShowing += (s, e) => Tree_CellToolTipShowing(activator, e);
+
+        if(Filter is not null)
+        {
+            Filter.TextChanged += HandleFilter;
+            Filter.Text = FilterText;
+            Filter.GotFocus += RemoveText;
+            Filter.LostFocus += AddText;
+        }
+      
 
         Tree.RevealAfterExpand = true;
 
@@ -289,6 +303,34 @@ public sealed class RDMPCollectionCommonFunctionality : IRefreshBusSubscriber
         else
             foreach (var c in Tree.AllColumns)
                 c.Sortable = false;
+    }
+
+
+    private readonly string FilterText = "Filter...";
+    public void RemoveText(object sender, EventArgs e)
+    {
+        if (Filter.Text == FilterText)
+        {
+            Filter.Text = "";
+        }
+    }
+
+    public void AddText(object sender, EventArgs e)
+    {
+        if (string.IsNullOrWhiteSpace(Filter.Text))
+            Filter.Text = FilterText;
+    }
+    private void HandleFilter(object sender, EventArgs e)
+    {
+        var text = Filter.Text;
+        if(text == FilterText)
+        {
+            Tree.ModelFilter = TextMatchFilter.Contains(Tree, "");
+            Tree.UseFiltering = true;
+            return;
+        }
+        Tree.ModelFilter = TextMatchFilter.Contains(Tree, text);
+        Tree.UseFiltering = true;
     }
 
     public static void Tree_CellToolTipShowing(IActivateItems activator, ToolTipShowingEventArgs e)
