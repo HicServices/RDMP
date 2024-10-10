@@ -197,16 +197,7 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
 
     private void ThreadedSetBindings(T databaseObject)
     {
-        //if (this)
-        //{
-
-        //    Action setBindings = delegate { SetBindings(_binder, databaseObject); };
-        //    this.Invoke(setBindings);
-        //}
-        //else
-        //{
         SetBindings(_binder, databaseObject);
-        //}
     }
 
 
