@@ -61,6 +61,12 @@ public interface ILoadMetadata : INamed, ILoggedActivityRootObject
     /// </summary>
     bool AllowReservedPrefix { get; }
 
+
+    /// <summary>
+    /// Optional - Allows Data Load inserts to be ordered by the PK for efficiency when using clustered PKS. Requires access to sys.indexes, INFORMATION_SCHEMA.TABLE_CONSTRAINTS and  INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+    /// </summary>
+    bool OrderInsertsByPrimaryKey { get; }
+
     /// <summary>
     /// List of all the user configured steps in a data load.  For example you could have 2 ProcessTasks, one that downloads files from an FTP server and one that loads RAW.
     /// </summary>

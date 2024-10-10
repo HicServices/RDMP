@@ -509,7 +509,13 @@ public class AtomicCommandFactory : CommandFactoryBase
             var reservedTest = lmd.AllowReservedPrefix ? "Drop" : "Allow";
             yield return new ExecuteCommandToggleAllowReservedPrefixForLoadMetadata(lmd)
             {
-                OverrideCommandName=$"{reservedTest} Reserved Prefix Columns"
+                OverrideCommandName = $"{reservedTest} Reserved Prefix Columns",
+                SuggestedCategory = "Advanced"
+            };
+            yield return new ExecuteCommandToggleInsertOrderingPrefixForLoadMetadata(lmd)
+            {
+                OverrideCommandName = $"{(lmd.OrderInsertsByPrimaryKey ? "Don't" : "")} Optimise Inserts for Sequential Keys",
+                SuggestedCategory = "Advanced"
             };
 
             yield return new ExecuteCommandSetGlobalDleIgnorePattern(_activator) { SuggestedCategory = Advanced };

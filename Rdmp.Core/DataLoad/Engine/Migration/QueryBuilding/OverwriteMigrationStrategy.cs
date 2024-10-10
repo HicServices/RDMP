@@ -6,12 +6,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using MongoDB.Driver;
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Triggers;
@@ -99,6 +102,37 @@ CrossDatabaseMergeCommandTo..ToTable.Age is null
         sbInsert.AppendLine("WHERE");
         sbInsert.AppendLine(
             $"{columnsToMigrate.DestinationTable.GetFullyQualifiedName()}.{syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())} IS NULL");
+
+        if (job.LoadMetadata.OrderInsertsByPrimaryKey && columnsToMigrate.PrimaryKeys.Any())
+        {
+            var orderSQL = $@"
+SELECT KU.ORDINAL_POSITION AS ORDINAL_POSITION
+    , COLUMN_NAME, TC.CONSTRAINT_NAME as name, is_descending_key
+FROM 
+    INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS TC
+INNER JOIN 
+    INFORMATION_SCHEMA.KEY_COLUMN_USAGE AS KU ON TC.CONSTRAINT_TYPE = 'PRIMARY KEY'
+                                            AND TC.CONSTRAINT_NAME = KU.CONSTRAINT_NAME
+											AND KU.TABLE_NAME = '{columnsToMigrate.DestinationTable.GetRuntimeName()}'
+LEFT JOIN(select COL_NAME(ic.object_id,ic.column_id) as cn, i.name, is_descending_key FROM sys.indexes i
+INNER JOIN sys.data_spaces ds ON i.data_space_id = ds.data_space_id 
+INNER JOIN sys.index_columns ic ON i.object_id = ic.object_id AND i.index_id = ic.index_id
+where is_primary_key=1) SY  ON SY.cn = KU.COLUMN_NAME AND SY.name = KU.CONSTRAINT_NAME
+ORDER BY ORDINAL_POSITION asc
+        ";
+            var dt = new DataTable();
+            dt.BeginLoadData();
+
+            using (var orderCmd = server.GetCommand(orderSQL, _managedConnection))
+            {
+                orderCmd.CommandTimeout = Timeout;
+                using var da = server.GetDataAdapter(orderCmd);
+                da.Fill(dt);
+            }
+            var orderList = String.Join(", ", dt.AsEnumerable().Select(row => $"{row[1]} {((bool)row[3]? "DESC":"ASC")}"));
+            var orderString = $"ORDER BY {orderList}";
+            sbInsert.Append(orderString);
+        }
 
         //right at the end of the SELECT
         if (columnsToMigrate.DestinationTable.Database.Server.DatabaseType == DatabaseType.MySql)

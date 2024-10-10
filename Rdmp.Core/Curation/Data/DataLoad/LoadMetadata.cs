@@ -61,6 +61,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     private string _folder;
     private DateTime? _lastLoadTime;
     private bool _allowReservedPrefix;
+    private bool _orderInsertsByPK;
 
     public string DefaultForLoadingPath = Path.Combine("Data", "ForLoading");
     public string DefaultForArchivingPath = Path.Combine("Data", "ForArchiving");
@@ -89,6 +90,13 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         get => _allowReservedPrefix;
         set => SetField(ref _allowReservedPrefix, value);
+    }
+
+    ///  <inheritdoc/>
+    public bool  OrderInsertsByPrimaryKey
+    {
+        get => _orderInsertsByPK;
+        set => SetField(ref _orderInsertsByPK, value);
     }
 
     ///  <inheritdoc/>
