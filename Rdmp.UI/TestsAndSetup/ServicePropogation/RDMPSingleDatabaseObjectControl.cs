@@ -333,7 +333,10 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
             {
                 _binder.Bind(c, propertyName, (T)DatabaseObject, dataMember, formattingEnabled, updateMode, getter);
             };
-            c.Invoke(bind);
+            try
+            {
+                c.Invoke(bind);
+            }catch(Exception) { }
         }
         else
         {
