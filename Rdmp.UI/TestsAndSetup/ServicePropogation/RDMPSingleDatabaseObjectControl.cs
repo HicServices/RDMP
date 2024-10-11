@@ -188,7 +188,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
         if (this.InvokeRequired)
         {
             Action setup = delegate { ObjectSaverButton1.SetupFor(this, databaseObject, activator); };
-            this.Invoke(setup);
+            try
+            {
+                this.Invoke(setup);
+            }
+            catch (Exception) { }
         }
         else
         {
@@ -206,7 +210,11 @@ public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDM
     {
         cmd.SuggestedCategory = AtomicCommandFactory.GoTo;
         Action add = delegate { CommonFunctionality.AddToMenu(cmd, null, null, AtomicCommandFactory.GoTo); };
-        this.BeginInvoke(add);
+        try
+        {
+            this.BeginInvoke(add);
+        }
+        catch (Exception) { }
         //if (CommonFunctionality.ToolStrip.InvokeRequired)
         //{
         //    CommonFunctionality.ToolStrip.Invoke(add);
