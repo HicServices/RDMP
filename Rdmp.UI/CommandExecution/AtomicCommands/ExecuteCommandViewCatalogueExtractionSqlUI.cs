@@ -49,6 +49,6 @@ public class ExecuteCommandViewCatalogueExtractionSqlUI : BasicUICommandExecutio
 
     public override void Execute()
     {
-        Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
+        Activator.Activate<ViewCatalogueOverviewUI, Catalogue>(_catalogue);
     }
 }
