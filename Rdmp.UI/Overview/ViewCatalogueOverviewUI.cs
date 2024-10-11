@@ -93,6 +93,8 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
             dt = _overview.GetCountsByMonth(_dateColumns[0].ColumnInfo);
             cbTimeColumns.SelectedIndex = 0;
         }
+
+        dataGridView1.DataSource = _overview.GetDataLoadDetails();
     }
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
@@ -168,6 +170,11 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
     }
 
     private void lblLatestExtraction_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
 
     }

@@ -44,7 +44,7 @@ namespace Rdmp.UI.ExtractionUIs
             panel3 = new System.Windows.Forms.Panel();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
-            viewsqlAndResultsWithDataGridui1 = new DataViewing.ViewSQLAndResultsWithDataGridUI();
+            dataGridView1 = new System.Windows.Forms.DataGridView();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -53,6 +53,7 @@ namespace Rdmp.UI.ExtractionUIs
             panel2.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -119,7 +120,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             // panel2
             // 
-            panel2.Controls.Add(viewsqlAndResultsWithDataGridui1);
+            panel2.Controls.Add(dataGridView1);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(panel3);
             panel2.Location = new System.Drawing.Point(0, 424);
@@ -131,7 +132,7 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             panel4.Controls.Add(label2);
             panel4.Controls.Add(lblLatestExtraction);
-            panel4.Location = new System.Drawing.Point(199, 7);
+            panel4.Location = new System.Drawing.Point(199, 6);
             panel4.Name = "panel4";
             panel4.Size = new System.Drawing.Size(182, 200);
             panel4.TabIndex = 5;
@@ -186,13 +187,14 @@ namespace Rdmp.UI.ExtractionUIs
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             lblLastDataLoad.Click += lblLastDataLoad_Click;
             // 
-            // viewsqlAndResultsWithDataGridui1
+            // dataGridView1
             // 
-            viewsqlAndResultsWithDataGridui1.Location = new System.Drawing.Point(496, 124);
-            viewsqlAndResultsWithDataGridui1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            viewsqlAndResultsWithDataGridui1.Name = "viewsqlAndResultsWithDataGridui1";
-            viewsqlAndResultsWithDataGridui1.Size = new System.Drawing.Size(8, 8);
-            viewsqlAndResultsWithDataGridui1.TabIndex = 6;
+            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Location = new System.Drawing.Point(405, 6);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.Size = new System.Drawing.Size(240, 150);
+            dataGridView1.TabIndex = 6;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // ViewCatalogueOverviewUI
             // 
@@ -213,6 +215,7 @@ namespace Rdmp.UI.ExtractionUIs
             panel4.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
@@ -231,6 +234,6 @@ namespace Rdmp.UI.ExtractionUIs
         private System.Windows.Forms.ComboBox cbTimeColumns;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private DataViewing.ViewSQLAndResultsWithDataGridUI viewsqlAndResultsWithDataGridui1;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }

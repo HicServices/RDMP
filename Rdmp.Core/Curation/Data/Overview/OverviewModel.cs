@@ -84,6 +84,18 @@ public class OverviewModel
 
     }
 
+    public DataTable GetDataLoadDetails()
+    {
+        DataTable dt = new();
+        dt.Columns.Add("Data Load");
+        dt.Columns.Add("");
+        dt.Rows.Add("# Records inserted or updated in most recent data load", 1);
+        dt.Rows.Add("Average # Records inserted or updated in data loads", 1);
+        dt.Rows.Add("Data Load Frequency", "Weekly");
+
+        return dt;
+    }
+
     //public DataTable GetDataLoadsuccessRate()
     //{
     //    if (_dataLoads == null) GetDataLoads();
