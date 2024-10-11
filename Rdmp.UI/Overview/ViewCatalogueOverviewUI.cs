@@ -64,10 +64,16 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
         {
             lblLastDataLoad.Text = "No Successful DataLoads";
         }
-
-        var latestExtractionDate = _overview.GetExtractions().AsEnumerable().Select(r => r.DateOfExtraction).Distinct().Max();
-        lblLatestExtraction.Text = latestExtractionDate.ToString();
-
+        var extractions = _overview.GetExtractions();
+        if (extractions.Any())
+        {
+            var latestExtractionDate = extractions.AsEnumerable().Select(r => r.DateOfExtraction).Distinct().Max();
+            lblLatestExtraction.Text = latestExtractionDate.ToString();
+        }
+        else
+        {
+            lblLatestExtraction.Text = "Catalogue has not been extracted";
+        }
         var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetQuerySyntaxHelper();
         var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
 
@@ -81,14 +87,12 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
         {
             dt = _overview.GetCountsByMonth(pks[0].ColumnInfo);
             cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
-        }else if (_dateColumns.Any())
+        }
+        else if (_dateColumns.Any())
         {
             dt = _overview.GetCountsByMonth(_dateColumns[0].ColumnInfo);
             cbTimeColumns.SelectedIndex = 0;
         }
-        _overview.GetDataLoadsuccessRate();
-        //areaChart1.GenerateChart(dt,"Records per Month");
-
     }
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
@@ -149,6 +153,21 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
     public override string GetTabName() => $"{_catalogue.Name} Overview";
 
     private void lblLastDataLoad_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void label2_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void lblDescription_Click(object sender, EventArgs e)
+    {
+
+    }
+
+    private void lblLatestExtraction_Click(object sender, EventArgs e)
     {
 
     }
