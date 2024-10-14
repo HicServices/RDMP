@@ -19,8 +19,9 @@ namespace Rdmp.Core.Curation
 
         private string _name;
         private string _type;
-        private string _url;
+        private int _ticketingConfigurationId;
         private int _objectId;
+        private int _externalAssetId;
 
         public string Name
         {
@@ -32,11 +33,18 @@ namespace Rdmp.Core.Curation
             get => _type;
             set => SetField(ref _type, value);
         }
-        public string URL
+        public int TicketingConfiguration_ID
         {
-            get => _url;
-            set => SetField(ref _url, value);
+            get => _ticketingConfigurationId;
+            set => SetField(ref _ticketingConfigurationId, value);
         }
+
+        public int ExternalAsset_ID
+        {
+            get => _externalAssetId;
+            set => SetField(ref _externalAssetId, value);
+        }
+
         public int ObjectId
         {
             get => _objectId;
@@ -45,13 +53,14 @@ namespace Rdmp.Core.Curation
 
         public override string ToString() => Name;
 
-        public ExternalAsset(ICatalogueRepository catalogueRepository, string name, string url, string type, int id)
+        public ExternalAsset(ICatalogueRepository catalogueRepository, string name, int externalAssetId,int ticketingConfigurationId, string type, int id)
         {
 
             catalogueRepository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name },
-                {"URL", url},
+                {"ExternalAssetID", externalAssetId},
+                {"TicketingConfigurationID", ticketingConfigurationId},
                 {"ObjectID", id},
                 {"ObjectType", type}
             });
@@ -60,9 +69,10 @@ namespace Rdmp.Core.Curation
         internal ExternalAsset(ICatalogueRepository repository, DbDataReader r) : base(repository, r)
         {
             Name = r["Name"].ToString();
-            URL = r["URL"].ToString();
+            ExternalAsset_ID = int.Parse(r["ExternalAssetID"].ToString());
+            TicketingConfiguration_ID = int.Parse(r["TicketingConfigurationID"].ToString());
             ObjectType = r["ObjectType"].ToString();
-            ObjectId = int.Parse(r["ObjectId"].ToString());
+            ObjectId = int.Parse(r["ObjectID"].ToString());
         }
 
         public object GetAssociatedObject(ICatalogueRepository repository)
