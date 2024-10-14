@@ -14,7 +14,8 @@ CREATE TABLE [dbo].[ExternalAssets](
 	[ObjectType] [varchar](500) NOT NULL,
  CONSTRAINT [PK_ExternalAssetsKey] PRIMARY KEY CLUSTERED
 (
-	[Url] ASC,
+	[TicketingConfigurationID] ASC,
+	[ExternalAssetID] ASC,
 	[ObjectId] ASC,
 	[ObjectType] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
