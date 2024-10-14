@@ -136,4 +136,9 @@ public class TicketingSystemConfiguration : DatabaseEntity, INamed
         DataAccessCredentials_ID = ObjectToNullableInt(r["DataAccessCredentials_ID"]);
     }
 
+    public override string ToString()
+    {
+        return Name;
+    }
+
 }
