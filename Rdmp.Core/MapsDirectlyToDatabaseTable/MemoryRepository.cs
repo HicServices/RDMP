@@ -81,6 +81,7 @@ public class MemoryRepository : IRepository
         }
 
         var underlying = Nullable.GetUnderlyingType(prop.PropertyType);
+
         var type = underlying ?? prop.PropertyType;
 
         if (type.IsEnum)

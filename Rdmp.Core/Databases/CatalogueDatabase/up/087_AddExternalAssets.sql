@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[ExternalAsset](
 	[Name] [varchar](250) NOT NULL,
 	[ExternalAssetID] int NOT NULL,
 	[TicketingConfigurationID] int NOT NULL,
-	[ObjectId] int NOT NULL,
+	[ObjectID] int NOT NULL,
 	[ObjectType] [varchar](500) NOT NULL,
  CONSTRAINT [PK_ExternalAssetsKey] PRIMARY KEY CLUSTERED
 (

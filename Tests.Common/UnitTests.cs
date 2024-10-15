@@ -593,7 +593,7 @@ public class UnitTests
 
         if(typeof(T) == typeof(ExternalAsset))
         {
-            return (T)(object)new ExternalAsset(repository.CatalogueRepository, "Example Asset", 1, 1, "", 1);
+            return (T)(object)new ExternalAsset(repository.CatalogueRepository, "Example Asset", 1, 1, "Unknown", 1);
         }
 
         throw new TestCaseNotWrittenYetException(typeof(T));
