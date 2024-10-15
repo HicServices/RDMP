@@ -29,7 +29,7 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
         base.SetItemActivator(activator);
 
         CommonTreeFunctionality.SetUp(RDMPCollection.Datasets, tlvDatasets, Activator, olvName, olvName,
-            new RDMPCollectionCommonFunctionalitySettings());
+            new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =
             a => new IAtomicCommand[]
             {
@@ -68,6 +68,8 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
             CommonFunctionality.Add(_refresh);
         }
     }
+   
+
 
     public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
     {

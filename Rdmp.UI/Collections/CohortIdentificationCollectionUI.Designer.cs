@@ -31,54 +31,64 @@ namespace Rdmp.UI.Collections
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvCohortIdentificationConfigurations = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvFrozen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCohortIdentificationConfigurations)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvCohortIdentificationConfigurations = new TreeListView();
+            olvName = new OLVColumn();
+            olvFrozen = new OLVColumn();
+            tbFilter = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).BeginInit();
+            SuspendLayout();
             // 
             // tlvCohortIdentificationConfigurations
             // 
-            this.tlvCohortIdentificationConfigurations.AllColumns.Add(this.olvName);
-            this.tlvCohortIdentificationConfigurations.AllColumns.Add(this.olvFrozen);
-            this.tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
-            this.tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName,olvFrozen});
-            this.tlvCohortIdentificationConfigurations.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
-            this.tlvCohortIdentificationConfigurations.Name = "tlvCohortIdentificationConfigurations";
-            this.tlvCohortIdentificationConfigurations.ShowGroups = false;
-            this.tlvCohortIdentificationConfigurations.Size = new System.Drawing.Size(500, 600);
-            this.tlvCohortIdentificationConfigurations.TabIndex = 0;
-            this.tlvCohortIdentificationConfigurations.UseCompatibleStateImageBehavior = false;
-            this.tlvCohortIdentificationConfigurations.View = System.Windows.Forms.View.Details;
-            this.tlvCohortIdentificationConfigurations.VirtualMode = true;
+            tlvCohortIdentificationConfigurations.AllColumns.Add(olvName);
+            tlvCohortIdentificationConfigurations.AllColumns.Add(olvFrozen);
+            tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
+            tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvFrozen });
+            tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
+            tlvCohortIdentificationConfigurations.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlvCohortIdentificationConfigurations.Name = "tlvCohortIdentificationConfigurations";
+            tlvCohortIdentificationConfigurations.ShowGroups = false;
+            tlvCohortIdentificationConfigurations.Size = new System.Drawing.Size(583, 692);
+            tlvCohortIdentificationConfigurations.TabIndex = 0;
+            tlvCohortIdentificationConfigurations.UseCompatibleStateImageBehavior = false;
+            tlvCohortIdentificationConfigurations.View = System.Windows.Forms.View.Details;
+            tlvCohortIdentificationConfigurations.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.Sortable = false;
-            this.olvName.Text = "Cohort Identification Configurations";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.MinimumWidth = 100;
+            olvName.Sortable = false;
+            olvName.Text = "Cohort Identification Configurations";
+            olvName.Width = 100;
             // 
             // olvFrozen
-            //
             // 
-            this.olvFrozen.Sortable = true;
-            this.olvFrozen.Text = "Frozen";
-            this.olvFrozen.IsEditable = false;
+            olvFrozen.IsEditable = false;
+            olvFrozen.Text = "Frozen";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 669);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(583, 23);
+            tbFilter.TabIndex = 1;
+            // 
             // CohortIdentificationCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvCohortIdentificationConfigurations);
-            this.Name = "CohortIdentificationCollectionUI";
-            this.Size = new System.Drawing.Size(500, 600);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvCohortIdentificationConfigurations)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvCohortIdentificationConfigurations);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "CohortIdentificationCollectionUI";
+            Size = new System.Drawing.Size(583, 692);
+            ((System.ComponentModel.ISupportInitialize)tlvCohortIdentificationConfigurations).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -86,5 +96,6 @@ namespace Rdmp.UI.Collections
         private TreeListView tlvCohortIdentificationConfigurations;
         private OLVColumn olvName;
         private OLVColumn olvFrozen;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }
