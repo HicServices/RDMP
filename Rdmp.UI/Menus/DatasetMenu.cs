@@ -15,6 +15,6 @@ public class DatasetMenu: RDMPContextMenuStrip
 
     public DatasetMenu(RDMPContextMenuStripArgs args, Dataset dataset): base(args, dataset)
     {
-        Add(new ExecuteCommandDeleteDatasetUI(_activator,dataset));
+        Add(new ExecuteCommandDeleteDatasetUI(_activator, dataset) { OverrideCommandName="Delete Dataset"});
     }
 }
