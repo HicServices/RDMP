@@ -3,9 +3,9 @@
 
 -- todo add the ticketing config as an FK
 
-if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='ExternalAssets')
+if not exists (select 1 from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='ExternalAsset')
 BEGIN
-CREATE TABLE [dbo].[ExternalAssets](
+CREATE TABLE [dbo].[ExternalAsset](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [varchar](250) NOT NULL,
 	[ExternalAssetID] int NOT NULL,

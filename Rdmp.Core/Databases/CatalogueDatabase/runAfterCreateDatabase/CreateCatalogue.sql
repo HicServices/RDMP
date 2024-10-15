@@ -1345,7 +1345,7 @@ CONSTRAINT [UNIQUE_SettingKey] UNIQUE([Key]),
 ) ON [PRIMARY]
 GO
 
-CREATE TABLE [dbo].[ExternalAssets](
+CREATE TABLE [dbo].[ExternalAsset](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[Name] [varchar](250) NOT NULL,
 	[ExternalAssetID] int NOT NULL,

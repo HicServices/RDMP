@@ -14,7 +14,8 @@ using System.Linq;
 
 namespace Rdmp.Core.Curation
 {
-    public class ExternalAsset : DatabaseEntity
+    /// <inheritdoc/>
+    public class ExternalAsset : DatabaseEntity, IExternalAsset
     {
 
         private string _name;
@@ -23,28 +24,33 @@ namespace Rdmp.Core.Curation
         private int _objectId;
         private int _externalAssetId;
 
+        /// <inheritdoc/>
         public string Name
         {
             get => _name;
             set => SetField(ref _name, value);
         }
+        /// <inheritdoc/>
         public string ObjectType
         {
             get => _type;
             set => SetField(ref _type, value);
         }
+        /// <inheritdoc/>
         public int TicketingConfiguration_ID
         {
             get => _ticketingConfigurationId;
             set => SetField(ref _ticketingConfigurationId, value);
         }
 
+        /// <inheritdoc/>
         public int ExternalAsset_ID
         {
             get => _externalAssetId;
             set => SetField(ref _externalAssetId, value);
         }
 
+        /// <inheritdoc/>
         public int ObjectId
         {
             get => _objectId;
@@ -75,6 +81,11 @@ namespace Rdmp.Core.Curation
             ObjectId = int.Parse(r["ObjectID"].ToString());
         }
 
+        /// <summary>
+        /// Fetched the associated RDMP object
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <returns></returns>
         public object GetAssociatedObject(ICatalogueRepository repository)
         {
             if(ObjectType == typeof(Project).ToString())
