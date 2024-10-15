@@ -5,13 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
+
 namespace Rdmp.Core.Curation;
 
 /// <summary>
 /// Used to store references to external assets.
 /// Requires a valid ticketing system to connect to.
 /// </summary>
-public  interface IExternalAsset
+public  interface IExternalAsset: IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// Firendly Name for the asset to be displayed
