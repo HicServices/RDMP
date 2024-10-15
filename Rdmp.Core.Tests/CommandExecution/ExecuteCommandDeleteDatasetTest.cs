@@ -24,7 +24,7 @@ internal class ExecuteCommandDeleteDatasetTest: CommandCliTests
     public void TestDeleteNonExistantDataset()
     {
         Assert.That(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>(), Is.Empty);
-        var founddataset = new Core.Curation.Data.Dataset();
+        var founddataset = new Core.Curation.Data.Datasets.Dataset();
         var delCmd = new ExecuteCommandDeleteDataset(GetMockActivator(), founddataset);
         Assert.Throws<NullReferenceException>(() => delCmd.Execute());
         Assert.That(GetMockActivator().RepositoryLocator.CatalogueRepository.GetAllObjects<Core.Curation.Data.Datasets.Dataset>(), Is.Empty);

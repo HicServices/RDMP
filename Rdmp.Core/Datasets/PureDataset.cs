@@ -31,17 +31,6 @@ public class PureDescription
     public URITerm Term { get => new URITerm("/dk/atira/pure/dataset/descriptions/datasetdescription", new ENGBWrapper("Description")); }
 }
 
-public class System
-{
-    public System(string? uuid, string? systemName)
-    {
-        UUID = uuid;
-        SystemName = systemName;
-    }
-    public string? SystemName { get; set; }
-    public string? UUID { get; set; }
-}
-
 public class Name()
 {
     public string? FirstName { get; set; }
@@ -56,7 +45,7 @@ public class PurePerson
     public Name? Name { get; set; }
     public URITerm? Role { get; set; }
 
-    public List<System>? Organizations { get; set; }
+    public List<PureSystem>? Organizations { get; set; }
 }
 
 public class PureDate
@@ -127,6 +116,17 @@ public class TemporalCoveragePeriod
     public PureDate? EndDate { get; set; }
 }
 
+public class PureSystem
+{
+    public PureSystem(string? uuid, string? systemName)
+    {
+        UUID = uuid;
+        SystemName = systemName;
+    }
+    public string? SystemName { get; set; }
+    public string? UUID { get; set; }
+}
+
 public class PureDataset : PluginDataset
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -161,13 +161,13 @@ public class PureDataset : PluginDataset
     public List<PureDescription>? Descriptions { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public System? ManagingOrganization { get; set; }
+    public PureSystem? ManagingOrganization { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public new URITerm? Type { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public System? Publisher { get; set; }
+    public PureSystem? Publisher { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Geolocation? Geolocation { get; set; }
@@ -176,7 +176,7 @@ public class PureDataset : PluginDataset
     public List<PurePerson>? Persons { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-    public List<System>? Organizations { get; set; }
+    public List<PureSystem>? Organizations { get; set; }
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public PureDate? PublicationAvailableDate { get; set; }
@@ -202,5 +202,4 @@ public class PureDataset : PluginDataset
 #nullable disable
 
     public PureDataset() { }
-
 }

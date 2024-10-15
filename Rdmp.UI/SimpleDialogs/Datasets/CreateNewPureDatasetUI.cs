@@ -15,7 +15,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 namespace Rdmp.UI.SimpleDialogs.Datasets;
 
 public partial class CreateNewPureDatasetUI : RDMPForm
@@ -26,7 +25,7 @@ public partial class CreateNewPureDatasetUI : RDMPForm
 
     private DatasetProviderConfiguration _providerConfiguration;
     private PureDatasetProvider _datasetProvider;
-    private List<PureDataset.System> _publishers;
+    private List<PureSystem> _publishers;
 
     public CreateNewPureDatasetUI(IActivateItems activator, ExecuteCommandCreateNewPureDatasetUI command) : base(activator)
     {

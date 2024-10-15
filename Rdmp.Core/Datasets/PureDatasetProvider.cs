@@ -72,13 +72,13 @@ namespace Rdmp.Core.Datasets
 
             var pureDataset = new PureDataset();
             pureDataset.Title = new ENGBWrapper(title);
-            pureDataset.ManagingOrganization = new System(Configuration.Organisation_ID, "Organization");
+            pureDataset.ManagingOrganization = new PureSystem(Configuration.Organisation_ID, "Organization");
             pureDataset.Type = new URITerm("/dk/atira/pure/dataset/datasettypes/dataset/dataset", new ENGBWrapper("Dataset"));
-            pureDataset.Publisher = new System(publisherUid, "Publisher");
+            pureDataset.Publisher = new PureSystem(publisherUid, "Publisher");
 
             pureDataset.Persons = people;
             pureDataset.Visibility = visibility;
-            pureDataset.Organizations = [new System(Configuration.Organisation_ID, "Organization")];
+            pureDataset.Organizations = [new PureSystem(Configuration.Organisation_ID, "Organization")];
             pureDataset.PublicationAvailableDate = publicationDate;
 
             var serializeOptions = new JsonSerializerOptions
@@ -158,7 +158,7 @@ namespace Rdmp.Core.Datasets
         }
 
 
-        public List<System> FetchPublishers()
+        public List<PureSystem> FetchPublishers()
         {
             var uri = $"{Configuration.Url}/publishers";
             var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
@@ -167,7 +167,7 @@ namespace Rdmp.Core.Datasets
                 throw new Exception("Error");
             }
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-            List<System> publishers = JsonConvert.DeserializeObject<List<System>>(detailsString);
+            List<PureSystem> publishers = JsonConvert.DeserializeObject<List<PureSystem>>(detailsString);
             return publishers;
 
         }

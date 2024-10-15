@@ -38,7 +38,9 @@ public partial class DatasetsCollectionUI : RDMPCollectionUI, ILifetimeSubscribe
                  new ExecuteCommandCreateNewPureDatasetUI(Activator)
                     { OverrideCommandName = "Create New Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f },
                    new ExecuteCommandImportExistingPureDatasetUI(Activator)
-                    { OverrideCommandName = "Import Existing Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f }
+                    { OverrideCommandName = "Import Existing Pure Dataset", SuggestedCategory="Pure Datasets" ,Weight = -50.9f },
+                   new ExecuteCommandCreateNewPureConfigurationUI(Activator)
+                    { OverrideCommandName = "Configure Pure Dataset Provider", SuggestedCategory="Pure Datasets" ,Weight = -50.9f }
             };
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvDatasets.AddObject(activator.CoreChildProvider.DatasetRootFolder);
