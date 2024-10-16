@@ -35,6 +35,9 @@ namespace Rdmp.UI.ExtractionUIs
             splitContainer1 = new System.Windows.Forms.SplitContainer();
             lblDescription = new System.Windows.Forms.Label();
             lblName = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
+            tbMainWhere = new System.Windows.Forms.TextBox();
             cbTimeColumns = new System.Windows.Forms.ComboBox();
             areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChart();
             panel2 = new System.Windows.Forms.Panel();
@@ -44,7 +47,6 @@ namespace Rdmp.UI.ExtractionUIs
             panel3 = new System.Windows.Forms.Panel();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
-            dataGridView1 = new System.Windows.Forms.DataGridView();
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -53,7 +55,6 @@ namespace Rdmp.UI.ExtractionUIs
             panel2.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // panel1
@@ -77,6 +78,9 @@ namespace Rdmp.UI.ExtractionUIs
             // 
             // splitContainer1.Panel2
             // 
+            splitContainer1.Panel2.Controls.Add(label4);
+            splitContainer1.Panel2.Controls.Add(label3);
+            splitContainer1.Panel2.Controls.Add(tbMainWhere);
             splitContainer1.Panel2.Controls.Add(cbTimeColumns);
             splitContainer1.Panel2.Controls.Add(areaChart1);
             splitContainer1.Size = new System.Drawing.Size(1342, 400);
@@ -101,6 +105,32 @@ namespace Rdmp.UI.ExtractionUIs
             lblName.TabIndex = 2;
             lblName.Text = "lblName";
             // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(765, 373);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(82, 15);
+            label4.TabIndex = 9;
+            label4.Text = "Time Column:";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(17, 373);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(44, 15);
+            label3.TabIndex = 8;
+            label3.Text = "Where:";
+            // 
+            // tbMainWhere
+            // 
+            tbMainWhere.Location = new System.Drawing.Point(67, 370);
+            tbMainWhere.Name = "tbMainWhere";
+            tbMainWhere.Size = new System.Drawing.Size(460, 23);
+            tbMainWhere.TabIndex = 7;
+            tbMainWhere.TextChanged += tbMainWhere_TextChanged;
+            // 
             // cbTimeColumns
             // 
             cbTimeColumns.FormattingEnabled = true;
@@ -117,10 +147,10 @@ namespace Rdmp.UI.ExtractionUIs
             areaChart1.Name = "areaChart1";
             areaChart1.Size = new System.Drawing.Size(1075, 400);
             areaChart1.TabIndex = 0;
+            areaChart1.Load += areaChart1_Load;
             // 
             // panel2
             // 
-            panel2.Controls.Add(dataGridView1);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(panel3);
             panel2.Location = new System.Drawing.Point(0, 424);
@@ -187,15 +217,6 @@ namespace Rdmp.UI.ExtractionUIs
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             lblLastDataLoad.Click += lblLastDataLoad_Click;
             // 
-            // dataGridView1
-            // 
-            dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new System.Drawing.Point(405, 6);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new System.Drawing.Size(240, 150);
-            dataGridView1.TabIndex = 6;
-            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
-            // 
             // ViewCatalogueOverviewUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -208,6 +229,7 @@ namespace Rdmp.UI.ExtractionUIs
             panel1.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
+            splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
             panel2.ResumeLayout(false);
@@ -215,7 +237,6 @@ namespace Rdmp.UI.ExtractionUIs
             panel4.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
         }
 
@@ -234,6 +255,8 @@ namespace Rdmp.UI.ExtractionUIs
         private System.Windows.Forms.ComboBox cbTimeColumns;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox tbMainWhere;
     }
 }

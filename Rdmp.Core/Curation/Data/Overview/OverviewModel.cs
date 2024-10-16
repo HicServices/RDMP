@@ -35,7 +35,7 @@ public class OverviewModel
     }
 
 
-    public DataTable GetCountsByMonth(ColumnInfo dateColumn)
+    public DataTable GetCountsByMonth(ColumnInfo dateColumn, string optionalWhere="")
     {
         DataTable dt = new();
 
@@ -48,6 +48,7 @@ public class OverviewModel
         SELECT format({dateColumn.GetRuntimeName()}, 'yyyy-MM') as YearMonth, count(*) as '# Records'
         FROM {discoveredColumn.Table.GetRuntimeName()}
         WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
+        {(optionalWhere != "" ? "AND":"")} {optionalWhere}
         GROUP BY format({dateColumn.GetRuntimeName()}, 'yyyy-MM')
         ORDER BY 1
         ";

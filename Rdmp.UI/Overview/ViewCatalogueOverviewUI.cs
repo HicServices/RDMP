@@ -94,12 +94,11 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
             cbTimeColumns.SelectedIndex = 0;
         }
 
-        dataGridView1.DataSource = _overview.GetDataLoadDetails();
     }
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var dt = _overview.GetCountsByMonth(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
+        var dt = _overview.GetCountsByMonth(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo,tbMainWhere.Text);
         areaChart1.GenerateChart(dt, "Records per Month");
     }
 
@@ -177,6 +176,18 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
     private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
     {
 
+    }
+
+    private void areaChart1_Load(object sender, EventArgs e)
+    {
+
+    }
+
+    private void tbMainWhere_TextChanged(object sender, EventArgs e)
+    {
+        //var text = tbMainWhere.Text;
+        var dt = _overview.GetCountsByMonth(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
+        areaChart1.GenerateChart(dt, "Records per Month");
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverview_Design, UserControl>))]
