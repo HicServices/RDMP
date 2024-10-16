@@ -84,6 +84,7 @@ public interface ICoreChildProvider : IChildProvider
 
     AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; }
 
+    AllDatasetConfigurationsNode AllDatasetConfigurationsNode { get; }
     AllObjectSharingNode AllObjectSharingNode { get; }
     ObjectImport[] AllImports { get; }
     ObjectExport[] AllExports { get; }

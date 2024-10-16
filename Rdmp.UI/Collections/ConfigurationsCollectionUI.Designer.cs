@@ -32,6 +32,7 @@ namespace Rdmp.UI.Collections
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            this.tbFilter = new TextBox();
             this.tlvConfigurations = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).BeginInit();

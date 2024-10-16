@@ -6,6 +6,7 @@ using Rdmp.UI.Refreshing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Curation.Data.Datasets;
 
 namespace Rdmp.UI.Collections;
 
@@ -24,11 +25,21 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         return new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewDatasetUI(_activator){
-                OverrideCommandName="Add New Dataset"
+                OverrideCommandName="Add New Dataset", SuggestedCategory="Datasets"
+            },
+            new ExecuteCommandCreateNewPureDatasetUI(_activator){
+                OverrideCommandName="Create New Pure Dataset", SuggestedCategory="Pure Datasets"
+            },
+            new ExecuteCommandImportExistingPureDatasetUI(_activator)
+            {
+                OverrideCommandName="Import Existing Pure Dataset", SuggestedCategory="Pure Datasets"
+            },
+            new ExecuteCommandCreateNewPureConfigurationUI(_activator){
+            OverrideCommandName="Create New Pure Configuration", SuggestedCategory="Pure Datasets"
             },
             new ExecuteCommandAddNewRegexRedactionConfigurationUI(_activator)
             {
-                OverrideCommandName="Add New Regex Redaction Configuration"
+                OverrideCommandName="Add New Regex Redaction Configuration", SuggestedCategory="Regex"
             }
         };
     }
@@ -38,11 +49,12 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         base.SetItemActivator(activator);
         _activator = activator;
         CommonTreeFunctionality.SetUp(RDMPCollection.Configurations, tlvConfigurations, activator, olvName, olvName,
-            new RDMPCollectionCommonFunctionalitySettings());
+            new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
+        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetConfigurationsNode);
         tlvConfigurations.Refresh();
         }
 
