@@ -93,7 +93,29 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
             dt = _overview.GetCountsByMonth(_dateColumns[0].ColumnInfo);
             cbTimeColumns.SelectedIndex = 0;
         }
+        lblRecords.Text = _overview.GetNumberOfRecords().ToString();
+        var dates = _overview.GetStartEndDates();
+        lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
 
+    }
+
+    private int OnTabChange(int tabIndex)
+    {
+        if(tabIndex == 0)
+        {
+            tbMainWhere.Visible = true;
+            lblWhere.Visible = true;
+            cbTimeColumns.Visible = true;
+            lblTime.Visible = true;
+        }
+        else
+        {
+            tbMainWhere.Visible = false;
+            lblWhere.Visible = false;
+            cbTimeColumns.Visible = false;
+            lblTime.Visible = false;
+        }
+        return 1;
     }
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)

@@ -34,8 +34,33 @@ public class OverviewModel
         _catalogue = catalogue;
     }
 
+    public int GetNumberOfRecords()
+    {
+        DataTable dt = new();
 
-    public DataTable GetCountsByMonth(ColumnInfo dateColumn, string optionalWhere="")
+        var discoveredColumn = _catalogue.CatalogueItems.First().ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var server = discoveredColumn.Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        var sql = $"select count(*) FROM {discoveredColumn.Table.GetRuntimeName()}";
+        using var cmd = server.GetCommand(sql, con);
+        cmd.CommandTimeout = 30000;
+        using var da = server.GetDataAdapter(cmd);
+        dt.BeginLoadData();
+        da.Fill(dt);
+        dt.EndLoadData();
+        con.Dispose();
+        return int.Parse(dt.Rows[0].ItemArray[0].ToString());
+    }
+
+    public Tuple<DateTime,DateTime> GetStartEndDates()
+    {
+
+        return new Tuple<DateTime, DateTime>(DateTime.Now,DateTime.Now);
+    }
+
+
+    public DataTable GetCountsByMonth(ColumnInfo dateColumn, string optionalWhere = "")
     {
         DataTable dt = new();
 
@@ -48,7 +73,7 @@ public class OverviewModel
         SELECT format({dateColumn.GetRuntimeName()}, 'yyyy-MM') as YearMonth, count(*) as '# Records'
         FROM {discoveredColumn.Table.GetRuntimeName()}
         WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
-        {(optionalWhere != "" ? "AND":"")} {optionalWhere}
+        {(optionalWhere != "" ? "AND" : "")} {optionalWhere}
         GROUP BY format({dateColumn.GetRuntimeName()}, 'yyyy-MM')
         ORDER BY 1
         ";
@@ -127,7 +152,7 @@ public class OverviewModel
     //    var failureIds = dt.AsEnumerable().Select(row => row[5]).Distinct().ToList();
     //    var ids = _dataLoads.AsEnumerable().Select(row => row[0]).Distinct().ToList();
 
-        
+
     //    int failed = ids.Intersect(failureIds).Count();
     //    int success = _dataLoads.Rows.Count - failed;
     //    DataTable results = new();
@@ -141,7 +166,7 @@ public class OverviewModel
     public DataTable GetMostRecentDataLoad()
     {
         if (_dataLoads == null) GetDataLoads();
-        if (_dataLoads.Rows.Count ==0) return null;
+        if (_dataLoads.Rows.Count == 0) return null;
         var maxDataLoadId = _dataLoads.AsEnumerable().Select(r => int.Parse(r[0].ToString())).Distinct().Max();
         //find the most recent dataload id in the catalogue then go grab the dataLoadrun from the logging db
         var loggingServers = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");

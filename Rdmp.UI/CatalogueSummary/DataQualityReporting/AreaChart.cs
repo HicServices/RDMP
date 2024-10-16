@@ -13,6 +13,7 @@ using System.Windows.Forms.DataVisualization.Charting;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 
@@ -27,9 +28,12 @@ public partial class AreaChart : RDMPUserControl
 {
     private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
-    public AreaChart()
+    private Func<int,int> _OnTabChange;
+
+    public AreaChart(Func<int,int> onTabChange=null)
     {
         InitializeComponent();
+        _OnTabChange = onTabChange;
     }
 
 
@@ -37,6 +41,14 @@ public partial class AreaChart : RDMPUserControl
     public void ClearGraph()
     {
         chart1.Series.Clear();
+    }
+
+    private void tabControl1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if(_OnTabChange is not null)
+        {
+            _OnTabChange(tabControl1.SelectedIndex);
+        }
     }
 
 
