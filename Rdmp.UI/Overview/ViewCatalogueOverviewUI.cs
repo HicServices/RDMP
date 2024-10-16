@@ -94,7 +94,7 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
             cbTimeColumns.SelectedIndex = 0;
         }
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
-        var dates = _overview.GetStartEndDates();
+        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
 
     }

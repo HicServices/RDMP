@@ -53,10 +53,23 @@ public class OverviewModel
         return int.Parse(dt.Rows[0].ItemArray[0].ToString());
     }
 
-    public Tuple<DateTime,DateTime> GetStartEndDates()
+    public Tuple<DateTime,DateTime> GetStartEndDates(ColumnInfo dateColumn)
     {
+        DataTable dt = new();
 
-        return new Tuple<DateTime, DateTime>(DateTime.Now,DateTime.Now);
+        var discoveredColumn = _catalogue.CatalogueItems.First().ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        var server = discoveredColumn.Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        var sql = $"select min({dateColumn.GetRuntimeName()}), max({dateColumn.GetRuntimeName()}) FROM {discoveredColumn.Table.GetRuntimeName()}";
+        using var cmd = server.GetCommand(sql, con);
+        cmd.CommandTimeout = 30000;
+        using var da = server.GetDataAdapter(cmd);
+        dt.BeginLoadData();
+        da.Fill(dt);
+        dt.EndLoadData();
+        con.Dispose();
+        return new Tuple<DateTime, DateTime>(DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()),DateTime.Parse(dt.Rows[0].ItemArray[1].ToString()));
     }
 
 
