@@ -1,4 +1,5 @@
 
+
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -9,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add Ordering to Filters
 
-## [8.3.1] - Unreleased
+## [8.3.1] - 2024-10-16
 
 - Improve Performance of regenerating problems with child providers
 - Update UI Tab opening Logic
