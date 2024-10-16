@@ -15,8 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Rdmp.Core.Curation.Data.Datasets;
 
 /// <inheritdoc cref="IDataset"/>
-
-public class Dataset : DatabaseEntity, IDataset, IHasFolder
+public sealed class Dataset : DatabaseEntity, IDataset, IHasFolder
 {
     private string _name;
     private string _digitalObjectIdentifier;
@@ -101,6 +100,6 @@ public class Dataset : DatabaseEntity, IDataset, IHasFolder
         if (r["Url"] != DBNull.Value)
             Url = r["Url"].ToString();
         if (r["Provider_ID"] != DBNull.Value)
-            Provider_ID= int.Parse(r["Provider_ID"].ToString());
+            Provider_ID = int.Parse(r["Provider_ID"].ToString());
     }
 }

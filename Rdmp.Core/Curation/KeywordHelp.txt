@@ -95,3 +95,7 @@ FK_PeriodicityState_Evaluation: Ensures that when a DQE Evaluation is deleted al
 FK_DQEGraphAnnotation_Evaluation: Ensures that when a DQE Evaluation is deleted all child database objects are also deleted
 FK_Memento_Commit: Ensures that when a Commit is deleted all its child database objects are also deleted
 UNIQUE_SettingKey: Ensures the uniqueness of key values in the setting table 
+FK_Redaction_RedactionConfiguration_ID: Prevents you from deleting a redaction configuration if ut's in use
+FK_Redaction_ColumnInfo_ID: Prevents redactions from becoming orphaned from their associated catalogue columns
+FK_RedactionKey_Redaction_ID: Prevents redaction primary keys from being orphaned from the associated redaction
+FK_RedactionKey_ColumnInfo_ID:  Prevents redaction keys from becoming orphaned from their associated catalogue columns

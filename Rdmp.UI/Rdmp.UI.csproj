@@ -190,6 +190,9 @@
 		<Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
 			<DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SimpleDialogs\RedactCatalogueUI.cs">
+		  <SubType>UserControl</SubType>
+		</Compile>
 		<Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
 			<SubType>Form</SubType>
 		</Compile>
@@ -242,6 +245,7 @@
 		<Compile Update="SimpleDialogs\WideMessageBox.Designer.cs">
 			<DependentUpon>WideMessageBox.cs</DependentUpon>
 		</Compile>
+		<Compile Update="SubComponents\RegexRedactionConfigurationUI.cs" />
 		<Compile Update="SuggestComboBox.cs">
 			<SubType>Component</SubType>
 		</Compile>

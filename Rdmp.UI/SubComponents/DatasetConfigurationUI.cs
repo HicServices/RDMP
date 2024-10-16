@@ -41,7 +41,6 @@ public partial class DatasetConfigurationUI : DatsetConfigurationUI_Design, IRef
         Bind(tbName, "Text", "Name", static c => c.Name);
         Bind(tbDOI, "Text", "DigitalObjectIdentifier", static c => c.DigitalObjectIdentifier);
         Bind(tbSource, "Text", "Source", static c => c.Source);
-        Bind(tbFolder, "Text", "Folder", static c => c.Folder);
         var s = GetObjectSaverButton();
         s.SetupFor(this, databaseObject, activator);
         GetObjectSaverButton()?.Enable(false);

@@ -22,7 +22,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
-using Rdmp.Core.Datasets;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.CohortNodes;
@@ -205,6 +205,11 @@ public class CatalogueChildProvider : ICoreChildProvider
     public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; set; } = new();
     public AllTemplateAggregateConfigurationsNode TemplateAggregateConfigurationsNode { get; set; } = new();
     public FolderNode<Catalogue> CatalogueRootFolder { get; private set; }
+
+    public AllDatasetsNode AllDatasetsNode { get; set; }
+
+    public RegexRedactionConfiguration[] AllRegexRedactionConfigurations { get; set; }
+    public AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; set; }
 
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
@@ -448,6 +453,17 @@ public class CatalogueChildProvider : ICoreChildProvider
 
         ReportProgress("After Plugins");
 
+        AllRegexRedactionConfigurations = GetAllObjects<RegexRedactionConfiguration>(repository);
+        AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
+        AddChildren(AllRegexRedactionConfigurationsNode);
+
+
+        AllDatasets = GetAllObjects<Curation.Data.Datasets.Dataset>(repository);
+        AllDatasetsNode = new AllDatasetsNode();
+        AddChildren(AllDatasetsNode);
+
+        ReportProgress("After Configurations");
+
         var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
         foreach (var o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
@@ -590,6 +606,20 @@ public class CatalogueChildProvider : ICoreChildProvider
     {
         var children = new HashSet<object>(LoadModuleAssembly.Assemblies);
         var descendancy = new DescendancyList(allPluginsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllRegexRedactionConfigurationsNode allRegexRedactionConfigurationsNode)
+    {
+        var children = new HashSet<object>(AllRegexRedactionConfigurations);
+        var descendancy = new DescendancyList(allRegexRedactionConfigurationsNode);
+        AddToDictionaries(children, descendancy);
+    }
+
+    private void AddChildren(AllDatasetsNode allDatasetsNode)
+    {
+        var children = new HashSet<object>(AllDatasets);
+        var descendancy = new DescendancyList(allDatasetsNode);
         AddToDictionaries(children, descendancy);
     }
 
