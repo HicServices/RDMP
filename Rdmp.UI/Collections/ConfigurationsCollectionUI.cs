@@ -52,6 +52,7 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new RDMPCollectionCommonFunctionalitySettings(),tbFilter);
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = e => GetWhitespaceRightClickMenu();
         Activator.RefreshBus.EstablishLifetimeSubscription(this);
+        //tlvConfigurations.AddObject(Activator.CoreChildProvider.DatasetRootFolder);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetConfigurationsNode);

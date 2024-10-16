@@ -68,6 +68,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     //Catalogue side of things
     public Catalogue[] AllCatalogues { get; set; }
     public Curation.Data.Datasets.Dataset[] AllDatasets { get; set; }
+
     public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
 
     public SupportingDocument[] AllSupportingDocuments { get; set; }
@@ -216,6 +217,7 @@ public class CatalogueChildProvider : ICoreChildProvider
 
     public AllDatasetConfigurationsNode AllDatasetConfigurationsNode { get; set; }
     public DatasetProviderConfiguration[] DatasetProviderConfigurations { get; set; }
+
 
     protected Stopwatch ProgressStopwatch = Stopwatch.StartNew();
     private int _progress;
@@ -396,8 +398,6 @@ public class CatalogueChildProvider : ICoreChildProvider
 
 
         DatasetRootFolder = FolderHelper.BuildFolderTree(AllDatasets);
-
-     
         AddChildren(DatasetRootFolder, new DescendancyList(DatasetRootFolder));
 
         ReportProgress("Build Catalogue Folder Root");
