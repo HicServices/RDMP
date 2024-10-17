@@ -16,7 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Minio" Version="6.0.3" />
-    <PackageVersion Include="MongoDB.Driver" Version="2.30.0" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NPOI" Version="2.7.1" />
     <PackageVersion Include="NLog" Version="5.3.4" />
