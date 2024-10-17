@@ -215,7 +215,7 @@ public class CatalogueChildProvider : ICoreChildProvider
     public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
     public AggregateConfiguration[] TemplateAggregateConfigurations;
 
-    public AllDatasetConfigurationsNode AllDatasetConfigurationsNode { get; set; }
+    public AllDatasetProviderConfigurationsNode AllDatasetProviderConfigurationsNode { get; set; }
     public DatasetProviderConfiguration[] DatasetProviderConfigurations { get; set; }
 
 
@@ -459,9 +459,9 @@ public class CatalogueChildProvider : ICoreChildProvider
         AllRegexRedactionConfigurationsNode = new AllRegexRedactionConfigurationsNode();
         AddChildren(AllRegexRedactionConfigurationsNode);
 
-        AllDatasetConfigurationsNode = new AllDatasetConfigurationsNode();
+        AllDatasetProviderConfigurationsNode = new AllDatasetProviderConfigurationsNode();
         DatasetProviderConfigurations = GetAllObjects<DatasetProviderConfiguration>(repository);
-        AddChildren(AllDatasetConfigurationsNode);
+        AddChildren(AllDatasetProviderConfigurationsNode);
 
         AllDatasets = GetAllObjects<Curation.Data.Datasets.Dataset>(repository);
         AllDatasetsNode = new AllDatasetsNode();
@@ -628,7 +628,7 @@ public class CatalogueChildProvider : ICoreChildProvider
         AddToDictionaries(children, descendancy);
     }
 
-    private void AddChildren(AllDatasetConfigurationsNode allDatasetConfigurationNode)
+    private void AddChildren(AllDatasetProviderConfigurationsNode allDatasetConfigurationNode)
     {
         var children = new HashSet<object>(DatasetProviderConfigurations);
         var descendancy = new DescendancyList(allDatasetConfigurationNode);

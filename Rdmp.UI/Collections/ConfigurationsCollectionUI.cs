@@ -27,9 +27,6 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
             new ExecuteCommandCreateNewDatasetUI(_activator){
                 OverrideCommandName="Add New Dataset", SuggestedCategory="Datasets"
             },
-            new ExecuteCommandCreateNewPureDatasetUI(_activator){
-                OverrideCommandName="Create New Pure Dataset", SuggestedCategory="Pure Datasets"
-            },
             new ExecuteCommandImportExistingPureDatasetUI(_activator)
             {
                 OverrideCommandName="Import Existing Pure Dataset", SuggestedCategory="Pure Datasets"
@@ -55,7 +52,7 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         //tlvConfigurations.AddObject(Activator.CoreChildProvider.DatasetRootFolder);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetsNode);
         tlvConfigurations.AddObject(Activator.CoreChildProvider.AllRegexRedactionConfigurationsNode);
-        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetConfigurationsNode);
+        tlvConfigurations.AddObject(Activator.CoreChildProvider.AllDatasetProviderConfigurationsNode);
         tlvConfigurations.Refresh();
         }
 

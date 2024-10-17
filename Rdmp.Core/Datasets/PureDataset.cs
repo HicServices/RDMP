@@ -1,4 +1,6 @@
 ﻿using Amazon.Auth.AccessControlPolicy.ActionIdentifiers;
+using NPOI.SS.Formula.Atp;
+using NPOI.SS.Formula.Functions;
 using SynthEHR;
 using System;
 using System.Collections.Generic;
@@ -58,6 +60,12 @@ public class PureDate
     }
 
     public PureDate() { }
+
+
+    public DateTime ToDateTime()
+    {
+        return new DateTime(Year, Month??1, Day??1, 0, 0, 0);
+    }
 
     public bool IsBefore(PureDate date)
     {

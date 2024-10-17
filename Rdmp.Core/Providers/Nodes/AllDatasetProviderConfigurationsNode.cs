@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.Core.Providers.Nodes;
 
-public class AllDatasetConfigurationsNode : SingletonNode
+public class AllDatasetProviderConfigurationsNode : SingletonNode
 {
-    public AllDatasetConfigurationsNode():base("Dataset Provider Configurations") { }
+    public AllDatasetProviderConfigurationsNode():base("Dataset Provider Configurations") { }
 }
