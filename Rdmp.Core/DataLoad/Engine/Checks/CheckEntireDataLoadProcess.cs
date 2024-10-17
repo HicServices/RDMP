@@ -6,6 +6,7 @@
 
 using System;
 using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
@@ -21,11 +22,14 @@ public class CheckEntireDataLoadProcess : ICheckable
 {
     private readonly HICDatabaseConfiguration _databaseConfiguration;
     private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
+    private readonly IBasicActivateItems _activator;
+
     public ILoadMetadata LoadMetadata { get; set; }
 
-    public CheckEntireDataLoadProcess(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
+    public CheckEntireDataLoadProcess(IBasicActivateItems activator, ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration,
         HICLoadConfigurationFlags loadConfigurationFlags)
     {
+        _activator = activator;
         _databaseConfiguration = databaseConfiguration;
         _loadConfigurationFlags = loadConfigurationFlags;
         LoadMetadata = loadMetadata;
@@ -36,7 +40,7 @@ public class CheckEntireDataLoadProcess : ICheckable
         var catalogueLoadChecks =
             new CatalogueLoadChecks(LoadMetadata, _loadConfigurationFlags, _databaseConfiguration);
         var metadataLoggingConfigurationChecks = new MetadataLoggingConfigurationChecks(LoadMetadata);
-        var processTaskChecks = new ProcessTaskChecks(LoadMetadata);
+        var processTaskChecks = new ProcessTaskChecks(LoadMetadata,_activator);
         var preExecutionChecks = new PreExecutionChecker(LoadMetadata, _databaseConfiguration);
 
         //If the load is a progressable (loaded over time) then make sure any associated caches are compatible with the load ProcessTasks

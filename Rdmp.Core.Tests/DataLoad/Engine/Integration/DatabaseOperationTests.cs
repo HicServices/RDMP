@@ -75,7 +75,7 @@ internal class DatabaseOperationTests : DatabaseTests
             //now clone the catalogue data structures to MachineName
             foreach (TableInfo tableInfo in cata.GetTableInfoList(false))
                 cloner.CreateTablesInDatabaseFromCatalogueInfo(ThrowImmediatelyDataLoadEventListener.Quiet, tableInfo,
-                    LoadBubble.Raw);
+                    LoadBubble.Raw,false);
 
             Assert.Multiple(() =>
             {

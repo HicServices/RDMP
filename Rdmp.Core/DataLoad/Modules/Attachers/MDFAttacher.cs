@@ -48,11 +48,21 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
     public MdfAttachStrategy AttachStrategy { get; set; }
 
     [DemandsInitialization(
-        "Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .mdf file in the DATA directory from the perspective of SQL Server")]
+        @"Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .mdf file in the DATA directory from the perspective of SQL Server.
+There are a number of variables for use within this override path:
+%d : the current date in the month e.g. 04
+%m : the current month  e.g. 12
+%y : the current year e.g. 24
+")]
     public string OverrideAttachMdfPath { get; set; }
 
     [DemandsInitialization(
-        "Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .ldf file in the DATA directory from the perspective of SQL Server")]
+        @"Set this only if you encounter problems with the ATTACH stage path.  This is the local path to the .ldf file in the DATA directory from the perspective of SQL Server.
+There are a number of variables for use within this override path:
+%d : the current date in the month e.g. 04
+%m : the current month  e.g. 12
+%y : the current year e.g. 24
+")]
     public string OverrideAttachLdfPath { get; set; }
 
     public MDFAttacher() : base(false)
@@ -60,6 +70,12 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
     }
 
     private MdfFileAttachLocations _locations;
+
+
+    private static string ReplacedateVariables(string str)
+    {
+        return str.Replace("%d", DateTime.Now.ToString("dd")).Replace("%m", DateTime.Now.ToString("MM")).Replace("%y", DateTime.Now.ToString("yy"));
+    }
 
     private void GetFileNames()
     {
@@ -84,7 +100,8 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         if (!string.IsNullOrWhiteSpace(OverrideAttachLdfPath) && !OverrideAttachLdfPath.EndsWith(".ldf", StringComparison.OrdinalIgnoreCase))
         {
             var _path = dt.Rows[1].ItemArray[3].ToString();
-            _locations.AttachLdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachLdfPath, _path); 
+            var path = ReplacedateVariables(OverrideAttachLdfPath);
+            _locations.AttachLdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(path, _path); 
         }
         else
         {
@@ -93,7 +110,8 @@ If you are attempting to attach an MDF file from a Linux machine to a Window mac
         if (!string.IsNullOrWhiteSpace(OverrideAttachMdfPath) && !OverrideAttachMdfPath.EndsWith(".mdf", StringComparison.OrdinalIgnoreCase))
         {
             var _path = dt.Rows[0].ItemArray[3].ToString();
-            _locations.AttachMdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(OverrideAttachMdfPath, _path);
+            var path = ReplacedateVariables(OverrideAttachMdfPath);
+            _locations.AttachMdfPath = MdfFileAttachLocations.MergeDirectoryAndFileUsingAssumedDirectorySeparator(path, _path);
         }
         else
         {
