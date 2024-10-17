@@ -176,7 +176,6 @@ jobs:
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/runtimes ./PublishWinForms
           cp -r Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/x64 ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/D3DCompiler_47_cor3.dll ./PublishWinForms
-          cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/mongocrypt.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/PenImc_cor3.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/PresentationNative_cor3.dll ./PublishWinForms
           cp Application/ResearchDataManagementPlatform/bin/Release/net8.0-windows/win-x64/vcruntime140_cor3.dll ./PublishWinForms
