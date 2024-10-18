@@ -49,7 +49,8 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             tlvCohortIdentificationConfigurations,
             Activator,
             olvName, //column with the icon
-            olvName //column that can be renamed
+            olvName, //column that can be renamed
+            tbFilter
         );
         CommonTreeFunctionality.AxeChildren = new[]
         {

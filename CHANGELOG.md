@@ -1,4 +1,3 @@
-
 # Changelog
 All notable changes to this project will be documented in this file.
 
@@ -10,9 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add Ordering to Filters
 - [MSSQL ONLY] Add ability to perform Regex redactions on data loads and existing catalogues
 
-## [8.3.1] - Unreleased
+## [8.3.1] - 2024-10-16
 
 - Improve Performance of regenerating problems with child providers
+- Update UI Tab opening Logic
+- Add Filter to Left-Hand Tree View
 
 ## [8.3.0] - 2024-09-23
 

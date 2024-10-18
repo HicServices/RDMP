@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.Collections
+﻿using System.Windows.Forms;
+
+namespace Rdmp.UI.Collections
 {
     partial class ConfigurationsCollectionUI
     {
@@ -32,10 +34,11 @@
             this.components = new System.ComponentModel.Container();
             this.tlvConfigurations = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            tbFilter = new TextBox();
+
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).BeginInit();
-            this.SuspendLayout();
             // 
-            // tlvFavourites
+            // tlvDatasets
             // 
             this.tlvConfigurations.AllColumns.Add(this.olvName);
             this.tlvConfigurations.CellEditUseWholeCell = false;
@@ -59,7 +62,7 @@
             this.olvName.Text = "Name";
             this.olvName.MinimumWidth = 100;
             // 
-            // FavouritesCollectionUI
+            // tbFilter
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -69,11 +72,17 @@
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfigurations)).EndInit();
             this.ResumeLayout(false);
             this.Text = "ConfigurationsCollection";
+            tbFilter.Dock = DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 620);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(376, 23);
+            tbFilter.TabIndex = 3;
         }
 
         #endregion
 
         private BrightIdeasSoftware.TreeListView tlvConfigurations;
         private BrightIdeasSoftware.OLVColumn olvName;
+        private TextBox tbFilter;
     }
 }

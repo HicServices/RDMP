@@ -80,7 +80,7 @@ public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubsc
             tlvLoadMetadata,
             activator,
             olvName,
-            olvName);
+            olvName,tbFilter);
 
         CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
             { new ExecuteCommandCreateNewLoadMetadata(a) };

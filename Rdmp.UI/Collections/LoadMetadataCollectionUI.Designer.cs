@@ -31,55 +31,65 @@ namespace Rdmp.UI.Collections
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvLoadMetadata = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvValue = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvLoadMetadata = new TreeListView();
+            olvName = new OLVColumn();
+            olvValue = new OLVColumn();
+            tbFilter = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvLoadMetadata).BeginInit();
+            SuspendLayout();
             // 
             // tlvLoadMetadata
             // 
-            this.tlvLoadMetadata.AllColumns.Add(this.olvName);
-            this.tlvLoadMetadata.AllColumns.Add(this.olvValue);
-            this.tlvLoadMetadata.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClick;
-            this.tlvLoadMetadata.CellEditUseWholeCell = false;
-            this.tlvLoadMetadata.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName, this.olvValue});
-            this.tlvLoadMetadata.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvLoadMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvLoadMetadata.Location = new System.Drawing.Point(0, 0);
-            this.tlvLoadMetadata.Name = "tlvLoadMetadata";
-            this.tlvLoadMetadata.ShowGroups = false;
-            this.tlvLoadMetadata.Size = new System.Drawing.Size(500, 600);
-            this.tlvLoadMetadata.TabIndex = 0;
-            this.tlvLoadMetadata.UseCompatibleStateImageBehavior = false;
-            this.tlvLoadMetadata.View = System.Windows.Forms.View.Details;
-            this.tlvLoadMetadata.VirtualMode = true;
+            tlvLoadMetadata.AllColumns.Add(olvName);
+            tlvLoadMetadata.AllColumns.Add(olvValue);
+            tlvLoadMetadata.CellEditActivation = ObjectListView.CellEditActivateMode.SingleClick;
+            tlvLoadMetadata.CellEditUseWholeCell = false;
+            tlvLoadMetadata.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvValue });
+            tlvLoadMetadata.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvLoadMetadata.Location = new System.Drawing.Point(0, 0);
+            tlvLoadMetadata.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlvLoadMetadata.Name = "tlvLoadMetadata";
+            tlvLoadMetadata.ShowGroups = false;
+            tlvLoadMetadata.Size = new System.Drawing.Size(583, 692);
+            tlvLoadMetadata.TabIndex = 0;
+            tlvLoadMetadata.UseCompatibleStateImageBehavior = false;
+            tlvLoadMetadata.View = System.Windows.Forms.View.Details;
+            tlvLoadMetadata.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.Text = "Load Metadata";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.MinimumWidth = 100;
+            olvName.Text = "Load Metadata";
+            olvName.Width = 100;
             // 
             // olvValue
             // 
-            this.olvValue.AspectName = "Value";
-            this.olvValue.Text = "Value";
-            this.olvValue.FillsFreeSpace = false;
-            this.olvValue.IsEditable = false;
+            olvValue.AspectName = "Value";
+            olvValue.IsEditable = false;
+            olvValue.Text = "Value";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 669);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(583, 23);
+            tbFilter.TabIndex = 1;
             // 
             // LoadMetadataCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvLoadMetadata);
-            this.Name = "LoadMetadataCollectionUI";
-            this.Size = new System.Drawing.Size(500, 600);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvLoadMetadata)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvLoadMetadata);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "LoadMetadataCollectionUI";
+            Size = new System.Drawing.Size(583, 692);
+            ((System.ComponentModel.ISupportInitialize)tlvLoadMetadata).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -87,5 +97,6 @@ namespace Rdmp.UI.Collections
         private TreeListView tlvLoadMetadata;
         private OLVColumn olvName;
         private OLVColumn olvValue;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }
