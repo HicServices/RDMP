@@ -8,7 +8,7 @@ CREATE TABLE [dbo].[DatasetProviderConfiguration](
 	DataAccessCredentials_ID [int] NOT NULL,
 	Organisation_ID [nvarchar](256) NOT NULL
 	CONSTRAINT FK_DatasetProviderConfiguration_DataAccessCredentials FOREIGN KEY (DataAccessCredentials_ID) REFERENCES DataAccessCredentials(ID)  ON DELETE CASCADE,
-CONSTRAINT [PK_RegexRedactionKey] PRIMARY KEY CLUSTERED 
+CONSTRAINT [PK_DatasetProviderConfiguration] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
