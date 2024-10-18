@@ -30,11 +30,11 @@
         {
             btnCreate = new System.Windows.Forms.Button();
             btnCancel = new System.Windows.Forms.Button();
-            label1 = new System.Windows.Forms.Label();
             tbUrl = new System.Windows.Forms.TextBox();
             lblError = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             cbProviders = new System.Windows.Forms.ComboBox();
+            label1 = new System.Windows.Forms.Label();
             SuspendLayout();
             // 
             // btnCreate
@@ -56,15 +56,6 @@
             btnCancel.Text = "Cancel";
             btnCancel.UseVisualStyleBackColor = true;
             btnCancel.Click += btnCancel_Click;
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(37, 59);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(31, 15);
-            label1.TabIndex = 16;
-            label1.Text = "URL:";
             // 
             // tbUrl
             // 
@@ -100,6 +91,15 @@
             cbProviders.TabIndex = 20;
             cbProviders.SelectedIndexChanged += cbProviders_SelectedIndexChanged;
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(37, 59);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(37, 15);
+            label1.TabIndex = 16;
+            label1.Text = "UUID:";
+            // 
             // ImportExistingPureDatasetUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -122,10 +122,10 @@
         #endregion
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbUrl;
         private System.Windows.Forms.Label lblError;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox cbProviders;
+        private System.Windows.Forms.Label label1;
     }
 }

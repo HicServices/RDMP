@@ -49,15 +49,16 @@ public partial class ImportExistingPureDatasetUI : RDMPForm
     {
         if (_activator.YesNo("Please confirm you wish to import this Dataset", "Import Dataset"))
         {
-            if (!_datasetProvider.CheckDatasetExistsAtURL(tbUrl.Text))
+            var url = _providerConfiguration.Url.Split("/ws/api").First() + "/en/datasets/"+tbUrl.Text;
+            if (!_datasetProvider.CheckDatasetExistsAtURL(url))
             {
-                lblError.Text = "Unable to locate dataset. Ensure UUID url is used";
+                lblError.Text = "Unable to locate dataset. Ensure UUID is correct.";
                 lblError.Visible = true;
                 return;
             }
             else
             {
-                _datasetProvider.AddExistingDataset(null, tbUrl.Text);
+                _datasetProvider.AddExistingDataset(null, url);
                 Close();
                 Dispose();
             }

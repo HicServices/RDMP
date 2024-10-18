@@ -62,7 +62,7 @@ Some variables are available:
         public void Check(ICheckNotifier notifier)
         {
             if (Dataset is null) notifier.OnCheckPerformed(new CheckEventArgs("No Dataset was selected", CheckResult.Fail));
-            if (Dataset.Type != _type) notifier.OnCheckPerformed(new CheckEventArgs("Dataset is not a Pure Dataset.", CheckResult.Fail));
+            if (Dataset is not null && Dataset.Type != _type) notifier.OnCheckPerformed(new CheckEventArgs("Dataset is not a Pure Dataset.", CheckResult.Fail));
         }
 
         public void Initialize(DiscoveredDatabase dbInfo, LoadStage loadStage)
@@ -147,7 +147,8 @@ Some variables are available:
         private List<PureDescription> GetDescriptions()
         {
             var descriptions = new List<PureDescription>();
-            foreach (var description in _pureDataset.Descriptions)
+            var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
+            foreach (var description in _pureDataset.Descriptions.Where(d => d.Term.URI == datasetDescriptionTerm))
             {
                 description.Value.en_GB += @$"
 {GetUpdateText()}";
