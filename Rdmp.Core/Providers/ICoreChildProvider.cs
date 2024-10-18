@@ -80,6 +80,10 @@ public interface ICoreChildProvider : IChildProvider
     AllDashboardsNode AllDashboardsNode { get; }
     DashboardLayout[] AllDashboards { get; }
 
+    AllDatasetsNode AllDatasetsNode { get; }
+
+    AllRegexRedactionConfigurationsNode AllRegexRedactionConfigurationsNode { get; }
+
     AllObjectSharingNode AllObjectSharingNode { get; }
     ObjectImport[] AllImports { get; }
     ObjectExport[] AllExports { get; }

@@ -28,7 +28,7 @@ internal class ConsoleGuiContextMenuFactory
         this.activator = activator;
     }
 
-    public ContextMenu Create(object[] many, object single)
+    public ContextMenu Create(int x,int y,object[] many, object single)
     {
         var commands = GetCommands(activator, many, single).ToArray();
 
@@ -65,18 +65,16 @@ internal class ConsoleGuiContextMenuFactory
             items.Add(bar);
         }
 
-        // we can do nothing if theres no menu items
+        // we can do nothing if there are no menu items
         if (items.Count == 0)
             return null;
 
         var withSpacers = AddSpacers(items, order);
 
-        var menu = new ContextMenu
+        return new ContextMenu(x, y, new MenuBarItem(withSpacers))
         {
-            MenuItems = new MenuBarItem(withSpacers)
+            UseSubMenusSingleFrame = true
         };
-
-        return menu;
     }
 
     private static MenuItem[] AddSpacers(List<MenuItem> items, Dictionary<MenuItem, float> order)

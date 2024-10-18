@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
@@ -62,7 +63,7 @@ public abstract class Argument : DatabaseEntity, IArgument
         typeof(CacheProgress), typeof(ExternalDatabaseServer), typeof(StandardRegex),
         typeof(CohortIdentificationConfiguration),
         typeof(RemoteRDMP), typeof(Catalogue), typeof(CatalogueItem),
-        typeof(DataAccessCredentials),
+        typeof(DataAccessCredentials), typeof(RegexRedactionConfiguration),
 
         //wierd special cases
         typeof(ICustomUIDrivenClass), typeof(EncryptedString),
