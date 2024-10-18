@@ -361,11 +361,6 @@
 	  </None>
 	</ItemGroup>
 	<ItemGroup>
-		<Compile Update="Databases\CatalogueDatabase\up\089_AddDatasetProviderConfiguration.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>089_AddDatasetProviderConfiguration.sql</DependentUpon>
-		</Compile>
 		<Compile Update="GlobalStrings.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
