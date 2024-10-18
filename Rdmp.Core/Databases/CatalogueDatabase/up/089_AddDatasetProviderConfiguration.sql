@@ -1,4 +1,7 @@
-﻿if not exists (select 1 from sys.tables where name = 'DatasetProviderConfiguration')
+﻿--Version: 8.4.0.0
+--Description: Adds the ability to store configuration to talk to remote dataset stores
+
+if not exists (select 1 from sys.tables where name = 'DatasetProviderConfiguration')
 BEGIN
 CREATE TABLE [dbo].[DatasetProviderConfiguration](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
