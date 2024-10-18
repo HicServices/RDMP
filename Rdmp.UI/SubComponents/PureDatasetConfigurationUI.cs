@@ -1,5 +1,6 @@
 ﻿using Rdmp.Core.Curation.Data.Datasets;
 using Rdmp.Core.Datasets;
+using Rdmp.Core.Datasets.PureItems;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -40,9 +41,9 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
         {
             btnViewOnPure.Enabled = true;
         }
-        tbName.Text = _dataset.Title.en_GB;
+        tbName.Text = _dataset.Title.En_GB;
         if (_dataset.Descriptions.Any(d => d.Value is not null))
-            tbDescription.Text = _dataset.Descriptions.Where(d => d.Value is not null).First().Value.en_GB;
+            tbDescription.Text = _dataset.Descriptions.Where(d => d.Value is not null).First().Value.En_GB;
         if (_dataset.TemporalCoveragePeriod is not null && _dataset.TemporalCoveragePeriod.StartDate is not null)
             tbTemporalStart.Text = _dataset.TemporalCoveragePeriod.StartDate.ToDateTime().ToString();
         if (_dataset.TemporalCoveragePeriod is not null && _dataset.TemporalCoveragePeriod.EndDate is not null)
@@ -74,7 +75,7 @@ public partial class PureDatasetConfigurationUI : DatsetConfigurationUI_Design, 
         if (_activator.YesNo("Are you sure?", "Save Changes"))
         {
             var datasetUpdate = new PureDataset();
-            _dataset.Title.en_GB = tbName.Text;
+            _dataset.Title.En_GB = tbName.Text;
             datasetUpdate.Title = _dataset.Title;
             var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
             var description = _dataset.Descriptions.Where(d => d.Term.URI == datasetDescriptionTerm).FirstOrDefault();

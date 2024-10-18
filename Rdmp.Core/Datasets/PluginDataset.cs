@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Rdmp.Core.Curation.Data.Datasets;
+
 
 namespace Rdmp.Core.Datasets
 {
-    public class PluginDataset: Curation.Data.Datasets.Dataset
+    /// <summary>
+    /// Base class to allow all plugin dataset types to be based off
+    /// </summary>
+    public class PluginDataset: Dataset
     {
 
         public PluginDataset() { }

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.UI.Refreshing;
-using Rdmp.Core.Dataset;
+using Rdmp.Core.Datasets;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.Core.Curation.Data.Datasets;

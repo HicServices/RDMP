@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CommandExecution;
 
-namespace Rdmp.Core.Dataset;
+namespace Rdmp.Core.Datasets;
 
 /// <summary>
 /// Common methods used by Cohort Builder UI implementations.  Eliminates

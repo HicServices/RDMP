@@ -17,164 +17,166 @@ using System.Net;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Text;
 using System.Data;
-namespace Rdmp.Core.Datasets
+namespace Rdmp.Core.Datasets;
+
+/// <summary>
+/// Provides access to a remore PURE system to access datasets
+/// </summary>
+public class PureDatasetProvider : PluginDatasetProvider
 {
-    public class PureDatasetProvider : PluginDatasetProvider
+    private HttpClient _client;
+
+    public PureDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
     {
-        private HttpClient _client;
+        _client = new HttpClient();
+        var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
+        var apiKey = credentials.GetDecryptedPassword();
+        _client.DefaultRequestHeaders.Add("api-key", apiKey);
+    }
 
-        public PureDatasetProvider(IBasicActivateItems activator, DatasetProviderConfiguration configuration) : base(activator, configuration)
+    public static string UrltoUUID(string url) => url.Split("/").Last();
+
+    public bool CheckDatasetExistsAtURL(string url)
+    {
+        var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
+        var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+        return response.StatusCode == HttpStatusCode.OK;
+    }
+
+    public override void AddExistingDataset(string name, string url)
+    {
+        var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
+        var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+        if (response.StatusCode == HttpStatusCode.OK)
         {
-            _client = new HttpClient();
-            var credentials = Repository.GetAllObjectsWhere<DataAccessCredentials>("ID", Configuration.DataAccessCredentials_ID).First();
-            var apiKey = credentials.GetDecryptedPassword();
-            _client.DefaultRequestHeaders.Add("api-key", apiKey);
-        }
-
-        public static string UrltoUUID(string url) => url.Split("/").Last();
-
-        public bool CheckDatasetExistsAtURL(string url)
-        {
-            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
-            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            return response.StatusCode == HttpStatusCode.OK;
-        }
-
-        public override void AddExistingDataset(string name, string url)
-        {
-            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(url)}";
-            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            if (response.StatusCode == HttpStatusCode.OK)
-            {
-                var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-                PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
-                var datasetName = string.IsNullOrWhiteSpace(name) ? pd.Title.en_GB : name;
-                var dataset = new Curation.Data.Datasets.Dataset(Repository, datasetName)
-                {
-                    Url = url,
-                    Type = this.ToString(),
-                    Provider_ID = Configuration.ID,
-                    DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
-                    Folder = $"\\{Configuration.Name}",
-                };
-                dataset.SaveToDatabase();
-                Activator.Publish(dataset);
-            }
-            else
-            {
-                throw new Exception("Cannot access dataset at provided url");
-            }
-        }
-
-        //public Curation.Data.Datasets.Dataset Create(string title, string publisherUid, List<PurePerson> people, Visibility visibility, PureDate publicationDate)
-        //{
-        //    //this works but i'm not sure it's linking up with the person correctly
-
-        //    var pureDataset = new PureDataset();
-        //    pureDataset.Title = new ENGBWrapper(title);
-        //    pureDataset.ManagingOrganization = new PureSystem(Configuration.Organisation_ID, "Organization");
-        //    pureDataset.Type = new URITerm("/dk/atira/pure/dataset/datasettypes/dataset/dataset", new ENGBWrapper("Dataset"));
-        //    pureDataset.Publisher = new PureSystem(publisherUid, "Publisher");
-
-        //    pureDataset.Persons = people;
-        //    pureDataset.Visibility = visibility;
-        //    pureDataset.Organizations = [new PureSystem(Configuration.Organisation_ID, "Organization")];
-        //    pureDataset.PublicationAvailableDate = publicationDate;
-
-        //    var serializeOptions = new JsonSerializerOptions
-        //    {
-        //        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        //        WriteIndented = true
-        //    };
-
-        //    var jsonString = JsonSerializer.Serialize(pureDataset, serializeOptions);
-
-        //    var uri = $"{Configuration.Url}/data-sets";
-        //    var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-
-        //    var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
-        //    if (response.StatusCode != HttpStatusCode.Created)
-        //    {
-        //        throw new Exception("Error");
-        //    }
-        //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-        //    PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
-        //    var dataset = new Curation.Data.Datasets.Dataset(Repository, pureDataset.Title.en_GB);
-        //    dataset.Provider_ID = Configuration.ID;
-        //    dataset.Url = pd.PortalURL;
-        //    dataset.SaveToDatabase();
-        //    return dataset;
-        //}
-
-        public override void Update(string uuid, PluginDataset datasetUpdates)
-        {
-            var serializeOptions = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                WriteIndented = true
-            };
-
-            var options = new JsonWriterOptions
-            {
-                Indented = true
-            };
-
-            using var stream = new MemoryStream();
-            JsonSerializer.Serialize<PureDataset>(stream, (PureDataset)datasetUpdates, serializeOptions);
-            var jsonString = Encoding.UTF8.GetString(stream.ToArray());
-            var uri = $"{Configuration.Url}/data-sets/{uuid}";
-            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
-
-            var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception("Error");
-            }
-        }
-
-        public PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
-        {
-            var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
-            var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-            if (response.StatusCode != HttpStatusCode.OK)
-            {
-                throw new Exception("Error");
-            }
             var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
             PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
-            return pd;
+            var datasetName = string.IsNullOrWhiteSpace(name) ? pd.Title.En_GB : name;
+            var dataset = new Curation.Data.Datasets.Dataset(Repository, datasetName)
+            {
+                Url = url,
+                Type = this.ToString(),
+                Provider_ID = Configuration.ID,
+                DigitalObjectIdentifier = pd.DigitalObjectIdentifier,
+                Folder = $"\\{Configuration.Name}",
+            };
+            dataset.SaveToDatabase();
+            Activator.Publish(dataset);
         }
-
-
-        public override Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
+        else
         {
-            var dataset = Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
-            return dataset;
+            throw new Exception("Cannot access dataset at provided url");
         }
+    }
 
-        public override List<Curation.Data.Datasets.Dataset> FetchDatasets()
+    //public Curation.Data.Datasets.Dataset Create(string title, string publisherUid, List<PurePerson> people, Visibility visibility, PureDate publicationDate)
+    //{
+    //    //this works but i'm not sure it's linking up with the person correctly
+
+    //    var pureDataset = new PureDataset();
+    //    pureDataset.Title = new ENGBWrapper(title);
+    //    pureDataset.ManagingOrganization = new PureSystem(Configuration.Organisation_ID, "Organization");
+    //    pureDataset.Type = new URITerm("/dk/atira/pure/dataset/datasettypes/dataset/dataset", new ENGBWrapper("Dataset"));
+    //    pureDataset.Publisher = new PureSystem(publisherUid, "Publisher");
+
+    //    pureDataset.Persons = people;
+    //    pureDataset.Visibility = visibility;
+    //    pureDataset.Organizations = [new PureSystem(Configuration.Organisation_ID, "Organization")];
+    //    pureDataset.PublicationAvailableDate = publicationDate;
+
+    //    var serializeOptions = new JsonSerializerOptions
+    //    {
+    //        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+    //        WriteIndented = true
+    //    };
+
+    //    var jsonString = JsonSerializer.Serialize(pureDataset, serializeOptions);
+
+    //    var uri = $"{Configuration.Url}/data-sets";
+    //    var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+    //    var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
+    //    if (response.StatusCode != HttpStatusCode.Created)
+    //    {
+    //        throw new Exception("Error");
+    //    }
+    //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+    //    PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+    //    var dataset = new Curation.Data.Datasets.Dataset(Repository, pureDataset.Title.en_GB);
+    //    dataset.Provider_ID = Configuration.ID;
+    //    dataset.Url = pd.PortalURL;
+    //    dataset.SaveToDatabase();
+    //    return dataset;
+    //}
+
+    public override void Update(string uuid, PluginDataset datasetUpdates)
+    {
+        var serializeOptions = new JsonSerializerOptions
         {
-            return Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("Provider_ID", Configuration.ID).ToList();
-        }
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        };
 
-
-        //public List<PurePublisher> FetchPublishers()
-        //{
-        //    var uri = $"{Configuration.Url}/publishers";
-        //    var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
-        //    if (response.StatusCode != HttpStatusCode.OK)
-        //    {
-        //        throw new Exception("Error");
-        //    }
-        //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
-        //    List<PurePublisher> publishers = JsonConvert.DeserializeObject<List<PurePublisher>>(detailsString);
-        //    return publishers;
-
-        //}
-
-        public override Curation.Data.Datasets.Dataset Create()
+        var options = new JsonWriterOptions
         {
-            throw new NotImplementedException();
+            Indented = true
+        };
+
+        using var stream = new MemoryStream();
+        JsonSerializer.Serialize<PureDataset>(stream, (PureDataset)datasetUpdates, serializeOptions);
+        var jsonString = Encoding.UTF8.GetString(stream.ToArray());
+        var uri = $"{Configuration.Url}/data-sets/{uuid}";
+        var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+        var response = Task.Run(async () => await _client.PutAsync(uri, httpContent)).Result;
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            throw new Exception("Error");
         }
+    }
+
+    public PureDataset FetchPureDataset(Curation.Data.Datasets.Dataset dataset)
+    {
+        var uri = $"{Configuration.Url}/data-sets/{UrltoUUID(dataset.Url)}";
+        var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            throw new Exception("Error");
+        }
+        var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+        PureDataset pd = JsonConvert.DeserializeObject<PureDataset>(detailsString);
+        return pd;
+    }
+
+
+    public override Curation.Data.Datasets.Dataset FetchDatasetByID(int id)
+    {
+        var dataset = Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("ID", id).FirstOrDefault();
+        return dataset;
+    }
+
+    public override List<Curation.Data.Datasets.Dataset> FetchDatasets()
+    {
+        return Repository.GetAllObjectsWhere<Curation.Data.Datasets.Dataset>("Provider_ID", Configuration.ID).ToList();
+    }
+
+
+    //public List<PurePublisher> FetchPublishers()
+    //{
+    //    var uri = $"{Configuration.Url}/publishers";
+    //    var response = Task.Run(async () => await _client.GetAsync(uri)).Result;
+    //    if (response.StatusCode != HttpStatusCode.OK)
+    //    {
+    //        throw new Exception("Error");
+    //    }
+    //    var detailsString = Task.Run(async () => await response.Content.ReadAsStringAsync()).Result;
+    //    List<PurePublisher> publishers = JsonConvert.DeserializeObject<List<PurePublisher>>(detailsString);
+    //    return publishers;
+
+    //}
+
+    public override Curation.Data.Datasets.Dataset Create()
+    {
+        throw new NotImplementedException();
     }
 }

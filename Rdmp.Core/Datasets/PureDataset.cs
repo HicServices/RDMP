@@ -1,7 +1,11 @@
-﻿using Amazon.Auth.AccessControlPolicy.ActionIdentifiers;
-using NPOI.SS.Formula.Atp;
-using NPOI.SS.Formula.Functions;
-using SynthEHR;
+﻿// Copyright (c) The University of Dundee 2024-2024
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+
+using Rdmp.Core.Datasets.PureItems;
 using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -9,132 +13,9 @@ using System.Text.Json.Serialization;
 namespace Rdmp.Core.Datasets;
 #nullable enable
 
-public class ENGBWrapper
-{
-    public ENGBWrapper(string? text) { en_GB = text; }
-    public string? en_GB { get; set; }
-}
-
-public class URITerm
-{
-    public URITerm(string? uri, ENGBWrapper enGBWrapper)
-    {
-        URI = uri;
-        term = enGBWrapper;
-    }
-    public string? URI { get; set; }
-    public ENGBWrapper term { get; set; }
-}
-public class PureDescription
-{
-    public int? PureId { get; set; }
-    public ENGBWrapper? Value { get; set; }
-
-    public URITerm Term { get => new URITerm("/dk/atira/pure/dataset/descriptions/datasetdescription", new ENGBWrapper("Description")); }
-}
-
-public class Name()
-{
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-}
-
-public class PurePerson
-{
-    public string? TypeDiscriminator { get; set; }
-    public int? PureId { get; set; }
-
-    public Name? Name { get; set; }
-    public URITerm? Role { get; set; }
-
-    public List<PureSystem>? Organizations { get; set; }
-}
-
-public class PureDate
-{
-    public PureDate(DateTime dateTime)
-    {
-        Year = dateTime.Year;
-        Month = dateTime.Month;
-        Day = dateTime.Day;
-    }
-
-    public PureDate() { }
-
-
-    public DateTime ToDateTime()
-    {
-        return new DateTime(Year, Month??1, Day??1, 0, 0, 0);
-    }
-
-    public bool IsBefore(PureDate date)
-    {
-        if (Year < date.Year) return true;
-        if (Year == date.Year)
-        {
-            if (Month < date.Month) return true;
-            if (Month == date.Month)
-            {
-                return Day < date.Day;
-            }
-        }
-
-        return false;
-    }
-
-    public PureDate(int year, int? month = null, int? day = null)
-    {
-        Year = year;
-        if (month != null) Month = month;
-        if (day != null) Day = day;
-    }
-    public int Year { get; set; }
-    public int? Month { get; set; }
-    public int? Day { get; set; }
-}
-
-public class Visibility
-{
-    public Visibility(string? key, ENGBWrapper description)
-    {
-        Key = key;
-        Description = description;
-    }
-    public string? Key { get; set; }
-    public ENGBWrapper Description { get; set; }
-}
-
-public class Workflow
-{
-    public string? Step { get; set; }
-    public ENGBWrapper? Description { get; set; }
-}
-
-public class Geolocation
-{
-    public ENGBWrapper? GeographicalCoverage { get; set; }
-    public string? Point { get; set; }
-
-    public string? Polygon { get; set; }
-}
-
-public class TemporalCoveragePeriod
-{
-    public PureDate? StartDate { get; set; }
-    public PureDate? EndDate { get; set; }
-}
-
-public class PureSystem
-{
-    public PureSystem(string? uuid, string? systemName)
-    {
-        UUID = uuid;
-        SystemName = systemName;
-    }
-    public string? SystemName { get; set; }
-    public string? UUID { get; set; }
-}
-
+/// <summary>
+/// Used for mapping Pure datasets from the API into a C# object.
+/// </summary>
 public class PureDataset : PluginDataset
 {
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]

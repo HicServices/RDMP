@@ -10,6 +10,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Datasets;
+using Rdmp.Core.Datasets.PureItems;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -25,6 +26,10 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.PostLoad
 {
+    /// <summary>
+    /// Used to update a Pure dataset with updated temporal data to include the new records
+    /// and update the description of the dataset
+    /// </summary>
     public class PureDatasetPostLoadUpdater : IMutilateDataTables
     {
         private readonly string _type = typeof(PureDatasetProvider).ToString();
@@ -97,7 +102,7 @@ Some variables are available:
 
             var dt = new DataTable();
             dt.BeginLoadData();
-            var server = catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad,false);
+            var server = catalogue.GetDistinctLiveDatabaseServer(ReusableLibraryCode.DataAccess.DataAccessContext.DataLoad, false);
             var con = server.GetConnection();
             con.Open();
             using (var cmd = server.GetCommand(sql, con))
@@ -106,7 +111,7 @@ Some variables are available:
                 da.Fill(dt);
             }
             dt.EndLoadData();
-            if (dt.Rows.Count ==0) return ExitCodeType.OperationNotRequired;
+            if (dt.Rows.Count == 0) return ExitCodeType.OperationNotRequired;
             _newRecordsCount = dt.Rows.Count;
             _earliestDate = new PureDate(dt.AsEnumerable().Min(row => DateTime.Parse(row[0].ToString())));
             _latestDate = new PureDate(dt.AsEnumerable().Max(row => DateTime.Parse(row[0].ToString())));
@@ -130,10 +135,10 @@ Some variables are available:
         private TemporalCoveragePeriod GetTemporalCoveragePeriod()
         {
             var coverage = _pureDataset.TemporalCoveragePeriod ?? new TemporalCoveragePeriod();
-            if(_pureDataset.TemporalCoveragePeriod is null || _pureDataset.TemporalCoveragePeriod.StartDate is null || _earliestDate.IsBefore(_pureDataset.TemporalCoveragePeriod.StartDate))
+            if (_pureDataset.TemporalCoveragePeriod is null || _pureDataset.TemporalCoveragePeriod.StartDate is null || _earliestDate.IsBefore(_pureDataset.TemporalCoveragePeriod.StartDate))
                 coverage.StartDate = _earliestDate;
 
-            if(_pureDataset.TemporalCoveragePeriod is null ||  _pureDataset.TemporalCoveragePeriod.EndDate is null || _pureDataset.TemporalCoveragePeriod.EndDate.IsBefore(_latestDate))
+            if (_pureDataset.TemporalCoveragePeriod is null || _pureDataset.TemporalCoveragePeriod.EndDate is null || _pureDataset.TemporalCoveragePeriod.EndDate.IsBefore(_latestDate))
                 coverage.EndDate = _latestDate;
             return coverage;
         }
@@ -150,7 +155,7 @@ Some variables are available:
             var datasetDescriptionTerm = "/dk/atira/pure/dataset/descriptions/datasetdescription";
             foreach (var description in _pureDataset.Descriptions.Where(d => d.Term.URI == datasetDescriptionTerm))
             {
-                description.Value.en_GB += @$"
+                description.Value.En_GB += @$"
 {GetUpdateText()}";
                 descriptions.Add(description);
             }

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Datasets;
 
+/// <inheritdoc/>
 public class DatasetProviderConfiguration : DatabaseEntity, IDatasetProviderConfiguration
 {
 
