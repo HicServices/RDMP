@@ -6,8 +6,10 @@
 
 
 using Rdmp.Core.Datasets.PureItems;
+using Rdmp.Core.Repositories;
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Text.Json.Serialization;
 
 namespace Rdmp.Core.Datasets;
@@ -91,4 +93,7 @@ public class PureDataset : PluginDataset
 #nullable disable
 
     public PureDataset() { }
+    public PureDataset(ICatalogueRepository catalogueRepository, string name) : base(catalogueRepository, name) { }
+    public PureDataset(ICatalogueRepository repository, DbDataReader r) : base(repository, r) { }
+
 }

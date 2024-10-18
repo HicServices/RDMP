@@ -16,7 +16,7 @@ public class PurePerson
     public string? TypeDiscriminator { get; set; }
     public int? PureId { get; set; }
 
-    public Name? Name { get; set; }
+    public PureName? Name { get; set; }
     public URITerm? Role { get; set; }
 
     public List<PureSystem>? Organizations { get; set; }

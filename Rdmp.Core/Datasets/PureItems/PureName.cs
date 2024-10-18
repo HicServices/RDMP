@@ -9,7 +9,7 @@ namespace Rdmp.Core.Datasets.PureItems;
 /// <summary>
 /// Internal PURE system class
 /// </summary>
-public class Name()
+public class PureName()
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

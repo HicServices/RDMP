@@ -45,6 +45,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.Core.Setting;
+using Spectre.Console;
 
 namespace Tests.Common;
 
@@ -608,15 +609,17 @@ public class UnitTests
         }
         if (typeof(T) == typeof(PluginDataset))
         {
-            return (T)(object)new PluginDataset();
+            return (T)(object)new PluginDataset(repository,"Plugin Dataset");
         }
         if (typeof(T) == typeof(PureDataset))
         {
-            return (T)(object)new PureDataset();
+            return (T)(object)  new PureDataset(repository,"Pure Dataset");
         }
         if (typeof(T) == typeof(DatasetProviderConfiguration))
         {
-            return (T)(object)new DatasetProviderConfiguration();
+            var creds = WhenIHaveA<DataAccessCredentials>(repository);
+            creds.SaveToDatabase();
+            return (T)(object)new DatasetProviderConfiguration(repository, "test configuration", "RDMP.Unkown.Provider", "google.com", creds.ID, "unknown");
         }
 
 
