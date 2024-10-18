@@ -131,6 +131,7 @@
 		<None Remove="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\087_AddAggregateFilterOrdering.sql" />
 		<None Remove="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />
+		<None Remove="Databases\CatalogueDatabase\up\089_AddDatasetProviderConfiguration.sql" />
 		<None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
 		<None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
 		<None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -258,6 +259,7 @@
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\084_AddLoadDirectorySplit.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\085_AddTicketingReleaseStatuses.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\088_AddRegexRedactionConfiguration.sql" />
+		<EmbeddedResource Include="Databases\CatalogueDatabase\up\089_AddDatasetProviderConfiguration.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\086_AddDataLoadPrefixOverride.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\087_AddAggregateFilterOrdering.sql" />
 		<EmbeddedResource Include="Databases\CatalogueDatabase\up\079_AddProcessTaskConfiguration.sql" />
@@ -352,6 +354,18 @@
 		<Folder Include="Resources\" />
 	</ItemGroup>
 	<ItemGroup>
+	  <None Include="Databases\CatalogueDatabase\up\089_AddDatasetPRoviderConfigurations.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>089_AddDatasetProviderConfiguration.sql</DependentUpon>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Update="Databases\CatalogueDatabase\up\089_AddDatasetProviderConfiguration.cs">
+		  <DesignTime>True</DesignTime>
+		  <AutoGen>True</AutoGen>
+		  <DependentUpon>089_AddDatasetProviderConfiguration.sql</DependentUpon>
+		</Compile>
 		<Compile Update="GlobalStrings.Designer.cs">
 			<DesignTime>True</DesignTime>
 			<AutoGen>True</AutoGen>
@@ -398,5 +412,14 @@
 			<LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
 			<Generator>PublicResXFileCodeGenerator</Generator>
 		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Databases\CatalogueDatabase\up\089_AddDatasetProviderConfiguration.sql">
+	    <Generator>TextTemplatingFileGenerator</Generator>
+	    <LastGenOutput>089_AddDatasetProviderConfiguration.cs</LastGenOutput>
+	  </None>
+	</ItemGroup>
+	<ItemGroup>
+	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 </Project>
