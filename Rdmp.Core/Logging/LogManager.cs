@@ -243,7 +243,7 @@ public class LogManager : ILogManager
         var sh = Server.GetQuerySyntaxHelper();
         conn.Open();
         var sql =
-            $"INSERT INTO {sh.EnsureWrapped("DataLoadTask")} ({sh.EnsureWrapped("ID")}, description, name, {sh.EnsureWrapped("createTime")}, {sh.EnsureWrapped("userAccount")}, {sh.EnsureWrapped("statusID")}, {sh.EnsureWrapped("isTest")}, {sh.EnsureWrapped("dataSetID")}) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, false, @dataSetID)";
+            $"INSERT INTO {sh.EnsureWrapped("DataLoadTask")} ({sh.EnsureWrapped("ID")}, description, name, {sh.EnsureWrapped("createTime")}, {sh.EnsureWrapped("userAccount")}, {sh.EnsureWrapped("statusID")}, {sh.EnsureWrapped("isTest")}, {sh.EnsureWrapped("dataSetID")}) VALUES ({id}, @dataSetID, @dataSetID, @date, @username, 1, {sh.False}, @dataSetID)";
 
         using var cmd = Server.GetCommand(sql, conn);
         Server.AddParameterWithValueToCommand("@date", cmd, DateTime.Now);
