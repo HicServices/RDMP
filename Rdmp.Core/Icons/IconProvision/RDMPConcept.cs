@@ -214,5 +214,7 @@ public enum RDMPConcept
     RegexRedactionKey,
     AllRegexRedactionConfigurationsNode,
     DatasetProviderConfiguration,
-    AllDatasetProviderConfigurationsNode
+    AllDatasetProviderConfigurationsNode,
+    PluginDataset,
+    PureDataset
 }
