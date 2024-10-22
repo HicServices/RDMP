@@ -30,70 +30,78 @@ namespace Rdmp.UI.Collections
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvDataExport = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvProjectNumber = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCohortSource = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.olvCohortVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvDataExport = new TreeListView();
+            olvName = new OLVColumn();
+            olvProjectNumber = new OLVColumn();
+            olvCohortSource = new OLVColumn();
+            olvCohortVersion = new OLVColumn();
+            tbFilter = new System.Windows.Forms.TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvDataExport).BeginInit();
+            SuspendLayout();
             // 
             // tlvDataExport
             // 
-            this.tlvDataExport.AllColumns.Add(this.olvName);
-            this.tlvDataExport.AllColumns.Add(this.olvProjectNumber);
-            this.tlvDataExport.AllColumns.Add(this.olvCohortSource);
-            this.tlvDataExport.AllColumns.Add(this.olvCohortVersion);
-            this.tlvDataExport.CellEditUseWholeCell = false;
-            this.tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName,
-            this.olvProjectNumber,
-            this.olvCohortVersion});
-            this.tlvDataExport.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvDataExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvDataExport.FullRowSelect = true;
-            this.tlvDataExport.HideSelection = false;
-            this.tlvDataExport.Location = new System.Drawing.Point(0, 0);
-            this.tlvDataExport.Name = "tlvDataExport";
-            this.tlvDataExport.ShowGroups = false;
-            this.tlvDataExport.Size = new System.Drawing.Size(385, 694);
-            this.tlvDataExport.TabIndex = 0;
-            this.tlvDataExport.UseCompatibleStateImageBehavior = false;
-            this.tlvDataExport.View = System.Windows.Forms.View.Details;
-            this.tlvDataExport.VirtualMode = true;
+            tlvDataExport.AllColumns.Add(olvName);
+            tlvDataExport.AllColumns.Add(olvProjectNumber);
+            tlvDataExport.AllColumns.Add(olvCohortSource);
+            tlvDataExport.AllColumns.Add(olvCohortVersion);
+            tlvDataExport.CellEditUseWholeCell = false;
+            tlvDataExport.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { olvName, olvProjectNumber, olvCohortVersion });
+            tlvDataExport.Dock = System.Windows.Forms.DockStyle.Fill;
+            tlvDataExport.FullRowSelect = true;
+            tlvDataExport.Location = new System.Drawing.Point(0, 0);
+            tlvDataExport.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            tlvDataExport.Name = "tlvDataExport";
+            tlvDataExport.ShowGroups = false;
+            tlvDataExport.Size = new System.Drawing.Size(449, 801);
+            tlvDataExport.TabIndex = 0;
+            tlvDataExport.UseCompatibleStateImageBehavior = false;
+            tlvDataExport.View = System.Windows.Forms.View.Details;
+            tlvDataExport.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Projects";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.CellEditUseWholeCell = true;
+            olvName.MinimumWidth = 100;
+            olvName.Text = "Projects";
+            olvName.Width = 100;
             // 
             // olvProjectNumber
             // 
-            this.olvProjectNumber.Text = "ProjectNumber";
-            this.olvProjectNumber.Width = 89;
+            olvProjectNumber.Text = "ProjectNumber";
+            olvProjectNumber.Width = 89;
             // 
             // olvCohortSource
             // 
-            this.olvCohortSource.IsVisible = false;
-            this.olvCohortSource.Text = "CohortSource";
+            olvCohortSource.IsVisible = false;
+            olvCohortSource.Text = "CohortSource";
             // 
             // olvCohortVersion
             // 
-            this.olvCohortVersion.Text = "Version";
+            olvCohortVersion.Text = "Version";
+            // 
+            // tbFilter
+            // 
+            tbFilter.Dock = System.Windows.Forms.DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 778);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(449, 23);
+            tbFilter.TabIndex = 1;
             // 
             // DataExportCollectionUI
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvDataExport);
-            this.Name = "DataExportCollectionUI";
-            this.Size = new System.Drawing.Size(385, 694);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDataExport)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvDataExport);
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            Name = "DataExportCollectionUI";
+            Size = new System.Drawing.Size(449, 801);
+            ((System.ComponentModel.ISupportInitialize)tlvDataExport).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -103,5 +111,6 @@ namespace Rdmp.UI.Collections
         private OLVColumn olvProjectNumber;
         private OLVColumn olvCohortSource;
         private OLVColumn olvCohortVersion;
+        private System.Windows.Forms.TextBox tbFilter;
     }
 }

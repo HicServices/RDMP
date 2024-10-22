@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>11.0</LangVersion>
+    <Version>8.3.0</Version>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+</Project>

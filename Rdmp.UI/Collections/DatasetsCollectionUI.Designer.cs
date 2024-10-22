@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.Collections
+﻿using System.Windows.Forms;
+
+namespace Rdmp.UI.Collections
 {
     partial class DatasetsCollectionUI
     {
@@ -29,53 +31,64 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.tlvDatasets = new BrightIdeasSoftware.TreeListView();
-            this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            tlvDatasets = new BrightIdeasSoftware.TreeListView();
+            olvName = new BrightIdeasSoftware.OLVColumn();
+            tbFilter = new TextBox();
+            ((System.ComponentModel.ISupportInitialize)tlvDatasets).BeginInit();
+            SuspendLayout();
             // 
-            // tlvFavourites
+            // tlvDatasets
             // 
-            this.tlvDatasets.AllColumns.Add(this.olvName);
-            this.tlvDatasets.CellEditUseWholeCell = false;
-            this.tlvDatasets.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.olvName});
-            this.tlvDatasets.Cursor = System.Windows.Forms.Cursors.Default;
-            this.tlvDatasets.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tlvDatasets.FullRowSelect = true;
-            this.tlvDatasets.HideSelection = false;
-            this.tlvDatasets.Location = new System.Drawing.Point(0, 0);
-            this.tlvDatasets.Name = "tlvFavourites";
-            this.tlvDatasets.ShowGroups = false;
-            this.tlvDatasets.Size = new System.Drawing.Size(322, 557);
-            this.tlvDatasets.TabIndex = 2;
-            this.tlvDatasets.UseCompatibleStateImageBehavior = false;
-            this.tlvDatasets.View = System.Windows.Forms.View.Details;
-            this.tlvDatasets.VirtualMode = true;
+            tlvDatasets.AllColumns.Add(olvName);
+            tlvDatasets.CellEditUseWholeCell = false;
+            tlvDatasets.Columns.AddRange(new ColumnHeader[] { olvName });
+            tlvDatasets.Dock = DockStyle.Fill;
+            tlvDatasets.FullRowSelect = true;
+            tlvDatasets.Location = new System.Drawing.Point(0, 0);
+            tlvDatasets.Margin = new Padding(4, 3, 4, 3);
+            tlvDatasets.Name = "tlvDatasets";
+            tlvDatasets.ShowGroups = false;
+            tlvDatasets.Size = new System.Drawing.Size(376, 643);
+            tlvDatasets.TabIndex = 2;
+            tlvDatasets.UseCompatibleStateImageBehavior = false;
+            tlvDatasets.View = View.Details;
+            tlvDatasets.VirtualMode = true;
             // 
             // olvName
             // 
-            this.olvName.AspectName = "ToString";
-            this.olvName.CellEditUseWholeCell = true;
-            this.olvName.Text = "Datasets";
-            this.olvName.MinimumWidth = 100;
+            olvName.AspectName = "ToString";
+            olvName.CellEditUseWholeCell = true;
+            olvName.MinimumWidth = 100;
+            olvName.Text = "Datasets";
+            olvName.Width = 100;
             // 
-            // FavouritesCollectionUI
+            // tbFilter
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tlvDatasets);
-            this.Name = "DatasetsCollectionUI";
-            this.Size = new System.Drawing.Size(322, 557);
-            ((System.ComponentModel.ISupportInitialize)(this.tlvDatasets)).EndInit();
-            this.ResumeLayout(false);
-            this.Text = "DatasetsCollectionUI";
+            tbFilter.Dock = DockStyle.Bottom;
+            tbFilter.Location = new System.Drawing.Point(0, 620);
+            tbFilter.Name = "tbFilter";
+            tbFilter.Size = new System.Drawing.Size(376, 23);
+            tbFilter.TabIndex = 3;
+            // 
+            // DatasetsCollectionUI
+            // 
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            Controls.Add(tbFilter);
+            Controls.Add(tlvDatasets);
+            Margin = new Padding(4, 3, 4, 3);
+            Name = "DatasetsCollectionUI";
+            Size = new System.Drawing.Size(376, 643);
+            ((System.ComponentModel.ISupportInitialize)tlvDatasets).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
 
         private BrightIdeasSoftware.TreeListView tlvDatasets;
         private BrightIdeasSoftware.OLVColumn olvName;
+        private TextBox tbFilter;
     }
 }
