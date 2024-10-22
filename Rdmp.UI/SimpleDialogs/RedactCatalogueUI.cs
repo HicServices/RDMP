@@ -41,6 +41,11 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
        
     }
 
+    public override string GetTabName()
+    {
+        return $"{base.GetTabName()} - Regex Redaction";   
+    }
+
     public void HandleNewRegex(object sender, EventArgs e)
     {
         //_activator

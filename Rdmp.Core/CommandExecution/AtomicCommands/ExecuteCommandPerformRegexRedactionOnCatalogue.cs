@@ -99,6 +99,11 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
                 }
                 redactionUpates.EndLoadData();
+                if(pksToSave.Rows.Count == 0)
+                {
+                    _activator.Show("Unable to find any matching Redactions");
+                    return;
+                }
                 for (int i = 0; i < pksToSave.Rows.Count; i++)
                 {
                     pksToSave.Rows[i][nameof(RegexRedactionHelper.Constants.ID)] = i + 1;
