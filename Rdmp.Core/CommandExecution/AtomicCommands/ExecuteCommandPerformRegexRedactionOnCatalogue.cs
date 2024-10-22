@@ -60,11 +60,14 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
         {
             redactionsToSaveTable = RegexRedactionHelper.GenerateRedactionsDataTable();
             pksToSave = RegexRedactionHelper.GeneratePKDataTable();
+
             var columnName = columnInfo.Name;
             var table = columnInfo.TableInfo.Name;
+            
             _discoveredTable = columnInfo.TableInfo.Discover(DataAccessContext.InternalDataProcessing);
             DiscoveredColumn[] discoveredColumns = _discoveredTable.DiscoverColumns();
             _discoveredPKColumns = discoveredColumns.Where(c => c.IsPrimaryKey).ToArray();
+            
             if (_discoveredPKColumns.Length != 0)
             {
                 _cataloguePKs = _catalogue.CatalogueItems.Where(c => c.ColumnInfo.IsPrimaryKey).ToList();
@@ -81,6 +84,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     qb.TopX = (int)_readLimit;
                 }
                 var sql = qb.SQL;
+
                 var dt = new DataTable();
                 dt.BeginLoadData();
                 var conn = _server.GetConnection();
@@ -92,6 +96,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                     da.Fill(dt);
                 }
                 conn.Close();
+                
                 redactionUpates = dt.Clone();
                 redactionUpates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
@@ -134,7 +139,6 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 throw new Exception($"Unable to identify any primary keys in table '{table}'. Redactions cannot be performed on tables without primary keys");
             }
             resultCount += redactionUpates.Rows.Count;
-
         }
     }
 }
