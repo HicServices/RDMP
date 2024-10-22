@@ -113,8 +113,6 @@ namespace Rdmp.Core.Curation.DataHelper.RegexRedaction
 
         public static void SaveRedactions(ICatalogueRepository catalogueRepo, DiscoveredTable pksToSave, DiscoveredTable redactionsToSaveTable, DiscoveredServer _server, int timeout = 30000)
         {
-            //the update isn't working? and do we need the +1?
-
             var sql = $@"
                 DECLARE @output TABLE (id1 int, inc int IDENTITY(1,1))
                 INSERT INTO RegexRedaction(RedactionConfiguration_ID,ColumnInfo_ID,startingIndex,ReplacementValue,RedactedValue) OUTPUT inserted.id as id1 INTO @output
