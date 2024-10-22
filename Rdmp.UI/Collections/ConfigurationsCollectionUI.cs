@@ -6,6 +6,7 @@ using Rdmp.UI.Refreshing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Curation.DataHelper.RegexRedaction;
 
 namespace Rdmp.UI.Collections;
 
@@ -52,6 +53,9 @@ public partial class ConfigurationsCollectionUI : RDMPCollectionUI, ILifetimeSub
         {
             case Dataset:
                 tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllDatasetsNode>());
+                break;
+            case RegexRedactionConfiguration:
+                tlvConfigurations.RefreshObject(tlvConfigurations.Objects.OfType<AllRegexRedactionConfigurationsNode>());
                 break;
         }
     }

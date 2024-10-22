@@ -73,7 +73,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         {
             if (ColumnMatches(column))
             {
-                var pkSeparator = pkColumnInfos.Count() > 0 ? "," : "";
+                var pkSeparator = pkColumnInfos.Any() ? "," : "";
                 var sql = @$"
                     SELECT {column.GetRuntimeName()} {pkSeparator} {string.Join(", ", pkColumnInfos.Select(c => c.GetRuntimeName()))}
                     FROM {table.GetRuntimeName()}

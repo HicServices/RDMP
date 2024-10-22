@@ -69,7 +69,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 var updateHelper = server.GetQuerySyntaxHelper().UpdateHelper;
                 var sqlLines = new List<CustomLine>
                 {
-                    new CustomLine($"t1.{columnInfo.GetRuntimeName()} = '{newValue}'", QueryComponent.SET)
+                    new($"t1.{columnInfo.GetRuntimeName()} = '{newValue}'", QueryComponent.SET)
                 };
                 foreach (var rk in _redaction.RedactionKeys)
                 {
