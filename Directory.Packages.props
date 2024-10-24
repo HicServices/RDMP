@@ -1,22 +1,22 @@
 <Project>
   <ItemGroup>
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.404.5" />
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.400.33" />
-    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.33" />
-    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.33" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.405.2" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="3.7.400.38" />
+    <PackageVersion Include="AWSSDK.SSO" Version="3.7.400.38" />
+    <PackageVersion Include="AWSSDK.SSOOIDC" Version="3.7.400.38" />
     <PackageVersion Include="CommandLineParser" Version="2.9.1" />
     <PackageVersion Include="Equ" Version="2.3.0" />
     <PackageVersion Include="ExcelNumberFormat" Version="1.1.0" />
     <PackageVersion Include="FluentFTP" Version="51.1.0" />
     <PackageVersion Include="HIC.SynthEHR" Version="2.0.1" />
-    <PackageVersion Include="HIC.FAnsiSql" Version="3.2.6" />
+    <PackageVersion Include="HIC.FAnsiSql" Version="3.2.7" />
     <PackageVersion Include="LibArchive.Net" Version="0.1.5" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
     <PackageVersion Include="Minio" Version="6.0.3" />
-    <PackageVersion Include="MongoDB.Driver" Version="2.29.0" />
+    <PackageVersion Include="MongoDB.Driver" Version="3.0.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NPOI" Version="2.7.1" />
     <PackageVersion Include="NLog" Version="5.3.4" />
@@ -30,14 +30,14 @@
     <PackageVersion Include="Autoupdater.NET.Official" Version="1.9.2" />
     <PackageVersion Include="DockPanelSuite.ThemeVS2015" Version="3.1.1" />
     <PackageVersion Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageVersion Include="WeCantSpell.Hunspell" Version="5.0.0" />
+    <PackageVersion Include="WeCantSpell.Hunspell" Version="5.1.0" />
     <PackageVersion Include="NUnit" Version="4.2.2" />
     <PackageVersion Include="ObjectListView.Repack.NET6Plus" Version="2.9.5" />
     <PackageVersion Include="Scintilla.NET" Version="5.3.2.9" />
     <PackageVersion Include="System.Resources.Extensions" Version="8.0.0" />
     <PackageVersion Include="VPKSoft.ScintillaLexers.NET" Version="1.1.16" />
     <PackageVersion Include="HIC.System.Windows.Forms.DataVisualization" Version="1.0.1" />
-    <PackageVersion Include="NunitXml.TestLogger" Version="4.0.254" />
+    <PackageVersion Include="NunitXml.TestLogger" Version="4.1.0" />
     <PackageVersion Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageVersion Include="NUnit.Analyzers" Version="4.3.0" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
