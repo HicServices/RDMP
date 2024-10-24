@@ -43,11 +43,6 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         if (ColumnRegexPattern != null)
         {
             ColumnRegexPattern = new Regex(ColumnRegexPattern.ToString(), RegexOptions.IgnoreCase);
-            var x = column.GetRuntimeName();
-            if (ColumnRegexPattern.IsMatch(column.GetRuntimeName()))
-            {
-                Console.WriteLine("X");
-            }
             return ColumnRegexPattern.IsMatch(column.GetRuntimeName());
         }
         else if (OnlyColumns is not null && OnlyColumns.Length > 0)
@@ -75,7 +70,23 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
             return;
         }
         var pkColumnInfos = cataloguePks.Select(c => c.ColumnInfo);
-        foreach (var column in columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
+        //if you would match a pk
+        var matchedOnPk = false;
+        foreach (var column in columns.Where(c => pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName())))
+        {
+            if (ColumnMatches(column))
+            {
+                matchedOnPk = true;
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Would masath on column '{column.GetRuntimeName()}' but it is a primary key"));
+            }
+        }
+
+        var nonPKColumns = columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName()));
+        if(!nonPKColumns.Any() && matchedOnPk)
+        {
+            //TOOD warn the user that they're doing nothing, but we would have hit a PK, maybe error?
+        }
+        foreach (var column in nonPKColumns)
         {
             if (ColumnMatches(column))
             {
