@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [8.3.1] - Unreleased
+## [8.4.0] - Unreleased
+
+- Add Ordering to Filters
+
+## [8.3.1] - 2024-10-22
 
 - Improve Performance of regenerating problems with child providers
 - Update UI Tab opening Logic

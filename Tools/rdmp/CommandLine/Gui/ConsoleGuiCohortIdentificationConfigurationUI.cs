@@ -140,38 +140,40 @@ public partial class ConsoleGuiCohortIdentificationConfigurationUI
         var o = RowObjects[obj.Row];
         if (o == null)
             return;
+
         var col = tableview1.Table.Columns[obj.Col];
 
-        if (col.ColumnName.Equals("Name"))
+        switch (col.ColumnName)
         {
-            var factory = new ConsoleGuiContextMenuFactory(_activator);
-            var menu = factory.Create(Array.Empty<object>(), o);
-
-            if (menu != null)
+            case "Name":
             {
                 var p = tableview1.CellToScreen(obj.Col, obj.Row);
 
                 if (p == null)
                     return;
 
-                menu.Position = p.Value;
-                _contextMenuShowing = true;
-                menu.Show();
-                menu.MenuBar.MenuAllClosed += () => _contextMenuShowing = false;
-            }
-        }
+                var factory = new ConsoleGuiContextMenuFactory(_activator);
+                var menu = factory.Create(p.Value.X, p.Value.Y, Array.Empty<object>(), o);
+                if (menu != null)
+                {
+                    menu.Position = p.Value;
+                    _contextMenuShowing = true;
+                    menu.Show();
+                    menu.MenuBar.MenuAllClosed += () => _contextMenuShowing = false;
+                }
 
-        if (col.ColumnName.Equals("Working"))
-        {
-            var key = Common.GetKey(o);
-            if (key?.CrashMessage != null)
+                break;
+            }
+            case "Working":
             {
-                _activator.ShowException("Task Crashed", key.CrashMessage);
-                return;
+                var key = Common.GetKey(o);
+                if (key?.CrashMessage != null) _activator.ShowException("Task Crashed", key.CrashMessage);
+                break;
             }
+            case "Execute":
+                Common.ExecuteOrCancel(o, int.MaxValue);
+                break;
         }
-
-        if (col.ColumnName.Equals("Execute")) Common.ExecuteOrCancel(o, Common.Timeout);
     }
 
     private bool IsValidSelection(int col, int row)
