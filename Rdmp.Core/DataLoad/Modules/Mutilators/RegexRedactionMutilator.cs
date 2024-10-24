@@ -40,15 +40,21 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 
     private bool ColumnMatches(DiscoveredColumn column)
     {
-        if (OnlyColumns is not null && OnlyColumns.Length > 0)
-        {
-            return OnlyColumns.Select(c => c.GetRuntimeName()).Contains(column.GetRuntimeName());
-        }
         if (ColumnRegexPattern != null)
         {
             ColumnRegexPattern = new Regex(ColumnRegexPattern.ToString(), RegexOptions.IgnoreCase);
+            var x = column.GetRuntimeName();
+            if (ColumnRegexPattern.IsMatch(column.GetRuntimeName()))
+            {
+                Console.WriteLine("X");
+            }
             return ColumnRegexPattern.IsMatch(column.GetRuntimeName());
         }
+        else if (OnlyColumns is not null && OnlyColumns.Length > 0)
+        {
+            return OnlyColumns.Select(c => c.GetRuntimeName()).Contains(column.GetRuntimeName());
+        }
+
         return false;
     }
 
