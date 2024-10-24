@@ -28,7 +28,7 @@ public class RemoteAttacherTests
             RemoteTableDateColumn = "date"
         };
         var lmd = new LoadMetadata();
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= DATEADD({convertTime}, -1, GETDATE())"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) > DATEADD({convertTime}, -1, GETDATE())"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse()
@@ -42,7 +42,7 @@ public class RemoteAttacherTests
         {
             LastLoadTime = DateTime.Now
         };
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{lmd.LastLoadTime.GetValueOrDefault():yyyy-MM-dd HH:mm:ss.fff}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) > convert(Date,'{lmd.LastLoadTime.GetValueOrDefault():yyyy-MM-dd HH:mm:ss.fff}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterSinceLastUse_NULL()
@@ -130,7 +130,7 @@ public class RemoteAttacherTests
         {
             LastLoadTime = DateTime.Now
         };
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays):yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays):yyyy-MM-dd HH:mm:ss.fff}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays):yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) < convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays):yyyy-MM-dd HH:mm:ss.fff}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReading_NoLookBack()
@@ -146,7 +146,7 @@ public class RemoteAttacherTests
         {
             LastLoadTime = DateTime.Now
         };
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate:yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays):yyyy-MM-dd HH:mm:ss.fff}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate:yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) < convert(Date,'{attacher.DeltaReadingStartDate.AddDays(attacher.DeltaReadingLookForwardDays):yyyy-MM-dd HH:mm:ss.fff}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReading_NoLookForward()
@@ -162,7 +162,7 @@ public class RemoteAttacherTests
         {
             LastLoadTime = DateTime.Now
         };
-        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays):yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) <= convert(Date,'{attacher.DeltaReadingStartDate:yyyy-MM-dd HH:mm:ss.fff}')"));
+        Assert.That(attacher.SqlHistoricalDataFilter(lmd, DatabaseType.MicrosoftSQLServer), Is.EqualTo($" WHERE CAST(date as Date) >= convert(Date,'{attacher.DeltaReadingStartDate.AddDays(-attacher.DeltaReadingLookBackDays):yyyy-MM-dd HH:mm:ss.fff}') AND CAST(date as Date) < convert(Date,'{attacher.DeltaReadingStartDate:yyyy-MM-dd HH:mm:ss.fff}')"));
     }
     [Test]
     public void TestRemoteAttacherParameterDeltaReadingNoDates()
