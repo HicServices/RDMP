@@ -51,11 +51,11 @@ public partial class RDMPTaskBarUI : UserControl
         btnTables.Image = CatalogueIcons.TableInfo.ImageToBitmap();
         btnTables.BackgroundImage = BackColorProvider.GetBackgroundImage(btnTables.Size, RDMPCollection.Tables);
 
-        btnDataSets.Image = CatalogueIcons.Dataset.ImageToBitmap();
-        btnDataSets.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.Datasets);
+        btnConfiguration.Image = FamFamFamIcons.pencil_go.ImageToBitmap();
+        btnConfiguration.BackgroundImage = BackColorProvider.GetBackgroundImage(btnConfiguration.Size, RDMPCollection.Datasets);
 
         btnLoads.Image = CatalogueIcons.LoadMetadata.ImageToBitmap();
-        btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnDataSets.Size, RDMPCollection.DataLoad);
+        btnLoads.BackgroundImage = BackColorProvider.GetBackgroundImage(btnConfiguration.Size, RDMPCollection.DataLoad);
 
         btnFavourites.Image = CatalogueIcons.Favourite.ImageToBitmap();
         btnDeleteLayout.Image = FamFamFamIcons.delete.ImageToBitmap();
@@ -111,7 +111,7 @@ public partial class RDMPTaskBarUI : UserControl
             btnTables.ToolTipText = "Advanced features e.g. logging, credentials, dashboards etc";
             btnLoads.ToolTipText = "Load configurations for reading data into your databases";
             btnFavourites.ToolTipText = "Collection of all objects that you have favourited";
-            btnDataSets.ToolTipText = "All external datasets that have been configured for use in RDMP";
+            btnConfiguration.ToolTipText = "All external datasets that have been configured for use in RDMP";
         }
         catch (Exception e)
         {
@@ -190,8 +190,8 @@ public partial class RDMPTaskBarUI : UserControl
             collectionToToggle = RDMPCollection.SavedCohorts;
         else if (button == btnFavourites)
             collectionToToggle = RDMPCollection.Favourites;
-        else if (button == btnDataSets)
-            collectionToToggle = RDMPCollection.Datasets;
+        else if (button == btnConfiguration)
+            collectionToToggle = RDMPCollection.Configurations;
         else
             throw new ArgumentOutOfRangeException(nameof(button));
 
