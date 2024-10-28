@@ -81,21 +81,37 @@ public class OverviewModel
     }
 
 
-    public DataTable GetCountsByMonth(ColumnInfo dateColumn, string optionalWhere = "")
+    public DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
     {
         DataTable dt = new();
-
+        if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))
+        {
+            throw new Exception("Invalid Date period");
+        }
         var discoveredColumn = dateColumn.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();
         con.Open();
         //TODO make this work on non-sql
+        var dateString = "yyyy-MM";
+        switch (datePeriod)
+        {
+            case "Day":
+                dateString = "yyyy-MM-dd";
+                break;
+            case "Month":
+                dateString = "yyyy-MM";
+                break;
+            case "Year":
+                dateString = "yyyy";
+                break;
+        }
         var sql = @$"
-        SELECT format({dateColumn.GetRuntimeName()}, 'yyyy-MM') as YearMonth, count(*) as '# Records'
+        SELECT format({dateColumn.GetRuntimeName()}, '{dateString}') as YearMonth, count(*) as '# Records'
         FROM {discoveredColumn.Table.GetRuntimeName()}
         WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
-        {(optionalWhere != "" ? "AND" : "")} {optionalWhere}
-        GROUP BY format({dateColumn.GetRuntimeName()}, 'yyyy-MM')
+        {(optionalWhere != "" ? "AND" : "")} {optionalWhere.Replace('"', '\'')}
+        GROUP BY format({dateColumn.GetRuntimeName()}, '{dateString}')
         ORDER BY 1
         ";
 

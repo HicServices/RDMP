@@ -45,6 +45,8 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
     private Catalogue _catalogue;
     private OverviewModel _overview;
     private List<CatalogueItem> _dateColumns;
+    private static readonly string[] frequencies = new[] { "Day", "Month", "Year" };
+
     public ViewCatalogueOverviewUI()
     {
         InitializeComponent();
@@ -85,18 +87,23 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
         DataTable dt = new();
         if (pks.Any())
         {
-            dt = _overview.GetCountsByMonth(pks[0].ColumnInfo);
+            dt = _overview.GetCountsByDatePeriod(pks[0].ColumnInfo,cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
         }
         else if (_dateColumns.Any())
         {
-            dt = _overview.GetCountsByMonth(_dateColumns[0].ColumnInfo);
+            dt = _overview.GetCountsByDatePeriod(_dateColumns[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = 0;
         }
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
         var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
 
+    }
+
+    private void cbFrequency_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        UpdateCatalogueData();
     }
 
     private int OnTabChange(int tabIndex)
@@ -120,56 +127,18 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var dt = _overview.GetCountsByMonth(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo,tbMainWhere.Text);
+        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(),tbMainWhere.Text);
         areaChart1.GenerateChart(dt, "Records per Month");
     }
-
-    private Bitmap ImageGetter(object rowObject) => Activator.CoreIconProvider.GetImage(rowObject).ImageToBitmap();
-
-    private void RefreshUIFromDatabase()
-    {
-        //CommonFunctionality.ResetChecks();
-
-        //try
-        //{
-        //    if (bLoading)
-        //        return;
-
-        //    //only allow reordering when all are visible or only internal are visible otherwise user could select core only and do a reorder leaving supplemental columns as freaky orphans all down at the bottom fo the SQL!
-        //    bLoading = true;
-
-        //    var extractionInformations = GetSelectedExtractionInformations();
-
-        //    //add the available filters
-        //    SetupAvailableFilters(extractionInformations);
-
-        //    //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
-        //    QueryPreview.ReadOnly = false;
-
-
-        //    var collection = GetCollection(extractionInformations);
-
-        //    QueryPreview.Text = collection.GetSql();
-        //    CommonFunctionality.ScintillaGoRed(QueryPreview, false);
-        //    QueryPreview.ReadOnly = true;
-        //}
-        //catch (Exception ex)
-        //{
-        //    CommonFunctionality.ScintillaGoRed(QueryPreview, ex);
-        //    CommonFunctionality.Fatal(ex.Message, ex);
-        //}
-        //finally
-        //{
-        //    bLoading = false;
-        //}
-    }
-
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
     {
         base.SetDatabaseObject(activator, databaseObject);
         _catalogue = databaseObject;
         _overview = new OverviewModel(activator, _catalogue);
+        cbFrequency.Items.Clear();
+        cbFrequency.Items.AddRange(frequencies);
+        cbFrequency.SelectedIndex = 1;
         UpdateCatalogueData();
     }
 
@@ -208,7 +177,7 @@ public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
     private void tbMainWhere_TextChanged(object sender, EventArgs e)
     {
         //var text = tbMainWhere.Text;
-        var dt = _overview.GetCountsByMonth(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
+        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(),tbMainWhere.Text);
         areaChart1.GenerateChart(dt, "Records per Month");
     }
 }

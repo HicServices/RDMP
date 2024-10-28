@@ -117,6 +117,12 @@ public class ChartLookAndFeelSetter
     /// <returns></returns>
     private static int GetOffset(string yearMonth)
     {
+        var matchYearDigit = Regex.Match(yearMonth, @"^\d+$");
+        if(matchYearDigit.Success)
+        {
+            return 0;
+        }
+
         var matchMonthName = Regex.Match(yearMonth, @"\d+-([A-Za-z]+)");
 
         if (matchMonthName.Success)
@@ -125,7 +131,7 @@ public class ChartLookAndFeelSetter
             return DateTime.ParseExact(monthName, "MMMM", CultureInfo.CurrentCulture).Month;
         }
 
-        var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)");
+        var matchMonthDigit = Regex.Match(yearMonth, @"\d+-(\d+)(-(\d\d))?");
 
         return !matchMonthDigit.Success
             ? throw new Exception("Regex did not match expected YYYY-MM!")
