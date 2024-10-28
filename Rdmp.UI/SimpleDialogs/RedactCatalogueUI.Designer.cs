@@ -46,12 +46,14 @@ partial class RedactCatalogueUI
         label2 = new System.Windows.Forms.Label();
         tbCatalogueName = new System.Windows.Forms.TextBox();
         label1 = new System.Windows.Forms.Label();
+        btnRestoreAll = new System.Windows.Forms.Button();
         panel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)folv).BeginInit();
         SuspendLayout();
         // 
         // panel1
         // 
+        panel1.Controls.Add(btnRestoreAll);
         panel1.Controls.Add(btnNewRegex);
         panel1.Controls.Add(folv);
         panel1.Controls.Add(label4);
@@ -118,7 +120,6 @@ partial class RedactCatalogueUI
         folvRedactButton.MinimumWidth = 100;
         folvRedactButton.Text = "Restore";
         folvRedactButton.Width = 100;
-        folvRedactButton.AspectGetter = delegate { return "Restore"; };
         // 
         // label4
         // 
@@ -197,6 +198,17 @@ partial class RedactCatalogueUI
         label1.TabIndex = 0;
         label1.Text = "Catalogue:";
         // 
+        // btnRestoreAll
+        // 
+        btnRestoreAll.Enabled = false;
+        btnRestoreAll.Location = new System.Drawing.Point(512, 168);
+        btnRestoreAll.Name = "btnRestoreAll";
+        btnRestoreAll.Size = new System.Drawing.Size(113, 23);
+        btnRestoreAll.TabIndex = 12;
+        btnRestoreAll.Text = "Restore All";
+        btnRestoreAll.UseVisualStyleBackColor = true;
+        btnRestoreAll.Click += btnRestoreAll_Click;
+        // 
         // RedactCatalogueUI
         // 
         AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -227,4 +239,5 @@ partial class RedactCatalogueUI
     private OLVColumn folvReplacmentValue;
     private OLVColumn folvRedactButton;
     private System.Windows.Forms.Button btnNewRegex;
+    private System.Windows.Forms.Button btnRestoreAll;
 }

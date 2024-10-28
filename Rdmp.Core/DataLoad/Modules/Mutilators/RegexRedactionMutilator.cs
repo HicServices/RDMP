@@ -85,6 +85,7 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
         if(!nonPKColumns.Any() && matchedOnPk)
         {
             //TOOD warn the user that they're doing nothing, but we would have hit a PK, maybe error?
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Regex Redaction matched only Primary Key columns. They will not be redacted. Consider updating your configuration."));
         }
         foreach (var column in nonPKColumns)
         {

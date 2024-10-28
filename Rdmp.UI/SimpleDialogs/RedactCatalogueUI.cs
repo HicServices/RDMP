@@ -16,6 +16,7 @@ using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper.RegexRedaction;
+using Rdmp.Core.ReusableLibraryCode.Checks;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.RegexRedactionConfigurationForm;
@@ -31,19 +32,20 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
 {
     private IActivateItems _activator;
     private Catalogue _catalogue;
+    private List<RegexRedaction> _redactions;
     public RedactCatalogueUI()
     {
         InitializeComponent();
         this.comboBox1.Items.Clear();
         AssociatedCollection = RDMPCollection.Tables;
-        this.folv.ButtonClick += Redact;
+        this.folv.ButtonClick += Restore;
         this.btnNewRegex.Click += HandleNewRegex;
-       
+
     }
 
     public override string GetTabName()
     {
-        return $"{base.GetTabName()} - Regex Redaction";   
+        return $"{base.GetTabName()} - Regex Redaction";
     }
 
     public void HandleNewRegex(object sender, EventArgs e)
@@ -58,20 +60,27 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
     public void RefreshTable()
     {
         var columnIds = _catalogue.CatalogueItems.Select(c => c.ColumnInfo_ID).ToList();
-        var objects = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
+        _redactions = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<RegexRedaction>().Where(r => columnIds.Contains(r.ColumnInfo_ID)).ToList();
         folv.ClearObjects();
-        folv.AddObjects(objects);
+        folv.AddObjects(_redactions);
+        btnRestoreAll.Enabled = _redactions.Count != 0;
     }
 
-    public void Redact(object sender, CellClickEventArgs e)
+    private void Restore(RegexRedaction redaction, bool refresh = true)
     {
-        Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
-        var redaction= (e.Model as RegexRedaction);
-        var cmd = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(_activator,redaction);
+        var cmd = new ExecuteCommandRestoreRegexRedactedValueInCatalogue(_activator, redaction);
         Cursor.Current = Cursors.WaitCursor;
         cmd.Execute();
         Cursor.Current = Cursors.Default;
-        RefreshTable();
+        if (refresh)
+            RefreshTable();
+    }
+
+    public void Restore(object sender, CellClickEventArgs e)
+    {
+        Debug.WriteLine(String.Format("Button clicked: ({0}, {1}, {2})", e.RowIndex, e.SubItem, e.Model));
+        var redaction = (e.Model as RegexRedaction);
+        Restore(redaction);
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -109,6 +118,22 @@ public partial class RedactCatalogueUI : RedactCatalogueUI_Design
         }
     }
 
+    private void btnRestoreAll_Click(object sender, EventArgs e)
+    {
+        foreach (RegexRedaction redaction in _redactions)
+        {
+            try
+            {
+                Restore(redaction, false);
+            }
+            catch (Exception ex)
+            {
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(ex.Message, CheckResult.Fail,ex));
+            }
+            _redactions = new();
+            RefreshTable();
+        }
+    }
 }
 
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RedactCatalogueUI_Design, UserControl>))]
