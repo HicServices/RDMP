@@ -39,6 +39,7 @@ partial class RedactCatalogueUI
         folvFoundValue = new OLVColumn();
         folvReplacmentValue = new OLVColumn();
         folvRedactButton = new OLVColumn();
+        folvConfiguration = new OLVColumn();
         folvColumn = new OLVColumn();
         label4 = new System.Windows.Forms.Label();
         tbMaxCount = new System.Windows.Forms.TextBox();
@@ -89,8 +90,9 @@ partial class RedactCatalogueUI
         folv.AllColumns.Add(folvFoundValue);
         folv.AllColumns.Add(folvReplacmentValue);
         folv.AllColumns.Add(folvRedactButton);
+        folv.AllColumns.Add(folvConfiguration);
         folv.AllColumns.Add(folvColumn);
-        folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { folvColumn,folvFoundValue, folvReplacmentValue, folvRedactButton });
+        folv.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] { folvColumn, folvFoundValue, folvReplacmentValue, folvRedactButton, folvConfiguration });
         folv.Location = new System.Drawing.Point(13, 201);
         folv.Name = "folv";
         folv.ShowGroups = false;
@@ -124,10 +126,23 @@ partial class RedactCatalogueUI
         folvRedactButton.MinimumWidth = 100;
         folvRedactButton.Text = "Restore";
         folvRedactButton.Width = 100;
+        folvRedactButton.AspectGetter = delegate (object rowObjct) { return "Restore"; };
+        // 
+        // folvConfiguration
+        // 
+        folvConfiguration.AspectGetter = delegate (object rowObject)
+        {
+            var redaction = (RegexRedaction)rowObject;
+            return _activator.RepositoryLocator.CatalogueRepository.GetObjectByID<RegexRedactionConfiguration>(redaction.RedactionConfiguration_ID).Name;
+        };
+        folvConfiguration.ButtonSizing = OLVColumn.ButtonSizingMode.CellBounds;
+        folvConfiguration.FillsFreeSpace = true;
+        folvConfiguration.MinimumWidth = 100;
+        folvConfiguration.Text = "Configuration";
+        folvConfiguration.Width = 100;
         // 
         // folvColumn
         // 
-        //folvColumn.AspectName = "Column";
         folvColumn.AspectGetter = delegate (object rowObject)
         {
             var redaction = (RegexRedaction)rowObject;
@@ -257,6 +272,7 @@ partial class RedactCatalogueUI
     private OLVColumn folvReplacmentValue;
     private OLVColumn folvRedactButton;
     private OLVColumn folvColumn;
+    private OLVColumn folvConfiguration;
     private System.Windows.Forms.Button btnNewRegex;
     private System.Windows.Forms.Button btnRestoreAll;
 }
