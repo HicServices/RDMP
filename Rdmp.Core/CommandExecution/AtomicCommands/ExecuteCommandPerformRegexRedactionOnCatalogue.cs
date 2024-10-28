@@ -33,7 +33,7 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
     private DataTable redactionsToSaveTable;
     private DataTable pksToSave;
     private readonly int? _readLimit;
-    private DataTable redactionUpates = new();
+    private DataTable redactionUpdates = new();
     public int resultCount = 0;
 
     public ExecuteCommandPerformRegexRedactionOnCatalogue(IBasicActivateItems activator, ICatalogue catalogue, RegexRedactionConfiguration redactionConfiguration, List<ColumnInfo> columns, int? readLimit = null)
@@ -97,13 +97,13 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 }
                 conn.Close();
                 
-                redactionUpates = dt.Clone();
-                redactionUpates.BeginLoadData();
+                redactionUpdates = dt.Clone();
+                redactionUpdates.BeginLoadData();
                 foreach (DataRow row in dt.Rows)
                 {
-                    RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpates);
+                    RegexRedactionHelper.Redact(columnInfo, row, _cataloguePKs, _redactionConfiguration, redactionsToSaveTable, pksToSave, redactionUpdates);
                 }
-                redactionUpates.EndLoadData();
+                redactionUpdates.EndLoadData();
                 if(pksToSave.Rows.Count == 0)
                 {
                     _activator.Show("Unable to find any matching Redactions");
@@ -131,14 +131,14 @@ public class ExecuteCommandPerformRegexRedactionOnCatalogue : BasicCommandExecut
                 t2.Drop();
                 if (dt.Rows.Count > 0)
                 {
-                    RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpates, _discoveredPKColumns);
+                    RegexRedactionHelper.DoJoinUpdate(columnInfo, _discoveredTable, _server, redactionUpdates, _discoveredPKColumns);
                 }
             }
             else
             {
                 throw new Exception($"Unable to identify any primary keys in table '{table}'. Redactions cannot be performed on tables without primary keys");
             }
-            resultCount += redactionUpates.Rows.Count;
+            resultCount += redactionUpdates.Rows.Count;
         }
     }
 }

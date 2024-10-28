@@ -34,8 +34,11 @@ To view the redactions made, see the section below.
 
 ## Usage within RDMP
 You can view and restore existing redactions, along with adding new redactions within RDMP.
-For a Catalogue, right-click and iopen the "Catalogue Items" submenu. 
+For a Catalogue, right-click and open the "Catalogue Items" submenu. 
 From here, select the "Regex Redactions" option.
 This will open an interface displaying existing redactions.
-From here you casn restore existing redactions either individually or in bulk.
-Yuo can also apply regex redactions to existing data by selecting a redaction configuration and which columns to redact.
+From here you can restore existing redactions either individually or in bulk.
+You can also apply regex redactions to existing data by selecting a redaction configuration and which columns to redact.
+
+
+[Catalogue](../CodeTutorials/Glossary.md#Catalogue)
