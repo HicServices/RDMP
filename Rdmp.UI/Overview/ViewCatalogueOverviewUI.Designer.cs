@@ -1,7 +1,7 @@
 ﻿using BrightIdeasSoftware;
 using System.Windows.Forms.DataVisualization.Charting;
 
-namespace Rdmp.UI.ExtractionUIs
+namespace Rdmp.UI.Overview
 {
     partial class ViewCatalogueOverviewUI
     {

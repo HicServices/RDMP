@@ -28,7 +28,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
 using SixLabors.ImageSharp.PixelFormats;
 
-namespace Rdmp.UI.ExtractionUIs;
+namespace Rdmp.UI.Overview;
 
 /// <summary>
 /// Allows you to view the Extraction SQL that is built by the QueryBuilder when extracting or running data quality engine against a dataset (Catalogue).  Includes options for
@@ -40,7 +40,7 @@ namespace Rdmp.UI.ExtractionUIs;
 /// <para>If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
 /// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). </para>
 /// </summary>
-public partial class ViewCatalogueOverviewUI : ViewExtractionSql_Design
+public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
 {
     private Catalogue _catalogue;
     private OverviewModel _overview;

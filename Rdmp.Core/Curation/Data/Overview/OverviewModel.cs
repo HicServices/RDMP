@@ -130,20 +130,23 @@ public class OverviewModel
         _dataLoads = new();
         var repo = new MemoryCatalogueRepository();
         var qb = new QueryBuilder(null, null);
-        var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
-        qb.AddColumn(new ColumnInfoToIColumn(repo, columnInfo));
-        qb.AddCustomLine($"{columnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
-        var sql = qb.SQL;
-        var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
-        using var con = server.GetConnection();
-        con.Open();
+        var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).FirstOrDefault();
+        if (columnInfo != null)
+        {
+            qb.AddColumn(new ColumnInfoToIColumn(repo, columnInfo));
+            qb.AddCustomLine($"{columnInfo.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var sql = qb.SQL;
+            var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
+            using var con = server.GetConnection();
+            con.Open();
 
-        using var cmd = server.GetCommand(sql, con);
-        cmd.CommandTimeout = 30000;
-        using var da = server.GetDataAdapter(cmd);
-        _dataLoads.BeginLoadData();
-        da.Fill(_dataLoads);
-        _dataLoads.EndLoadData();
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = 30000;
+            using var da = server.GetDataAdapter(cmd);
+            _dataLoads.BeginLoadData();
+            da.Fill(_dataLoads);
+            _dataLoads.EndLoadData();
+        }
 
     }
 
@@ -158,47 +161,6 @@ public class OverviewModel
 
         return dt;
     }
-
-    //public DataTable GetDataLoadsuccessRate()
-    //{
-    //    if (_dataLoads == null) GetDataLoads();
-    //    DataTable dt = new();
-    //    var loggingServers = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
-    //    var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
-    //    var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
-    //    foreach (var loggingServer in loggingServers)
-    //    {
-    //        var logCollection = new ViewLogsCollection(loggingServer, new LogViewerFilter(LoggingTables.FatalError));
-    //        var dataLoadRunSql = $"{logCollection.GetSql()}";
-    //        var logServer = loggingServer.Discover(DataAccessContext.InternalDataProcessing).Server;
-    //        using var loggingCon = logServer.GetConnection();
-    //        loggingCon.Open();
-    //        using var loggingCmd = logServer.GetCommand(dataLoadRunSql, loggingCon);
-    //        loggingCmd.CommandTimeout = 30000;
-    //        using var loggingDa = server.GetDataAdapter(loggingCmd);
-    //        dt.BeginLoadData();
-    //        loggingDa.Fill(dt);
-    //        dt.EndLoadData();
-    //        loggingCon.Dispose();
-    //        if (dt.Rows.Count > 0)
-    //        {
-    //            //if we've found it, then stop
-    //            break;
-    //        }
-    //    }
-    //    var failureIds = dt.AsEnumerable().Select(row => row[5]).Distinct().ToList();
-    //    var ids = _dataLoads.AsEnumerable().Select(row => row[0]).Distinct().ToList();
-
-
-    //    int failed = ids.Intersect(failureIds).Count();
-    //    int success = _dataLoads.Rows.Count - failed;
-    //    DataTable results = new();
-    //    results.Columns.Add("success");
-    //    results.Columns.Add("failed");
-    //    results.Rows.Add(success, failed);
-
-    //    return results;
-    //}
 
     public DataTable GetMostRecentDataLoad()
     {
