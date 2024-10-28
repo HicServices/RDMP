@@ -12,4 +12,4 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("8.3.1")]
 [assembly: AssemblyFileVersion("8.3.1")]
-[assembly: AssemblyInformationalVersion("8.3.1")]
+[assembly: AssemblyInformationalVersion("8.3.1-doug-load")]
