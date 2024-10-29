@@ -31,6 +31,9 @@ public class RemoteAttacher : Attacher, IPluginAttacher
     [DemandsInitialization("Which column in the remote table can be used to perform time-based data selection")]
     public string RemoteTableDateColumn { get; set; }
 
+    [DemandsInitialization("Option name for the Date colunn table within RDMP if it differs from the remote table e.g Due to joins")]
+    public string RawTableDateColumn { get; set; }
+
     private readonly string RemoteTableDateFormat = "yyyy-MM-dd HH:mm:ss.fff";
 
     [DemandsInitialization("Earliest date when using a custom fetch duration")]
@@ -173,9 +176,14 @@ public class RemoteAttacher : Attacher, IPluginAttacher
         return true;
     }
 
-    public void FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job)
+    public void FindMostRecentDateInLoadedData(IQuerySyntaxHelper syntaxFrom, DatabaseType dbType, string table, IDataLoadJob job, bool userOverrideColumn = false)
     {
-        var maxDateSql = $"SELECT MAX({RemoteTableDateColumn}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
+        var column = RemoteTableDateColumn;
+        if (userOverrideColumn && !string.IsNullOrWhiteSpace(RawTableDateColumn))
+        {
+            column = RawTableDateColumn;
+        }
+        var maxDateSql = $"SELECT MAX({column}) FROM {syntaxFrom.EnsureWrapped(table)} {SqlHistoricalDataFilter(job.LoadMetadata, dbType)}";
 
         using var con = _dbInfo.Server.GetConnection();
         using var dt = new DataTable();

@@ -466,7 +466,7 @@ public class RemoteTableAttacher : RemoteAttacher
 
         if (SetDeltaReadingToLatestSeenDatePostLoad)
         {
-            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job);
+            FindMostRecentDateInLoadedData(rawSyntax, _dbInfo.Server.DatabaseType, rawTableName, job,true);
         }
 
 
