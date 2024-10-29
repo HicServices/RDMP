@@ -56,6 +56,9 @@ namespace Rdmp.UI.Overview
             panel3 = new System.Windows.Forms.Panel();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
+            panel7 = new System.Windows.Forms.Panel();
+            label6 = new System.Windows.Forms.Label();
+            lblPeople = new System.Windows.Forms.Label();
             areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChartUI(OnTabChange);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
@@ -66,6 +69,7 @@ namespace Rdmp.UI.Overview
             panel5.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
+            panel7.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -90,9 +94,8 @@ namespace Rdmp.UI.Overview
             splitContainer1.Size = new System.Drawing.Size(1342, 400);
             splitContainer1.SplitterDistance = 259;
             splitContainer1.TabIndex = 0;
-            // 
             // splitContainer1.Panel2
-            // 
+            //
             splitContainer1.Panel2.Controls.Add(areaChart1);
             //
             // areaChart1
@@ -103,6 +106,7 @@ namespace Rdmp.UI.Overview
             areaChart1.Size = new System.Drawing.Size(1075, 400);
             areaChart1.TabIndex = 0;
             areaChart1.Load += areaChart1_Load;
+            //
             // 
             // btnSettings
             // 
@@ -169,6 +173,7 @@ namespace Rdmp.UI.Overview
             // 
             // panel2
             // 
+            panel2.Controls.Add(panel7);
             panel2.Controls.Add(label5);
             panel2.Controls.Add(cbFrequency);
             panel2.Controls.Add(panel6);
@@ -207,7 +212,7 @@ namespace Rdmp.UI.Overview
             panel6.AutoSize = true;
             panel6.Controls.Add(label4);
             panel6.Controls.Add(lblDateRange);
-            panel6.Location = new System.Drawing.Point(593, 35);
+            panel6.Location = new System.Drawing.Point(778, 35);
             panel6.Name = "panel6";
             panel6.Size = new System.Drawing.Size(202, 200);
             panel6.TabIndex = 7;
@@ -319,6 +324,34 @@ namespace Rdmp.UI.Overview
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             lblLastDataLoad.Click += lblLastDataLoad_Click;
             // 
+            // panel7
+            // 
+            panel7.Controls.Add(label6);
+            panel7.Controls.Add(lblPeople);
+            panel7.Location = new System.Drawing.Point(585, 36);
+            panel7.Name = "panel7";
+            panel7.Size = new System.Drawing.Size(182, 200);
+            panel7.TabIndex = 7;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new System.Drawing.Font("Segoe UI", 16F);
+            label6.Location = new System.Drawing.Point(34, 4);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(98, 30);
+            label6.TabIndex = 2;
+            label6.Text = "# People";
+            // 
+            // lblPeople
+            // 
+            lblPeople.Location = new System.Drawing.Point(3, 63);
+            lblPeople.Name = "lblPeople";
+            lblPeople.Size = new System.Drawing.Size(166, 23);
+            lblPeople.TabIndex = 3;
+            lblPeople.Text = "label2";
+            lblPeople.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // ViewCatalogueOverviewUI
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
@@ -343,6 +376,8 @@ namespace Rdmp.UI.Overview
             panel4.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
+            panel7.ResumeLayout(false);
+            panel7.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -373,5 +408,8 @@ namespace Rdmp.UI.Overview
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cbFrequency;
         private System.Windows.Forms.Button btnSettings;
+        private System.Windows.Forms.Panel panel7;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblPeople;
     }
 }

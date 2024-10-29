@@ -43,7 +43,6 @@ public class OverviewModel
     {
         _activator = activator;
         _catalogue = catalogue;
-        GetNumberOfPeople();
     }
 
     public int GetNumberOfRecords()

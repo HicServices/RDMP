@@ -41,7 +41,7 @@ namespace Rdmp.UI.Overview;
 /// <para>If for some reason you see an error instead of your extraction SQL then read the description and take the steps it suggests (e.g. if it is complaining about not knowing
 /// how to JOIN two tables then configure an appropriate JoinInfo - See JoinConfiguration). </para>
 /// </summary>
-public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
+public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 {
     private Catalogue _catalogue;
     private OverviewModel _overview;
@@ -99,6 +99,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
         var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
+        lblPeople.Text = _overview.GetNumberOfPeople().ToString();
 
     }
 
@@ -187,7 +188,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
         Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
     }
 }
-[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverview_Design, UserControl>))]
-public abstract class ViewCatalogueOverview_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+[TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]
+public abstract class ViewCatalogueOverviewUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
 {
 }
