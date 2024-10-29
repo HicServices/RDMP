@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
-    partial class AreaChart
+    partial class AreaChartUI
     {
         /// <summary> 
         /// Required designer variable.

@@ -24,13 +24,13 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting;
 /// validation as a stack chart.  The Data tab will show you the raw counts that power the graph.  See SecondaryConstraintUI for validation configuration and ConsequenceKey for the
 /// meanings of each consequence classification.
 /// </summary>
-public partial class AreaChart : RDMPUserControl
+public partial class AreaChartUI : RDMPUserControl
 {
     private readonly ChartLookAndFeelSetter _chartLookAndFeelSetter = new();
 
     private Func<int,int> _OnTabChange;
 
-    public AreaChart(Func<int,int> onTabChange=null)
+    public AreaChartUI(Func<int,int> onTabChange=null)
     {
         InitializeComponent();
         _OnTabChange = onTabChange;

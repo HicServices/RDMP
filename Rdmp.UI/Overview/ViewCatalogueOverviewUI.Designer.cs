@@ -41,7 +41,7 @@ namespace Rdmp.UI.Overview
             cbTimeColumns = new System.Windows.Forms.ComboBox();
             panel2 = new System.Windows.Forms.Panel();
             label5 = new System.Windows.Forms.Label();
-            areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChart(OnTabChange);
+            areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChartUI(OnTabChange);
             cbFrequency = new System.Windows.Forms.ComboBox();
             panel6 = new System.Windows.Forms.Panel();
             label4 = new System.Windows.Forms.Label();
@@ -340,7 +340,7 @@ namespace Rdmp.UI.Overview
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblLatestExtraction;
-        private CatalogueSummary.DataQualityReporting.AreaChart areaChart1;
+        private CatalogueSummary.DataQualityReporting.AreaChartUI areaChart1;
         private System.Windows.Forms.ComboBox cbTimeColumns;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Panel panel4;
