@@ -77,14 +77,13 @@ public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
             if (ColumnMatches(column))
             {
                 matchedOnPk = true;
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Would masath on column '{column.GetRuntimeName()}' but it is a primary key"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, $"Would match on column '{column.GetRuntimeName()}' but it is a primary key"));
             }
         }
 
         var nonPKColumns = columns.Where(c => !pkColumnInfos.Select(c => c.GetRuntimeName()).Contains(c.GetRuntimeName()));
         if(!nonPKColumns.Any() && matchedOnPk)
         {
-            //TOOD warn the user that they're doing nothing, but we would have hit a PK, maybe error?
             job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Regex Redaction matched only Primary Key columns. They will not be redacted. Consider updating your configuration."));
         }
         foreach (var column in nonPKColumns)
