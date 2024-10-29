@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi.Discovery;
 using MongoDB.Driver;
 using NPOI.OpenXmlFormats.Dml;
 using NPOI.SS.Formula.Functions;
@@ -20,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -41,6 +43,7 @@ public class OverviewModel
     {
         _activator = activator;
         _catalogue = catalogue;
+        GetNumberOfPeople();
     }
 
     public int GetNumberOfRecords()
@@ -60,6 +63,25 @@ public class OverviewModel
         dt.EndLoadData();
         con.Dispose();
         return int.Parse(dt.Rows[0].ItemArray[0].ToString());
+    }
+
+    public int GetNumberOfPeople()
+    {
+        //extractionInformation isExtractionIdentifier
+        var discoveredColumns = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).Select(ci => ci.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing));
+        if(discoveredColumns.Count() > 1)
+        {
+            //more than 1 extraction identifier...
+        }
+        var server = discoveredColumns.First().Table.Database.Server;
+        using var con = server.GetConnection();
+        con.Open();
+        var columnStrings = string.Join(" , ", discoveredColumns.Select(dc => dc.GetRuntimeName()));
+        var sql = $"SELECT COUNT(*) FROM (SELECT DISTINCT({columnStrings}) FROM {discoveredColumns.First().Table.GetRuntimeName()}) as x";
+        using var cmd = server.GetCommand(sql, con);
+        cmd.CommandTimeout = 30000;
+        var result = cmd.ExecuteScalar();
+        return int.Parse((string)result);
     }
 
     public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn)

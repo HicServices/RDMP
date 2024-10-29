@@ -11,6 +11,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
+using Rdmp.UI.Overview;
 
 namespace Rdmp.UI.CommandExecution.Proposals;
 
@@ -24,7 +25,9 @@ internal class ProposeExecutionWhenTargetIsCatalogue : RDMPCommandExecutionPropo
 
     public override void Activate(Catalogue c)
     {
-        ItemActivator.Activate<CatalogueUI, Catalogue>(c);
+
+        //ItemActivator.Activate<CatalogueUI, Catalogue>(c);
+        ItemActivator.Activate<ViewCatalogueOverviewUI, Catalogue>(c);
     }
 
     public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Catalogue targetCatalogue,

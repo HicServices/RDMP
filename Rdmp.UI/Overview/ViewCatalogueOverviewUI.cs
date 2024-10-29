@@ -23,6 +23,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ScintillaNET;
@@ -87,7 +88,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
         DataTable dt = new();
         if (pks.Any())
         {
-            dt = _overview.GetCountsByDatePeriod(pks[0].ColumnInfo,cbFrequency.SelectedItem.ToString());
+            dt = _overview.GetCountsByDatePeriod(pks[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
         }
         else if (_dateColumns.Any())
@@ -108,7 +109,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
 
     private int OnTabChange(int tabIndex)
     {
-        if(tabIndex == 0)
+        if (tabIndex == 0)
         {
             tbMainWhere.Visible = true;
             lblWhere.Visible = true;
@@ -127,7 +128,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(),tbMainWhere.Text);
+        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
         areaChart1.GenerateChart(dt, "Records per Month");
     }
 
@@ -177,8 +178,13 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverview_Design
     private void tbMainWhere_TextChanged(object sender, EventArgs e)
     {
         //var text = tbMainWhere.Text;
-        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(),tbMainWhere.Text);
+        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
         areaChart1.GenerateChart(dt, "Records per Month");
+    }
+
+    private void btnSettings_Click(object sender, EventArgs e)
+    {
+        Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverview_Design, UserControl>))]

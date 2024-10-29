@@ -31,8 +31,10 @@ namespace Rdmp.UI.Overview
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ViewCatalogueOverviewUI));
             panel1 = new System.Windows.Forms.Panel();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
+            btnSettings = new System.Windows.Forms.Button();
             lblDescription = new System.Windows.Forms.Label();
             lblName = new System.Windows.Forms.Label();
             lblTime = new System.Windows.Forms.Label();
@@ -41,7 +43,6 @@ namespace Rdmp.UI.Overview
             cbTimeColumns = new System.Windows.Forms.ComboBox();
             panel2 = new System.Windows.Forms.Panel();
             label5 = new System.Windows.Forms.Label();
-            areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChartUI(OnTabChange);
             cbFrequency = new System.Windows.Forms.ComboBox();
             panel6 = new System.Windows.Forms.Panel();
             label4 = new System.Windows.Forms.Label();
@@ -55,6 +56,7 @@ namespace Rdmp.UI.Overview
             panel3 = new System.Windows.Forms.Panel();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
+            areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChartUI(OnTabChange);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
@@ -82,11 +84,35 @@ namespace Rdmp.UI.Overview
             // 
             // splitContainer1.Panel1
             // 
+            splitContainer1.Panel1.Controls.Add(btnSettings);
             splitContainer1.Panel1.Controls.Add(lblDescription);
             splitContainer1.Panel1.Controls.Add(lblName);
             splitContainer1.Size = new System.Drawing.Size(1342, 400);
             splitContainer1.SplitterDistance = 259;
             splitContainer1.TabIndex = 0;
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(areaChart1);
+            //
+            // areaChart1
+            //
+            areaChart1.Location = new System.Drawing.Point(4, 0);
+            areaChart1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            areaChart1.Name = "areaChart1";
+            areaChart1.Size = new System.Drawing.Size(1075, 400);
+            areaChart1.TabIndex = 0;
+            areaChart1.Load += areaChart1_Load;
+            // 
+            // btnSettings
+            // 
+            btnSettings.Image = (System.Drawing.Image)resources.GetObject("btnSettings.Image");
+            btnSettings.Location = new System.Drawing.Point(230, 3);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new System.Drawing.Size(26, 23);
+            btnSettings.TabIndex = 4;
+            btnSettings.UseVisualStyleBackColor = true;
+            btnSettings.Click += btnSettings_Click;
             // 
             // lblDescription
             // 
@@ -153,19 +179,10 @@ namespace Rdmp.UI.Overview
             panel2.Controls.Add(cbTimeColumns);
             panel2.Controls.Add(panel4);
             panel2.Controls.Add(panel3);
-            splitContainer1.Panel2.Controls.Add(areaChart1);
             panel2.Location = new System.Drawing.Point(0, 424);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(1342, 246);
             panel2.TabIndex = 1;
-            // areaChart1
-            //
-            areaChart1.Location = new System.Drawing.Point(4, 0);
-            areaChart1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            areaChart1.Name = "areaChart1";
-            areaChart1.Size = new System.Drawing.Size(1075, 400);
-            areaChart1.TabIndex = 0;
-            areaChart1.Load += areaChart1_Load;
             // 
             // label5
             // 
@@ -355,5 +372,6 @@ namespace Rdmp.UI.Overview
         private System.Windows.Forms.Label lblRecords;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ComboBox cbFrequency;
+        private System.Windows.Forms.Button btnSettings;
     }
 }
