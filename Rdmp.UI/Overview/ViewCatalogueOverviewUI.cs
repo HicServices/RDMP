@@ -97,7 +97,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
             cbTimeColumns.SelectedIndex = 0;
         }
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
-        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
+        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
         lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
 
@@ -187,8 +187,19 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void button1_Click(object sender, EventArgs e)
     {
+        _overview.Regen(tbMainWhere.Text);
+        lblRecords.Text = _overview.GetNumberOfRecords().ToString();
+        lblPeople.Text = _overview.GetNumberOfPeople().ToString();
+        var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
+        lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
+        lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
         var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
         areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem.ToString()}");
+    }
+
+    private void label4_Click(object sender, EventArgs e)
+    {
+
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]

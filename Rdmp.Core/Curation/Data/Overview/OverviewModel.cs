@@ -21,10 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Rdmp.Core.Curation.Data.Overview;
 
@@ -39,21 +35,32 @@ public class OverviewModel
 
     private DataTable _dataLoads;
 
+    private int _numberOfPeople;
+    private int _numberOfRecords;
+
     public OverviewModel(IBasicActivateItems activator, ICatalogue catalogue)
     {
         _activator = activator;
         _catalogue = catalogue;
+        Regen("");
     }
 
-    public int GetNumberOfRecords()
+    public void Regen(string whereClause)
     {
         DataTable dt = new();
-
-        var discoveredColumn = _catalogue.CatalogueItems.First().ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
+        bool hasExtractionIdentifier = true;
+        var column = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).FirstOrDefault();
+        if (column is null)
+        {
+            column = _catalogue.CatalogueItems.FirstOrDefault();
+            hasExtractionIdentifier = false;
+        }
+        var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();
         con.Open();
-        var sql = $"select count(*) FROM {discoveredColumn.Table.GetRuntimeName()}";
+        string populatedWhere = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
+        var sql = $"SELECT {column.ColumnInfo.GetRuntimeName()} FROM {discoveredColumn.Table.GetRuntimeName()} {populatedWhere}";
         using var cmd = server.GetCommand(sql, con);
         cmd.CommandTimeout = 30000;
         using var da = server.GetDataAdapter(cmd);
@@ -61,34 +68,28 @@ public class OverviewModel
         da.Fill(dt);
         dt.EndLoadData();
         con.Dispose();
-        return int.Parse(dt.Rows[0].ItemArray[0].ToString());
+        _numberOfRecords = dt.Rows.Count;
+        _numberOfPeople = hasExtractionIdentifier ? dt.DefaultView.ToTable(true, column.ColumnInfo.GetRuntimeName()).Rows.Count : 0;
+        GetDataLoads();
+    }
+
+    public int GetNumberOfRecords()
+    {
+        return _numberOfRecords;
     }
 
     public int GetNumberOfPeople()
     {
-        //extractionInformation isExtractionIdentifier
-        var discoveredColumns = _catalogue.CatalogueItems.Where(ci => ci.ExtractionInformation.IsExtractionIdentifier).Select(ci => ci.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing));
-        if(discoveredColumns.Count() > 1)
-        {
-            //more than 1 extraction identifier...
-        }
-        var server = discoveredColumns.First().Table.Database.Server;
-        using var con = server.GetConnection();
-        con.Open();
-        var columnStrings = string.Join(" , ", discoveredColumns.Select(dc => dc.GetRuntimeName()));
-        var sql = $"SELECT COUNT(*) FROM (SELECT DISTINCT({columnStrings}) FROM {discoveredColumns.First().Table.GetRuntimeName()}) as x";
-        using var cmd = server.GetCommand(sql, con);
-        cmd.CommandTimeout = 30000;
-        var result = cmd.ExecuteScalar();
-        return (int)result;
+        return _numberOfPeople;
     }
 
-    public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn)
+    public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn, string whereClause)
     {
         DataTable dt = new();
 
         var discoveredColumn = _catalogue.CatalogueItems.First().ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
+        var populatedWhereClause = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
         using var con = server.GetConnection();
         con.Open();
         var sql = $@"
@@ -96,7 +97,7 @@ public class OverviewModel
         from
         (select {dateColumn.GetRuntimeName()},
         count(1) over (partition by year({dateColumn.GetRuntimeName()})) as occurs 
-        from {discoveredColumn.Table.GetRuntimeName()}) as t
+        from {discoveredColumn.Table.GetRuntimeName()} {populatedWhereClause}) as t
         where occurs >1
         ";
 
@@ -178,18 +179,6 @@ public class OverviewModel
             _dataLoads.EndLoadData();
         }
 
-    }
-
-    public DataTable GetDataLoadDetails()
-    {
-        DataTable dt = new();
-        dt.Columns.Add("Data Load");
-        dt.Columns.Add("");
-        dt.Rows.Add("# Records inserted or updated in most recent data load", 1);
-        dt.Rows.Add("Average # Records inserted or updated in data loads", 1);
-        dt.Rows.Add("Data Load Frequency", "Weekly");
-
-        return dt;
     }
 
     public DataTable GetMostRecentDataLoad()
