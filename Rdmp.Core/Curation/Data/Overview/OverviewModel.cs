@@ -42,7 +42,10 @@ public class OverviewModel
     {
         _activator = activator;
         _catalogue = catalogue;
-        Regen("");
+        if (catalogue != null)
+        {
+            Regen("");
+        }
     }
 
     public void Regen(string whereClause)
@@ -55,6 +58,7 @@ public class OverviewModel
             column = _catalogue.CatalogueItems.FirstOrDefault();
             hasExtractionIdentifier = false;
         }
+        if (column is null) return;
         var discoveredColumn = column.ColumnInfo.Discover(DataAccessContext.InternalDataProcessing);
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();

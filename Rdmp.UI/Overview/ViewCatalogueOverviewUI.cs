@@ -77,10 +77,17 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         {
             lblLatestExtraction.Text = "Catalogue has not been extracted";
         }
-        var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false).GetQuerySyntaxHelper();
-        var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
-
+        try
+        {
+            var syntaxHelper = _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.InternalDataProcessing, false)?.GetQuerySyntaxHelper();
+            var dateTypeString = syntaxHelper.TypeTranslater.GetSQLDBTypeForCSharpType(new TypeGuesser.DatabaseTypeRequest(typeof(DateTime)));
+       
         _dateColumns = _catalogue.CatalogueItems.Where(ci => ci.ColumnInfo.Data_type == dateTypeString).ToList();
+        }
+        catch
+        {
+            return;
+        }
         cbTimeColumns.Items.Clear();
         cbTimeColumns.Items.AddRange(_dateColumns.ToArray());
         var pks = _dateColumns.Where(ci => ci.ColumnInfo.IsPrimaryKey).ToList();
