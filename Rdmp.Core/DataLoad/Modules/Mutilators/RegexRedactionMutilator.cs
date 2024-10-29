@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators;
 /// </summary>
 public class RegexRedactionMutilator : MatchingTablesMutilatorWithDataLoadJob
 {
-    [DemandsInitialization("the regex redaction configuration to use")]
+    [DemandsInitialization("The regex redaction configuration to use")]
     public RegexRedactionConfiguration RedactionConfiguration { get; set; }
 
     [DemandsInitialization(
