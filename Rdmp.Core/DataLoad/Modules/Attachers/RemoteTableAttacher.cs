@@ -364,12 +364,12 @@ public class RemoteTableAttacher : RemoteAttacher
         string sql;
         if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
         {
-            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType).Replace(" WHERE", "");
+            var injectedWhereClause = SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType, RemoteTableDateColumn).Replace(" WHERE", "");
             sql = Regex.Replace(RemoteSelectSQL, "\\$RDMPDefinedWhereClause", injectedWhereClause);
         }
         else
         {
-            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType)}";
+            sql = $"Select {SelectedColumns} from {syntax.EnsureWrapped(RemoteTableName)}  {SqlHistoricalDataFilter(job.LoadMetadata, DatabaseType, RemoteTableDateColumn)}";
         }
 
         var scheduleMismatch = false;
