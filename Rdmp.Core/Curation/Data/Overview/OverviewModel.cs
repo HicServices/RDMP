@@ -80,7 +80,7 @@ public class OverviewModel
         using var cmd = server.GetCommand(sql, con);
         cmd.CommandTimeout = 30000;
         var result = cmd.ExecuteScalar();
-        return int.Parse((string)result);
+        return (int)result;
     }
 
     public Tuple<DateTime, DateTime> GetStartEndDates(ColumnInfo dateColumn)

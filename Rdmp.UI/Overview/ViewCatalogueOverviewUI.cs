@@ -99,7 +99,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
         var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
-        lblPeople.Text = _overview.GetNumberOfPeople().ToString();
+        lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
 
     }
 
@@ -130,7 +130,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
         var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
-        areaChart1.GenerateChart(dt, "Records per Month");
+        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
     }
 
     public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
@@ -178,14 +178,17 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void tbMainWhere_TextChanged(object sender, EventArgs e)
     {
-        //var text = tbMainWhere.Text;
-        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
-        areaChart1.GenerateChart(dt, "Records per Month");
     }
 
     private void btnSettings_Click(object sender, EventArgs e)
     {
         Activator.Activate<CatalogueUI, Catalogue>(_catalogue);
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
+        areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem.ToString()}");
     }
 }
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ViewCatalogueOverviewUI_Design, UserControl>))]

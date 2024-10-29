@@ -42,6 +42,9 @@ namespace Rdmp.UI.Overview
             tbMainWhere = new System.Windows.Forms.TextBox();
             cbTimeColumns = new System.Windows.Forms.ComboBox();
             panel2 = new System.Windows.Forms.Panel();
+            panel7 = new System.Windows.Forms.Panel();
+            label6 = new System.Windows.Forms.Label();
+            lblPeople = new System.Windows.Forms.Label();
             label5 = new System.Windows.Forms.Label();
             cbFrequency = new System.Windows.Forms.ComboBox();
             panel6 = new System.Windows.Forms.Panel();
@@ -56,20 +59,18 @@ namespace Rdmp.UI.Overview
             panel3 = new System.Windows.Forms.Panel();
             label1 = new System.Windows.Forms.Label();
             lblLastDataLoad = new System.Windows.Forms.Label();
-            panel7 = new System.Windows.Forms.Panel();
-            label6 = new System.Windows.Forms.Label();
-            lblPeople = new System.Windows.Forms.Label();
+            button1 = new System.Windows.Forms.Button();
             areaChart1 = new CatalogueSummary.DataQualityReporting.AreaChartUI(OnTabChange);
             panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.SuspendLayout();
             panel2.SuspendLayout();
+            panel7.SuspendLayout();
             panel6.SuspendLayout();
             panel5.SuspendLayout();
             panel4.SuspendLayout();
             panel3.SuspendLayout();
-            panel7.SuspendLayout();
             SuspendLayout();
             // 
             // panel1
@@ -94,6 +95,17 @@ namespace Rdmp.UI.Overview
             splitContainer1.Size = new System.Drawing.Size(1342, 400);
             splitContainer1.SplitterDistance = 259;
             splitContainer1.TabIndex = 0;
+            // 
+            // btnSettings
+            // 
+            btnSettings.Image = (System.Drawing.Image)resources.GetObject("btnSettings.Image");
+            btnSettings.Location = new System.Drawing.Point(230, 3);
+            btnSettings.Name = "btnSettings";
+            btnSettings.Size = new System.Drawing.Size(26, 23);
+            btnSettings.TabIndex = 4;
+            btnSettings.UseVisualStyleBackColor = false;
+            btnSettings.Click += btnSettings_Click;
+            // 
             // splitContainer1.Panel2
             //
             splitContainer1.Panel2.Controls.Add(areaChart1);
@@ -107,17 +119,6 @@ namespace Rdmp.UI.Overview
             areaChart1.TabIndex = 0;
             areaChart1.Load += areaChart1_Load;
             //
-            // 
-            // btnSettings
-            // 
-            btnSettings.Image = (System.Drawing.Image)resources.GetObject("btnSettings.Image");
-            btnSettings.Location = new System.Drawing.Point(230, 3);
-            btnSettings.Name = "btnSettings";
-            btnSettings.Size = new System.Drawing.Size(26, 23);
-            btnSettings.TabIndex = 4;
-            btnSettings.UseVisualStyleBackColor = true;
-            btnSettings.Click += btnSettings_Click;
-            // 
             // lblDescription
             // 
             lblDescription.Location = new System.Drawing.Point(16, 108);
@@ -158,7 +159,7 @@ namespace Rdmp.UI.Overview
             // 
             tbMainWhere.Location = new System.Drawing.Point(315, 6);
             tbMainWhere.Name = "tbMainWhere";
-            tbMainWhere.Size = new System.Drawing.Size(460, 23);
+            tbMainWhere.Size = new System.Drawing.Size(402, 23);
             tbMainWhere.TabIndex = 7;
             tbMainWhere.TextChanged += tbMainWhere_TextChanged;
             // 
@@ -173,6 +174,7 @@ namespace Rdmp.UI.Overview
             // 
             // panel2
             // 
+            panel2.Controls.Add(button1);
             panel2.Controls.Add(panel7);
             panel2.Controls.Add(label5);
             panel2.Controls.Add(cbFrequency);
@@ -188,6 +190,34 @@ namespace Rdmp.UI.Overview
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(1342, 246);
             panel2.TabIndex = 1;
+            // 
+            // panel7
+            // 
+            panel7.Controls.Add(label6);
+            panel7.Controls.Add(lblPeople);
+            panel7.Location = new System.Drawing.Point(585, 36);
+            panel7.Name = "panel7";
+            panel7.Size = new System.Drawing.Size(182, 200);
+            panel7.TabIndex = 7;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new System.Drawing.Font("Segoe UI", 16F);
+            label6.Location = new System.Drawing.Point(34, 4);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(98, 30);
+            label6.TabIndex = 2;
+            label6.Text = "# People";
+            // 
+            // lblPeople
+            // 
+            lblPeople.Location = new System.Drawing.Point(3, 63);
+            lblPeople.Name = "lblPeople";
+            lblPeople.Size = new System.Drawing.Size(166, 23);
+            lblPeople.TabIndex = 3;
+            lblPeople.Text = "label2";
+            lblPeople.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label5
             // 
@@ -324,33 +354,15 @@ namespace Rdmp.UI.Overview
             lblLastDataLoad.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             lblLastDataLoad.Click += lblLastDataLoad_Click;
             // 
-            // panel7
+            // button1
             // 
-            panel7.Controls.Add(label6);
-            panel7.Controls.Add(lblPeople);
-            panel7.Location = new System.Drawing.Point(585, 36);
-            panel7.Name = "panel7";
-            panel7.Size = new System.Drawing.Size(182, 200);
-            panel7.TabIndex = 7;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new System.Drawing.Font("Segoe UI", 16F);
-            label6.Location = new System.Drawing.Point(34, 4);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(98, 30);
-            label6.TabIndex = 2;
-            label6.Text = "# People";
-            // 
-            // lblPeople
-            // 
-            lblPeople.Location = new System.Drawing.Point(3, 63);
-            lblPeople.Name = "lblPeople";
-            lblPeople.Size = new System.Drawing.Size(166, 23);
-            lblPeople.TabIndex = 3;
-            lblPeople.Text = "label2";
-            lblPeople.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
+            button1.Location = new System.Drawing.Point(723, 6);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(26, 23);
+            button1.TabIndex = 5;
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
             // 
             // ViewCatalogueOverviewUI
             // 
@@ -368,6 +380,8 @@ namespace Rdmp.UI.Overview
             splitContainer1.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
+            panel7.ResumeLayout(false);
+            panel7.PerformLayout();
             panel6.ResumeLayout(false);
             panel6.PerformLayout();
             panel5.ResumeLayout(false);
@@ -376,8 +390,6 @@ namespace Rdmp.UI.Overview
             panel4.PerformLayout();
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
-            panel7.ResumeLayout(false);
-            panel7.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -411,5 +423,6 @@ namespace Rdmp.UI.Overview
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label lblPeople;
+        private System.Windows.Forms.Button button1;
     }
 }
