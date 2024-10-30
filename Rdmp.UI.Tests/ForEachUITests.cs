@@ -6,8 +6,6 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Overview;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests;
@@ -30,15 +28,5 @@ internal class ForEachUITests : UITests
                 Assert.That(string.IsNullOrWhiteSpace(ui.GetTabName()), Is.False);
             });
         });
-    }
-
-    [Test, UITimeout(20000)]
-    public void Test_ViewCatalogueOverviewUI_Constructor()
-    {
-        var o = WhenIHaveA<Catalogue>();
-        var ui = AndLaunch<ViewCatalogueOverviewUI>(o);
-        //Assert.IsNotNull(ui);
-        //AssertNoErrors(ExpectedErrorType.Fatal);
-        //AssertNoErrors(ExpectedErrorType.KilledForm);
     }
 }

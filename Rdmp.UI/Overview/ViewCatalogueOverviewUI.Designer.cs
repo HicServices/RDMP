@@ -87,7 +87,6 @@ namespace Rdmp.UI.Overview
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(panel3);
             splitContainer1.Panel1.Controls.Add(btnSettings);
             splitContainer1.Panel1.Controls.Add(lblDescription);
             splitContainer1.Panel1.Controls.Add(lblName);
@@ -95,6 +94,18 @@ namespace Rdmp.UI.Overview
             splitContainer1.SplitterDistance = 259;
             splitContainer1.TabIndex = 0;
             // 
+            // panel3
+            // 
+            panel3.BackColor = System.Drawing.SystemColors.ControlDark;
+            panel3.Controls.Add(lblLatestExtraction);
+            panel3.Controls.Add(label2);
+            panel3.Controls.Add(label1);
+            panel3.Controls.Add(lblLastDataLoad);
+            panel3.Location = new System.Drawing.Point(16, 7);
+            panel3.Name = "panel3";
+            panel3.Size = new System.Drawing.Size(190, 148);
+            panel3.TabIndex = 4;
+            //
             // splitContainer1.Panel2
             //
             splitContainer1.Panel2.Controls.Add(areaChart1);
@@ -108,17 +119,6 @@ namespace Rdmp.UI.Overview
             areaChart1.TabIndex = 0;
             areaChart1.Load += areaChart1_Load;
             //
-            // panel3
-            // 
-            panel3.BackColor = System.Drawing.SystemColors.ControlDark;
-            panel3.Controls.Add(lblLatestExtraction);
-            panel3.Controls.Add(label2);
-            panel3.Controls.Add(label1);
-            panel3.Controls.Add(lblLastDataLoad);
-            panel3.Location = new System.Drawing.Point(16, 245);
-            panel3.Name = "panel3";
-            panel3.Size = new System.Drawing.Size(190, 148);
-            panel3.TabIndex = 4;
             // 
             // lblLatestExtraction
             // 
@@ -230,6 +230,7 @@ namespace Rdmp.UI.Overview
             // 
             // panel2
             // 
+            panel2.Controls.Add(panel3);
             panel2.Controls.Add(button1);
             panel2.Controls.Add(panel7);
             panel2.Controls.Add(label5);
