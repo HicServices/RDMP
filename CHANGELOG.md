@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.0] - Unreleased
 
 - Add Ordering to Filters
+- Add overview page for Catalogues
 
 ## [8.3.1] - 2024-10-22
 
