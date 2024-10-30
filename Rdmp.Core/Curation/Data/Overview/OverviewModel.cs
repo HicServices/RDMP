@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using NPOI.SS.Formula.Functions;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataLoad.Triggers;
@@ -13,6 +14,7 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.DataAccess;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -91,7 +93,9 @@ public class OverviewModel
         var populatedWhereClause = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : "";
         using var con = server.GetConnection();
         con.Open();
-        var sql = $@"
+        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
+        {
+            var sql = $@"
         select min({dateColumn.GetRuntimeName()}) as min, max({dateColumn.GetRuntimeName()}) as max
         from
         (select {dateColumn.GetRuntimeName()},
@@ -100,18 +104,36 @@ public class OverviewModel
         where occurs >1
         ";
 
-        using var cmd = server.GetCommand(sql, con);
-        cmd.CommandTimeout = 30000;
-        using var da = server.GetDataAdapter(cmd);
-        dt.BeginLoadData();
-        da.Fill(dt);
-        dt.EndLoadData();
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = 30000;
+            using var da = server.GetDataAdapter(cmd);
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
+        else
+        {
+            var repo = new MemoryCatalogueRepository();
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
+            qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var cmd = server.GetCommand(qb.SQL, con);
+            using var da = server.GetDataAdapter(cmd);
+            dt.BeginLoadData();
+            da.Fill(dt);
+            var latest = dt.AsEnumerable()
+               .Max(r => r.Field<DateTime>(dateColumn.Name));
+            var earliest = dt.AsEnumerable()
+              .Min(r => r.Field<DateTime>(dateColumn.Name));
+            dt = new();
+            dt.Rows.Add([earliest, latest]);
+        }
         con.Dispose();
         return new Tuple<DateTime, DateTime>(DateTime.Parse(dt.Rows[0].ItemArray[0].ToString()), DateTime.Parse(dt.Rows[0].ItemArray[1].ToString()));
     }
 
 
-    public DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
+    public static DataTable GetCountsByDatePeriod(ColumnInfo dateColumn, string datePeriod, string optionalWhere = "")
     {
         DataTable dt = new();
         if (!(new[] { "Day", "Month", "Year" }).Contains(datePeriod))
@@ -122,7 +144,6 @@ public class OverviewModel
         var server = discoveredColumn.Table.Database.Server;
         using var con = server.GetConnection();
         con.Open();
-        //TODO make this work on non-sql
         var dateString = "yyyy-MM";
         switch (datePeriod)
         {
@@ -136,7 +157,9 @@ public class OverviewModel
                 dateString = "yyyy";
                 break;
         }
-        var sql = @$"
+        if (server.DatabaseType == FAnsi.DatabaseType.MicrosoftSQLServer)
+        {
+            var sql = @$"
         SELECT format({dateColumn.GetRuntimeName()}, '{dateString}') as YearMonth, count(*) as '# Records'
         FROM {discoveredColumn.Table.GetRuntimeName()}
         WHERE {dateColumn.GetRuntimeName()} IS NOT NULL
@@ -145,12 +168,41 @@ public class OverviewModel
         ORDER BY 1
         ";
 
-        using var cmd = server.GetCommand(sql, con);
-        cmd.CommandTimeout = 30000;
-        using var da = server.GetDataAdapter(cmd);
-        dt.BeginLoadData();
-        da.Fill(dt);
-        dt.EndLoadData();
+            using var cmd = server.GetCommand(sql, con);
+            cmd.CommandTimeout = 30000;
+            using var da = server.GetDataAdapter(cmd);
+            dt.BeginLoadData();
+            da.Fill(dt);
+            dt.EndLoadData();
+        }
+        else
+        {
+            var repo = new MemoryCatalogueRepository();
+            var qb = new QueryBuilder(null, null);
+            qb.AddColumn(new ColumnInfoToIColumn(repo, dateColumn));
+            qb.AddCustomLine($"{dateColumn.Name} IS NOT NULL", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var cmd = server.GetCommand(qb.SQL, con);
+            using var da = server.GetDataAdapter(cmd);
+            dt.BeginLoadData();
+            da.Fill(dt);
+            Dictionary<string, int> counts = [];
+            foreach (var row in dt.AsEnumerable())
+            {
+                var datetime = DateTime.Parse(row.ItemArray[0].ToString());
+                var key = datetime.ToString(dateString);
+                counts[key]++;
+            }
+            dt = new DataTable();
+            foreach (var item in counts)
+            {
+                DataRow dr = dt.NewRow();
+                dr["YearMonth"] = item.Key;
+                dr["# Records"] = item.Value;
+                dt.Rows.Add(dr);
+            }
+            dt.EndLoadData();
+
+        }
         con.Dispose();
         return dt;
     }
@@ -185,7 +237,6 @@ public class OverviewModel
         if (_dataLoads == null) GetDataLoads();
         if (_dataLoads.Rows.Count == 0) return null;
         var maxDataLoadId = _dataLoads.AsEnumerable().Select(r => int.Parse(r[0].ToString())).Distinct().Max();
-        //find the most recent dataload id in the catalogue then go grab the dataLoadrun from the logging db
         var loggingServers = _activator.RepositoryLocator.CatalogueRepository.GetAllObjectsWhere<ExternalDatabaseServer>("CreatedByAssembly", "Rdmp.Core/Databases.LoggingDatabase");
         var columnInfo = _catalogue.CatalogueItems.Where(c => c.Name == SpecialFieldNames.DataLoadRunID).Select(c => c.ColumnInfo).First();
         var server = columnInfo.Discover(DataAccessContext.InternalDataProcessing).Table.Database.Server;
@@ -207,7 +258,6 @@ public class OverviewModel
             loggingCon.Dispose();
             if (dt.Rows.Count > 0)
             {
-                //if we've found it, then stop
                 break;
             }
         }

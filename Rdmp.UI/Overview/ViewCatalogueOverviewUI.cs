@@ -95,12 +95,12 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         DataTable dt = new();
         if (pks.Any())
         {
-            dt = _overview.GetCountsByDatePeriod(pks[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
+            dt = OverviewModel.GetCountsByDatePeriod(pks[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = _dateColumns.IndexOf(pks[0]);
         }
         else if (_dateColumns.Any())
         {
-            dt = _overview.GetCountsByDatePeriod(_dateColumns[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
+            dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[0].ColumnInfo, cbFrequency.SelectedItem.ToString());
             cbTimeColumns.SelectedIndex = 0;
         }
         lblRecords.Text = _overview.GetNumberOfRecords().ToString();
@@ -136,7 +136,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
 
     private void cbTimeColumns_SelectedIndexChanged(object sender, EventArgs e)
     {
-        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
+        var dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
         areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem}");
     }
 
@@ -200,7 +200,7 @@ public partial class ViewCatalogueOverviewUI : ViewCatalogueOverviewUI_Design
         var dates = _overview.GetStartEndDates(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, tbMainWhere.Text);
         lblDateRange.Text = $"{dates.Item1} - {dates.Item2}";
         lblPeople.Text = $"{_overview.GetNumberOfPeople()}";
-        var dt = _overview.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
+        var dt = OverviewModel.GetCountsByDatePeriod(_dateColumns[cbTimeColumns.SelectedIndex].ColumnInfo, cbFrequency.SelectedItem.ToString(), tbMainWhere.Text);
         areaChart1.GenerateChart(dt, $"Records per {cbFrequency.SelectedItem.ToString()}");
     }
 
