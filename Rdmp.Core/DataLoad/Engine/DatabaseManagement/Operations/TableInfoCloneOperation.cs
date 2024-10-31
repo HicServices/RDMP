@@ -156,10 +156,6 @@ public class TableInfoCloneOperation
                 drop = true;
             }
 
-            ////drop the data load run ID field and validFrom fields, we don't need them in STAGING or RAW, it will be hard coded in the MERGE migration with a fixed value anyway.
-            //if (colName.Equals(SpecialFieldNames.DataLoadRunID) || colName.Equals(SpecialFieldNames.ValidFrom))
-            //    drop = true;
-
             var dilution = dilutionColumns.SingleOrDefault(c => c.GetRuntimeName().Equals(colName));
 
             if (dilution != null)
