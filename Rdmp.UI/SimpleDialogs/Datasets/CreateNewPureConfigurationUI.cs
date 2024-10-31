@@ -63,6 +63,7 @@ namespace Rdmp.UI.SimpleDialogs.Datasets
         {
             var config = new DatasetProviderConfiguration(_activator.RepositoryLocator.CatalogueRepository, tbName.Text, typeof(PureDatasetProvider).ToString(), tbUrl.Text, ((DataAccessCredentials)cbCredentials.SelectedItem).ID, tbOrganisationId.Text);
             config.SaveToDatabase();
+            _activator.Publish(config);
             Close();
             _activator.Show($"Dataset Provider '{tbName.Text}' has successfully been created");
         }
