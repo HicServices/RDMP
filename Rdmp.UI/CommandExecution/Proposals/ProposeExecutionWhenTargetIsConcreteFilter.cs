@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 
@@ -24,8 +26,16 @@ internal class ProposeExecutionWhenTargetIsConcreteFilter : RDMPCommandExecution
         ItemActivator.Activate<ExtractionFilterUI, ConcreteFilter>(target);
     }
 
-    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target,
-        InsertOption insertOption = InsertOption.Default) =>
-        //currently nothing can be dropped onto a filter
-        null;
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter targetFilter,
+        InsertOption insertOption = InsertOption.Default)
+    {
+        return cmd switch
+        {
+            FilterCombineable sourceFilterCommand =>
+            !sourceFilterCommand.Filter.Equals(targetFilter) && sourceFilterCommand.Filter is ConcreteFilter && sourceFilterCommand.Filter.FilterContainer_ID == targetFilter.FilterContainer_ID ?
+                new ExecuteCommandReorderFilter(ItemActivator, (ConcreteFilter)sourceFilterCommand.Filter, targetFilter, insertOption)
+                : null,
+            _ => null
+        };
+    }
 }
