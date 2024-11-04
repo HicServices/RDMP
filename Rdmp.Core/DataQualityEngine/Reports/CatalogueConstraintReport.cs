@@ -13,6 +13,7 @@ using System.Threading;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
@@ -50,6 +51,8 @@ public class CatalogueConstraintReport : DataQualityReport
     private IExternalDatabaseServer _loggingServer;
     private string _loggingTask;
     private LogManager _logManager;
+
+    private int? _dataLoadID;
 
     /// <summary>
     /// Set this property to use an explicit DQE results store database instead of the
@@ -91,6 +94,116 @@ public class CatalogueConstraintReport : DataQualityReport
 
     private bool haveComplainedAboutNullCategories;
 
+
+    private void BuildReportInternals(ICatalogue c, IDataLoadEventListener listener,
+        CancellationToken cancellationToken, ForkDataLoadEventListener forker, DQERepository dqeRepository)
+    {
+        byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
+        byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
+
+        Check(new FromDataLoadEventListenerToCheckNotifier(forker));
+
+        var sw = Stopwatch.StartNew();
+        using (var con = _server.GetConnection())
+        {
+            con.Open();
+            var qb = _queryBuilder;
+            if (_dataLoadID is not null)
+                qb.AddCustomLine($"{SpecialFieldNames.DataLoadRunID} = {_dataLoadID}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
+            var cmd = _server.GetCommand(qb.SQL, con);
+            cmd.CommandTimeout = 500000;
+
+            var t = cmd.ExecuteReaderAsync(cancellationToken);
+            t.Wait(cancellationToken);
+
+            if (cancellationToken.IsCancellationRequested)
+                throw new OperationCanceledException("User cancelled DQE while fetching data");
+
+            var r = t.Result;
+
+            var progress = 0;
+
+            while (r.Read())
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                progress++;
+                var dataLoadRunIDOfCurrentRecord = 0;
+                //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
+
+                //if the DataReader is likely to have a data load run ID column
+                if (_containsDataLoadID)
+                {
+                    //get data load run id
+                    var runID = dqeRepository.ObjectToNullableInt(r[_dataLoadRunFieldName]);
+
+                    //if it has a value use it (otherwise it is null so use 0 - ugh I know, it's a primary key constraint issue)
+                    if (runID != null)
+                        dataLoadRunIDOfCurrentRecord = (int)runID;
+                }
+
+                string pivotValue = null;
+
+                //if the user has a pivot category configured
+                if (_pivotCategory != null)
+                {
+                    pivotValue = GetStringValueForPivotField(r[_pivotCategory], forker);
+
+                    if (!haveComplainedAboutNullCategories && string.IsNullOrWhiteSpace(pivotValue))
+                    {
+                        forker.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Warning,
+                                $"Found a null/empty value for pivot category '{_pivotCategory}', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
+                        haveComplainedAboutNullCategories = true;
+                        pivotValue = null;
+                    }
+                }
+
+                //always increase the "ALL" category
+                ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
+                    byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
+
+                //if there is a value in the current record for the pivot column
+                if (pivotValue != null)
+                {
+                    //if it is a novel
+                    if (!byPivotCategoryCubesOverTime.TryGetValue(pivotValue, out var periodicityCubesOverTime))
+                    {
+                        //we will need to expand the dictionaries
+                        if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
+                            throw new OverflowException(
+                                $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
+
+                        //expand both the time periodicity and the state results
+                        byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
+                            new DQEStateOverDataLoadRunId(pivotValue));
+                        periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotValue);
+                        byPivotCategoryCubesOverTime.Add(pivotValue, periodicityCubesOverTime);
+                    }
+
+                    //now we are sure that the dictionaries have the category field we can increment it
+                    ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
+periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
+                }
+
+                if (progress % 5000 == 0)
+                    forker.OnProgress(this,
+                        new ProgressEventArgs($"Processing {_catalogue}",
+                            new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+            }
+
+            //final value
+            forker.OnProgress(this,
+                new ProgressEventArgs($"Processing {_catalogue}",
+                    new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
+            con.Close();
+        }
+
+        sw.Stop();
+        foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
+            state.CalculateFinalValues();
+    }
+
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
         CancellationToken cancellationToken)
     {
@@ -105,110 +218,8 @@ public class CatalogueConstraintReport : DataQualityReport
         {
             _catalogue = c;
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
+            BuildReportInternals(c, listener, cancellationToken, forker, dqeRepository);
 
-            byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
-            byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
-
-            Check(new FromDataLoadEventListenerToCheckNotifier(forker));
-
-            var sw = Stopwatch.StartNew();
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                var cmd = _server.GetCommand(_queryBuilder.SQL, con);
-                cmd.CommandTimeout = 500000;
-
-                var t = cmd.ExecuteReaderAsync(cancellationToken);
-                t.Wait(cancellationToken);
-
-                if (cancellationToken.IsCancellationRequested)
-                    throw new OperationCanceledException("User cancelled DQE while fetching data");
-
-                var r = t.Result;
-
-                var progress = 0;
-
-                while (r.Read())
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    progress++;
-                    var dataLoadRunIDOfCurrentRecord = 0;
-                    //to start with assume we will pass the results for the 'unknown batch' (where data load run ID is null or not available)
-
-                    //if the DataReader is likely to have a data load run ID column
-                    if (_containsDataLoadID)
-                    {
-                        //get data load run id
-                        var runID = dqeRepository.ObjectToNullableInt(r[_dataLoadRunFieldName]);
-
-                        //if it has a value use it (otherwise it is null so use 0 - ugh I know, it's a primary key constraint issue)
-                        if (runID != null)
-                            dataLoadRunIDOfCurrentRecord = (int)runID;
-                    }
-
-                    string pivotValue = null;
-
-                    //if the user has a pivot category configured
-                    if (_pivotCategory != null)
-                    {
-                        pivotValue = GetStringValueForPivotField(r[_pivotCategory], forker);
-
-                        if (!haveComplainedAboutNullCategories && string.IsNullOrWhiteSpace(pivotValue))
-                        {
-                            forker.OnNotify(this,
-                                new NotifyEventArgs(ProgressEventType.Warning,
-                                    $"Found a null/empty value for pivot category '{_pivotCategory}', this record will ONLY be recorded under ALL and not its specific category, you will not be warned of further nulls because there are likely to be many if there are any"));
-                            haveComplainedAboutNullCategories = true;
-                            pivotValue = null;
-                        }
-                    }
-
-                    //always increase the "ALL" category
-                    ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-                        byPivotCategoryCubesOverTime["ALL"], byPivotRowStatesOverDataLoadRunId["ALL"]);
-
-                    //if there is a value in the current record for the pivot column
-                    if (pivotValue != null)
-                    {
-                        //if it is a novel
-                        if (!byPivotCategoryCubesOverTime.TryGetValue(pivotValue, out var periodicityCubesOverTime))
-                        {
-                            //we will need to expand the dictionaries
-                            if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
-                                throw new OverflowException(
-                                    $"Encountered more than {MaximumPivotValues} values for the pivot column {_pivotCategory} this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
-
-                            //expand both the time periodicity and the state results
-                            byPivotRowStatesOverDataLoadRunId.Add(pivotValue,
-                                new DQEStateOverDataLoadRunId(pivotValue));
-                            periodicityCubesOverTime = new PeriodicityCubesOverTime(pivotValue);
-                            byPivotCategoryCubesOverTime.Add(pivotValue, periodicityCubesOverTime);
-                        }
-
-                        //now we are sure that the dictionaries have the category field we can increment it
-                        ProcessRecord(dqeRepository, dataLoadRunIDOfCurrentRecord, r,
-periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
-                    }
-
-                    if (progress % 5000 == 0)
-                        forker.OnProgress(this,
-                            new ProgressEventArgs($"Processing {_catalogue}",
-                                new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                }
-
-                //final value
-                forker.OnProgress(this,
-                    new ProgressEventArgs($"Processing {_catalogue}",
-                        new ProgressMeasurement(progress, ProgressType.Records), sw.Elapsed));
-                con.Close();
-            }
-
-            sw.Stop();
-
-            foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
-                state.CalculateFinalValues();
 
             //now commit results
             using (var con = dqeRepository.BeginNewTransactedConnection())
@@ -237,6 +248,96 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
             forker.OnNotify(this,
                 new NotifyEventArgs(ProgressEventType.Information,
                     "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
+        }
+        catch (Exception e)
+        {
+            forker.OnNotify(this,
+                e is OperationCanceledException
+                    ? new NotifyEventArgs(ProgressEventType.Warning, "DQE Execution Cancelled", e)
+                    : new NotifyEventArgs(ProgressEventType.Error, "Fatal Crash", e));
+        }
+        finally
+        {
+            toDatabaseLogger.FinalizeTableLoadInfos();
+        }
+    }
+
+
+    public void UpdateReport(ICatalogue c, int dataLoadID, IDataLoadEventListener listener,
+        CancellationToken cancellationToken)
+    {
+        _dataLoadID = dataLoadID;
+        SetupLogging(c.CatalogueRepository);
+
+        var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask,
+            $"DQE evaluation of {c}");
+
+        var forker = new ForkDataLoadEventListener(listener, toDatabaseLogger);
+        try
+        {
+            _catalogue = c;
+            var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
+            //make report for new data
+            BuildReportInternals(c, listener, cancellationToken, forker, dqeRepository);
+            var newByPivotRowStatesOverDataLoadRunId = byPivotRowStatesOverDataLoadRunId;
+            var newByPivotCategoryCubesOverTime = byPivotCategoryCubesOverTime;
+            using (var con = dqeRepository.BeginNewTransactedConnection())
+            {
+                try
+                {
+                    //mark down that we are beginning an evaluation on this the day of our lord etc...
+                    var previousEvaluation = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault() ?? throw new Exception("No DQE results currently exist");
+                    var evaluation = new Evaluation(dqeRepository, _catalogue);
+                    foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
+                    {
+                        //TODO find existing state and update - does this work? still to test
+                        //var previousRowStates = previousEvaluation.RowStates.Where(r => r.PivotCategory == state.GetPiviotCategory());
+                        //foreach (var previousState in previousRowStates)
+                        //{
+                        //    state.RowsPassingValidationByDataLoadRunID[previousState.DataLoadRunID] = previousState.Correct;
+                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID] = new Dictionary<Consequence, int>();
+                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.Missing] = previousState.Missing;
+                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.Wrong] = previousState.Wrong;
+                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.InvalidatesRow] = previousState.Invalid;
+                        //    var previousColumnStates = previousEvaluation.ColumnStates.Where(c => c.DataLoadRunID == previousState.DataLoadRunID);
+
+                        //    state.AllColumnStates[previousState.DataLoadRunID] = previousColumnStates.ToArray();
+                        //}
+                        state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
+                    }
+                    foreach(var rowState in previousEvaluation.RowStates)
+                    {
+                        _ = new RowState(evaluation, rowState.DataLoadRunID,rowState.Correct,rowState.Missing, rowState.Wrong, rowState.Invalid,rowState.ValidatorXML,rowState.PivotCategory,con.Connection,con.Transaction);
+                    }
+
+                    if (_timePeriodicityField != null)
+                        foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
+                        {
+                            //TODO find existing state and update
+                            //var previousStates = previousEvaluation.ColumnStates.Where(c => c.PivotCategory == periodicity.GetPivotCategory());
+                            //foreach (var state in previousStates)
+                            //{
+                            //    //add old values onto new values
+                            //    periodicity.
+                            //}
+                            periodicity.CommitToDatabase(evaluation);
+                        }
+
+                    dqeRepository.EndTransactedConnection(true);
+                }
+                catch (Exception)
+                {
+                    dqeRepository.EndTransactedConnection(false);
+                    throw;
+                }
+            }
+
+            forker.OnNotify(this,
+                new NotifyEventArgs(ProgressEventType.Information,
+                    "CatalogueConstraintReport completed successfully  and committed results to DQE server"));
+            //make report for old data
+            //subtract old data
+            //add new data
         }
         catch (Exception e)
         {

@@ -73,6 +73,7 @@ public class DQEPostLoadRunner : IMutilateDataTables
             DqeOptions options = new()
             {
                 Catalogue = catalogue.ID.ToString(),
+                DataLoadUpdateID = job.DataLoadInfo.ID.ToString(),
                 Command = CommandLineActivity.run
             };
             var runner = RunnerFactory.CreateRunner(new ThrowImmediatelyActivator(job.RepositoryLocator), options);

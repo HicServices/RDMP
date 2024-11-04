@@ -31,6 +31,11 @@ public class PeriodicityCubesOverTime
         _pivotCategory = pivotCategory;
     }
 
+    public string GetPivotCategory()
+    {
+        return _pivotCategory;
+    }
+
     public static void PeriodicityCube()
     {
     }
