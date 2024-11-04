@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
@@ -290,39 +291,39 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                     var evaluation = new Evaluation(dqeRepository, _catalogue);
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                     {
-                        //TODO find existing state and update - does this work? still to test
-                        //var previousRowStates = previousEvaluation.RowStates.Where(r => r.PivotCategory == state.GetPiviotCategory());
-                        //foreach (var previousState in previousRowStates)
-                        //{
-                        //    state.RowsPassingValidationByDataLoadRunID[previousState.DataLoadRunID] = previousState.Correct;
-                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID] = new Dictionary<Consequence, int>();
-                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.Missing] = previousState.Missing;
-                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.Wrong] = previousState.Wrong;
-                        //    state.WorstConsequencesByDataLoadRunID[previousState.DataLoadRunID][Consequence.InvalidatesRow] = previousState.Invalid;
-                        //    var previousColumnStates = previousEvaluation.ColumnStates.Where(c => c.DataLoadRunID == previousState.DataLoadRunID);
-
-                        //    state.AllColumnStates[previousState.DataLoadRunID] = previousColumnStates.ToArray();
-                        //}
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
                     }
-                    foreach(var rowState in previousEvaluation.RowStates)
+                    foreach (var rowState in previousEvaluation.RowStates)
                     {
-                        _ = new RowState(evaluation, rowState.DataLoadRunID,rowState.Correct,rowState.Missing, rowState.Wrong, rowState.Invalid,rowState.ValidatorXML,rowState.PivotCategory,con.Connection,con.Transaction);
+                        _ = new RowState(evaluation, rowState.DataLoadRunID, rowState.Correct, rowState.Missing, rowState.Wrong, rowState.Invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
 
                     if (_timePeriodicityField != null)
+                    {
+                        var categories = previousEvaluation.RowStates.Select(r => r.PivotCategory).Distinct().ToList();
+                        foreach (var category in categories)
+                        {
+                            var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                            if (!newByPivotCategoryCubesOverTime.ContainsKey(category))
+                            {
+                                newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                            }
+                            //exists, just add
+                            foreach (var row in periodicityDT.AsEnumerable())
+                            {
+                                for (int i = 0; i < int.Parse(row.ItemArray[2].ToString()); i++)
+                                {
+                                    Enum.TryParse<Consequence>(row.ItemArray[3].ToString(), out Consequence cons);
+                                    newByPivotCategoryCubesOverTime[category].IncrementHyperCube(DateTime.Parse(row.ItemArray[1].ToString()).Year, DateTime.Parse(row.ItemArray[1].ToString()).Month, cons);
+                                }
+                            }
+
+                        }
                         foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
                         {
-                            //TODO find existing state and update
-                            //var previousStates = previousEvaluation.ColumnStates.Where(c => c.PivotCategory == periodicity.GetPivotCategory());
-                            //foreach (var state in previousStates)
-                            //{
-                            //    //add old values onto new values
-                            //    periodicity.
-                            //}
                             periodicity.CommitToDatabase(evaluation);
                         }
-
+                    }
                     dqeRepository.EndTransactedConnection(true);
                 }
                 catch (Exception)
