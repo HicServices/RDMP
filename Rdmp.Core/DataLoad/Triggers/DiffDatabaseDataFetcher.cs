@@ -113,7 +113,7 @@ public class DiffDatabaseDataFetcher
                 CheckResult.Success));
 
             GetInsertData(server, database, checkNotifier);
-            GetUpdatetData(server, database, checkNotifier);
+            GetUpdatedData(server, database, checkNotifier);
         }
         catch (Exception e)
         {
@@ -163,7 +163,7 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
     }
 
 
-    private void GetUpdatetData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
+    private void GetUpdatedData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
     {
         const string archive = "archive";
         const string zzArchive = "zzarchivezz";

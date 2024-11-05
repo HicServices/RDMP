@@ -19,6 +19,7 @@ using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -289,6 +290,17 @@ periodicityCubesOverTime, byPivotRowStatesOverDataLoadRunId[pivotValue]);
                     //mark down that we are beginning an evaluation on this the day of our lord etc...
                     var previousEvaluation = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault() ?? throw new Exception("No DQE results currently exist");
                     var evaluation = new Evaluation(dqeRepository, _catalogue);
+
+                    //find entries that have been put in the archive
+                    //is this the correct table info?
+                    var tableInfo = _catalogue.CatalogueItems.First().ColumnInfo.TableInfo;
+                    var dataDiffFetcher = new DiffDatabaseDataFetcher(9, tableInfo, (int)_dataLoadID, 50000);
+                    dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
+                    var replaced = dataDiffFetcher.Updates_Replaced;
+                    var newRows = dataDiffFetcher.Updates_New;
+                    var inserts = dataDiffFetcher.Inserts;
+                    //i think we need to run a report on just the replaced rows and take them away from the new results
+
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                     {
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
