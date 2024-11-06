@@ -403,6 +403,7 @@ public class CohortQueryBuilderResult
         foreach (var dependency in Dependencies)
         {
             _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
+            var x = dependency.CohortSet.Catalogue.GetTableInfoList(false);
             foreach (var dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
                 HandleDependency(dependency, false, dependantTable);
 

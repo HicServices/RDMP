@@ -191,7 +191,8 @@ select 1 from {archiveTableName} where {whereStatement} {syntaxHelper.EnsureWrap
 --Records which appear in the archive
 SELECT top {{0}}
 {{6}},
-{{7}}
+{{7}},
+{{8}}
 FROM    {{1}}
 CROSS APPLY
         (
@@ -200,7 +201,7 @@ CROSS APPLY
         WHERE
          {{3}}
          order by {syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)} desc
-        ) {{8}}
+        ) {{9}}
 where
 {{1}}.{{4}} = {{5}}";
                 break;
@@ -214,13 +215,14 @@ where
 /*Records which appear in the archive*/
 SELECT
 {{6}},
-{{7}}
+{{7}},
+{{8}}
 FROM
 {{1}}
 Join
-{{2}} {{8}} on {whereStatement.Replace(archiveTableName, archive)}
+{{2}} {{9}} on {whereStatement.Replace(archiveTableName, archive)}
  AND
- {{8}}.{{9}} = (select max({syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)}) from {{2}} s where {whereStatement.Replace(archiveTableName, archive).Replace(tableName, "s")})
+ {{9}}.{{10}} = (select max({syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)}) from {{2}} s where {whereStatement.Replace(archiveTableName, archive).Replace(tableName, "s")})
  where
   {{1}}.{{4}} = {{5}}
 
@@ -241,8 +243,9 @@ Join
             _dataLoadRunID, //{5}
             GetSharedColumnsSQL(tableName), //{6}
             GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive), //{7}
-            archive, //{8}
-            syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
+            GetHICSpecialColumns(archive, zzArchive),//{8}
+            archive, //{9}
+            syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) //{10}
         );
 
         var dtComboTable = new DataTable();
@@ -270,6 +273,13 @@ Join
                 else
                     newRow[column.ColumnName] = fromRow[column];
         }
+    }
+
+    private string GetHICSpecialColumns(string tableName, string columnAliasString)
+    {
+        return $@"{tableName}.{SpecialFieldNames.DataLoadRunID} as {SpecialFieldNames.DataLoadRunID},
+{tableName}.{SpecialFieldNames.ValidFrom} as {SpecialFieldNames.ValidFrom}
+";
     }
 
     private string GetSharedColumnsSQLWithColumnAliasPrefix(string tableName, string columnAliasPrefix)
