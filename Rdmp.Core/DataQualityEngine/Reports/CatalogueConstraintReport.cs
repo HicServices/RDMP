@@ -233,34 +233,27 @@ public class CatalogueConstraintReport : DataQualityReport
                     var tableInfo = _catalogue.CatalogueItems.First().ColumnInfo.TableInfo;
                     var dataDiffFetcher = new DiffDatabaseDataFetcher(9, tableInfo, (int)_dataLoadID, 50000);
                     dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
-                    var replaced = dataDiffFetcher.Updates_Replaced;
-                    var newRows = dataDiffFetcher.Updates_New;
-                    var inserts = dataDiffFetcher.Inserts;
-                    //i think we need to run a report on just the replaced rows and take them away from the new results
+                    var replaced = dataDiffFetcher.Updates_Replaced; //all the stuff that has been replaced by the new data load
+
                     var previousReportBuilder = new ReportBuilder(_catalogue, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, replaced);
                     previousReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
                     var previousRows = previousReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
                     var previousColumns = previousReportBuilder.GetByPivotCategoryCubesOverTime();
-                    //want to modify newByPivotRowStatesOverDataLoadRunId?
+
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                     {
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
                     }
+                
                     foreach (var rowState in previousEvaluation.RowStates)
                     {
-                        //reduce numbers based on the replaed dt
-                        //will also need to update all(maybe?)
-                        var pivotColumn = _catalogue.PivotCategory_ExtractionInformation.SelectSQL.Split('.').Last().Trim('[').Trim(']');
-                        //how do we know witch column the pivot category is from?
-                        var matching = replaced.AsEnumerable().Where(row => int.Parse(row[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID && row[pivotColumn].ToString() == rowState.PivotCategory).ToList();
-                        if (matching.Any())
+                        if(replaced.AsEnumerable().Any() && int.Parse(replaced.AsEnumerable().First()[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID)
                         {
-                            Console.WriteLine("do something");
+                            var dqeState = previousRows[rowState.PivotCategory];//how to get the row state from a report?
+                            Console.WriteLine("test");
+                            //var correct = rowState.Correct - 
                         }
-                    }
 
-                        foreach (var rowState in previousEvaluation.RowStates)
-                    {
                         _ = new RowState(evaluation, rowState.DataLoadRunID, rowState.Correct, rowState.Missing, rowState.Wrong, rowState.Invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
                     //actually want to create a new rowstate for each update (including all)
