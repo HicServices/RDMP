@@ -257,8 +257,6 @@ public class CatalogueConstraintReport : DataQualityReport
                         var missing = rowState.Missing;
                         var wrong = rowState.Wrong;
                         var invalid = rowState.Invalid;
-                        //if (rowState.PivotCategory != "ALL")
-                        //{
                         if (replaced.AsEnumerable().Any() && previousRows.TryGetValue(rowState.PivotCategory, out var pivotCategoryRow))
                         {
                             var oldCorrect = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[0];
@@ -273,10 +271,30 @@ public class CatalogueConstraintReport : DataQualityReport
                         }
 
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
-                        //}
-
 
                         _ = new RowState(evaluation, rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
+                    }
+                    //TODO need to update the column states ad the counts for ALL are wrong
+                    foreach (var columnState in previousEvaluation.ColumnStates)
+                    {
+                        var cs = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
+                        {
+                            CountMissing = columnState.CountMissing,
+                            CountWrong = columnState.CountWrong,
+                            CountInvalidatesRow = columnState.CountInvalidatesRow,
+                            CountCorrect = columnState.CountCorrect,
+                            CountDBNull = columnState.CountDBNull
+                        };
+                        //if (replaced.AsEnumerable().Any() && previousColumns.TryGetValue(columnState.PivotCategory, out var pivotCategoryColumn)) {
+                        //    var oldCorect = pivotCategoryColumn.hyperCube[columnState.y]
+
+
+                        //}
+                        if(replaced.AsEnumerable().Any())
+                        {
+
+                        }
+                        cs.Commit(evaluation, columnState.PivotCategory, con.Connection, con.Transaction);
                     }
 
                     if (_timePeriodicityField != null)
