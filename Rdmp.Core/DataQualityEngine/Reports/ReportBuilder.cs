@@ -73,8 +73,6 @@ public class ReportBuilder
         byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
         byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
 
-        //Check(new FromDataLoadEventListenerToCheckNotifier(forker));
-
         var sw = Stopwatch.StartNew();
         var progress = 0;
 

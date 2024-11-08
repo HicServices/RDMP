@@ -196,7 +196,7 @@ public class CatalogueConstraintReport : DataQualityReport
             _catalogue = c;
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
             //make report for new data
-            DbDataReader r;
+            DataTable  rDT = new();
             Check(new FromDataLoadEventListenerToCheckNotifier(forker));
 
             using (var con = _server.GetConnection())
@@ -207,16 +207,20 @@ public class CatalogueConstraintReport : DataQualityReport
                     qb.AddCustomLine($"{SpecialFieldNames.DataLoadRunID} = {_dataLoadID}", FAnsi.Discovery.QuerySyntax.QueryComponent.WHERE);
                 var cmd = _server.GetCommand(qb.SQL, con);
                 cmd.CommandTimeout = 500000;
+                var adapter = _server.GetDataAdapter(cmd);
+                rDT.BeginLoadData();
+                adapter.Fill(rDT);
+                rDT.EndLoadData();
+                con.Close();
+                //var t = cmd.ExecuteReaderAsync(cancellationToken);
+                //t.Wait(cancellationToken);
 
-                var t = cmd.ExecuteReaderAsync(cancellationToken);
-                t.Wait(cancellationToken);
+                //if (cancellationToken.IsCancellationRequested)
+                //    throw new OperationCanceledException("User cancelled DQE while fetching data");
 
-                if (cancellationToken.IsCancellationRequested)
-                    throw new OperationCanceledException("User cancelled DQE while fetching data");
-
-                r = t.Result;
+                //r = t.Result;
             }
-            var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, r);
+            var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, rDT);
             reportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
             var newByPivotRowStatesOverDataLoadRunId = reportBuilder.GetByPivotRowStatesOverDataLoadRunId();
             var newByPivotCategoryCubesOverTime = reportBuilder.GetByPivotCategoryCubesOverTime();
@@ -240,21 +244,55 @@ public class CatalogueConstraintReport : DataQualityReport
                     var previousRows = previousReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
                     var previousColumns = previousReportBuilder.GetByPivotCategoryCubesOverTime();
 
+                    var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.Name;
+
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                     {
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
                     }
-                
+
                     foreach (var rowState in previousEvaluation.RowStates)
                     {
-                        if(replaced.AsEnumerable().Any() && int.Parse(replaced.AsEnumerable().First()[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID)
+                        //if(replaced.AsEnumerable().Any() && int.Parse(replaced.AsEnumerable().First()[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID)
+                        //{
+                        //    var dqeState = previousRows[rowState.PivotCategory];//how to get the row state from a report?
+                        //    Console.WriteLine("test");
+                        //    //var correct = rowState.Correct - 
+                        //}
+                        var correct = rowState.Correct;
+                        var missing = rowState.Missing;
+                        var wrong = rowState.Wrong;
+                        var invalid = rowState.Invalid;
+                        //        if(replaced.AsEnumerable().Any() && rowState.PivotCategory != "ALL")
+                        //        {
+                        //            var matchingRows  = replaced.AsEnumerable().Where(row => int.Parse(row[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID && row[pivotColumn].ToString() == rowState.PivotCategory);
+                        //            //can we find these rows in the previous rows?
+                        //            var pivotCategoryRow = previousRows[rowState.PivotCategory];
+                        //            var oldTotal = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[dataLoadRunID];
+                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.Missing],
+                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.Wrong],
+                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.InvalidatesRow]
+                        //            var x = previousRows;
+                        //        }
+                        if (replaced.AsEnumerable().Any() && previousRows.TryGetValue(rowState.PivotCategory, out var pivotCategoryRow))
                         {
-                            var dqeState = previousRows[rowState.PivotCategory];//how to get the row state from a report?
-                            Console.WriteLine("test");
-                            //var correct = rowState.Correct - 
+                            var oldCorrect = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[0];
+                            var oldMissing = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.Missing];
+                            var oldWrong = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.Wrong];
+                            var oldInvalid = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.InvalidatesRow];
+                            correct -= oldCorrect;
+                            missing -= oldMissing;
+                            wrong -= oldWrong;
+                            invalid -= oldInvalid;
+                            Console.WriteLine("1");
                         }
 
-                        _ = new RowState(evaluation, rowState.DataLoadRunID, rowState.Correct, rowState.Missing, rowState.Wrong, rowState.Invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
+                        if (rowState.PivotCategory == "ALL")
+                        {
+                            //todo ...something
+                        }
+                        if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
+                        _ = new RowState(evaluation, rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
                     //actually want to create a new rowstate for each update (including all)
 
