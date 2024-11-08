@@ -196,7 +196,7 @@ public class CatalogueConstraintReport : DataQualityReport
             _catalogue = c;
             var dqeRepository = ExplicitDQERepository ?? new DQERepository(c.CatalogueRepository);
             //make report for new data
-            DataTable  rDT = new();
+            DataTable rDT = new();
             Check(new FromDataLoadEventListenerToCheckNotifier(forker));
 
             using (var con = _server.GetConnection())
@@ -253,27 +253,12 @@ public class CatalogueConstraintReport : DataQualityReport
 
                     foreach (var rowState in previousEvaluation.RowStates)
                     {
-                        //if(replaced.AsEnumerable().Any() && int.Parse(replaced.AsEnumerable().First()[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID)
-                        //{
-                        //    var dqeState = previousRows[rowState.PivotCategory];//how to get the row state from a report?
-                        //    Console.WriteLine("test");
-                        //    //var correct = rowState.Correct - 
-                        //}
                         var correct = rowState.Correct;
                         var missing = rowState.Missing;
                         var wrong = rowState.Wrong;
                         var invalid = rowState.Invalid;
-                        //        if(replaced.AsEnumerable().Any() && rowState.PivotCategory != "ALL")
-                        //        {
-                        //            var matchingRows  = replaced.AsEnumerable().Where(row => int.Parse(row[SpecialFieldNames.DataLoadRunID].ToString()) == rowState.DataLoadRunID && row[pivotColumn].ToString() == rowState.PivotCategory);
-                        //            //can we find these rows in the previous rows?
-                        //            var pivotCategoryRow = previousRows[rowState.PivotCategory];
-                        //            var oldTotal = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[dataLoadRunID];
-                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.Missing],
-                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.Wrong],
-                        //WorstConsequencesByDataLoadRunID[dataLoadRunID][Consequence.InvalidatesRow]
-                        //            var x = previousRows;
-                        //        }
+                        //if (rowState.PivotCategory != "ALL")
+                        //{
                         if (replaced.AsEnumerable().Any() && previousRows.TryGetValue(rowState.PivotCategory, out var pivotCategoryRow))
                         {
                             var oldCorrect = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[0];
@@ -287,15 +272,12 @@ public class CatalogueConstraintReport : DataQualityReport
                             Console.WriteLine("1");
                         }
 
-                        if (rowState.PivotCategory == "ALL")
-                        {
-                            //todo ...something
-                        }
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
+                        //}
+
+
                         _ = new RowState(evaluation, rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
-                    //actually want to create a new rowstate for each update (including all)
-
 
                     if (_timePeriodicityField != null)
                     {
