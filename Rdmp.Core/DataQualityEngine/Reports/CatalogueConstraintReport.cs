@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using FAnsi.Discovery;
+using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Triggers;
@@ -28,6 +29,7 @@ using Rdmp.Core.ReusableLibraryCode.Progress;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
+using static Terminal.Gui.Application;
 
 namespace Rdmp.Core.DataQualityEngine.Reports;
 
@@ -285,14 +287,30 @@ public class CatalogueConstraintReport : DataQualityReport
                             CountCorrect = columnState.CountCorrect,
                             CountDBNull = columnState.CountDBNull
                         };
-                        //if (replaced.AsEnumerable().Any() && previousColumns.TryGetValue(columnState.PivotCategory, out var pivotCategoryColumn)) {
-                        //    var oldCorect = pivotCategoryColumn.hyperCube[columnState.y]
-
-
-                        //}
-                        if(replaced.AsEnumerable().Any())
+                        var x = previousRows.TryGetValue(columnState.PivotCategory, out var pivotCategoryRow);
+                        if (pivotCategoryRow != null)
                         {
+                            pivotCategoryRow.AllColumnStates.TryGetValue(columnState.DataLoadRunID, out var allcolumnStates);
+                            if (allcolumnStates is not null)
+                            {
+                                //var allcolumnStates = pivotCategoryRow.AllColumnStates[columnState.DataLoadRunID];
+                                var col = allcolumnStates.Where(c => c.TargetProperty == columnState.TargetProperty).FirstOrDefault();
+                                if (col is not null)
+                                {
+                                    //cs.CountMissing -= col.CountMissing;
+                                    cs.CountMissing = col.CountMissing - cs.CountMissing;
+                                    cs.CountWrong -= col.CountWrong;
+                                    cs.CountInvalidatesRow -= col.CountInvalidatesRow;
+                                    cs.CountCorrect -= col.CountCorrect;
+                                    cs.CountDBNull -= col.CountDBNull;
+                                }
+                            }
+                        }
 
+
+                        if (replaced.AsEnumerable().Any() && previousColumns.TryGetValue(columnState.PivotCategory, out var pivotCategoryColumns))
+                        {
+                            var y = pivotCategoryColumns;
                         }
                         cs.Commit(evaluation, columnState.PivotCategory, con.Connection, con.Transaction);
                     }
