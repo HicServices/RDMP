@@ -71,7 +71,7 @@ jobs:
           mv `find coverage -type f` db-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release -e AWS_ENDPOINT_URL="http://127.0.0.1:9000" --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` db-core.lcov
-      - uses: coverallsapp/github-action@v2.3.3
+      - uses: coverallsapp/github-action@v2.3.4
         with:
           github-token: ${{ secrets.github_token }}
           files: ./db-ui.lcov ./db-core.lcov
@@ -137,7 +137,7 @@ jobs:
           mv `find coverage -type f` fs-ui.lcov
           dotnet test Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --nologo --collect:"XPlat Code Coverage" --no-build --verbosity minimal -c Release  -e AWS_ENDPOINT_URL="http://127.0.0.1:9000" --results-directory coverage -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=lcov
           mv `find coverage -type f` fs-core.lcov
-      - uses: coverallsapp/github-action@v2.3.3
+      - uses: coverallsapp/github-action@v2.3.4
         with:
           github-token: ${{ secrets.github_token }}
           files: ./fs-ui.lcov ./fs-core.lcov
@@ -154,7 +154,7 @@ jobs:
         shell: bash
         run: perl -ne "print \"rdmpversion=\$1\n\" if /AssemblyInformationalVersion\(\"([0-9a-z.-]+)\"\)/;" SharedAssemblyInfo.cs >> $GITHUB_OUTPUT
       - name: Setup .NET Core
-        uses: actions/setup-dotnet@v4.0.1
+        uses: actions/setup-dotnet@v4.1.0
         with:
           dotnet-version: 7.0.x
       - name: BundleSource
@@ -210,7 +210,7 @@ jobs:
 
 
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1.31.3
+        uses: shogo82148/actions-setup-perl@v1.31.4
         with:
           install-modules-with: cpanm
           install-modules: Archive::Zip Archive::Tar
