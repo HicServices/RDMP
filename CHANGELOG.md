@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [8.4.0] - Unreleased
 
 - Add Ordering to Filters
+- Add RAW Table Date Column Override for Delta Loads
 - Fix Delta Load off by one issue
 - Update Migration strategy to account for all Primary Keys when moving from staging -> live
 - Fix UI issue with viewing cross-database SQL results
