@@ -121,7 +121,6 @@ namespace Rdmp.Core.Tests.CommandExecution
             regexConfiguration.SaveToDatabase();
             var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
             Assert.DoesNotThrow(() => cmd.Execute());
-            var retrieveSQL = @"select [Condition2] from [RedactionTest]";
             dt = Retrieve(db);
             Assert.That(dt.Rows.Count, Is.EqualTo(1));
             Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<GG>>1234"));
@@ -154,7 +153,6 @@ namespace Rdmp.Core.Tests.CommandExecution
             regexConfiguration.SaveToDatabase();
             var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
             Assert.DoesNotThrow(() => cmd.Execute());
-            var retrieveSQL = @"select [Condition2] from [RedactionTest]";
             dt = Retrieve(db);
             Assert.That(dt.Rows.Count, Is.EqualTo(1));
             Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234TEST1234"));
@@ -188,7 +186,6 @@ namespace Rdmp.Core.Tests.CommandExecution
             regexConfiguration.SaveToDatabase();
             var cmd = new ExecuteCommandPerformRegexRedactionOnCatalogue(activator, catalogue, regexConfiguration, _columnInfos.Where(c => c.GetRuntimeName() == "Condition2").ToList());
             Assert.DoesNotThrow(() => cmd.Execute());
-            var retrieveSQL = @"select [Condition2] from [RedactionTest]";
             dt = Retrieve(db);
             Assert.That(dt.Rows.Count, Is.EqualTo(1));
             Assert.That(dt.Rows[0].ItemArray[0], Is.EqualTo("1234<DB>1234<DB>1234"));
