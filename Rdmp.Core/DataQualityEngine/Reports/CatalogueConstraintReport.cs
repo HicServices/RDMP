@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using FAnsi.Discovery;
+using MongoDB.Driver;
 using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -95,9 +96,6 @@ public class CatalogueConstraintReport : DataQualityReport
                 "You must set a Default LiveLoggingServer so we can audit the DQE run, do this through the ManageExternalServers dialog");
         }
     }
-
-    //private bool haveComplainedAboutNullCategories;
-
 
     public override void GenerateReport(ICatalogue c, IDataLoadEventListener listener,
           CancellationToken cancellationToken)
@@ -214,13 +212,6 @@ public class CatalogueConstraintReport : DataQualityReport
                 adapter.Fill(rDT);
                 rDT.EndLoadData();
                 con.Close();
-                //var t = cmd.ExecuteReaderAsync(cancellationToken);
-                //t.Wait(cancellationToken);
-
-                //if (cancellationToken.IsCancellationRequested)
-                //    throw new OperationCanceledException("User cancelled DQE while fetching data");
-
-                //r = t.Result;
             }
             var reportBuilder = new ReportBuilder(c, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, rDT);
             reportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
@@ -246,7 +237,7 @@ public class CatalogueConstraintReport : DataQualityReport
                     var previousRows = previousReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
                     var previousColumns = previousReportBuilder.GetByPivotCategoryCubesOverTime();
 
-                    var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.Name;
+                    var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.GetRuntimeName();
 
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                     {
@@ -276,7 +267,6 @@ public class CatalogueConstraintReport : DataQualityReport
 
                         _ = new RowState(evaluation, rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
-                    //TODO need to update the column states ad the counts for ALL are wrong
                     foreach (var columnState in previousEvaluation.ColumnStates)
                     {
                         var cs = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
@@ -290,7 +280,9 @@ public class CatalogueConstraintReport : DataQualityReport
                         var x = previousRows.TryGetValue(columnState.PivotCategory, out var pivotCategoryRow);
                         if (pivotCategoryRow != null)
                         {
-                            pivotCategoryRow.AllColumnStates.TryGetValue(columnState.DataLoadRunID, out var allcolumnStates);
+                            //they all seem to be dataLoadId [0], but should check this is true
+                            //pivotCategoryRow.AllColumnStates.TryGetValue(columnState.DataLoadRunID, out var allcolumnStates);
+                            pivotCategoryRow.AllColumnStates.TryGetValue(0, out var allcolumnStates);
                             if (allcolumnStates is not null)
                             {
                                 //var allcolumnStates = pivotCategoryRow.AllColumnStates[columnState.DataLoadRunID];
@@ -312,6 +304,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         {
                             var y = pivotCategoryColumns;
                         }
+                        if (cs.CountCorrect < 1 && cs.CountMissing < 1 && cs.CountWrong < 1 && cs.CountInvalidatesRow < 1) continue;
                         cs.Commit(evaluation, columnState.PivotCategory, con.Connection, con.Transaction);
                     }
 
@@ -321,6 +314,17 @@ public class CatalogueConstraintReport : DataQualityReport
                         foreach (var category in categories)
                         {
                             var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                            var matchingReplaced = replaced.AsEnumerable();
+                            if (category != "ALL")
+                            {
+                                matchingReplaced = matchingReplaced.Where(row => row[pivotColumn].ToString() == category);
+                            }
+                            //do we validate the row here...
+                            //var x = _validator.ItemValidators;
+                            //foreach(var validator in _validator.ItemValidators)
+                            //{
+                            //    validator.ValidateAll()
+                            //}
                             if (!newByPivotCategoryCubesOverTime.ContainsKey(category))
                             {
                                 newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
@@ -328,9 +332,26 @@ public class CatalogueConstraintReport : DataQualityReport
                             //exists, just add
                             foreach (var row in periodicityDT.AsEnumerable())
                             {
-                                for (int i = 0; i < int.Parse(row.ItemArray[2].ToString()); i++)
+                                Enum.TryParse<Consequence>(row.ItemArray[3].ToString(), out Consequence cons);
+                                var count = int.Parse(row.ItemArray[2].ToString());
+                                foreach(var replacedRow in matchingReplaced)
                                 {
-                                    Enum.TryParse<Consequence>(row.ItemArray[3].ToString(), out Consequence cons);
+                                    foreach(var validator in _validator.ItemValidators.Where(iv => iv.PrimaryConstraint.Consequence == cons)) //only use validators with matching consequences
+                                    {
+                                        var cols = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != validator.TargetProperty);
+                                        var result = validator.ValidateAll(replacedRow[validator.TargetProperty], cols.ToArray(), cols.Select(c => c.ColumnName).ToArray());
+                                        if (result != null)
+                                        {
+                                            count -= 1;
+                                        }
+                                        var res = validator;//.ValidateAll(row[validator.PrimaryConstraint.col])
+
+                                    }
+                                }
+
+                                for (int i = 0; i < count; i++)
+                                {
+                                    //TODO this is where the periodicitystates are generated from
                                     newByPivotCategoryCubesOverTime[category].IncrementHyperCube(DateTime.Parse(row.ItemArray[1].ToString()).Year, DateTime.Parse(row.ItemArray[1].ToString()).Month, cons);
                                 }
                             }
