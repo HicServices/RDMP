@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
+using MongoDB.Driver;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
@@ -256,11 +257,15 @@ Join
 
         //add the columns from the combo table to both views
         foreach (DataColumn col in dtComboTable.Columns)
+        {
             if (!col.ColumnName.StartsWith(zzArchive, StringComparison.InvariantCultureIgnoreCase))
             {
                 Updates_New.Columns.Add(col.ColumnName, col.DataType);
                 Updates_Replaced.Columns.Add(col.ColumnName, col.DataType);
             }
+        }
+        Updates_Replaced.Columns.Add(SpecialFieldNames.DataLoadRunID, typeof(int));
+        Updates_Replaced.Columns.Add(SpecialFieldNames.ValidFrom, typeof(DateTime));
 
         foreach (DataRow fromRow in dtComboTable.Rows)
         {
@@ -275,10 +280,10 @@ Join
         }
     }
 
-    private string GetHICSpecialColumns(string tableName, string columnAliasString)
+    private string GetHICSpecialColumns(string tableName, string columnAliasPrefix = "")
     {
-        return $@"{tableName}.{SpecialFieldNames.DataLoadRunID} as {SpecialFieldNames.DataLoadRunID},
-{tableName}.{SpecialFieldNames.ValidFrom} as {SpecialFieldNames.ValidFrom}
+        return $@"{tableName}.{SpecialFieldNames.DataLoadRunID} as {columnAliasPrefix}{SpecialFieldNames.DataLoadRunID},
+{tableName}.{SpecialFieldNames.ValidFrom} as {columnAliasPrefix}{SpecialFieldNames.ValidFrom}
 ";
     }
 
