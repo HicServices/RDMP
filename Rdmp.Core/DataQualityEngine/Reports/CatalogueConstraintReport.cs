@@ -392,9 +392,6 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
 
-
-                    //foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
-                    //    state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
                     var currentEvalCategories = newByPivotCategoryCubesOverTime.Keys.ToList();
                     var categoriesThatHaveGoneMissing = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).Where(pc => !currentEvalCategories.Contains(pc)).ToList().Distinct();
                     foreach (var category in categoriesThatHaveGoneMissing)
@@ -418,6 +415,9 @@ public class CatalogueConstraintReport : DataQualityReport
                         }
 
                     }
+                    foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
+                        state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
+
                     if (_timePeriodicityField != null)
                         foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
                             periodicity.CommitToDatabase(evaluation);
