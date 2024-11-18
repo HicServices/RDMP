@@ -16,6 +16,7 @@ using System.Threading;
 using FAnsi.Discovery;
 using MongoDB.Driver;
 using NPOI.OpenXmlFormats.Vml;
+using NPOI.SS.Formula.Functions;
 using NPOI.Util;
 using Org.BouncyCastle.Security.Certificates;
 using Rdmp.Core.Curation.Data;
@@ -274,8 +275,7 @@ public class CatalogueConstraintReport : DataQualityReport
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
                         evaluation.AddRowState(rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
-                    
-                    //column state is wrong
+
                     foreach (var columnState in previousEvaluation.ColumnStates)
                     {
                         var dbNull = columnState.CountDBNull;
@@ -316,6 +316,68 @@ public class CatalogueConstraintReport : DataQualityReport
                                 correct -= 1; //remove a correct entry
                             }
                         }
+                        //if(columnState.PivotCategory == "ALL")
+                        //{
+                        //    var inserts = dataDiffFetcher.Inserts;
+                        //    foreach (var insert in inserts.AsEnumerable())
+                        //    {
+                        //        var itemValidators = _validator.ItemValidators.Where(iv => iv.TargetProperty == columnState.TargetProperty);
+                        //        if (itemValidators.Any())
+                        //        {
+                        //            foreach (var itemValidator in itemValidators)
+                        //            {
+                        //                var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
+                        //                var result = itemValidator.ValidateAll(insert[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
+                        //                if (result.SourceConstraint.Consequence == Consequence.Missing)
+                        //                {
+                        //                    missing += 1;
+                        //                }
+                        //                else if (result.SourceConstraint.Consequence == Consequence.Wrong)
+                        //                {
+                        //                    wrong += 1;
+                        //                }
+                        //                else if (result.SourceConstraint.Consequence == Consequence.InvalidatesRow)
+                        //                {
+                        //                    invalid += 1;
+                        //                }
+                        //            }
+                        //        }
+                        //        else
+                        //        {
+                        //            correct += 1; //remove a correct entry
+                        //        }
+                        //    }
+                        //    var newUpdates = dataDiffFetcher.Updates_New;
+                        //    //foreach (var newUpdate in newUpdates.AsEnumerable())
+                        //    //{
+                        //    //    var itemValidators = _validator.ItemValidators.Where(iv => iv.TargetProperty == columnState.TargetProperty);
+                        //    //    if (itemValidators.Any())
+                        //    //    {
+                        //    //        foreach (var itemValidator in itemValidators)
+                        //    //        {
+                        //    //            var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
+                        //    //            var result = itemValidator.ValidateAll(newUpdate[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
+                        //    //            if (result.SourceConstraint.Consequence == Consequence.Missing)
+                        //    //            {
+                        //    //                missing += 1;
+                        //    //            }
+                        //    //            else if (result.SourceConstraint.Consequence == Consequence.Wrong)
+                        //    //            {
+                        //    //                wrong += 1;
+                        //    //            }
+                        //    //            else if (result.SourceConstraint.Consequence == Consequence.InvalidatesRow)
+                        //    //            {
+                        //    //                invalid += 1;
+                        //    //            }
+                        //    //        }
+                        //    //    }
+                        //    //    else
+                        //    //    {
+                        //    //        //correct += 1; //remove a correct entry
+                        //    //    }
+                        //    //}
+                        //}
+                        ////probably want to use the inserts & updates new to add to the columnstate for ALL
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
 
                         var cs = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
@@ -330,58 +392,108 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
 
-                    //pivot category is wrong
-                    var categories = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).ToList().Distinct();
-                    foreach (var category in categories)
+
+                    //foreach (var state in byPivotRowStatesOverDataLoadRunId.Values)
+                    //    state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
+                    var currentEvalCategories = newByPivotCategoryCubesOverTime.Keys.ToList();
+                    var categoriesThatHaveGoneMissing = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).Where(pc => !currentEvalCategories.Contains(pc)).ToList().Distinct();
+                    foreach (var category in categoriesThatHaveGoneMissing)
                     {
-                        //this is working well, but it's not decresing the periodicityState when the value is replaced
-                        var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
-                        var periodicityCube = new PeriodicityCubesOverTime(category);
-                        newByPivotCategoryCubesOverTime.TryGetValue(category, out PeriodicityCubesOverTime value);
-                        if (value is not null)
-                        {
-                            periodicityCube = value;
-                        }
-                        foreach (var row in previousPeriodicity.AsEnumerable())
+                        var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                        newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                        foreach (var row in periodicityDT.AsEnumerable())
                         {
                             var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
                             var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
-                            _ = Enum.TryParse<Consequence>(row["RowEvaluation"].ToString(), out Consequence cons);
+                            var worseConsequence = row["RowEvaluation"].ToString();
+                            _ = Enum.TryParse<Consequence>(worseConsequence, out Consequence cons);
 
-                            var count = int.Parse(row["CountOfRecords"].ToString());
-                            var matchingReplacements = replaced.AsEnumerable();
-                            if (category != "ALL")
+                            var count = 0;
+                            while (count < int.Parse(row["CountOfRecords"].ToString()))
                             {
-                                matchingReplacements = matchingReplacements.Where(row => row[pivotColumn].ToString() == category && DateTime.Parse(row[timeColumn].ToString()).Year == year && DateTime.Parse(row[timeColumn].ToString()).Month == month);
-                            }
-
-                            foreach (var replacement in matchingReplacements)
-                            {
-                                var itemValidators = _validator.ItemValidators;
-                                foreach (var itemValidator in itemValidators)
-                                {
-                                    var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
-                                    var result = itemValidator.ValidateAll(replacement[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                                    if(result.SourceConstraint.Consequence == cons)
-                                    {
-                                        count -= 1;
-                                    }
-                                }
-                            }
-
-
-                            for (var i = 0; i < count; i++)
-                            {
-                                periodicityCube.IncrementHyperCube(year, month, cons);
+                                newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                                newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                                count++;
                             }
                         }
-                        periodicityCube.CommitToDatabase(evaluation);
-                    }
 
-                    foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
-                    {
-                        state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
                     }
+                    if (_timePeriodicityField != null)
+                        foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
+                            periodicity.CommitToDatabase(evaluation);
+
+                    //pivot category is wrong
+                    //var categories = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).ToList().Distinct();
+                    //foreach (var category in categories)
+                    //{
+                    //    //this is working well, but it's not decresing the periodicityState when the value is replaced
+                    //    var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                    //    var periodicityCube = new PeriodicityCubesOverTime(category);
+                    //    newByPivotCategoryCubesOverTime.TryGetValue(category, out PeriodicityCubesOverTime value);
+                    //    if (value is not null)
+                    //    {
+                    //        periodicityCube = value;
+                    //    }
+                    //    foreach (var row in previousPeriodicity.AsEnumerable())
+                    //    {
+                    //        var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
+                    //        var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
+                    //        _ = Enum.TryParse<Consequence>(row["RowEvaluation"].ToString(), out Consequence cons);
+
+                    //        var count = int.Parse(row["CountOfRecords"].ToString());
+                    //        var matchingReplacements = replaced.AsEnumerable();
+                    //        if (category != "ALL")
+                    //        {
+                    //            matchingReplacements = matchingReplacements.Where(row => row[pivotColumn].ToString() == category && DateTime.Parse(row[timeColumn].ToString()).Year == year && DateTime.Parse(row[timeColumn].ToString()).Month == month);
+                    //        }
+
+                    //        foreach (var replacement in matchingReplacements)
+                    //        {
+                    //            var itemValidators = _validator.ItemValidators;
+                    //            foreach (var itemValidator in itemValidators)
+                    //            {
+                    //                var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
+                    //                var result = itemValidator.ValidateAll(replacement[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
+                    //                if (result is not null && result.SourceConstraint.Consequence == cons)
+                    //                {
+                    //                    count -= 1;
+                    //                    break;
+                    //                }
+                    //            }
+                    //        }
+
+                    //        for (var i = 0; i < count; i++)
+                    //        {
+                    //            periodicityCube.IncrementHyperCube(year, month, cons);
+                    //        }
+                    //    }
+
+                    //    foreach (var update in dataDiffFetcher.Updates_New.AsEnumerable())
+                    //    {
+                    //        var itemValidators = _validator.ItemValidators;
+                    //        var year = DateTime.Parse(update[timeColumn].ToString()).Year;
+                    //        var month = DateTime.Parse(update[timeColumn].ToString()).Month;
+                    //        foreach (var itemValidator in itemValidators)
+                    //        {
+                    //            var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
+                    //            var result = itemValidator.ValidateAll(update[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
+                    //            //if (result is not null && result.SourceConstraint.Consequence == cons)
+                    //            //{
+                    //            //    count += 1;
+                    //            //}
+                    //            if (result is not null)
+                    //            {
+                    //                periodicityCube.IncrementHyperCube(year, month, result.SourceConstraint.Consequence);
+                    //            }
+                    //        }
+                    //    }
+                    //    periodicityCube.CommitToDatabase(evaluation);
+                    //}
+
+                    //foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
+                    //{
+                    //state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
+                    //}
                     //foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
                     //{
                     //    periodicity.CommitToDatabase(evaluation);
