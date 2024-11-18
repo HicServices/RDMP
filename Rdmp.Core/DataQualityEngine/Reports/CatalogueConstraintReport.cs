@@ -227,7 +227,6 @@ public class CatalogueConstraintReport : DataQualityReport
                 {
                     var previousEvaluation = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault() ?? throw new Exception("No DQE results currently exist");
                     var evaluation = new Evaluation(dqeRepository, _catalogue);
-                    //what about periodicityValues?
                     var tableInfo = _catalogue.CatalogueItems.First().ColumnInfo.TableInfo;
                     var dataDiffFetcher = new DiffDatabaseDataFetcher(10000000, tableInfo, (int)_dataLoadID, 50000);//todo update these numbers
                     dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
@@ -275,6 +274,8 @@ public class CatalogueConstraintReport : DataQualityReport
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
                         evaluation.AddRowState(rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
                     }
+                    
+                    //column state is wrong
                     foreach (var columnState in previousEvaluation.ColumnStates)
                     {
                         var dbNull = columnState.CountDBNull;
@@ -328,6 +329,8 @@ public class CatalogueConstraintReport : DataQualityReport
                         cs.Commit(evaluation, columnState.PivotCategory, con.Connection, con.Transaction);
                     }
 
+
+                    //pivot category is wrong
                     var categories = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).ToList().Distinct();
                     foreach (var category in categories)
                     {
