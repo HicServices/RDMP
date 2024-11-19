@@ -297,7 +297,7 @@ public class CatalogueConstraintReport : DataQualityReport
                                 {
                                     var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
                                     var result = itemValidator.ValidateAll(replacement[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                                    if(result is null)
+                                    if (result is null)
                                     {
                                         correct -= 1;
                                     }
@@ -334,36 +334,120 @@ public class CatalogueConstraintReport : DataQualityReport
                     }
 
 
-                    var currentEvalCategories = newByPivotCategoryCubesOverTime.Keys.ToList();
-                    var categoriesThatHaveGoneMissing = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).Where(pc => !currentEvalCategories.Contains(pc)).ToList().Distinct();
-                    //make sure they weren't in replaced...
-                    foreach (var category in categoriesThatHaveGoneMissing)
-                    {
-                        var prevousCount = previousEvaluation.RowStates.Where(rs => rs.PivotCategory == category).Count();
-                        var replacedCount = replaced.AsEnumerable().Where(r => r[pivotColumn].ToString() == category).Count();
-                        if (prevousCount == replacedCount)
-                        {
-                            continue;
-                        }
-                        var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
-                        newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
-                        foreach (var row in periodicityDT.AsEnumerable())
-                        {
-                            var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
-                            var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
-                            var worseConsequence = row["RowEvaluation"].ToString();
-                            _ = Enum.TryParse<Consequence>(worseConsequence, out Consequence cons);
 
-                            var count = 0;
-                            while (count < int.Parse(row["CountOfRecords"].ToString()))
-                            {
-                                newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
-                                newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
-                                count++;
-                            }
-                        }
+                    ////periodicity is scuffed
 
-                    }
+                    //var currentEvalCategories = newByPivotCategoryCubesOverTime.Keys.ToList();
+                    //var categoriesThatHaveGoneMissing = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).Where(pc => !currentEvalCategories.Contains(pc)).ToList().Distinct();
+                    ////make sure they weren't in replaced...
+                    //foreach (var category in categoriesThatHaveGoneMissing)
+                    //{
+                    //    var prevousCount = previousEvaluation.RowStates.Where(rs => rs.PivotCategory == category).Count();
+                    //    var replacedCount = replaced.AsEnumerable().Where(r => r[pivotColumn].ToString() == category).Count();
+                    //    if (prevousCount == replacedCount)
+                    //    {
+                    //        continue;
+                    //    }
+                    //    var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                    //    newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                    //    foreach (var row in periodicityDT.AsEnumerable())
+                    //    {
+                    //        var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
+                    //        var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
+                    //        var worseConsequence = row["RowEvaluation"].ToString();
+                    //        _ = Enum.TryParse<Consequence>(worseConsequence, out Consequence cons);
+
+                    //        var count = 0;
+                    //        while (count < int.Parse(row["CountOfRecords"].ToString()))
+                    //        {
+                    //            newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                    //            newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                    //            count++;
+                    //        }
+                    //    }
+                    //}
+                    ////add values for rows that were in previous eval, but not replaced
+                    //var previousCategories = previousEvaluation.GetPivotCategoryValues();
+                    //var missingCategories = previousCategories.Where(pc => !currentEvalCategories.Contains(pc) && !categoriesThatHaveGoneMissing.Contains(pc));
+                    //foreach (var category in missingCategories)
+                    //{
+                    //    var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                    //    if (periodicityDT == null) continue;
+                    //    foreach (var row in periodicityDT.AsEnumerable())
+                    //    {
+                    //        var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
+                    //        var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
+                    //        var worseConsequence = row["RowEvaluation"].ToString();
+                    //        if (worseConsequence == "Correct") worseConsequence = null;
+                    //        var matchingReplacements = replaced.AsEnumerable();
+
+                    //        if (category != "ALL")
+                    //        {
+                    //            matchingReplacements = matchingReplacements.Where(row => row[pivotColumn].ToString() == category);
+                    //        }
+                    //        var matchesReplacement = false;
+                    //        foreach (var replacementRow in matchingReplacements)
+                    //        {
+                    //            var replacementYear = DateTime.Parse(replacementRow[timeColumn].ToString()).Year;
+                    //            var replacementMonth = DateTime.Parse(replacementRow[timeColumn].ToString()).Month;
+                    //            string replacementRowEvaluation = null;//todo
+                    //            var columnResults = new List<Consequence?>();
+                    //            var itemValidators = _validator.ItemValidators.Where(iv => replaced.Columns.Cast<DataColumn>().Select(c => c.ColumnName).Contains(iv.TargetProperty));
+                    //            if (itemValidators.Any())
+                    //            {
+                    //                foreach (var itemValidator in itemValidators)
+                    //                {
+                    //                    var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
+                    //                    var result = itemValidator.ValidateAll(replacementRow[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
+                    //                    if (result != null)
+                    //                    {
+                    //                        columnResults.Add(result.SourceConstraint.Consequence);
+                    //                    }
+                    //                }
+                    //            }
+                    //            if (columnResults.Any())
+                    //            {
+                    //                replacementRowEvaluation = columnResults.OrderByDescending(x => (int)(x)).ToList().First().ToString();
+                    //            }
+                    //            if (year != replacementYear)
+                    //            {
+                    //                continue;
+                    //            }
+                    //            if (month != replacementMonth)
+                    //            {
+                    //                continue;
+                    //            }
+                    //            if (worseConsequence != replacementRowEvaluation)
+                    //            {
+                    //                continue;
+                    //            }
+                    //            matchesReplacement = true;
+                    //            break;
+                    //        }
+                    //        if (!matchesReplacement)
+                    //        {
+                    //            _ = Enum.TryParse<Consequence>(worseConsequence, out Consequence cons);
+                    //            if (int.Parse(row["CountOfRecords"].ToString()) > 0)
+                    //            {
+                    //                if (!newByPivotCategoryCubesOverTime.TryGetValue(category, out var exists))
+                    //                {
+                    //                    newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
+                    //                }
+                    //                newByPivotCategoryCubesOverTime[category].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                    //                newByPivotCategoryCubesOverTime["ALL"].IncrementHyperCube(year, month, worseConsequence == "Correct" ? null : cons);
+                    //            }
+                    //        }
+                    //    }
+                    //}
+
+                    //var persistingCategories = previousCategories.Where(pc => currentEvalCategories.Contains(pc));
+                    //foreach(var category in persistingCategories)
+                    //{
+                    //    var previousPeriodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
+                    //    var currentPeriodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(evaluation, category, false);
+                    //    Console.WriteLine("X");
+                    //}
+
                     foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
                         state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
 
