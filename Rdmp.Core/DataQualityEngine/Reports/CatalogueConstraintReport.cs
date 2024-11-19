@@ -297,7 +297,11 @@ public class CatalogueConstraintReport : DataQualityReport
                                 {
                                     var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
                                     var result = itemValidator.ValidateAll(replacement[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                                    if (result.SourceConstraint.Consequence == Consequence.Missing)
+                                    if(result is null)
+                                    {
+                                        correct -= 1;
+                                    }
+                                    else if (result.SourceConstraint.Consequence == Consequence.Missing)
                                     {
                                         missing -= 1;
                                     }
@@ -316,68 +320,6 @@ public class CatalogueConstraintReport : DataQualityReport
                                 correct -= 1; //remove a correct entry
                             }
                         }
-                        //if(columnState.PivotCategory == "ALL")
-                        //{
-                        //    var inserts = dataDiffFetcher.Inserts;
-                        //    foreach (var insert in inserts.AsEnumerable())
-                        //    {
-                        //        var itemValidators = _validator.ItemValidators.Where(iv => iv.TargetProperty == columnState.TargetProperty);
-                        //        if (itemValidators.Any())
-                        //        {
-                        //            foreach (var itemValidator in itemValidators)
-                        //            {
-                        //                var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
-                        //                var result = itemValidator.ValidateAll(insert[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                        //                if (result.SourceConstraint.Consequence == Consequence.Missing)
-                        //                {
-                        //                    missing += 1;
-                        //                }
-                        //                else if (result.SourceConstraint.Consequence == Consequence.Wrong)
-                        //                {
-                        //                    wrong += 1;
-                        //                }
-                        //                else if (result.SourceConstraint.Consequence == Consequence.InvalidatesRow)
-                        //                {
-                        //                    invalid += 1;
-                        //                }
-                        //            }
-                        //        }
-                        //        else
-                        //        {
-                        //            correct += 1; //remove a correct entry
-                        //        }
-                        //    }
-                        //    var newUpdates = dataDiffFetcher.Updates_New;
-                        //    //foreach (var newUpdate in newUpdates.AsEnumerable())
-                        //    //{
-                        //    //    var itemValidators = _validator.ItemValidators.Where(iv => iv.TargetProperty == columnState.TargetProperty);
-                        //    //    if (itemValidators.Any())
-                        //    //    {
-                        //    //        foreach (var itemValidator in itemValidators)
-                        //    //        {
-                        //    //            var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
-                        //    //            var result = itemValidator.ValidateAll(newUpdate[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                        //    //            if (result.SourceConstraint.Consequence == Consequence.Missing)
-                        //    //            {
-                        //    //                missing += 1;
-                        //    //            }
-                        //    //            else if (result.SourceConstraint.Consequence == Consequence.Wrong)
-                        //    //            {
-                        //    //                wrong += 1;
-                        //    //            }
-                        //    //            else if (result.SourceConstraint.Consequence == Consequence.InvalidatesRow)
-                        //    //            {
-                        //    //                invalid += 1;
-                        //    //            }
-                        //    //        }
-                        //    //    }
-                        //    //    else
-                        //    //    {
-                        //    //        //correct += 1; //remove a correct entry
-                        //    //    }
-                        //    //}
-                        //}
-                        ////probably want to use the inserts & updates new to add to the columnstate for ALL
                         if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
 
                         var cs = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
@@ -394,8 +336,15 @@ public class CatalogueConstraintReport : DataQualityReport
 
                     var currentEvalCategories = newByPivotCategoryCubesOverTime.Keys.ToList();
                     var categoriesThatHaveGoneMissing = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).Where(pc => !currentEvalCategories.Contains(pc)).ToList().Distinct();
+                    //make sure they weren't in replaced...
                     foreach (var category in categoriesThatHaveGoneMissing)
                     {
+                        var prevousCount = previousEvaluation.RowStates.Where(rs => rs.PivotCategory == category).Count();
+                        var replacedCount = replaced.AsEnumerable().Where(r => r[pivotColumn].ToString() == category).Count();
+                        if (prevousCount == replacedCount)
+                        {
+                            continue;
+                        }
                         var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
                         newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
                         foreach (var row in periodicityDT.AsEnumerable())
@@ -422,224 +371,6 @@ public class CatalogueConstraintReport : DataQualityReport
                         foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
                             periodicity.CommitToDatabase(evaluation);
 
-                    //pivot category is wrong
-                    //var categories = previousEvaluation.RowStates.Select(rs => rs.PivotCategory).ToList().Distinct();
-                    //foreach (var category in categories)
-                    //{
-                    //    //this is working well, but it's not decresing the periodicityState when the value is replaced
-                    //    var previousPeriodicity = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
-                    //    var periodicityCube = new PeriodicityCubesOverTime(category);
-                    //    newByPivotCategoryCubesOverTime.TryGetValue(category, out PeriodicityCubesOverTime value);
-                    //    if (value is not null)
-                    //    {
-                    //        periodicityCube = value;
-                    //    }
-                    //    foreach (var row in previousPeriodicity.AsEnumerable())
-                    //    {
-                    //        var year = DateTime.Parse(row["YearMonth"].ToString()).Year;
-                    //        var month = DateTime.Parse(row["YearMonth"].ToString()).Month;
-                    //        _ = Enum.TryParse<Consequence>(row["RowEvaluation"].ToString(), out Consequence cons);
-
-                    //        var count = int.Parse(row["CountOfRecords"].ToString());
-                    //        var matchingReplacements = replaced.AsEnumerable();
-                    //        if (category != "ALL")
-                    //        {
-                    //            matchingReplacements = matchingReplacements.Where(row => row[pivotColumn].ToString() == category && DateTime.Parse(row[timeColumn].ToString()).Year == year && DateTime.Parse(row[timeColumn].ToString()).Month == month);
-                    //        }
-
-                    //        foreach (var replacement in matchingReplacements)
-                    //        {
-                    //            var itemValidators = _validator.ItemValidators;
-                    //            foreach (var itemValidator in itemValidators)
-                    //            {
-                    //                var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
-                    //                var result = itemValidator.ValidateAll(replacement[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                    //                if (result is not null && result.SourceConstraint.Consequence == cons)
-                    //                {
-                    //                    count -= 1;
-                    //                    break;
-                    //                }
-                    //            }
-                    //        }
-
-                    //        for (var i = 0; i < count; i++)
-                    //        {
-                    //            periodicityCube.IncrementHyperCube(year, month, cons);
-                    //        }
-                    //    }
-
-                    //    foreach (var update in dataDiffFetcher.Updates_New.AsEnumerable())
-                    //    {
-                    //        var itemValidators = _validator.ItemValidators;
-                    //        var year = DateTime.Parse(update[timeColumn].ToString()).Year;
-                    //        var month = DateTime.Parse(update[timeColumn].ToString()).Month;
-                    //        foreach (var itemValidator in itemValidators)
-                    //        {
-                    //            var columns = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != itemValidator.TargetProperty).ToArray();
-                    //            var result = itemValidator.ValidateAll(update[itemValidator.TargetProperty], columns, columns.Select(c => c.ColumnName).ToArray());
-                    //            //if (result is not null && result.SourceConstraint.Consequence == cons)
-                    //            //{
-                    //            //    count += 1;
-                    //            //}
-                    //            if (result is not null)
-                    //            {
-                    //                periodicityCube.IncrementHyperCube(year, month, result.SourceConstraint.Consequence);
-                    //            }
-                    //        }
-                    //    }
-                    //    periodicityCube.CommitToDatabase(evaluation);
-                    //}
-
-                    //foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
-                    //{
-                    //state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
-                    //}
-                    //foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
-                    //{
-                    //    periodicity.CommitToDatabase(evaluation);
-                    //}
-
-                    ////mark down that we are beginning an evaluation on this the day of our lord etc...
-                    //var previousEvaluation = dqeRepository.GetAllObjectsWhere<Evaluation>("CatalogueID", _catalogue.ID).LastOrDefault() ?? throw new Exception("No DQE results currently exist");
-                    //var evaluation = new Evaluation(dqeRepository, _catalogue);
-
-                    ////find entries that have been put in the archive
-                    ////is this the correct table info?
-                    //var tableInfo = _catalogue.CatalogueItems.First().ColumnInfo.TableInfo;
-                    //var dataDiffFetcher = new DiffDatabaseDataFetcher(9, tableInfo, (int)_dataLoadID, 50000);
-                    //dataDiffFetcher.FetchData(new AcceptAllCheckNotifier());
-                    //var replaced = dataDiffFetcher.Updates_Replaced; //all the stuff that has been replaced by the new data load
-
-                    //var previousReportBuilder = new ReportBuilder(_catalogue, _validator, _queryBuilder, _dataLoadRunFieldName, _containsDataLoadID, _timePeriodicityField, _pivotCategory, replaced);
-                    //previousReportBuilder.BuildReportInternals(cancellationToken, forker, dqeRepository);
-                    //var previousRows = previousReportBuilder.GetByPivotRowStatesOverDataLoadRunId();
-                    //var previousColumns = previousReportBuilder.GetByPivotCategoryCubesOverTime();
-
-                    //var pivotColumn = c.PivotCategory_ExtractionInformation.ColumnInfo.GetRuntimeName();
-
-                    //foreach (var state in newByPivotRowStatesOverDataLoadRunId.Values)
-                    //{
-                    //    state.CommitToDatabase(evaluation, _catalogue, con.Connection, con.Transaction);
-                    //}
-
-                    //foreach (var rowState in previousEvaluation.RowStates)
-                    //{
-                    //    var correct = rowState.Correct;
-                    //    var missing = rowState.Missing;
-                    //    var wrong = rowState.Wrong;
-                    //    var invalid = rowState.Invalid;
-                    //    if (replaced.AsEnumerable().Any() && previousRows.TryGetValue(rowState.PivotCategory, out var pivotCategoryRow))
-                    //    {
-                    //        var oldCorrect = pivotCategoryRow.RowsPassingValidationByDataLoadRunID[0];
-                    //        var oldMissing = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.Missing];
-                    //        var oldWrong = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.Wrong];
-                    //        var oldInvalid = pivotCategoryRow.WorstConsequencesByDataLoadRunID[0][Consequence.InvalidatesRow];
-                    //        correct -= oldCorrect;
-                    //        missing -= oldMissing;
-                    //        wrong -= oldWrong;
-                    //        invalid -= oldInvalid;
-                    //        Console.WriteLine("1");
-                    //    }
-
-                    //    if (correct < 1 && missing < 1 && wrong < 1 && invalid < 1) continue;
-
-                    //    _ = new RowState(evaluation, rowState.DataLoadRunID, correct, missing, wrong, invalid, rowState.ValidatorXML, rowState.PivotCategory, con.Connection, con.Transaction);
-                    //}
-                    //foreach (var columnState in previousEvaluation.ColumnStates)
-                    //{
-                    //    var cs = new ColumnState(columnState.TargetProperty, columnState.DataLoadRunID, columnState.ItemValidatorXML)
-                    //    {
-                    //        CountMissing = columnState.CountMissing,
-                    //        CountWrong = columnState.CountWrong,
-                    //        CountInvalidatesRow = columnState.CountInvalidatesRow,
-                    //        CountCorrect = columnState.CountCorrect,
-                    //        CountDBNull = columnState.CountDBNull
-                    //    };
-                    //    var x = previousRows.TryGetValue(columnState.PivotCategory, out var pivotCategoryRow);
-                    //    if (pivotCategoryRow != null)
-                    //    {
-                    //        //they all seem to be dataLoadId [0], but should check this is true
-                    //        //pivotCategoryRow.AllColumnStates.TryGetValue(columnState.DataLoadRunID, out var allcolumnStates);
-                    //        pivotCategoryRow.AllColumnStates.TryGetValue(0, out var allcolumnStates);
-                    //        if (allcolumnStates is not null)
-                    //        {
-                    //            //var allcolumnStates = pivotCategoryRow.AllColumnStates[columnState.DataLoadRunID];
-                    //            var col = allcolumnStates.Where(c => c.TargetProperty == columnState.TargetProperty).FirstOrDefault();
-                    //            if (col is not null)
-                    //            {
-                    //                //cs.CountMissing -= col.CountMissing;
-                    //                cs.CountMissing = col.CountMissing - cs.CountMissing;
-                    //                cs.CountWrong -= col.CountWrong;
-                    //                cs.CountInvalidatesRow -= col.CountInvalidatesRow;
-                    //                cs.CountCorrect -= col.CountCorrect;
-                    //                cs.CountDBNull -= col.CountDBNull;
-                    //            }
-                    //        }
-                    //    }
-
-
-                    //    if (replaced.AsEnumerable().Any() && previousColumns.TryGetValue(columnState.PivotCategory, out var pivotCategoryColumns))
-                    //    {
-                    //        var y = pivotCategoryColumns;
-                    //    }
-                    //    if (cs.CountCorrect < 1 && cs.CountMissing < 1 && cs.CountWrong < 1 && cs.CountInvalidatesRow < 1) continue;
-                    //    cs.Commit(evaluation, columnState.PivotCategory, con.Connection, con.Transaction);
-                    //}
-
-                    //if (_timePeriodicityField != null)
-                    //{
-                    //    var categories = previousEvaluation.RowStates.Select(r => r.PivotCategory).Distinct().ToList();
-                    //    foreach (var category in categories)
-                    //    {
-                    //        var periodicityDT = PeriodicityState.GetPeriodicityForDataTableForEvaluation(previousEvaluation, category, false);
-                    //        var matchingReplaced = replaced.AsEnumerable();
-                    //        if (category != "ALL")
-                    //        {
-                    //            matchingReplaced = matchingReplaced.Where(row => row[pivotColumn].ToString() == category);
-                    //        }
-                    //        //do we validate the row here...
-                    //        //var x = _validator.ItemValidators;
-                    //        //foreach(var validator in _validator.ItemValidators)
-                    //        //{
-                    //        //    validator.ValidateAll()
-                    //        //}
-                    //        if (!newByPivotCategoryCubesOverTime.ContainsKey(category))
-                    //        {
-                    //            newByPivotCategoryCubesOverTime[category] = new PeriodicityCubesOverTime(category);
-                    //        }
-                    //        //exists, just add
-                    //        foreach (var row in periodicityDT.AsEnumerable())
-                    //        {
-                    //            Enum.TryParse<Consequence>(row.ItemArray[3].ToString(), out Consequence cons);
-                    //            var count = int.Parse(row.ItemArray[2].ToString());
-                    //            foreach(var replacedRow in matchingReplaced)
-                    //            {
-                    //                foreach(var validator in _validator.ItemValidators.Where(iv => iv.PrimaryConstraint.Consequence == cons)) //only use validators with matching consequences
-                    //                {
-                    //                    var cols = replaced.Columns.Cast<DataColumn>().Where(c => c.ColumnName != validator.TargetProperty);
-                    //                    var result = validator.ValidateAll(replacedRow[validator.TargetProperty], cols.ToArray(), cols.Select(c => c.ColumnName).ToArray());
-                    //                    if (result != null)
-                    //                    {
-                    //                        count -= 1;
-                    //                    }
-                    //                    var res = validator;//.ValidateAll(row[validator.PrimaryConstraint.col])
-
-                    //                }
-                    //            }
-
-                    //            for (int i = 0; i < count; i++)
-                    //            {
-                    //                //TODO this is where the periodicitystates are generated from
-                    //                newByPivotCategoryCubesOverTime[category].IncrementHyperCube(DateTime.Parse(row.ItemArray[1].ToString()).Year, DateTime.Parse(row.ItemArray[1].ToString()).Month, cons);
-                    //            }
-                    //        }
-
-                    //    }
-                    //    foreach (var periodicity in newByPivotCategoryCubesOverTime.Values)
-                    //    {
-                    //        periodicity.CommitToDatabase(evaluation);
-                    //    }
-                    //}
                     dqeRepository.EndTransactedConnection(true);
                 }
                 catch (Exception)
