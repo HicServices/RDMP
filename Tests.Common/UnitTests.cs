@@ -775,7 +775,7 @@ public class UnitTests
     /// Returns instances of all Types supported by <see cref="WhenIHaveA{T}()"/>
     /// </summary>
     /// <returns></returns>
-    public IEnumerable<DatabaseEntity> WhenIHaveAll()
+    protected IEnumerable<DatabaseEntity> WhenIHaveAll()
     {
         var methodWhenIHaveA = GetWhenIHaveAMethod();
         var repo = new object[] { Repository };
@@ -786,7 +786,6 @@ public class UnitTests
 
         foreach (var t in types)
         {
-            Console.Error.WriteLine("WhenIHaveAll: {0}", t.Name);
             //ensure that the method supports the Type
             yield return (DatabaseEntity)methodWhenIHaveA.MakeGenericMethod(t).Invoke(this, repo);
         }
