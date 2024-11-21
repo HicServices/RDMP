@@ -15,10 +15,12 @@ using System.Linq;
 using Minio.DataModel.Args;
 using System.Collections.Generic;
 using Minio.DataModel;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Amazon.Runtime.Internal.Transform;
 
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
-public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
+public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfiguration
 {
     private const string Username = "minioadmin";
     private const string Password = "minioadmin";
@@ -45,7 +47,7 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
 
     private void DoExtraction()
     {
-        base.SetUp();
+        SetUp();
         Execute(out _, out _, ThrowImmediatelyDataLoadEventListener.Quiet);
     }
 
@@ -70,6 +72,16 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
         return x.IsCompleted ? x.Result : x.AsTask().Result;
     }
 
+    private static void SetArgs(IArgument[] args, Dictionary<string, object> values)
+    {
+        foreach (var x in args)
+        {
+            if (!values.TryGetValue(x.Name, out var value) || x.GetValueAsSystemType().Equals(value)) continue;
+
+            x.SetValue(value);
+            x.SaveToDatabase();
+        }
+    }
 
     [Test]
     public void AWSLoginTest()
@@ -92,21 +104,14 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
 
         Assert.That(pc.GetAllArguments().Any());
 
-        var match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Profile", "minio" },
+            { "BucketName", "releasetoawsbasictest" },
+            { "AWS_Region", "eu-west-2" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -135,18 +140,13 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
 
         Assert.That(pc.GetAllArguments().Any());
 
-        var match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Profile", "minio" },
+            { "BucketName", "releasetoawsbasictest" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -173,18 +173,13 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
 
         Assert.That(pc.GetAllArguments().Any());
 
-        var match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "BucketName", "releasetoawsbasictest" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -211,20 +206,14 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
 
         Assert.That(pc.GetAllArguments().Any());
 
-        var match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("junk-profile");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "AWS_Profile", "junk-profile" },
+            { "BucketName", "releasetoawsbasictest" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -251,19 +240,13 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
         var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
         Assert.That(pc.GetAllArguments().Any());
-
-        var match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "AWS_Profile", "minio" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -289,22 +272,14 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
         var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
         Assert.That(pc.GetAllArguments().Any());
-
-        var match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("doesNotExist");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "AWS_Profile", "minio" },
+            { "BucketName", "doesNotExist" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -333,22 +308,14 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
         var args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
         Assert.That(pc.GetAllArguments().Any());
-
-        var match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "AWS_Profile", "minio" },
+            { "BucketName", "doesNotExist" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
@@ -370,22 +337,14 @@ public class S3BucketReleaseDestinationTests : TestsRequiringAnExtractionConfigu
         args = pc.CreateArgumentsForClassIfNotExists<AWSS3BucketReleaseDestination>();
 
         Assert.That(pc.GetAllArguments().Any());
-
-        match = args.Single(static a => a.Name == "AWS_Profile");
-        match.SetValue("minio");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketName");
-        match.SetValue("releasetoawsbasictest");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "AWS_Region");
-        match.SetValue("eu-west-2");
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "ConfigureInteractivelyOnRelease");
-        match.SetValue(false);
-        match.SaveToDatabase();
-        match = args.Single(static a => a.Name == "BucketFolder");
-        match.SetValue("release");
-        match.SaveToDatabase();
+        SetArgs(args, new Dictionary<string, object>
+        {
+            { "AWS_Region", "eu-west-2" },
+            { "AWS_Profile", "minio" },
+            { "BucketName", "releasetoawsbasictest" },
+            { "ConfigureInteractivelyOnRelease", false },
+            { "BucketFolder", "release" }
+        });
 
         pipe.DestinationPipelineComponent_ID = pc.ID;
         pipe.SaveToDatabase();
