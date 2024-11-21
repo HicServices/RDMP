@@ -74,7 +74,7 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     {
         foreach (var x in args)
         {
-            if (!values.TryGetValue(x.Name, out var value) || x.GetValueAsSystemType().Equals(value)) continue;
+            if (!values.TryGetValue(x.Name, out var value) || x.GetValueAsSystemType()?.Equals(value) == true) continue;
 
             x.SetValue(value);
             x.SaveToDatabase();
