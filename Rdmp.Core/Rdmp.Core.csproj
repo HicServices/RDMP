@@ -332,6 +332,7 @@
 		<PackageReference Include="SixLabors.ImageSharp" />
 		<PackageReference Include="SixLabors.ImageSharp.Drawing" />
 		<PackageReference Include="Spectre.Console" />
+		<PackageReference Include="System.Private.Uri" />
 		<PackageReference Include="System.Resources.Extensions" />
 		<PackageReference Include="SSH.NET" />
 		<PackageReference Include="Terminal.Gui" />
