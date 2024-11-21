@@ -16,7 +16,6 @@ using Minio.DataModel.Args;
 using System.Collections.Generic;
 using Minio.DataModel;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Amazon.Runtime.Internal.Transform;
 
 namespace Rdmp.Core.Tests.DataExport.DataRelease;
 
@@ -37,7 +36,6 @@ public sealed class S3BucketReleaseDestinationTests : TestsRequiringAnExtraction
     [OneTimeSetUp]
     public new void OneTimeSetUp()
     {
-        base.OneTimeSetUp();
         _minioClient = new MinioClient()
             .WithEndpoint(Endpoint)
             .WithCredentials(Username, Password)
