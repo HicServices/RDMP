@@ -37,10 +37,6 @@ public class RemoteTableAttacher : RemoteAttacher
 {
     private const string FutureLoadMessage = "Cannot load data from the future";
 
-    public RemoteTableAttacher() : base()
-    {
-    }
-
     [DemandsInitialization(
         "The server to connect to (this replaces all other settings e.g. RemoteServer, RemoteDatabaseName etc")]
     public ExternalDatabaseServer RemoteServerReference { get; set; }
@@ -217,7 +213,7 @@ public class RemoteTableAttacher : RemoteAttacher
         {
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "LoadDirectory was null in Check() for class RemoteTableAttacher",
-                CheckResult.Warning, null));
+                CheckResult.Warning));
         }
 
 
@@ -241,14 +237,14 @@ public class RemoteTableAttacher : RemoteAttacher
                     else
                     {
                         notifier.OnCheckPerformed(new CheckEventArgs(
-                            "User decided not to apply suggested fix so stopping checking", CheckResult.Fail, null));
+                            "User decided not to apply suggested fix so stopping checking", CheckResult.Fail));
                     }
                 }
                 else
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs(
                         $"LoadProgress '{Progress}' does not have a DataLoadProgress value, you must set this to something to start loading data from that date",
-                        CheckResult.Fail, null));
+                        CheckResult.Fail));
                 }
             }
 
@@ -268,17 +264,17 @@ public class RemoteTableAttacher : RemoteAttacher
             if (string.IsNullOrWhiteSpace(RemoteSelectSQL))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "A LoadProgress has been configured but the RemoteSelectSQL is empty, how are you respecting the schedule without tailoring your query?",
-                    CheckResult.Fail, null));
+                    CheckResult.Fail));
             else
                 foreach (var expectedParameter in new[] { StartDateParameter, EndDateParameter })
                     if (RemoteSelectSQL.Contains(expectedParameter))
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Found {expectedParameter} in the RemoteSelectSQL",
-                            CheckResult.Success, null));
+                            CheckResult.Success));
                     else
                         notifier.OnCheckPerformed(new CheckEventArgs(
                             $"Could not find any reference to parameter {expectedParameter} in the RemoteSelectSQL, how do you expect to respect the LoadProgress you have configured without a reference to this date?",
-                            CheckResult.Fail, null));
+                            CheckResult.Fail));
         }
 
         // If user hasn't picked a table to load (either explicit or free text)
@@ -303,8 +299,8 @@ public class RemoteTableAttacher : RemoteAttacher
             if (!_remoteDatabase.Exists())
                 throw new Exception($"Database {_remoteDatabase} did not exist on the remote server");
 
-            //still worthwhile doing this incase we cannot connect to the server
-            var tables = _remoteDatabase.DiscoverTables(true).Select(t => t.GetRuntimeName()).ToArray();
+            //still worthwhile doing this in case we cannot connect to the server
+            var tables = _remoteDatabase.DiscoverTables(true).Select(static t => t.GetRuntimeName()).ToArray();
 
             //overrides table level checks
             if (!string.IsNullOrWhiteSpace(RemoteSelectSQL))
@@ -314,11 +310,11 @@ public class RemoteTableAttacher : RemoteAttacher
             if (tables.Contains(RemoteTableName))
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"successfully found table {RemoteTableName} on server {_remoteDatabase.Server} on database {_remoteDatabase}",
-                    CheckResult.Success, null));
+                    CheckResult.Success));
             else
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     $"Could not find table called '{RemoteTableName}' on server {_remoteDatabase.Server} on database {_remoteDatabase}{Environment.NewLine}(The following tables were found:{string.Join(",", tables)})",
-                    CheckResult.Fail, null));
+                    CheckResult.Fail));
         }
         catch (Exception e)
         {
@@ -383,7 +379,7 @@ public class RemoteTableAttacher : RemoteAttacher
             catch (Exception e)
             {
                 //if the date range is in the future then GetScheduleParameterDeclarations will throw Exception about future dates
-                if (e.Message.StartsWith(FutureLoadMessage))
+                if (e.Message.StartsWith(FutureLoadMessage, StringComparison.Ordinal))
                     return ExitCodeType.OperationNotRequired; //if this is the case then don't bother with the data load
 
                 throw;

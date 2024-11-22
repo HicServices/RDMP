@@ -28,10 +28,6 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers;
 /// </summary>
 public class RemoteDatabaseAttacher : RemoteAttacher
 {
-    public RemoteDatabaseAttacher() : base()
-    {
-    }
-
     [DemandsInitialization("The DataSource to connect to in order to read data.", Mandatory = true)]
     public ExternalDatabaseServer RemoteSource { get; set; }
 
@@ -40,17 +36,21 @@ public class RemoteDatabaseAttacher : RemoteAttacher
     public int Timeout { get; set; }
 
     [DemandsInitialization(
-        @"Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
-True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns)
-False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema",
+        """
+        Determines how columns in the remote database are fetched and used to populate RAW tables of the same name.
+        True - Fetch only the default columns that appear in RAW (e.g. skip hic_ columns)
+        False - Fetch all columns in the remote table.  To use this option you will need ALTER statements in RAW scripts to make table(s) match the remote schema
+        """,
         DefaultValue = true)]
     public bool LoadRawColumnsOnly { get; set; }
 
     [DemandsInitialization(
-        @"By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
-True - Ignore the fact that some tables do not exist and skip them
-False - Trigger an error reporting the missing table(s)
-")]
+        """
+        By default RemoteDatabaseAttacher expects all tables in the load to exist in the remote database at the time the load is run.  Enabling this option will ignore missing tables:
+        True - Ignore the fact that some tables do not exist and skip them
+        False - Trigger an error reporting the missing table(s)
+
+        """)]
     public bool IgnoreMissingTables { get; set; }
 
 
@@ -72,7 +72,7 @@ False - Trigger an error reporting the missing table(s)
 
         var dbFrom = RemoteSource.Discover(DataAccessContext.DataLoad);
 
-        var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(t => t.GetRuntimeName()),
+        var remoteTables = new HashSet<string>(dbFrom.DiscoverTables(true).Select(static t => t.GetRuntimeName()),
             StringComparer.CurrentCultureIgnoreCase);
         var loadables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).ToArray();
 
@@ -144,12 +144,8 @@ False - Trigger an error reporting the missing table(s)
                 $"Finished after reading {source.TotalRowsRead} rows"));
 
             if (SetDeltaReadingToLatestSeenDatePostLoad)
-            {
-                FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType ,table, job);
-            }
-
+                FindMostRecentDateInLoadedData(syntaxFrom, dbFrom.Server.DatabaseType, table, job);
         }
-
 
 
         return ExitCodeType.Success;

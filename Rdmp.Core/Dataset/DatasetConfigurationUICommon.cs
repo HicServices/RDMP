@@ -15,17 +15,10 @@ namespace Rdmp.Core.Dataset;
 /// </summary>
 public class DatasetConfigurationUICommon
 {
-     /// <summary>
+    /// <summary>
     /// User interface layer for modal dialogs, showing Exceptions etc
     /// </summary>
     public IBasicActivateItems Activator;
 
     public Curation.Data.Dataset Dataset;
-
-
-    public DatasetConfigurationUICommon()
-    {
-    }
-
-   
 }
