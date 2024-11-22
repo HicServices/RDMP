@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution
 {
     private readonly CatalogueItem _catalogueItem;
 

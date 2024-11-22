@@ -14,11 +14,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCommand, IAtomicCommandWithTarget
+public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCommandWithTarget
 {
     private readonly LoadMetadata _loadMetadata;
     private ExternalDatabaseServer _server;
-    private ExternalDatabaseServer[] _available;
+    private readonly ExternalDatabaseServer[] _available;
 
     public ExecuteCommandOverrideRawServer(IBasicActivateItems activator, LoadMetadata loadMetadata) : base(activator)
     {
@@ -27,7 +27,7 @@ public class ExecuteCommandOverrideRawServer : BasicCommandExecution, IAtomicCom
             activator.CoreChildProvider.AllExternalServers.Where(s => string.IsNullOrWhiteSpace(s.CreatedByAssembly))
                 .ToArray();
 
-        if (!_available.Any())
+        if (_available.Length == 0)
             SetImpossible("There are no compatible servers");
     }
 

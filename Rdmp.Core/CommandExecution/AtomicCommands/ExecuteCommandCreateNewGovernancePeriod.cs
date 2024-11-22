@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewGovernancePeriod : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewGovernancePeriod : BasicCommandExecution
 {
     private readonly string _name;
 

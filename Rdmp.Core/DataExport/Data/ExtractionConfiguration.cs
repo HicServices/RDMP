@@ -29,7 +29,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExtractionConfiguration"/>
-public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters, INamed,
+public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,
     ICustomSearchString
 {
     #region Database Properties

@@ -16,11 +16,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// a single new dimension for linkage in a <see cref="CohortIdentificationConfiguration"/> based on
 /// a chosen <see cref="ExtractionInformation"/> which must be marked <see cref="ConcreteColumn.IsExtractionIdentifier"/>
 /// </summary>
-public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandSetAggregateDimension : BasicCommandExecution
 {
-    private AggregateConfiguration _aggregate;
-    private ExtractionInformation[] _available;
-    private ExtractionInformation _extractionInformation;
+    private readonly AggregateConfiguration _aggregate;
+    private readonly ExtractionInformation[] _available;
+    private readonly ExtractionInformation _extractionInformation;
 
     public ExecuteCommandSetAggregateDimension(IBasicActivateItems activator,
         [DemandsInitialization("The AggregateConfiguration which you want to change the extraction identifier on")]
@@ -47,7 +47,7 @@ public class ExecuteCommandSetAggregateDimension : BasicCommandExecution, IAtomi
         try
         {
             var cata = ac.GetCatalogue();
-            _available = cata.GetAllExtractionInformation().Where(ci => ci.IsExtractionIdentifier).ToArray();
+            _available = cata.GetAllExtractionInformation().Where(static ci => ci.IsExtractionIdentifier).ToArray();
 
             if (_extractionInformation != null)
                 if (cata.ID != _extractionInformation.CatalogueItem.Catalogue_ID)

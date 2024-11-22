@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.CohortCreationCommands;
 
-public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution
 {
     private readonly ExternalCohortTable _externalCohortTable;
     private readonly IProject _specificProject;
@@ -59,18 +59,18 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
     private int? GetWhichCohortToImport(ExternalCohortTable ect)
     {
         // the cohorts in the database
-        var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(c => c.ID.HasValue).ToArray();
+        var available = ExtractableCohort.GetImportableCohortDefinitions(ect).Where(static c => c.ID.HasValue).ToArray();
 
 
         // the ones we already know about
         var existing = new HashSet<int>(BasicActivator.RepositoryLocator.DataExportRepository
-            .GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ect.ID).Select(c => c.OriginID));
+            .GetAllObjects<ExtractableCohort>().Where(c => c.ExternalCohortTable_ID == ect.ID).Select(static c => c.OriginID));
 
         // new ones we don't know about yet
         available = available.Where(c => !existing.Contains(c.ID.Value)).ToArray();
 
         // if there are no new ones
-        if (!available.Any())
+        if (available.Length == 0)
         {
             BasicActivator.Show("There are no new cohorts");
             return null;
@@ -81,7 +81,7 @@ public class ExecuteCommandImportAlreadyExistingCohort : BasicCommandExecution, 
         {
             available = available.Where(a => a.ProjectNumber == _specificProject.ProjectNumber).ToArray();
 
-            if (!available.Any())
+            if (available.Length == 0)
             {
                 BasicActivator.Show(
                     $"There are no new cohorts to import for ProjectNumber {_specificProject.ProjectNumber}");

@@ -17,7 +17,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline;
 /// <summary>
 /// See CohortCreationRequest
 ///  </summary>
-public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode, IPipelineUseCase
+public interface ICohortCreationRequest : ICheckable, IPipelineUseCase
 {
     IProject Project { get; }
     ICohortDefinition NewCohortDefinition { get; set; }

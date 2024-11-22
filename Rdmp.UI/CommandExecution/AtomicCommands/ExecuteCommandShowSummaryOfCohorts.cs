@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes.UsedByProject;
@@ -18,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution
 {
     private readonly string _commandName;
     private readonly ExtractableCohort[] _onlyCohorts;
@@ -37,7 +36,7 @@ internal class ExecuteCommandShowSummaryOfCohorts : BasicUICommandExecution, IAt
         if (projectSource.IsEmptyNode)
             SetImpossible("Node is empty");
         else
-            _onlyCohorts = projectSource.CohortsUsed.Select(u => u.ObjectBeingUsed).ToArray();
+            _onlyCohorts = projectSource.CohortsUsed.Select(static u => u.ObjectBeingUsed).ToArray();
     }
 
     [UseWithObjectConstructor]

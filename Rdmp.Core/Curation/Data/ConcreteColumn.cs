@@ -7,7 +7,6 @@
 using System;
 using System.Data.Common;
 using FAnsi.Implementations.MicrosoftSQL;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.QueryBuilding;
@@ -23,7 +22,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
 /// </summary>
-public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, IComparable
+public abstract class ConcreteColumn : DatabaseEntity, IColumn, IComparable
 {
     #region Database Properties
 
@@ -101,7 +100,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
     }
 
     /// <inheritdoc/>
-    protected ConcreteColumn() : base()
+    protected ConcreteColumn()
     {
     }
 
@@ -112,7 +111,7 @@ public abstract class ConcreteColumn : DatabaseEntity, IColumn, IOrderable, ICom
         if (!string.IsNullOrWhiteSpace(Alias))
             return helper.GetRuntimeName(Alias); //.GetRuntimeName(); RDMPQuerySyntaxHelper.GetRuntimeName(this);
 
-        return !string.IsNullOrWhiteSpace(SelectSQL) ? helper.GetRuntimeName(SelectSQL) : ColumnInfo.GetRuntimeName();
+        return !string.IsNullOrWhiteSpace(SelectSQL) ? helper.GetRuntimeName(SelectSQL) : ColumnInfo?.GetRuntimeName();
     }
 
     /// <inheritdoc cref="ColumnSyntaxChecker"/>

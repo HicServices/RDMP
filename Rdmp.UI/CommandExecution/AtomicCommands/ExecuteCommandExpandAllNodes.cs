@@ -15,10 +15,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandExpandAllNodes : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandExpandAllNodes : BasicUICommandExecution
 {
     private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
-    private object _rootToExpandFrom;
+    private readonly object _rootToExpandFrom;
 
     public ExecuteCommandExpandAllNodes(IActivateItems activator, RDMPCollectionCommonFunctionality commonFunctionality,
         object toExpand) : base(activator)

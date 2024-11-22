@@ -17,32 +17,25 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// for setting up new fields, the synchronizing of this description over time (e.g. when a data analyst edits one of the other 'NHS Number' fields) is done through propagation
 /// (See PropagateCatalogueItemChangesToSimilarNamedUI)
 /// </summary>
-public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate)
+    : BasicCommandExecution(activator)
 {
-    private readonly CatalogueItem _toPopulate;
-
-    public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate) :
-        base(activator)
-    {
-        _toPopulate = toPopulate;
-    }
-
     public override void Execute()
     {
-        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] { _toPopulate }).ToList();
+        var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except([toPopulate]).ToList();
 
         string initialSearchText = null;
 
         //if we have a CatalogueItem other than us that has same Name maybe that's the one they want
-        if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
-            initialSearchText = _toPopulate.Name;
+        if (available.Any(a => a.Name.Equals(toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
+            initialSearchText = toPopulate.Name;
 
-        if (SelectOne(available, out var selected, initialSearchText, false))
+        if (SelectOne(available, out var selected, initialSearchText))
         {
-            CopyNonIDValuesAcross(selected, _toPopulate, true);
-            _toPopulate.SaveToDatabase();
+            CopyNonIDValuesAcross(selected, toPopulate, true);
+            toPopulate.SaveToDatabase();
 
-            Publish(_toPopulate);
+            Publish(toPopulate);
         }
 
         base.Execute();
@@ -67,7 +60,7 @@ public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecutio
             if (propertyInfo.Name == "ID")
                 continue;
 
-            if (propertyInfo.Name.EndsWith("_ID"))
+            if (propertyInfo.Name.EndsWith("_ID", StringComparison.Ordinal))
                 continue;
 
             if (propertyInfo.Name == "Name" && skipNameProperty)

@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -14,15 +13,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewCohortAggregateGraph : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandViewCohortAggregateGraph : BasicUICommandExecution
 {
     private readonly CohortSummaryAggregateGraphObjectCollection _collection;
-    private float DEFAULT_WEIGHT = 2.6f;
+    private const float DefaultWeight = 2.6f;
 
     public ExecuteCommandViewCohortAggregateGraph(IActivateItems activator,
         CohortSummaryAggregateGraphObjectCollection collection) : base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
+        Weight = DefaultWeight;
 
         _collection = collection;
 

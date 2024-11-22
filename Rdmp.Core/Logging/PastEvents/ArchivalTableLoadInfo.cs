@@ -16,7 +16,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// <summary>
 /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
 /// </summary>
-public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
+public sealed class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IHasSummary
 {
     public ArchivalDataLoadInfo Parent { get; private set; }
 
@@ -84,7 +84,7 @@ public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, ICompara
         if (obj is ArchivalTableLoadInfo other)
             return Start == other.Start ? 0 : Start > other.Start ? 1 : -1;
 
-        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+        return string.Compare(ToString(), obj?.ToString(), StringComparison.Ordinal);
     }
 
     public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)

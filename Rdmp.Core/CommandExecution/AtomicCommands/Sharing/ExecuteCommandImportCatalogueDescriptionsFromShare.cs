@@ -18,7 +18,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 /// <summary>
 /// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems
 /// </summary>
-public class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare, IAtomicCommand
+public sealed class ExecuteCommandImportCatalogueDescriptionsFromShare : ExecuteCommandImportShare
 {
     private readonly Catalogue _targetCatalogue;
 

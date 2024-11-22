@@ -15,7 +15,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// <summary>
 /// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
 /// </summary>
-public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
+public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IHasSummary
 {
     public int ID { get; internal set; }
     public DateTime Date { get; internal set; }

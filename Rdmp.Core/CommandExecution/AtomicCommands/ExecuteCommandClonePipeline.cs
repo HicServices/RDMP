@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandClonePipeline : BasicCommandExecution
 {
     private readonly Pipeline _pipeline;
 

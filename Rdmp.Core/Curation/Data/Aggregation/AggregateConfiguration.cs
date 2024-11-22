@@ -48,7 +48,7 @@ public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, IC
     IInjectKnown<JoinableCohortAggregateConfiguration>,
     IInjectKnown<AggregateDimension[]>,
     IInjectKnown<Catalogue>,
-    IDisableable, IKnowWhatIAm, IMightBeReadOnly, IRootFilterContainerHost
+    IDisableable, IKnowWhatIAm, IRootFilterContainerHost
 {
     #region Database Properties
 

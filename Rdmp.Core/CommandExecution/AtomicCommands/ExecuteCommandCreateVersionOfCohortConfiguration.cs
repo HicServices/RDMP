@@ -11,7 +11,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateVersionOfCohortConfiguration : BasicCommandExecution
 {
     readonly CohortIdentificationConfiguration _cic;
     readonly IBasicActivateItems _activator;

@@ -9,7 +9,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSettingBase, IAtomicCommand
+public class ExecuteCommandSetExtractionPrimaryKeys : ExecuteCommandSetColumnSettingBase
 {
     /// <summary>
     /// Change which column(s) should be marked as primary key on extraction to a destination that supports this feature (e.g. to database).

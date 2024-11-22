@@ -14,16 +14,11 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// info here so that it is available for rapid query as user waves it around over
 /// potential drop targets
 /// </summary>
-public class LoadMetadataCombineable : ICombineToMakeCommand, IHasFolderCombineable
+public class LoadMetadataCombineable(LoadMetadata lmd) : IHasFolderCombineable
 {
-    public LoadMetadata LoadMetadata { get; }
+    public LoadMetadata LoadMetadata { get; } = lmd;
 
     public IHasFolder Folderable => LoadMetadata;
-
-    public LoadMetadataCombineable(LoadMetadata lmd)
-    {
-        LoadMetadata = lmd;
-    }
 
     public string GetSqlString() => "";
 }

@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -18,14 +17,14 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandAnonymiseColumnInfo : BasicUICommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandAnonymiseColumnInfo : BasicUICommandExecution
 {
     private readonly ColumnInfo _columnInfo;
 
     public ExecuteCommandAnonymiseColumnInfo(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
     {
         _columnInfo = columnInfo;
-        if (columnInfo.GetRuntimeName().StartsWith(ANOTable.ANOPrefix, StringComparison.CurrentCultureIgnoreCase))
+        if (columnInfo.GetRuntimeName()?.StartsWith(ANOTable.ANOPrefix, StringComparison.OrdinalIgnoreCase) == true)
             SetImpossible($"ColumnInfo is already anonymised (Starts with \"{ANOTable.ANOPrefix}\"");
 
         if (columnInfo.ANOTable_ID != null)

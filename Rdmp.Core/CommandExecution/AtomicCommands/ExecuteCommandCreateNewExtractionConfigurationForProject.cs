@@ -21,11 +21,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Creates a new <see cref="ExtractionConfiguration"/> under a given <see cref="Project"/>
 /// </summary>
-public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCommandExecution
 {
     private readonly Project _project;
     private readonly string _name;
-    private ExtractableCohort cohort;
+    private ExtractableCohort _cohort;
 
     /// <summary>
     /// True to prompt the user to pick an <see cref="ExtractableCohort"/> after creating the <see cref="ExtractionConfiguration"/>
@@ -42,12 +42,12 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
     /// </summary>
     public ExtractableCohort CohortIfAny
     {
-        get => cohort;
+        get => _cohort;
         set
         {
             if (!GetProjects(value).Any())
                 SetImpossible($"There are no Projects with ProjectNumber {value.ExternalProjectNumber}");
-            cohort = value;
+            _cohort = value;
         }
     }
 
@@ -96,11 +96,12 @@ public class ExecuteCommandCreateNewExtractionConfigurationForProject : BasicCom
 
         if (p == null)
             if (!SelectOne(new DialogArgs
-            {
-                WindowTitle = "Select Project",
-                TaskDescription = GetTaskDescription()
-            }, GetProjects(CohortIfAny).ToList(), out p))
+                {
+                    WindowTitle = "Select Project",
+                    TaskDescription = GetTaskDescription()
+                }, GetProjects(CohortIfAny).ToList(), out p))
                 return;
+
         if (p == null)
             return;
 

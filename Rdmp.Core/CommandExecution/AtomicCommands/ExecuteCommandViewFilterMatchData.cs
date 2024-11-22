@@ -16,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAtomicCommand
+public sealed class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase
 {
     private readonly IFilter _filter;
     private readonly IContainer _container;
@@ -52,8 +52,8 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
             var candidates = GetCandidates(c);
 
             // match on exact name?
-            _columnInfo = candidates.FirstOrDefault(c =>
-                c.GetRuntimeName().Equals(columnName, StringComparison.CurrentCultureIgnoreCase));
+            _columnInfo = candidates.FirstOrDefault(candidate =>
+                candidate.GetRuntimeName()?.Equals(columnName, StringComparison.CurrentCultureIgnoreCase) == true);
             if (_columnInfo == null)
                 throw new Exception($"Could not find a ColumnInfo called '{columnName}' in Catalogue '{c}'");
         }
@@ -82,23 +82,21 @@ public class ExecuteCommandViewFilterMatchData : ExecuteCommandViewDataBase, IAt
     {
         _candidates = GetCandidates(catalogue);
 
-        if (!_candidates.Any())
+        if (_candidates.Length == 0)
             SetImpossible($"No ColumnInfo is associated with '{rootObj}'");
     }
 
     private ColumnInfo[] GetCandidates(Catalogue catalogue)
     {
-        if (catalogue == null)
-        {
-            SetImpossible("Filter has no Catalogue");
-            return null;
-        }
+        if (catalogue != null)
+            return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(static e => e.ColumnInfo)
+                .Where(static c => c != null).Distinct().ToArray();
 
-        return catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo)
-            .Where(c => c != null).Distinct().ToArray();
+        SetImpossible("Filter has no Catalogue");
+        return null;
     }
 
-    protected ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) :
+    private ExecuteCommandViewFilterMatchData(IBasicActivateItems activator, ViewType viewType, FileInfo toFile) :
         base(activator, toFile)
     {
         _viewType = viewType;

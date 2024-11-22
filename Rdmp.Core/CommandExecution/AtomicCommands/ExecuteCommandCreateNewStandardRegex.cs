@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewStandardRegex : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewStandardRegex : BasicCommandExecution
 {
     public ExecuteCommandCreateNewStandardRegex(IBasicActivateItems activator) : base(activator)
     {

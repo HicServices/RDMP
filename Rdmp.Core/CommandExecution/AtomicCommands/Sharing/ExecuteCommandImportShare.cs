@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
-public abstract class ExecuteCommandImportShare : BasicCommandExecution, IAtomicCommand
+public abstract class ExecuteCommandImportShare : BasicCommandExecution
 {
     private FileInfo _shareDefinitionFile;
 

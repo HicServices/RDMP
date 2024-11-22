@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// <summary>
 /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
 /// </summary>
-public class CatalogueCombineable : ICombineToMakeCommand, IHasFolderCombineable
+public class CatalogueCombineable : IHasFolderCombineable
 {
     public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
     public Catalogue Catalogue { get; set; }

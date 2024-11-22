@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandRevertToHistoricalCohortVersion : BasicCommandExecution
 {
 
     private readonly IBasicActivateItems _activator;

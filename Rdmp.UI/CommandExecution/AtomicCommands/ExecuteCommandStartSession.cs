@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.ItemActivation;
 
@@ -14,11 +13,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands;
 /// <summary>
 /// Starts a new scoped session for one or more objects in the GUI
 /// </summary>
-public class ExecuteCommandStartSession : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandStartSession : BasicUICommandExecution
 {
     public const string FindResultsTitle = "Find Results";
     private readonly string _sessionName;
-    private IMapsDirectlyToDatabaseTable[] _initialSelection;
+    private readonly IMapsDirectlyToDatabaseTable[] _initialSelection;
 
     /// <summary>
     /// True if the command was cancelled before finishing <see cref="Execute"/>

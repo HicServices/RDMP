@@ -25,7 +25,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Import references to many tables at once from a database as <see cref="TableInfo"/>.  Optionally importing descriptive metadata for them from <see cref="ShareDefinition"/> files
 /// </summary>
-public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandBulkImportTableInfos : BasicCommandExecution
 {
     private readonly IExternalDatabaseServer _loggingServer;
 

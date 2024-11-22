@@ -12,12 +12,8 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewRemoteRDMP : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewRemoteRDMP(IBasicActivateItems activator) : BasicCommandExecution(activator)
 {
-    public ExecuteCommandCreateNewRemoteRDMP(IBasicActivateItems activator) : base(activator)
-    {
-    }
-
     public override void Execute()
     {
         base.Execute();

@@ -18,7 +18,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// place.  You can process these records programatically via LogManager.  This class contains public properties for each of the sub concepts (Errors, Progress
 /// messages, Tables loaded etc).  See Logging.cd for more information
 /// </summary>
-public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
+public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent
 {
     private readonly DiscoveredDatabase _loggingDatabase;
 
@@ -106,7 +106,7 @@ public class ArchivalDataLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparab
         if (obj is ArchivalDataLoadInfo other)
             return StartTime == other.StartTime ? 0 : StartTime > other.StartTime ? 1 : -1;
 
-        return string.Compare(ToString(), obj.ToString(), StringComparison.Ordinal);
+        return string.Compare(ToString(), obj?.ToString(), StringComparison.Ordinal);
     }
 
     private List<ArchivalTableLoadInfo> GetTableInfos()

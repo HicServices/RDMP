@@ -16,10 +16,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandChooseCohort : BasicCommandExecution
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
-    private readonly List<ExtractableCohort> _compatibleCohorts = new();
+    private readonly List<ExtractableCohort> _compatibleCohorts = [];
     private readonly ExtractableCohort _pick;
 
     public ExecuteCommandChooseCohort(IBasicActivateItems activator,
@@ -52,15 +52,19 @@ public class ExecuteCommandChooseCohort : BasicCommandExecution, IAtomicCommand
 
         //find cohorts that match the project number
         if (childProvider.ProjectNumberToCohortsDictionary.TryGetValue(project.ProjectNumber.Value, out var value))
-            _compatibleCohorts = value.Where(c => !c.IsDeprecated).ToList();
+            _compatibleCohorts = value.Where(static c => !c.IsDeprecated).ToList();
 
-        //if there's only one compatible cohort and that one is already selected
-        if (_compatibleCohorts.Count == 1 && _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID)
-            SetImpossible("The currently select cohort is the only one available");
-
-        if (!_compatibleCohorts.Any())
-            SetImpossible(
-                $"There are no cohorts currently configured with ProjectNumber {project.ProjectNumber.Value}");
+        switch (_compatibleCohorts.Count)
+        {
+            //if there's only one compatible cohort and that one is already selected
+            case 1 when _compatibleCohorts.Single().ID == _extractionConfiguration.Cohort_ID:
+                SetImpossible("The currently select cohort is the only one available");
+                break;
+            case 0:
+                SetImpossible(
+                    $"There are no cohorts currently configured with ProjectNumber {project.ProjectNumber.Value}");
+                break;
+        }
 
         _pick = cohort;
 

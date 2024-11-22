@@ -13,13 +13,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewEmptyCatalogue : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : BasicCommandExecution(activator)
 {
     public string TargetFolder { get; set; }
-
-    public ExecuteCommandCreateNewEmptyCatalogue(IBasicActivateItems activator) : base(activator)
-    {
-    }
 
     public override string GetCommandHelp() =>
         @"Create a new dataset not yet linked to any underlying database columns\tables";

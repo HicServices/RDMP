@@ -20,12 +20,12 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandCreateNewFilter : BasicCommandExecution
 {
-    private IFilterFactory _factory;
-    private IContainer _container;
-    private IRootFilterContainerHost _host;
-    private const float DEFAULT_WEIGHT = 0.1f;
+    private readonly IFilterFactory _factory;
+    private readonly IContainer _container;
+    private readonly IRootFilterContainerHost _host;
+    private const float DefaultWeight = 0.1f;
 
     public IFilter BasedOn { get; set; }
     public ExtractionFilterParameterSet ParameterSet { get; set; }
@@ -33,11 +33,11 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
     public string WhereSQL { get; }
 
     private IFilter[] _offerFilters;
-    private bool offerCatalogueFilters;
+    private bool _offerCatalogueFilters;
 
     public bool OfferCatalogueFilters
     {
-        get => offerCatalogueFilters;
+        get => _offerCatalogueFilters;
         set
         {
             if (value)
@@ -45,28 +45,30 @@ public class ExecuteCommandCreateNewFilter : BasicCommandExecution, IAtomicComma
                 var c = GetCatalogue();
                 _offerFilters = c?.GetAllFilters();
 
-                if (_offerFilters == null || !_offerFilters.Any())
+                if (_offerFilters == null || _offerFilters.Length == 0)
                     SetImpossible($"There are no Filters declared in Catalogue '{c?.ToString() ?? "NULL"}'");
             }
 
 
-            offerCatalogueFilters = value;
+            _offerCatalogueFilters = value;
         }
     }
 
 
     private ExecuteCommandCreateNewFilter(IBasicActivateItems activator) : base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
+        Weight = DefaultWeight;
     }
 
     [UseWithCommandLine(
         ParameterHelpList = "<into> <basedOn> <name> <where>",
         ParameterHelpBreakdown =
-            @"into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
-basedOn    Optional ExtractionFilter to copy or ExtractionFilterParameterSet
-name    Optional name to set for the new filter
-where    Optional SQL to set for the filter.  If <basedOn> is not null this will overwrite it")]
+            """
+            into	A WHERE filter container or IRootFilterContainerHost (e.g. AggregateConfiguration)
+            basedOn    Optional ExtractionFilter to copy or ExtractionFilterParameterSet
+            name    Optional name to set for the new filter
+            where    Optional SQL to set for the filter.  If <basedOn> is not null this will overwrite it
+            """)]
     public ExecuteCommandCreateNewFilter(IBasicActivateItems activator,
         CommandLineObjectPicker picker) : this(activator)
     {

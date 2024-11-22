@@ -19,7 +19,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data;
 
 /// <inheritdoc cref="ILoadProgress"/>
-public class LoadProgress : DatabaseEntity, ILoadProgress, ICheckable
+public class LoadProgress : DatabaseEntity, ILoadProgress
 {
     #region Database Properties
 

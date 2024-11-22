@@ -17,18 +17,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Adds a new SqlParameter to an <see cref="ICollectSqlParameters"/>
 /// </summary>
-public class ExecuteCommandAddParameter : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAddParameter : BasicCommandExecution
 {
     private readonly ICollectSqlParameters _collector;
     private readonly string _parameterName;
     private readonly string _datatype;
     private readonly string _value;
-    private const float DEFAULT_WEIGHT = 2.1f;
+    private const float DefaultWeight = 2.1f;
 
     public ExecuteCommandAddParameter(IBasicActivateItems activator, ICollectSqlParameters collector,
         string parameterName, string datatype, string value) : base(activator)
     {
-        Weight = DEFAULT_WEIGHT;
+        Weight = DefaultWeight;
         _collector = collector;
         _parameterName = parameterName;
         _datatype = datatype;

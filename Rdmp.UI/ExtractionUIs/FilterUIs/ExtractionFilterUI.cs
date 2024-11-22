@@ -44,7 +44,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs;
 /// <para>If you want to parameterise your query (e.g. a filter for 'Approved name of drug like X') then just type a parameter like you normally would e.g. 'Prescription.DrugName like @drugName'
 /// and save. This will automatically create an empty parameter (See ParameterCollectionUI).</para>
 /// </summary>
-public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ILifetimeSubscriber, ISaveableUI
+public partial class ExtractionFilterUI : ExtractionFilterUI_Design, ISaveableUI
 {
     private IFilter _extractionFilter;
 

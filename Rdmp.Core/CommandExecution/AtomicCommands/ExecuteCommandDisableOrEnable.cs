@@ -12,7 +12,7 @@ using Rdmp.Core.MapsDirectlyToDatabaseTable;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandDisableOrEnable : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandDisableOrEnable : BasicCommandExecution
 {
     private IDisableable[] _targets;
 

@@ -14,10 +14,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution
 {
-    private Catalogue _catalogue;
-    private ExtractableDataSet _extractableDataSet;
+    private readonly Catalogue _catalogue;
+    private readonly ExtractableDataSet _extractableDataSet;
 
     public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue) :
         base(activator)
@@ -40,11 +40,7 @@ public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicComman
             return;
         }
 
-        if (_extractableDataSet.Project_ID == null)
-        {
-            SetImpossible("Catalogue is not a project specific Catalogue");
-            return;
-        }
+        if (_extractableDataSet.Project_ID == null) SetImpossible("Catalogue is not a project specific Catalogue");
     }
 
     public override string GetCommandHelp() =>

@@ -4,15 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution.AtomicCommands;
-
 namespace Rdmp.Core.CommandExecution;
 
 /// <summary>
 /// A command that can never be executed because of the given reason, this is a corner case where you are unable even to construct the
 /// BasicCommandExecution you really want but need to return an ICommandExecution anyway.
 /// </summary>
-public class ImpossibleCommand : BasicCommandExecution, IAtomicCommand
+public sealed class ImpossibleCommand : BasicCommandExecution
 {
     public ImpossibleCommand(string reasonImpossible)
     {

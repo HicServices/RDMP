@@ -21,7 +21,7 @@ namespace Rdmp.Core.Curation.Data;
 /// <summary>
 /// Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter"/> (its parent).
 /// </summary>
-public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
+public class ExtractionFilterParameter : DatabaseEntity, ISqlParameter, IHasDependencies
 {
     #region Database Properties
 

@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandCreateNewANOTable : BasicCommandExecution
 {
     private readonly IExternalDatabaseServer _anoStoreServer;
 

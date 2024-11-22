@@ -10,7 +10,7 @@ using Rdmp.Core.Reports.DublinCore;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
-public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandExportInDublinCoreFormat : BasicCommandExecution
 {
     private readonly DublinCoreDefinition _definition;
     private FileInfo _toExport;

@@ -13,7 +13,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Import all CatalogueItem descriptions from one <see cref="Catalogue"/> into another
 /// </summary>
-public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandImportCatalogueItemDescriptions : BasicCommandExecution
 {
     public Catalogue ToPopulate { get; }
     public Catalogue Other { get; set; }

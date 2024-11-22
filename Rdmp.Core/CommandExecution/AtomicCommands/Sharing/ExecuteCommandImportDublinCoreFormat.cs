@@ -11,7 +11,7 @@ using Rdmp.Core.Reports.DublinCore;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
-public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandImportDublinCoreFormat : BasicCommandExecution
 {
     private Catalogue _target;
     private FileInfo _toImport;

@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution
 {
     private readonly FileCollectionCombineable _fileCollectionCombineable;
     private readonly Catalogue _targetCatalogue;
@@ -63,10 +63,10 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add SupportingDocument",
-                TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add SupportingDocument",
+                    TaskDescription = "Select which Catalogue you want to add the SupportingDocument to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
@@ -75,18 +75,17 @@ public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution, IAt
 
         var files = _fileCollectionCombineable != null
             ? _fileCollectionCombineable.Files
-            : new[] { BasicActivator.SelectFile("File to add") };
+            : [BasicActivator.SelectFile("File to add")];
 
-        if (files == null || files.All(f => f == null))
+        if (files == null || files.All(static f => f == null))
             return;
 
         var created = new List<SupportingDocument>();
-        foreach (var f in files)
+        foreach (var doc in files.Select(f => new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name)
+                 {
+                     URL = new Uri(f.FullName)
+                 }))
         {
-            var doc = new SupportingDocument((ICatalogueRepository)c.Repository, c, f.Name)
-            {
-                URL = new Uri(f.FullName)
-            };
             doc.SaveToDatabase();
             created.Add(doc);
         }

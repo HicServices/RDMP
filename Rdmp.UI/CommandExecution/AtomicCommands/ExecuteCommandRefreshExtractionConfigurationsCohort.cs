@@ -6,7 +6,6 @@
 
 using System.Threading.Tasks;
 using Rdmp.Core.CohortCommitting.Pipeline;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -18,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandRefreshExtractionConfigurationsCohort : BasicUICommandExecution
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
 

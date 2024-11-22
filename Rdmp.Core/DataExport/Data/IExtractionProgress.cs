@@ -16,7 +16,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// Records how far through a batch extraction a <see cref="SelectedDataSets"/> is.  Also tracks which column is being
 /// used for the batch splitting.
 /// </summary>
-public interface IExtractionProgress : IMapsDirectlyToDatabaseTable, ISaveable, INamed
+public interface IExtractionProgress : INamed
 {
     /// <summary>
     /// The absolute origin date of the dataset being extracted.  This is the first day of the first batch

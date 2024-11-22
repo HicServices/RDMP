@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -17,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandCheckAsync : BasicUICommandExecution
 {
     private readonly ICheckable _checkable;
     private readonly Action<ICheckable, CheckResult> _reportWorstTo;
@@ -36,8 +35,6 @@ internal class ExecuteCommandCheckAsync : BasicUICommandExecution, IAtomicComman
         Action<ICheckable, CheckResult> reportWorst) : this(activator, checkable)
     {
         _reportWorstTo = reportWorst;
-
-        Weight = 100.3f;
     }
 
     public override string GetCommandName() => _checkable == null ? "Check" : $"Check '{_checkable}'";

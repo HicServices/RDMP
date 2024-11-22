@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandLine.Gui {
     using Terminal.Gui;
     
     
-    public partial class ConsoleGuiRunPipeline : Terminal.Gui.Window {
+    public sealed partial class ConsoleGuiRunPipeline : Terminal.Gui.Window {
         
         private Terminal.Gui.Label label1;
         

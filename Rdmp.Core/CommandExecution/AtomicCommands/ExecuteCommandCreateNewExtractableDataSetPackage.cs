@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewExtractableDataSetPackage : BasicCommandExecution
 {
     public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
     {

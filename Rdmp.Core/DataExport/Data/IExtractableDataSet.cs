@@ -15,7 +15,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// Controls whether a given <see cref="Catalogue"/> is extractable or not.  Includes whether it is usable only with a specific <see cref="Project"/> or
 /// if extraction of the <see cref="Catalogue"/> has been temporarily disabled.
 /// </summary>
-public interface IExtractableDataSet : IMapsDirectlyToDatabaseTable, IRevertable
+public interface IExtractableDataSet : IRevertable
 {
     /// <summary>
     /// The <see cref="Curation.Data.Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in

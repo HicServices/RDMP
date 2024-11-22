@@ -12,7 +12,7 @@ using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandRename : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandRename : BasicCommandExecution
 {
     private string _newValue;
     private readonly INamed _nameable;

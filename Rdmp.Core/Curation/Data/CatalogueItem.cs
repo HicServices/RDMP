@@ -36,7 +36,7 @@ namespace Rdmp.Core.Curation.Data;
 /// 
 /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
 /// </summary>
-public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed,
+public class CatalogueItem : DatabaseEntity, IComparable, IHasDependencies, INamed,
     IInjectKnown<ExtractionInformation>, IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
 {
     #region Database Properties
@@ -340,7 +340,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
             //Check whether property can be written to
             if (property.CanWrite && !property.Name.Equals("ID") && !property.Name.Equals("Catalogue_ID"))
                 if (property.PropertyType.IsValueType || property.PropertyType.IsEnum ||
-                    property.PropertyType.Equals(typeof(string)))
+                    property.PropertyType == typeof(string))
                     property.SetValue(clone, property.GetValue(this, null), null);
 
         clone.SaveToDatabase();
@@ -359,27 +359,27 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     public IEnumerable<ColumnInfo> GuessAssociatedColumn(ColumnInfo[] guessPool, bool allowPartial = true)
     {
         //exact matches exist so return those
-        var Guess = guessPool.Where(col => col.GetRuntimeName().Equals(Name)).ToArray();
-        if (Guess.Any())
-            return Guess;
+        var guess = guessPool.Where(col => col.GetRuntimeName()?.Equals(Name) == true).ToArray();
+        if (guess.Length != 0)
+            return guess;
 
         //ignore caps match instead
-        Guess = guessPool.Where(col => col.GetRuntimeName().ToLower().Equals(Name.ToLower())).ToArray();
-        if (Guess.Any())
-            return Guess;
+        guess = guessPool.Where(col => col.GetRuntimeName()?.Equals(Name, StringComparison.OrdinalIgnoreCase) == true).ToArray();
+        if (guess.Length != 0)
+            return guess;
 
         //ignore caps and remove spaces match instead
-        Guess = guessPool.Where(col =>
-            col.GetRuntimeName().ToLower().Replace(" ", "").Equals(Name.ToLower().Replace(" ", ""))).ToArray();
-        if (Guess.Any())
-            return Guess;
+        guess = guessPool.Where(col =>
+            col.GetRuntimeName()?.Replace(" ", "").Equals(Name.Replace(" ", ""), StringComparison.OrdinalIgnoreCase) == true).ToArray();
+        if (guess.Length != 0)
+            return guess;
 
         if (allowPartial)
             //contains match is final last resort
             return guessPool.Where(col =>
-                col.GetRuntimeName().ToLower().Contains(Name.ToLower())
+                col.GetRuntimeName()?.Contains(Name, StringComparison.OrdinalIgnoreCase) == true
                 ||
-                Name.ToLower().Contains(col.GetRuntimeName().ToLower()));
+                Name.Contains(col.GetRuntimeName() ?? "(dummy for null)", StringComparison.OrdinalIgnoreCase));
 
         return Array.Empty<ColumnInfo>();
     }
@@ -428,7 +428,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
     {
         var sb = new StringBuilder();
 
-        foreach (var prop in GetType().GetProperties().Where(p => p.Name.Contains("Description")))
+        foreach (var prop in GetType().GetProperties().Where(static p => p.Name.Contains("Description")))
             AppendPropertyToSummary(sb, prop, includeName, includeID, false);
 
         sb.AppendLine(SUMMARY_LINE_DIVIDER);
@@ -437,7 +437,7 @@ public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDepen
         sb.AppendLine($"Transforms Data: {FormatForSummary(ExtractionInformation?.IsProperTransform() ?? false)}");
         sb.AppendLine($"Category: {ExtractionInformation?.ExtractionCategory ?? (object)"Not Extractable"}");
 
-        foreach (var prop in GetType().GetProperties().Where(p => !p.Name.Contains("Description")))
+        foreach (var prop in GetType().GetProperties().Where(static p => !p.Name.Contains("Description")))
             AppendPropertyToSummary(sb, prop, includeName, includeID);
 
         return sb.ToString();

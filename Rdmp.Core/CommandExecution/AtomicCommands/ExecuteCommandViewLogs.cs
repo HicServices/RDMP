@@ -20,7 +20,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandViewLogs : BasicCommandExecution
 {
     public ILoggedActivityRootObject RootObject { get; }
     private readonly LogViewerFilter _filter;
@@ -28,9 +28,11 @@ public class ExecuteCommandViewLogs : BasicCommandExecution, IAtomicCommand
 
     [UseWithCommandLine(
         ParameterHelpList = "<root> <table?> <id?>",
-        ParameterHelpBreakdown = @"root object to view logs for or logging server
-table? Only required if <root> is logging server, specifies the table to view e.g. DataLoadRun
-int? Optional, if <root> is logging server this can be a specific audit id to show")]
+        ParameterHelpBreakdown = """
+                                 root object to view logs for or logging server
+                                 table? Only required if <root> is logging server, specifies the table to view e.g. DataLoadRun
+                                 int? Optional, if <root> is logging server this can be a specific audit id to show
+                                 """)]
     public ExecuteCommandViewLogs(IBasicActivateItems activator, CommandLineObjectPicker picker) : base(activator)
     {
         if (picker.Length == 0)
@@ -49,7 +51,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
                     RootObject = root;
                     break;
                 case ExternalDatabaseServer eds:
-                    _loggingServers = new ExternalDatabaseServer[] { eds };
+                    _loggingServers = [eds];
                     break;
                 default:
                     throw new Exception(
@@ -82,7 +84,7 @@ int? Optional, if <root> is logging server this can be a specific audit id to sh
         LogViewerFilter filter) : base(activator)
     {
         _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-        _loggingServers = new ExternalDatabaseServer[] { loggingServer };
+        _loggingServers = [loggingServer];
     }
 
     public ExecuteCommandViewLogs(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)

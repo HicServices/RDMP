@@ -57,7 +57,7 @@ namespace Rdmp.UI.Collections;
 /// 
 /// <para>In addition to the plugins you can define SQL or EXE tasks that run during the load (See SqlProcessTaskUI and ExeProcessTaskUI). </para>
 /// </summary>
-public partial class LoadMetadataCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+public partial class LoadMetadataCollectionUI : RDMPCollectionUI
 {
     private bool _isFirstTime = true;
 

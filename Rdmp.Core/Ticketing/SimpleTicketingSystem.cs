@@ -18,7 +18,7 @@ namespace Rdmp.Core.Ticketing;
 /// at the Url + ticket name.  Has no validation restrictions based on
 /// ticket states.
 /// </summary>
-public class SimpleTicketingSystem : ICheckable, ITicketingSystem
+public class SimpleTicketingSystem : ITicketingSystem
 {
     protected IDataAccessCredentials Credentials { get; set; }
     protected string Url { get; set; }
@@ -58,8 +58,5 @@ public class SimpleTicketingSystem : ICheckable, ITicketingSystem
     public string GetProjectFolderName(string masterTicket) =>
         UsefulStuff.RegexThingsThatAreNotNumbersOrLettersOrUnderscores.Replace(masterTicket, "");
 
-    public List<string> GetAvailableStatuses()
-    {
-        return new List<string>();
-    }
+    public List<string> GetAvailableStatuses() => [];
 }

@@ -14,16 +14,11 @@ namespace Rdmp.Core.CommandExecution.Combining;
 /// info here so that it is available for rapid query as user waves it around over
 /// potential drop targets
 /// </summary>
-public class ProjectCombineable : ICombineToMakeCommand, IHasFolderCombineable
+public class ProjectCombineable(Project project) : IHasFolderCombineable
 {
-    public Project Project { get; private set; }
+    public Project Project { get; } = project;
 
     public IHasFolder Folderable => Project;
-
-    public ProjectCombineable(Project project)
-    {
-        Project = project;
-    }
 
     public string GetSqlString() => "";
 }

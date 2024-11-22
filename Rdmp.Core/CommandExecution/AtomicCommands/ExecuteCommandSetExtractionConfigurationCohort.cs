@@ -12,7 +12,7 @@ using SixLabors.ImageSharp;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetExtractionConfigurationCohort : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandSetExtractionConfigurationCohort : BasicCommandExecution
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
     private readonly ExtractableCohort _extractableCohort;

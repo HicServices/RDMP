@@ -38,13 +38,12 @@ namespace Rdmp.Core.Curation.Data;
 /// A TableInfo represents a cached state of the live database table schema.  You can synchronize a TableInfo at any time to handle schema changes
 /// (e.g. dropping columns) (see <see cref="TableInfoSynchronizer"/>).</para>
 /// </summary>
-public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,
-    ICheckable
+public class TableInfo : DatabaseEntity, ITableInfo, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>
 {
     /// <summary>
     /// Cached results of <see cref="GetQuerySyntaxHelper"/>
     /// </summary>
-    private static ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> _cachedSyntaxHelpers = new();
+    private static readonly ConcurrentDictionary<DatabaseType, IQuerySyntaxHelper> CachedSyntaxHelpers = new();
 
     #region Database Properties
 
@@ -330,7 +329,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     {
         return
             CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
-                .Select(kvp => kvp.Value)
+                .Select(static kvp => kvp.Value)
                 .Cast<IHasDependencies>()
                 .ToArray();
     }
@@ -372,7 +371,7 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     public bool IsLookupTable(ICoreChildProvider childProvider)
     {
         // we are a lookup if
-        var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Select(l => l.Description_ID));
+        var lookupDescriptionColumnInfoIds = new HashSet<int>(childProvider.AllLookups.Select(static l => l.Description_ID));
         return ColumnInfos.Any(c => lookupDescriptionColumnInfoIds.Contains(c.ID));
     }
 
@@ -389,30 +388,33 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
     {
         //if it is AdjustRaw then it will also have the pre load discarded columns
         if (loadStage <= LoadStage.AdjustRaw)
-            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(c =>
+            foreach (var discardedColumn in PreLoadDiscardedColumns.Where(static c =>
                          c.Destination != DiscardedColumnDestination.Dilute))
                 yield return discardedColumn;
 
         //also add column infos
         foreach (var c in ColumnInfos)
-            if (loadStage <= LoadStage.AdjustRaw && SpecialFieldNames.IsHicPrefixed(c))
-                continue;
-            else if (loadStage <= LoadStage.AdjustStaging &&
-                     c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
-                continue;
-            else if (loadStage == LoadStage.AdjustStaging &&
-                     //these two do not appear in staging
-                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID) ||
-                      c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))
-                    )
-                continue;
-            else
-                yield return c;
+            switch (loadStage)
+            {
+                case <= LoadStage.AdjustRaw when SpecialFieldNames.IsHicPrefixed(c):
+                //auto increment columns do not get created in RAW/STAGING
+                case <= LoadStage.AdjustStaging when
+                    c.IsAutoIncrement:
+                case LoadStage.AdjustStaging when
+                    //these two do not appear in staging
+                    (c.GetRuntimeName()?.Equals(SpecialFieldNames.DataLoadRunID) == true ||
+                     c.GetRuntimeName()?.Equals(SpecialFieldNames.ValidFrom) == true):
+                    continue;
+                default:
+                    yield return c;
+
+                    break;
+            }
     }
 
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper() =>
-        _cachedSyntaxHelpers.GetOrAdd(DatabaseType, QuerySyntaxHelperFactory.Create(DatabaseType));
+        CachedSyntaxHelpers.GetOrAdd(DatabaseType, QuerySyntaxHelperFactory.Create(DatabaseType));
 
     /// <inheritdoc/>
     public void InjectKnown(ColumnInfo[] instance)
@@ -427,13 +429,9 @@ public class TableInfo : DatabaseEntity, ITableInfo, INamed, IHasFullyQualifiedN
         _knownIsLookup = new Lazy<bool>(FetchIsLookup);
         _knownCredentials.Clear();
 
-        foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
+        foreach (var context1 in Enum.GetValues(typeof(DataAccessContext)).Cast<DataAccessContext>()
+                     .Where(static context => context != DataAccessContext.Any))
         {
-            if (context == DataAccessContext.Any)
-                continue;
-
-            //avoid access to
-            var context1 = context;
             _knownCredentials.Add(context1,
                 new Lazy<IDataAccessCredentials>(() =>
                     CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,

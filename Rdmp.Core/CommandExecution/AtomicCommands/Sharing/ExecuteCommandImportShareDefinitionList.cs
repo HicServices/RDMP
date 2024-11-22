@@ -20,12 +20,8 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Sharing;
 
-public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandImportShareDefinitionList(IBasicActivateItems activator) : BasicCommandExecution(activator)
 {
-    public ExecuteCommandImportShareDefinitionList(IBasicActivateItems activator) : base(activator)
-    {
-    }
-
     public override void Execute()
     {
         base.Execute();
@@ -61,7 +57,7 @@ public class ExecuteCommandImportShareDefinitionList : BasicCommandExecution, IA
         ShareDefinition shareDefinition)
     {
         BasicActivator.Show(
-            $"Choose a local object for '{property}' on {Environment.NewLine}{string.Join(Environment.NewLine, shareDefinition.Properties.Select(kvp => $"{kvp.Key}: {kvp.Value}"))}");
+            $"Choose a local object for '{property}' on {Environment.NewLine}{string.Join(Environment.NewLine, shareDefinition.Properties.Select(static kvp => $"{kvp.Key}: {kvp.Value}"))}");
 
         var requiredType = relationshipAttribute.Cref;
 

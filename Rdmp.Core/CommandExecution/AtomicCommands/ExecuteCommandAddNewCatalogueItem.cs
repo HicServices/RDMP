@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
     private readonly ColumnInfo[] _columnInfos;
@@ -96,7 +96,7 @@ public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution, IAtomicC
                 return;
 
             //get them to type a name for it (based on the ColumnInfo if picked)
-            if (!TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo?.GetRuntimeName(),
+            if (!TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo.GetRuntimeName(),
                     out var text)) return;
 
             var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, c,

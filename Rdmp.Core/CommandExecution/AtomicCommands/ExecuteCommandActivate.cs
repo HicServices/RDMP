@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Command for double clicking objects.
 /// </summary>
-public class ExecuteCommandActivate : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandActivate : BasicCommandExecution
 {
     private readonly object _o;
 

@@ -8,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 
 namespace Rdmp.Core.Curation.Data.DataLoad;
 
 /// <inheritdoc cref="ProcessTask"/>
-public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisableable
+public interface IProcessTask : IArgumentHost, IOrderable, IDisableable
 {
     /// <inheritdoc cref="IArgumentHost.GetAllArguments"/>
     IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get; }

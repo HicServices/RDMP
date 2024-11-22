@@ -26,29 +26,29 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui;
 
-public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadEventListener, IListDataSource
+public sealed partial class ConsoleGuiRunPipeline : IPipelineRunner, IDataLoadEventListener, IListDataSource
 {
-    private readonly IBasicActivateItems activator;
-    private IPipelineUseCase _useCase;
-    private IPipeline _pipeline;
+    private readonly IBasicActivateItems _activator;
+    private readonly IPipelineUseCase _useCase;
+    private readonly IPipeline _pipeline;
     public event PipelineEngineEventHandler PipelineExecutionFinishedsuccessfully;
 
-    private GracefulCancellationTokenSource cancellation;
-    private int? exitCode;
+    private GracefulCancellationTokenSource _cancellation;
+    private int? _exitCode;
 
-    private HashSet<IDataLoadEventListener> additionals = new();
-    private PipelineRunner runner;
-    private PipelineEngineEventArgs successArgs;
-    private DataTable progressDataTable;
+    private readonly HashSet<IDataLoadEventListener> _additionals = new();
+    private PipelineRunner _runner;
+    private PipelineEngineEventArgs _successArgs;
+    private readonly DataTable _progressDataTable;
 
-    private List<NotifyEventArgs> notifyEventArgs = new();
+    private readonly List<NotifyEventArgs> _notifyEventArgs = new();
 
-    public int Count => notifyEventArgs.Count;
-    public int Length => notifyEventArgs.Count;
+    public int Count => _notifyEventArgs.Count;
+    public int Length => _notifyEventArgs.Count;
 
-    private ColorScheme _red;
-    private ColorScheme _yellow;
-    private ColorScheme _white;
+    private readonly ColorScheme _red;
+    private readonly ColorScheme _yellow;
+    private readonly ColorScheme _white;
 
     public ConsoleGuiRunPipeline(IBasicActivateItems activator, IPipelineUseCase useCase, IPipeline pipeline)
     {
@@ -60,7 +60,7 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
         InitializeComponent();
 
-        this.activator = activator;
+        this._activator = activator;
         _useCase = useCase;
         _pipeline = pipeline;
 
@@ -80,13 +80,13 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         if (_pipeline != null)
             combobox1.SelectedItem = combobox1.Source.ToList().IndexOf(_pipeline);
 
-        progressDataTable = _tableView.Table;
-        progressDataTable.Columns["Progress"].DataType = typeof(int);
+        _progressDataTable = _tableView.Table;
+        if (_progressDataTable?.Columns["Progress"] != null) _progressDataTable.Columns["Progress"].DataType = typeof(int);
 
         _results.KeyPress += Results_KeyPress;
         btnRun.Clicked += BtnRun_Clicked;
         btnCancel.Clicked += BtnCancel_Clicked;
-        btnClose.Clicked += () => Application.RequestStop();
+        btnClose.Clicked += static () => Application.RequestStop();
 
         _results.Source = this;
     }
@@ -95,14 +95,14 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     {
         if (obj.KeyEvent.Key == Key.Enter && _results.HasFocus)
         {
-            if (_results.SelectedItem <= notifyEventArgs.Count)
+            if (_results.SelectedItem <= _notifyEventArgs.Count)
             {
-                var selected = notifyEventArgs[_results.SelectedItem];
+                var selected = _notifyEventArgs[_results.SelectedItem];
 
                 if (selected.Exception != null || selected.ProgressEventType == ProgressEventType.Error)
-                    activator.ShowException(selected.Message, selected.Exception);
+                    _activator.ShowException(selected.Message, selected.Exception);
                 else
-                    activator.Show(selected.Message);
+                    _activator.Show(selected.Message);
             }
 
             obj.Handled = true;
@@ -111,21 +111,21 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
     private void BtnCancel_Clicked()
     {
-        if (cancellation == null)
+        if (_cancellation == null)
         {
             MessageBox.ErrorQuery("Not Started", "Pipeline execution has not started yet", "Ok");
             return;
         }
 
-        if (cancellation.Token.IsAbortRequested)
+        if (_cancellation.Token.IsAbortRequested)
             MessageBox.ErrorQuery("Already Cancelled", "Cancellation already issued", "Ok");
         else
-            cancellation.Abort();
+            _cancellation.Abort();
     }
 
     private void BtnRun_Clicked()
     {
-        if (cancellation != null)
+        if (_cancellation != null)
         {
             MessageBox.ErrorQuery("Already Running", "Pipeline is already running", "Ok");
             return;
@@ -144,10 +144,10 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
             return;
         }
 
-        runner = new PipelineRunner(_useCase, p);
-        foreach (var l in additionals) runner.AdditionalListeners.Add(l);
+        _runner = new PipelineRunner(_useCase, p);
+        foreach (var l in _additionals) _runner.AdditionalListeners.Add(l);
 
-        runner.PipelineExecutionFinishedsuccessfully += Runner_PipelineExecutionFinishedsuccessfully;
+        _runner.PipelineExecutionFinishedsuccessfully += Runner_PipelineExecutionFinishedsuccessfully;
 
         // clear old results
         _results.Text = "";
@@ -156,24 +156,24 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         {
             try
             {
-                cancellation = new GracefulCancellationTokenSource();
-                exitCode = runner.Run(activator.RepositoryLocator, this,
-                    new FromDataLoadEventListenerToCheckNotifier(this), cancellation.Token);
-                cancellation = null;
+                _cancellation = new GracefulCancellationTokenSource();
+                _exitCode = _runner.Run(_activator.RepositoryLocator, this,
+                    new FromDataLoadEventListenerToCheckNotifier(this), _cancellation.Token);
+                _cancellation = null;
             }
             catch (Exception ex)
             {
                 OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, ex.Message, ex));
-                cancellation = null;
+                _cancellation = null;
             }
         });
     }
 
     private void Runner_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
     {
-        successArgs = args;
+        _successArgs = args;
         if (UserSettings.ShowPipelineCompletedPopup)
-            Application.MainLoop.Invoke(() =>
+            Application.MainLoop.Invoke(static () =>
             {
                 if (MessageBox.Query("Pipeline completed successfully", "Close Window?", "Yes", "No") == 0)
                     Application.RequestStop();
@@ -186,9 +186,9 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
     public void OnNotify(object sender, NotifyEventArgs e)
     {
-        lock (notifyEventArgs)
+        lock (_notifyEventArgs)
         {
-            notifyEventArgs.Insert(0, e);
+            _notifyEventArgs.Insert(0, e);
             Application.MainLoop.Invoke(() => _results.SetNeedsDisplay());
         }
     }
@@ -196,14 +196,14 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
 
     public void OnProgress(object sender, ProgressEventArgs e)
     {
-        lock (progressDataTable)
+        lock (_progressDataTable)
         {
-            var existing = progressDataTable.Rows.Cast<DataRow>()
+            var existing = _progressDataTable.Rows.Cast<DataRow>()
                 .FirstOrDefault(r => Equals(r["Name"], e.TaskDescription));
             if (existing != null)
                 existing["Progress"] = e.Progress.Value;
             else
-                progressDataTable.Rows.Add(e.TaskDescription, e.Progress.Value);
+                _progressDataTable.Rows.Add(e.TaskDescription, e.Progress.Value);
         }
 
         Application.MainLoop.Invoke(() => _tableView.Update());
@@ -216,29 +216,29 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
         Application.Run(this, ConsoleMainWindow.ExceptionPopup);
 
         // run the event after the window has closed
-        if (successArgs != null) PipelineExecutionFinishedsuccessfully?.Invoke(this, successArgs);
+        if (_successArgs != null) PipelineExecutionFinishedsuccessfully?.Invoke(this, _successArgs);
 
-        return exitCode ?? throw new OperationCanceledException();
+        return _exitCode ?? throw new OperationCanceledException();
     }
 
     public void SetAdditionalProgressListener(IDataLoadEventListener toAdd)
     {
-        if (runner != null)
-            runner.AdditionalListeners.Add(toAdd);
+        if (_runner != null)
+            _runner.AdditionalListeners.Add(toAdd);
         else
-            additionals.Add(toAdd);
+            _additionals.Add(toAdd);
     }
 
     public void Render(ListView container, ConsoleDriver driver, bool selected, int item, int col, int line, int width,
         int start = 0)
     {
-        if (item >= notifyEventArgs.Count) return;
+        if (item >= _notifyEventArgs.Count) return;
 
-        var str = $"{notifyEventArgs[item].ProgressEventType} {notifyEventArgs[item].Message}";
+        var str = $"{_notifyEventArgs[item].ProgressEventType} {_notifyEventArgs[item].Message}";
 
         str = str.Length > width ? str[..width] : str.PadRight(width, ' ');
 
-        var colour = notifyEventArgs[item].ProgressEventType switch
+        var colour = _notifyEventArgs[item].ProgressEventType switch
         {
             ProgressEventType.Error => _red,
             ProgressEventType.Warning => _yellow,
@@ -256,5 +256,5 @@ public partial class ConsoleGuiRunPipeline : Window, IPipelineRunner, IDataLoadE
     {
     }
 
-    public IList ToList() => notifyEventArgs;
+    public IList ToList() => _notifyEventArgs;
 }

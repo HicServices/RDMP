@@ -11,7 +11,7 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution, IAtomicCommand
+public abstract class ExecuteCommandSetColumnSettingBase : BasicCommandExecution
 {
     private ICatalogue _catalogue;
     private ExtractionInformation[] _extractionInformations;

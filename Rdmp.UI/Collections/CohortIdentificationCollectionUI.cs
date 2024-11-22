@@ -27,7 +27,7 @@ namespace Rdmp.UI.Collections;
 /// INTERSECT, EXCEPT) for example Cohort Set 1 '3+ diabetes drug prescriptions' UNION 'hospital admissions for amputations'.  Cohort sets can be from the same or different data sets (as
 /// long as they have a common identifier).
 /// </summary>
-public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
+public partial class CohortIdentificationCollectionUI : RDMPCollectionUI
 {
     private bool _firstTime = true;
 
@@ -72,27 +72,21 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             .TemplateAggregateConfigurationsNode);
 
 
-        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate (object x)
+        tlvCohortIdentificationConfigurations.CanExpandGetter = delegate(object x)
         {
-            if (x is CohortIdentificationConfiguration)
-            {
-                return ((CohortIdentificationConfiguration)x).GetVersions().Count > 0;
-            }
+            if (x is CohortIdentificationConfiguration configuration) return configuration.GetVersions().Count > 0;
 
             return Activator.CoreChildProvider.GetChildren(x).Length > 0;
         };
 
-        tlvCohortIdentificationConfigurations.ChildrenGetter = delegate (object x)
+        tlvCohortIdentificationConfigurations.ChildrenGetter = delegate(object x)
         {
-            if (x is CohortIdentificationConfiguration)
-            {
-                CohortIdentificationConfiguration cic = (CohortIdentificationConfiguration)x;
-                return cic.GetVersions();
-            }
+            if (x is CohortIdentificationConfiguration cic) return cic.GetVersions();
+
             return Activator.CoreChildProvider.GetChildren(x);
         };
 
-        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = a => new IAtomicCommand[]
+        CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = static a => new IAtomicCommand[]
         {
             new ExecuteCommandCreateNewCohortIdentificationConfiguration(a),
             new ExecuteCommandMergeCohortIdentificationConfigurations(a, null)
@@ -106,34 +100,32 @@ public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifet
             factory.CreateMenuItem(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator)), "New...");
         CommonFunctionality.Add(
             factory.CreateMenuItem(new ExecuteCommandMergeCohortIdentificationConfigurations(Activator, null)
-            { OverrideCommandName = "By Merging Existing..." }), "New...");
+                { OverrideCommandName = "By Merging Existing..." }), "New...");
 
-        if (_firstTime)
+        if (!_firstTime) return;
+
+        CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
+        CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
+
+        tlvCohortIdentificationConfigurations.Expand(rootFolder);
+        var refresh = new ToolStripMenuItem
         {
-            CommonTreeFunctionality.SetupColumnTracking(olvName, new Guid("f8a42259-ce5a-4006-8ab8-e0305fce05aa"));
-            CommonTreeFunctionality.SetupColumnTracking(olvFrozen, new Guid("d1e155ef-a28f-41b5-81e4-b763627ddb3c"));
+            Visible = true,
+            Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
+            Alignment = ToolStripItemAlignment.Right,
+            ToolTipText = "Refresh Object"
+        };
+        refresh.Click += delegate
+        {
+            var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
+            if (cic is null) return;
 
-            tlvCohortIdentificationConfigurations.Expand(rootFolder);
-            var _refresh = new ToolStripMenuItem
-            {
-                Visible = true,
-                Image = FamFamFamIcons.arrow_refresh.ImageToBitmap(),
-                Alignment = ToolStripItemAlignment.Right,
-                ToolTipText = "Refresh Object"
-            };
-            _refresh.Click += delegate (object sender, EventArgs e)
-            {
-                var cic = Activator.CoreChildProvider.AllCohortIdentificationConfigurations.First();
-                if (cic is not null)
-                {
-                    var cmd = new ExecuteCommandRefreshObject(Activator, cic);
-                    cmd.Execute();
-                }
-            };
-            CommonFunctionality.Add(_refresh);
+            var cmd = new ExecuteCommandRefreshObject(Activator, cic);
+            cmd.Execute();
+        };
+        CommonFunctionality.Add(refresh);
 
-            _firstTime = false;
-        }
+        _firstTime = false;
     }
 
     public static bool IsRootObject(object root) =>

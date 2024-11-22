@@ -20,7 +20,7 @@ namespace Rdmp.Core.Repositories.Managers;
 /// 
 /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
 /// </summary>
-public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
+public class PasswordEncryptionKeyLocation : IEncryptionManager
 {
     private readonly ICatalogueRepository _catalogueRepository;
 

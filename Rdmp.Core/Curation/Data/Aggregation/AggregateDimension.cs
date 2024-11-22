@@ -24,7 +24,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation;
 /// want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows you to specify new SelectSQL which can change how the field
 /// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate"
 /// </summary>
-public class AggregateDimension : DatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies,
+public class AggregateDimension : DatabaseEntity, IColumn, IHasDependencies,
     IInjectKnown<ExtractionInformation>
 {
     #region Database Properties

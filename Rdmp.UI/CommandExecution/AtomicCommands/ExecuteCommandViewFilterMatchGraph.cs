@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Icons.IconProvision;
@@ -19,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAtomicCommand
+internal sealed class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution
 {
     private readonly IFilter _filter;
     private AggregateConfiguration[] _compatibleGraphs;
@@ -37,9 +36,9 @@ internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution, IAt
 
 
         //compatible graphs are those that are not part of a cic (i.e. they are proper aggregate graphs)
-        var compatibleGraphs = cata.AggregateConfigurations.Where(a => !a.IsCohortIdentificationAggregate).ToArray();
+        var compatibleGraphs = cata.AggregateConfigurations.Where(static a => !a.IsCohortIdentificationAggregate).ToArray();
 
-        if (!compatibleGraphs.Any())
+        if (compatibleGraphs.Length == 0)
         {
             SetImpossible($"No graphs defined in Catalogue '{cata}'");
             return;

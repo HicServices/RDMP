@@ -2,7 +2,7 @@
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
-    partial class ViewInsertsAndUpdatesDialog : ICheckNotifier
+    sealed partial class ViewInsertsAndUpdatesDialog : ICheckNotifier
     {
         /// <summary>
         /// Required designer variable.

@@ -43,8 +43,7 @@ public enum CacheArchiveType
 }
 
 /// <inheritdoc cref="ILoadMetadata"/>
-public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper,
-    ILoggedActivityRootObject, IHasFolder
+public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper, IHasFolder
 {
     #region Database Properties
 
@@ -69,17 +68,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public DirectoryInfo GetRootDirectory()
     {
-        if (!string.IsNullOrWhiteSpace(_locationOfForLoadingDirectory) && !string.IsNullOrWhiteSpace(_locationOfForArchivingDirectory) && !string.IsNullOrWhiteSpace(_locationOfExecutablesDirectory) && !string.IsNullOrWhiteSpace(_locationOfCacheDirectory))
-        {
-            var forLoadingRoot = _locationOfForLoadingDirectory.Replace(DefaultForLoadingPath, "");
-            var forArchivingRoot = _locationOfForArchivingDirectory.Replace(DefaultForArchivingPath, "");
-            var forExecutablesRoot = _locationOfExecutablesDirectory.Replace(DefaultExecutablesPath, "");
-            var forCacheRoot = _locationOfCacheDirectory.Replace(DefaultCachePath, "");
-            if (forLoadingRoot == forArchivingRoot && forExecutablesRoot == forCacheRoot && forArchivingRoot == forExecutablesRoot)
-            {
-                return new DirectoryInfo(forLoadingRoot);
-            }
-        }
+        if (string.IsNullOrWhiteSpace(_locationOfForLoadingDirectory) ||
+            string.IsNullOrWhiteSpace(_locationOfForArchivingDirectory) ||
+            string.IsNullOrWhiteSpace(_locationOfExecutablesDirectory) ||
+            string.IsNullOrWhiteSpace(_locationOfCacheDirectory)) return null;
+
+        var forLoadingRoot = _locationOfForLoadingDirectory.Replace(DefaultForLoadingPath, "");
+        var forArchivingRoot = _locationOfForArchivingDirectory.Replace(DefaultForArchivingPath, "");
+        var forExecutablesRoot = _locationOfExecutablesDirectory.Replace(DefaultExecutablesPath, "");
+        var forCacheRoot = _locationOfCacheDirectory.Replace(DefaultCachePath, "");
+        if (forLoadingRoot == forArchivingRoot && forExecutablesRoot == forCacheRoot && forArchivingRoot == forExecutablesRoot) return new DirectoryInfo(forLoadingRoot);
+
         return null;
     }
 
@@ -214,7 +213,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         get
         {
             return
-                Repository.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(pt => pt.Order);
+                Repository.GetAllObjectsWithParent<ProcessTask>(this).Cast<IProcessTask>().OrderBy(static pt => pt.Order);
         }
     }
 
@@ -263,7 +262,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         AllowReservedPrefix = ObjectToNullableBool(r["AllowReservedPrefix"]) ?? false;
     }
 
-    internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition) : base()
+    internal LoadMetadata(ShareManager shareManager, ShareDefinition shareDefinition)
     {
         shareManager.UpsertAndHydrate(this, shareDefinition);
     }
@@ -276,10 +275,9 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
 
     public void UnlinkFromCatalogue(ICatalogue catalogue)
     {
-        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>().Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
-        {
+        foreach (var l in CatalogueRepository.GetAllObjects<LoadMetadataCatalogueLinkage>()
+                     .Where(link => link.CatalogueID == catalogue.ID && link.LoadMetadataID == this.ID))
             l.DeleteInDatabase();
-        }
     }
 
     /// <inheritdoc/>
@@ -300,7 +298,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public IEnumerable<ICatalogue> GetAllCatalogues()
     {
-        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(l => l.CatalogueID);
+        var catalogueLinkIDs = Repository.GetAllObjectsWhere<LoadMetadataCatalogueLinkage>("LoadMetadataID", ID).Select(static l => l.CatalogueID);
         return Repository.GetAllObjects<Catalogue>().Where(cat => catalogueLinkIDs.Contains(cat.ID));
     }
 
@@ -331,7 +329,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
         return !catalogue.Any()
             ? throw new NotSupportedException(
                 $"LoadMetaData '{ToString()} (ID={ID}) does not have any Catalogues associated with it so it is not possible to fetch its LoggingDatabaseSettings")
-            : (IDataAccessPoint[])catalogue.Select(c => c.LiveLoggingServer).ToArray();
+            : (IDataAccessPoint[])catalogue.Select(static c => c.LiveLoggingServer).ToArray();
     }
 
     /// <summary>
@@ -342,17 +340,17 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     {
         var catalogueMetadatas = GetAllCatalogues().ToArray();
 
-        if (!catalogueMetadatas.Any())
+        if (catalogueMetadatas.Length == 0)
             throw new Exception($"There are no Catalogues associated with load metadata (ID={ID})");
 
         var cataloguesWithoutLoggingTasks =
-            catalogueMetadatas.Where(c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
+            catalogueMetadatas.Where(static c => string.IsNullOrWhiteSpace(c.LoggingDataTask)).ToArray();
 
-        if (cataloguesWithoutLoggingTasks.Any())
+        if (cataloguesWithoutLoggingTasks.Length != 0)
             throw new Exception(
-                $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", (s, n) => $"{s}{n}(ID={n.ID}),")}");
+                $"The following Catalogues do not have a LoggingDataTask specified:{cataloguesWithoutLoggingTasks.Aggregate("", static (s, n) => $"{s}{n}(ID={n.ID}),")}");
 
-        var distinctLoggingTasks = catalogueMetadatas.Select(c => c.LoggingDataTask).Distinct().ToArray();
+        var distinctLoggingTasks = catalogueMetadatas.Select(static c => c.LoggingDataTask).Distinct().ToArray();
         return distinctLoggingTasks.Length >= 2
             ? throw new Exception(
                 $"There are {distinctLoggingTasks.Length} logging tasks in Catalogues belonging to this metadata (ID={ID})")
@@ -366,14 +364,8 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <returns></returns>
     public List<TableInfo> GetDistinctTableInfoList(bool includeLookups)
     {
-        var toReturn = new List<TableInfo>();
-
-        foreach (var catalogueMetadata in GetAllCatalogues())
-            foreach (TableInfo tableInfo in catalogueMetadata.GetTableInfoList(includeLookups))
-                if (!toReturn.Contains(tableInfo))
-                    toReturn.Add(tableInfo);
-
-        return toReturn;
+        return GetAllCatalogues().SelectMany(cat => cat.GetTableInfoList(includeLookups)).Distinct().OfType<TableInfo>()
+            .ToList();
     }
 
     /// <inheritdoc/>
@@ -392,10 +384,10 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
                 lookupTables.Add(l);
         }
 
-        if (normalTables.Any())
+        if (normalTables.Count != 0)
             return DataAccessPortal.ExpectDistinctServer(normalTables.ToArray(), DataAccessContext.DataLoad, true);
 
-        return lookupTables.Any()
+        return lookupTables.Count != 0
             ? DataAccessPortal.ExpectDistinctServer(lookupTables.ToArray(), DataAccessContext.DataLoad, true)
             : throw new Exception(
                 $"LoadMetadata {this} has no TableInfos configured (or possibly the tables have been deleted resulting in MISSING ColumnInfos?)");
@@ -446,7 +438,7 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     /// <inheritdoc/>
     public IQuerySyntaxHelper GetQuerySyntaxHelper()
     {
-        var syntax = GetAllCatalogues().Select(c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
+        var syntax = GetAllCatalogues().Select(static c => c.GetQuerySyntaxHelper()).Distinct().ToArray();
         return syntax.Length > 1
             ? throw new Exception(
                 $"LoadMetadata '{this}' has multiple underlying Catalogue Live Database Type(s) - not allowed")
@@ -463,6 +455,6 @@ public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHa
     public static bool UsesPersistentRaw(ILoadMetadata loadMetadata)
     {
         return loadMetadata.CatalogueRepository.GetExtendedProperties(ExtendedProperty.PersistentRaw,
-            loadMetadata).Any(p => p.Value == "true");
+            loadMetadata).Any(static p => p.Value == "true");
     }
 }

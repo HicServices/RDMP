@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution
 {
     private readonly LoadProgress _loadProgress;
 

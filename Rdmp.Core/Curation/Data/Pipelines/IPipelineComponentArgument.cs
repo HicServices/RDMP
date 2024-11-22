@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.ReusableLibraryCode;
 
 namespace Rdmp.Core.Curation.Data.Pipelines;
@@ -13,8 +12,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines;
 /// <summary>
 /// See PipelineComponentArgument
 /// </summary>
-public interface IPipelineComponentArgument : IArgument, IMapsDirectlyToDatabaseTable, ISaveable, IDeleteable,
-    IHasDependencies
+public interface IPipelineComponentArgument : IArgument, IHasDependencies
 {
     /// <summary>
     /// Component for whom this <see cref="IPipelineComponentArgument"/> provides a value for.  There will be one <see cref="IPipelineComponentArgument"/>

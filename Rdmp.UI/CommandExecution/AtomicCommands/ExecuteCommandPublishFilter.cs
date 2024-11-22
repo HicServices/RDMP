@@ -7,7 +7,6 @@
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
@@ -15,11 +14,11 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandPublishFilter : BasicUICommandExecution
 {
     private readonly IFilter _filter;
     private Catalogue _catalogue;
-    private ExtractionInformation[] _allExtractionInformations;
+    private readonly ExtractionInformation[] _allExtractionInformations;
 
     public ExecuteCommandPublishFilter(IActivateItems activator, IFilter filter, Catalogue targetCatalogue) :
         base(activator)
@@ -42,7 +41,7 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 
         _allExtractionInformations = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
-        if (!_allExtractionInformations.Any())
+        if (_allExtractionInformations.Length==0)
             SetImpossible(
                 $"Cannot publish filter because Catalogue {_catalogue} does not have any ExtractionInformations (extractable columns) we could associate it with");
 
@@ -70,13 +69,12 @@ public class ExecuteCommandPublishFilter : BasicUICommandExecution, IAtomicComma
 
             if (duplicate != null)
             {
-                if (YesNo(
+                if (!YesNo(
                         $"There is already a filter called {_filter.Name} in ExtractionInformation {toAddTo} do you want to mark this filter as a child of that master filter?",
-                        "Duplicate, mark these as the same?"))
-                {
-                    _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
-                    _filter.SaveToDatabase();
-                }
+                        "Duplicate, mark these as the same?")) return;
+
+                _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
+                _filter.SaveToDatabase();
 
                 return;
             }

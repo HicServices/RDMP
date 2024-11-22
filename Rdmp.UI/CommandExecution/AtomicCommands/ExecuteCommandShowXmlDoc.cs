@@ -13,10 +13,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowXmlDoc : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandShowXmlDoc : BasicUICommandExecution
 {
     private readonly string _title;
-    private string _help;
+    private readonly string _help;
 
     /// <summary>
     /// sets up the command to show xmldoc for the supplied <paramref name="classOrProperty"/>

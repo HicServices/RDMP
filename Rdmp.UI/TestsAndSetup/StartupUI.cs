@@ -28,7 +28,7 @@ namespace Rdmp.UI.TestsAndSetup;
 /// Shows every when RDMP application is first launched.  Tells you whether there are any problems with your current platform databases.
 /// If you get an error (Red face) then clicking it will show a log of the startup process.
 /// </summary>
-public partial class StartupUI : Form, ICheckNotifier
+public sealed partial class StartupUI : Form
 {
     /// <summary>
     /// True if we failed to reach the catalogue database
@@ -64,7 +64,7 @@ public partial class StartupUI : Form, ICheckNotifier
         try
         {
             return typeof(StartupUI).Assembly.CustomAttributes
-                .FirstOrDefault(a => a.AttributeType == typeof(AssemblyInformationalVersionAttribute))
+                .FirstOrDefault(static a => a.AttributeType == typeof(AssemblyInformationalVersionAttribute))
                 ?.ToString().Split('"')[1];
         }
         catch (Exception)
@@ -102,8 +102,8 @@ public partial class StartupUI : Form, ICheckNotifier
         pbLoadProgress.Value = 800; //80% done
     }
 
-    private bool escapePressed;
-    private int countDownToClose = 5;
+    private bool _escapePressed;
+    private int _countDownToClose = 5;
 
     private void StartupComplete()
     {
@@ -134,17 +134,18 @@ public partial class StartupUI : Form, ICheckNotifier
     {
         var t = (Timer)sender;
 
-        if (escapePressed)
+        if (_escapePressed)
         {
             t.Stop();
             return;
         }
 
-        countDownToClose--;
+        _countDownToClose--;
 
-        lblProgress.Text = $"Startup Complete... Closing in {countDownToClose}s (Esc to cancel)";
+        lblProgress.Text = $"Startup Complete... Closing in {_countDownToClose}s (Esc to cancel)";
 
-        if (UserSettings.Wait5SecondsAfterStartupUI && countDownToClose != 0) return;
+        if (UserSettings.Wait5SecondsAfterStartupUI && _countDownToClose != 0) return;
+
         t.Stop();
         Close();
     }
@@ -176,9 +177,9 @@ public partial class StartupUI : Form, ICheckNotifier
                 ragSmiley1.Fatal(ex);
             }
 
-        escapePressed = false;
-        countDownToClose = 5;
-        lastStatus = RDMPPlatformDatabaseStatus.Healthy;
+        _escapePressed = false;
+        _countDownToClose = 5;
+        _lastStatus = RDMPPlatformDatabaseStatus.Healthy;
 
         //10% progress because we connected to user settings
         pbLoadProgress.Value = 100;
@@ -205,7 +206,7 @@ public partial class StartupUI : Form, ICheckNotifier
         t.Start();
     }
 
-    private RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
+    private RDMPPlatformDatabaseStatus _lastStatus = RDMPPlatformDatabaseStatus.Healthy;
     private ChoosePlatformDatabasesUI _choosePlatformsUI;
     private ChooseLocalFileSystemLocationUI _chooseLocalFileSystem;
     private bool _haveWarnedAboutOutOfDate;
@@ -213,8 +214,8 @@ public partial class StartupUI : Form, ICheckNotifier
     private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
     {
         //if status got worse
-        if (eventArgs.Status < lastStatus)
-            lastStatus = eventArgs.Status;
+        if (eventArgs.Status < _lastStatus)
+            _lastStatus = eventArgs.Status;
 
         //if we are unable to reach a tier 1 database don't report anything else
         if (CouldNotReachTier1Database)
@@ -303,8 +304,7 @@ public partial class StartupUI : Form, ICheckNotifier
         }
 
         //if the message starts with a percentage translate it into the progress bars movement
-        var progressHackMessage = Percentage();
-        var match = progressHackMessage.Match(args.Message);
+        var match = Percentage().Match(args.Message);
 
         if (match.Success)
         {
@@ -335,7 +335,7 @@ public partial class StartupUI : Form, ICheckNotifier
     private void StartupUIMainForm_KeyUp(object sender, KeyEventArgs e)
     {
         if (e.KeyCode == Keys.Escape)
-            escapePressed = true;
+            _escapePressed = true;
     }
 
     private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -359,13 +359,13 @@ public partial class StartupUI : Form, ICheckNotifier
         ragSmiley1.ShowMessagesIfAny();
     }
 
-    [GeneratedRegex("^(\\d+)%")]
-    private static partial Regex Percentage();
-
     private void btnLocalFileSystem_Click(object sender, EventArgs e)
     {
         DoNotContinue = true;
         _chooseLocalFileSystem = new ChooseLocalFileSystemLocationUI();
         _chooseLocalFileSystem.ShowDialog();
     }
+
+    [GeneratedRegex("^(\\d+)%")]
+    private static partial Regex Percentage();
 }

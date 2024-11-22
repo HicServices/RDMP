@@ -17,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddPlugins : BasicCommandExecution
 {
     private FileInfo[] _files;
 
@@ -43,17 +43,15 @@ public class ExecuteCommandAddPlugins : BasicCommandExecution, IAtomicCommand
             var f = BasicActivator.SelectFile("Plugin to add",
                 $"Plugins (*{PackPluginRunner.PluginPackageSuffix})", $"*{PackPluginRunner.PluginPackageSuffix}");
             if (f != null)
-                _files = new FileInfo[] { f };
+                _files = [f];
             else return;
         }
 
 
-        foreach (var f in _files)
-        {
-            var runner = new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName });
+        foreach (var runner in _files.Select(static f =>
+                     new PackPluginRunner(new CommandLine.Options.PackOptions { File = f.FullName })))
             runner.Run(BasicActivator.RepositoryLocator, ThrowImmediatelyDataLoadEventListener.Quiet,
                 ThrowImmediatelyCheckNotifier.Quiet, new DataFlowPipeline.GracefulCancellationToken());
-        }
 
         Show("Changes will take effect on restart");
     }

@@ -10,7 +10,6 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
@@ -32,7 +31,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
 /// to write plugin classes to easily handle proprietary/bespoke source file types or complex data load requirements.</para>
 /// </summary>
-public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICheckable
+public class ProcessTask : DatabaseEntity, IProcessTask, INamed, ICheckable
 {
     #region Database Properties
 
@@ -154,7 +153,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage)
     {
         var order =
-            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(static t => t.Order).DefaultIfEmpty().Max() + 1;
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {
@@ -176,7 +175,7 @@ public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable, INamed, ICh
     public ProcessTask(ICatalogueRepository repository, ILoadMetadata parent, LoadStage stage, string serialisableConfiguration = null)
     {
         var order =
-            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(t => t.Order).DefaultIfEmpty().Max() + 1;
+            repository.GetAllObjectsWithParent<ProcessTask>(parent).Select(static t => t.Order).DefaultIfEmpty().Max() + 1;
 
         repository.InsertAndHydrate(this, new Dictionary<string, object>
         {

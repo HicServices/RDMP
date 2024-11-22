@@ -13,7 +13,7 @@ namespace Rdmp.Core.Logging.PastEvents;
 /// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See
 /// ArchivalTableLoadInfo).
 /// </summary>
-public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent, IComparable
+public class ArchivalDataSource : IArchivalLoggingRecordOfPastEvent
 {
     public string MD5 { get; internal set; }
     public string Source { get; internal set; }

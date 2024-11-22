@@ -12,7 +12,7 @@ namespace Rdmp.Core.Curation.Data.Cache;
 /// <summary>
 /// See CacheFetchFailure
 /// </summary>
-public interface ICacheFetchFailure : ISaveable, IDeleteable, IMapsDirectlyToDatabaseTable
+public interface ICacheFetchFailure : ISaveable, IMapsDirectlyToDatabaseTable
 {
     /// <summary>
     /// The ID of the <see cref="CacheProgress"/> that was being executed when the fetch error occured.

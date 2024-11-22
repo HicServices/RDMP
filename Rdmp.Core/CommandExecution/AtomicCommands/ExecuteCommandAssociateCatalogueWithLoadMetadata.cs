@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAssociateCatalogueWithLoadMetadata : BasicCommandExecution
 {
     private readonly LoadMetadata _loadMetadata;
     private readonly Catalogue[] _availableCatalogues;

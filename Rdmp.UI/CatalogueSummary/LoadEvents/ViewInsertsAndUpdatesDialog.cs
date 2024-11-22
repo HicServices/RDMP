@@ -29,10 +29,10 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents;
 /// <para>Once the queries have finished executing (you will see progress messages appearing in the 'Fetch Data' tab), INSERTS that were part of the data load will appear in 'View Inserts'
 /// tab and side by side views of UPDATES (old vs new) will appear in the 'View Updates' tab (see DiffDataTables).</para>
 /// </summary>
-public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
+public sealed partial class ViewInsertsAndUpdatesDialog : Form
 {
-    private int _dataLoadRunID;
-    private TableInfo _toInterrogate;
+    private readonly int _dataLoadRunID;
+    private readonly TableInfo _toInterrogate;
     private int _batchSizeToGet;
     private int _timeout;
 
@@ -50,7 +50,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         tbTimeout.Text = "30";
         _timeout = 30;
 
-        dgInserts.ColumnAdded += (s, e) => e.Column.FillWeight = 1;
+        dgInserts.ColumnAdded += static (_, e) => e.Column.FillWeight = 1;
     }
 
 
@@ -80,11 +80,11 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         }
     }
 
-    private bool fetchDataResultedInNoErrors = true;
+    private bool _fetchDataResultedInNoErrors = true;
 
     private void btnFetchData_Click(object sender, EventArgs e)
     {
-        fetchDataResultedInNoErrors = true;
+        _fetchDataResultedInNoErrors = true;
         var fetcher = new DiffDatabaseDataFetcher(_batchSizeToGet, _toInterrogate, _dataLoadRunID, _timeout);
 
         fetcher.FetchData(this);
@@ -101,7 +101,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
             diffDataTables1.HighlightDiffCells();
 
         //we didn't see any errors so probably everything was fine
-        if (fetchDataResultedInNoErrors)
+        if (_fetchDataResultedInNoErrors)
             WideMessageBox.Show("Data Ready", "Data ready for you to view in the Inserts / Updates tabs",
                 WideMessageBoxTheme.Help);
     }
@@ -117,9 +117,9 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         if (potentialTableInfos.Count == 0)
             throw new Exception("No potential tables were found");
 
-        if (potentialTableInfos.Select(t => t.DatabaseType).Distinct().Count() > 1)
+        if (potentialTableInfos.Select(static t => t.DatabaseType).Distinct().Count() > 1)
             throw new Exception(
-                $"Tables found were from different DBMS Types: {string.Join(",", potentialTableInfos.Select(t => t.DatabaseType).Distinct())}");
+                $"Tables found were from different DBMS Types: {string.Join(",", potentialTableInfos.Select(static t => t.DatabaseType).Distinct())}");
 
         var syntax = potentialTableInfos.First().GetQuerySyntaxHelper();
 
@@ -133,27 +133,25 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
                 $"The following TableInfos were given to us to pick from {string.Join(",", potentialTableInfos)}",
                 CheckResult.Success));
 
-        var candidates = potentialTableInfos.Where(t => t.GetRuntimeName().Equals(runtimeName)).ToArray();
+        var candidates = potentialTableInfos.Where(t => t.GetRuntimeName()?.Equals(runtimeName) == true).ToArray();
 
-        if (!candidates.Any())
+        switch (candidates.Length)
         {
-            checkNotifier.OnCheckPerformed(
-                new CheckEventArgs("Could not find an appropriate TableInfo from those mentioned above",
+            case 0:
+                checkNotifier.OnCheckPerformed(
+                    new CheckEventArgs("Could not find an appropriate TableInfo from those mentioned above",
+                        CheckResult.Fail));
+                return null;
+            case > 1:
+                checkNotifier.OnCheckPerformed(new CheckEventArgs(
+                    $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view",
                     CheckResult.Fail));
-            return null;
+                return null;
+            default:
+                checkNotifier.OnCheckPerformed(new CheckEventArgs("Found the correct TableInfo!", CheckResult.Success));
+
+                return candidates.Single();
         }
-
-        if (candidates.Length > 1)
-        {
-            checkNotifier.OnCheckPerformed(new CheckEventArgs(
-                $"Found multiple TableInfos (mentioned above) with the runtime name {runtimeName} I don't know which one you want to view",
-                CheckResult.Fail));
-            return null;
-        }
-
-        checkNotifier.OnCheckPerformed(new CheckEventArgs("Found the correct TableInfo!", CheckResult.Success));
-
-        return candidates.Single();
     }
 
     private bool _yesToAll;
@@ -180,7 +178,7 @@ public partial class ViewInsertsAndUpdatesDialog : Form, ICheckNotifier
         }
 
         if (args.Result == CheckResult.Fail)
-            fetchDataResultedInNoErrors = false; //don't tell them everything was fine because it wasn't
+            _fetchDataResultedInNoErrors = false; //don't tell them everything was fine because it wasn't
 
         return checksUI1.OnCheckPerformed(args);
     }

@@ -18,7 +18,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution, IAtomicCommand
+internal class ExecuteCommandGenerateReleaseDocument : BasicCommandExecution
 {
     private readonly ExtractionConfiguration _extractionConfiguration;
 

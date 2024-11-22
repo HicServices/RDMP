@@ -23,7 +23,7 @@ using Rdmp.Core.ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IProject"/>
-public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable, IHasFolder
+public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
 {
     #region Database Properties
 
@@ -115,25 +115,15 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
         catch (Exception ex)
         {
             //sometimes the user tries to create multiple Projects without fully populating the last one (with a project number)
-            if (ex.Message.Contains("idx_ProjectNumberMustBeUnique"))
-            {
-                Project offender;
-                try
-                {
-                    //find the one with the unset project number
-                    offender = Repository.GetAllObjects<Project>().Single(p => p.ProjectNumber == null);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            if (!ex.Message.Contains("idx_ProjectNumberMustBeUnique")) throw;
 
-                throw new Exception(
-                    $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
-                    ex);
-            }
+            var offender =
+                //find the one with the unset project number
+                Repository.GetAllObjects<Project>().Single(static p => p.ProjectNumber == null);
 
-            throw;
+            throw new Exception(
+                $"Could not create a new Project because there is already another Project in the system ({offender}) which is missing a Project Number.  All projects must have a ProjectNumber, there can be 1 Project at a time which does not have a number and that is one that is being built by the user right now.  Either delete Project {offender} or give it a project number",
+                ex);
         }
     }
 
@@ -176,7 +166,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     {
         var associations =
             Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-        return associations.Select(a => a.CohortIdentificationConfiguration).Where(c => c != null).ToArray();
+        return associations.Select(static a => a.CohortIdentificationConfiguration).Where(static c => c != null).ToArray();
     }
 
     /// <summary>
@@ -192,7 +182,7 @@ public class Project : DatabaseEntity, IProject, ICustomSearchString, ICheckable
     /// <inheritdoc/>
     public ICatalogue[] GetAllProjectCatalogues()
     {
-        return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
+        return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(static eds => eds.Catalogue).ToArray();
     }
 
     /// <inheritdoc/>

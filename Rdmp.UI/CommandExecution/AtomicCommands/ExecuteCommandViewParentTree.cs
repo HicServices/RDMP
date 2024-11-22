@@ -5,15 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers;
 using Rdmp.UI.SimpleDialogs;
 using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
-public class ExecuteCommandViewParentTree : BasicCommandExecution, IAtomicCommand
-{
 
+public class ExecuteCommandViewParentTree : BasicCommandExecution
+{
     private readonly IBasicActivateItems _activator;
     private readonly object _databaseObject;
     private DescendancyList _tree;

@@ -24,7 +24,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.DataExport.Data;
 
 /// <inheritdoc cref="IExternalCohortTable"/>
-public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable, INamed
+public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable
 {
     #region Database Properties
 
@@ -266,7 +266,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             if (cohortTable.Exists())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs($"Found table {cohortTable} in database {Database}",
-                    CheckResult.Success, null));
+                    CheckResult.Success));
 
                 DiscoverPrivateIdentifier();
                 DiscoverReleaseIdentifier();
@@ -275,7 +275,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             else
             {
                 notifier.OnCheckPerformed(new CheckEventArgs($"Could not find table {TableName} in database {Database}",
-                    CheckResult.Fail, null));
+                    CheckResult.Fail));
             }
 
             var foundCohortDefinitionTable = DiscoverDefinitionTable();
@@ -283,7 +283,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             if (foundCohortDefinitionTable.Exists())
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success, null));
+                    $"Found table {DefinitionTableName} in database {Database}", CheckResult.Success));
 
                 var cols = foundCohortDefinitionTable.DiscoverColumns();
 
@@ -293,7 +293,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
             else
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    $"Could not find table {DefinitionTableName} in database {Database}", CheckResult.Fail, null));
+                    $"Could not find table {DefinitionTableName} in database {Database}", CheckResult.Fail));
             }
         }
         catch (Exception e)
@@ -309,8 +309,7 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
         {
             DataAccessPortal.ExpectServer(this, DataAccessContext.DataExport).TestConnection();
 
-            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success,
-                null));
+            notifier.OnCheckPerformed(new CheckEventArgs($"Connected to Cohort database '{Name}'", CheckResult.Success));
         }
         catch (Exception e)
         {
@@ -337,14 +336,14 @@ public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExte
     {
         var tofind = GetQuerySyntaxHelper().GetRuntimeName(colToFindCanBeFullyQualifiedIfYouLike);
 
-        if (columns.Any(col => col.GetRuntimeName().Equals(tofind, StringComparison.CurrentCultureIgnoreCase)))
+        if (columns.Any(col => col.GetRuntimeName().Equals(tofind, StringComparison.OrdinalIgnoreCase)))
             notifier.OnCheckPerformed(new CheckEventArgs(
                 $"Found required field {tofind} in table {tableNameFullyQualified}",
-                CheckResult.Success, null));
+                CheckResult.Success));
         else
             notifier.OnCheckPerformed(new CheckEventArgs(
-                $"Could not find required field {tofind} in table {tableNameFullyQualified}(It had the following columns:{columns.Aggregate("", (s, n) => $"{s}{n},")})",
-                CheckResult.Fail, null));
+                $"Could not find required field {tofind} in table {tableNameFullyQualified}(It had the following columns:{columns.Aggregate("", static (s, n) => $"{s}{n},")})",
+                CheckResult.Fail));
     }
 
 

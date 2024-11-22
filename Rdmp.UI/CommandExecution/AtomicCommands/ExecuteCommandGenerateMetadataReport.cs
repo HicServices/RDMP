@@ -11,7 +11,7 @@ using Rdmp.UI.SimpleDialogs.Reports;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandGenerateMetadataReport : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandGenerateMetadataReport : BasicUICommandExecution
 {
     private readonly ICatalogue[] _initialSelection;
 

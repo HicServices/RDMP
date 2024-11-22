@@ -12,9 +12,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecution, IAtomicCommand
+internal class ExecuteCommandFreezeExtractionConfiguration : BasicCommandExecution
 {
-    private ExtractionConfiguration _extractionConfiguration;
+    private readonly ExtractionConfiguration _extractionConfiguration;
 
     public ExecuteCommandFreezeExtractionConfiguration(IBasicActivateItems activator,
         ExtractionConfiguration extractionConfiguration) : base(activator)

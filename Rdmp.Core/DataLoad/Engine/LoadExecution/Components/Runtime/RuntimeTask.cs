@@ -27,7 +27,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 /// <para>The second are those that do not have a MEF class powering them.  This includes ProcessTaskTypes like Executable and SQLFile where the ProcessTask.Path
 /// is simply the location of the exe/sql file to run at runtime. </para>
 /// </summary>
-public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask, ICheckable
+public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask
 {
     public RuntimeArgumentCollection RuntimeArguments { get; set; }
     public IProcessTask ProcessTask { get; set; }
@@ -62,31 +62,32 @@ public abstract class RuntimeTask : DataLoadComponent, IRuntimeTask, ICheckable
         {
             //see if any demand initialization
             var initialization = (DemandsInitializationAttribute)Attribute.GetCustomAttributes(propertyInfo)
-                .FirstOrDefault(a => a is DemandsInitializationAttribute);
+                .FirstOrDefault(static a => a is DemandsInitializationAttribute);
 
             //this one does
-            if (initialization != null)
-                try
-                {
-                    //get the approrpriate value from arguments
-                    var value = args.GetCustomArgumentValue(propertyInfo.Name);
+            if (initialization == null) continue;
 
-                    //use reflection to set the value
-                    propertyInfo.SetValue(toSetPropertiesOf, value, null);
-                }
-                catch (NotSupportedException e)
-                {
-                    throw new Exception(
-                        $"Class {toSetPropertiesOf.GetType().Name} has a property {propertyInfo.Name} but is of unexpected type {propertyInfo.GetType()}",
+            try
+            {
+                //get the approrpriate value from arguments
+                var value = args.GetCustomArgumentValue(propertyInfo.Name);
+
+                //use reflection to set the value
+                propertyInfo.SetValue(toSetPropertiesOf, value, null);
+            }
+            catch (NotSupportedException e)
+            {
+                throw new Exception(
+                    $"Class {toSetPropertiesOf.GetType().Name} has a property {propertyInfo.Name} but is of unexpected type {propertyInfo.GetType()}",
+                    e);
+            }
+            catch (KeyNotFoundException e)
+            {
+                if (initialization.Mandatory)
+                    throw new ArgumentException(
+                        $"Class {toSetPropertiesOf.GetType().Name} has a Mandatory property '{propertyInfo.Name}' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",
                         e);
-                }
-                catch (KeyNotFoundException e)
-                {
-                    if (initialization.Mandatory)
-                        throw new ArgumentException(
-                            $"Class {toSetPropertiesOf.GetType().Name} has a Mandatory property '{propertyInfo.Name}' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",
-                            e);
-                }
+            }
         }
     }
 

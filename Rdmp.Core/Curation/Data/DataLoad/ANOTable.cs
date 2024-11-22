@@ -15,7 +15,6 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.Core.MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
 using Rdmp.Core.ReusableLibraryCode.Checks;
@@ -35,7 +34,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad;
 /// NEVER deleting ANOTables that reference existing data  (in the ANOStore database).</para>
 /// 
 /// </summary>
-public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRevertable, IHasDependencies
+public class ANOTable : DatabaseEntity, ICheckable, IHasDependencies
 {
     /// <summary>
     /// Prefix to put on anonymous columns
@@ -201,7 +200,7 @@ public class ANOTable : DatabaseEntity, ISaveable, IDeleteable, ICheckable, IRev
                 new CheckEventArgs(
                     "You must choose a suffix for your ANO identifiers so that they can be distinguished from regular identifiers",
                     CheckResult.Fail));
-        else if (Suffix.StartsWith("_"))
+        else if (Suffix.StartsWith('_'))
             notifier.OnCheckPerformed(new CheckEventArgs(
                 "Suffix will automatically include an underscore, there is no need to add it", CheckResult.Fail));
 
@@ -408,11 +407,11 @@ CONSTRAINT AK_{TableName} UNIQUE({anonymousColumnName})
 
             if (anonymous == null)
                 throw new Exception(
-                    $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
+                    $"Could not find a column called {TableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(static c => c.GetRuntimeName()).ToArray())})");
 
             if (identifiable == null)
                 throw new Exception(
-                    $"Could not find a column called {expectedIdentifiableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(c => c.GetRuntimeName()).ToArray())})");
+                    $"Could not find a column called {expectedIdentifiableName} in table {TableName} on server {Server} (Columns found were {string.Join(",", columnsFoundInANO.Select(static c => c.GetRuntimeName()).ToArray())})");
 
             _identifiableDataType = identifiable.DataType.SQLType;
             _anonymousDataType = anonymous.DataType.SQLType;

@@ -13,7 +13,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution
 {
     private readonly CatalogueItem _catalogueItem;
     private ColumnInfo _columnInfo;

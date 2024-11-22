@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShow : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandShow : BasicCommandExecution
 {
     private IMapsDirectlyToDatabaseTable _objectToShow;
 

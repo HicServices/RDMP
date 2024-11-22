@@ -13,21 +13,15 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandScriptTable : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandScriptTable(IBasicActivateItems activator, TableInfo tableInfo)
+    : BasicCommandExecution(activator)
 {
-    private readonly TableInfo _tableInfo;
-
-    public ExecuteCommandScriptTable(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
-    {
-        _tableInfo = tableInfo;
-    }
-
     public override string GetCommandHelp() => "Scripts table structure to Clipboard (without dependencies)";
 
     public override void Execute()
     {
-        Show($"Script for {_tableInfo.GetRuntimeName()}",
-            _tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false, false, false));
+        Show($"Script for {tableInfo.GetRuntimeName()}",
+            tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false, false, false));
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.SQL);

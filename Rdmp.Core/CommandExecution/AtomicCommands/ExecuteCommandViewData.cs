@@ -18,7 +18,7 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
+public sealed class ExecuteCommandViewData : ExecuteCommandViewDataBase
 {
     private readonly IViewSQLAndResultsCollection _collection;
     private readonly ViewType _viewType;
@@ -168,7 +168,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
 
     #endregion
 
-    private IViewSQLAndResultsCollection CreateCollection(ColumnInfo c)
+    private ViewColumnExtractCollection CreateCollection(ColumnInfo c)
     {
         var toReturn = new ViewColumnExtractCollection(c, _viewType);
 
@@ -178,7 +178,7 @@ public class ExecuteCommandViewData : ExecuteCommandViewDataBase, IAtomicCommand
         return toReturn;
     }
 
-    private IViewSQLAndResultsCollection CreateCollection(ExtractionInformation ei)
+    private ViewColumnExtractCollection CreateCollection(ExtractionInformation ei)
     {
         var toReturn = new ViewColumnExtractCollection(ei, _viewType);
         if ((!ei.ColumnInfo?.IsNumerical() ?? false) && _viewType == ViewType.Distribution)

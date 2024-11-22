@@ -11,7 +11,7 @@ using Rdmp.Core.ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution
 {
     private DataAccessCredentialUsageNode _node;
     private readonly DataAccessContext _newContext;

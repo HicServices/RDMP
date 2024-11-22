@@ -31,7 +31,7 @@ namespace Rdmp.Core.DataExport.Data;
 /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
 /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
 /// </summary>
-public class ExtractableColumn : ConcreteColumn, IComparable, IInjectKnown<CatalogueItem>, IInjectKnown<ColumnInfo>,
+public class ExtractableColumn : ConcreteColumn, IInjectKnown<CatalogueItem>, IInjectKnown<ColumnInfo>,
     IInjectKnown<ExtractionInformation>
 {
     #region Database Properties

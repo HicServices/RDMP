@@ -6,14 +6,13 @@
 
 using System.Linq;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.MapsDirectlyToDatabaseTable;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddToSession : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandAddToSession : BasicUICommandExecution
 {
     private IMapsDirectlyToDatabaseTable[] _toAdd;
     private readonly SessionCollectionUI session;

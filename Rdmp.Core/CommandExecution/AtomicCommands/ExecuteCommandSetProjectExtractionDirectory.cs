@@ -12,15 +12,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandSetProjectExtractionDirectory(IBasicActivateItems activator, Project project)
+    : BasicCommandExecution(activator)
 {
-    private readonly Project _project;
-
-    public ExecuteCommandSetProjectExtractionDirectory(IBasicActivateItems activator, Project project) : base(activator)
-    {
-        _project = project;
-    }
-
     public override string GetCommandHelp() =>
         "Change the location on disk where extracted artefacts are put when you run extraction configurations of this project";
 
@@ -31,9 +25,10 @@ public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution
         var dir = BasicActivator.SelectDirectory("Extraction Directory");
 
         if (dir == null) return;
-        _project.ExtractionDirectory = dir.FullName;
-        _project.SaveToDatabase();
-        Publish(_project);
+
+        project.ExtractionDirectory = dir.FullName;
+        project.SaveToDatabase();
+        Publish(project);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

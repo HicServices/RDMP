@@ -12,7 +12,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution
 {
     private readonly CohortAggregateContainer _container;
 

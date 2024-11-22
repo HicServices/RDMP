@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandListCohortVersions: BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandListCohortVersions: BasicCommandExecution
 {
     readonly CohortIdentificationConfiguration _cic;
     readonly IBasicActivateItems _activator;

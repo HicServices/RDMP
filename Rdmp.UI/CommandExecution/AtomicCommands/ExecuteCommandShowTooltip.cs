@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.Collections;
@@ -15,11 +14,11 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowTooltip : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandShowTooltip : BasicUICommandExecution
 {
-    private string _title;
-    private string _body;
-    private bool _isBad;
+    private readonly string _title;
+    private readonly string _body;
+    private readonly bool _isBad;
 
     public ExecuteCommandShowTooltip(IActivateItems activator, object o) : base(activator)
     {

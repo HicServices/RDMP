@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// Change which column is used to perform linkage against a cohort.  This command supports both changing the global setting on a <see cref="Catalogue"/>
 /// or changing it only for a specific <see cref="ExtractionConfiguration"/>
 /// </summary>
-public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase, IAtomicCommand
+public sealed class ExecuteCommandSetExtractionIdentifier : ExecuteCommandSetColumnSettingBase
 {
     /// <summary>
     /// Change which column is the linkage identifier in a <see cref="Catalogue"/> either at a global level or for a specific <paramref name="inConfiguration"/>

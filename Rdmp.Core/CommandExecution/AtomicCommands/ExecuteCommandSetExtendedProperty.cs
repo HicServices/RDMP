@@ -15,7 +15,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// <summary>
 /// Creates or Updates an <see cref="ExtendedProperty"/> declaration on any RDMP object.
 /// </summary>
-public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandSetExtendedProperty : BasicCommandExecution
 {
     private readonly IMapsDirectlyToDatabaseTable[] _setOn;
     private readonly string _propertyName;

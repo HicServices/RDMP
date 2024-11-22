@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using Rdmp.Core;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
 using Rdmp.UI.Collections;
@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution
 {
     private readonly RDMPCollectionCommonFunctionality _commonFunctionality;
     private readonly object _rootToCollapseTo;
@@ -54,9 +54,9 @@ public class ExecuteCommandCollapseChildNodes : BasicUICommandExecution, IAtomic
             }
 
             //collapse all children
-            foreach (var o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo))
-                if (_commonFunctionality.Tree.IsExpanded(o))
-                    _commonFunctionality.Tree.Collapse(o);
+            foreach (var o in _commonFunctionality.CoreChildProvider.GetAllChildrenRecursively(_rootToCollapseTo)
+                         .Where(o => _commonFunctionality.Tree.IsExpanded(o)))
+                _commonFunctionality.Tree.Collapse(o);
 
             //and collapse the root
             _commonFunctionality.Tree.Collapse(_rootToCollapseTo);

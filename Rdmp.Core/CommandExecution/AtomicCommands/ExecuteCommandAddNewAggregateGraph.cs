@@ -15,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution
 {
     private readonly Catalogue _catalogue;
     private readonly string _name;

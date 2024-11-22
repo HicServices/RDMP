@@ -6,7 +6,6 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -20,10 +19,10 @@ using TypeGuesser;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPreLoadDiscardedColumn : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandCreateNewPreLoadDiscardedColumn : BasicUICommandExecution
 {
     private readonly TableInfo _tableInfo;
-    private ColumnInfo[] _prototypes;
+    private readonly ColumnInfo[] _prototypes;
 
     public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo) :
         base(activator)
@@ -39,7 +38,7 @@ public class ExecuteCommandCreateNewPreLoadDiscardedColumn : BasicUICommandExecu
         var existing = tableInfo.PreLoadDiscardedColumns;
         foreach (var prototype in _prototypes)
         {
-            var alreadyExists = existing.Any(c => c.GetRuntimeName().Equals(prototype.GetRuntimeName()));
+            var alreadyExists = existing.Any(c => c.GetRuntimeName()?.Equals(prototype.GetRuntimeName()) == true);
 
             if (alreadyExists)
                 SetImpossible($"There is already a PreLoadDiscardedColumn called '{prototype.GetRuntimeName()}'");

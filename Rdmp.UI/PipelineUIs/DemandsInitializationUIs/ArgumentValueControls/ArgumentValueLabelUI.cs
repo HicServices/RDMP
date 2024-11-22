@@ -17,7 +17,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 /// will display to the user some information about why he cannot specify a value for the IArgument.</para>
 /// </summary>
 [TechnicalUI]
-public partial class ArgumentValueLabelUI : UserControl, IArgumentValueUI
+public sealed partial class ArgumentValueLabelUI : UserControl
 {
     public ArgumentValueLabelUI(string readonlyText)
     {

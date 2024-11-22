@@ -6,7 +6,6 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.ReusableLibraryCode;
@@ -19,9 +18,9 @@ using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandShowKeywordHelp : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandShowKeywordHelp : BasicUICommandExecution
 {
-    private RDMPContextMenuStripArgs _args;
+    private readonly RDMPContextMenuStripArgs _args;
 
     public ExecuteCommandShowKeywordHelp(IActivateItems activator, RDMPContextMenuStripArgs args) : base(activator)
     {

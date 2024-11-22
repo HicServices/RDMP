@@ -11,7 +11,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandUpdateCatalogueDataLocation : BasicCommandExecution
 {
     private readonly IBasicActivateItems _activator;
     private readonly DiscoveredTable _table;

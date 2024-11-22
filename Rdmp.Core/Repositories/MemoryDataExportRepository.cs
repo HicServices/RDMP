@@ -18,8 +18,7 @@ namespace Rdmp.Core.Repositories;
 /// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in
 /// dictionaries and arrays in memory instead of the database.
 /// </summary>
-public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExportRepository, IDataExportPropertyManager,
-    IExtractableDataSetPackageManager
+public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExportRepository, IDataExportPropertyManager
 {
     public ICatalogueRepository CatalogueRepository => this;
     public IDataExportPropertyManager DataExportPropertyManager => this;
@@ -37,7 +36,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
     public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
     {
-        var col = GetAllObjects<ExtractableColumn>().Where(ec => ec.IsExtractionIdentifier).ToArray();
+        var col = GetAllObjects<ExtractableColumn>().Where(static ec => ec.IsExtractionIdentifier).ToArray();
 
         return GetAllObjects<ISelectedDataSets>()
             .Where(sds => !col.Any(c => c.ExtractableDataSet_ID == sds.ExtractableDataSet_ID
@@ -95,7 +94,7 @@ public class MemoryDataExportRepository : MemoryCatalogueRepository, IDataExport
 
     public Dictionary<int, List<int>> GetPackageContentsDictionary()
     {
-        return PackageDictionary.ToDictionary(k => k.Key.ID, v => v.Value.Select(o => o.ID).ToList());
+        return PackageDictionary.ToDictionary(static k => k.Key.ID, static v => v.Value.Select(static o => o.ID).ToList());
     }
 
     public IEnumerable<ICumulativeExtractionResults> GetAllCumulativeExtractionResultsFor(

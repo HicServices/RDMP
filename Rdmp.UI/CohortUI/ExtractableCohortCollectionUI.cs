@@ -27,7 +27,7 @@ namespace Rdmp.UI.CohortUI;
 /// If a project/global list includes more than one Cohort Source (e.g. you link NHS numbers to ReleaseIdentifiers but also link CHI numbers to ReleaseIdentifiers or if you have the same
 /// private identifier but different release identifier formats) then each seperate cohort source table will be listed along with the associated cohorts found by RDMP.
 /// </summary>
-public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
+public partial class ExtractableCohortCollectionUI : RDMPUserControl
 {
     private ExtractableCohortAuditLogBuilder _auditLogBuilder = new();
 
@@ -53,22 +53,12 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         lbCohortDatabaseTable.BeforeSorting += BeforeSorting;
     }
 
-    public override void SetItemActivator(IActivateItems activator)
-    {
-        base.SetItemActivator(activator);
-
-    }
-
     private object CreatedFromAspectGetter(object rowObject)
     {
-        if (rowObject is ExtractableCohortDescription ecd && Activator is not null)
-        {
-            var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
-            return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
-        }
+        if (rowObject is not ExtractableCohortDescription ecd || Activator is null) return null;
 
-
-        return null;
+        var obj = ExtractableCohortAuditLogBuilder.GetObjectIfAny(ecd.Cohort, Activator.RepositoryLocator);
+        return obj is ExtractionInformation ei ? $"{ei.CatalogueItem.Catalogue}.{ei}" : obj;
     }
 
     private void BeforeSorting(object sender, BeforeSortingEventArgs e)
@@ -90,7 +80,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
             : (object)null;
 
     private object IDAspectGetter(object rowObject) =>
-        rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : (object)null;
+        rowObject is ExtractableCohortDescription ecd ? ecd.Cohort.ID : null;
 
     private bool haveSubscribed;
 
@@ -119,7 +109,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         try
         {
             lbCohortDatabaseTable.ClearObjects();
-            lbCohortDatabaseTable.AddObjects(cohorts.Select(cohort => new ExtractableCohortDescription(cohort))
+            lbCohortDatabaseTable.AddObjects(cohorts.Select(static cohort => new ExtractableCohortDescription(cohort))
                 .ToArray());
         }
         catch (Exception e)
@@ -139,7 +129,7 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
         var factory = new CohortDescriptionFactory(Activator.RepositoryLocator.DataExportRepository);
         var fetchDescriptionsDictionary = factory.Create();
 
-        lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());
+        lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(static kvp => kvp.Value).ToArray());
 
         //Just because the object updates itself doesn't mean ObjectListView will notice, so we must also subscribe to the fetch completion (1 per cohort source table)
         //when the fetch completes, update the UI nodes (they also themselves subscribe to the fetch completion handler and should be registered further up the invocation list)
@@ -150,10 +140,6 @@ public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeS
                 if (!lbCohortDatabaseTable.IsDisposed)
                     lbCohortDatabaseTable.RefreshObjects(nodes);
             };
-    }
-
-    private void lbCohortDatabaseTable_SelectedIndexChanged(object sender, EventArgs e)
-    {
     }
 
     public event SelectedCohortChangedHandler SelectedCohortChanged;

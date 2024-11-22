@@ -1,6 +1,6 @@
 ﻿namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
-    partial class ArgumentValueLabelUI : IArgumentValueUI
+    sealed partial class ArgumentValueLabelUI : IArgumentValueUI
     {
         /// <summary> 
         /// Required designer variable.

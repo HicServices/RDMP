@@ -6,7 +6,6 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
@@ -18,7 +17,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution, IAtomicCommand
+public sealed class ExecuteCommandCreateNewDataExtractionProject : BasicUICommandExecution
 {
     /// <summary>
     /// The folder to put the new <see cref="Project"/> in.  Defaults to <see cref="FolderHelper.Root"/>

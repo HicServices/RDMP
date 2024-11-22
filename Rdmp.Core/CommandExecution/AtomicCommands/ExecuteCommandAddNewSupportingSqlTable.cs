@@ -14,18 +14,12 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandAddNewSupportingSqlTable(
+    IBasicActivateItems activator,
+    Catalogue catalogue,
+    string name = null)
+    : BasicCommandExecution(activator)
 {
-    private readonly Catalogue _catalogue;
-    private readonly string _name;
-
-    public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue,
-        string name = null) : base(activator)
-    {
-        _catalogue = catalogue;
-        _name = name;
-    }
-
     public override string GetCommandHelp() =>
         "Allows you to specify some freeform SQL that helps understand / interact with a dataset.  Optionally this SQL can be run and the results provided in project extractions.";
 
@@ -34,34 +28,34 @@ public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution, IAt
         base.Execute();
 
 
-        var c = _catalogue;
-        var name = _name;
+        var c = catalogue;
+        var name1 = name;
 
         if (c == null)
         {
             if (BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add Supporting SQL Table",
-                TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
+                {
+                    WindowTitle = "Add Supporting SQL Table",
+                    TaskDescription = "Select which Catalogue you want to add the Supporting SQL Table to."
+                }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out var selected))
                 c = selected;
             else
                 // user cancelled selecting a Catalogue
                 return;
         }
 
-        if (name == null && BasicActivator.IsInteractive)
+        if (name1 == null && BasicActivator.IsInteractive)
             if (!BasicActivator.TypeText(new DialogArgs
-            {
-                WindowTitle = "Supporting SQL Table Name",
-                TaskDescription =
+                {
+                    WindowTitle = "Supporting SQL Table Name",
+                    TaskDescription =
                         "Enter a name that describes what data the query will show.  This is a human readable name not a table name.",
-                EntryLabel = "Name"
-            }, 255, null, out name, false))
+                    EntryLabel = "Name"
+                }, 255, null, out name1, false))
                 // user cancelled typing a name
                 return;
 
-        var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name ??
+        var newSqlTable = new SupportingSQLTable((ICatalogueRepository)c.Repository, c, name1 ??
             $"New Supporting SQL Table {Guid.NewGuid()}");
 
         Activate(newSqlTable);

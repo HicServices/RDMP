@@ -2,7 +2,7 @@
 
 namespace Rdmp.UI.SimpleDialogs
 {
-    partial class NewfindUI
+    sealed partial class NewfindUI
     {
         /// <summary>
         /// Required designer variable.

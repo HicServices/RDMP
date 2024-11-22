@@ -3,7 +3,7 @@ using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.TestsAndSetup
 {
-    partial class StartupUI : ICheckNotifier
+    sealed partial class StartupUI : ICheckNotifier
     {
         /// <summary>
         /// Required designer variable.

@@ -13,16 +13,10 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution, IAtomicCommand
+public sealed class ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period)
+    : BasicCommandExecution(activator)
 {
-    private readonly GovernancePeriod _period;
     private readonly FileInfo _file;
-
-    public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period) :
-        base(activator)
-    {
-        _period = period;
-    }
 
     public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period, FileInfo file)
         : this(activator, period)
@@ -34,15 +28,15 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
     {
         base.Execute();
 
-        var p = _period;
+        var p = period;
         var f = _file;
 
         if (p == null)
             if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                WindowTitle = "Add Governance Document",
-                TaskDescription = "Select which GovernancePeriod you want to attach the document to."
-            }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
+                    {
+                        WindowTitle = "Add Governance Document",
+                        TaskDescription = "Select which GovernancePeriod you want to attach the document to."
+                    }, BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>(),
                     out p))
                 // user cancelled selecting a Catalogue
                 return;
@@ -52,7 +46,7 @@ public sealed class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecuti
             return;
 
         var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, p, f);
-        Publish(_period);
+        Publish(period);
         Emphasise(doc);
         Activate(doc);
     }

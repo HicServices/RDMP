@@ -256,7 +256,7 @@ public class MDFAttacherTests : DatabaseTests
         }
     }
 
-    public class MyClass : IAttacher, ICheckable
+    public class MyClass : IAttacher
     {
         public ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken) =>
             throw new NotImplementedException();

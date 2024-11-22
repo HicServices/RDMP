@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands;
 /// Records as an ExtendedProperty that a given object is replaced by another.
 /// Typically used to forward users of Deprecated items to the new live version
 /// </summary>
-public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandReplacedBy : BasicCommandExecution
 {
     public IMapsDirectlyToDatabaseTable Deprecated { get; }
     public IMapsDirectlyToDatabaseTable Replacement { get; }
@@ -55,9 +55,9 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
 
         if (PromptToPickReplacement && rep == null)
             if (!BasicActivator.SelectObject(new DialogArgs
-            {
-                AllowSelectingNull = true
-            }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
+                {
+                    AllowSelectingNull = true
+                }, BasicActivator.CoreChildProvider.AllCatalogues, out rep))
                 // user cancelled
                 return;
 
@@ -70,6 +70,6 @@ public class ExecuteCommandReplacedBy : BasicCommandExecution, IAtomicCommand
         // null means delete relationship and don't create a new one
         if (rep != null)
             // store the ID of the thing that replaces us
-            new ExtendedProperty(cataRepo, Deprecated, ExtendedProperty.ReplacedBy, rep.ID);
+            _ = new ExtendedProperty(cataRepo, Deprecated, ExtendedProperty.ReplacedBy, rep.ID);
     }
 }

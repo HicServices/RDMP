@@ -14,7 +14,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewPipeline : BasicUICommandExecution
 {
     private readonly PipelineUseCase _useCase;
 

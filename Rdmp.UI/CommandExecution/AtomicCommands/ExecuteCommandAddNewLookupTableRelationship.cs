@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -17,7 +16,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution, IAtomicCommand
+public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution
 {
     private readonly Catalogue _catalogueIfKnown;
     private readonly TableInfo _lookupTableInfoIfKnown;

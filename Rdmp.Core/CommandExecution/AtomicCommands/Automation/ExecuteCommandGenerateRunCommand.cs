@@ -13,13 +13,9 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands.Automation;
 
-public class ExecuteCommandGenerateRunCommand : AutomationCommandExecution, IAtomicCommand
+public class ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
+    : AutomationCommandExecution(activator, commandGetter)
 {
-    public ExecuteCommandGenerateRunCommand(IBasicActivateItems activator, Func<RDMPCommandLineOptions> commandGetter)
-        : base(activator, commandGetter)
-    {
-    }
-
     public override string GetCommandHelp() => "Generates the execute command line invocation (including arguments)";
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) => iconProvider.GetImage(RDMPConcept.Clipboard);

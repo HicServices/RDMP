@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.ReusableLibraryCode.Icons.IconProvision;
@@ -16,7 +15,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands;
 
-internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAtomicCommand
+internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution
 {
     private readonly LoadMetadata _loadMetadata;
 
@@ -33,23 +32,19 @@ internal class ExecuteCommandChooseLoadDirectory : BasicUICommandExecution, IAto
         base.Execute();
 
         var dialog = new ChooseLoadDirectoryUI(Activator, _loadMetadata);
-        if (dialog.ShowDialog() == DialogResult.OK)
-        {
-            if (dialog.ResultDirectory.RootPath != null)
-            {
-                //todo check these are correct & make it work with linux
-                dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
-            }
-            else if (dialog.ResultDirectory.ForLoading != null &&
-                dialog.ResultDirectory.ForArchiving != null &&
-                dialog.ResultDirectory.ExecutablesPath != null &&
-                dialog.ResultDirectory.Cache != null)
-            {
-                dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
-            }
-            _loadMetadata.SaveToDatabase();
-            Publish(_loadMetadata);
-        }
+        if (dialog.ShowDialog() != DialogResult.OK) return;
+
+        if (dialog.ResultDirectory.RootPath != null)
+            //todo check these are correct & make it work with linux
+            dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
+        else if (dialog.ResultDirectory.ForLoading != null &&
+                 dialog.ResultDirectory.ForArchiving != null &&
+                 dialog.ResultDirectory.ExecutablesPath != null &&
+                 dialog.ResultDirectory.Cache != null)
+            dialog.ResultDirectory.PopulateLoadMetadata(_loadMetadata);
+
+        _loadMetadata.SaveToDatabase();
+        Publish(_loadMetadata);
     }
 
     public override Image<Rgba32> GetImage(IIconProvider iconProvider) =>

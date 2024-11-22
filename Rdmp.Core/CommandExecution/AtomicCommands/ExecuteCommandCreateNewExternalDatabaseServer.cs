@@ -20,7 +20,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands;
 
-public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution, IAtomicCommand
+public class ExecuteCommandCreateNewExternalDatabaseServer : BasicCommandExecution
 {
     private readonly PermissableDefaults _defaultToSet;
     private readonly ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
